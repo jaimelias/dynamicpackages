@@ -1,0 +1,1014 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Dynamic Packages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-16 15:51+0000\n"
+"PO-Revision-Date: 2018-10-16 21:28+0000\n"
+"Last-Translator: melody <melody@nativatours.com>\n"
+"Language-Team: French (France)\n"
+"Language: fr_FR\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/"
+
+#: public/partials/archive.php:144
+msgid "1 Day"
+msgstr "Une Journée"
+
+#: public/partials/checkout.php:273
+msgid "3 numbers on the back"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1594
+msgid "@"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:276
+msgid "Accept Bookings"
+msgstr "Accepter des Reservations"
+
+#: includes/class-dynamicpackages-metaboxes.php:234
+msgid "Accomodation Prices Per Person"
+msgstr "Prix du Logement par Personne"
+
+#: includes/class-dynamicpackages-post-type.php:17
+msgid "Add New"
+msgstr "Ajouter Nouveau"
+
+#: includes/class-dynamicpackages-post-type.php:16
+msgid "Add New Package"
+msgstr "Ajouter un nouveau Circuit"
+
+#: public/partials/single.php:76 public/partials/checkout.php:233
+msgid "Address"
+msgstr "Adresse"
+
+#: public/partials/single.php:74 public/partials/checkout.php:110
+msgid "Address of Departure"
+msgstr "Adresse de Départ"
+
+#: public/class-dynamicpackages-public.php:1570
+msgid "adult"
+msgstr "Adulte"
+
+#: includes/class-dynamicpackages-metaboxes.php:239
+#: public/partials/forms.php:135 public/partials/checkout.php:129
+msgid "Adults"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1571
+msgid "adults"
+msgstr "Adultes"
+
+#: public/partials/archive.php:163
+msgid "Advance Search"
+msgstr "Recherche Avancée"
+
+#: includes/class-dynamicpackages-post-type.php:15
+msgid "All Packages"
+msgstr "Tous les Programmes"
+
+#: public/class-dynamicpackages-public.php:1500
+#: includes/class-dynamicpackages-metaboxes.php:303
+msgid "and"
+msgstr "et"
+
+#: public/partials/forms.php:215 public/partials/archive.php:143
+msgid "Any"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:38
+msgid "Availability"
+msgstr "Disponibilité"
+
+#: includes/class-dynamicpackages-metaboxes.php:409
+msgid "Badge Color"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:219
+msgid "Base Prices Per Person"
+msgstr "Prix Base par personne"
+
+#: public/class-dynamicpackages-public.php:1722
+#: includes/class-dynamicpackages-metaboxes.php:400
+msgid "Best Seller"
+msgstr "Le plus vendu"
+
+#: includes/class-dynamicpackages-metaboxes.php:278
+msgid "Between"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:301
+msgid "between"
+msgstr "entre"
+
+#: public/partials/checkout.php:242
+msgid "Billing Details"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:414
+msgid "Black"
+msgstr "noir"
+
+#: includes/class-dynamicpackages-metaboxes.php:418
+msgid "Blue"
+msgstr "bleu"
+
+#: public/partials/forms.php:24
+msgid "Book  Now"
+msgstr "Reserver Maintenant"
+
+#: includes/class-dynamicpackages-metaboxes.php:295
+msgid "Book by Hour"
+msgstr "Reserver par heure"
+
+#: public/class-dynamicpackages-public.php:942
+msgid "Book Our Awesome"
+msgstr "Reserver notre Superbe"
+
+#: includes/class-dynamicpackages-sidebar.php:8
+msgid "Booking Sidebar"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1500
+msgid "Bookings are only available between"
+msgstr "Reservations seulement disponible entre"
+
+#: includes/class-dynamicpackages-post-type.php:77
+#: public/partials/archive.php:266
+msgid "Categories"
+msgstr "Catégories"
+
+#: includes/class-dynamicpackages-post-type.php:78
+#: public/partials/archive.php:156
+msgid "Category"
+msgstr "Catégorie"
+
+#: gateways/paguelofacil/paguelofacil.php:63
+msgid "CCLW"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1773
+msgid "Check Prices"
+msgstr "Verifier les Prix"
+
+#: includes/class-dynamicpackages-metaboxes.php:136
+msgid "Check-in Hour"
+msgstr "Heure d'arrivée"
+
+#: public/class-dynamicpackages-public.php:857
+#: public/class-dynamicpackages-public.php:947
+msgid "Checkout"
+msgstr "Heure de départ"
+
+#: admin/class-dynamicpackages-settings.php:122
+msgid "Checkout Webhook URL"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1570
+msgid "child under"
+msgstr "Enfant de moins de"
+
+#: includes/class-dynamicpackages-metaboxes.php:180
+msgid "Children Discount Under"
+msgstr "Réduction Enfant de moins de"
+
+#: includes/class-dynamicpackages-metaboxes.php:176
+msgid "Children Free of Cost Under"
+msgstr "Enfant gratuit si moins de"
+
+#: includes/class-dynamicpackages-metaboxes.php:225
+#: includes/class-dynamicpackages-metaboxes.php:239
+#: public/partials/forms.php:165 public/partials/forms.php:189
+#: public/partials/checkout.php:139 public/partials/checkout.php:149
+msgid "Children Under"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1571
+msgid "children under"
+msgstr "enfant de moins de"
+
+#: public/class-dynamicpackages-public.php:1738
+msgid "Choose an Alternative Package"
+msgstr "Choisier un programme alternatif"
+
+#: includes/class-dynamicpackages-metaboxes.php:332
+msgid "Code"
+msgstr "Code"
+
+#: includes/class-dynamicpackages-metaboxes.php:109
+#: includes/class-dynamicpackages-metaboxes.php:121
+msgid "Confirmation Message"
+msgstr "Message de confirmation"
+
+#: public/partials/checkout.php:206
+msgid "Contact Details"
+msgstr "Détails de Contact"
+
+#: public/class-dynamicpackages-public.php:614
+msgid "Contact The Experts"
+msgstr "Contacter les Experts"
+
+#: public/partials/archive.php:228
+msgid "Contact Us For Pricing"
+msgstr "Contactez nous pour un devis"
+
+#: public/partials/checkout.php:229
+msgid "Country"
+msgstr "Pays"
+
+#: public/partials/checkout.php:243
+msgid "Credit Card Number"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:143
+msgid "Daily"
+msgstr "Journalier"
+
+#: includes/class-dynamicpackages-metaboxes.php:216
+msgid "Daily Rental Per Person"
+msgstr "Location journaliere par personne"
+
+#: public/partials/forms.php:27
+msgid "Date"
+msgstr "Date"
+
+#: public/partials/checkout.php:99
+msgid "Date of Departure"
+msgstr "Date de départ"
+
+#: public/class-dynamicpackages-public.php:785
+msgid "Date_of_Birth"
+msgstr "Date de Naissance"
+
+#: public/class-dynamicpackages-public.php:1107
+#: public/class-dynamicpackages-public.php:1152
+msgid "Day"
+msgstr "Jour"
+
+#: public/class-dynamicpackages-public.php:1109
+#: public/class-dynamicpackages-public.php:1154
+#: includes/class-dynamicpackages-metaboxes.php:357
+#: public/partials/forms.php:50
+msgid "Days"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:281
+msgid "days"
+msgstr "Jours"
+
+#: includes/class-dynamicpackages-metaboxes.php:159
+#: includes/class-dynamicpackages-metaboxes.php:326
+#: includes/class-dynamicpackages-metaboxes.php:383
+msgid "default"
+msgstr "Défaut"
+
+#: includes/class-dynamicpackages-metaboxes.php:51
+msgid "Departure"
+msgstr "Départ"
+
+#: includes/class-dynamicpackages-metaboxes.php:144
+msgid "Departure Address"
+msgstr "Adresse de départ"
+
+#: includes/class-dynamicpackages-metaboxes.php:140
+msgid "Departure Hour"
+msgstr "Heure de départ"
+
+#: includes/class-dynamicpackages-metaboxes.php:203
+#: public/partials/checkout.php:46
+msgid "Deposit"
+msgstr "Acompte"
+
+#: includes/class-dynamicpackages-metaboxes.php:9
+#: public/partials/checkout.php:118
+msgid "Description"
+msgstr "Description"
+
+#: admin/class-dynamicpackages-settings.php:197
+msgid "Developers"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:284
+msgid "Disable Days"
+msgstr "Désactiver les jours"
+
+#: includes/class-dynamicpackages-metaboxes.php:308
+msgid "Disabled Dates"
+msgstr "Désactiver les dates"
+
+#: includes/class-dynamicpackages-metaboxes.php:369
+#: public/partials/forms.php:46 public/partials/checkout.php:97
+msgid "Duration"
+msgstr "Durée"
+
+#. Name of the plugin
+msgid "Dynamic Packages"
+msgstr "Programmes Énergiques"
+
+#: includes/class-dynamicpackages-post-type.php:19
+msgid "Edit Package"
+msgstr "Editer un programme"
+
+#: includes/class-dynamicpackages-metaboxes.php:77
+#: public/partials/checkout.php:219
+msgid "Email"
+msgstr "E mail"
+
+#: includes/class-dynamicpackages-metaboxes.php:166
+msgid "Enable Automatic Booking"
+msgstr "Activer la Reservation Automatique"
+
+#: public/partials/checkout.php:248
+msgid "Expiration Month"
+msgstr ""
+
+#: public/partials/checkout.php:262
+msgid "Expiration Year"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1722
+#: includes/class-dynamicpackages-metaboxes.php:403
+msgid "Featured"
+msgstr "Caractéristiques"
+
+#: includes/class-dynamicpackages-post-type.php:27
+msgid "Filter locations list"
+msgstr "Filtre liste de lieux"
+
+#: includes/class-dynamicpackages-metaboxes.php:384
+msgid "fixed prices"
+msgstr "Prix fixes"
+
+#: includes/class-dynamicpackages-metaboxes.php:290
+msgid "Friday"
+msgstr "Vendredi"
+
+#: includes/class-dynamicpackages-metaboxes.php:202
+msgid "Full Payment"
+msgstr "Paiement complet"
+
+#: includes/class-dynamicpackages-metaboxes.php:391
+msgid "Full Price"
+msgstr "Prix complet"
+
+#: admin/class-dynamicpackages-settings.php:101
+#: gateways/paguelofacil/paguelofacil.php:56
+msgid "General Settings"
+msgstr "Paramétres Généraux"
+
+#: includes/class-dynamicpackages-metaboxes.php:195
+msgid "get more leads even if the prices are not defined"
+msgstr ""
+
+#: public/partials/forms.php:78
+msgid "Get Quote"
+msgstr "Recevoir un devis"
+
+#: includes/class-dynamicpackages-metaboxes.php:420
+msgid "Green"
+msgstr "Vert"
+
+# Gris
+#: includes/class-dynamicpackages-metaboxes.php:416
+msgid "Grey"
+msgstr "Gris"
+
+#: gateways/paguelofacil/paguelofacil.php:234
+msgid "Hello"
+msgstr "Bonjour"
+
+#: includes/class-dynamicpackages-metaboxes.php:324
+msgid "Hide Package"
+msgstr "Cacher le programme"
+
+#: public/class-dynamicpackages-public.php:1107
+#: public/class-dynamicpackages-public.php:1152 public/partials/forms.php:34
+msgid "Hour"
+msgstr ""
+
+#: public/partials/forms.php:64
+msgid "hour"
+msgstr "heure"
+
+#: public/partials/single.php:78 public/partials/checkout.php:106
+msgid "Hour of Check-in"
+msgstr "Heure d'Arrivée"
+
+#: public/partials/single.php:81 public/partials/checkout.php:102
+msgid "Hour of Departure"
+msgstr "Heure de Départ"
+
+#: includes/class-dynamicpackages-metaboxes.php:214
+msgid "Hourly Rental Per Person"
+msgstr "Location a l'heure par personne"
+
+#: public/class-dynamicpackages-public.php:1109
+#: public/class-dynamicpackages-public.php:1154
+#: includes/class-dynamicpackages-metaboxes.php:353
+msgid "Hours"
+msgstr ""
+
+#: public/partials/forms.php:68
+msgid "hours"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/jaimelias/dynamicpackages"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://jaimelias.com"
+msgstr ""
+
+#: gateways/paguelofacil/paguelofacil.php:318
+msgid "I accept"
+msgstr "J'accepte"
+
+#: public/partials/single.php:15 public/partials/archive.php:208
+msgid "ID"
+msgstr "Identification"
+
+#: includes/class-dynamicpackages-post-type.php:97
+#: includes/class-dynamicpackages-post-type.php:98
+msgid "Included"
+msgstr "Inclus"
+
+#: public/class-dynamicpackages-public.php:1273
+msgid "Included:"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:194
+msgid "Increase maximum number of participants by"
+msgstr "Augmenter le nombre maximum de participants par"
+
+#: gateways/paguelofacil/paguelofacil.php:253
+msgid ""
+"Invalid Checkout. Please return to the previous page and resubmit the "
+"transaction."
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1490
+msgid "Invalid Hour"
+msgstr "Heure non valide"
+
+#: public/class-dynamicpackages-public.php:621
+msgid "Invalid Request"
+msgstr "Demande non valide"
+
+#. Author of the plugin
+msgid "Jaimelías"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1722
+#: includes/class-dynamicpackages-metaboxes.php:404
+msgid "Last Minute Deal"
+msgstr "Offre de derniére minute"
+
+#: public/partials/checkout.php:213
+msgid "Last Name"
+msgstr "Nom de famille"
+
+#: includes/class-dynamicpackages-metaboxes.php:348
+msgid "Length Unit"
+msgstr "Unité de longeur"
+
+#: includes/class-dynamicpackages-post-type.php:59
+#: public/partials/archive.php:149
+msgid "Location"
+msgstr "Lieu"
+
+#: includes/class-dynamicpackages-post-type.php:58
+msgid "Locations"
+msgstr "Lieux"
+
+#: public/partials/forms.php:96
+msgid "Make a Reservation"
+msgstr "Faire une réservation"
+
+#: admin/class-dynamicpackages-settings.php:146
+msgid "Mandrill Api Key"
+msgstr ""
+
+#: admin/class-dynamicpackages-settings.php:154
+msgid "Mandrill Username"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1486
+msgid "maximum"
+msgstr "Maximum"
+
+#: includes/class-dynamicpackages-metaboxes.php:376
+msgid "Maximum Duration"
+msgstr "Durée Maximale"
+
+#: includes/class-dynamicpackages-metaboxes.php:189
+msgid "Maximum Number of participants"
+msgstr "Nombre maximum de participants"
+
+#: includes/class-dynamicpackages-metaboxes.php:185
+msgid "Minimum Number of participants"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1107
+#: public/class-dynamicpackages-public.php:1152
+msgid "Minute"
+msgstr "Minute"
+
+#: public/class-dynamicpackages-public.php:1109
+#: public/class-dynamicpackages-public.php:1154
+#: includes/class-dynamicpackages-metaboxes.php:352
+msgid "Minutes"
+msgstr "Minutes"
+
+#: includes/class-dynamicpackages-metaboxes.php:87
+msgid "Mobile Phone"
+msgstr "Numéro de portable"
+
+#: includes/class-dynamicpackages-metaboxes.php:286
+msgid "Monday"
+msgstr "Lundi"
+
+#: public/partials/archive.php:239
+msgid "More details"
+msgstr "Plus de détails"
+
+#: includes/class-dynamicpackages-metaboxes.php:340
+#: public/partials/archive.php:145
+msgid "Multi-day"
+msgstr "Plusieurs jours"
+
+#: public/class-dynamicpackages-public.php:782
+#: includes/class-dynamicpackages-metaboxes.php:72
+#: public/partials/checkout.php:209
+msgid "Name"
+msgstr "Prénom"
+
+#: public/class-dynamicpackages-public.php:784
+msgid "Nationality"
+msgstr "Nationalité"
+
+#: public/class-dynamicpackages-public.php:1722
+#: includes/class-dynamicpackages-metaboxes.php:401
+msgid "New"
+msgstr "Nouveau"
+
+#: includes/class-dynamicpackages-post-type.php:18
+msgid "New Package"
+msgstr "Nouveau programme"
+
+#: public/class-dynamicpackages-public.php:1107
+#: public/class-dynamicpackages-public.php:1152
+msgid "Night"
+msgstr "Nuit"
+
+#: admin/class-dynamicpackages-admin.php:147
+msgid "Nightly"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1109
+#: public/class-dynamicpackages-public.php:1154
+#: includes/class-dynamicpackages-metaboxes.php:359
+#: public/partials/forms.php:42
+msgid "Nights"
+msgstr "Nuits"
+
+#: includes/class-dynamicpackages-metaboxes.php:160
+#: includes/class-dynamicpackages-metaboxes.php:298
+#: includes/class-dynamicpackages-metaboxes.php:326
+#: includes/class-dynamicpackages-metaboxes.php:384
+msgid "No"
+msgstr "Non"
+
+#: admin/class-dynamicpackages-settings.php:183
+msgid "None"
+msgstr "Aucun"
+
+#: public/class-dynamicpackages-public.php:1372
+#: public/class-dynamicpackages-public.php:1437
+#: includes/class-dynamicpackages-post-type.php:23
+msgid "Not found"
+msgstr "Pas trouvé"
+
+#: includes/class-dynamicpackages-post-type.php:24
+msgid "Not found in Trash"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:116
+#: includes/class-dynamicpackages-post-type.php:117
+msgid "Not Included"
+msgstr "Non inclus"
+
+#: public/class-dynamicpackages-public.php:1307
+msgid "Not Included:"
+msgstr ""
+
+#: public/partials/checkout.php:119
+msgid "Number"
+msgstr "Nombre"
+
+#: includes/class-dynamicpackages-metaboxes.php:259
+msgid "Number of Special Seasons"
+msgstr "Nombre de saisons spéciales"
+
+#: public/class-dynamicpackages-public.php:1722
+#: includes/class-dynamicpackages-metaboxes.php:402
+msgid "Offer"
+msgstr "Offre"
+
+#: includes/class-dynamicpackages-metaboxes.php:339
+msgid "One day"
+msgstr "Un jour"
+
+#: includes/class-dynamicpackages-metaboxes.php:157
+msgid "one day packages only"
+msgstr "Programme d'une journée seulement"
+
+#: public/class-dynamicpackages-public.php:852
+msgid "Online Booking"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:428
+msgid "Orange"
+msgstr "Orange"
+
+#: public/class-dynamicpackages-public.php:1486
+msgid "Our prices online are only available from "
+msgstr "Nos prix en ligne sont seulement disponibles a partir"
+
+#: public/partials/checkout.php:45 gateways/paguelofacil/paguelofacil.php:278
+msgid "Outstanding Balance"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:11
+#: includes/class-dynamicpackages-post-type.php:13
+#: includes/class-dynamicpackages-post-type.php:31
+msgid "Package"
+msgstr "Programme "
+
+#: includes/class-dynamicpackages-post-type.php:32
+msgid "Package Description"
+msgstr "Description du programme"
+
+#: includes/class-dynamicpackages-metaboxes.php:337
+#: public/partials/archive.php:141
+msgid "Package Type"
+msgstr "Type de programme"
+
+#: includes/class-dynamicpackages-post-type.php:10
+#: includes/class-dynamicpackages-post-type.php:12
+#: public/partials/single.php:12
+msgid "Packages"
+msgstr "Programmes"
+
+#: includes/class-dynamicpackages-post-type.php:25
+msgid "Packages list"
+msgstr "Liste de programmes"
+
+#: includes/class-dynamicpackages-post-type.php:26
+msgid "Packages list navigation"
+msgstr ""
+
+#: admin/class-dynamicpackages-settings.php:184
+msgid "Paguelo Facil"
+msgstr ""
+
+#: gateways/paguelofacil/paguelofacil.php:38
+msgid "Paguelofacil"
+msgstr ""
+
+#: gateways/paguelofacil/paguelofacil.php:278
+msgid "Paid"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:14
+msgid "Parent Package:"
+msgstr "Programme Parent:"
+
+#: public/partials/checkout.php:127
+msgid "Participants"
+msgstr "Participants"
+
+#: public/class-dynamicpackages-public.php:783
+msgid "Passport_ID"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:160
+msgid "Paste Transpose"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:170
+msgid "Paste your content here"
+msgstr ""
+
+#: public/partials/checkout.php:288
+msgid "Pay"
+msgstr ""
+
+#: public/partials/checkout.php:288
+msgid "Pay by card"
+msgstr ""
+
+#: public/partials/forms.php:91
+msgid "Pay Deposit"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:200
+msgid "Payment"
+msgstr "Paiement"
+
+#: gateways/paguelofacil/paguelofacil.php:234
+msgid ""
+"Payment approved. Thank you for order! You will receive and email "
+"confirmation shortly at"
+msgstr ""
+
+#: gateways/paguelofacil/paguelofacil.php:243
+msgid ""
+"Payment Declined. Please contact your bank to authorize the transaction."
+msgstr ""
+
+#: admin/class-dynamicpackages-settings.php:107
+msgid "Payment Gateway"
+msgstr ""
+
+#: public/partials/forms.php:139
+msgid "People"
+msgstr "Personnes"
+
+#: public/class-dynamicpackages-public.php:1486
+msgid "people. Send us your request and we will send you the quote shortly."
+msgstr ""
+"Personne. Envoyez nous votre demande et nous vous ferons un devis rapidement"
+
+#: public/class-dynamicpackages-public.php:1057
+#: public/class-dynamicpackages-public.php:1061
+#: public/class-dynamicpackages-public.php:1077
+msgid "Per Day"
+msgstr "Par jour"
+
+#: public/class-dynamicpackages-public.php:1046
+#: public/class-dynamicpackages-public.php:1050
+#: public/class-dynamicpackages-public.php:1073
+msgid "Per Hour"
+msgstr "Par heure"
+
+#: public/class-dynamicpackages-public.php:1050
+#: public/class-dynamicpackages-public.php:1061
+#: public/class-dynamicpackages-public.php:1066
+#: public/class-dynamicpackages-public.php:1077
+#: includes/class-dynamicpackages-metaboxes.php:390
+#: public/partials/tables.php:28
+msgid "Per Person"
+msgstr "Par personne"
+
+#: public/partials/checkout.php:223
+msgid "Phone"
+msgstr "Telephone"
+
+#: public/partials/archive.php:269
+msgid "Places of Interest"
+msgstr "Endroits d'interet"
+
+#: public/class-dynamicpackages-public.php:1196
+msgid "Places of Interest:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1781
+msgid "Please select a feature image"
+msgstr "Merci de sélectionner une image"
+
+#: public/partials/tables.php:27 public/partials/tables.php:40
+msgid "Prices"
+msgstr "Prix"
+
+#: includes/class-dynamicpackages-metaboxes.php:17
+msgid "Pricing"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:388
+msgid "Pricing Type"
+msgstr "Type de prix"
+
+#: public/partials/checkout.php:196
+msgid "Proceed to Checkout"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:59
+msgid "Provider"
+msgstr "Fournisseur"
+
+#: includes/class-dynamicpackages-metaboxes.php:424
+msgid "Purple"
+msgstr "Violet"
+
+#: admin/class-dynamicpackages-settings.php:138
+msgid "Recaptcha Secret Key"
+msgstr ""
+
+#: admin/class-dynamicpackages-settings.php:130
+msgid "Recaptcha Site Key"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:426
+msgid "Red"
+msgstr "Rouge"
+
+#: includes/class-dynamicpackages-metaboxes.php:341
+msgid "Rental (per day)"
+msgstr "Location (par jour)"
+
+#: includes/class-dynamicpackages-metaboxes.php:342
+msgid "Rental (per hour)"
+msgstr "Location (par heure)"
+
+#: public/class-dynamicpackages-public.php:614 public/partials/checkout.php:293
+msgid "Request Quote"
+msgstr "Demande de devis"
+
+#: public/class-dynamicpackages-public.php:1506
+msgid "Restrictions"
+msgstr "Restrictions"
+
+#: public/partials/checkout.php:96
+msgid "Review Your Request"
+msgstr "Voir votre demande"
+
+#: includes/class-dynamicpackages-metaboxes.php:291
+msgid "Saturday"
+msgstr "Samedi"
+
+#: includes/class-dynamicpackages-post-type.php:22
+msgid "Search Package"
+msgstr "Chercher un programme"
+
+#: public/class-dynamicpackages-public.php:1742
+msgid "Select an Accomodation"
+msgstr "Chercher un logement"
+
+#: public/partials/archive.php:158
+msgid "Select Category"
+msgstr "Selectionner une catégorie"
+
+#: public/partials/archive.php:151
+msgid "Select Location"
+msgstr "Selectionner un Endroit"
+
+#: includes/class-dynamicpackages-metaboxes.php:397
+msgid "Show Badge"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:157
+msgid "Show Price Table"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:381
+msgid "Show Prices Per Person"
+msgstr "Montrer le prix par personne"
+
+#: includes/class-dynamicpackages-metaboxes.php:28
+msgid "Special Seasons"
+msgstr "Saisons spéciales"
+
+#: public/class-dynamicpackages-public.php:1810 public/partials/archive.php:225
+msgid "Starting at"
+msgstr "Démarre a"
+
+#: public/partials/checkout.php:96 public/partials/checkout.php:196
+#: public/partials/checkout.php:293
+msgid "Step"
+msgstr "Étape"
+
+#: public/partials/checkout.php:121
+msgid "Subtotal"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:292
+msgid "Sunday"
+msgstr "Dimanche"
+
+#: admin/class-dynamicpackages-settings.php:114
+#: public/partials/checkout.php:161
+msgid "Tax"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:82
+msgid "Telephone"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:135
+#: includes/class-dynamicpackages-post-type.php:136
+#: public/partials/checkout.php:285
+msgid "Terms & Conditions"
+msgstr "Conditions Générales"
+
+#: public/class-dynamicpackages-public.php:1242
+msgid "Terms & Conditions:"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:171
+msgid ""
+"This box will close after the content is transposed and copied to your "
+"clipboard."
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"This is a short description of what the plugin does. It's displayed in the "
+"WordPress admin area."
+msgstr ""
+
+#: includes/class-dynamicpackages-sidebar.php:10
+msgid "This sidebar should containg a Contact Form 7."
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:287
+msgid "Thuesday"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:289
+msgid "Thursday"
+msgstr "Jeudi"
+
+#: includes/class-dynamicpackages-taxtitle.php:7
+#: includes/class-dynamicpackages-taxtitle.php:18
+msgid "Title Modifier"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1486
+#: includes/class-dynamicpackages-metaboxes.php:279
+msgid "to"
+msgstr "a"
+
+#: public/partials/tables.php:28 public/partials/checkout.php:167
+msgid "Total"
+msgstr "Total"
+
+#: admin/class-dynamicpackages-settings.php:71
+msgid "Travel Packages"
+msgstr "Programmes de voyage"
+
+#: includes/class-dynamicpackages-metaboxes.php:422
+msgid "Turquoise"
+msgstr "Turquoise"
+
+#: gateways/paguelofacil/paguelofacil.php:248
+msgid "Undefined Checkout Error"
+msgstr ""
+
+#: public/partials/checkout.php:120
+msgid "Unit Price"
+msgstr "Prix de l'unité"
+
+#: includes/class-dynamicpackages-post-type.php:20
+msgid "Update Package"
+msgstr "Programme a jour"
+
+#: includes/class-dynamicpackages-post-type.php:21
+msgid "View Package"
+msgstr "Voir le Programme"
+
+#: includes/class-dynamicpackages-metaboxes.php:288
+msgid "Wednesday"
+msgstr "Mercredi"
+
+#: public/class-dynamicpackages-public.php:1107
+#: public/class-dynamicpackages-public.php:1152
+msgid "Week"
+msgstr "Semaine"
+
+#: admin/class-dynamicpackages-admin.php:151
+msgid "Weekly"
+msgstr "A la Semaine"
+
+#: public/class-dynamicpackages-public.php:1109
+#: public/class-dynamicpackages-public.php:1154
+#: includes/class-dynamicpackages-metaboxes.php:359
+msgid "Weeks"
+msgstr "Semaines"
+
+#: includes/class-dynamicpackages-metaboxes.php:412
+msgid "White"
+msgstr "Blanc"
+
+#: includes/class-dynamicpackages-metaboxes.php:177
+#: includes/class-dynamicpackages-metaboxes.php:181
+msgid "year old"
+msgstr "Ans"
+
+#: public/partials/forms.php:165 public/partials/forms.php:189
+msgid "Years Old"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:430
+msgid "Yellow"
+msgstr "Jaune"
+
+#: includes/class-dynamicpackages-metaboxes.php:159
+#: includes/class-dynamicpackages-metaboxes.php:299
+#: includes/class-dynamicpackages-metaboxes.php:327
+#: includes/class-dynamicpackages-metaboxes.php:383
+msgid "Yes"
+msgstr "Oui"

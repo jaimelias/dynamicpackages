@@ -1,0 +1,133 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+@media screen and (min-width: 1024px)	
+{
+	.tp_grid .tp_brief .tp_starting_at
+	{
+		float: right;
+	}
+	.tp_grid .tp_brief .tp_duration
+	{
+		float: left;
+	}
+
+}
+form#dy_package_filter
+{
+	padding: 20px 20px 0 20px !important; 
+}
+form#dy_package_filter button 
+{
+	height: 34px !important;
+}
+.booking_form_container
+{
+	margin-bottom: 20px;
+}
+.booking_form_container>form.booking_form
+{
+	margin-bottom: 0 !important;
+}
+ul#booking_sidebar > .widget-title,  ul#booking-sidebar > .widget-title
+ {
+	 font-weight: 800;
+ }
+ul.tp_included, ul.tp_location, ul.tp_restrictions
+ {
+	 padding: 0;
+	 list-style: none;
+ }
+fieldset.package_terms_conditions
+{
+	border: 1px solid rgba(0,0,0,0.3);
+	padding: 10px;
+	margin: 0 0 20px 0;
+}
+fieldset.package_terms_conditions > label > span
+{
+	margin: 0 4px;
+}
+#dynamic_participants, #dynamic_table
+{
+	margin: 0 0 20px 0;
+}
+
+/**
+ * RIBBON
+ */
+ 
+ /* The ribbons */
+
+.corner-ribbon{
+  width: 120px;
+  background: #e43;
+  position: absolute;
+  text-align: center;
+  line-height: 25px;
+  letter-spacing: 1px;
+  color: #f0f0f0;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+   top: 20px;
+  right: -25px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  text-shadow: 1px 1px 1px rgba(0,0,0,.3); 
+}
+
+.corner-ribbon.white{background: #f0f0f0; color: #555;}
+.corner-ribbon.black{background: #333;}
+.corner-ribbon.grey{background: #999;}
+.corner-ribbon.blue{background: #39d;}
+.corner-ribbon.green{background: #2c7;}
+.corner-ribbon.turquoise{background: #1b9;}
+.corner-ribbon.purple{background: #95b;}
+.corner-ribbon.red{background: #e43;}
+.corner-ribbon.orange{background: #e82;}
+.corner-ribbon.yellow{background: #ec0;}
+
+ul.tax_list > li.cat-item  > ul.children
+{
+	margin-bottom: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.tax-package_terms_conditions article
+{
+	background-color: #fff;
+	padding: 40px;
+	color: #000;
+}
+.dy_pad
+{
+	padding: 5px;
+}
+.dy_package
+{
+	padding: 10px;
+}
+.dy_package, .dy_pad
+{
+	background-color: rgba(0,0,0,0.02);
+}
+.grecaptcha-badge
+{
+	margin: 0 0 20px 0;
+}
+.dy_event_date
+{
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	background-color: rgba(0,0,0,0.6);
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+}
+.dy_archive
+{
+	max-width: 1600px;
+	margin: 0 auto;
+}

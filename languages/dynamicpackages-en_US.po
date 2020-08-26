@@ -1,0 +1,1203 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Dynamic Packages\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-15 21:14+0000\n"
+"PO-Revision-Date: 2019-03-15 21:14+0000\n"
+"Last-Translator: jaimelias <jaime@aeroalbrook.com>\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.1; wp-5.1.1"
+
+#: gateways/checkout_page.php:45 gateways/checkout_matrix.php:481
+msgid "Outstanding Balance"
+msgstr ""
+
+#: gateways/checkout_page.php:46
+#: includes/class-dynamicpackages-metaboxes.php:221
+msgid "Deposit"
+msgstr ""
+
+#: gateways/checkout_page.php:106 gateways/checkout_page.php:195
+#: gateways/creditcard_form.php:26
+msgid "Step"
+msgstr ""
+
+#: gateways/checkout_page.php:106
+msgid "Review Your Request"
+msgstr ""
+
+#: gateways/checkout_page.php:113 gateways/checkout_matrix.php:404
+#: includes/class-dynamicpackages-metaboxes.php:47
+#: public/partials/forms.php:167
+msgid "Coupon"
+msgstr ""
+
+#: gateways/checkout_page.php:113
+msgid "activated"
+msgstr ""
+
+#: gateways/checkout_page.php:113
+msgid "discount already applied on rate. This coupon expires on"
+msgstr ""
+
+#: gateways/checkout_page.php:115
+msgid "Invalid or expired coupon"
+msgstr ""
+
+#: gateways/checkout_page.php:124
+#: includes/class-dynamicpackages-metaboxes.php:9
+msgid "Description"
+msgstr ""
+
+#: gateways/checkout_page.php:125
+msgid "Unit Price"
+msgstr ""
+
+#: gateways/checkout_page.php:126
+msgid "Subtotal"
+msgstr ""
+
+#: gateways/checkout_page.php:132
+msgid "Participants"
+msgstr ""
+
+#: gateways/checkout_page.php:134
+#: includes/class-dynamicpackages-metaboxes.php:258
+#: public/partials/forms.php:197
+msgid "Adults"
+msgstr ""
+
+#: gateways/checkout_page.php:143 gateways/checkout_page.php:152
+#: includes/class-dynamicpackages-metaboxes.php:244
+#: includes/class-dynamicpackages-metaboxes.php:258
+msgid "Children Under"
+msgstr ""
+
+#: gateways/checkout_page.php:143 gateways/checkout_page.php:152
+#: public/class-dynamicpackages-public.php:1738
+#: public/class-dynamicpackages-public.php:1738 public/partials/forms.php:222
+#: public/partials/forms.php:241
+msgid "years old"
+msgstr ""
+
+#: gateways/checkout_page.php:163 gateways/checkout_settings.php:271
+msgid "Tax"
+msgstr ""
+
+#: gateways/checkout_page.php:169
+msgid "Total"
+msgstr ""
+
+#: gateways/checkout_page.php:195 public/class-dynamicpackages-public.php:650
+msgid "Request Quote"
+msgstr ""
+
+#: gateways/creditcard_form.php:4
+msgid "Pay by Card"
+msgstr ""
+
+#: gateways/creditcard_form.php:6
+msgid "Visa or Mastercard"
+msgstr ""
+
+#: gateways/creditcard_form.php:12
+msgid "Pay With Paypal"
+msgstr ""
+
+#: gateways/creditcard_form.php:15
+msgid "Payment Approved"
+msgstr ""
+
+#: gateways/creditcard_form.php:16
+msgid "Payment Declined. Please Verify Your Funds and Try Again Later"
+msgstr ""
+
+#: gateways/creditcard_form.php:17
+msgid "Payment Error. Please contact us for more details"
+msgstr ""
+
+#: gateways/creditcard_form.php:26
+msgid "Proceed to Checkout"
+msgstr ""
+
+#: gateways/creditcard_form.php:36
+msgid "Contact Details"
+msgstr ""
+
+#: gateways/creditcard_form.php:39 public/class-dynamicpackages-public.php:691
+#: public/class-dynamicpackages-public.php:788
+#: includes/class-dynamicpackages-metaboxes.php:93
+#: public/partials/quote-form.php:17
+msgid "Name"
+msgstr ""
+
+#: gateways/creditcard_form.php:43 public/partials/quote-form.php:21
+msgid "Last Name"
+msgstr ""
+
+#: gateways/creditcard_form.php:49 public/class-dynamicpackages-public.php:693
+#: includes/class-dynamicpackages-metaboxes.php:98
+#: public/partials/quote-form.php:27
+msgid "Email"
+msgstr ""
+
+#: gateways/creditcard_form.php:53 public/class-dynamicpackages-public.php:695
+#: public/partials/quote-form.php:31
+msgid "Phone"
+msgstr ""
+
+#: gateways/creditcard_form.php:59
+msgid "Country"
+msgstr ""
+
+#: gateways/creditcard_form.php:63
+msgid "City"
+msgstr ""
+
+#: gateways/creditcard_form.php:70
+msgid "Street Address 1"
+msgstr ""
+
+#: gateways/creditcard_form.php:74
+msgid "Street Address 2"
+msgstr ""
+
+#: gateways/creditcard_form.php:74 gateways/creditcard_form.php:78
+msgid "optional"
+msgstr ""
+
+#: gateways/creditcard_form.php:78
+msgid "ZIP Code"
+msgstr ""
+
+#: gateways/creditcard_form.php:89
+msgid "Billing Details"
+msgstr ""
+
+#: gateways/creditcard_form.php:90
+msgid "Credit Card Number"
+msgstr ""
+
+#: gateways/creditcard_form.php:95
+msgid "Expiration Month"
+msgstr ""
+
+#: gateways/creditcard_form.php:109
+msgid "Expiration Year"
+msgstr ""
+
+#: gateways/creditcard_form.php:127
+#: includes/class-dynamicpackages-post-type.php:137
+#: includes/class-dynamicpackages-post-type.php:138
+msgid "Terms & Conditions"
+msgstr ""
+
+#: gateways/creditcard_form.php:130
+msgid "Pay"
+msgstr ""
+
+#: gateways/creditcard_form.php:130
+msgid "Pay by card"
+msgstr ""
+
+#: gateways/checkout_matrix.php:88 gateways/checkout_matrix.php:117
+#: gateways/checkout_settings.php:244
+msgid "General Settings"
+msgstr ""
+
+#: gateways/checkout_matrix.php:152
+msgid "Maximum Amount"
+msgstr ""
+
+#: gateways/checkout_matrix.php:161
+msgid "Show"
+msgstr ""
+
+#: gateways/checkout_matrix.php:165
+msgid "Always"
+msgstr ""
+
+#: gateways/checkout_matrix.php:165
+msgid "For Deposits"
+msgstr ""
+
+#: gateways/checkout_matrix.php:304
+msgid "Invalid Recaptcha"
+msgstr ""
+
+#: gateways/checkout_matrix.php:309
+msgid "Missing Fields"
+msgstr ""
+
+#: gateways/checkout_matrix.php:358 gateways/checkout_matrix.php:360
+msgid "Undefined Checkout Error"
+msgstr ""
+
+#: gateways/checkout_matrix.php:364
+msgid "Payment Declined"
+msgstr ""
+
+#: gateways/checkout_matrix.php:366
+msgid ""
+"Payment Declined. Please contact your bank to authorize the transaction."
+msgstr ""
+
+#: gateways/checkout_matrix.php:372
+msgid "Hello"
+msgstr ""
+
+#: gateways/checkout_matrix.php:372
+msgid ""
+"Payment approved. Thank you for order! You will receive and email "
+"confirmation shortly at"
+msgstr ""
+
+#: gateways/checkout_matrix.php:404
+msgid "off"
+msgstr ""
+
+#: gateways/checkout_matrix.php:427
+msgid "I accept"
+msgstr ""
+
+#: gateways/checkout_matrix.php:481
+msgid "Paid"
+msgstr ""
+
+#: gateways/checkout_settings.php:209
+msgid "Dynamicpackages Packages"
+msgstr ""
+
+#: gateways/checkout_settings.php:250
+msgid "Payment Gateway"
+msgstr ""
+
+#: gateways/checkout_settings.php:257
+msgid "Secondary Payment Gateway"
+msgstr ""
+
+#: gateways/checkout_settings.php:264
+msgid "Breadcrumb"
+msgstr ""
+
+#: gateways/checkout_settings.php:279
+msgid "Checkout Webhook URL"
+msgstr ""
+
+#: gateways/checkout_settings.php:287
+msgid "Quote Webhook URL"
+msgstr ""
+
+#: gateways/checkout_settings.php:295
+msgid "Recaptcha Site Key"
+msgstr ""
+
+#: gateways/checkout_settings.php:303
+msgid "Recaptcha Secret Key"
+msgstr ""
+
+#: gateways/checkout_settings.php:311
+msgid "Mandrill Api Key"
+msgstr ""
+
+#: gateways/checkout_settings.php:319
+msgid "Mandrill Username"
+msgstr ""
+
+#: gateways/checkout_settings.php:327
+msgid "IPGeolocation API Key"
+msgstr ""
+
+#: gateways/checkout_settings.php:362
+msgid "None"
+msgstr ""
+
+#: gateways/checkout_settings.php:417 gateways/checkout_settings.php:424
+msgid "Developers"
+msgstr ""
+
+#: gateways/checkout_ajax.php:24
+msgid "Thank you for your booking."
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:650
+msgid "Contact The Experts"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:672
+#: public/class-dynamicpackages-public.php:706
+msgid "Invalid Request"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:685
+msgid "New Request from"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:699
+msgid "Thank you for contacting us. Our staff will be in touch with you soon."
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:789
+msgid "Passport_ID"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:790
+msgid "Nationality"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:791
+msgid "Date_of_Birth"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:846
+#: public/class-dynamicpackages-public.php:981
+msgid "Packages in"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:867
+msgid "Online Booking"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:872
+#: public/class-dynamicpackages-public.php:1014
+msgid "Checkout"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:876
+#: public/class-dynamicpackages-public.php:1018
+msgid "Quote"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:906
+msgid "Find Packages"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1003
+msgid "Booking Page"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1161
+#: includes/class-dynamicpackages-metaboxes.php:409
+msgid "Per Person"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1166
+msgid "Per Hour"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1170
+msgid "Per Day"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1209
+#: public/class-dynamicpackages-public.php:1284
+msgid "Minute"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1209
+#: public/class-dynamicpackages-public.php:1284
+#: public/class-dynamicpackages-public.php:2199 public/partials/forms.php:82
+msgid "Hour"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1209
+#: public/class-dynamicpackages-public.php:1284
+msgid "Day"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1209
+#: public/class-dynamicpackages-public.php:1284
+msgid "Night"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1209
+#: public/class-dynamicpackages-public.php:1284
+msgid "Week"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1210
+#: public/class-dynamicpackages-public.php:1286
+#: includes/class-dynamicpackages-metaboxes.php:371
+msgid "Minutes"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1210
+#: public/class-dynamicpackages-public.php:1286
+#: includes/class-dynamicpackages-metaboxes.php:372
+msgid "Hours"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1210
+#: public/class-dynamicpackages-public.php:1286
+#: includes/class-dynamicpackages-metaboxes.php:376
+#: public/partials/forms.php:98
+msgid "Days"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1210
+#: public/class-dynamicpackages-public.php:1286
+#: includes/class-dynamicpackages-metaboxes.php:378
+#: public/partials/forms.php:90
+msgid "Nights"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1210
+#: public/class-dynamicpackages-public.php:1286
+#: includes/class-dynamicpackages-metaboxes.php:378
+msgid "Weeks"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1250
+msgid "Bookings"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1328
+msgid "Places of Interest:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1345
+msgid "Categories:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1391
+msgid "Terms & Conditions:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1422
+msgid "Included:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1456
+msgid "Not Included:"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1521
+#: public/class-dynamicpackages-public.php:1586
+#: includes/class-dynamicpackages-post-type.php:23
+msgid "Not found"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1635
+msgid "Our prices online are only available from "
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1635
+#: includes/class-dynamicpackages-metaboxes.php:298
+msgid "to"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1635
+msgid "maximum"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1635
+msgid "people. Send us your request and we will send you the quote shortly."
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1639
+msgid "Invalid Hour"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1649
+msgid "Bookings are only available between"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1649
+#: includes/class-dynamicpackages-metaboxes.php:322
+msgid "and"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1655
+msgid "Restrictions"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1739
+msgid "adult"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1739
+msgid "child under"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1740
+msgid "adults"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1740
+msgid "children under"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1764
+msgid "@"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1898
+#: includes/class-dynamicpackages-metaboxes.php:419
+msgid "Best Seller"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1898
+#: includes/class-dynamicpackages-metaboxes.php:420
+msgid "New"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1898
+#: includes/class-dynamicpackages-metaboxes.php:421
+msgid "Offer"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1898
+#: includes/class-dynamicpackages-metaboxes.php:422
+msgid "Featured"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1898
+#: includes/class-dynamicpackages-metaboxes.php:423
+msgid "Last Minute Deal"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1914
+msgid "Choose an Alternative Package"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1918
+msgid "Select an Accomodation"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1949
+msgid "Check Prices"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1957
+msgid "Please select a feature image"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1985 public/partials/archive.php:206
+msgid "Starting at"
+msgstr "From"
+
+#: public/class-dynamicpackages-public.php:1993
+msgid "Book it with a"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:1993
+msgid "deposit"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Mon"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Tue"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Wed"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Thu"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Fri"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Sat"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2145
+msgid "Sun"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:305
+msgid "Monday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+msgid "Tuesday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:307
+msgid "Wednesday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:308
+msgid "Thursday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:309
+msgid "Friday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:310
+msgid "Saturday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2146
+#: includes/class-dynamicpackages-metaboxes.php:311
+msgid "Sunday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2167
+msgid "Everyday"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2185
+msgid "Schedule"
+msgstr ""
+
+#: public/class-dynamicpackages-public.php:2195
+msgid "Check-in"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:151
+msgid "Daily"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:155
+msgid "Nightly"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:159
+msgid "Weekly"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:168
+msgid "Paste Transpose"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:178
+msgid "Paste your content here"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:179
+msgid ""
+"This box will close after the content is transposed and copied to your "
+"clipboard."
+msgstr ""
+
+#: includes/class-dynamicpackages-taxtitle.php:7
+#: includes/class-dynamicpackages-taxtitle.php:18
+msgid "Title Modifier"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:10
+#: includes/class-dynamicpackages-post-type.php:12
+msgid "Packages"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:11
+#: includes/class-dynamicpackages-post-type.php:13
+#: includes/class-dynamicpackages-post-type.php:31
+msgid "Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:14
+msgid "Parent Package:"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:15
+msgid "All Packages"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:16
+msgid "Add New Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:17
+msgid "Add New"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:18
+msgid "New Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:19
+msgid "Edit Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:20
+msgid "Update Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:21
+msgid "View Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:22
+msgid "Search Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:24
+msgid "Not found in Trash"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:25
+msgid "Packages list"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:26
+msgid "Packages list navigation"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:27
+msgid "Filter locations list"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:32
+msgid "Package Description"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:58
+msgid "Locations"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:59 public/partials/forms.php:31
+msgid "Location"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:77
+msgid "Categories"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:78 public/partials/forms.php:38
+msgid "Category"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:97
+#: includes/class-dynamicpackages-post-type.php:98
+msgid "Included"
+msgstr ""
+
+#: includes/class-dynamicpackages-post-type.php:117
+#: includes/class-dynamicpackages-post-type.php:118
+msgid "Not Included"
+msgstr ""
+
+#: includes/class-dynamicpackages-sidebar.php:8
+msgid "Booking Sidebar"
+msgstr ""
+
+#: includes/class-dynamicpackages-sidebar.php:10
+msgid "This sidebar should containg a Contact Form 7."
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:17
+msgid "Pricing"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:28
+msgid "Special Seasons"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:38
+msgid "Availability"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:56
+msgid "Departure"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:68
+msgid "Provider"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:81
+msgid "Number of coupons"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:83
+#: includes/class-dynamicpackages-metaboxes.php:351
+msgid "Code"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:83
+msgid "Discount (%)"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:83
+msgid "Expiration"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:83
+msgid "From"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:83
+msgid "To"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:103
+msgid "Telephone"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:108
+msgid "Mobile Phone"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:130
+#: includes/class-dynamicpackages-metaboxes.php:142
+msgid "Confirmation Message"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:157
+msgid "Check-in Hour"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:161
+msgid "Departure Hour"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:165
+msgid "Departure Address"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:176
+msgid "Show Price Table"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:178
+#: includes/class-dynamicpackages-metaboxes.php:318
+#: includes/class-dynamicpackages-metaboxes.php:346
+#: includes/class-dynamicpackages-metaboxes.php:402
+msgid "Yes"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:178
+#: includes/class-dynamicpackages-metaboxes.php:345
+#: includes/class-dynamicpackages-metaboxes.php:402
+msgid "default"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:179
+#: includes/class-dynamicpackages-metaboxes.php:317
+#: includes/class-dynamicpackages-metaboxes.php:345
+#: includes/class-dynamicpackages-metaboxes.php:403
+msgid "No"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:185
+msgid "Enable Automatic Booking"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:194
+msgid "Children Free of Cost Under"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:195
+#: includes/class-dynamicpackages-metaboxes.php:199
+msgid "year old"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:198
+msgid "Children Discount Under"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:203
+msgid "Minimum Number of participants"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:207
+msgid "Maximum Number of participants"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:212
+msgid "Increase maximum number of participants by"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:213
+msgid "get more leads even if the prices are not defined"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:218
+msgid "Payment"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:220
+msgid "Full Payment"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:232
+msgid "Hourly Rental Per Person"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:234
+msgid "Daily Rental Per Person"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:237
+msgid "Base Prices Per Person"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:253
+msgid "Accomodation Prices Per Person"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:278
+msgid "Number of Special Seasons"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:295
+msgid "Accept Bookings"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:297
+msgid "Between"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:300
+msgid "days"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:303
+msgid "Disable Days"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:306
+msgid "Thuesday"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:314
+msgid "Book by Hour"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:320
+msgid "between"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:327
+msgid "Disabled Dates"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:343
+msgid "Hide Package"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:356
+msgid "Package Type"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:358
+msgid "One day"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:359
+msgid "Multi-day"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:360
+msgid "Rental (per day)"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:361
+msgid "Rental (per hour)"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:367
+msgid "Length Unit"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:388
+#: public/partials/forms.php:94
+msgid "Duration"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:395
+msgid "Maximum Duration"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:400
+msgid "Show Prices Per Person"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:403
+msgid "fixed prices"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:407
+msgid "Pricing Type"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:410
+msgid "Full Price"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:416
+msgid "Show Badge"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:428
+msgid "Badge Color"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:431
+msgid "White"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:433
+msgid "Black"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:435
+msgid "Grey"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:437
+msgid "Blue"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:439
+msgid "Green"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:441
+msgid "Turquoise"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:443
+msgid "Purple"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:445
+msgid "Red"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:447
+msgid "Orange"
+msgstr ""
+
+#: includes/class-dynamicpackages-metaboxes.php:449
+msgid "Yellow"
+msgstr ""
+
+#: public/partials/single.php:8
+msgid "More packages"
+msgstr ""
+
+#: public/partials/single.php:103
+msgid "Booking Details"
+msgstr ""
+
+#: public/partials/archive.php:160
+msgid "Read More"
+msgstr ""
+
+#: public/partials/archive.php:194
+msgid "ID"
+msgstr ""
+
+#: public/partials/archive.php:209
+msgid "Contact Us For Pricing"
+msgstr ""
+
+#: public/partials/archive.php:224
+msgid "More details"
+msgstr ""
+
+#: public/partials/archive.php:255
+msgid "About"
+msgstr ""
+
+#: public/partials/forms.php:25
+msgid "Search"
+msgstr ""
+
+#: public/partials/forms.php:33
+msgid "Select Location"
+msgstr ""
+
+#: public/partials/forms.php:40
+msgid "Select Category"
+msgstr ""
+
+#: public/partials/forms.php:45
+msgid "Advance Search"
+msgstr ""
+
+#: public/partials/forms.php:70
+msgid "Book  Now"
+msgstr ""
+
+#: public/partials/forms.php:75
+msgid "Date"
+msgstr ""
+
+#: public/partials/forms.php:112
+msgid "hour"
+msgstr ""
+
+#: public/partials/forms.php:116
+msgid "hours"
+msgstr ""
+
+#: public/partials/forms.php:126
+msgid "Get Quote"
+msgstr ""
+
+#: public/partials/forms.php:140
+msgid "Pay Deposit"
+msgstr ""
+
+#: public/partials/forms.php:145
+msgid "Make a Reservation"
+msgstr ""
+
+#: public/partials/forms.php:166
+msgid "Enter coupon code"
+msgstr ""
+
+#: public/partials/forms.php:201
+msgid "People"
+msgstr ""
+
+#: public/partials/forms.php:222 public/partials/forms.php:241
+msgid "Children under"
+msgstr ""
+
+#: public/partials/forms.php:267
+msgid "Any"
+msgstr ""
+
+#: public/partials/tables.php:27
+msgid "Prices"
+msgstr ""
+
+#: public/partials/quote-form.php:36
+msgid "Send Request"
+msgstr ""
+
+#. Name of the plugin
+msgid "Dynamic Packages"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"This is a short description of what the plugin does. It's displayed in the "
+"WordPress admin area."
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/jaimelias/dynamicpackages"
+msgstr ""
+
+#. Author of the plugin
+msgid "Jaimelías"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://jaimelias.com"
+msgstr ""
