@@ -17,7 +17,7 @@ class dynamicpackages_Tables{
 
 			
 			$package_occupancy_chart = json_decode(html_entity_decode(package_field( 'package_occupancy_chart' )), true);	
-			$package_occupancy_chart = $package_occupancy_chart['occupancy_chart'];	
+			$package_occupancy_chart = (is_array($package_occupancy_chart)) ? $package_occupancy_chart['occupancy_chart'] : null;	
 
 			
 			if(intval($price_fixed) == 1)
@@ -49,12 +49,18 @@ class dynamicpackages_Tables{
 						}						
 					}
 					
-					if(isset($package_occupancy_chart[$x][0]))
+					if(is_array($package_occupancy_chart))
 					{
-						if($package_occupancy_chart[$x][0] != 0)
+						if(count($package_occupancy_chart) > 0)
 						{
-							$occupancy_price = floatval($package_occupancy_chart[$x][0]);
-						}						
+							if(isset($package_occupancy_chart[$x][0]))
+							{
+								if($package_occupancy_chart[$x][0] != 0)
+								{
+									$occupancy_price = floatval($package_occupancy_chart[$x][0]);
+								}						
+							}							
+						}
 					}
 
 					if($price_type == 0)

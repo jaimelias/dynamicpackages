@@ -306,7 +306,7 @@ class dynamicpackages_Taxmodifier
 		$package_type = package_field('package_package_type');
 		$package_unit = package_field('package_length_unit');
 		
-		if(array_key_exists('post_parent', $post) && !has_term('', 'package_add_ons', $the_id))
+		if(property_exists($post, 'post_parent') && !has_term('', 'package_add_ons', $the_id))
 		{
 			if($post->post_parent > 0)
 			{

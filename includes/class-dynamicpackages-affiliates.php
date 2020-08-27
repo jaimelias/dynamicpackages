@@ -15,14 +15,14 @@ class dynamicpackages_Affiliates{
 	}	
 	public static function admin_init()
 	{
-		register_setting('tp_settings', 'tapfiliate', 'sanitize_user');
+		register_setting('dy_settings', 'tapfiliate', 'sanitize_user');
 		
 		add_settings_field( 
 			'tapfiliate', 
 			esc_html(__( 'Tapfiliate API Key', 'dynamicpackages' )), 
 			array('dynamicpackages_Affiliates', 'display_tapfiliate'), 
-			'tp_settings', 
-			'tp_settings-section' 
+			'dy_settings', 
+			'dy_settings-section' 
 		);			
 	}
 	public static function display_tapfiliate() { ?>

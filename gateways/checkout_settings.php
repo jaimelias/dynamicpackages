@@ -67,28 +67,6 @@ class dynamicpackages_Settings
 		return $output;
 	}
 
-
-	public static function settings_page()
-	{ 
-		?><div class="wrap">
-		<form action='options.php' method='post'>
-			
-			<h1><?php esc_html(_e("Dynamicpackages", "dynamicpackages")); ?></h1>	
-			<?php
-			settings_fields( 'tp_settings' );
-			do_settings_sections( 'tp_settings' );
-			submit_button();
-			?>			
-		</form>
-		
-		<?php
-	}
-	
-
-	
-
-	
-
 	public static function gateway_buttons()
 	{
 		return self::gateway_buttons_cb();

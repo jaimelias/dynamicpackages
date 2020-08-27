@@ -476,7 +476,7 @@ class dynamicpackages_Validators
 		{
 			if(isset($post))
 			{
-				if(array_key_exists('post_parent', $post))
+				if(property_exists($post, 'post_parent'))
 				{
 					if($post->post_parent > 0)
 					{

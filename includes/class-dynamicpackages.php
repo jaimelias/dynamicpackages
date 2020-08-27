@@ -70,12 +70,11 @@ class dynamicpackages {
 
 		$this->plugin_name = 'dynamicpackages';
 		$this->version = '1.0.0';
-
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
+		$this->mailer = new dynamicpackages_Mailer();
 	}
 
 	/**
@@ -158,7 +157,6 @@ class dynamicpackages {
 		$plugin_metaboxes = new dynamicpackages_Metaboxes();
 		$plugin_metapost = new dynamicpackages_Metapost();
 		$plugin_post_type = new dynamicpackages_Post_Type();
-		$plugin_mailer = new dynamicpackages_Mailer();
 		$plugin_affiliates = new dynamicpackages_Affiliates();
 		$plugin_reviewes = new dynamicpackages_Reviews();
 		$plugins_tax = new dynamicpackages_Taxmodifier();
@@ -185,7 +183,6 @@ class dynamicpackages {
 
 		$plugin_public = new dynamicpackages_Public();
 		$plugin_settings = new dynamicpackages_Settings();	
-		$plugin_mailer = new dynamicpackages_Mailer();
 		$plugin_search = new dynamicpackages_Search();
 		$plugin_affiliates = new dynamicpackages_Affiliates();
 		$plugin_add_to_calendar = new add_to_calendar();

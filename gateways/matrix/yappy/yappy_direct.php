@@ -100,7 +100,7 @@ class yappy_direct{
 		{
 			if(dynamicpackages_Validators::validate_recaptcha())
 			{
-				dynamicpackages_Checkout::webhook('tp_quote_webhook', json_encode($_POST));
+				dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
 				$content = $this->message();
 				$this->send();
 			}

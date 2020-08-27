@@ -41,6 +41,12 @@ class dynamicpackages_Public {
 	private $version;
 
 	public function __construct() {
+		
+		$this->init();
+	}
+	
+	public function init()
+	{
 		add_action('wp_enqueue_scripts', array('dynamicpackages_Public', 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array('dynamicpackages_Public', 'enqueue_scripts'), 11);
 		add_action('pre_get_posts', array('dynamicpackages_Public', 'global_vars'));
@@ -57,7 +63,7 @@ class dynamicpackages_Public {
 		add_filter("term_description", array('dynamicpackages_Public', 'modify_term_description'));
 		add_action('wp_head', array('dynamicpackages_Public', 'location_category_canonical'));
 		add_filter('jetpack_enable_open_graph', array('dynamicpackages_Public', 'deque_jetpack'));
-		add_filter('package_details', array('dynamicpackages_Public', 'details_add'));
+		add_filter('package_details', array('dynamicpackages_Public', 'details_add'));		
 	}
 	 
 	public static function enqueue_styles() {
@@ -781,7 +787,7 @@ class dynamicpackages_Public {
 						$body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']);
 						
 						wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['fname']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
-						dynamicpackages_Checkout::webhook('tp_quote_webhook', json_encode($_POST));
+						dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
 						$content = '<p class="minimal_success"><strong>'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</strong></p>';
 						
 					}
@@ -1336,7 +1342,6 @@ class dynamicpackages_Public {
 			if(dynamicpackages_Validators::has_children() && in_the_loop())
 			{
 				$prices = array();
-				//dynamicpackages_Validators::has_children() returns the children obj
 				$children = dynamicpackages_Validators::has_children();
 				
 				foreach ( $children as $child )
@@ -1384,7 +1389,7 @@ class dynamicpackages_Public {
 			$duration = floatval(package_field('package_duration'));
 			$price_chart = self::get_price_chart($the_id);
 			$occupancy_chart = self::get_occupancy_chart($the_id);	
-			$occupancy_chart = $occupancy_chart['occupancy_chart'];
+			$occupancy_chart = (is_array($occupancy_chart)) ? $occupancy_chart['occupancy_chart'] : null;
 			$price_type = package_field('package_starting_at_unit');
 			$package_type = package_field('package_package_type');
 			$mix = array();
@@ -1621,7 +1626,7 @@ class dynamicpackages_Public {
 	{
 		$termid = $this_post->ID;
 		
-		if(array_key_exists('post_parent', $this_post) && !has_term('', 'package_location', $termid))
+		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_location', $termid))
 		{
 			$termid = $this_post->post_parent;
 		}
@@ -1634,7 +1639,7 @@ class dynamicpackages_Public {
 	{
 		$termid = $this_post->ID;
 
-		if(array_key_exists('post_parent', $this_post) && !has_term('', 'package_category', $termid))
+		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_category', $termid))
 		{
 			$termid = $this_post->post_parent;
 		}		
@@ -1649,7 +1654,7 @@ class dynamicpackages_Public {
 		
 		$termid = $post->ID;
 		
-		if(array_key_exists('post_parent', $post))
+		if(property_exists($post, 'post_parent'))
 		{
 			$termid = $post->post_parent;
 		}		
@@ -1676,7 +1681,7 @@ class dynamicpackages_Public {
 	{
 		$termid = $this_post->ID;
 		
-		if(array_key_exists('post_parent', $this_post))
+		if(property_exists($this_post, 'post_parent'))
 		{
 			$termid = $this_post->post_parent;
 		}		
@@ -1690,7 +1695,7 @@ class dynamicpackages_Public {
 		$termid = $this_post->ID;
 		$output = '';
 		
-		if(array_key_exists('post_parent', $this_post) && !has_term('', 'package_included', $termid))
+		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_included', $termid))
 		{
 			$termid = $this_post->post_parent;
 		}
@@ -1722,7 +1727,7 @@ class dynamicpackages_Public {
 		$termid = $this_post->ID;
 		$output = '';
 		
-		if(array_key_exists('post_parent', $this_post) && !has_term('', 'package_not_included', $termid))
+		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_not_included', $termid))
 		{
 			$termid = $this_post->post_parent;
 		}		
@@ -2077,9 +2082,7 @@ class dynamicpackages_Public {
 	
 	public static function tax()
 	{
-		$tax = get_option('dy_tax');
-		$tax = floatval($tax['text_field_dynamicpackages_5']);
-		return $tax;
+		return floatval(get_option('dy_tax'));
 	}
 
 	public static function total($regular = '')
@@ -2274,7 +2277,7 @@ class dynamicpackages_Public {
 					
 					foreach($children_array as $item)
 					{
-						if(array_key_exists('post_name', $item))
+						if(property_exists($item, 'post_name'))
 						{
 							if($item->post_name != '')
 							{

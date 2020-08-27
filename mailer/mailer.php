@@ -7,7 +7,6 @@ class dynamicpackages_Mailer
 	{
 		$this->mandrill_api_key = get_option('mandrill_api_key');
 		$this->mandrill_username = get_option('mandrill_username');
-		
 		$this->init();
 	}
 	
@@ -42,14 +41,13 @@ class dynamicpackages_Mailer
 		$mailer->SMTPDebug = 0;
 		
 		if(!$mailer->Send()) {
-			write_log($mailer->ErrorInfo);
 		   exit;
 		}
 	}
 	
 	public function phpmailer_failed($mailer)
 	{
-		write_log($mailer->ErrorInfo);
+		write_log(json_encode($mailer));
 	}
 	
 	public function from_name()

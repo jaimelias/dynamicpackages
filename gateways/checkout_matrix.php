@@ -279,13 +279,13 @@ class dynamicpackages_Checkout
 		else if($status == 1)
 		{
 			self::declined_mail($checkout);			
-			self::webhook('tp_webhook', json_encode($checkout));
+			self::webhook('dy_webhook', json_encode($checkout));
 			$output = '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-phone" aria-hidden="true"></i></span> '.esc_html(__('Payment Declined. Please contact your bank to authorize the transaction.', 'dynamicpackages')).'</h2></div>';
 			return $output;
 		}
 		else
 		{
-			self::webhook('tp_webhook', json_encode($checkout));
+			self::webhook('dy_webhook', json_encode($checkout));
 			
 			if(dynamicpackages_Affiliates::valid_affiliate_hash($checkout))
 			{
@@ -536,7 +536,7 @@ class dynamicpackages_Checkout
 		global $post;
 		$termid = $post->ID;
 		
-		if(array_key_exists('post_parent', $post) && !has_term('', $tax, $termid))
+		if(property_exists($post, 'post_parent') && !has_term('', $tax, $termid))
 		{
 			$termid = $post->post_parent;
 		}
@@ -627,7 +627,7 @@ class dynamicpackages_Checkout
 		
 		$the_id = $post->ID;
 		
-		if(array_key_exists('post_parent', $post))
+		if(property_exists($post, 'post_parent'))
 		{
 			$the_id = $post->post_parent;
 		}

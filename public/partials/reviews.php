@@ -182,14 +182,18 @@ class dynamicpackages_Reviews
 		$comments = get_approved_comments($id);
 		
 		global $polylang;
-		$translationIds = PLL()->model->post->get_translations($id);
-		foreach ( $translationIds as $key=>$translationID ){
-			if( $translationID != $id ) {
-				$translatedPostComments = get_approved_comments($translationID);
-				if ( $translatedPostComments ) {
-					$comments = array_merge($comments, $translatedPostComments);
+		
+		if(isset($polylang))
+		{
+			$translationIds = PLL()->model->post->get_translations($id);
+			foreach ( $translationIds as $key=>$translationID ){
+				if( $translationID != $id ) {
+					$translatedPostComments = get_approved_comments($translationID);
+					if ( $translatedPostComments ) {
+						$comments = array_merge($comments, $translatedPostComments);
+					}
 				}
-			}
+			}			
 		}
 
 		if ( $comments )

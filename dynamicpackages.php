@@ -78,11 +78,9 @@ function package_field($name, $this_id = null)
 		//pull all the fields from parent package with exceptions
 		if(isset($post))
 		{
-			if(array_key_exists('post_parent', $post))
+			if(property_exists($post, 'post_parent'))
 			{
 				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title');
-				
-				
 				
 				if($polylang)
 				{

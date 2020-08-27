@@ -198,7 +198,7 @@
 								
 				<tfoot class="text-center strong">
 					<?php if(get_option('dy_tax' )): ?>
-						<?php $tax = get_option('dy_tax'); $tax = $tax['text_field_dynamicpackages_5']; ?>
+						<?php $tax = get_option('dy_tax'); ?>
 						<?php if(floatval($tax) > 0): ?>
 							<tr>
 							<td class="text-right" colspan="2"><?php echo esc_html(__('Tax', 'dynamicpackages')).' '.esc_html($tax); ?>%</td>
