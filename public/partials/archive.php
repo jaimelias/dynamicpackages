@@ -2,33 +2,37 @@
 
 	$posts_per_page = isset($dis_imp) ? $dis_imp : 12;
 	$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-	$args = array();
-	$args['post_type'] = 'packages';
-	//menu_order, date
-	$args['orderby'] = 'menu_order';
-	$args['order'] = 'ASC';
-	$args['post_parent'] = 0;
-	$args['meta_query'] = array();
-	$args['paged'] = $paged;
+
+	$args = array(
+		'post_type' => 'packages',
+		'orderby' => 'menu_order',
+		'order' => 'ASC',
+		'post_parent' => 0,
+		'meta_query' => array(),
+		'paged' => $paged
+	);
 	
 	//yesterday exclude
-	$yesterday = strtotime('yesterday');
-	$yesterday = date("Y-m-d", $yesterday);
-	$filter_yesterday = array();
-	$filter_yesterday['key'] = 'package_event_date'; 
-	$filter_yesterday['type'] = 'DATE'; 
-	$filter_yesterday['value'] = $yesterday;
-	$filter_yesterday['compare'] = '>';
+	$filter_yesterday = array(
+		'key' => 'package_event_date',
+		'type' => 'DATE',
+		'value' => date("Y-m-d", strtotime('yesterday')),
+		'compare' => '>'
+	);
+
 	//troubleshoot if null
-	$filter_null = array();
-	$filter_null['value'] = '';
-	$filter_null['key'] = 'package_event_date'; 
-	$filter_null['compare'] = '=';
+	$filter_null = array(
+		'value' => '',
+		'key' => 'package_event_date',
+		'compare' => '='
+	);
+
 	//troubleshoot if not exist in old versions
-	$filter_not_exist = array();
-	$filter_not_exist['value'] = '';
-	$filter_not_exist['key'] = 'package_event_date'; 
-	$filter_not_exist['compare'] = 'NOT EXISTS';	
+	$filter_not_exist = array(
+		'value' => '',
+		'key' => 'package_event_date',
+		'key' => 'NOT EXISTS'
+	);	
 	
 	array_push($args['meta_query'], array('relation' => 'OR', $filter_yesterday, $filter_null, $filter_not_exist));	
 		
@@ -36,7 +40,13 @@
 	{
 		global $wp_query;
 		$term = $wp_query->get_queried_object();
-		$args['tax_query'] = array(array('taxonomy' => get_query_var( 'taxonomy' ), 'field' => 'term_id', 'terms' => $term->term_id));
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => get_query_var( 'taxonomy' ), 
+				'field' => 'term_id', 
+				'terms' => $term->term_id
+			)
+		);
 	}
 	else
 	{
@@ -55,10 +65,12 @@
 		{
 			if($cat_imp != 'any')
 			{
-				$cat_imp_args = array();
-				$cat_imp_args['taxonomy'] = 'package_category';
-				$cat_imp_args['field'] = 'slug';
-				$cat_imp_args['terms'] = $cat_imp;	
+				$cat_imp_args = array(
+					'taxonomy' => 'package_category',
+					'field' => 'slug',
+					'terms' => $cat_imp
+				);
+	
 				array_push($args['tax_query'], $cat_imp_args);					
 			}
 		}
@@ -67,10 +79,12 @@
 		{
 			if($loc_imp != 'any')
 			{
-				$loc_imp_args = array();
-				$loc_imp_args['taxonomy'] = 'package_location';
-				$loc_imp_args['field'] = 'slug';
-				$loc_imp_args['terms'] = $loc_imp;	
+				$loc_imp_args = array(
+					'taxonomy' => 'package_location',
+					'field' => 'slug',
+					'terms' => $loc_imp
+				);
+
 				array_push($args['tax_query'], $loc_imp_args);					
 			}
 		}
@@ -98,11 +112,13 @@
 			{
 				//today
 				$today = date("Y-m-d");
-				$filter_today = array();
-				$filter_today['key'] = 'package_date'; 
-				$filter_today['type'] = 'DATE'; 
-				$filter_today['value'] = $today;
-				$filter_today['compare'] = '=';
+				$filter_today = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $today,
+					'compare' => '='
+				);
+ 
 				array_push($args['meta_query'], $filter_today);
 			}
 			else if($sort_imp == 'tomorrow')
@@ -110,60 +126,68 @@
 				
 				//today
 				$today = date("Y-m-d");
-				$filter_today = array();
-				$filter_today['key'] = 'package_date'; 
-				$filter_today['type'] = 'DATE'; 
-				$filter_today['value'] = $today;
-				$filter_today['compare'] = '>=';				
+
+				$filter_today = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $today,
+					'compare' => '>='
+				);				
 				
 				//tomorrow start
-				$tomorrow = strtotime('tomorrow midnight');
-				$tomorrow = date("Y-m-d", $tomorrow);
-				$filter_tomorrow = array();
-				$filter_tomorrow['key'] = 'package_date'; 
-				$filter_tomorrow['type'] = 'DATE';
-				$filter_tomorrow['value'] = $tomorrow;
-				$filter_tomorrow['compare'] = '<=';			
+				$tomorrow = date("Y-m-d", strtotime('tomorrow midnight'));
+
+				$filter_tomorrow = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $tomorrow,
+					'compare' => '<='
+				);
+			
 				array_push($args['meta_query'], $filter_today, $filter_tomorrow);
 			}			
 			else if($sort_imp == 'week')
 			{
 				//today
 				$today = date("Y-m-d");
-				$filter_today = array();
-				$filter_today['key'] = 'package_date'; 
-				$filter_today['type'] = 'DATE'; 
-				$filter_today['value'] = $today;
-				$filter_today['compare'] = '>=';
+				$filter_today = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $today,
+					'compare' => '>='
+				);
 				
 				//+7 days
-				$week = strtotime('+7 day', strtotime('today midnight'));
-				$week = date('Y-m-d', $week);
-				$filter_week = array();
-				$filter_week['key'] = 'package_date'; 
-				$filter_week['type'] = 'DATE'; 
-				$filter_week['value'] = $week;
-				$filter_week['compare'] = '<=';	
+				$week = date('Y-m-d', strtotime('+7 day', strtotime('today midnight')));
+				$filter_week = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => '$week',
+					'compare' => '<='
+				);
+
 				array_push($args['meta_query'], $filter_today, $filter_week);
 			}
 			else if($sort_imp == 'month')
 			{
 				//today
 				$today = date("Y-m-d");
-				$filter_today = array();
-				$filter_today['key'] = 'package_date'; 
-				$filter_today['type'] = 'DATE'; 
-				$filter_today['value'] = $today;
-				$filter_today['compare'] = '>=';
+				$filter_today = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $today,
+					'compare' => '>='
+				);
 				
 				//+30 days
-				$month = strtotime('+30 day', strtotime('today midnight'));
-				$month = date('Y-m-d', $month);
-				$filter_month = array();
-				$filter_month['key'] = 'package_date'; 
-				$filter_month['type'] = 'DATE'; 
-				$filter_month['value'] = $month;
-				$filter_month['compare'] = '<=';	
+				$month = date('Y-m-d', strtotime('+30 day', strtotime('today midnight')));
+				$filter_month = array(
+					'key' => 'package_date',
+					'type' => 'DATE',
+					'value' => $month,
+					'compare' => '<='
+				);
+					
 				array_push($args['meta_query'], $filter_today, $filter_month);
 			}
 		}		
