@@ -4,25 +4,30 @@ class nequi_direct{
 	
 	function __construct()
 	{
+		$this->gateway_name = 'nequi_direct';
+		$this->init();
+	}
+	public function init()
+	{
 		if(is_admin())
 		{
-			add_action( 'admin_init', array('nequi_direct', 'settings_init'), 1);
-			add_action('admin_menu', array('nequi_direct', 'add_settings_page'), 100);			
+			add_action('admin_init', array(&$this, 'settings_init'), 1);
+			add_action('admin_menu', array(&$this, 'add_settings_page'), 100);			
 		}
 		else
 		{
-			add_filter('the_content', array('nequi_direct', 'filter_content'), 101);
-			add_filter('the_title', array('nequi_direct', 'title'), 101);
-			add_filter('pre_get_document_title', array('nequi_direct', 'title'), 101);
-			add_filter('get_the_excerpt', array('nequi_direct', 'filter_excerpt'), 101);
-			add_filter('gateway_buttons', array('nequi_direct', 'button'), 3);
-			add_filter('list_gateways', array('nequi_direct', 'add_gateway'), 3);
-			add_action('wp_enqueue_scripts', array('nequi_direct', 'scripts'), 101);
-			add_filter('coupon_gateway', array('nequi_direct', 'single_coupon'), 10, 3);
-			add_filter('coupon_gateway_hide', array('nequi_direct', 'single_coupon_hide'), 10, 3);
-		}
+			add_filter('the_content', array(&$this, 'filter_content'), 101);
+			add_filter('the_title', array(&$this, 'title'), 101);
+			add_filter('pre_get_document_title', array(&$this, 'title'), 101);
+			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 101);
+			add_filter('gateway_buttons', array(&$this, 'button'), 3);
+			add_filter('list_gateways', array(&$this, 'add_gateway'), 3);
+			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 101);
+			add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
+			add_filter('coupon_gateway_hide', array(&$this, 'single_coupon_hide'), 10, 3);
+		}		
 	}
-	public static function is_active()
+	public function is_active()
 	{
 		$output = false;
 		global $nequi_direct_is_active;
@@ -33,7 +38,7 @@ class nequi_direct{
 		}
 		else
 		{
-			if(get_option('nequi_direct') != '')
+			if(get_option($this->gateway_name) != '')
 			{
 				$GLOBALS['nequi_direct_is_active'] = true;
 				$output = true;
@@ -41,7 +46,7 @@ class nequi_direct{
 		}
 		return $output;
 	}
-	public static function show_nequi()
+	public function show_nequi()
 	{
 		$output = false;
 		global $nequi_direct_show_nequi;
@@ -52,9 +57,9 @@ class nequi_direct{
 		}
 		else
 		{
-			if(is_singular('packages') && self::is_active())
+			if(is_singular('packages') && $this->is_active())
 			{
-				if(self::is_valid())
+				if($this->is_valid())
 				{
 					$GLOBALS['nequi_direct_show_nequi'] = true;
 					$output = true;
@@ -63,7 +68,7 @@ class nequi_direct{
 		}
 		return $output;
 	}
-	public static function is_valid_request()
+	public function is_valid_request()
 	{
 		$output = false;
 		global $nequi_is_valid_request;
@@ -76,7 +81,7 @@ class nequi_direct{
 		{
 			if(isset($_POST['dy_platform']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == 'nequi_direct' && intval($_POST['total']) > 1)
+				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['nequi_is_valid_request'] = true;
 					$output = true;
@@ -86,37 +91,37 @@ class nequi_direct{
 		
 		return $output;
 	}
-	public static function filter_excerpt($excerpt)
+	public function filter_excerpt($excerpt)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',');
 		}
 		return $excerpt;
 	}
-	public static function filter_content($content)
+	public function filter_content($content)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			if(dynamicpackages_Validators::validate_recaptcha())
 			{
 				dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
-				$content = self::message();
-				self::send();
+				$content = $this->message();
+				$this->send();
 			}
 		}
 		return $content;
 	}
-	public static function title($title)
+	public function title($title)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Thank you for using Nequi', 'dynamicpackages'));
 		}
 		return $title;
 	}
 	
-	public static function send()
+	public function send()
 	{
 		
 		$admin_email = get_option('admin_email');
@@ -128,13 +133,13 @@ class nequi_direct{
 		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
 		
 		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',</p>'.self::message();
+		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',</p>'.$this->message();
 		
 		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
 		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
 	}
 	
-	public static function message()
+	public function message()
 	{
 		
 		$first = __('To complete the booking please enter your Nequi App and send the', 'dynamicpackages');
@@ -147,16 +152,16 @@ class nequi_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$output = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option('nequi_direct')).'</strong>.</p>';
+		$output = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
 		
-		$output .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option('nequi_direct')).'</p>';
+		$output .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
 		
 		$output .= '<p class="large">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
 		return $output;
 	}
 
-	public static function is_valid()
+	public function is_valid()
 	{
 		$output = false;
 		global $nequi_direct_is_valid;
@@ -167,7 +172,7 @@ class nequi_direct{
 		}
 		else
 		{
-			if(self::is_active() && !isset($_GET['quote']))
+			if($this->is_active() && !isset($_GET['quote']))
 			{
 				$max = floatval(get_option(sanitize_title('nequi_direct_max')));
 				$show = intval(get_option(sanitize_title('nequi_direct_show')));
@@ -217,11 +222,11 @@ class nequi_direct{
 		return $output;
 	}
 
-	public static function settings_init()
+	public function settings_init()
 	{
 		//Nequi
 		
-		register_setting('nequi_direct_settings', 'nequi_direct', 'intval');
+		register_setting('nequi_direct_settings', $this->gateway_name, 'intval');
 		register_setting('nequi_direct_settings', 'nequi_direct_show', 'intval');
 		register_setting('nequi_direct_settings', 'nequi_direct_max', 'floatval');
 		
@@ -233,52 +238,52 @@ class nequi_direct{
 		);
 		
 		add_settings_field( 
-			'nequi_direct', 
+			$this->gateway_name, 
 			esc_html(__( 'Nequi Cell Phone Number', 'dynamicpackages' )), 
-			array('nequi_direct', 'input_number'), 
+			array(&$this, 'input_number'), 
 			'nequi_direct_settings', 
-			'nequi_direct_settings_section', 'nequi_direct'
+			'nequi_direct_settings_section', $this->gateway_name
 		);	
 		add_settings_field( 
 			'nequi_direct_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array('nequi_direct', 'input_number'), 
+			array(&$this, 'input_number'), 
 			'nequi_direct_settings', 
 			'nequi_direct_settings_section', 'nequi_direct_max'
 		);
 		add_settings_field( 
 			'nequi_direct_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array('nequi_direct', 'display_nequi_direct_show'), 
+			array(&$this, 'display_nequi_direct_show'), 
 			'nequi_direct_settings', 
 			'nequi_direct_settings_section'
 		);		
 	}
 	
-	public static function input_text($name){
+	public function input_text($name){
 		$option = get_option($name);
 		?>
 		<input type="text" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" />
 		<?php
 	}
-	public static function input_number($name){
+	public function input_number($name){
 		$option = get_option($name);
 		?>
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
 		<?php
 	}
-	public static function display_nequi_direct_show() { ?>
+	public function display_nequi_direct_show() { ?>
 		<select name='nequi_direct_show'>
 			<option value="0" <?php selected(get_option('nequi_direct_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option('nequi_direct_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }
 
-	public static function add_settings_page()
+	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Nequi', 'Nequi', 'manage_options', 'nequi_direct', array('nequi_direct', 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', 'Nequi', 'Nequi', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
-	public static function settings_page()
+	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action='options.php' method='post'>
@@ -293,35 +298,35 @@ class nequi_direct{
 		
 		<?php
 	}
-	public static function button($output)
+	public function button($output)
 	{
-		if(self::show_nequi() && in_array('Nequi', self::list_gateways_cb()))
+		if($this->show_nequi() && in_array('Nequi', $this->list_gateways_cb()))
 		{
 			$output .= ' <button class="pure-button bottom-20 pure-button-nequi withnequi rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
-	public static function list_gateways_cb()
+	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
 	}	
-	public static function add_gateway($array)
+	public function add_gateway($array)
 	{
-		if(self::show_nequi() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		if($this->show_nequi() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
 			$array[] = 'Nequi';		
 		}
 		return $array;	
 	}
-	public static function scripts()
+	public function scripts()
 	{
-		if(self::show_nequi())
+		if($this->show_nequi())
 		{
-			wp_add_inline_style('minimalLayout', self::css());
-			wp_add_inline_script('dynamicpackages', self::js(), 'before');	
+			wp_add_inline_style('minimalLayout', $this->css());
+			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public static function css()
+	public function css()
 	{
 		ob_start();
 		?>
@@ -335,7 +340,7 @@ class nequi_direct{
 		ob_end_clean();
 		return $output;			
 	}
-	public static function js()
+	public function js()
 	{
 		ob_start();
 		?>
@@ -349,7 +354,7 @@ class nequi_direct{
 				$('#dy_form_icon').html(nequi_logo);
 				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('nequi_direct');
+				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
 				
 				$('#dynamic_form').find('span.dy_mobile_payment').text('Nequi');
 				
@@ -378,7 +383,7 @@ class nequi_direct{
 		ob_end_clean();
 		return $output;			
 	}
-	public static function single_coupon($str, $gateway)
+	public function single_coupon($str, $gateway)
 	{
 		if(strtolower($gateway) == 'nequi')
 		{
@@ -387,7 +392,7 @@ class nequi_direct{
 		
 		return $str;
 	}
-	public static function single_coupon_hide($str, $gateway)
+	public function single_coupon_hide($str, $gateway)
 	{
 		if(strtolower($gateway) == 'nequi')
 		{

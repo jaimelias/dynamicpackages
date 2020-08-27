@@ -4,6 +4,11 @@ class paypal_me{
 	
 	function __construct()
 	{
+		$this->gateway_name = 'paypal_me';
+		$this->init();
+	}
+	public function init()
+	{
 		if(is_admin())
 		{
 			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
@@ -20,7 +25,7 @@ class paypal_me{
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 			add_filter('gateway_icons', array(&$this, 'icon'), 2);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
-		}
+		}		
 	}
 	public function filter_excerpt($excerpt)
 	{
@@ -64,7 +69,7 @@ class paypal_me{
 		}
 		else
 		{
-			if(get_option('paypal_me') != '')
+			if(get_option($this->gateway_name) != '')
 			{
 				$GLOBALS['paypal_me_is_active'] = true;
 				$output = true;
@@ -107,7 +112,7 @@ class paypal_me{
 		{
 			if(isset($_POST['dy_platform']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == 'paypal_me' && intval($_POST['total']) > 1)
+				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['paypal_is_valid_request'] = true;
 					$output = true;
@@ -119,7 +124,7 @@ class paypal_me{
 	}
 	public function redirect()
 	{
-		$paypal_url = 'https://paypal.me/'.get_option('paypal_me').'/'.esc_html($_POST['total']);
+		$paypal_url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.esc_html($_POST['total']);
 		wp_redirect(esc_url($paypal_url));
 		exit;		
 	}
@@ -187,7 +192,7 @@ class paypal_me{
 	{
 		//paypal.me
 		
-		register_setting('paypal_me_settings', 'paypal_me', 'sanitize_user');
+		register_setting('paypal_me_settings', $this->gateway_name, 'sanitize_user');
 		register_setting('paypal_me_settings', 'paypal_me_show', 'intval');
 		register_setting('paypal_me_settings', 'paypal_me_max', 'floatval');
 		
@@ -199,11 +204,11 @@ class paypal_me{
 		);
 		
 		add_settings_field( 
-			'paypal_me', 
+			$this->gateway_name, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			'paypal_me_settings', 
-			'paypal_me_settings_section', 'paypal_me'
+			'paypal_me_settings_section', $this->gateway_name
 		);	
 		add_settings_field( 
 			'paypal_me_max', 
@@ -243,7 +248,7 @@ class paypal_me{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Paypal.me', 'Paypal.me', 'manage_options', 'paypal_me', array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', 'Paypal.me', 'Paypal.me', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
@@ -315,7 +320,7 @@ class paypal_me{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(paypal_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('paypal_me');
+				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -372,7 +377,7 @@ class paypal_me{
 	{
 		$output = '';
 		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
-		$url = 'https://paypal.me/'.get_option('paypal_me').'/'.$total;
+		$url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.$total;
 		$amount = number_format($total, 2, '.', ',');
 		$amount = dy_utilities::currency_symbol().''.$amount;
 		

@@ -4,6 +4,11 @@ class yappy_direct{
 	
 	function __construct()
 	{
+		$this->gateway_name = 'yappy_direct';
+		$this->init();
+	}
+	public function init()
+	{
 		if(is_admin())
 		{
 			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
@@ -20,7 +25,7 @@ class yappy_direct{
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 101);
 			add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
 			add_filter('coupon_gateway_hide', array(&$this, 'single_coupon_hide'), 10, 3);
-		}
+		}		
 	}
 	public function is_active()
 	{
@@ -33,7 +38,7 @@ class yappy_direct{
 		}
 		else
 		{
-			if(get_option('yappy_direct') != '')
+			if(get_option($this->gateway_name) != '')
 			{
 				$GLOBALS['yappy_direct_is_active'] = true;
 				$output = true;
@@ -76,7 +81,7 @@ class yappy_direct{
 		{
 			if(isset($_POST['dy_platform']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == 'yappy_direct' && intval($_POST['total']) > 1)
+				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['yappy_is_valid_request'] = true;
 					$output = true;
@@ -147,9 +152,9 @@ class yappy_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$output = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option('yappy_direct')).'</strong>.</p>';
+		$output = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
 		
-		$output .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option('yappy_direct')).'</p>';
+		$output .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
 		
 		$output .= '<p class="large">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
@@ -221,7 +226,7 @@ class yappy_direct{
 	{
 		//Yappy
 		
-		register_setting('yappy_direct_settings', 'yappy_direct', 'intval');
+		register_setting('yappy_direct_settings', $this->gateway_name, 'intval');
 		register_setting('yappy_direct_settings', 'yappy_direct_show', 'intval');
 		register_setting('yappy_direct_settings', 'yappy_direct_max', 'floatval');
 		
@@ -233,11 +238,11 @@ class yappy_direct{
 		);
 		
 		add_settings_field( 
-			'yappy_direct', 
+			$this->gateway_name, 
 			esc_html(__( 'Yappy Cell Phone Number', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
 			'yappy_direct_settings', 
-			'yappy_direct_settings_section', 'yappy_direct'
+			'yappy_direct_settings_section', $this->gateway_name
 		);	
 		add_settings_field( 
 			'yappy_direct_max', 
@@ -276,7 +281,7 @@ class yappy_direct{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Yappy', 'Yappy', 'manage_options', 'yappy_direct', array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', 'Yappy', 'Yappy', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
@@ -349,7 +354,7 @@ class yappy_direct{
 				$('#dy_form_icon').html(yappy_logo);
 				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('yappy_direct');
+				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
 				
 				$('#dynamic_form').find('span.dy_mobile_payment').text('Yappy');
 				

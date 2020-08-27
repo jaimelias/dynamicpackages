@@ -4,23 +4,28 @@ class bank_transfer{
 	
 	function __construct()
 	{
+		$this->gateway_name = 'bank_transfer';
+		$this->init();
+	}
+	public function init()
+	{
 		if(is_admin())
 		{
-			add_action( 'admin_init', array('bank_transfer', 'settings_init'), 1);
-			add_action('admin_menu', array('bank_transfer', 'add_settings_page'), 101);			
+			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
+			add_action('admin_menu', array(&$this, 'add_settings_page'), 101);			
 		}
 		else
 		{
-			add_filter('the_content', array('bank_transfer', 'filter_content'), 102);
-			add_filter('the_title', array('bank_transfer', 'title'), 102);
-			add_filter('pre_get_document_title', array('bank_transfer', 'title'), 102);
-			add_filter('get_the_excerpt', array('bank_transfer', 'filter_excerpt'), 102);
-			add_filter('gateway_buttons', array('bank_transfer', 'button'), 4);
-			add_filter('list_gateways', array('bank_transfer', 'add_gateway'), 4);
-			add_action('wp_enqueue_scripts', array('bank_transfer', 'scripts'), 102);
-		}
+			add_filter('the_content', array(&$this, 'filter_content'), 102);
+			add_filter('the_title', array(&$this, 'title'), 102);
+			add_filter('pre_get_document_title', array(&$this, 'title'), 102);
+			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 102);
+			add_filter('gateway_buttons', array(&$this, 'button'), 4);
+			add_filter('list_gateways', array(&$this, 'add_gateway'), 4);
+			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
+		}		
 	}
-	public static function is_active()
+	public function is_active()
 	{
 		$output = false;
 		global $bank_transfer_is_active;
@@ -31,7 +36,7 @@ class bank_transfer{
 		}
 		else
 		{
-			if(get_option('bank_transfer') != '')
+			if(get_option($this->gateway_name) != '')
 			{
 				$GLOBALS['bank_transfer_is_active'] = true;
 				$output = true;
@@ -39,7 +44,7 @@ class bank_transfer{
 		}
 		return $output;
 	}
-	public static function show_bank()
+	public function show_bank()
 	{
 		$output = false;
 		global $bank_transfer_show_bank;
@@ -50,9 +55,9 @@ class bank_transfer{
 		}
 		else
 		{
-			if(is_singular('packages') && self::is_active())
+			if(is_singular('packages') && $this->is_active())
 			{
-				if(self::is_valid())
+				if($this->is_valid())
 				{
 					$GLOBALS['bank_transfer_show_bank'] = true;
 					$output = true;
@@ -61,7 +66,7 @@ class bank_transfer{
 		}
 		return $output;
 	}
-	public static function is_valid_request()
+	public function is_valid_request()
 	{
 		$output = false;
 		global $bank_is_valid_request;
@@ -74,7 +79,7 @@ class bank_transfer{
 		{
 			if(isset($_POST['dy_platform']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == 'bank_transfer' && intval($_POST['total']) > 1)
+				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['bank_is_valid_request'] = true;
 					$output = true;
@@ -84,29 +89,29 @@ class bank_transfer{
 		
 		return $output;
 	}
-	public static function filter_excerpt($excerpt)
+	public function filter_excerpt($excerpt)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',');
 		}
 		return $excerpt;
 	}
-	public static function filter_content($content)
+	public function filter_content($content)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			if(dynamicpackages_Validators::validate_recaptcha())
 			{
 				dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
-				$content = self::message();
-				self::send();
+				$content = $this->message();
+				$this->send();
 			}
 		}
 		return $content;
 	}
 	
-	public static function send()
+	public function send()
 	{
 		
 		$admin_email = get_option('admin_email');
@@ -118,20 +123,20 @@ class bank_transfer{
 		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
 		
 		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',</p>'.self::message();
+		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',</p>'.$this->message();
 		
 		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
 		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
 	}	
-	public static function title($title)
+	public function title($title)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && self::is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Pay From Your Bank', 'dynamicpackages'));
 		}
 		return $title;
 	}
-	public static function message()
+	public function message()
 	{
 		
 		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
@@ -149,14 +154,14 @@ class bank_transfer{
 		
 		$output .= ') '. __('to the following account', 'dynamicpackages').'.</p>';
 		
-		$output .= '<p class="large dy_pad padding-10">'.self::account().'</p>';
+		$output .= '<p class="large dy_pad padding-10">'.$this->account().'</p>';
 		
 		$output .= '<p class="large">'.esc_html(__('Once we receive the slip and payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
 		return $output;
 	}
 	
-	public static function account()
+	public function account()
 	{
 		
 		$type = __('Saving Account', 'dynamicpackages');
@@ -168,13 +173,13 @@ class bank_transfer{
 		
 		$bank = esc_html(__('Bank', 'dynamicpackages')).': <strong>'.esc_html(get_option('bank_transfer_name')).'</strong> <br/>';
 		$bank .= esc_html(__('Account Type', 'dynamicpackages')).': <strong>'.esc_html($type).'</strong><br/>';
-		$bank .= esc_html(__('Account Number', 'dynamicpackages')).': <strong>'.esc_html(get_option('bank_transfer')).'</strong><br/>';
+		$bank .= esc_html(__('Account Number', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name)).'</strong><br/>';
 		$bank .= esc_html(__('Account Name', 'dynamicpackages')).': <strong>'.esc_html(get_option('bank_transfer_account')).'</strong>';
 
 		return $bank;
 	}
 
-	public static function is_valid()
+	public function is_valid()
 	{
 		$output = false;
 		global $bank_transfer_is_valid;
@@ -185,7 +190,7 @@ class bank_transfer{
 		}
 		else
 		{
-			if(self::is_active() && !isset($_GET['quote']))
+			if($this->is_active() && !isset($_GET['quote']))
 			{
 				$min = floatval(get_option(sanitize_title('bank_transfer_min')));
 				$show = intval(get_option(sanitize_title('bank_transfer_show')));
@@ -235,11 +240,11 @@ class bank_transfer{
 		return $output;
 	}
 
-	public static function settings_init()
+	public function settings_init()
 	{
 		//Bank
 		
-		register_setting('bank_transfer_settings', 'bank_transfer', 'sanitize_text_field');
+		register_setting('bank_transfer_settings', $this->gateway_name, 'sanitize_text_field');
 		register_setting('bank_transfer_settings', 'bank_transfer_account', 'sanitize_text_field');
 		register_setting('bank_transfer_settings', 'bank_transfer_name', 'sanitize_text_field');
 		register_setting('bank_transfer_settings', 'bank_transfer_type', 'sanitize_text_field');
@@ -263,56 +268,56 @@ class bank_transfer{
 		add_settings_field( 
 			'bank_transfer_name', 
 			esc_html(__( 'Bank Name', 'dynamicpackages' )), 
-			array('bank_transfer', 'input_text'), 
+			array(&$this, 'input_text'), 
 			'bank_transfer_settings', 
 			'bank_transfer_settings_section', 'bank_transfer_name'
 		);		
 		add_settings_field( 
 			'bank_transfer_type', 
 			esc_html(__( 'Account Type', 'dynamicpackages' )), 
-			array('bank_transfer', 'display_bank_transfer_type'), 
+			array(&$this, 'display_bank_transfer_type'), 
 			'bank_transfer_settings', 
 			'bank_transfer_settings_section'
 		);	
 		add_settings_field( 
 			'bank_transfer_account', 
 			esc_html(__( 'Account Name', 'dynamicpackages' )), 
-			array('bank_transfer', 'input_text'), 
+			array(&$this, 'input_text'), 
 			'bank_transfer_settings', 
 			'bank_transfer_settings_section', 'bank_transfer_account'
 		);			
 		
 		add_settings_field( 
-			'bank_transfer', 
+			$this->gateway_name, 
 			esc_html(__( 'Account Number', 'dynamicpackages' )), 
-			array('bank_transfer', 'input_number'), 
+			array(&$this, 'input_number'), 
 			'bank_transfer_settings', 
-			'bank_transfer_settings_section', 'bank_transfer'
+			'bank_transfer_settings_section', $this->gateway_name
 		);	
 		add_settings_field( 
 			'bank_transfer_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array('bank_transfer', 'input_number'), 
+			array(&$this, 'input_number'), 
 			'bank_transfer_settings', 
 			'bank_transfer_control_section', 'bank_transfer_min'
 		);
 		add_settings_field( 
 			'bank_transfer_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array('bank_transfer', 'display_bank_transfer_show'), 
+			array(&$this, 'display_bank_transfer_show'), 
 			'bank_transfer_settings', 
 			'bank_transfer_control_section'
 		);		
 	}
 	
-	public static function input_text($name){
+	public function input_text($name){
 		$option = get_option($name);
 		?>
 		<input type="text" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" />
 		<?php
 	}
 	
-	public static function input_number($name){
+	public function input_number($name){
 		$option = get_option($name);
 		?>
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
@@ -320,7 +325,7 @@ class bank_transfer{
 	}	
 		
 	
-	public static function display_bank_transfer_type() { ?>
+	public function display_bank_transfer_type() { ?>
 		<select name='bank_transfer_type'>
 			<option value="0" <?php selected(get_option('bank_transfer_type'), 0); ?>><?php echo esc_html('Saving', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option('bank_transfer_type'), 1); ?>><?php echo esc_html('Checking', 'dynamicpackages'); ?></option>
@@ -328,18 +333,18 @@ class bank_transfer{
 	<?php }
 			
 	
-	public static function display_bank_transfer_show() { ?>
+	public function display_bank_transfer_show() { ?>
 		<select name='bank_transfer_show'>
 			<option value="0" <?php selected(get_option('bank_transfer_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option('bank_transfer_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }	
 
-	public static function add_settings_page()
+	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Bank', 'Bank', 'manage_options', 'bank_transfer', array('bank_transfer', 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', 'Bank', 'Bank', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
-	public static function settings_page()
+	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action='options.php' method='post'>
@@ -354,39 +359,39 @@ class bank_transfer{
 		
 		<?php
 	}
-	public static function button($output)
+	public function button($output)
 	{
-		if(self::show_bank() && in_array(self::gateway_name(), self::list_gateways_cb()))
+		if($this->show_bank() && in_array($this->gateway_name(), $this->list_gateways_cb()))
 		{
 			$output .= ' <button class="pure-button bottom-20 pure-button-bank  withbank rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html(__('Local Bank', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
-	public static function list_gateways_cb()
+	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
 	}
-	public static function gateway_name()
+	public function gateway_name()
 	{
 		return __('Local Bank Transfer', 'dynamicpackages');
 	}
-	public static function add_gateway($array)
+	public function add_gateway($array)
 	{
-		if(self::show_bank() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		if($this->show_bank() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
-			$array[] = self::gateway_name();
+			$array[] = $this->gateway_name();
 		}
 		return $array;	
 	}
-	public static function scripts()
+	public function scripts()
 	{
-		if(self::show_bank())
+		if($this->show_bank())
 		{
-			wp_add_inline_style('minimalLayout', self::css());
-			wp_add_inline_script('dynamicpackages', self::js(), 'before');	
+			wp_add_inline_style('minimalLayout', $this->css());
+			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public static function css()
+	public function css()
 	{
 		ob_start();
 		?>
@@ -400,7 +405,7 @@ class bank_transfer{
 		ob_end_clean();
 		return $output;			
 	}
-	public static function js()
+	public function js()
 	{
 		ob_start();
 		?>
@@ -412,7 +417,7 @@ class bank_transfer{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(bank_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('bank_transfer');
+				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
