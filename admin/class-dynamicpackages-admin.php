@@ -169,12 +169,12 @@ class dynamicpackages_Admin {
 		return $output;	
 	}
 	
-	public static function add_settings_page()
+	public  function add_settings_page()
 	{
 		add_submenu_page( 'edit.php?post_type=packages', 'Dynamicpackages - Settings', '<strong>Settings</strong>', 'manage_options', 'dynamicpackages', array(&$this, 'settings_page'));
 	}
 
-	public static function settings_init(  ) { 
+	public function settings_init(  ) { 
 
 		//recaptcha
 		register_setting('tp_settings', 'captcha_site_key', 'sanitize_user');
