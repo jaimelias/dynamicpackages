@@ -368,7 +368,7 @@ class yappy_direct{
 			{
 				var yappy_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/yappy/yappy.svg'});
 				$(yappy_logo).attr({'width': '80', 'height': '69'});
-				$('#dynamic-checkout').addClass('hidden');
+				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(yappy_logo);
 				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});

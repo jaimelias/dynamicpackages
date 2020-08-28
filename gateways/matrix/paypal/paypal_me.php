@@ -336,7 +336,7 @@ class paypal_me{
 			$('.withpaypal').click(function(){
 				var paypal_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/paypal/paypal.svg'});
 				$(paypal_logo).attr({'width': '205', 'height': '50'});
-				$('#dynamic-checkout').addClass('hidden');
+				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(paypal_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();

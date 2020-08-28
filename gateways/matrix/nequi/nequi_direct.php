@@ -370,7 +370,7 @@ class nequi_direct{
 			{
 				var nequi_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
 				$(nequi_logo).attr({'width': '214', 'height': '48'});
-				$('#dynamic-checkout').addClass('hidden');
+				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(nequi_logo);
 				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});

@@ -316,7 +316,7 @@ function dy_recaptcha()
 	var checkout_widget;
 	var quote_widget;
 	
-	if(jQuery('#dynamic-checkout').length)
+	if(jQuery('#dy_checkout_form').length)
 	{
 		args.callback = function(token){
 			return new Promise(function(resolve, reject) { 

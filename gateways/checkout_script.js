@@ -1,13 +1,13 @@
 $(function(){
 	fields_paguelo();
 	dy_payment_method();
-	dy_populate_checkout($('#dynamic-checkout'));
+	dy_populate_checkout($('#dy_checkout_form'));
 });
 
 function dy_populate_checkout(form)
 {
 	var input = $(form).find('input');
-	input = $(input).add($('#dynamic-checkout').find('select'));
+	input = $(input).add($('#dy_checkout_form').find('select'));
 	
 	$(input).each(function(){
 		
@@ -59,15 +59,15 @@ function dy_payment_method()
 		}		
 		
 		$('#dynamic_form').addClass('hidden');
-		$('#dynamic-checkout').removeClass('hidden');
-		$('#dynamic-checkout').find('input[name="name"]').focus();
+		$('#dy_checkout_form').removeClass('hidden');
+		$('#dy_checkout_form').find('input[name="name"]').focus();
 	});
 }
 
 function fields_paguelo()
 {
 	var paguelo_prop = booking_args();
-	var paguelo_form = $('#dynamic-checkout');
+	var paguelo_form = $('#dy_checkout_form');
 	
 	for(var key in paguelo_prop)
 	{
@@ -102,7 +102,7 @@ function fields_paguelo()
 
 function checkout_paguelo(token)
 {
-	var paguelo_form = $('#dynamic-checkout');
+	var paguelo_form = $('#dy_checkout_form');
 	var invalid_field = 0;
 	var exclude_storage = ['CCNum', 'CVV2', 'sea_recaptcha', 'sea_pax', 's_passengers'];
 	

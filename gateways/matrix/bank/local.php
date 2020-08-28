@@ -434,7 +434,7 @@ class bank_transfer{
 			$('.withbank').click(function()
 			{
 				var bank_logo = $('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html(get_option('bank_transfer_name')); ?></strong></p>').addClass('text-muted');
-				$('#dynamic-checkout').addClass('hidden');
+				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(bank_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();

@@ -564,7 +564,7 @@ class wire_transfer{
 			{
 				var wire_logo = $('<span style="font-size: 3em;"></span>').addClass('text-muted');
 				wire_logo.append('<i class="fas fa-globe"></i>');
-				$('#dynamic-checkout').addClass('hidden');
+				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(wire_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();

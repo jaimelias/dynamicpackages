@@ -2,7 +2,7 @@
 <div id="credit_card_form">
 		
 	<div id="dynamic_terms">
-		<form id="dynamic-checkout" class="hidden" method="post" action="<?php echo esc_url(get_permalink().'#checkout'); ?>">
+		<form id="dy_checkout_form" class="hidden" method="post" action="<?php echo esc_url(get_permalink().'#checkout'); ?>">
 		
 	<input type="hidden" name="dy_recaptcha" />
 		
