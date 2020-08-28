@@ -16,20 +16,36 @@ class paypal_me{
 		}
 		else
 		{
+			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('the_content', array(&$this, 'filter_content'), 101);
 			add_filter('the_title', array(&$this, 'title'), 101);
 			add_filter('pre_get_document_title', array(&$this, 'title'), 101);
 			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 101);
-			
 			add_filter('gateway_buttons', array(&$this, 'button'), 2);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 			add_filter('gateway_icons', array(&$this, 'icon'), 2);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
 		}		
 	}
+
+	public function send_data()
+	{		
+		if(dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		{
+			global $dy_valid_recaptcha;
+
+			if(isset($dy_valid_recaptcha))
+			{
+				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
+				$this->send();
+			}
+		}
+
+	}
+
 	public function filter_excerpt($excerpt)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',');
 		}
@@ -37,20 +53,26 @@ class paypal_me{
 	}
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
-			if(dynamicpackages_Validators::validate_recaptcha())
+			global $dy_valid_recaptcha;
+
+			if(isset($dy_valid_recaptcha))
 			{
-				dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
+				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
 				$content = $this->message();
 				$this->send();
 			}
+			else
+			{
+				$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+			}			
 		}
 		return $content;
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Thank you for choosing Paypal', 'dynamicpackages'));
 		}
@@ -110,9 +132,9 @@ class paypal_me{
 		}
 		else
 		{
-			if(isset($_POST['dy_platform']) && isset($_POST['total']))
+			if(isset($_POST['dy_request']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['paypal_is_valid_request'] = true;
 					$output = true;
@@ -320,7 +342,7 @@ class paypal_me{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(paypal_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -360,7 +382,7 @@ class paypal_me{
 		
 		$admin_email = get_option('admin_email');
 		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['fname']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_platform']);
+		$admin_subject = sanitize_text_field($_POST['fname']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
 		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
 		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
 		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';

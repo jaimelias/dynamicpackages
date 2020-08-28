@@ -16,6 +16,7 @@ class bank_transfer{
 		}
 		else
 		{
+			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('the_content', array(&$this, 'filter_content'), 102);
 			add_filter('the_title', array(&$this, 'title'), 102);
 			add_filter('pre_get_document_title', array(&$this, 'title'), 102);
@@ -25,6 +26,22 @@ class bank_transfer{
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
 		}		
 	}
+
+	public function send_data()
+	{		
+		if(dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		{
+			global $dy_valid_recaptcha;
+
+			if(isset($dy_valid_recaptcha))
+			{
+				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
+				$this->send();
+			}
+		}
+
+	}
+
 	public function is_active()
 	{
 		$output = false;
@@ -77,9 +94,9 @@ class bank_transfer{
 		}
 		else
 		{
-			if(isset($_POST['dy_platform']) && isset($_POST['total']))
+			if(isset($_POST['dy_request']) && isset($_POST['total']))
 			{
-				if($_POST['dy_platform'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
 					$GLOBALS['bank_is_valid_request'] = true;
 					$output = true;
@@ -91,7 +108,7 @@ class bank_transfer{
 	}
 	public function filter_excerpt($excerpt)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',');
 		}
@@ -99,14 +116,20 @@ class bank_transfer{
 	}
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
-			if(dynamicpackages_Validators::validate_recaptcha())
+			global $dy_valid_recaptcha;
+
+			if(isset($dy_valid_recaptcha))
 			{
-				dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
+				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
 				$content = $this->message();
 				$this->send();
 			}
+			else
+			{
+				$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+			}	
 		}
 		return $content;
 	}
@@ -116,7 +139,7 @@ class bank_transfer{
 		
 		$admin_email = get_option('admin_email');
 		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['fname']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_platform']);
+		$admin_subject = sanitize_text_field($_POST['fname']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
 		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
 		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
 		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';
@@ -130,7 +153,7 @@ class bank_transfer{
 	}	
 	public function title($title)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::validate_quote() && $this->is_valid_request())
+		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Pay From Your Bank', 'dynamicpackages'));
 		}
@@ -417,7 +440,7 @@ class bank_transfer{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(bank_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_platform"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)

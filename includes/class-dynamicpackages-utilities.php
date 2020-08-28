@@ -939,5 +939,28 @@ class dy_utilities {
 		
 		return $hour;
 	}	
+
+
+	public static function webhook($option, $data)
+	{
+		$webhook = get_option($option);
+		
+		if($webhook)
+		{
+			if(!filter_var($webhook, FILTER_VALIDATE_URL) === false)
+			{
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $webhook);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data)));
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch,CURLOPT_TIMEOUT, 20);
+				$result = curl_exec($ch);
+				curl_close($ch);
+			}
+		}
+
+	}	
 	
 }

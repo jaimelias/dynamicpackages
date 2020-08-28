@@ -348,7 +348,7 @@ function dy_request_form(token)
 {
 	var exclude = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	var form = jQuery('#dynamic_form');
-	var exclude_storage = ['dy_recaptcha', 'total', 'dy_platform'];
+	var exclude_storage = ['dy_recaptcha', 'total', 'dy_request'];
 	
 	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), function(data) {
 		var obj = {};
@@ -414,7 +414,7 @@ function dy_request_form(token)
 			//facebook pixel
 			if(typeof fbq !== typeof undefined)
 			{
-				if(jQuery(form).find('input[name="dy_platform"]').val() == 'quote')
+				if(jQuery(form).find('input[name="dy_request"]').val() == 'quote')
 				{
 					console.log('Lead');
 					fbq('track', 'Lead');
@@ -435,7 +435,7 @@ function dy_request_form(token)
 				eventArgs.eventAction = 'Submit';
 				eventArgs.eventLabel = dy_vars.title;
 				
-				if(jQuery(form).find('input[name="dy_platform"]').val() == 'quote')
+				if(jQuery(form).find('input[name="dy_request"]').val() == 'quote')
 				{
 					console.log('Lead');
 					eventArgs.eventCategory = 'Lead';

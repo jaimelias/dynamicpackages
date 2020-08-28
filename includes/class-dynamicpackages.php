@@ -75,6 +75,7 @@ class dynamicpackages {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->mailer = new dynamicpackages_Mailer();
+		$this->validate_recaptcha = dynamicpackages_Validators::validate_recaptcha();
 	}
 
 	/**
@@ -115,13 +116,14 @@ class dynamicpackages {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/forms.php';			
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/tables.php';			
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/add_to_calendar.php';			
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/validators.php';						
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/validators.php';						
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/shortcodes.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/reviews.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'mailer/mailer.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-ical.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-json.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-utilities.php';		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/form-actions.php';		
 
 		$this->loader = new dynamicpackages_Loader();
 
@@ -187,6 +189,7 @@ class dynamicpackages {
 		$plugins_shortcodes = new dynamicpackages_Shortcodes();
 		$plugins_json = new dynamicpackages_Json();
 		$plugins_ical = new dynamicpackages_Ical();
+		$plugin_form_actions = new dynamicpackages_Form_Actions();
 	}
 
 	/**

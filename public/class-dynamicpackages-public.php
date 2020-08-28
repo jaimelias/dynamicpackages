@@ -136,7 +136,7 @@ class dynamicpackages_Public {
 			$dep = array( 'jquery', 'landing-cookies');			
 			wp_enqueue_script('landing-cookies', plugin_dir_url( __FILE__ ) . 'js/cookies.js', array( 'jquery'), '', true );
 			
-			if(is_booking_page() || dynamicpackages_Validators::validate_quote())
+			if(is_booking_page())
 			{
 				wp_enqueue_script('invisible-recaptcha', 'https://www.google.com/recaptcha/api.js?onload=dy_recaptcha&render=explicit', array(), 'async_defer', true );
 				array_push($dep, 'invisible-recaptcha');
@@ -354,45 +354,6 @@ class dynamicpackages_Public {
 					$content .= '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
 				}
 			}
-			else if(dynamicpackages_Validators::is_checkout_or_quote())
-			{
-				if(dynamicpackages_Validators::validate_checkout())
-				{
-					$content = dynamicpackages_Checkout::checkout();
-				}
-				elseif(dynamicpackages_Validators::validate_quote())
-				{
-					if(dynamicpackages_Validators::validate_recaptcha())
-					{
-						$headers = array('Content-type: text/html');
-						array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
-						$body = __('New Request from', 'dynamicpackages');
-						$body .= ' ';
-						$body .= sanitize_text_field($_POST['fname']) .' '.sanitize_text_field($_POST['lastname']);
-						$body .= ',<br/><br/>';
-						$body .= sanitize_text_field($_POST['description']);
-						$body .= '<br/><br/>';
-						$body .= __('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']);
-						$body .= '<br/>';
-						$body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']);
-						$body .= '<br/>';
-						$body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']);
-						
-						wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['fname']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
-						dynamicpackages_Checkout::webhook('dy_quote_webhook', json_encode($_POST));
-						$content = '<p class="minimal_success"><strong>'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</strong></p>';
-						
-					}
-					else
-					{
-						$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
-					}
-				}
-				else
-				{
-					$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
-				}
-			}
 			else
 			{
 				
@@ -590,11 +551,7 @@ class dynamicpackages_Public {
 			elseif(dynamicpackages_Validators::validate_checkout())
 			{
 				$title = esc_html(__('Checkout', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-			}
-			elseif(dynamicpackages_Validators::validate_quote())
-			{
-				$title = esc_html(__('Quote', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-			}			
+			}		
 			
 			global $post;
 			if($post->post_parent > 0)
@@ -786,11 +743,7 @@ class dynamicpackages_Public {
 				elseif(dynamicpackages_Validators::validate_checkout())
 				{
 					$title = '<span class="linkcolor">'.esc_html(__('Checkout', 'dynamicpackages')).'</span>';
-				}
-				elseif(dynamicpackages_Validators::validate_quote())
-				{
-					$title = '<span class="linkcolor">'.esc_html(__('Quote', 'dynamicpackages')).'</span>';
-				}				
+				}			
 				else
 				{
 					$title = '<span itemprop="name">'.esc_html($title).'</span>';

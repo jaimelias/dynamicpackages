@@ -10,7 +10,7 @@
 		</div>
 		<hr />
 	
-		<input type="hidden" name="dy_platform" value="quote" />
+		<input type="hidden" name="dy_request" value="request" />
 		<input type="hidden" name="dy_recaptcha" />
 		<input type="hidden" name="channel" class="channel" value="" />
 		<input type="hidden" name="device" class="device" value="" />

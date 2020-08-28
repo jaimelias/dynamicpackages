@@ -279,13 +279,13 @@ class dynamicpackages_Checkout
 		else if($status == 1)
 		{
 			self::declined_mail($checkout);			
-			self::webhook('dy_webhook', json_encode($checkout));
+			dy_utilities::webhook('dy_webhook', json_encode($checkout));
 			$output = '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-phone" aria-hidden="true"></i></span> '.esc_html(__('Payment Declined. Please contact your bank to authorize the transaction.', 'dynamicpackages')).'</h2></div>';
 			return $output;
 		}
 		else
 		{
-			self::webhook('dy_webhook', json_encode($checkout));
+			dy_utilities::webhook('dy_webhook', json_encode($checkout));
 				
 			$output = '<div class="minimal_success padding-10 bottom-20"><h2><span class="large"><i class="fas fa-thumbs-up"></i></span> '.esc_html(__('Hello', 'dynamicpackages').' '.$checkout['Name'].' '.__('Payment approved. Thank you for order! You will receive and email confirmation shortly at', 'dynamicpackages').' '.$checkout['Email']).'</h2></div>';
 			$output .= '<div class="text-center">'.add_to_calendar::show().'</div>';
@@ -457,23 +457,6 @@ class dynamicpackages_Checkout
 		return $script;			
 	}
 	
-	public static function webhook($option, $data)
-	{
-		$webhook = get_option($option);
-		
-		if(!filter_var($webhook, FILTER_VALIDATE_URL) === false)
-		{
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $webhook);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data)));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch,CURLOPT_TIMEOUT, 20);
-			$result = curl_exec($ch);
-			curl_close($ch);
-		}
-	}
 	public static function tax_amount()
 	{
 		$output = 0;
