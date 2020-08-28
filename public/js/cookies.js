@@ -6,28 +6,6 @@ function set_cookies()
 	set_landing_path();
 	set_landing_domain();
 	set_device();
-	set_affiliate();
-}
-function set_affiliate()
-{
-	if(affiliate_change() != '')
-	{
-		if(getCookie('affiliate') != affiliate_change())
-		{
-			setCookie('affiliate', affiliate_change(), 30);
-		}
-	}
-	if(getCookie('affiliate') == '')
-	{
-		if(typeof getUrlParameter('ref') !== 'undefined')
-		{
-			if(getUrlParameter('ref') != '')
-			{
-				setCookie('affiliate', getUrlParameter('ref'), 30);
-			}
-		}		
-	}
-	console.log('affiliate: ' + getCookie('affiliate'));
 }
 
 function set_device()
@@ -48,8 +26,8 @@ function set_device()
 			setCookie('device', 'undefined', 30);
 		}				
 	}
-	$('input.device').each(function(){
-		$(this).val(getCookie('device'));
+	jQuery('input.device').each(function(){
+		jQuery(this).val(getCookie('device'));
 	});	
 	console.log('device: ' + getCookie('device'));
 }
@@ -65,8 +43,8 @@ function set_landing_domain()
 			setCookie('landing_domain', 'undefined', 30);
 		}		
 	}
-	$('input.landing_domain').each(function(){
-		$(this).val(getCookie('landing_domain'));
+	jQuery('input.landing_domain').each(function(){
+		jQuery(this).val(getCookie('landing_domain'));
 	});		
 	console.log('landing_domain: ' + getCookie('landing_domain'));
 }
@@ -82,8 +60,8 @@ function set_landing_path()
 			setCookie('landing_path', 'undefined', 30);
 		}	
 	}
-	$('input.landing_path').each(function(){
-		$(this).val(getCookie('landing_path'));
+	jQuery('input.landing_path').each(function(){
+		jQuery(this).val(getCookie('landing_path'));
 	});		
 	console.log('landing_path: ' + getCookie('landing_path'));
 }
@@ -152,8 +130,8 @@ function set_channel()
 	}
 	
 	
-	$('input.channel').each(function(){
-		$(this).val(getCookie('channel'));
+	jQuery('input.channel').each(function(){
+		jQuery(this).val(getCookie('channel'));
 	});
 
 	console.log('channel: '+ getCookie('channel'));

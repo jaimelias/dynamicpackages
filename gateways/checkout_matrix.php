@@ -286,12 +286,7 @@ class dynamicpackages_Checkout
 		else
 		{
 			self::webhook('dy_webhook', json_encode($checkout));
-			
-			if(dynamicpackages_Affiliates::valid_affiliate_hash($checkout))
-			{
-				dynamicpackages_Affiliates::affiliate_mail($checkout);
-			}			
-			
+				
 			$output = '<div class="minimal_success padding-10 bottom-20"><h2><span class="large"><i class="fas fa-thumbs-up"></i></span> '.esc_html(__('Hello', 'dynamicpackages').' '.$checkout['Name'].' '.__('Payment approved. Thank you for order! You will receive and email confirmation shortly at', 'dynamicpackages').' '.$checkout['Email']).'</h2></div>';
 			$output .= '<div class="text-center">'.add_to_calendar::show().'</div>';
 			$output .= self::google_ads_tracker();
@@ -397,22 +392,12 @@ class dynamicpackages_Checkout
 		$description = self::get_description();
 		$coupon_code = null;
 		$coupon_discount = null;
-		$affiliate = null;
-		$affiliate_hash = null;
-		$affiliate_total = null;
 		
 		if(dynamicpackages_Validators::valid_coupon())
 		{
 			$coupon_code = dy_utilities::get_coupon('code');
 			$coupon_discount = dy_utilities::get_coupon('discount');
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
-		}
-		
-		if(dynamicpackages_Affiliates::valid_affiliate())
-		{
-			$affiliate = dynamicpackages_Affiliates::get_affiliate('id');
-			$affiliate_hash = dynamicpackages_Affiliates::affiliate_hash();
-			$affiliate_total = dy_utilities::currency_format(dy_utilities::subtotal());
 		}
 		
 		$checkout_vars = array(
@@ -442,9 +427,6 @@ class dynamicpackages_Checkout
 			'package_url' => get_permalink(),
 			'hash' => sanitize_text_field($_GET['hash']),
 			'currency' => 'USD',
-			'affiliate' => esc_html($affiliate),
-			'affiliate_hash' => esc_html($affiliate_hash),
-			'affiliate_total' => esc_html($affiliate_total),
 			'outstanding' =>dy_utilities::currency_format(dy_sum_tax(self::outstanding())),
 			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
 			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),

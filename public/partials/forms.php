@@ -52,10 +52,6 @@ class dynamicpackages_Forms
 				</div>				
 			</div>
 				
-				<?php if(dynamicpackages_Affiliates::valid_affiliate()): ?>
-				<input type="hidden" name="ref" value="<?php echo esc_html(substr(sanitize_text_field($_GET['ref']), 0, 25));?>" />
-				<?php endif; ?>
-				
 			</form>		
 			
 		<?php
@@ -212,22 +208,7 @@ class dynamicpackages_Forms
 			
 			
 			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="light bottom-5 block">'.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_html($get_coupon).'" /></div>';
-		}
-		
-		if(dynamicpackages_Affiliates::has_affiliate())
-		{
-			$get_affiliate = '';
-			
-			if(isset($_GET['ref']))
-			{
-				if($_GET['ref'] != '')
-				{
-					$get_affiliate = sanitize_text_field($_GET['ref']);
-					$form .= '<input type="hidden" name="ref" value="'.esc_html($get_affiliate).'" />';
-				}
-			}	
-		}
-				
+		}		
 		
 		$form .= '<div><button type="submit" class="width-100 booking_submit '.esc_html($margin).' block pure-button pure-button-primary rounded">'.esc_html($book_now_text).' '.$book_now_icon.'</button></div>';
 		$form .= $get_quote;		

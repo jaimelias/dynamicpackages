@@ -1,11 +1,11 @@
-$(function()
+
+jQuery(function()
 {
 	booking_datepicker();
 	booking_hourpicker();
 	booking_quote();
 	booking_submit();
-	booking_affiliate();
-	booking_populate($('#dynamic_form'));
+	booking_populate(jQuery('#dynamic_form'));
 	booking_if_country();
 	booking_coupon();
 	
@@ -55,12 +55,12 @@ function booking_args()
 		}
 	}
 	
-	$('#dynamic_table').find('select.add_ons').each(function(){
-		var field = $(this);
+	jQuery('#dynamic_table').find('select.add_ons').each(function(){
+		var field = jQuery(this);
 		
-		if($(field).val() == 1)
+		if(jQuery(field).val() == 1)
 		{
-			add_ons_id.push(parseFloat($(field).attr('data-id')));
+			add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
 		}
 	});
 	
@@ -226,33 +226,33 @@ function booking_args()
 
 function booking_calc()
 {
-	$(document).on('change', '#dynamic_table select.add_ons', function(){
+	jQuery(document).on('change', '#dynamic_table select.add_ons', function(){
 		
 		var args = booking_args();
 		
-		$('input[name="total"]').val(args.total);
+		jQuery('input[name="total"]').val(args.total);
 				
-		$('.dy_calc').each(function(){
+		jQuery('.dy_calc').each(function(){
 			
-			if($(this).hasClass('dy_calc_amount'))
+			if(jQuery(this).hasClass('dy_calc_amount'))
 			{
-				$(this).text(args.amount);
+				jQuery(this).text(args.amount);
 			}
-			if($(this).hasClass('dy_calc_regular'))
+			if(jQuery(this).hasClass('dy_calc_regular'))
 			{
-				$(this).text(args.regular_amount);
+				jQuery(this).text(args.regular_amount);
 			}			
-			if($(this).hasClass('dy_calc_total'))
+			if(jQuery(this).hasClass('dy_calc_total'))
 			{
-				$(this).text(args.total);
+				jQuery(this).text(args.total);
 			}
-			if($(this).hasClass('dy_calc_outstanding'))
+			if(jQuery(this).hasClass('dy_calc_outstanding'))
 			{
-				$(this).text(args.outstanding);
+				jQuery(this).text(args.outstanding);
 			}
-			if($(this).hasClass('dy_calc_tax_amount'))
+			if(jQuery(this).hasClass('dy_calc_tax_amount'))
 			{
-				$(this).text(args.tax_amount);
+				jQuery(this).text(args.tax_amount);
 			}				
 		});		
 	});
@@ -260,24 +260,24 @@ function booking_calc()
 
 function booking_if_country()
 {
-	$(window).on('load', function(){
-		if($('.dy_show_country').length)
+	jQuery(window).on('load', function(){
+		if(jQuery('.dy_show_country').length)
 		{
 			if(dy_ipgeolocation() != '')
 			{
 				if(getCookie('country_code') == '')
 				{
-					$.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), function(data){
+					jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), function(data){
 						if(data.hasOwnProperty('country_code2'))
 						{
-							$('.dy_show_country_' + data.country_code2).closest('.dy_coupon').removeClass('hidden');
+							jQuery('.dy_show_country_' + data.country_code2).closest('.dy_coupon').removeClass('hidden');
 							setCookie('country_code', data.country_code2, 30);
 						}
 					});				
 				}
 				else
 				{
-					$('.dy_show_country_' + getCookie('country_code')).closest('.dy_coupon').removeClass('hidden');
+					jQuery('.dy_show_country_' + getCookie('country_code')).closest('.dy_coupon').removeClass('hidden');
 				}
 			}
 		}		
@@ -286,12 +286,12 @@ function booking_if_country()
 
 function booking_populate(form)
 {
-	var input = $(form).find('input');
+	var input = jQuery(form).find('input');
 	
-	$(input).each(function(){
+	jQuery(input).each(function(){
 		
-		var field = $(this);
-		var name = $(field).attr('name');
+		var field = jQuery(this);
+		var name = jQuery(field).attr('name');
 		
 		if (typeof(Storage) !== 'undefined')
 		{
@@ -300,7 +300,7 @@ function booking_populate(form)
 				if(sessionStorage.getItem(name) != null && sessionStorage.getItem(name) != '')
 				{
 					var item = sessionStorage.getItem(name);
-					$(field).val(item);
+					jQuery(field).val(item);
 				}
 			}
 		}
@@ -316,7 +316,7 @@ function dy_recaptcha()
 	var checkout_widget;
 	var quote_widget;
 	
-	if($('#dynamic-checkout').length)
+	if(jQuery('#dynamic-checkout').length)
 	{
 		args.callback = function(token){
 			return new Promise(function(resolve, reject) { 
@@ -329,7 +329,7 @@ function dy_recaptcha()
 		};
 		checkout_widget = grecaptcha.render('confirm_checkout', args);
 	}
-	if($('#dynamic_form').length)
+	if(jQuery('#dynamic_form').length)
 	{
 		args.callback = function(token){
 			return new Promise(function(resolve, reject) { 
@@ -344,33 +344,13 @@ function dy_recaptcha()
 	}
 }
 
-function booking_affiliate()
-{
-	if(getCookie('affiliate') != '')
-	{
-		$('form.booking_form').each(function()
-		{
-			var form = $(this);
-			
-			if($(form).find('input[name="ref"]').length == 0)
-			{
-				var input = $('<input/>');
-				input.attr({'value': getCookie('affiliate'), 'name': 'ref'});
-				input.addClass('hidden');
-				$(form).append(input);		
-				console.log(form);
-			}
-		});
-	}
-}
-
 function dy_request_form(token)
 {
 	var exclude = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
-	var form = $('#dynamic_form');
+	var form = jQuery('#dynamic_form');
 	var exclude_storage = ['dy_recaptcha', 'total', 'dy_platform'];
 	
-	$.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), function(data) {
+	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), function(data) {
 		var obj = {};
 
 		for(var k in data)
@@ -380,7 +360,7 @@ function dy_request_form(token)
 			  if(exclude.indexOf(k) == -1)
 			  {
 				obj[k] = data[k];
-				$(form).find('input.'+k).val(data[k]);
+				jQuery(form).find('input.'+k).val(data[k]);
 			  }
 		  }
 		  else
@@ -390,7 +370,7 @@ function dy_request_form(token)
 				  if(exclude.indexOf(k+'_'+sk) == -1)
 				  {
 					obj[k+'_'+sk] = data[k][sk];
-					$(form).find('input.'+k+'_'+sk).val(data[k][sk]);
+					jQuery(form).find('input.'+k+'_'+sk).val(data[k][sk]);
 				  }	   
 			  }
 		  }
@@ -399,26 +379,26 @@ function dy_request_form(token)
 		
 		var invalids = 0;
 		
-		$(form).find('input').each(function(){
+		jQuery(form).find('input').each(function(){
 			
-			var field = $(this);
-			var name = $(field).attr('name');
+			var field = jQuery(this);
+			var name = jQuery(field).attr('name');
 			
-			if($(this).hasClass('required') && $(this).val() == '')
+			if(jQuery(this).hasClass('required') && jQuery(this).val() == '')
 			{
 				invalids++;
-				$(this).addClass('invalid_field');
-				console.log($(this).attr('name')+ ' invalid');
+				jQuery(this).addClass('invalid_field');
+				console.log(jQuery(this).attr('name')+ ' invalid');
 			}
 			else
 			{
-				$(this).removeClass('invalid_field');
+				jQuery(this).removeClass('invalid_field');
 				
 				if (typeof name !== typeof undefined && name !== false)
 				{
 					if(!exclude_storage.includes(name))
 					{
-						sessionStorage.setItem(name, $(field).val());
+						sessionStorage.setItem(name, jQuery(field).val());
 					}
 				}				
 			}
@@ -427,14 +407,14 @@ function dy_request_form(token)
 		if(invalids == 0)
 		{
 			dy_populate_form(form);
-			$(form).find('input[name="dy_recaptcha"]').val(token);
-			//console.log($(form).serializeArray());
+			jQuery(form).find('input[name="dy_recaptcha"]').val(token);
+			//console.log(jQuery(form).serializeArray());
 			//console.log(token); 
 
 			//facebook pixel
 			if(typeof fbq !== typeof undefined)
 			{
-				if($(form).find('input[name="dy_platform"]').val() == 'quote')
+				if(jQuery(form).find('input[name="dy_platform"]').val() == 'quote')
 				{
 					console.log('Lead');
 					fbq('track', 'Lead');
@@ -442,7 +422,7 @@ function dy_request_form(token)
 				else
 				{
 					console.log('Purchase');
-					var total = parseFloat($(form).find('input[name="total"]').val());
+					var total = parseFloat(jQuery(form).find('input[name="total"]').val());
 					fbq('track', 'Purchase', {value: total, currency: 'USD'});
 				}
 			}
@@ -455,7 +435,7 @@ function dy_request_form(token)
 				eventArgs.eventAction = 'Submit';
 				eventArgs.eventLabel = dy_vars.title;
 				
-				if($(form).find('input[name="dy_platform"]').val() == 'quote')
+				if(jQuery(form).find('input[name="dy_platform"]').val() == 'quote')
 				{
 					console.log('Lead');
 					eventArgs.eventCategory = 'Lead';
@@ -468,7 +448,7 @@ function dy_request_form(token)
 				ga('send', 'event', eventArgs);	
 			}			
 
-			$(form).submit();
+			jQuery(form).submit();
 		}	
 	});
 	return false;
@@ -484,7 +464,7 @@ function dy_populate_form(form)
 		{
 			if(typeof checkout_obj[key] == 'string' || Number.isInteger(checkout_obj[key]))
 			{
-				form.append($('<input>').attr({'type': 'hidden', 'name': key, 'value': checkout_obj[key]}));						
+				form.append(jQuery('<input>').attr({'type': 'hidden', 'name': key, 'value': checkout_obj[key]}));						
 			}
 		}
 	}		
@@ -493,20 +473,20 @@ function dy_populate_form(form)
 function dy_country_dropdown(pluginurl, htmllang)
 {
 	var pluginurl = dy_url();
-	var htmllang = $("html").attr("lang").slice(0, -3);
+	var htmllang = jQuery("html").attr("lang").slice(0, -3);
 	
-	$(window).on('load', function (e) {
+	jQuery(window).on('load', function (e) {
 		
-		if($('.countrylist').length > 0)
+		if(jQuery('.countrylist').length > 0)
 		{
-			$.getJSON( pluginurl + 'languages/countries/'+htmllang+'.json')
+			jQuery.getJSON( pluginurl + 'languages/countries/'+htmllang+'.json')
 				.done(function(data) 
 				{
 					dy_country_options(data);
 				})
 				.fail(function()
 				{
-					$.getJSON(pluginurl + 'languages/countries/en.json', function(data) {
+					jQuery.getJSON(pluginurl + 'languages/countries/en.json', function(data) {
 
 						dy_country_options(data);
 					});				
@@ -517,14 +497,14 @@ function dy_country_dropdown(pluginurl, htmllang)
 
 function dy_country_options(data)
 {
-	$('.countrylist').each(function() {
+	jQuery('.countrylist').each(function() {
 		
-		var field = $(this);
-		var name = $(field).attr('name');
+		var field = jQuery(this);
+		var name = jQuery(field).attr('name');
 		
 		for (var x = 0; x < data.length; x++) 
 		{
-			var this_option = $('<option></option>').attr({'value': data[x][0]}).html(data[x][1]);
+			var this_option = jQuery('<option></option>').attr({'value': data[x][0]}).html(data[x][1]);
 			
 			if (typeof(Storage) !== 'undefined')
 			{
@@ -536,27 +516,27 @@ function dy_country_options(data)
 						
 						if(item ==  data[x][0])
 						{
-							$(this_option).attr({'selected': 'selected'});
+							jQuery(this_option).attr({'selected': 'selected'});
 						}
 					}
 				}
 			}
 			
-			$(this).append(this_option);
+			jQuery(this).append(this_option);
 		}
 	});		
 }	
 
 function booking_datepicker()
 {
-	$('body').append($('<div>').attr({'id': 'availability_calendar'}));
+	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 	
-	$('.booking_form').find('input[name="booking_date"]').each(function()
+	jQuery('.booking_form').find('input[name="booking_date"]').each(function()
 	{
-		var field = $(this);
+		var field = jQuery(this);
 		var d = new Date();
 		
-		$.getJSON(dy_permalink()+'?json=disabled_dates&stamp='+d.getTime(), function(data){
+		jQuery.getJSON(dy_permalink()+'?json=disabled_dates&stamp='+d.getTime(), function(data){
 			var args = {};
 			args.container = '#availability_calendar';
 			args.format = 'yyyy-mm-dd';
@@ -568,16 +548,16 @@ function booking_datepicker()
 			args.min = json_parse.min;
 			args.max = json_parse.max;
 						
-			if($(field).attr('type') == 'text')
+			if(jQuery(field).attr('type') == 'text')
 			{
-				$(field).pickadate(args);
+				jQuery(field).pickadate(args);
 			}
-			else if($(field).attr('type') == 'date')
+			else if(jQuery(field).attr('type') == 'date')
 			{
-				$(field).attr({'type': 'text'});
-				$(field).pickadate(args);
+				jQuery(field).attr({'type': 'text'});
+				jQuery(field).pickadate(args);
 			}
-			$(field).removeAttr('disabled').attr({'placeholder': ''});
+			jQuery(field).removeAttr('disabled').attr({'placeholder': ''});
 		});
 	});			
 
@@ -585,7 +565,7 @@ function booking_datepicker()
 
 function booking_hourpicker()
 {
-	$(window).on('load', function (e) {
+	jQuery(window).on('load', function (e) {
 		if(typeof(booking_allowed_hours) == "function")
 		{
 			var allowed_hours = booking_allowed_hours();
@@ -598,23 +578,23 @@ function booking_hourpicker()
 			}
 		}
 		
-		$('.booking_form').find('input[name="booking_hour"]').each(function()
+		jQuery('.booking_form').find('input[name="booking_hour"]').each(function()
 		{
-			$(this).pickatime(args);
+			jQuery(this).pickatime(args);
 		});			
 	});
 }
 function booking_submit()
 {	
-	$('.booking_form').submit(function(event){
+	jQuery('.booking_form').submit(function(event){
 		
 		event.preventDefault();
-		var form = $(this);
+		var form = jQuery(this);
 		
 		if(booking_validate(form) == true)
 		{
 			//facebook pixel
-			if($(form).find('input[name="quote"]').length == 0)
+			if(jQuery(form).find('input[name="quote"]').length == 0)
 			{
 				//google analytics
 				ga_click(form, 'Checkout');
@@ -625,27 +605,27 @@ function booking_submit()
 					fbq('track', 'AddToCart');		
 				}
 			}
-			$(form).unbind('submit').submit();
+			jQuery(form).unbind('submit').submit();
 		}			
 	});
 }
 
 function booking_quote()
 {
-	$('.booking_form').find('.booking_quote').click(function(){
+	jQuery('.booking_form').find('.booking_quote').click(function(){
 		
-		var form = $(this).closest('form');
+		var form = jQuery(this).closest('form');
 		
 		if(booking_validate(form) == true)
 		{
-			$(form).find('input[name="quote"]').remove();
+			jQuery(form).find('input[name="quote"]').remove();
 			var args = {};
 			args.name = 'quote';
 			args.type = 'hidden';
 			args.value = true;
-			$(form).append($('<input />').attr(args));
+			jQuery(form).append(jQuery('<input />').attr(args));
 			ga_click(form, 'Quote');
-			$(form).submit();				
+			jQuery(form).submit();				
 		}
 	});
 }
@@ -654,42 +634,42 @@ function booking_validate(form)
 {
 	var invalids = 0;
 				
-	$(form).find('input[type="text"]').each(function(){
-		if($(this).val() == '' && $(this).hasClass('required'))
+	jQuery(form).find('input[type="text"]').each(function(){
+		if(jQuery(this).val() == '' && jQuery(this).hasClass('required'))
 		{
-			$(this).addClass('invalid_field');
+			jQuery(this).addClass('invalid_field');
 			invalids++;
 		}
 		else
 		{
-			$(this).removeClass('invalid_field');
+			jQuery(this).removeClass('invalid_field');
 		}
 	});
 		
 	if(invalids == 0)
 	{	
 
-		var booking_date = $(form).find('input[name="booking_date"]').val();
-		var pax_num = parseInt($(form).find('select[name="pax_regular"]').val());
+		var booking_date = jQuery(form).find('input[name="booking_date"]').val();
+		var pax_num = parseInt(jQuery(form).find('select[name="pax_regular"]').val());
 				
-		if($(form).find('select[name="pax_free"]').length > 0)
+		if(jQuery(form).find('select[name="pax_free"]').length > 0)
 		{
-			pax_num = pax_num + parseInt($(form).find('select[name="pax_free"]').val());
+			pax_num = pax_num + parseInt(jQuery(form).find('select[name="pax_free"]').val());
 		}
-		if($(form).find('select[name="pax_discount"]').length > 0)
+		if(jQuery(form).find('select[name="pax_discount"]').length > 0)
 		{
-			pax_num = pax_num + parseInt($(form).find('select[name="pax_discount"]').val());
+			pax_num = pax_num + parseInt(jQuery(form).find('select[name="pax_discount"]').val());
 		}
 
 		console.log();
 		var hash = (pax_num+booking_date);
 		
-		$(form).find('input[name="hash"]').remove();
+		jQuery(form).find('input[name="hash"]').remove();
 		var args = {};
 		args.name = 'hash';
 		args.type = 'hidden';
 		args.value = sha512(hash);
-		$(form).append($('<input />').attr(args));
+		jQuery(form).append(jQuery('<input />').attr(args));
 		return true;
 	}	
 	else
@@ -702,17 +682,17 @@ function ga_click(form, event_category)
 {
 	if(typeof ga !== typeof undefined)
 	{
-		var booking_date = $(form).find('input[name="booking_date"]');
-		var pax_regular = $(form).find('select[name="pax_regular"]');
-		var departure = Date.parse($(booking_date).val());
+		var booking_date = jQuery(form).find('input[name="booking_date"]');
+		var pax_regular = jQuery(form).find('select[name="pax_regular"]');
+		var departure = Date.parse(jQuery(booking_date).val());
 		var today = new Date();
 		today.setDate(today.getDate() - 2);
 		today = Date.parse(today);
 		var days_between = Math.round((departure-today)/(1000*60*60*24));
 		var eventArgs = {};
 		eventArgs.eventCategory = event_category;
-		eventArgs.eventAction = $('.entry-title').text();
-		eventArgs.eventLabel = days_between+'/'+$(booking_date).val()+'/'+$(pax_regular).val();
+		eventArgs.eventAction = jQuery('.entry-title').text();
+		eventArgs.eventLabel = days_between+'/'+jQuery(booking_date).val()+'/'+jQuery(pax_regular).val();
 		ga('send', 'event', eventArgs);
 	}
 	else
@@ -723,12 +703,12 @@ function ga_click(form, event_category)
 
 function booking_coupon()
 {
-	var el = $('#booking_coupon');
+	var el = jQuery('#booking_coupon');
 	
-	$(el).find('a').click(function(e){
+	jQuery(el).find('a').click(function(e){
 		e.preventDefault();
-		var input = $(el).find('input[name="booking_coupon"]');
-		$(input).toggleClass('hidden');
-		$(input).focus();
+		var input = jQuery(el).find('input[name="booking_coupon"]');
+		jQuery(input).toggleClass('hidden');
+		jQuery(input).focus();
 	});	
 }

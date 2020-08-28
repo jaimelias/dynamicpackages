@@ -33,7 +33,7 @@ $gate['headers'] = array();
 array_push($gate['headers'], 'Content-Type: application/x-www-form-urlencoded');
 array_push($gate['headers'], 'Accept: */*');
 $gate['auth'] = array();
-$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'fname', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'departure_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message', 'affiliate', 'affiliate_hash', 'affiliate_total');
+$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'fname', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'departure_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message');
 $gate['custom_fields'] = array('CCLW');
 $gate['hidden_fields'] = array();
 array_push($gate['hidden_fields'], array('TxType' => 'SALE'));
@@ -84,11 +84,7 @@ if(!is_admin())
 		$gate_webhook['provider_tel'] = 'return package_field("package_provider_tel");';
 		$gate_webhook['provider_mobile'] = 'return package_field("package_provider_mobile");';
 		$gate_webhook['departure_address'] = 'return package_field("package_departure_address");';
-		
-		//affiliate
-		$gate_webhook['affiliate'] = 'return $sanitized_fields["affiliate"];';
-		$gate_webhook['affiliate_name'] = 'return dynamicpackages_Affiliates::get_affiliate("name");';
-		$gate_webhook['affiliate_email'] = 'return dynamicpackages_Affiliates::get_affiliate("email");';
+
 		array_push($gate['webhook'], $gate_webhook);
 	}	
 }
