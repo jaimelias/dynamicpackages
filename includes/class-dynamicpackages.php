@@ -112,7 +112,6 @@ class dynamicpackages {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-metapost.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-tax.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-post-type.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-affiliates.php';			
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/forms.php';			
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/tables.php';			
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/add_to_calendar.php';			
@@ -157,7 +156,6 @@ class dynamicpackages {
 		$plugin_metaboxes = new dynamicpackages_Metaboxes();
 		$plugin_metapost = new dynamicpackages_Metapost();
 		$plugin_post_type = new dynamicpackages_Post_Type();
-		$plugin_affiliates = new dynamicpackages_Affiliates();
 		$plugin_reviewes = new dynamicpackages_Reviews();
 		$plugins_tax = new dynamicpackages_Taxmodifier();
 		
@@ -184,7 +182,6 @@ class dynamicpackages {
 		$plugin_public = new dynamicpackages_Public();
 		$plugin_settings = new dynamicpackages_Gateways();	
 		$plugin_search = new dynamicpackages_Search();
-		$plugin_affiliates = new dynamicpackages_Affiliates();
 		$plugin_add_to_calendar = new add_to_calendar();
 		$plugin_reviewes = new dynamicpackages_Reviews();
 		$plugins_shortcodes = new dynamicpackages_Shortcodes();
