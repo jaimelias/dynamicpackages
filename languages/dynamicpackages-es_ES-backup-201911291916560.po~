@@ -18,94 +18,94 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "X-Loco-Version: 2.3.1; wp-5.3"
 
-#: gateways/checkout_page.php:61 gateways/checkout_matrix.php:511
+#: gateways/checkout-page.php:61 gateways/checkout_matrix.php:511
 msgid "Outstanding Balance"
 msgstr "Saldo"
 
-#: gateways/checkout_page.php:62
+#: gateways/checkout-page.php:62
 #: includes/class-dynamicpackages-metaboxes.php:266
 msgid "Deposit"
 msgstr "Deposito"
 
-#: gateways/checkout_page.php:127 gateways/checkout_matrix.php:408
+#: gateways/checkout-page.php:127 gateways/checkout_matrix.php:408
 msgid "Coupon"
 msgstr "Cupón"
 
-#: gateways/checkout_page.php:127
+#: gateways/checkout-page.php:127
 msgid "activated"
 msgstr "activado"
 
-#: gateways/checkout_page.php:127
+#: gateways/checkout-page.php:127
 msgid "discount already applied on rate. This coupon expires on"
 msgstr "de descuento aplicado en la tarifa. Este cupón expira el "
 
-#: gateways/checkout_page.php:129
+#: gateways/checkout-page.php:129
 msgid "Invalid or expired coupon"
 msgstr "Cupón inválido o expirado"
 
-#: gateways/checkout_page.php:139
+#: gateways/checkout-page.php:139
 msgid "Support via Whatsapp"
 msgstr "Soporte via Whatsapp"
 
-#: gateways/checkout_page.php:147
+#: gateways/checkout-page.php:147
 #: includes/class-dynamicpackages-metaboxes.php:11
 msgid "Description"
 msgstr "Descripción"
 
-#: gateways/checkout_page.php:148
+#: gateways/checkout-page.php:148
 msgid "Unit Price"
 msgstr "Precio unitario"
 
-#: gateways/checkout_page.php:149
+#: gateways/checkout-page.php:149
 msgid "Subtotal"
 msgstr "Subtotal"
 
-#: gateways/checkout_page.php:155
+#: gateways/checkout-page.php:155
 msgid "Participants"
 msgstr "Participantes"
 
-#: gateways/checkout_page.php:157
+#: gateways/checkout-page.php:157
 #: includes/class-dynamicpackages-metaboxes.php:322
 #: public/partials/forms.php:258
 msgid "Adults"
 msgstr "Adultos"
 
-#: gateways/checkout_page.php:166 gateways/checkout_page.php:175
+#: gateways/checkout-page.php:166 gateways/checkout-page.php:175
 #: public/partials/forms.php:293 public/partials/forms.php:318
 msgid "Children"
 msgstr "Niños"
 
-#: gateways/checkout_page.php:166 gateways/checkout_page.php:175
+#: gateways/checkout-page.php:166 gateways/checkout-page.php:175
 #: public/partials/forms.php:293 public/partials/forms.php:318
 msgid "years old"
 msgstr "años"
 
-#: gateways/checkout_page.php:185
+#: gateways/checkout-page.php:185
 #: includes/class-dynamicpackages-post-type.php:169
 msgid "Add-ons"
 msgstr "Extras"
 
-#: gateways/checkout_page.php:186
+#: gateways/checkout-page.php:186
 msgid "Include?"
 msgstr "¿Incluir?"
 
-#: gateways/checkout_page.php:199 gateways/gateways.php:161
+#: gateways/checkout-page.php:199 gateways/gateways.php:161
 msgid "Tax"
 msgstr "Impuesto"
 
-#: gateways/checkout_page.php:207
+#: gateways/checkout-page.php:207
 msgid "Regular Price"
 msgstr "Precio regular"
 
-#: gateways/checkout_page.php:209
+#: gateways/checkout-page.php:209
 msgid "Total"
 msgstr "Total"
 
-#: gateways/creditcard_form.php:15
+#: gateways/credit-card-form.php:15
 msgid "Before you book"
 msgstr "Antes de reservar"
 
-#: gateways/creditcard_form.php:16
+#: gateways/credit-card-form.php:16
 msgid ""
 "In to complete the reservation process, we´ll request images of passports "
 "(foreigners) or identification documents (nationals) of each participant. "
@@ -117,11 +117,11 @@ msgstr ""
 "cada participante. Estos documentos enviados serán verificados contra los "
 "originales en el punto de partida por nuestro equipo."
 
-#: gateways/creditcard_form.php:25
+#: gateways/credit-card-form.php:25
 msgid "Contact Details"
 msgstr "Detalles de contacto"
 
-#: gateways/creditcard_form.php:28 public/class-dynamicpackages-public.php:777
+#: gateways/credit-card-form.php:28 public/class-dynamicpackages-public.php:777
 #: includes/class-dynamicpackages-metaboxes.php:120
 #: public/partials/quote-form.php:26 gateways/matrix/yappy/yappy_direct.php:126
 #: gateways/matrix/bank/local.php:116
@@ -131,11 +131,11 @@ msgstr "Detalles de contacto"
 msgid "Name"
 msgstr "Nombre"
 
-#: gateways/creditcard_form.php:32 public/partials/quote-form.php:30
+#: gateways/credit-card-form.php:32 public/partials/quote-form.php:30
 msgid "Last Name"
 msgstr "Apellido"
 
-#: gateways/creditcard_form.php:38 public/class-dynamicpackages-public.php:779
+#: gateways/credit-card-form.php:38 public/class-dynamicpackages-public.php:779
 #: includes/class-dynamicpackages-metaboxes.php:125
 #: public/partials/quote-form.php:36 gateways/matrix/yappy/yappy_direct.php:127
 #: gateways/matrix/bank/local.php:117
@@ -145,7 +145,7 @@ msgstr "Apellido"
 msgid "Email"
 msgstr "Email"
 
-#: gateways/creditcard_form.php:42 public/class-dynamicpackages-public.php:781
+#: gateways/credit-card-form.php:42 public/class-dynamicpackages-public.php:781
 #: public/partials/quote-form.php:40 gateways/matrix/yappy/yappy_direct.php:128
 #: gateways/matrix/bank/local.php:118
 #: gateways/matrix/bank/international.php:117
@@ -154,41 +154,41 @@ msgstr "Email"
 msgid "Phone"
 msgstr "Teléfono"
 
-#: gateways/creditcard_form.php:48
+#: gateways/credit-card-form.php:48
 msgid "Country"
 msgstr "País"
 
-#: gateways/creditcard_form.php:52
+#: gateways/credit-card-form.php:52
 msgid "City"
 msgstr "Ciudad"
 
-#: gateways/creditcard_form.php:56
+#: gateways/credit-card-form.php:56
 msgid "Address"
 msgstr "Dirección"
 
-#: gateways/creditcard_form.php:66
+#: gateways/credit-card-form.php:66
 msgid "Billing Details"
 msgstr "Datos de facturación"
 
-#: gateways/creditcard_form.php:67
+#: gateways/credit-card-form.php:67
 msgid "Credit Card Number"
 msgstr "Tarjeta de crédido"
 
-#: gateways/creditcard_form.php:72
+#: gateways/credit-card-form.php:72
 msgid "Expiration Month"
 msgstr "Mes de expiración"
 
-#: gateways/creditcard_form.php:86
+#: gateways/credit-card-form.php:86
 msgid "Expiration Year"
 msgstr "Año de expiración"
 
-#: gateways/creditcard_form.php:104
+#: gateways/credit-card-form.php:104
 #: includes/class-dynamicpackages-post-type.php:149
 #: includes/class-dynamicpackages-post-type.php:150
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
 
-#: gateways/creditcard_form.php:107
+#: gateways/credit-card-form.php:107
 msgid "Pay Now!"
 msgstr "¡Pagar Ya!"
 

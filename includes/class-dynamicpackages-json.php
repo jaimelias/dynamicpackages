@@ -1,11 +1,11 @@
 <?php
 
-class dynamicpackages_Json
+class dy_Json
 {
 	function __construct()
 	{
-		add_action('wp', array('dynamicpackages_Json', 'export'));
-		add_filter('minimal_ld_json', array('dynamicpackages_Json', 'ld_json'), 100);
+		add_action('wp', array('dy_Json', 'export'));
+		add_filter('minimal_ld_json', array('dy_Json', 'ld_json'), 100);
 	}
 	
 	public static function is_disabled_dates()
@@ -45,11 +45,11 @@ class dynamicpackages_Json
 				global $post;
 				$event_id = $post->ID;
 				
-				if(dynamicpackages_Validators::has_children())
+				if(dy_Validators::has_children())
 				{
 					$ids = array();
-					//dynamicpackages_Validators::has_children() returns the children obj
-					$children = dynamicpackages_Validators::has_children();
+					//dy_Validators::has_children() returns the children obj
+					$children = dy_Validators::has_children();
 					
 					foreach ( $children as $child )
 					{
@@ -75,10 +75,10 @@ class dynamicpackages_Json
 				
 				$starting_at = floatval(number_format(dy_utilities::starting_at($event_id), 2, '.', ''));
 				
-				if(dynamicpackages_Validators::is_valid_schema())
+				if(dy_Validators::is_valid_schema())
 				{
 					global $post;
-					$event = dynamicpackages_Validators::event();
+					$event = dy_Validators::event();
 					
 					//offers
 					$offers = array();
@@ -92,7 +92,7 @@ class dynamicpackages_Json
 					//aggregateRating
 					$aggregateRating = array();
 					$aggregateRating['@type'] = 'aggregateRating';
-					$aggregateRating['ratingValue'] = esc_html(dynamicpackages_Reviews::get_rating(get_the_ID()));
+					$aggregateRating['ratingValue'] = esc_html(dy_Reviews::get_rating(get_the_ID()));
 					$aggregateRating['reviewCount'] = esc_html(get_comments_number());
 
 					//reviews
@@ -156,7 +156,7 @@ class dynamicpackages_Json
 						
 						$arr['description'] = $post->post_excerpt;
 						
-						if(dynamicpackages_Reviews::get_rating(get_the_ID()) > 0)
+						if(dy_Reviews::get_rating(get_the_ID()) > 0)
 						{
 							$arr['aggregateRating'] = $aggregateRating;
 						}
@@ -219,7 +219,7 @@ class dynamicpackages_Json
 							$item['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
 							$item['eventStatus'] = 'https://schema.org/EventScheduled';
 							
-							if(dynamicpackages_Reviews::get_rating(get_the_ID()) > 0)
+							if(dy_Reviews::get_rating(get_the_ID()) > 0)
 							{
 								$item['aggregateRating'] = $aggregateRating;
 							}							
@@ -256,7 +256,7 @@ class dynamicpackages_Json
 			{
 				if($_GET['json'] == 'disabled_dates')
 				{
-					wp_send_json(dynamicpackages_Public::disabled_dates());
+					wp_send_json(dy_Public::disabled_dates());
 				}
 				else
 				{

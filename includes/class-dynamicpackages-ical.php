@@ -1,11 +1,11 @@
 <?php 
 
 
-class dynamicpackages_Ical
+class dy_Ical
 {
 	function __construct()
 	{
-			add_action('wp', array('dynamicpackages_Ical', 'export'), 2);
+			add_action('wp', array('dy_Ical', 'export'), 2);
 	}
 	
 	public static function is_valid()
@@ -34,7 +34,7 @@ class dynamicpackages_Ical
 	{
 		if(self::is_valid())
 		{
-			$event = dynamicpackages_Validators::event();
+			$event = dy_Validators::event();
 			$events = array();
 			$event_max = count($event);
 			
@@ -67,7 +67,7 @@ class dynamicpackages_Ical
 					$event_item['LOCATION'] = esc_html(package_field('package_departure_address'));
 				}
 				
-				$categories = dynamicpackages_Checkout::imp_taxo('package_category');
+				$categories = dy_utilities::imp_taxo('package_category');
 				
 				if($categories != '')
 				{

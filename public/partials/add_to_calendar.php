@@ -78,7 +78,7 @@ class add_to_calendar
 			}
 			else
 			{
-				$calendar = dynamicpackages_Public::date().' '.dy_utilities::hour();
+				$calendar = dy_Public::date().' '.dy_utilities::hour();
 			}
 			
 			global $post;

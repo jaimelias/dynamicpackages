@@ -1,7 +1,7 @@
 <?php
 
 
-class dynamicpackages_Form_Actions{
+class dy_Actions{
 
     public function __construct()
     {
@@ -34,7 +34,7 @@ class dynamicpackages_Form_Actions{
     {
         global $dy_valid_recaptcha;
 
-        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dynamicpackages_Validators::is_request_valid())
+        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_Validators::is_request_valid())
         {
             $this->send_quote_email();
             dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
@@ -46,7 +46,7 @@ class dynamicpackages_Form_Actions{
 
         if(is_singular('packages') && $this->is_request_submitted())
         {               
-            if(dynamicpackages_Validators::is_request_valid())
+            if(dy_Validators::is_request_valid())
             {
                 if(isset($dy_valid_recaptcha))
                 {
@@ -69,20 +69,20 @@ class dynamicpackages_Form_Actions{
     public function send_quote_email()
     {
         $headers = array('Content-type: text/html');
-        array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
+        array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
         $body = __('New Request from', 'dynamicpackages');
         $body .= ' ';
-        $body .= sanitize_text_field($_POST['fname']) .' '.sanitize_text_field($_POST['lastname']);
+        $body .= sanitize_text_field($_POST['first_name']) .' '.sanitize_text_field($_POST['lastname']);
         $body .= ',<br/><br/>';
         $body .= sanitize_text_field($_POST['description']);
         $body .= '<br/><br/>';
-        $body .= __('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']);
+        $body .= __('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']);
         $body .= '<br/>';
         $body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']);
         $body .= '<br/>';
         $body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']);
         
-        wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['fname']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
+        wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['first_name']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
     }
 
     public function wp_title($title)

@@ -1,15 +1,15 @@
 <?php
 
-class dynamicpackages_Shortcodes {
+class dy_Shortcodes {
 	
 	function __construct()
 	{
-		add_shortcode( 'packages', array('dynamicpackages_Shortcodes', 'package_shortcode_full') );
-		add_shortcode('page_title', array('dynamicpackages_Shortcodes', 'render_title'));
-		add_shortcode('page_excerpt', array('dynamicpackages_Shortcodes', 'render_excerpt'));
-		add_shortcode('package_locations', array('dynamicpackages_Shortcodes', 'get_locations'));
-		add_shortcode('package_categories', array('dynamicpackages_Shortcodes', 'get_categories'));
-		add_shortcode('package_filter', array('dynamicpackages_Shortcodes', 'package_filter_form'));		
+		add_shortcode( 'packages', array('dy_Shortcodes', 'package_shortcode_full') );
+		add_shortcode('page_title', array('dy_Shortcodes', 'render_title'));
+		add_shortcode('page_excerpt', array('dy_Shortcodes', 'render_excerpt'));
+		add_shortcode('package_locations', array('dy_Shortcodes', 'get_locations'));
+		add_shortcode('package_categories', array('dy_Shortcodes', 'get_categories'));
+		add_shortcode('package_filter', array('dy_Shortcodes', 'package_filter_form'));		
 	}
 	
 	public static function package_filter_form($content = '')
@@ -166,7 +166,7 @@ class dynamicpackages_Shortcodes {
 				$classes['a'] = $attr['a'];
 			}			
 			
-			$content = dynamicpackages_Public::get_all_locations($classes);
+			$content = dy_Public::get_all_locations($classes);
 		}
 		
 		return $content;
@@ -190,7 +190,7 @@ class dynamicpackages_Shortcodes {
 				$classes['a'] = $attr['a'];
 			}			
 			
-			$content = dynamicpackages_Public::get_categories($classes);
+			$content = dy_Public::get_categories($classes);
 		}
 		
 		return $content;

@@ -1,19 +1,19 @@
 <?php
 
 
-class dynamicpackages_Post_Type
+class dy_Post_Type
 {
 	// Register Custom Post Type
 	
 	function __construct()
 	{
-		add_action('init', array('dynamicpackages_Post_Type', 'package_post_type'));
-		add_action('init', array('dynamicpackages_Post_Type', 'location_taxonomy'));
-		add_action('init', array('dynamicpackages_Post_Type', 'category_taxonomy'));
-		add_action('init', array('dynamicpackages_Post_Type', 'included_taxonomy'));
-		add_action('init', array('dynamicpackages_Post_Type', 'not_included_taxonomy'));
-		add_action('init', array('dynamicpackages_Post_Type', 'terms_conditions_taxonomy'));
-		add_action('init', array('dynamicpackages_Post_Type', 'add_ons'));
+		add_action('init', array('dy_Post_Type', 'package_post_type'));
+		add_action('init', array('dy_Post_Type', 'location_taxonomy'));
+		add_action('init', array('dy_Post_Type', 'category_taxonomy'));
+		add_action('init', array('dy_Post_Type', 'included_taxonomy'));
+		add_action('init', array('dy_Post_Type', 'not_included_taxonomy'));
+		add_action('init', array('dy_Post_Type', 'terms_conditions_taxonomy'));
+		add_action('init', array('dy_Post_Type', 'add_ons'));
 	}
 	
 	public static function package_post_type() {

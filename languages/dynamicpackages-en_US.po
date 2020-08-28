@@ -14,195 +14,195 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.2.1; wp-5.1.1"
 
-#: gateways/checkout_page.php:45 gateways/checkout_matrix.php:481
+#: gateways/checkout-page.php:45 gateways/checkout_matrix.php:481
 msgid "Outstanding Balance"
 msgstr ""
 
-#: gateways/checkout_page.php:46
+#: gateways/checkout-page.php:46
 #: includes/class-dynamicpackages-metaboxes.php:221
 msgid "Deposit"
 msgstr ""
 
-#: gateways/checkout_page.php:106 gateways/checkout_page.php:195
-#: gateways/creditcard_form.php:26
+#: gateways/checkout-page.php:106 gateways/checkout-page.php:195
+#: gateways/credit-card-form.php:26
 msgid "Step"
 msgstr ""
 
-#: gateways/checkout_page.php:106
+#: gateways/checkout-page.php:106
 msgid "Review Your Request"
 msgstr ""
 
-#: gateways/checkout_page.php:113 gateways/checkout_matrix.php:404
+#: gateways/checkout-page.php:113 gateways/checkout_matrix.php:404
 #: includes/class-dynamicpackages-metaboxes.php:47
 #: public/partials/forms.php:167
 msgid "Coupon"
 msgstr ""
 
-#: gateways/checkout_page.php:113
+#: gateways/checkout-page.php:113
 msgid "activated"
 msgstr ""
 
-#: gateways/checkout_page.php:113
+#: gateways/checkout-page.php:113
 msgid "discount already applied on rate. This coupon expires on"
 msgstr ""
 
-#: gateways/checkout_page.php:115
+#: gateways/checkout-page.php:115
 msgid "Invalid or expired coupon"
 msgstr ""
 
-#: gateways/checkout_page.php:124
+#: gateways/checkout-page.php:124
 #: includes/class-dynamicpackages-metaboxes.php:9
 msgid "Description"
 msgstr ""
 
-#: gateways/checkout_page.php:125
+#: gateways/checkout-page.php:125
 msgid "Unit Price"
 msgstr ""
 
-#: gateways/checkout_page.php:126
+#: gateways/checkout-page.php:126
 msgid "Subtotal"
 msgstr ""
 
-#: gateways/checkout_page.php:132
+#: gateways/checkout-page.php:132
 msgid "Participants"
 msgstr ""
 
-#: gateways/checkout_page.php:134
+#: gateways/checkout-page.php:134
 #: includes/class-dynamicpackages-metaboxes.php:258
 #: public/partials/forms.php:197
 msgid "Adults"
 msgstr ""
 
-#: gateways/checkout_page.php:143 gateways/checkout_page.php:152
+#: gateways/checkout-page.php:143 gateways/checkout-page.php:152
 #: includes/class-dynamicpackages-metaboxes.php:244
 #: includes/class-dynamicpackages-metaboxes.php:258
 msgid "Children Under"
 msgstr ""
 
-#: gateways/checkout_page.php:143 gateways/checkout_page.php:152
+#: gateways/checkout-page.php:143 gateways/checkout-page.php:152
 #: public/class-dynamicpackages-public.php:1738
 #: public/class-dynamicpackages-public.php:1738 public/partials/forms.php:222
 #: public/partials/forms.php:241
 msgid "years old"
 msgstr ""
 
-#: gateways/checkout_page.php:163 gateways/gateways.php:271
+#: gateways/checkout-page.php:163 gateways/gateways.php:271
 msgid "Tax"
 msgstr ""
 
-#: gateways/checkout_page.php:169
+#: gateways/checkout-page.php:169
 msgid "Total"
 msgstr ""
 
-#: gateways/checkout_page.php:195 public/class-dynamicpackages-public.php:650
+#: gateways/checkout-page.php:195 public/class-dynamicpackages-public.php:650
 msgid "Request Quote"
 msgstr ""
 
-#: gateways/creditcard_form.php:4
+#: gateways/credit-card-form.php:4
 msgid "Pay by Card"
 msgstr ""
 
-#: gateways/creditcard_form.php:6
+#: gateways/credit-card-form.php:6
 msgid "Visa or Mastercard"
 msgstr ""
 
-#: gateways/creditcard_form.php:12
+#: gateways/credit-card-form.php:12
 msgid "Pay With Paypal"
 msgstr ""
 
-#: gateways/creditcard_form.php:15
+#: gateways/credit-card-form.php:15
 msgid "Payment Approved"
 msgstr ""
 
-#: gateways/creditcard_form.php:16
+#: gateways/credit-card-form.php:16
 msgid "Payment Declined. Please Verify Your Funds and Try Again Later"
 msgstr ""
 
-#: gateways/creditcard_form.php:17
+#: gateways/credit-card-form.php:17
 msgid "Payment Error. Please contact us for more details"
 msgstr ""
 
-#: gateways/creditcard_form.php:26
+#: gateways/credit-card-form.php:26
 msgid "Proceed to Checkout"
 msgstr ""
 
-#: gateways/creditcard_form.php:36
+#: gateways/credit-card-form.php:36
 msgid "Contact Details"
 msgstr ""
 
-#: gateways/creditcard_form.php:39 public/class-dynamicpackages-public.php:691
+#: gateways/credit-card-form.php:39 public/class-dynamicpackages-public.php:691
 #: public/class-dynamicpackages-public.php:788
 #: includes/class-dynamicpackages-metaboxes.php:93
 #: public/partials/quote-form.php:17
 msgid "Name"
 msgstr ""
 
-#: gateways/creditcard_form.php:43 public/partials/quote-form.php:21
+#: gateways/credit-card-form.php:43 public/partials/quote-form.php:21
 msgid "Last Name"
 msgstr ""
 
-#: gateways/creditcard_form.php:49 public/class-dynamicpackages-public.php:693
+#: gateways/credit-card-form.php:49 public/class-dynamicpackages-public.php:693
 #: includes/class-dynamicpackages-metaboxes.php:98
 #: public/partials/quote-form.php:27
 msgid "Email"
 msgstr ""
 
-#: gateways/creditcard_form.php:53 public/class-dynamicpackages-public.php:695
+#: gateways/credit-card-form.php:53 public/class-dynamicpackages-public.php:695
 #: public/partials/quote-form.php:31
 msgid "Phone"
 msgstr ""
 
-#: gateways/creditcard_form.php:59
+#: gateways/credit-card-form.php:59
 msgid "Country"
 msgstr ""
 
-#: gateways/creditcard_form.php:63
+#: gateways/credit-card-form.php:63
 msgid "City"
 msgstr ""
 
-#: gateways/creditcard_form.php:70
+#: gateways/credit-card-form.php:70
 msgid "Street Address 1"
 msgstr ""
 
-#: gateways/creditcard_form.php:74
+#: gateways/credit-card-form.php:74
 msgid "Street Address 2"
 msgstr ""
 
-#: gateways/creditcard_form.php:74 gateways/creditcard_form.php:78
+#: gateways/credit-card-form.php:74 gateways/credit-card-form.php:78
 msgid "optional"
 msgstr ""
 
-#: gateways/creditcard_form.php:78
+#: gateways/credit-card-form.php:78
 msgid "ZIP Code"
 msgstr ""
 
-#: gateways/creditcard_form.php:89
+#: gateways/credit-card-form.php:89
 msgid "Billing Details"
 msgstr ""
 
-#: gateways/creditcard_form.php:90
+#: gateways/credit-card-form.php:90
 msgid "Credit Card Number"
 msgstr ""
 
-#: gateways/creditcard_form.php:95
+#: gateways/credit-card-form.php:95
 msgid "Expiration Month"
 msgstr ""
 
-#: gateways/creditcard_form.php:109
+#: gateways/credit-card-form.php:109
 msgid "Expiration Year"
 msgstr ""
 
-#: gateways/creditcard_form.php:127
+#: gateways/credit-card-form.php:127
 #: includes/class-dynamicpackages-post-type.php:137
 #: includes/class-dynamicpackages-post-type.php:138
 msgid "Terms & Conditions"
 msgstr ""
 
-#: gateways/creditcard_form.php:130
+#: gateways/credit-card-form.php:130
 msgid "Pay"
 msgstr ""
 
-#: gateways/creditcard_form.php:130
+#: gateways/credit-card-form.php:130
 msgid "Pay by card"
 msgstr ""
 

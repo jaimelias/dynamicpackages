@@ -1,6 +1,6 @@
 <?php 
 
-class dynamicpackages_Metapost{
+class dy_Metapost{
 	public static function package_save($post_id) 
 	{
 		if(defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
@@ -93,7 +93,7 @@ class dynamicpackages_Metapost{
 			}
 			else
 			{
-				dynamicpackages_Public::event_date_update($post_id);
+				dy_Public::event_date_update($post_id);
 			}
 			
 		}

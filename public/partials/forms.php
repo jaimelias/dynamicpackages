@@ -103,7 +103,7 @@ class dynamicpackages_Forms
 		
 		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
 		
-		if(dynamicpackages_Gateways::has_any_gateway())
+		if(dy_Gateways::has_any_gateway())
 		{	
 			$form .= '<h3 class="linkcolor uppercase">'.esc_html(__('Book  Now', 'dynamicpackages')).'</h3>';
 		}
@@ -192,7 +192,7 @@ class dynamicpackages_Forms
 		$form .= self::discount_select($price_chart, $min, $max, $option_disc, $option_free);		
 		$form .= self::free_select($price_chart, $min, $max, $option_disc, $option_free);	
 
-		if(dynamicpackages_Validators::has_coupon())
+		if(dy_Validators::has_coupon())
 		{
 			$get_coupon = '';
 			$coupon_hidden = ' class="hidden" ';

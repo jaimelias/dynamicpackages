@@ -1,6 +1,6 @@
 <?php global $post; ?>
 
-<form id="dynamic_form"  <?php if(dynamicpackages_Gateways::has_any_gateway()) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dynamic_form"  <?php if(dy_Gateways::has_any_gateway()) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
 	
 	    <div class="text-center bottom-20" id="dy_form_icon">
@@ -19,12 +19,12 @@
 		<input type="hidden" name="city" class="city" value="" />
 		<input type="hidden" name="countrycode" class="country_code2" value="" />
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
-		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dynamicpackages_Checkout::amount())); ?>" />
+		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())); ?>" />
 
 		<div class="pure-g gutters">
 			<div class="pure-u-1 pure-u-md-1-2">
-				<label for="fname"><?php echo esc_html(__('Name', 'dynamicpackages')); ?></label>
-				<input type="text" name="fname" class="bottom-20 required" />
+				<label for="first_name"><?php echo esc_html(__('Name', 'dynamicpackages')); ?></label>
+				<input type="text" name="first_name" class="bottom-20 required" />
 			</div>
 			<div class="pure-u-1 pure-u-md-1-2">
 				<label for="lastname"><?php echo esc_html(__('Last Name', 'dynamicpackages')); ?></label>

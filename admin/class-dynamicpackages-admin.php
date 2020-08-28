@@ -20,7 +20,7 @@
  * @subpackage dynamicpackages/admin
  * @author     Jaimelías <jaimelias@about.me>
  */
-class dynamicpackages_Admin {
+class dy_Admin {
 
 	/**
 	 * The ID of this plugin.

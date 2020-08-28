@@ -27,13 +27,13 @@ $gate['name'] = 'Paguelo Facil';
 $gate['currency'] = array('USD');
 $gate['url'] = 'https://secure.paguelofacil.com/rest/ccprocessing';
 $gate['scripts'] = array();
-$gate['form'] = 'creditcard_form.php';
+$gate['form'] = 'credit-card-form.php';
 $gate['content_type'] = 'x-www-form-urlencoded';
 $gate['headers'] = array();
 array_push($gate['headers'], 'Content-Type: application/x-www-form-urlencoded');
 array_push($gate['headers'], 'Accept: */*');
 $gate['auth'] = array();
-$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'fname', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'departure_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message');
+$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'first_name', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'departure_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message');
 $gate['custom_fields'] = array('CCLW');
 $gate['hidden_fields'] = array();
 array_push($gate['hidden_fields'], array('TxType' => 'SALE'));
@@ -42,7 +42,7 @@ $gate['declined'] = array(array("Status" => "Declined"));
 
 if(!is_admin())
 {
-	if(dynamicpackages_Validators::validate_checkout())
+	if(dy_Validators::validate_checkout())
 	{
 		$gate['checkout'] = array();
 		$gate_checkout = array();
@@ -53,7 +53,7 @@ if(!is_admin())
 		$gate_checkout['ExpMonth'] = 'return sprintf("%02d", $sanitized_fields["ExpMonth"]);';
 		$gate_checkout['ExpYear'] = 'return $sanitized_fields["ExpYear"];';
 		$gate_checkout['CVV2'] = 'return $sanitized_fields["CVV2"];';
-		$gate_checkout['Name'] = 'return substr($sanitized_fields["fname"], 0, 25);';
+		$gate_checkout['Name'] = 'return substr($sanitized_fields["first_name"], 0, 25);';
 		$gate_checkout['LastName'] = 'return substr($sanitized_fields["lastname"], 0, 25);';
 		$gate_checkout['Email'] = 'return $sanitized_fields["email"];';
 		$gate_checkout['Tel'] = 'return $sanitized_fields["phone"];';
@@ -63,7 +63,7 @@ if(!is_admin())
 		$gate_webhook = array();
 		$gate_webhook['CMTN'] = 'return $sanitized_fields["total"];';
 		$gate_webhook['CDSC'] = 'return substr($sanitized_fields["description"], 0, 150);';
-		$gate_webhook['Name'] = 'return substr($sanitized_fields["fname"], 0, 25);';
+		$gate_webhook['Name'] = 'return substr($sanitized_fields["first_name"], 0, 25);';
 		$gate_webhook['LastName'] = 'return substr($sanitized_fields["lastname"], 0, 25);';
 		$gate_webhook['Email'] = 'return $sanitized_fields["email"];';
 		$gate_webhook['Tel'] = 'return $sanitized_fields["phone"];';

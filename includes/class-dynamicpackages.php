@@ -75,7 +75,7 @@ class dynamicpackages {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->mailer = new dynamicpackages_Mailer();
-		$this->validate_recaptcha = dynamicpackages_Validators::validate_recaptcha();
+		$this->validate_recaptcha = dy_Validators::validate_recaptcha();
 	}
 
 	/**
@@ -85,8 +85,8 @@ class dynamicpackages {
 	 *
 	 * - dynamicpackages_Loader. Orchestrates the hooks of the plugin.
 	 * - dynamicpackages_i18n. Defines internationalization functionality.
-	 * - dynamicpackages_Admin. Defines all hooks for the admin area.
-	 * - dynamicpackages_Public. Defines all hooks for the public side of the site.
+	 * - dy_Admin. Defines all hooks for the admin area.
+	 * - dy_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -154,12 +154,12 @@ class dynamicpackages {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new dynamicpackages_Admin($this->get_plugin_name(), $this->get_version());
-		$plugin_metaboxes = new dynamicpackages_Metaboxes();
-		$plugin_metapost = new dynamicpackages_Metapost();
-		$plugin_post_type = new dynamicpackages_Post_Type();
-		$plugin_reviewes = new dynamicpackages_Reviews();
-		$plugins_tax = new dynamicpackages_Taxmodifier();
+		$plugin_admin = new dy_Admin($this->get_plugin_name(), $this->get_version());
+		$plugin_metaboxes = new dy_Metaboxes();
+		$plugin_metapost = new dy_Metapost();
+		$plugin_post_type = new dy_Post_Type();
+		$plugin_reviewes = new dy_Reviews();
+		$plugins_tax = new dy_Tax_Mod();
 		
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');		
@@ -181,15 +181,15 @@ class dynamicpackages {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new dynamicpackages_Public();
-		$plugin_settings = new dynamicpackages_Gateways();	
-		$plugin_search = new dynamicpackages_Search();
+		$plugin_public = new dy_Public();
+		$plugin_settings = new dy_Gateways();	
+		$plugin_search = new dy_Search();
 		$plugin_add_to_calendar = new add_to_calendar();
-		$plugin_reviewes = new dynamicpackages_Reviews();
-		$plugins_shortcodes = new dynamicpackages_Shortcodes();
-		$plugins_json = new dynamicpackages_Json();
-		$plugins_ical = new dynamicpackages_Ical();
-		$plugin_form_actions = new dynamicpackages_Form_Actions();
+		$plugin_reviewes = new dy_Reviews();
+		$plugins_shortcodes = new dy_Shortcodes();
+		$plugins_json = new dy_Json();
+		$plugins_ical = new dy_Ical();
+		$plugin_form_actions = new dy_Actions();
 	}
 
 	/**

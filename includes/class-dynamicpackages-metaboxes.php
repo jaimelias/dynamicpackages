@@ -1,6 +1,6 @@
 <?php
 
-class dynamicpackages_Metaboxes
+class dy_Metaboxes
 {
 
 	public static function package_add_meta_box() {
@@ -9,7 +9,7 @@ class dynamicpackages_Metaboxes
 		add_meta_box(
 			'package-a',
 			__( 'Description', 'dynamicpackages' ),
-			array("dynamicpackages_Metaboxes", "package_description_html"),
+			array("dy_Metaboxes", "package_description_html"),
 			'packages',
 			'normal',
 			'default'
@@ -17,18 +17,18 @@ class dynamicpackages_Metaboxes
 		add_meta_box(
 			'package-b',
 			__( 'Pricing Controls', 'dynamicpackages' ),
-			array("dynamicpackages_Metaboxes", "package_pricing_html"),
+			array("dy_Metaboxes", "package_pricing_html"),
 			'packages',
 			'normal',
 			'default'
 		);
 
-		if(!dynamicpackages_Validators::has_children())
+		if(!dy_Validators::has_children())
 		{
 			add_meta_box(
 				'package-c',
 				__( 'Rates', 'dynamicpackages' ),
-				array("dynamicpackages_Metaboxes", "package_rates_html"),
+				array("dy_Metaboxes", "package_rates_html"),
 				'packages',
 				'normal',
 				'default'
@@ -39,31 +39,31 @@ class dynamicpackages_Metaboxes
 		add_meta_box(
 			'package-d',
 			__( 'Availability', 'dynamicpackages' ),
-			array("dynamicpackages_Metaboxes", "package_availability_html"),
+			array("dy_Metaboxes", "package_availability_html"),
 			'packages',
 			'normal',
 			'default'
 		);		
 		
 		
-		if(!dynamicpackages_Validators::is_child())
+		if(!dy_Validators::is_child())
 		{			
 			add_meta_box(
 				'package-e',
 				__( 'Departure', 'dynamicpackages' ),
-				array("dynamicpackages_Metaboxes", "package_departure_html"),
+				array("dy_Metaboxes", "package_departure_html"),
 				'packages',
 				'normal',
 				'default'
 			);		
 						
 			//if e-commerce if off disable metabox
-			if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Validators::is_gateway_active())
+			if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active())
 			{	
 				add_meta_box(
 					'package-f',
 					__( 'Provider', 'dynamicpackages' ),
-					array("dynamicpackages_Metaboxes", "package_provider_html"),
+					array("dy_Metaboxes", "package_provider_html"),
 					'packages',
 					'normal',
 					'default'
@@ -72,7 +72,7 @@ class dynamicpackages_Metaboxes
 			add_meta_box(
 				'package-g',
 				__( 'Coupons', 'dynamicpackages' ),
-				array("dynamicpackages_Metaboxes", "package_coupon_html"),
+				array("dy_Metaboxes", "package_coupon_html"),
 				'packages',
 				'normal',
 				'default'
@@ -203,7 +203,7 @@ class dynamicpackages_Metaboxes
 		
 			$disable_child = '';
 
-			if(dynamicpackages_Validators::is_child())
+			if(dy_Validators::is_child())
 			{
 				$disable_child = 'disabled';
 			}
@@ -211,7 +211,7 @@ class dynamicpackages_Metaboxes
 		
 		
 		
-		<?php if(!dynamicpackages_Validators::is_child()) : ?>	
+		<?php if(!dy_Validators::is_child()) : ?>	
 				<p>
 					<label for="package_show_pricing"><?php _e( 'Show Price Table', 'dynamicpackages' ); ?></label><br />
 					<select name="package_show_pricing" id="package_show_pricing">
@@ -220,7 +220,7 @@ class dynamicpackages_Metaboxes
 					</select>
 				</p>
 
-				<?php if(dynamicpackages_Validators::is_gateway_active()): ?>
+				<?php if(dy_Validators::is_gateway_active()): ?>
 					<p>
 						<label for="package_auto_booking"><?php _e( 'Enable Automatic Booking', 'dynamicpackages' ); ?></label><br />
 						<select name="package_auto_booking" id="package_auto_booking">
@@ -252,13 +252,13 @@ class dynamicpackages_Metaboxes
 				<?php self::select_number('package_max_persons', (intval(package_field( 'package_min_persons' ))+1), 100); ?>
 			</p>
 			
-			<?php if(!dynamicpackages_Validators::is_child()) : ?>
+			<?php if(!dy_Validators::is_child()) : ?>
 				<p>
 					<label for="package_increase_persons"><?php _e( 'Increase maximum number of participants by', 'dynamicpackages' ); ?></label><br />
 					<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo package_field( 'package_increase_persons' ); ?>"> <?php _e( 'get more leads even if the prices are not defined', 'dynamicpackages' ); ?>.</span>
 				</p>
 				
-				<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Validators::is_gateway_active() === true): ?>
+				<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active() === true): ?>
 					<p>
 						<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
 						<select name="package_payment" id="package_payment">
@@ -315,7 +315,7 @@ class dynamicpackages_Metaboxes
 	
 		<?php if(package_field( 'package_package_type' ) == 1): ?>
 		<fieldset>			
-			<h3 id="accommodation"><?php echo dynamicpackages_Admin::get_duration_unit()?> <?php _e( 'Accomodation Prices Per Person', 'dynamicpackages' ); ?></h3>
+			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit()?> <?php _e( 'Accomodation Prices Per Person', 'dynamicpackages' ); ?></h3>
 			
 			
 			<div class="hot-container">
@@ -337,7 +337,7 @@ class dynamicpackages_Metaboxes
 	public static function package_availability_html( $post) {
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 		
-		<?php if(!dynamicpackages_Validators::is_child()) : ?>
+		<?php if(!dy_Validators::is_child()) : ?>
 			<h4><?php _e( 'Event Date', 'dynamicpackages' ); ?></h4>
 				<p>
 					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo package_field( 'package_event_date' ); ?>">
@@ -393,7 +393,7 @@ class dynamicpackages_Metaboxes
 		
 		<?php 
 
-			if(dynamicpackages_Validators::is_child())
+			if(dy_Validators::is_child())
 			{
 				global $polylang; 
 				$language_list = array();
@@ -432,7 +432,7 @@ class dynamicpackages_Metaboxes
 			}
 		?>		
 		
-		<?php if(!dynamicpackages_Validators::is_child()) : ?>
+		<?php if(!dy_Validators::is_child()) : ?>
 			<p>
 				<label for="package_display"><?php _e( 'Hide Package', 'dynamicpackages' ); ?></label><br />
 				<select name="package_display" id="package_display">

@@ -1,13 +1,13 @@
 <?php
 
-class dynamicpackages_Taxmodifier
+class dy_Tax_Mod
 {
 	function __construct()
 	{
-		add_action('init', array('dynamicpackages_Taxmodifier', 'add_ons'));
-		add_action('admin_init', array('dynamicpackages_Taxmodifier', 'title_modifier'), 10, 2);
-		add_action('admin_enqueue_scripts', array('dynamicpackages_Taxmodifier', 'enqueue'));
-		add_action('checkout_items', array('dynamicpackages_Taxmodifier', 'checkout_items'), 10);
+		add_action('init', array('dy_Tax_Mod', 'add_ons'));
+		add_action('admin_init', array('dy_Tax_Mod', 'title_modifier'), 10, 2);
+		add_action('admin_enqueue_scripts', array('dy_Tax_Mod', 'enqueue'));
+		add_action('checkout_items', array('dy_Tax_Mod', 'checkout_items'), 10);
 	}
 	
 	public static function enqueue()
@@ -16,7 +16,7 @@ class dynamicpackages_Taxmodifier
 		{
 			if($_GET['taxonomy'] == 'package_add_ons' && $_GET['taxonomy'] != '' && $_GET['post_type'] == 'post')
 			{
-				dynamicpackages_Admin::handsontable();
+				dy_Admin::handsontable();
 				wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true);
 			}
 		}
@@ -25,9 +25,9 @@ class dynamicpackages_Taxmodifier
 	public static function add_ons()
 	{
 		$tax = 'package_add_ons';
-		add_action($tax.'_edit_form_fields', array('dynamicpackages_Taxmodifier', 'add_ons_form'), 10, 2);
-		add_action( 'create_'.$tax, array('dynamicpackages_Taxmodifier', 'save'), 10, 2);
-		add_action( 'edited_'.$tax, array('dynamicpackages_Taxmodifier', 'save'), 10, 2);		
+		add_action($tax.'_edit_form_fields', array('dy_Tax_Mod', 'add_ons_form'), 10, 2);
+		add_action( 'create_'.$tax, array('dy_Tax_Mod', 'save'), 10, 2);
+		add_action( 'edited_'.$tax, array('dy_Tax_Mod', 'save'), 10, 2);		
 	}
 	public static function title_modifier()
 	{
@@ -36,9 +36,9 @@ class dynamicpackages_Taxmodifier
 		for($x = 0; $x < count($taxonomies); $x++)
 		{
 			$tax = $taxonomies[$x];
-			add_action($tax.'_edit_form_fields', array('dynamicpackages_Taxmodifier', 'title_form'), 10, 2);
-			add_action( 'create_'.$tax, array('dynamicpackages_Taxmodifier', 'save'), 10, 2);
-			add_action( 'edited_'.$tax, array('dynamicpackages_Taxmodifier', 'save'), 10, 2);
+			add_action($tax.'_edit_form_fields', array('dy_Tax_Mod', 'title_form'), 10, 2);
+			add_action( 'create_'.$tax, array('dy_Tax_Mod', 'save'), 10, 2);
+			add_action( 'edited_'.$tax, array('dy_Tax_Mod', 'save'), 10, 2);
 		}
 	}	
 	public static function title_form($term){

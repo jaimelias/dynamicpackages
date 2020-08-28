@@ -1,28 +1,7 @@
 <?php
 
-class dynamicpackages_Validators
+class dy_Validators
 {
-
-	public static function is_checkout_or_quote()
-	{
-		global $dy_is_checkout_or_quote;
-		$output = false;
-		
-		if(isset($dy_is_checkout_or_quote))
-		{
-			$output = true;
-		}
-		else
-		{
-			if(isset($_POST['description']) && isset($_POST['departure_date']) && isset($_POST['duration']))
-			{
-				$output = true;
-				$GLOBALS['dy_is_checkout_or_quote'] = $output;
-			}			
-		}
-
-		return $output;
-	}
 	public static function validate_booking_date()
 	{
 		$output = false;
@@ -159,9 +138,9 @@ class dynamicpackages_Validators
 		}
 		else
 		{
-			if(isset($_POST['fname']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']))
+			if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']))
 			{
-				if(is_email($_POST['email']) && !empty($_POST['fname']) && !empty($_POST['lastname']) && !empty($_POST['phone']))
+				if(is_email($_POST['email']) && !empty($_POST['first_name']) && !empty($_POST['lastname']) && !empty($_POST['phone']))
 				{
 					$output = true;
 					$GLOBALS['dy_contact_details'] = $output;
@@ -207,20 +186,12 @@ class dynamicpackages_Validators
 	public static function validate_checkout()
 	{
 		$output = false;
-		global $validate_checkout;
-		
-		if(isset($validate_checkout))
+
+		if(self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details() && self::credit_card())
 		{
 			$output = true;
-		}
-		else
-		{
-			if(self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details() && self::credit_card())
-			{
-				$output = true;
-				$GLOBALS['validate_checkout'] = $output;
-			}		
-		}
+		}	
+		
 		return $output;
 	}
 	public static function booking_details()

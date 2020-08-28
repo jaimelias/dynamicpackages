@@ -20,7 +20,7 @@
  * @subpackage dynamicpackages/public
  * @author     Jaimelías <jaimelias@about.me>
  */
-class dynamicpackages_Public {
+class dy_Public {
 
 	/**
 	 * The ID of this plugin.
@@ -47,23 +47,23 @@ class dynamicpackages_Public {
 	
 	public function init()
 	{
-		add_action('wp_enqueue_scripts', array('dynamicpackages_Public', 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array('dynamicpackages_Public', 'enqueue_scripts'), 11);
-		add_action('pre_get_posts', array('dynamicpackages_Public', 'global_vars'));
-		add_filter( 'template_include', array('dynamicpackages_Public', 'package_template'), 99);
-		add_filter( 'the_content', array('dynamicpackages_Public', 'filter_content'), 100);
-		add_filter( 'pre_get_document_title', array('dynamicpackages_Public', 'modify_wp_title'), 100);
-		add_filter( 'wp_title', array('dynamicpackages_Public', 'modify_wp_title'), 100);
-		add_filter("the_title", array('dynamicpackages_Public', 'modify_title'), 100);
-		add_filter("single_term_title", array('dynamicpackages_Public', 'modify_tax_title'));
-		add_action('pre_get_posts', array('dynamicpackages_Public', 'fix_multiple_tax'));
-		add_action('wp_head', array('dynamicpackages_Public', 'booking_head'));
-		add_action('wp_head', array('dynamicpackages_Public', 'meta_tags'));
-		add_filter("get_the_excerpt", array('dynamicpackages_Public', 'modify_excerpt'));
-		add_filter("term_description", array('dynamicpackages_Public', 'modify_term_description'));
-		add_action('wp_head', array('dynamicpackages_Public', 'location_category_canonical'));
-		add_filter('jetpack_enable_open_graph', array('dynamicpackages_Public', 'deque_jetpack'));
-		add_filter('package_details', array('dynamicpackages_Public', 'details_add'));		
+		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_styles'));
+		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_scripts'), 11);
+		add_action('pre_get_posts', array('dy_Public', 'global_vars'));
+		add_filter( 'template_include', array('dy_Public', 'package_template'), 99);
+		add_filter( 'the_content', array('dy_Public', 'filter_content'), 100);
+		add_filter( 'pre_get_document_title', array('dy_Public', 'modify_wp_title'), 100);
+		add_filter( 'wp_title', array('dy_Public', 'modify_wp_title'), 100);
+		add_filter("the_title", array('dy_Public', 'modify_title'), 100);
+		add_filter("single_term_title", array('dy_Public', 'modify_tax_title'));
+		add_action('pre_get_posts', array('dy_Public', 'fix_multiple_tax'));
+		add_action('wp_head', array('dy_Public', 'booking_head'));
+		add_action('wp_head', array('dy_Public', 'meta_tags'));
+		add_filter("get_the_excerpt", array('dy_Public', 'modify_excerpt'));
+		add_filter("term_description", array('dy_Public', 'modify_term_description'));
+		add_action('wp_head', array('dy_Public', 'location_category_canonical'));
+		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
+		add_filter('package_details', array('dy_Public', 'details_add'));		
 	}
 	 
 	public static function enqueue_styles() {
@@ -151,7 +151,7 @@ class dynamicpackages_Public {
 			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );			
 			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');	
 
-			wp_add_inline_script('dynamicpackages', dynamicpackages_Public::recaptcha_sitekey(), 'before');					
+			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');					
 			
 			if(!is_booking_page())
 			{
@@ -297,7 +297,7 @@ class dynamicpackages_Public {
 			{
 				if(is_booking_page())
 				{
-					if(dynamicpackages_Validators::validate_hash())
+					if(dy_Validators::validate_hash())
 					{
 						$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
 						$sum_people = $pax_regular;	
@@ -328,7 +328,7 @@ class dynamicpackages_Public {
 								else
 								{
 									ob_start();
-									require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout_page.php');
+									require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
 									$content = ob_get_contents();
 									ob_end_clean();									
 								}	
@@ -337,7 +337,7 @@ class dynamicpackages_Public {
 						else
 						{
 							ob_start();
-							require_once(plugin_dir_path( __DIR__ ) . 'gateways/checkout_page.php');
+							require_once(plugin_dir_path( __DIR__ ) . 'gateways/checkout-page.php');
 							$content = ob_get_contents();
 							ob_end_clean();						
 						}					
@@ -357,7 +357,7 @@ class dynamicpackages_Public {
 			else
 			{
 				
-				if(dynamicpackages_Validators::is_child())
+				if(dy_Validators::is_child())
 				{
 					
 					$subpackage_name = 'package_child_title';
@@ -546,12 +546,7 @@ class dynamicpackages_Public {
 			if(is_booking_page())
 			{
 				$title = esc_html(__('Online Booking', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-			}
-			
-			elseif(dynamicpackages_Validators::validate_checkout())
-			{
-				$title = esc_html(__('Checkout', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-			}		
+			}	
 			
 			global $post;
 			if($post->post_parent > 0)
@@ -576,7 +571,7 @@ class dynamicpackages_Public {
 		}
 		elseif(is_page())
 		{
-			if(dynamicpackages_Validators::validate_category_location())
+			if(dy_Validators::validate_category_location())
 			{
 				$location = '';
 				$category = '';
@@ -725,10 +720,8 @@ class dynamicpackages_Public {
 				}
 			}
 			
-			if($post->post_type == 'packages')
-			{
-				global $post;
-				
+			if(is_singular('packages'))
+			{				
 				if(is_booking_page())
 				{
 					$our_awesome = __('Booking Page', 'dynamicpackages');
@@ -739,10 +732,6 @@ class dynamicpackages_Public {
 					}
 					
 					$title = '<span class="linkcolor">'.esc_html($our_awesome).'</span>: <span data-id="package-title">'.esc_html($title).'</span> <span class="large linkcolor"></span>';
-				}
-				elseif(dynamicpackages_Validators::validate_checkout())
-				{
-					$title = '<span class="linkcolor">'.esc_html(__('Checkout', 'dynamicpackages')).'</span>';
 				}			
 				else
 				{
@@ -752,7 +741,7 @@ class dynamicpackages_Public {
 			}
 			elseif(is_page())
 			{
-				if(dynamicpackages_Validators::validate_category_location())
+				if(dy_Validators::validate_category_location())
 				{
 					$location = '';
 					$category = '';
@@ -1478,7 +1467,7 @@ class dynamicpackages_Public {
 		global $post;
 		global $polylang;
 		
-		if(!dynamicpackages_Validators::is_child() && isset($post))
+		if(!dy_Validators::is_child() && isset($post))
 		{
 			$label = __('Packages', 'dynamicpackages');
 			
@@ -1598,7 +1587,7 @@ class dynamicpackages_Public {
 			
 			if(is_object($post))
 			{
-				if(dynamicpackages_Validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
+				if(dy_Validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
 				{
 					$excerpt = null;
 				}				
@@ -1610,7 +1599,7 @@ class dynamicpackages_Public {
 	
 	public static function deque_jetpack()
 	{	
-		if(is_page() && dynamicpackages_Validators::validate_category_location())
+		if(is_page() && dy_Validators::validate_category_location())
 		{	
 			remove_action( 'wp_head', 'rel_canonical');
 			return false;
@@ -1629,7 +1618,7 @@ class dynamicpackages_Public {
 	}
 	public static function location_category_canonical()
 	{
-		if(dynamicpackages_Validators::validate_category_location())
+		if(dy_Validators::validate_category_location())
 		{
 			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 			$url = get_the_permalink().'?';
@@ -1955,7 +1944,7 @@ class dynamicpackages_Public {
 	
 	public static function show_coupons()
 	{
-		if(dynamicpackages_Validators::has_coupon())
+		if(dy_Validators::has_coupon())
 		{
 			$coupons = self::get_all_coupons();
 			$output = null;
@@ -2033,7 +2022,7 @@ class dynamicpackages_Public {
 	{
 		global $post;
 		
-		if(isset($post) && dynamicpackages_Validators::is_child())
+		if(isset($post) && dy_Validators::is_child())
 		{
 			$label = __('Similar packages', 'dynamicpackages');
 			

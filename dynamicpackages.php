@@ -125,11 +125,11 @@ function get_price_chart()
 }
 function is_booking_page()
 {
-	return dynamicpackages_Validators::is_booking_page();
+	return dy_Validators::is_booking_page();
 }
 function is_has_package()
 {
-	return dynamicpackages_Validators::is_has_package();
+	return dy_Validators::is_has_package();
 }
 
 if ( ! function_exists('write_log')) {

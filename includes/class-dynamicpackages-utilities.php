@@ -202,7 +202,7 @@ class dy_utilities {
 	{
 		$sum = self::subtotal_regular();
 		
-		if(dynamicpackages_Validators::valid_coupon())
+		if(dy_Validators::valid_coupon())
 		{
 			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 		}
@@ -281,10 +281,10 @@ class dy_utilities {
 		{
 			$output = self::starting_at();
 			
-			if(dynamicpackages_Validators::has_children() && in_the_loop())
+			if(dy_Validators::has_children() && in_the_loop())
 			{
 				$prices = array();
-				$children = dynamicpackages_Validators::has_children();
+				$children = dy_Validators::has_children();
 				
 				foreach ( $children as $child )
 				{
@@ -769,7 +769,7 @@ class dy_utilities {
 			
 			$sum = $base_price + $occupancy_price;
 			
-			if(dynamicpackages_Validators::valid_coupon())
+			if(dy_Validators::valid_coupon())
 			{
 				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 			}
@@ -858,7 +858,7 @@ class dy_utilities {
 			
 			$sum = $base_price + $occupancy_price;
 			
-			if(dynamicpackages_Validators::valid_coupon())
+			if(dy_Validators::valid_coupon())
 			{
 				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 			}			
@@ -961,6 +961,45 @@ class dy_utilities {
 			}
 		}
 
+	}
+	
+	public static function imp_taxo($tax)
+	{
+		global $post;
+		$termid = $post->ID;
+		
+		if(property_exists($post, 'post_parent') && !has_term('', $tax, $termid))
+		{
+			$termid = $post->post_parent;
+		}
+		
+		$terms = get_the_terms($termid, $tax);		
+		
+		if($terms)
+		{
+
+			$terms_array = array();
+					
+			for($x = 0; $x < count($terms); $x++)
+			{
+				array_push($terms_array, $terms[$x]->name);
+			}
+			
+			return implode(', ', $terms_array);
+		}
+	}
+	
+	public static function amount()
+	{
+		$total = floatval(dy_utilities::total());
+		
+		if(dy_Validators::has_deposit())
+		{
+			$deposit = floatval(dy_utilities::get_deposit());
+			$total = $total*($deposit*0.01);			
+		}
+		
+		return $total;
 	}	
 	
 }

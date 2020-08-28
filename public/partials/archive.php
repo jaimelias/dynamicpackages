@@ -261,7 +261,7 @@ else
 	<?php $term_description = do_shortcode($term_description); ?>
 	<?php $term_description = $Parsedown->text($term_description); ?>
 	<div class="bottom-20"><?php echo $term_description; ?> </div>
-	<?php echo dynamicpackages_Shortcodes::package_filter_form();?>
+	<?php echo dy_Shortcodes::package_filter_form();?>
 <?php endif; ?>
 
 	<div id="dy_archive" class="dy_archive">
@@ -276,14 +276,14 @@ else
 		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>		
 
 		<?php
-			dynamicpackages_Public::event_date_update($post->ID);
+			dy_Public::event_date_update($post->ID);
 			$package_code = package_field( 'package_trip_code' );
 		?>
 
-			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dynamicpackages_Validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
+			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_Validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
 				
 				
-				<?php if(dynamicpackages_Validators::is_valid_schema($post->ID)): ?>
+				<?php if(dy_Validators::is_valid_schema($post->ID)): ?>
 					<link itemprop="url" href="<?php the_permalink(); ?>" />
 					<meta itemprop="brand" content="<?php bloginfo('name'); ?>" />
 					<meta itemprop="sku" content="<?php echo esc_html(md5(package_field( 'package_trip_code' ))); ?>" />
@@ -296,8 +296,8 @@ else
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
 								<a title="<?php echo esc_html($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
-								<?php dynamicpackages_Public::show_event_date(); ?>
-								<?php dynamicpackages_Public::show_badge(); ?>
+								<?php dy_Public::show_event_date(); ?>
+								<?php dy_Public::show_badge(); ?>
 							</div>
 							<?php endif;?>
 						</div>	
@@ -314,18 +314,18 @@ else
 							
 							
 							<div class="dy_reviews small bottom-10">
-							<?php dynamicpackages_Reviews::stars($post->ID); ?>
+							<?php dy_Reviews::stars($post->ID); ?>
 							</div>
 
 							<div class="dy_pad bottom-10 semibold">
-								<?php echo esc_html(dynamicpackages_Public::show_duration()); ?>
+								<?php echo esc_html(dy_Public::show_duration()); ?>
 							</div>
 
 							<?php if(has_excerpt()): ?>
 								<p itemprop="description" class="bottom-10 small hide-sm"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
-							<div class="small hide-sm"><?php dynamicpackages_Public::details(); ?></div>
+							<div class="small hide-sm"><?php dy_Public::details(); ?></div>
 							
 							
 							<?php if(dy_utilities::starting_at_archive() > 0): ?>
@@ -336,7 +336,7 @@ else
 									<meta itemprop="priceValidUntil" content="<?php echo esc_html(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_html(dy_utilities::currency_name()); ?>" />
 									<?php echo esc_html(__('Starting at', 'dynamicpackages')); ?> <?php echo esc_html(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_html(dy_utilities::starting_at_archive());?>"><?php echo esc_html(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
-									</span> <small class="text-muted"> <?php echo esc_html(dynamicpackages_Public::price_type());?></small>
+									</span> <small class="text-muted"> <?php echo esc_html(dy_Public::price_type());?></small>
 								</div>
 							<?php endif;?>
 												

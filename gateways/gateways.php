@@ -1,11 +1,11 @@
 <?php
 
-class dynamicpackages_Gateways
+class dy_Gateways
 {
 	function __construct()
 	{
 		$this->load_gateways();
-		$this->plugin_checkout = new dynamicpackages_Checkout();
+		$this->plugin_checkout = new dy_CC_Checkout();
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
 		$this->yappy_direct = new yappy_direct();	
@@ -23,7 +23,7 @@ class dynamicpackages_Gateways
 	}
 	public static function load_gateways()
 	{
-		require_once plugin_dir_path(__FILE__).'checkout_matrix.php';		
+		require_once plugin_dir_path(__FILE__).'cc-gateways.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
 		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
@@ -80,12 +80,12 @@ class dynamicpackages_Gateways
 		{
 			$output = __('Pay', 'dynamicpackages');
 			
-			if(dynamicpackages_Validators::has_deposit())
+			if(dy_Validators::has_deposit())
 			{
 				$output .= ' '.__('the deposit', 'dynamicpackages');
 			}
 			
-			$output .= ' ('.dy_utilities::currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dynamicpackages_Checkout::amount(), 2, '.', ',').'</span>';
+			$output .= ' ('.dy_utilities::currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dy_utilities::amount(), 2, '.', ',').'</span>';
 			
 			$output .= ') '.__('with', 'dynamicpackages');
 			
@@ -105,7 +105,7 @@ class dynamicpackages_Gateways
 	{
 		if(is_singular('packages') && package_field('package_auto_booking') > 0)
 		{	
-			if(is_booking_page() && dynamicpackages_Validators::valid_coupon())
+			if(is_booking_page() && dy_Validators::valid_coupon())
 			{
 				$coupon = ucwords(strtolower(sanitize_text_field($_GET['booking_coupon'])));
 				
@@ -123,7 +123,7 @@ class dynamicpackages_Gateways
 	public static function add_to_checkout_area()
 	{
 		$output = '';
-		if(dynamicpackages_Gateways::has_any_gateway())
+		if(dy_Gateways::has_any_gateway())
 		{
 			$output .= '<p class="text-center bottom-20 large">'.self::choose_gateway().'.</p><div class="text-center bottom-20">'.self::gateway_buttons().'</div>';
 		}
@@ -144,7 +144,7 @@ class dynamicpackages_Gateways
 			}
 		}
 		
-		$output .= dynamicpackages_Public::booking_sidebar();	
+		$output .= dy_Public::booking_sidebar();	
 		echo $output;	
 	}
 }

@@ -30,7 +30,7 @@ class paypal_me{
 
 	public function send_data()
 	{		
-		if(dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		if(dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -45,15 +45,15 @@ class paypal_me{
 
 	public function filter_excerpt($excerpt)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
-			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',');
+			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',');
 		}
 		return $excerpt;
 	}
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -70,7 +70,7 @@ class paypal_me{
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dynamicpackages_Validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Thank you for choosing Paypal', 'dynamicpackages'));
 		}
@@ -180,7 +180,7 @@ class paypal_me{
 					}
 				}
 				
-				if(dynamicpackages_Validators::has_deposit())
+				if(dy_Validators::has_deposit())
 				{
 					$total = $total * ($deposit/100);
 				}
@@ -193,7 +193,7 @@ class paypal_me{
 					}
 					else
 					{
-						if(dynamicpackages_Validators::has_deposit())
+						if(dy_Validators::has_deposit())
 						{
 							$output = true;
 						}
@@ -380,14 +380,14 @@ class paypal_me{
 		
 		$admin_email = get_option('admin_email');
 		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['fname']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
+		$admin_subject = sanitize_text_field($_POST['first_name']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
 		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
-		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
+		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
 		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';
 		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
 		
 		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['fname']).',</p>'.$this->message();
+		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',</p>'.$this->message();
 		
 		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
 		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
@@ -403,7 +403,7 @@ class paypal_me{
 		
 		$label = __('full payment of', 'dynamicpackages');
 		
-		if(dynamicpackages_Validators::has_deposit())
+		if(dy_Validators::has_deposit())
 		{
 			$label = __('deposit of', 'dynamicpackages');
 		}	
