@@ -1561,9 +1561,9 @@ class dy_Public {
 				{
 					$excerpt .= ' '.__('Starting at', 'dynamicpackages');
 					
-					if(intval(self::starting_at()) > 0)
+					if(intval(dy_utilities::starting_at()) > 0)
 					{
-						$excerpt .= ' '.dy_utilities::currency_symbol().intval(self::starting_at()).' '.self::price_type().'. ';
+						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.self::price_type().'. ';
 						
 						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
 						{
