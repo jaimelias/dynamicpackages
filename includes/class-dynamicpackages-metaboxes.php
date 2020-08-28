@@ -58,7 +58,7 @@ class dynamicpackages_Metaboxes
 			);		
 						
 			//if e-commerce if off disable metabox
-			if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Settings::is_gateway_active())
+			if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Validators::is_gateway_active())
 			{	
 				add_meta_box(
 					'package-f',
@@ -220,7 +220,7 @@ class dynamicpackages_Metaboxes
 					</select>
 				</p>
 
-				<?php if(dynamicpackages_Settings::is_gateway_active()): ?>
+				<?php if(dynamicpackages_Validators::is_gateway_active()): ?>
 					<p>
 						<label for="package_auto_booking"><?php _e( 'Enable Automatic Booking', 'dynamicpackages' ); ?></label><br />
 						<select name="package_auto_booking" id="package_auto_booking">
@@ -258,7 +258,7 @@ class dynamicpackages_Metaboxes
 					<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo package_field( 'package_increase_persons' ); ?>"> <?php _e( 'get more leads even if the prices are not defined', 'dynamicpackages' ); ?>.</span>
 				</p>
 				
-				<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Settings::is_gateway_active() === true): ?>
+				<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dynamicpackages_Validators::is_gateway_active() === true): ?>
 					<p>
 						<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
 						<select name="package_payment" id="package_payment">

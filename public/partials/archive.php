@@ -2,6 +2,10 @@
 
 	$posts_per_page = isset($dis_imp) ? $dis_imp : 12;
 	$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+	$today = date("Y-m-d");
+	$tomorrow = date("Y-m-d", strtotime('tomorrow midnight'));
+	$week = date('Y-m-d', strtotime('+7 day', strtotime('today midnight')));
+	$month = date('Y-m-d', strtotime('+30 day', strtotime('today midnight')));
 
 	$args = array(
 		'post_type' => 'packages',
@@ -111,7 +115,6 @@
 			else if($sort_imp == 'today')
 			{
 				//today
-				$today = date("Y-m-d");
 				$filter_today = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -125,8 +128,6 @@
 			{
 				
 				//today
-				$today = date("Y-m-d");
-
 				$filter_today = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -135,8 +136,6 @@
 				);				
 				
 				//tomorrow start
-				$tomorrow = date("Y-m-d", strtotime('tomorrow midnight'));
-
 				$filter_tomorrow = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -149,7 +148,6 @@
 			else if($sort_imp == 'week')
 			{
 				//today
-				$today = date("Y-m-d");
 				$filter_today = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -158,7 +156,6 @@
 				);
 				
 				//+7 days
-				$week = date('Y-m-d', strtotime('+7 day', strtotime('today midnight')));
 				$filter_week = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -171,7 +168,6 @@
 			else if($sort_imp == 'month')
 			{
 				//today
-				$today = date("Y-m-d");
 				$filter_today = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
@@ -180,14 +176,13 @@
 				);
 				
 				//+30 days
-				$month = date('Y-m-d', strtotime('+30 day', strtotime('today midnight')));
 				$filter_month = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
 					'value' => $month,
 					'compare' => '<='
 				);
-					
+
 				array_push($args['meta_query'], $filter_today, $filter_month);
 			}
 		}		
@@ -223,6 +218,7 @@ if(is_array($args))
 			'value' => '1',
 			'compare' => '!='
 		);	
+		
 		array_push($args['meta_query'], $display);
 	}	
 }
@@ -332,14 +328,14 @@ else
 							<div class="small hide-sm"><?php dynamicpackages_Public::details(); ?></div>
 							
 							
-							<?php if(dynamicpackages_Public::starting_at_archive() > 0): ?>
+							<?php if(dy_utilities::starting_at_archive() > 0): ?>
 								<div class="dy_pad bottom-10">
 									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 									<link itemprop="availability" href="http://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_html(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_html(dy_utilities::currency_name()); ?>" />
-									<?php echo esc_html(__('Starting at', 'dynamicpackages')); ?> <?php echo esc_html(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_html(dynamicpackages_Public::starting_at_archive());?>"><?php echo esc_html(number_format(dynamicpackages_Public::starting_at_archive(), 0, '.', ','));?></span>
+									<?php echo esc_html(__('Starting at', 'dynamicpackages')); ?> <?php echo esc_html(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_html(dy_utilities::starting_at_archive());?>"><?php echo esc_html(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
 									</span> <small class="text-muted"> <?php echo esc_html(dynamicpackages_Public::price_type());?></small>
 								</div>
 							<?php endif;?>

@@ -6,7 +6,7 @@ class dynamicpackages_Checkout
 	{
 		if(is_admin())
 		{
-			if(dynamicpackages_Settings::is_gateway_active())
+			if(dynamicpackages_Validators::is_gateway_active())
 			{
 				add_action('admin_init', array('dynamicpackages_Checkout', 'settings_init'));
 				add_action('admin_menu', array('dynamicpackages_Checkout', 'add_primary_gateway_page'), 100);				
@@ -339,17 +339,17 @@ class dynamicpackages_Checkout
 		else
 		{
 			//outstanding balance
-			$total = dynamicpackages_Public::total();
+			$total = dy_utilities::total();
 			$amount = $total;
 			
 			
 			if(package_field('package_payment' ) == 1)
 			{
-				$deposit = floatval(dynamicpackages_Public::get_deposit());
+				$deposit = floatval(dy_utilities::get_deposit());
 				
 				if($deposit > 0)
 				{
-					$amount = floatval(dynamicpackages_Public::total())*(floatval($deposit)*0.01);
+					$amount = floatval(dy_utilities::total())*(floatval($deposit)*0.01);
 					$output = floatval($total)-$amount;					
 				}
 				if(isset($_GET['quote']))
@@ -393,7 +393,7 @@ class dynamicpackages_Checkout
 	{
 		global $post;
 		
-		$tax = floatval(dynamicpackages_Public::tax());
+		$tax = floatval(dy_utilities::tax());
 		$description = self::get_description();
 		$coupon_code = null;
 		$coupon_discount = null;
@@ -403,8 +403,8 @@ class dynamicpackages_Checkout
 		
 		if(dynamicpackages_Validators::valid_coupon())
 		{
-			$coupon_code = dynamicpackages_Public::get_coupon('code');
-			$coupon_discount = dynamicpackages_Public::get_coupon('discount');
+			$coupon_code = dy_utilities::get_coupon('code');
+			$coupon_discount = dy_utilities::get_coupon('discount');
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
@@ -412,7 +412,7 @@ class dynamicpackages_Checkout
 		{
 			$affiliate = dynamicpackages_Affiliates::get_affiliate('id');
 			$affiliate_hash = dynamicpackages_Affiliates::affiliate_hash();
-			$affiliate_total = dy_utilities::currency_format(dynamicpackages_Public::subtotal());
+			$affiliate_total = dy_utilities::currency_format(dy_utilities::subtotal());
 		}
 		
 		$checkout_vars = array(
@@ -423,9 +423,9 @@ class dynamicpackages_Checkout
 			'departure_date' => sanitize_text_field($_GET['booking_date']),
 			'departure_address' => esc_html(package_field('package_departure_address')),
 			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
-			'booking_hour' => esc_html(dynamicpackages_Public::hour()),
+			'booking_hour' => esc_html(dy_utilities::hour()),
 			'duration' => esc_html(dynamicpackages_Public::show_duration()),
-			'pax_num' => intval(dynamicpackages_Public::pax_num()),
+			'pax_num' => intval(dy_utilities::pax_num()),
 			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
 			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
 			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
@@ -446,10 +446,10 @@ class dynamicpackages_Checkout
 			'affiliate_hash' => esc_html($affiliate_hash),
 			'affiliate_total' => esc_html($affiliate_total),
 			'outstanding' =>dy_utilities::currency_format(dy_sum_tax(self::outstanding())),
-			'amount' =>dy_utilities::currency_format(dy_sum_tax(dynamicpackages_Public::total())),
-			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dynamicpackages_Public::subtotal_regular())),
+			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
+			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),
 			'payment_type' => self::payment_type(),
-			'deposit' => floatval(dynamicpackages_Public::get_deposit())
+			'deposit' => floatval(dy_utilities::get_deposit())
 		);
 		
 		if($tax > 0)
@@ -495,8 +495,8 @@ class dynamicpackages_Checkout
 	public static function tax_amount()
 	{
 		$output = 0;
-		$tax = floatval(dynamicpackages_Public::tax());
-		$total = floatval(dynamicpackages_Public::total());
+		$tax = floatval(dy_utilities::tax());
+		$total = floatval(dy_utilities::total());
 		
 		if($tax > 0 && $total > 0)
 		{
@@ -507,11 +507,11 @@ class dynamicpackages_Checkout
 	}
 	public static function amount()
 	{
-		$total = floatval(dynamicpackages_Public::total());
+		$total = floatval(dy_utilities::total());
 		
 		if(dynamicpackages_Validators::has_deposit())
 		{
-			$deposit = floatval(dynamicpackages_Public::get_deposit());
+			$deposit = floatval(dy_utilities::get_deposit());
 			$total = $total*($deposit*0.01);			
 		}
 		
@@ -524,7 +524,7 @@ class dynamicpackages_Checkout
 		if(dynamicpackages_Validators::has_deposit())
 		{
 			$deposit = dy_sum_tax(self::amount());
-			$total = dy_sum_tax(dynamicpackages_Public::total());
+			$total = dy_sum_tax(dy_utilities::total());
 			$outstanding = $total-$deposit;
 			$output .= '- '.__('Paid', 'dynamicpackages').' $'.dy_utilities::currency_format($deposit).' - '.__('Outstanding Balance', 'dynamicpackages').' $'.dy_utilities::currency_format($outstanding);					
 		}
@@ -718,7 +718,7 @@ class dynamicpackages_Checkout
 	public static function button($output)
 	{
 		
-		if(dynamicpackages_Settings::is_gateway_active() && (in_array('Visa', self::list_gateways_cb()) || in_array('Mastercard', self::list_gateways_cb())))
+		if(dynamicpackages_Validators::is_gateway_active() && (in_array('Visa', self::list_gateways_cb()) || in_array('Mastercard', self::list_gateways_cb())))
 		{
 			$output .= '<button class="pure-button pure-button-primary bottom-20 bycard rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html(__('Pay by card', 'dynamicpackages')).'</button>';
 		}
@@ -730,7 +730,7 @@ class dynamicpackages_Checkout
 	}	
 	public static function add_gateway($array)
 	{
-		if(is_singular('packages') && dynamicpackages_Settings::is_gateway_active() && package_field('package_auto_booking') > 0)
+		if(is_singular('packages') && dynamicpackages_Validators::is_gateway_active() && package_field('package_auto_booking') > 0)
 		{
 			$array[] = 'Visa';
 			$array[] = 'Mastercard';		

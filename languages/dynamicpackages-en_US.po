@@ -86,7 +86,7 @@ msgstr ""
 msgid "years old"
 msgstr ""
 
-#: gateways/checkout_page.php:163 gateways/checkout_settings.php:271
+#: gateways/checkout_page.php:163 gateways/gateways.php:271
 msgid "Tax"
 msgstr ""
 
@@ -207,7 +207,7 @@ msgid "Pay by card"
 msgstr ""
 
 #: gateways/checkout_matrix.php:88 gateways/checkout_matrix.php:117
-#: gateways/checkout_settings.php:244
+#: gateways/gateways.php:244
 msgid "General Settings"
 msgstr ""
 
@@ -270,55 +270,55 @@ msgstr ""
 msgid "Paid"
 msgstr ""
 
-#: gateways/checkout_settings.php:209
+#: gateways/gateways.php:209
 msgid "Dynamicpackages Packages"
 msgstr ""
 
-#: gateways/checkout_settings.php:250
+#: gateways/gateways.php:250
 msgid "Payment Gateway"
 msgstr ""
 
-#: gateways/checkout_settings.php:257
+#: gateways/gateways.php:257
 msgid "Secondary Payment Gateway"
 msgstr ""
 
-#: gateways/checkout_settings.php:264
+#: gateways/gateways.php:264
 msgid "Breadcrumb"
 msgstr ""
 
-#: gateways/checkout_settings.php:279
+#: gateways/gateways.php:279
 msgid "Checkout Webhook URL"
 msgstr ""
 
-#: gateways/checkout_settings.php:287
+#: gateways/gateways.php:287
 msgid "Quote Webhook URL"
 msgstr ""
 
-#: gateways/checkout_settings.php:295
+#: gateways/gateways.php:295
 msgid "Recaptcha Site Key"
 msgstr ""
 
-#: gateways/checkout_settings.php:303
+#: gateways/gateways.php:303
 msgid "Recaptcha Secret Key"
 msgstr ""
 
-#: gateways/checkout_settings.php:311
+#: gateways/gateways.php:311
 msgid "Mandrill Api Key"
 msgstr ""
 
-#: gateways/checkout_settings.php:319
+#: gateways/gateways.php:319
 msgid "Mandrill Username"
 msgstr ""
 
-#: gateways/checkout_settings.php:327
+#: gateways/gateways.php:327
 msgid "IPGeolocation API Key"
 msgstr ""
 
-#: gateways/checkout_settings.php:362
+#: gateways/gateways.php:362
 msgid "None"
 msgstr ""
 
-#: gateways/checkout_settings.php:417 gateways/checkout_settings.php:424
+#: gateways/gateways.php:417 gateways/gateways.php:424
 msgid "Developers"
 msgstr ""
 

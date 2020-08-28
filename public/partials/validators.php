@@ -28,9 +28,9 @@ class dynamicpackages_Validators
 		
 		if(isset($_GET['booking_date']))
 		{
-			$booking_date = dynamicpackages_Public::booking_date();
-			$min_range = dynamicpackages_Public::min_range();
-			$max_range = dynamicpackages_Public::max_range();
+			$booking_date = dy_utilities::booking_date();
+			$min_range = dy_utilities::min_range();
+			$max_range = dy_utilities::max_range();
 			$event_date = strtotime(package_field('package_event_date'));
 			
 			if($booking_date)
@@ -280,7 +280,7 @@ class dynamicpackages_Validators
 		}
 		else
 		{
-			$hash = hash('sha512', dynamicpackages_Public::pax_num().$_GET['booking_date']);
+			$hash = hash('sha512', dy_utilities::pax_num().$_GET['booking_date']);
 			
 			if(isset($_GET['hash']))
 			{
@@ -345,12 +345,12 @@ class dynamicpackages_Validators
 				{
 					$booking_coupon = strtolower(sanitize_text_field($_GET['booking_coupon']));
 					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
-					$get_coupon = strtolower(dynamicpackages_Public::get_coupon('code'));
+					$get_coupon = strtolower(dy_utilities::get_coupon('code'));
 					$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
 					
 					if($get_coupon == $booking_coupon)
 					{
-						$expiration = dynamicpackages_Public::get_coupon('expiration');
+						$expiration = dy_utilities::get_coupon('expiration');
 
 						if($expiration == '')
 						{
@@ -450,7 +450,7 @@ class dynamicpackages_Validators
 			{
 				if(package_field('package_auto_booking'))
 				{
-					if(package_field( 'package_payment' ) == 1 && package_field('package_deposit') > 0 && dynamicpackages_Public::total() > 0)
+					if(package_field( 'package_payment' ) == 1 && package_field('package_deposit') > 0 && dy_utilities::total() > 0)
 					{
 						$output = true;
 						$GLOBALS['dy_has_deposit'] = $output;
@@ -562,9 +562,9 @@ class dynamicpackages_Validators
 						$new_range = array();
 						$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
 						$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
-						$range = dynamicpackages_Public::get_date_range($today, $last_day);
-						$disabled_range = dynamicpackages_Public::get_disabled_range();
-						$week_days = dynamicpackages_Public::get_week_days_list();				
+						$range = dy_utilities::get_date_range($today, $last_day);
+						$disabled_range = dy_utilities::get_disabled_range();
+						$week_days = dy_utilities::get_week_days_list();				
 						
 						for($x = 0; $x < count($range); $x++)
 						{
@@ -619,14 +619,14 @@ class dynamicpackages_Validators
 			{
 				if(is_singular('package'))
 				{
-					if(dynamicpackages_Public::starting_at() > 0)
+					if(dy_utilities::starting_at() > 0)
 					{
 						$output = true;
 					}
 				}
 				else
 				{
-					if(dynamicpackages_Public::starting_at_archive() > 0)
+					if(dy_utilities::starting_at_archive() > 0)
 					{
 						$output = true;
 					}
@@ -638,6 +638,31 @@ class dynamicpackages_Validators
 		
 		return $output;
 	}
+	
+	public static function is_gateway_active()
+	{
+		$output = false;
+		global $is_gateway_active;
+		
+		if(isset($is_gateway_active))
+		{
+			$output = true;
+		}
+		else
+		{
+			if(get_option('primary_gateway') != '' && !isset($_GET['quote']))
+			{
+				$option = get_option('primary_gateway');
+				
+				if($option != '0')
+				{
+					$GLOBALS['is_gateway_active'] = true;
+					$output = true;
+				}
+			}			
+		}
+		return $output;
+	}	
 }
 
 

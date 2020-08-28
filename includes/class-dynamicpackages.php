@@ -107,7 +107,7 @@ class dynamicpackages {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-dynamicpackages-admin.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-dynamicpackages-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-search.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'gateways/checkout_settings.php';	
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'gateways/gateways.php';	
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-metaboxes.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-metapost.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-tax.php';
@@ -182,7 +182,7 @@ class dynamicpackages {
 	private function define_public_hooks() {
 
 		$plugin_public = new dynamicpackages_Public();
-		$plugin_settings = new dynamicpackages_Settings();	
+		$plugin_settings = new dynamicpackages_Gateways();	
 		$plugin_search = new dynamicpackages_Search();
 		$plugin_affiliates = new dynamicpackages_Affiliates();
 		$plugin_add_to_calendar = new add_to_calendar();

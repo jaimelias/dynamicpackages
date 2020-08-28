@@ -8,12 +8,12 @@
 	
 	$sum = 0;
 	$sum_adults = 0;
-	$each_adult = dynamicpackages_Public::get_price_adults();
+	$each_adult = dy_utilities::get_price_adults();
 	$sum_children = 0;
-	$each_child = dynamicpackages_Public::get_price_discount();
+	$each_child = dy_utilities::get_price_discount();
 	$payment = 0;
 	$deposit = 25;
-	$total = dynamicpackages_Public::total();
+	$total = dy_utilities::total();
 	$payment_amount = $total;
 	$participants = intval(sanitize_text_field($_GET['pax_regular']));
 	$traveling_children = '';
@@ -53,8 +53,8 @@
 	if(package_field('package_payment' ) == 1)
 	{
 		$payment = 1;
-		$deposit = floatval(dynamicpackages_Public::get_deposit());
-		$payment_amount = dy_sum_tax(floatval(dynamicpackages_Public::total())*(floatval($deposit)*0.01));
+		$deposit = floatval(dy_utilities::get_deposit());
+		$payment_amount = dy_sum_tax(floatval(dy_utilities::total())*(floatval($deposit)*0.01));
 		$outstanding_amount = dy_sum_tax(floatval($total)-$payment_amount);
 		$outstanding_label = esc_html(__('Outstanding Balance', 'dynamicpackages')).' '.dy_money($outstanding_amount, 'dy_calc dy_calc_outstanding');
 		$deposit_label = esc_html(__('Deposit', 'dynamicpackages')).' '.dy_money($payment_amount, 'dy_calc dy_calc_total').' ('.esc_html($deposit).'%)';
@@ -68,7 +68,7 @@
 			{
 				$each_adult = floatval($each_adult)+floatval($price_chart[$a][0]);
 				
-				if(dynamicpackages_Public::increase_by_hour() || dynamicpackages_Public::increase_by_day())
+				if(dy_utilities::increase_by_hour() || dy_utilities::increase_by_day())
 				{
 					$each_adult = $each_adult * floatval(sanitize_text_field($_GET['booking_extra']));
 				}
@@ -90,7 +90,7 @@
 				{
 					$each_child = floatval($each_child) + floatval($price_chart[$a][1]);
 					
-					if(dynamicpackages_Public::increase_by_hour() || dynamicpackages_Public::increase_by_day())
+					if(dy_utilities::increase_by_hour() || dy_utilities::increase_by_day())
 					{
 						$each_child = $each_child * floatval(sanitize_text_field($_GET['booking_extra']));
 					}	
@@ -121,7 +121,7 @@
 <?php if(isset($_GET['booking_coupon'])): ?>
 	<?php if($_GET['booking_coupon'] != ''): ?>
 		<?php if(dynamicpackages_Validators::valid_coupon()): ?>
-			<p class="minimal_success large"><?php echo esc_html(__('Coupon', 'dynamicpackages').' '.dynamicpackages_Public::get_coupon('code').' '.__('activated', 'dynamicpackages').'. '.dynamicpackages_Public::get_coupon('discount').'% '.__('discount already applied on rate. This coupon expires on', 'dynamicpackages').' '.date_i18n(get_option('date_format' ), strtotime(dynamicpackages_Public::get_coupon('expiration')))); ?></p>
+			<p class="minimal_success large"><?php echo esc_html(__('Coupon', 'dynamicpackages').' '.dy_utilities::get_coupon('code').' '.__('activated', 'dynamicpackages').'. '.dy_utilities::get_coupon('discount').'% '.__('discount already applied on rate. This coupon expires on', 'dynamicpackages').' '.date_i18n(get_option('date_format' ), strtotime(dy_utilities::get_coupon('expiration')))); ?></p>
 		<?php else: ?> 
 			<p class="minimal_alert"><?php echo esc_html(__('Invalid or expired coupon', 'dynamicpackages')); ?></p>
 		<?php endif; ?>
@@ -153,8 +153,8 @@
 						<?php else: ?>
 						<td><?php echo esc_html(__('Adults', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php endif; ?>
-						<td><?php echo dy_money(dynamicpackages_Public::get_price_adults()); ?></td>
-						<td><?php echo dy_money(dynamicpackages_Public::get_price_adults()*floatval($_GET['pax_regular'])); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_adults()); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_adults()*floatval($_GET['pax_regular'])); ?></td>
 					</tr>
 					
 					<?php if(isset($_GET['pax_free'])): ?>
@@ -170,8 +170,8 @@
 					<?php if($each_child > 0 && floatval(sanitize_text_field($_GET['pax_discount'])) > 0 &&$discount != '' && intval($discount) != 0): ?>
 					<tr>
 						<td><?php echo esc_html(__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
-						<td><?php echo dy_money(dynamicpackages_Public::get_price_discount()); ?></td>
-						<td><?php echo dy_money(dynamicpackages_Public::get_price_discount()*floatval($_GET['pax_discount'])); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_discount()); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_discount()*floatval($_GET['pax_discount'])); ?></td>
 					</tr>
 					<?php endif; ?>
 					
@@ -192,7 +192,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php dynamicpackages_Settings::checkout_items(); ?>
+						<?php dynamicpackages_Gateways::checkout_items(); ?>
 					</tbody>
 				<?php endif; ?>
 								
@@ -202,16 +202,16 @@
 						<?php if(floatval($tax) > 0): ?>
 							<tr>
 							<td class="text-right" colspan="2"><?php echo esc_html(__('Tax', 'dynamicpackages')).' '.esc_html($tax); ?>%</td>
-							<td><?php echo dy_money((dynamicpackages_Public::total()*(floatval($tax)/100)), 'dy_calc dy_calc_tax_amount'); ?></td>
+							<td><?php echo dy_money((dy_utilities::total()*(floatval($tax)/100)), 'dy_calc dy_calc_tax_amount'); ?></td>
 							</tr>
 						<?php endif; ?>
 					<?php endif; ?>
 					<tr>
 						<td colspan="3">
 							<?php if(dynamicpackages_Validators::valid_coupon()): ?>
-								<s class="small light text-muted"><?php echo esc_html(__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dynamicpackages_Public::subtotal_regular(), 'dy_calc dy_calc_regular'); ?></span></s><br/>
+								<s class="small light text-muted"><?php echo esc_html(__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::subtotal_regular(), 'dy_calc dy_calc_regular'); ?></span></s><br/>
 							<?php endif; ?>
-							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dynamicpackages_Public::total()), 'dy_calc dy_calc_amount'); ?></span>
+							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dy_utilities::total()), 'dy_calc dy_calc_amount'); ?></span>
 						</td>
 					</tr>
 					
@@ -224,7 +224,7 @@
 				</tfoot>	
 			</table>
 
-			<div class="hidden" data-id="total"><?php echo esc_html(dynamicpackages_Public::total()); ?></div>
+			<div class="hidden" data-id="total"><?php echo esc_html(dy_utilities::total()); ?></div>
 			<div class="hidden" data-id="participants"><?php echo esc_html($participants); ?></div>
 			<div class="hidden" data-id="traveling-children"><?php echo esc_html($traveling_children); ?></div>
 
@@ -239,4 +239,4 @@
 
 <hr />
 
-<?php dynamicpackages_Settings::checkout_area(); ?>
+<?php dynamicpackages_Gateways::checkout_area(); ?>

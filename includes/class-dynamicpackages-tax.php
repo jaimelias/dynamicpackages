@@ -270,7 +270,7 @@ class dynamicpackages_Taxmodifier
 		if(is_booking_page())
 		{
 			$output = '';
-			$pax = intval(dynamicpackages_Public::pax_num()) - 1;
+			$pax = intval(dy_utilities::pax_num()) - 1;
 			$terms = self::get_add_ons();
 			
 			if(is_array($terms))
@@ -316,7 +316,7 @@ class dynamicpackages_Taxmodifier
 		
 		$output = array();
 		$def_lang = true;
-		$pax = intval(dynamicpackages_Public::pax_num()) - 1;
+		$pax = intval(dy_utilities::pax_num()) - 1;
 		
 		if($polylang)
 		{

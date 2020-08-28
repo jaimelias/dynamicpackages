@@ -141,7 +141,7 @@ class dynamicpackages_Affiliates{
 	public static function affiliate_hash()
 	{
 		//id.total
-		$string = self::get_affiliate('id').'~'.dy_utilities::currency_format(dynamicpackages_Public::total());
+		$string = self::get_affiliate('id').'~'.dy_utilities::currency_format(dy_utilities::total());
 		$string  = wp_hash($string);
 		return $string;
 	}

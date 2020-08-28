@@ -53,7 +53,7 @@ class dynamicpackages_Json
 					
 					foreach ( $children as $child )
 					{
-						$ids[$child->ID] = dynamicpackages_Public::starting_at($child->ID);
+						$ids[$child->ID] = dy_utilities::starting_at($child->ID);
 					}
 
 					if(is_array($ids))
@@ -73,7 +73,7 @@ class dynamicpackages_Json
 					}
 				}			
 				
-				$starting_at = floatval(number_format(dynamicpackages_Public::starting_at($event_id), 2, '.', ''));
+				$starting_at = floatval(number_format(dy_utilities::starting_at($event_id), 2, '.', ''));
 				
 				if(dynamicpackages_Validators::is_valid_schema())
 				{

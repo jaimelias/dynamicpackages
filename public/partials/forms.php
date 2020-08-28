@@ -94,7 +94,7 @@ class dynamicpackages_Forms
 	public static function auto_booking()
 	{
 		$auto_booking = package_field('package_auto_booking');
-		$price_chart = dynamicpackages_Public::get_price_chart();
+		$price_chart = dy_utilities::get_price_chart();
 		$min = package_field('package_min_persons');
 		$max = package_field('package_max_persons');
 		$option_disc = package_field('package_discount');
@@ -107,7 +107,7 @@ class dynamicpackages_Forms
 		
 		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
 		
-		if(dynamicpackages_Settings::has_any_gateway())
+		if(dynamicpackages_Gateways::has_any_gateway())
 		{	
 			$form .= '<h3 class="linkcolor uppercase">'.esc_html(__('Book  Now', 'dynamicpackages')).'</h3>';
 		}
@@ -131,7 +131,7 @@ class dynamicpackages_Forms
 		
 		}
 		
-		if(($package_type == 1 || dynamicpackages_Public::increase_by_hour() || dynamicpackages_Public::increase_by_day()) && $max_duration > $min_duration)
+		if(($package_type == 1 || dy_utilities::increase_by_hour() || dy_utilities::increase_by_day()) && $max_duration > $min_duration)
 		{
 			
 			$time_label = __('Nights', 'dynamicpackages');
@@ -186,7 +186,7 @@ class dynamicpackages_Forms
 			
 			if(package_field('package_payment') == 1)
 			{
-				$deposit = dynamicpackages_Public::get_deposit();
+				$deposit = dy_utilities::get_deposit();
 				$book_now_text =  __('Pay Deposit', 'dynamicpackages').' '.$deposit.'% ';
 				
 			}

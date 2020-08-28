@@ -195,15 +195,15 @@ class bank_transfer{
 				$min = floatval(get_option(sanitize_title('bank_transfer_min')));
 				$show = intval(get_option(sanitize_title('bank_transfer_show')));
 				$payment = package_field('package_payment');
-				$deposit = floatval(dynamicpackages_Public::get_deposit());
+				$deposit = floatval(dy_utilities::get_deposit());
 				
 				if(is_booking_page())
 				{
-					$total = dynamicpackages_Public::total();
+					$total = dy_utilities::total();
 				}
 				else
 				{
-					$total = floatval(dynamicpackages_Public::starting_at());
+					$total = floatval(dy_utilities::starting_at());
 					
 					if(package_field('package_starting_at_unit') == 0)
 					{

@@ -121,7 +121,7 @@ function package_field($name, $this_id = null)
 }
 function get_price_chart()
 {
-	return dynamicpackages_Public::get_price_chart();
+	return dy_utilities::get_price_chart();
 }
 function is_booking_page()
 {
@@ -212,9 +212,9 @@ function dy_money($price = 0, $wrap = '')
 	
 	if(is_singular('packages'))
 	{
-		if($price == 0 && dynamicpackages_Public::total() > 0)
+		if($price == 0 && dy_utilities::total() > 0)
 		{
-			$amount = dynamicpackages_Public::total(); 
+			$amount = dy_utilities::total(); 
 		}
 	}
 
@@ -240,7 +240,7 @@ function dy_money($price = 0, $wrap = '')
 
 function dy_sum_tax($amount)
 {
-	$tax = floatval(dynamicpackages_Public::tax());
+	$tax = floatval(dy_utilities::tax());
 	$amount = floatval($amount);
 	
 	if($tax > 0 && $amount > 0)

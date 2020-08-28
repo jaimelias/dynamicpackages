@@ -1,6 +1,6 @@
 <?php global $post; ?>
 
-<form id="dynamic_form"  <?php if(dynamicpackages_Settings::has_any_gateway()) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dynamic_form"  <?php if(dynamicpackages_Gateways::has_any_gateway()) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
 	
 	    <div class="text-center bottom-20" id="dy_form_icon">

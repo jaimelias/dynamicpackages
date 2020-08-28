@@ -356,7 +356,7 @@ class dynamicpackages_Metapost{
 		//starting at
 		if(isset( $_POST['package_starting_at']))
 		{
-			update_post_meta( $post_id, 'package_starting_at', esc_attr( dynamicpackages_Public::starting_at() ) );
+			update_post_meta( $post_id, 'package_starting_at', esc_attr( dy_utilities::starting_at() ) );
 		}			
 		
 		

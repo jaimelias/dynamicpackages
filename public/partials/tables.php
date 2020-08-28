@@ -4,7 +4,7 @@ class dynamicpackages_Tables{
 
 	public static function daytour_pricetable()
 	{
-		$price_chart = dynamicpackages_Public::get_price_chart();
+		$price_chart = dy_utilities::get_price_chart();
 		
 		if(intval(package_field( 'package_show_pricing' )) == 0)
 		{

@@ -89,7 +89,7 @@ msgstr "Extras"
 msgid "Include?"
 msgstr "¿Incluir?"
 
-#: gateways/checkout_page.php:199 gateways/checkout_settings.php:161
+#: gateways/checkout_page.php:199 gateways/gateways.php:161
 msgid "Tax"
 msgstr "Impuesto"
 
@@ -192,7 +192,7 @@ msgstr "Términos y Condiciones"
 msgid "Pay Now!"
 msgstr "¡Pagar Ya!"
 
-#: gateways/checkout_matrix.php:62 gateways/checkout_settings.php:125
+#: gateways/checkout_matrix.php:62 gateways/gateways.php:125
 #: gateways/matrix/yappy/yappy_direct.php:230
 #: gateways/matrix/bank/local.php:251
 #: gateways/matrix/bank/international.php:316
@@ -262,75 +262,75 @@ msgstr "Pagado"
 msgid "Pay by card"
 msgstr "Paga por tarjeta"
 
-#: gateways/checkout_settings.php:91
+#: gateways/gateways.php:91
 msgid "Dynamicpackages"
 msgstr "Dynamicpackages"
 
-#: gateways/checkout_settings.php:132
+#: gateways/gateways.php:132
 msgid "Gateway Settings"
 msgstr "Configuración de plataforma de pagos"
 
-#: gateways/checkout_settings.php:139
+#: gateways/gateways.php:139
 msgid "Integrations Settings"
 msgstr "Configuración de integraciones"
 
-#: gateways/checkout_settings.php:146
+#: gateways/gateways.php:146
 msgid "Payment Gateway"
 msgstr "Pasarela de pagos"
 
-#: gateways/checkout_settings.php:154
+#: gateways/gateways.php:154
 msgid "Package Archive Page"
 msgstr "Página de archivo de paquetes"
 
-#: gateways/checkout_settings.php:169
+#: gateways/gateways.php:169
 msgid "Checkout Webhook URL"
 msgstr "Webhook URL de pagos"
 
-#: gateways/checkout_settings.php:177
+#: gateways/gateways.php:177
 msgid "Quote Webhook URL"
 msgstr "URL de webhook de cotizaciones"
 
-#: gateways/checkout_settings.php:185
+#: gateways/gateways.php:185
 msgid "Recaptcha Site Key"
 msgstr "Recaptcha Site Key"
 
-#: gateways/checkout_settings.php:193
+#: gateways/gateways.php:193
 msgid "Recaptcha Secret Key"
 msgstr "Recaptcha Secret Key"
 
-#: gateways/checkout_settings.php:201
+#: gateways/gateways.php:201
 msgid "Mandrill Api Key"
 msgstr "Mandrill Api Key"
 
-#: gateways/checkout_settings.php:209
+#: gateways/gateways.php:209
 msgid "Mandrill Username"
 msgstr "Mandrill Username"
 
-#: gateways/checkout_settings.php:217
+#: gateways/gateways.php:217
 msgid "IPGeolocation API Key"
 msgstr "IPGeolocation API Key"
 
-#: gateways/checkout_settings.php:253
+#: gateways/gateways.php:253
 msgid "None"
 msgstr "Ningun"
 
-#: gateways/checkout_settings.php:308 gateways/checkout_settings.php:315
+#: gateways/gateways.php:308 gateways/gateways.php:315
 msgid "Developers"
 msgstr "Desarrolladores"
 
-#: gateways/checkout_settings.php:415
+#: gateways/gateways.php:415
 msgid "or"
 msgstr "o"
 
-#: gateways/checkout_settings.php:436
+#: gateways/gateways.php:436
 msgid "Pay"
 msgstr "Pagar"
 
-#: gateways/checkout_settings.php:440
+#: gateways/gateways.php:440
 msgid "the deposit"
 msgstr "el deposito"
 
-#: gateways/checkout_settings.php:445
+#: gateways/gateways.php:445
 msgid "with"
 msgstr "con"
 
