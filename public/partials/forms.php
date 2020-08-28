@@ -5,7 +5,7 @@ class dynamicpackages_Forms
 	public static function package_filter_form()
 	{
 		global $polylang;
-		$package_main = get_option('dy_packages_breadcrump');
+		$package_main = (get_option('dy_packages_breadcrump')) ? get_option('dy_packages_breadcrump') : get_option('page_on_front');
 		
 		if(isset($polylang))
 		{	
