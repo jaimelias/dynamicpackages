@@ -1,11 +1,12 @@
 <?php
-	
+
+	global $dy_add_to_calendar;
+	global $post;
 	$price_chart = get_price_chart();
 	$discount = 0;
 	$free = 0;
 	$start_free = 0;
 	$start_discount = 0;
-	
 	$sum = 0;
 	$sum_adults = 0;
 	$each_adult = dy_utilities::get_price_adults();
@@ -132,7 +133,9 @@
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
 			<?php dy_Public::details(); ?>
-			<div class="text-center bottom-10"><?php add_to_calendar::show(); ?></div>
+			<?php if(isset($dy_add_to_calendar)) : ?>
+				<div class="text-center bottom-10"><?php $dy_add_to_calendar->show(); ?></div>
+			<?php endif; ?>
 			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), dy_Public::description().' '.dy_money()); ?></div>
 		</div>
 	</div>

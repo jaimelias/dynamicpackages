@@ -2,9 +2,10 @@
 
 class dy_CC_Checkout
 {
-	function __construct()
+	function __construct($add_to_calendar)
 	{		
 		$this->init();
+		$this->add_to_calendar = $add_to_calendar;
 	}
 
 	public function init()
@@ -363,7 +364,7 @@ class dy_CC_Checkout
 			else
 			{
 				$output = '<div class="minimal_success padding-10 bottom-20"><h2><span class="large"><i class="fas fa-thumbs-up"></i></span> '.esc_html(__('Hello', 'dynamicpackages').' '.$checkout['Name'].' '.__('Payment approved. Thank you for order! You will receive and email confirmation shortly at', 'dynamicpackages').' '.$checkout['Email']).'</h2></div>';
-				$output .= '<div class="text-center">'.add_to_calendar::show().'</div>';
+				$output .= '<div class="text-center">'.$this->add_to_calendar->show().'</div>';
 				$output .= $this->google_ads_tracker();
 				$output .= $this->facebook_pixel();
 				return $output;				

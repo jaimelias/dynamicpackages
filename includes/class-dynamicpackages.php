@@ -184,7 +184,6 @@ class dynamicpackages {
 		$plugin_public = new dy_Public();
 		$plugin_settings = new dy_Gateways();	
 		$plugin_search = new dy_Search();
-		$plugin_add_to_calendar = new add_to_calendar();
 		$plugin_reviewes = new dy_Reviews();
 		$plugins_shortcodes = new dy_Shortcodes();
 		$plugins_json = new dy_Json();

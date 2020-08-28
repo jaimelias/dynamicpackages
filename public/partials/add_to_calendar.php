@@ -1,21 +1,22 @@
 <?php
 
-class add_to_calendar
+class dy_Add_To_Calendar
 {
 	function __construct()
 	{
-		add_action( 'wp_enqueue_scripts', array('add_to_calendar', 'scripts'));
+		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts'));
 	}
-	public static function scripts()
+	public function scripts()
 	{
-		if(self::is_valid())
+		if($this->is_valid())
 		{
+			
 			$url = 'https://addevent.com/libs/atc/1.6.1/atc.min.js';
-			wp_enqueue_script('add_to_calendar', $url, '', '', true);
-			wp_add_inline_style('minimalLayout', self::css());
+			wp_enqueue_script('dy_add_to_calendar', $url, '', '', true);
+			wp_add_inline_style('minimalLayout', $this->css());
 		}
 	}
-	public static function is_valid()
+	public function is_valid()
 	{
 		$output = false;
 		
@@ -58,35 +59,21 @@ class add_to_calendar
 		return $output;
 	}
 	
-	public static function show()
+	public function show()
 	{
-		if(self::is_valid())
+		if($this->is_valid())
 		{
 			
-			if(isset($_POST['description']))
-			{
-				$description = sanitize_text_field($_POST['description']);
-			}
-			else
-			{
-				$description = get_the_excerpt();
-			}	
+			$description = (isset($_POST['description'])) ? sanitize_text_field($_POST['description']) : get_the_excerpt();
 
-			if(isset($_POST['departure_date']) && isset($_POST['booking_hour']))
-			{
-				$calendar = sanitize_text_field($_POST['departure_date']).' '.sanitize_text_field($_POST['booking_hour']);
-			}
-			else
-			{
-				$calendar = dy_Public::date().' '.dy_utilities::hour();
-			}
+			$calendar = (isset($_POST['departure_date']) && isset($_POST['booking_hour'])) ? sanitize_text_field($_POST['departure_date']).' '.sanitize_text_field($_POST['booking_hour']) : dy_Public::date().' '.dy_utilities::hour();
 			
 			global $post;
 			ob_start();
 			?>
 				<div class="bottom-20 addevent_container">
-					<div title="<?php echo __('Add to Calendar', 'dynamicpackages'); ?>" class="addeventatc">
-						<?php echo __('Add to Calendar', 'dynamicpackages'); ?>
+					<div title="<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
+						<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>
 						<span class="start"><?php echo esc_html($calendar); ?></span>
 						<span class="timezone"><?php echo esc_html(get_option('timezone_string')); ?></span>
 						<span class="title"><?php echo esc_html($post->post_title); ?></span>
@@ -101,7 +88,7 @@ class add_to_calendar
 		}
 	}
 	
-	public static function css()
+	public function css()
 	{
 		return '.addeventatc{visibility: hidden;}.addevent_container{height: 42px;}';
 	}

@@ -5,21 +5,95 @@ class dy_Gateways
 	function __construct()
 	{
 		$this->load_gateways();
-		$this->plugin_checkout = new dy_CC_Checkout();
+		$this->add_to_calendar = new dy_Add_To_Calendar();
+		$this->load_classes();
+		$this->init();
+	}
+	
+	public function load_classes()
+	{
+		$this->plugin_checkout = new dy_CC_Checkout($this->add_to_calendar);
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
 		$this->yappy_direct = new yappy_direct();	
 		$this->bank_transfer = new bank_transfer();
 		$this->wire_transfer = new wire_transfer();
-		$this->init();
 	}
-	
 	public function init()
 	{
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
-		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);		
+		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);
+		add_filter('the_content', array(&$this, 'the_content'), 102);		
+	}
+
+	public function the_content($content)
+	{
+		if(is_singular('packages') && isset($_GET['booking_date']))
+		{
+			if(is_booking_page())
+			{
+				if(dy_Validators::validate_hash())
+				{
+					$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
+					$sum_people = $pax_regular;	
+					$GLOBALS['dy_add_to_calendar'] = $this->add_to_calendar;
+
+					if(isset($_GET['pax_discount']))
+					{
+						$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_discount']));
+					}
+					if(isset($_GET['pax_free']))
+					{
+						$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_free']));
+					}					
+					
+					if(isset($_GET['booking_date']))
+					{
+						if(sanitize_text_field($_GET['booking_date']) == '')
+						{
+							$content = '<p class="minimal_alert"><strong>'.esc_html(self::hour_restriction()).'</strong></p>';		
+						}
+						else
+						{
+							if($pax_regular < package_field('package_min_persons') || $sum_people > package_field('package_max_persons'))
+							{
+								$content = '<p class="minimal_success strong">'.esc_html(self::people_restriction()).'</p>';
+								$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
+								$content .= self::booking_sidebar();							
+							}
+							else
+							{
+								ob_start();
+								require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
+								$content = ob_get_contents();
+								ob_end_clean();									
+							}	
+						}
+					}
+					else
+					{
+						ob_start();
+						require_once(plugin_dir_path( __DIR__ ) . 'gateways/checkout-page.php');
+						$content = ob_get_contents();
+						ob_end_clean();						
+					}					
+				}
+				else
+				{
+					$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
+				}
+			}
+			else
+			{
+				$content = null;
+				
+				$content .= '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
+			}		
+		}
+
+		return $content;
 	}
 	public static function load_gateways()
 	{

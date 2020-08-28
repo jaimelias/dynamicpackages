@@ -293,70 +293,8 @@ class dy_Public {
 		}
 		if(is_singular('packages'))
 		{
-			if(isset($_GET['booking_date']))
+			if(!is_booking_page())
 			{
-				if(is_booking_page())
-				{
-					if(dy_Validators::validate_hash())
-					{
-						$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
-						$sum_people = $pax_regular;	
-
-						if(isset($_GET['pax_discount']))
-						{
-							$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_discount']));
-						}
-						if(isset($_GET['pax_free']))
-						{
-							$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_free']));
-						}					
-						
-						if(isset($_GET['booking_date']))
-						{
-							if(sanitize_text_field($_GET['booking_date']) == '')
-							{
-								$content = '<p class="minimal_alert"><strong>'.esc_html(self::hour_restriction()).'</strong></p>';		
-							}
-							else
-							{
-								if($pax_regular < package_field('package_min_persons') || $sum_people > package_field('package_max_persons'))
-								{
-									$content = '<p class="minimal_success strong">'.esc_html(self::people_restriction()).'</p>';
-									$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
-									$content .= self::booking_sidebar();							
-								}
-								else
-								{
-									ob_start();
-									require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
-									$content = ob_get_contents();
-									ob_end_clean();									
-								}	
-							}
-						}
-						else
-						{
-							ob_start();
-							require_once(plugin_dir_path( __DIR__ ) . 'gateways/checkout-page.php');
-							$content = ob_get_contents();
-							ob_end_clean();						
-						}					
-					}
-					else
-					{
-						$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
-					}
-				}
-				else
-				{
-					$content = null;
-					
-					$content .= '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
-				}
-			}
-			else
-			{
-				
 				if(dy_Validators::is_child())
 				{
 					
@@ -381,8 +319,9 @@ class dy_Public {
 				ob_start();
 				require_once(dirname( __FILE__ ) . '/partials/single.php');
 				$content = ob_get_contents();
-				ob_end_clean();				
-			}					
+				ob_end_clean();	
+
+			}
 		}
 		return $content;
 	}
@@ -1490,7 +1429,7 @@ class dy_Public {
 				if(count($children_array) > 0)
 				{
 					$make_null = false;
-					$output .= '<table class="pure-table pure-table-bordered"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html(self::count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody>';
+					$output .= '<table class="pure-table pure-table-bordered"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html(self::count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">';
 					
 					foreach($children_array as $item)
 					{

@@ -1348,8 +1348,8 @@ msgstr "¡Solicita tu cotización ahora!"
 msgid "Send Request!"
 msgstr "¡Enviar solicitud!"
 
-#: public/partials/add_to_calendar.php:88
-#: public/partials/add_to_calendar.php:89
+#: public/partials/dy_Add_To_Calendar.php:88
+#: public/partials/dy_Add_To_Calendar.php:89
 msgid "Add to Calendar"
 msgstr "Guarda en tu calendario"
 

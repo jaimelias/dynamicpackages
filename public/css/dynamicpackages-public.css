@@ -131,3 +131,8 @@ ul.tax_list > li.cat-item  > ul.children
 	max-width: 1600px;
 	margin: 0 auto;
 }
+.table-vertical-responsive
+{
+	height: 200px;
+	overflow-y: auto;
+}

@@ -30,7 +30,7 @@ class dynamicpackages_Tables{
 			
 			
 			
-			$table = '<table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody>';			
+			$table = '<div class="table-vertical-responsive"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
 			
 			for($x = 0; $x < count($price_chart); $x++)
 			{
@@ -129,7 +129,7 @@ class dynamicpackages_Tables{
 			}
 				$table .= '</tbody>';			
 	
-			$table .= '</table>';
+			$table .= '</table></div>';
 			echo $table;
 		}		
 		
