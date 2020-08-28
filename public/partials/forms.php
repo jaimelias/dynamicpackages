@@ -5,13 +5,14 @@ class dynamicpackages_Forms
 	public static function package_filter_form()
 	{
 		global $polylang;
+		
 		$package_main = (get_option('dy_packages_breadcrump')) ? get_option('dy_packages_breadcrump') : get_option('page_on_front');
 		
 		if(isset($polylang))
 		{	
 			if(pll_current_language() != pll_default_language())
 			{
-				$package_main = pll_get_post(get_option('dy_packages_breadcrump'), pll_current_language());
+				$package_main = pll_get_post($package_main, pll_current_language());
 
 			}
 		}	
