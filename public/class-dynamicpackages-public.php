@@ -1071,30 +1071,35 @@ class dynamicpackages_Public {
 	{
 		global $post;
 		
-		$termid = $post->ID;
-		
-		if(property_exists($post, 'post_parent'))
+		if(isset($post))
 		{
-			$termid = $post->post_parent;
-		}		
-		
-		$terms = get_the_terms( $termid, 'package_terms_conditions');
-				
-		$terms_conditions = array();
-		
-		if($terms)
-		{
-			for($x = 0; $x < count($terms); $x++)
+			if(property_exists($post, 'ID'))
 			{
-				array_push($terms_conditions, $terms[$x]);
+				$termid = $post->ID;
+				
+				if(property_exists($post, 'post_parent'))
+				{
+					$termid = $post->post_parent;
+				}		
+				
+				$terms = get_the_terms( $termid, 'package_terms_conditions');
+						
+				$terms_conditions = array();
+				
+				if($terms)
+				{
+					for($x = 0; $x < count($terms); $x++)
+					{
+						array_push($terms_conditions, $terms[$x]);
+					}			
+				}
+				
+				if(count($terms_conditions) > 0)
+				{
+					return $terms_conditions;
+				}			
 			}			
-		}
-		
-		if(count($terms_conditions) > 0)
-		{
-			return $terms_conditions;
-		}
-		
+		}		
 	}
 	public static function get_terms_conditions_list($this_post)
 	{

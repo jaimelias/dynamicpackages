@@ -15,7 +15,7 @@ class dynamicpackages_Form_Actions{
         add_filter( 'the_title', array(&$this, 'the_title'), 101);
     }
 
-	public static function is_request_submitted()
+	public function is_request_submitted()
 	{
 		$output = false;
 		
@@ -30,27 +30,23 @@ class dynamicpackages_Form_Actions{
         return $output;
 	}    
 
-    public static function send_data()
+    public function send_data()
     {
         global $dy_valid_recaptcha;
 
-        if(isset($dy_valid_recaptcha) && self::is_request_submitted() && dynamicpackages_Validators::is_request_valid())
+        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dynamicpackages_Validators::is_request_valid())
         {
-            self::send_quote_email();
+            $this->send_quote_email();
             dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
         }   
     }
-    public static function the_content($content)
+    public function the_content($content)
     {
         global $dy_valid_recaptcha;
 
-        if(is_singular('packages') && self::is_request_submitted())
-        {
-            if(dynamicpackages_Validators::validate_checkout())
-            {
-                //$content = dynamicpackages_Checkout::checkout();
-            }                
-            elseif(dynamicpackages_Validators::is_request_valid())
+        if(is_singular('packages') && $this->is_request_submitted())
+        {               
+            if(dynamicpackages_Validators::is_request_valid())
             {
                 if(isset($dy_valid_recaptcha))
                 {
@@ -70,7 +66,7 @@ class dynamicpackages_Form_Actions{
         return $content;
     }
 
-    public static function send_quote_email()
+    public function send_quote_email()
     {
         $headers = array('Content-type: text/html');
         array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['fname']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
@@ -89,10 +85,10 @@ class dynamicpackages_Form_Actions{
         wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['fname']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
     }
 
-    public static function wp_title($title)
+    public function wp_title($title)
     {
 
-        if(is_singular('packages') && self::is_request_submitted())
+        if(is_singular('packages') && $this->is_request_submitted())
         {
             $title = esc_html(__('Quote', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
         }
@@ -100,9 +96,9 @@ class dynamicpackages_Form_Actions{
         return $title;
     }
 
-    public static function the_title($title)
+    public function the_title($title)
     {
-        if(is_singular('packages') && self::is_request_submitted())
+        if(is_singular('packages') && $this->is_request_submitted())
         {
             $title = esc_html(__('Thank you for your Inquiry', 'dynamicpackages'));
         }

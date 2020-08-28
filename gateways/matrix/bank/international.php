@@ -122,9 +122,7 @@ class wire_transfer{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
 				$content = $this->message();
-				$this->send();
 			}
 			else
 			{

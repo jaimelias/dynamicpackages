@@ -14,10 +14,38 @@ class dynamicpackages_Checkout
 		}
 		else
 		{
+			add_filter('wp_headers', array('dynamicpackages_Checkout', 'checkout'), 101);
+			add_filter('the_content', array('dynamicpackages_Checkout', 'the_content'), 101);
 			add_action('wp_enqueue_scripts', array('dynamicpackages_Checkout', 'enqueue_scripts'));
 			add_filter('gateway_buttons', array('dynamicpackages_Checkout', 'button'), 0);
 			add_filter('list_gateways', array('dynamicpackages_Checkout', 'add_gateway'), 0);
 		}
+	}
+
+	public static function the_content($content)
+	{
+        if(is_singular('packages') && dynamicpackages_Validators::credit_card())
+        {
+			if(dynamicpackages_Validators::validate_checkout())
+			{
+				global $dy_valid_recaptcha;
+				
+				if(isset($dy_valid_recaptcha))
+				{
+					$content = self::confirmation_page();	
+				}
+				else
+				{
+					 $content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+				}			
+			}
+			else
+			{
+				$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
+			}
+        }
+		
+		return $content;
 	}
 
 	public static function enqueue_scripts()
@@ -121,9 +149,11 @@ class dynamicpackages_Checkout
 	
 	public static function checkout()
 	{
+		global $dy_valid_recaptcha;
+		
 		if(dynamicpackages_Validators::validate_checkout())
 		{
-			if(dynamicpackages_Validators::validate_recaptcha())
+			if(isset($dy_valid_recaptcha))
 			{	
 				$data = array();
 				$gateway = dy_utilities::get_this_gateway();
@@ -213,22 +243,13 @@ class dynamicpackages_Checkout
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 				$result = curl_exec($ch);				
 				//write_log($result);
-				$result = json_decode($result, true);		
-		
-				return self::confirmation_page($result, $webhook_data);	
+				
+				self::define_status(json_decode($result, true), $webhook_data);
 			}
-			else
-			{
-				return __('Invalid Recaptcha', 'dynamicpackages');
-			}
-		}
-		else
-		{
-			return __('Missing Fields', 'dynamicpackages');
 		}
 	}
 	
-	public static function confirmation_page($result, $data)
+	public static function define_status($result, $data)
 	{
 		//0 = error, 1 = declined, 2 = approved
 		$status = 0;
@@ -236,7 +257,7 @@ class dynamicpackages_Checkout
 		$admin_email = get_option( 'admin_email' );
 		$time = current_time('timestamp', $gmt = 0 );
 		$time = date_i18n(get_option('date_format'), $time);
-		$headers = array('Content-type: text/html');
+		$headers = array('Content-type: text/html');		
 
 		if(is_array($result) && is_array($data))
 		{
@@ -270,30 +291,48 @@ class dynamicpackages_Checkout
 				}
 			}			
 		}
-				
-		if($status == 0)
+		
+		if($status === 0)
 		{
-			wp_mail($admin_email, __('Undefined Checkout Error', 'dynamicpackages').' - '.$time, self::implode_result($result), $headers);	
-			return '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span> '.esc_html(__('Undefined Checkout Error', 'dynamicpackages')).'</h2></div>';
+			wp_mail($admin_email, __('Undefined Checkout Error', 'dynamicpackages').' - '.$time, self::implode_result($result), $headers);
 		}
-		else if($status == 1)
+		else if($status === 1)
 		{
 			self::declined_mail($checkout);			
 			dy_utilities::webhook('dy_webhook', json_encode($checkout));
-			$output = '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-phone" aria-hidden="true"></i></span> '.esc_html(__('Payment Declined. Please contact your bank to authorize the transaction.', 'dynamicpackages')).'</h2></div>';
-			return $output;
 		}
 		else
 		{
 			dy_utilities::webhook('dy_webhook', json_encode($checkout));
-				
-			$output = '<div class="minimal_success padding-10 bottom-20"><h2><span class="large"><i class="fas fa-thumbs-up"></i></span> '.esc_html(__('Hello', 'dynamicpackages').' '.$checkout['Name'].' '.__('Payment approved. Thank you for order! You will receive and email confirmation shortly at', 'dynamicpackages').' '.$checkout['Email']).'</h2></div>';
-			$output .= '<div class="text-center">'.add_to_calendar::show().'</div>';
-			$output .= self::google_ads_tracker();
-			$output .= self::facebook_pixel();
-			return $output;				
 		}
-
+		
+		$GLOBALS['dy_checkout_status'] = $status;
+	}
+	
+	public static function confirmation_page()
+	{
+		global $dy_checkout_status;
+		
+		if(isset($dy_checkout_status))
+		{
+			if($dy_checkout_status == 0)
+			{
+				return '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span> '.esc_html(__('Undefined Checkout Error', 'dynamicpackages')).'</h2></div>';
+			}
+			else if($dy_checkout_status == 1)
+			{
+				$output = '<div class="minimal_alert padding-10"><h2><span class="large"><i class="fa fa-phone" aria-hidden="true"></i></span> '.esc_html(__('Payment Declined. Please contact your bank to authorize the transaction.', 'dynamicpackages')).'</h2></div>';
+				return $output;
+			}
+			else
+			{
+				$output = '<div class="minimal_success padding-10 bottom-20"><h2><span class="large"><i class="fas fa-thumbs-up"></i></span> '.esc_html(__('Hello', 'dynamicpackages').' '.$checkout['Name'].' '.__('Payment approved. Thank you for order! You will receive and email confirmation shortly at', 'dynamicpackages').' '.$checkout['Email']).'</h2></div>';
+				$output .= '<div class="text-center">'.add_to_calendar::show().'</div>';
+				$output .= self::google_ads_tracker();
+				$output .= self::facebook_pixel();
+				return $output;				
+			}			
+		}
 	}
 	
 	
