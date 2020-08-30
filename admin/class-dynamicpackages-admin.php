@@ -183,6 +183,7 @@ class dy_Admin {
 		//mandrill
 		register_setting('dy_settings', 'sendgrid_api_key', 'sanitize_user');
 		register_setting('dy_settings', 'sendgrid_username', 'sanitize_text_field');
+		register_setting('dy_settings', 'sendgrid_email', 'sanitize_text_field');
 		
 		//settings
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
@@ -237,7 +238,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
-			array("name" => 'dy_tax', 'type' => 'number')
+			array('name' => 'dy_tax', 'type' => 'number')
 		);
 
 		add_settings_field( 
@@ -246,7 +247,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'dy_webhook')
+			array('name' => 'dy_webhook')
 		);
 
 		add_settings_field( 
@@ -255,7 +256,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'dy_quote_webhook')
+			array('name' => 'dy_quote_webhook')
 		);		
 
 		add_settings_field( 
@@ -264,7 +265,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
-			array("name" => 'captcha_site_key') 
+			array('name' => 'captcha_site_key') 
 		);	
 
 		add_settings_field( 
@@ -273,7 +274,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
-			array("name" => 'captcha_secret_key') 
+			array('name' => 'captcha_secret_key') 
 		);	
 
 		add_settings_field( 
@@ -282,7 +283,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'sendgrid_api_key') 
+			array('name' => 'sendgrid_api_key') 
 		);
 
 		add_settings_field( 
@@ -291,8 +292,17 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'sendgrid_username') 
-		);		
+			array('name' => 'sendgrid_username') 
+		);	
+
+		add_settings_field( 
+			'sendgrid_email', 
+			esc_html(__( 'Sendgrid Email', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_integrations_section',
+			array('name' => 'sendgrid_email') 
+		);			
 		
 		add_settings_field( 
 			'ipgeolocation', 
@@ -300,7 +310,7 @@ class dy_Admin {
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
-			array("name" => 'ipgeolocation', 'url' => 'https://app.ipgeolocation.io/auth/login') 
+			array('name' => 'ipgeolocation', 'url' => 'https://app.ipgeolocation.io/auth/login') 
 		);	
 	}
 

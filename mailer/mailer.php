@@ -5,14 +5,18 @@ class dynamicpackages_Mailer
 	
 	public function __construct()
 	{
-		$this->sendgrid_api_key = get_option('sendgrid_api_key');
-		$this->sendgrid_username = get_option('sendgrid_username');
+		$this->api_key = get_option('sendgrid_api_key');
+		$this->username = get_option('sendgrid_username');
+		$this->email = get_option('sendgrid_email');
+		$this->host = 'smtp.sendgrid.net';
+		$this->port = 587;
 		$this->init();
 	}
 	
 	public function is_transactional()
 	{
-		$output = ($this->sendgrid_api_key != '' && $this->sendgrid_username != '') ? true : false;
+		$output = ($this->api_key && $this->username && is_email($this->email)) ? true : false;
+		
 		return $output;
 	}
 	
@@ -30,14 +34,14 @@ class dynamicpackages_Mailer
 	public function phpmailer($mailer)
 	{
 		$mailer->IsSMTP();
-		$mailer->Host = "smtp.mandrillapp.com";
-		$mailer->Port = 587;
+		$mailer->Host = $this->host;
+		$mailer->Port = $this->port;
 		$mailer->SMTPAuth = true;
 		$mailer->CharSet  = "utf-8";
 		$mailer->SMTPSecure = 'tls';
 		$mailer->IsHTML(true);
-		$mailer->Username = $this->sendgrid_username;
-		$mailer->Password = $this->sendgrid_api_key;
+		$mailer->Username = $this->username;
+		$mailer->Password = $this->api_key;
 		$mailer->SMTPDebug = 0;
 		
 		if(!$mailer->Send()) {
@@ -56,9 +60,10 @@ class dynamicpackages_Mailer
 	}
 	public function from_email($email)
 	{
-		$email = substr(strrchr($email, "@"), 1);
-		$email = 'bot@'.$email;
-		return esc_html($email);
+		
+		$email = ($this->email != '') ? $this->email : $email;
+		
+		return $email;
 	}
 }
 
