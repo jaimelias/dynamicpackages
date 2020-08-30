@@ -12,7 +12,7 @@
 			<div id="auto_booking"><?php dynamicpackages_Forms::auto_booking(); ?></div>
 		<?php endif; ?>
 		
-		<?php dynamicpackages_Tables::daytour_pricetable(); ?>
+		<?php dynamicpackages_Tables::package_price_table(); ?>
 		
 		<?php dy_Public::return_parent();?>
 	</div>
@@ -88,7 +88,7 @@
 		}
 	?>	
 	
-	<?php dynamicpackages_Tables::daytour_pricetable(); ?>
+	<?php dynamicpackages_Tables::package_price_table(); ?>
 	
 	<?php comments_template('', true); ?>
 				

@@ -303,11 +303,11 @@ msgid "Recaptcha Secret Key"
 msgstr ""
 
 #: gateways/gateways.php:311
-msgid "Mandrill Api Key"
+msgid "Sendgrid Api Key"
 msgstr ""
 
 #: gateways/gateways.php:319
-msgid "Mandrill Username"
+msgid "Sendgrid Username"
 msgstr ""
 
 #: gateways/gateways.php:327

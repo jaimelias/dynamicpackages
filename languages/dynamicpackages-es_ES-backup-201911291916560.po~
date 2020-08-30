@@ -299,12 +299,12 @@ msgid "Recaptcha Secret Key"
 msgstr "Recaptcha Secret Key"
 
 #: gateways/gateways.php:201
-msgid "Mandrill Api Key"
-msgstr "Mandrill Api Key"
+msgid "Sendgrid Api Key"
+msgstr "Sendgrid Api Key"
 
 #: gateways/gateways.php:209
-msgid "Mandrill Username"
-msgstr "Mandrill Username"
+msgid "Sendgrid Username"
+msgstr "Sendgrid Username"
 
 #: gateways/gateways.php:217
 msgid "IPGeolocation API Key"

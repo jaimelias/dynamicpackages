@@ -181,8 +181,8 @@ class dy_Admin {
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
 
 		//mandrill
-		register_setting('dy_settings', 'mandrill_api_key', 'sanitize_user');
-		register_setting('dy_settings', 'mandrill_username', 'sanitize_text_field');
+		register_setting('dy_settings', 'sendgrid_api_key', 'sanitize_user');
+		register_setting('dy_settings', 'sendgrid_username', 'sanitize_text_field');
 		
 		//settings
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
@@ -277,21 +277,21 @@ class dy_Admin {
 		);	
 
 		add_settings_field( 
-			'mandrill_api_key', 
-			esc_html(__( 'Mandrill Api Key', 'dynamicpackages' )), 
+			'sendgrid_api_key', 
+			esc_html(__( 'Sendgrid Api Key', 'dynamicpackages' )), 
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'mandrill_api_key') 
+			array("name" => 'sendgrid_api_key') 
 		);
 
 		add_settings_field( 
-			'mandrill_username', 
-			esc_html(__( 'Mandrill Username', 'dynamicpackages' )), 
+			'sendgrid_username', 
+			esc_html(__( 'Sendgrid Username', 'dynamicpackages' )), 
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
-			array("name" => 'mandrill_username') 
+			array("name" => 'sendgrid_username') 
 		);		
 		
 		add_settings_field( 

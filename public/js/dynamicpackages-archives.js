@@ -11,7 +11,7 @@ jQuery(function()
 		{
 			jQuery('.dy_archive').find('a').click(function(){
 				var eventArgs = {};
-				eventArgs.eventCategory = 'Tour Click';
+				eventArgs.eventCategory = 'Package Click';
 				eventArgs.eventAction = jQuery(this).attr('title');
 				console.log(eventArgs);
 				ga('send', 'event', eventArgs);

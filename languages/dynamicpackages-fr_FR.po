@@ -489,11 +489,11 @@ msgid "Make a Reservation"
 msgstr "Faire une réservation"
 
 #: admin/class-dynamicpackages-settings.php:146
-msgid "Mandrill Api Key"
+msgid "Sendgrid Api Key"
 msgstr ""
 
 #: admin/class-dynamicpackages-settings.php:154
-msgid "Mandrill Username"
+msgid "Sendgrid Username"
 msgstr ""
 
 #: public/class-dynamicpackages-public.php:1486

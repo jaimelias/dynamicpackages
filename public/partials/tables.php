@@ -2,7 +2,7 @@
 
 class dynamicpackages_Tables{
 
-	public static function daytour_pricetable()
+	public static function package_price_table()
 	{
 		$price_chart = dy_utilities::get_price_chart();
 		
@@ -30,7 +30,7 @@ class dynamicpackages_Tables{
 			
 			
 			
-			$table = '<div class="table-vertical-responsive"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
+			$table = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
 			
 			for($x = 0; $x < count($price_chart); $x++)
 			{

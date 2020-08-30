@@ -5,14 +5,14 @@ class dynamicpackages_Mailer
 	
 	public function __construct()
 	{
-		$this->mandrill_api_key = get_option('mandrill_api_key');
-		$this->mandrill_username = get_option('mandrill_username');
+		$this->sendgrid_api_key = get_option('sendgrid_api_key');
+		$this->sendgrid_username = get_option('sendgrid_username');
 		$this->init();
 	}
 	
 	public function is_transactional()
 	{
-		$output = ($this->mandrill_api_key != '' && $this->mandrill_username != '') ? true : false;
+		$output = ($this->sendgrid_api_key != '' && $this->sendgrid_username != '') ? true : false;
 		return $output;
 	}
 	
@@ -36,8 +36,8 @@ class dynamicpackages_Mailer
 		$mailer->CharSet  = "utf-8";
 		$mailer->SMTPSecure = 'tls';
 		$mailer->IsHTML(true);
-		$mailer->Username = $this->mandrill_username;
-		$mailer->Password = $this->mandrill_api_key;
+		$mailer->Username = $this->sendgrid_username;
+		$mailer->Password = $this->sendgrid_api_key;
 		$mailer->SMTPDebug = 0;
 		
 		if(!$mailer->Send()) {
