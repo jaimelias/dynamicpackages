@@ -1,34 +1,12 @@
 <?php
 
-/**
- * The admin-specific functionality of the plugin.
- *
- * @link       http://jaimelias.com
- * @since      1.0.0
- *
- * @package    dynamicpackages
- * @subpackage dynamicpackages/admin
- */
 
-/**
- * The admin-specific functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
- * @package    dynamicpackages
- * @subpackage dynamicpackages/admin
- * @author     Jaimelías <jaimelias@about.me>
- */
+if ( !defined( 'ABSPATH' ) ) exit;
+
+
 class dy_Admin {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
+
 	private $plugin_name;
 	private $version;
 
@@ -52,17 +30,6 @@ class dy_Admin {
 
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in dynamicpackages_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The dynamicpackages_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
 		self::handsontable();
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
@@ -167,18 +134,17 @@ class dy_Admin {
 
 	public function settings_init(  ) { 
 
-		//recaptcha
+		register_setting('dy_settings', 'dy_email', 'sanitize_email');
+		register_setting('dy_settings', 'dy_phone', 'esc_html');
+		register_setting('dy_settings', 'dy_whatsapp', 'intval');
+		register_setting('dy_settings', 'dy_address', 'esc_html');
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
-		
-		//settings
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
 		register_setting( 'dy_settings', 'primary_gateway', 'esc_html');
 		register_setting( 'dy_settings', 'dy_tax', 'intval');
 		register_setting( 'dy_settings', 'dy_webhook', 'esc_url');
 		register_setting( 'dy_settings', 'dy_quote_webhook', 'esc_url');
-		
-		//ip geolocation
 		register_setting('dy_settings', 'ipgeolocation', 'sanitize_user');	
 
 
@@ -226,6 +192,44 @@ class dy_Admin {
 			'dy_settings_section',
 			array('name' => 'dy_tax', 'type' => 'number')
 		);
+		
+		
+		add_settings_field( 
+			'dy_email', 
+			esc_html(__( 'Company Email', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'dy_email', 'type' => 'email')
+		);
+
+		add_settings_field( 
+			'dy_phone', 
+			esc_html(__( 'Company Phone', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'dy_phone', 'type' => 'text')
+		);
+		
+		add_settings_field( 
+			'dy_whatsapp', 
+			esc_html(__( 'Company Whatsapp', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'dy_whatsapp', 'type' => 'number')
+		);		
+
+		add_settings_field( 
+			'dy_address', 
+			esc_html(__( 'Company Address', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'dy_address', 'type' => 'text')
+		);		
+		
 
 		add_settings_field( 
 			'dy_webhook', 

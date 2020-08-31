@@ -112,7 +112,7 @@ if(!class_exists('Sendgrid_API_Mailer'))
 			$email->setFrom(sanitize_email($this->email), esc_html($this->name));
 			$email->setSubject(esc_html($args['subject']));
 			$email->addTo(sanitize_email($args['to']));
-			$email->addContent('text/html', stripslashes(wp_filter_post_kses($args['message'])));
+			$email->addContent('text/html', $this->minify_html($args['message']));
 			$sendgrid = new \SendGrid(esc_html($this->api_key));
 			
 			try {
@@ -137,6 +137,25 @@ if(!class_exists('Sendgrid_API_Mailer'))
 		public function disable_phpmailer($phpmailer)
 		{
 			$phpmailer->ClearAllRecipients();
+		}
+		
+		public function minify_html($template)
+		{
+			$search = array(
+				'/\>[^\S ]+/s',
+				'/[^\S ]+\</s',
+				'/(\s)+/s',
+				'/<!--(.|\s)*?-->/'
+			);
+
+			$replace = array(
+				'>',
+				'<',
+				'\\1',
+				''
+			);
+
+			return preg_replace($search, $replace, $template);			
 		}
 	}	
 	

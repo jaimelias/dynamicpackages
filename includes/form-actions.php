@@ -70,19 +70,12 @@ class dy_Actions{
     {
         $headers = array('Content-type: text/html');
         array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
-        $body = __('New Request from', 'dynamicpackages');
-        $body .= ' ';
-        $body .= sanitize_text_field($_POST['first_name']) .' '.sanitize_text_field($_POST['lastname']);
-        $body .= ',<br/><br/>';
-        $body .= sanitize_text_field($_POST['description']);
-        $body .= '<br/><br/>';
-        $body .= __('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']);
-        $body .= '<br/>';
-        $body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']);
-        $body .= '<br/>';
-        $body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']);
         
-        wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['first_name']).': '. sanitize_text_field($_POST['description'])), $body, $headers);
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+		
+		//write_log($email_template);
+		
+        wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['first_name']).': '. sanitize_text_field($_POST['description'])), $email_template, $headers);
     }
 
     public function wp_title($title)

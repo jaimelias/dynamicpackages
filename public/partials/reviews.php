@@ -528,14 +528,20 @@ class dy_Reviews
 		
 		$output = json_decode($output, true);
 		
-		if(array_key_exists('results', $output))
+		if(is_array($output))
 		{
-			$output = $output['results'][0];
-			$output = $output['name'];
-			$output = ucfirst($output['first']).' '.ucfirst($output['last']);
-		}
-		
-		return esc_html($output);
+			if(count($output) > 0)
+			{
+				if(array_key_exists('results', $output))
+				{
+					$output = $output['results'][0];
+					$output = $output['name'];
+					$output = ucfirst($output['first']).' '.ucfirst($output['last']);
+				}
+				
+				return esc_html($output);				
+			}
+		}		
 	}
 	
 	public static function total_reviews()
