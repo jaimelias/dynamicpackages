@@ -30,35 +30,26 @@ class dy_Admin {
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
 	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
 	private $version;
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
+
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		add_editor_style(plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css');
+		$this->init();
 	}
 
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
+	public function init()
+	{
+		add_action('admin_menu', array(&$this, 'add_settings_page'), 99);
+		add_action('admin_init', array(&$this, 'settings_init'), 1);
+		add_editor_style(plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css');
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));		
+		add_action('admin_init', array(&$this, 'register_polylang_strings'));		
+	}
+
 	public function enqueue_styles() {
 
 		/**
@@ -179,11 +170,6 @@ class dy_Admin {
 		//recaptcha
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
-
-		//mandrill
-		register_setting('dy_settings', 'sendgrid_api_key', 'sanitize_user');
-		register_setting('dy_settings', 'sendgrid_username', 'sanitize_text_field');
-		register_setting('dy_settings', 'sendgrid_email', 'sanitize_text_field');
 		
 		//settings
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
@@ -275,34 +261,7 @@ class dy_Admin {
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'captcha_secret_key') 
-		);	
-
-		add_settings_field( 
-			'sendgrid_api_key', 
-			esc_html(__( 'Sendgrid Api Key', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_integrations_section',
-			array('name' => 'sendgrid_api_key') 
-		);
-
-		add_settings_field( 
-			'sendgrid_username', 
-			esc_html(__( 'Sendgrid Username', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_integrations_section',
-			array('name' => 'sendgrid_username') 
-		);	
-
-		add_settings_field( 
-			'sendgrid_email', 
-			esc_html(__( 'Sendgrid Email', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_integrations_section',
-			array('name' => 'sendgrid_email') 
-		);			
+		);		
 		
 		add_settings_field( 
 			'ipgeolocation', 
@@ -315,13 +274,13 @@ class dy_Admin {
 	}
 
 	public static function settings_input($arr){
-			$name = esc_html($arr['name']);
+			$name = $arr['name'];
 			$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 		?>
-		<input type="<?php echo $type; ?>" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="<?php echo esc_html(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
+		<input type="<?php echo $type; ?>" name="<?php echo esc_html($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_html(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
 
-	<?php }
+	<?php }	
 	
 	public static function text_field_dynamicpackages_0_render($gateways) { 
 		$options = get_option($gateways[0]);
@@ -374,31 +333,11 @@ class dy_Admin {
 		</select>
 		<?php
 	}
-	
-
-	public static function sanitize_thumb_width( $input ) {
-		$valid = array();
-		$valid['text_field_dynamicpackages_3'] = intval(sanitize_text_field( $input['text_field_dynamicpackages_3'] ));
-		if($valid['text_field_dynamicpackages_3'] < 100)
-		{
-			$valid['text_field_dynamicpackages_3'] = 100;
-		}
-		return $valid;
-	}
-	public static function sanitize_thumb_height( $input ) {
-		$valid = array();
-		$valid['text_field_dynamicpackages_4'] = intval(sanitize_text_field( $input['text_field_dynamicpackages_4'] ));
-		if($valid['text_field_dynamicpackages_4'] < 100)
-		{
-			$valid['text_field_dynamicpackages_4'] = 100;
-		}
-		return $valid;
-	}
 
 	public static function settings_page()
 	{ 
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
 			<h1><?php esc_html(_e("Dynamicpackages", "dynamicpackages")); ?></h1>	
 			<?php

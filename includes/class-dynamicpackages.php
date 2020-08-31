@@ -74,7 +74,6 @@ class dynamicpackages {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->mailer = new dynamicpackages_Mailer();
 		$this->validate_recaptcha = dy_Validators::validate_recaptcha();
 	}
 
@@ -101,6 +100,7 @@ class dynamicpackages {
 		 * core plugin.
 		 */
 		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/autoload.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/sitemap.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-loader.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/Parsedown.php';
@@ -160,16 +160,6 @@ class dynamicpackages {
 		$plugin_post_type = new dy_Post_Type();
 		$plugin_reviewes = new dy_Reviews();
 		$plugins_tax = new dy_Tax_Mod();
-		
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');		
-		$this->loader->add_action('admin_init', $plugin_admin, 'register_polylang_strings');		
-		$this->loader->add_action('add_meta_boxes', $plugin_metaboxes, 'package_add_meta_box');
-		$this->loader->add_action('save_post', $plugin_metapost, 'package_save', 10, 3);
-
-		//settings
-		$this->loader->add_action('admin_menu', $plugin_admin, 'add_settings_page', 99);
-		$this->loader->add_action('admin_init', $plugin_admin, 'settings_init', 1);
 	}
 
 	/**

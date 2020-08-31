@@ -1,6 +1,16 @@
 <?php 
 
 class dy_Metapost{
+	
+	public function __construct()
+	{
+		$this->init();
+	}
+	public function init()
+	{
+		add_action('save_post', array(&$this, 'package_save') , 10, 3);
+	}	
+	
 	public static function package_save($post_id) 
 	{
 		if(defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;

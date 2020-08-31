@@ -3,6 +3,14 @@
 class dy_Metaboxes
 {
 
+	public function __construct()
+	{
+		$this->init();
+	}
+	public function init()
+	{
+		add_action('add_meta_boxes', array(&$this, 'package_add_meta_box'));
+	}
 	public static function package_add_meta_box() {
 		
 		
