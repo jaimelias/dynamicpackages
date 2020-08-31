@@ -67,7 +67,7 @@ class dy_Ical
 					$event_item['LOCATION'] = esc_html(package_field('package_departure_address'));
 				}
 				
-				$categories = dy_utilities::imp_taxo('package_category');
+				$categories = dy_utilities::implode_taxo_names('package_category');
 				
 				if($categories != '')
 				{

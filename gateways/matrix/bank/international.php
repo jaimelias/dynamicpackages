@@ -5,6 +5,7 @@ class wire_transfer{
 	function __construct()
 	{
 		$this->gateway_name = 'wire_transfer';
+		$this->gateway_title = __('Wire Transfer', 'dynamicpackages');
 		$this->init();
 	}
 	public function init()
@@ -61,12 +62,12 @@ class wire_transfer{
 		}
 		return $output;
 	}
-	public function show_wire()
+	public function show()
 	{
 		$output = false;
-		global $wire_transfer_show_wire;
+		global $wire_transfer_show;
 		
-		if(isset($wire_transfer_show_wire))
+		if(isset($wire_transfer_show))
 		{
 			$output = true;
 		}
@@ -76,7 +77,7 @@ class wire_transfer{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS['wire_transfer_show_wire'] = true;
+					$GLOBALS['wire_transfer_show'] = true;
 					$output = true;
 				}
 			}			
@@ -497,9 +498,9 @@ class wire_transfer{
 	public function settings_page()
 		 { 
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
-			<h1><?php echo esc_html(__('Wire Transfer', 'dynamicpackages')); ?></h1>	
+			<h1><?php echo esc_html($this->gateway_title); ?></h1>	
 			<?php
 			settings_fields( 'wire_transfer_settings' );
 			do_settings_sections( 'wire_transfer_settings' );
@@ -511,9 +512,9 @@ class wire_transfer{
 	}
 	public function button($output)
 	{
-		if($this->show_wire() && in_array($this->gateway_name(), $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_name(), $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-wire  withwire rounded" type="button"><i class="fas fa-globe"></i> '.esc_html(__('Wire Transfer', 'dynamicpackages')).'</button>';			
+			$output .= ' <button class="pure-button bottom-20 pure-button-wire  withwire rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->gateway_title).'</button>';			
 		}
 		return $output;
 	}
@@ -525,17 +526,36 @@ class wire_transfer{
 	{
 		return __('International Wire Transfer', 'dynamicpackages');
 	}
+
 	public function add_gateway($array)
 	{
-		if($this->show_wire() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		global $dy_valid_recaptcha;
+		$add = false;
+		
+		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
-			$array[] = $this->gateway_name();
+			$add = true;
 		}
+		
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		{
+			if($_POST['dy_request'] == 'request')
+			{
+				$add = true;
+			}	
+		}		
+		
+		if($add)
+		{
+			$array[] = $this->gateway_title;
+		}
+		
 		return $array;	
 	}
+
 	public function scripts()
 	{
-		if($this->show_wire())
+		if($this->show())
 		{
 			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
@@ -568,7 +588,7 @@ class wire_transfer{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(wire_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -583,7 +603,7 @@ class wire_transfer{
 					var dy_vars = checkout_vars();
 					var eventArgs = {};
 					eventArgs.eventAction = 'Click';
-					eventArgs.eventLabel = 'Wire';
+					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';
 					eventArgs.eventCategory = 'Gateway';
 					ga('send', 'event', eventArgs);	
 				}				

@@ -107,7 +107,7 @@ class dy_CC_Checkout
 		$gateway = dy_utilities::get_this_gateway();
 	
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
 			<h1><?php echo esc_html($gateway['name']); ?></h1>	
 			<?php
@@ -477,11 +477,13 @@ class dy_CC_Checkout
 		}
 		
 		$checkout_vars = array(
+			'post_id' => intval($post->ID),
 			'description' => esc_html($description),
 			'coupon_code' => esc_html($coupon_code),
 			'coupon_discount' => esc_html($coupon_discount),
 			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())),
 			'departure_date' => sanitize_text_field($_GET['booking_date']),
+			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
 			'departure_address' => esc_html(package_field('package_departure_address')),
 			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
 			'booking_hour' => esc_html(dy_utilities::hour()),
@@ -493,16 +495,17 @@ class dy_CC_Checkout
 			'package_code' => esc_html(package_field('package_trip_code')),
 			'title' => esc_html($post->post_title),
 			'package_type' => esc_html($this->get_type()),
-			'package_categories' => esc_html(dy_utilities::imp_taxo('package_category')),
-			'package_locations' => esc_html(dy_utilities::imp_taxo('package_location')),
-			'package_not_included' => esc_html(dy_utilities::imp_taxo('package_not_included')),
-			'package_included' => esc_html(dy_utilities::imp_taxo('package_included')),
+			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
+			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
+			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
+			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
 			'message' => esc_html($this->get_notes()),
 			'TRANSLATIONS' => array('i_accept' => __('I accept', 'dynamicpackages')),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
 			'hash' => sanitize_text_field($_GET['hash']),
-			'currency' => 'USD',
+			'currency_name' => dy_utilities::currency_name(),
+			'currency_symbol' => dy_utilities::currency_symbol(),
 			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),
 			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
 			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),
@@ -556,7 +559,7 @@ class dy_CC_Checkout
 			$deposit = dy_sum_tax(dy_utilities::amount());
 			$total = dy_sum_tax(dy_utilities::total());
 			$outstanding = $total-$deposit;
-			$output .= '- '.__('Paid', 'dynamicpackages').' $'.dy_utilities::currency_format($deposit).' - '.__('Outstanding Balance', 'dynamicpackages').' $'.dy_utilities::currency_format($outstanding);					
+			$output .= '- '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
 		}
 		return $output;
 	}
@@ -735,11 +738,29 @@ class dy_CC_Checkout
 	}	
 	public function add_gateway($array)
 	{
+
+		global $dy_valid_recaptcha;
+		$add = false;		
+		
 		if(is_singular('packages') && dy_Validators::is_gateway_active() && package_field('package_auto_booking') > 0)
 		{
-			$array[] = 'Visa';
-			$array[] = 'Mastercard';		
+			$add = true;
 		}
+		
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		{
+			if($_POST['dy_request'] == 'request')
+			{
+				$add = true;
+			}	
+		}		
+		
+		if($add)
+		{
+			$array[] = 'Visa';
+			$array[] = 'Mastercard';			
+		}
+		
 		return $array;	
 	}	
 }

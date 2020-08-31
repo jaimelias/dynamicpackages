@@ -8,6 +8,7 @@ $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');
 $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
 $company_address = get_option('dy_address');
+$company_tax_id = get_option('dy_tax_id');
 $label_estimate = __('Estimate', 'dynamicpackages');
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
@@ -15,7 +16,13 @@ $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = sanitize_text_field($_POST['description']);
-$notes = 'TODO list all gateways';
+$included = sanitize_text_field($_POST['package_included']);
+$label_included = __('Included', 'dynamicpackages');
+$not_included = sanitize_text_field($_POST['package_not_included']);
+$label_not_included = __('Not Included', 'dynamicpackages');
+$accept = __('We accept', 'dynamicpackages');
+$all_gateways = dy_Gateways::join_gateways();
+$notes = (dy_Gateways::join_gateways()) ? $accept . ' ' . $all_gateways : null;
 $footer = $company_address;
 $label_whatsapp = (get_option('dy_whatsapp')) ? __('Feel free to contact us using Whatsapp:', 'dynamicpackages') : null;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
@@ -89,7 +96,7 @@ $email_template = <<<EOT
 		</style>
 	</head>
 
-	<body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;color: #777;color: #000;line-height: 1.5;font-size: 16px;">
+	<body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #666666; line-height: 1.5; font-size: 16px;">
 	
 		<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
 	
@@ -101,10 +108,10 @@ $email_template = <<<EOT
 							<tr>
 								<td class="title" style="padding: 0;vertical-align: top; padding: 5px 5px 20px 5px">
 									<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">${company_name}</h1>
-									<small style="color: #777">${company_contact}</small>
+									<small style="color: #777777">${company_tax_id}</small>
 								</td>
 								<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
-									<small style="color: #777">${label_estimate}</small>
+									<small style="color: #777777">${label_estimate}</small>
 								</td>
 							</tr>
 						</table>
@@ -115,7 +122,7 @@ $email_template = <<<EOT
 						<table style="width: 100%;line-height: inherit;text-align: left">
 							<tr>
 								<td colspan="2" style="padding: 5px;vertical-align: top;text-align: right;padding-bottom: 40px">
-									<small style="color: #777">${label_client}</small>
+									<small style="color: #777777">${label_client}</small>
 									<br/> ${client_name}
 								</td>
 							</tr>
@@ -123,41 +130,53 @@ $email_template = <<<EOT
 					</td>
 				</tr>
 				<tr>
-					<td style="padding: 5px;vertical-align: top; color:#666666; border-bottom: 1px solid #dddddd">
-						<strong>${label_item}</strong>
+					<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
+						<strong style="color:#666666;">${label_item}</strong>
 					</td>
-					<td style="padding: 5px;vertical-align: top;text-align: right; color:#666666; border-bottom: 1px solid #dddddd">
-						<strong>${label_subtotal}</strong>
+					<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+						<strong style="color:#666666;">${label_subtotal}</strong>
 					</td>
 				</tr>
 				
 				<tr>
-					<td style="padding: 5px;vertical-align: top; color:#666666; border-bottom: solid 1px #eeeeee;">
-						${description}
+					<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee; line-height: 2;">
+						<div style="min-height: 200px">
+							<div style="color:#666666; border-bottom: solid 1px #eeeeee;">${description}</div>
+							<div style="color:#777777;">${label_included}: ${included}</div>
+							<div style="color:#777777;">${label_not_included}: ${not_included}</div>						
+						</div>
 					</td>
-					<td style="padding: 5px;vertical-align: top;text-align: right; color:#666666;border-bottom: solid 1px #eeeeee;">
-						${total}
+					<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee; text-align: right; ">
+						<div style="min-height: 200px">
+							<span style="color:#666666;">${currency_symbol}${total}</span>
+						</div>
 					</td>
 				</tr>
 
 				<tr>
-					<td style="padding: 5px;vertical-align: top"></td>
-					<td style="padding: 5px;vertical-align: top;text-align: right; line-height: 2">
-						<span style="font-size: 16px; color: #666666"><strong>${label_total}:</strong><br/>${currency_symbol}${total}</span>
+					<td style="padding: 5px; vertical-align: top"></td>
+					<td style="padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+						<span style="color: #666666"><strong>${label_total}</strong><br/>${currency_symbol}${total}</span>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2" style="color: #666666; font-size: 14px; padding: 5px;vertical-align: top">${notes}</td>
+					<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
+						<small style="color: #666666; ">${notes}.</small>
+					</td>
 				</tr>
 				<tr>
-					<td colspan="2" style=" color: #666666; font-size: 12px; padding: 5px;vertical-align: top; text-align: center;">${footer}</td>
+					<td colspan="2" style="padding: 5px; vertical-align: top; text-align: center;">
+						<small style="color: #666666">${company_contact}</small>
+						<br/>
+						<small style="color: #666666; ">${footer}</small>
+					</td>
 				</tr>          
 			</table>
 		</div>
 		<p style="text-align: center;">
-			<small style="color: #777">${label_whatsapp}</small>
+			<small style="color: #666666">${label_whatsapp}</small>
 		</p>
-		<p style="text-align: center; max-width: 800px; margin: 0 auto;">${whatsapp}</p>
+		<p style="max-width: 800px; margin: 0 auto;">${whatsapp}</p>
 	</body>
 </html>
 EOT;

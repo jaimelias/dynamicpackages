@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2019-11-19 02:33+0000\n"
-"PO-Revision-Date: 2019-11-19 02:32+0000\n"
+"PO-Revision-Date: 2019-11-29 19:15+0000\n"
 "Last-Translator: jaimelias <jaime@aeroalbrook.com>\n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -406,7 +406,7 @@ msgstr "hoy"
 #: public/class-dynamicpackages-public.php:2862
 #: public/class-dynamicpackages-public.php:2887
 msgid "tomorrow"
-msgstr "tomorrow"
+msgstr "mañana"
 
 #: public/class-dynamicpackages-public.php:1109
 #: public/class-dynamicpackages-public.php:1287
@@ -1302,7 +1302,7 @@ msgstr "Hoy"
 
 #: public/partials/forms.php:84
 msgid "Tomorrow"
-msgstr "Tomorrow"
+msgstr "Mañana"
 
 #: public/partials/forms.php:112
 msgid "Book  Now"

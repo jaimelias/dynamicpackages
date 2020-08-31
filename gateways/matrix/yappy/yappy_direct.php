@@ -4,6 +4,7 @@ class yappy_direct{
 	
 	function __construct()
 	{
+		$this->gateway_title = 'Yappy';
 		$this->gateway_name = 'yappy_direct';
 		$this->init();
 	}
@@ -61,12 +62,12 @@ class yappy_direct{
 		}
 		return $output;
 	}
-	public function show_yappy()
+	public function show()
 	{
 		$output = false;
-		global $yappy_direct_show_yappy;
+		global $yappy_direct_show;
 		
-		if(isset($yappy_direct_show_yappy))
+		if(isset($yappy_direct_show))
 		{
 			$output = true;
 		}
@@ -76,7 +77,7 @@ class yappy_direct{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS['yappy_direct_show_yappy'] = true;
+					$GLOBALS['yappy_direct_show'] = true;
 					$output = true;
 				}
 			}			
@@ -300,18 +301,18 @@ class yappy_direct{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Yappy', 'Yappy', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_title, $this->gateway_title, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
-			<h1><?php esc_html(_e("Yappy", "dynamicpackages")); ?></h1>	
+			<h1><?php esc_html($this->gateway_title); ?></h1>	
 			<?php
-			settings_fields( 'yappy_direct_settings' );
-			do_settings_sections( 'yappy_direct_settings' );
-			submit_button();
+				settings_fields( 'yappy_direct_settings' );
+				do_settings_sections( 'yappy_direct_settings' );
+				submit_button();
 			?>			
 		</form>
 		
@@ -319,7 +320,7 @@ class yappy_direct{
 	}
 	public function button($output)
 	{
-		if($this->show_yappy() && in_array('Yappy', $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
 			$output .= ' <button class="pure-button bottom-20 pure-button-yappy withyappy rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy-icon.svg').'"/> '.esc_html(__('Pay with Yappy', 'dynamicpackages')).'</button>';			
 		}
@@ -328,18 +329,37 @@ class yappy_direct{
 	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
-	}	
+	}
+	
 	public function add_gateway($array)
 	{
-		if($this->show_yappy() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		global $dy_valid_recaptcha;
+		$add = false;
+		
+		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
-			$array[] = 'Yappy';		
+			$add = true;
 		}
+		
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		{
+			if($_POST['dy_request'] == 'request')
+			{
+				$add = true;
+			}	
+		}		
+		
+		if($add)
+		{
+			$array[] = $this->gateway_title;
+		}
+		
 		return $array;	
 	}
+	
 	public function scripts()
 	{
-		if($this->show_yappy())
+		if($this->show())
 		{
 			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
@@ -373,9 +393,9 @@ class yappy_direct{
 				$('#dy_form_icon').html(yappy_logo);
 				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
-				$('#dynamic_form').find('span.dy_mobile_payment').text('Yappy');
+				$('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -390,7 +410,7 @@ class yappy_direct{
 					var dy_vars = checkout_vars();
 					var eventArgs = {};
 					eventArgs.eventAction = 'Click';
-					eventArgs.eventLabel = 'Yappy';
+					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';
 					eventArgs.eventCategory = 'Gateway';
 					ga('send', 'event', eventArgs);	
 				}				

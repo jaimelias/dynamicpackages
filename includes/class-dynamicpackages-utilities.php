@@ -963,7 +963,7 @@ class dy_utilities {
 
 	}
 	
-	public static function imp_taxo($tax)
+	public static function implode_taxo_names($tax)
 	{
 		global $post;
 		$termid = $post->ID;
@@ -1002,4 +1002,8 @@ class dy_utilities {
 		return $total;
 	}	
 	
+	public static function format_date($date)
+	{
+		return date_i18n(get_option('date_format'), strtotime(sanitize_text_field($date)));
+	}
 }

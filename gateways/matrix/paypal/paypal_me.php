@@ -5,6 +5,7 @@ class paypal_me{
 	function __construct()
 	{
 		$this->gateway_name = 'paypal_me';
+		$this->gateway_title = 'Paypal';
 		$this->init();
 	}
 	public function init()
@@ -97,12 +98,12 @@ class paypal_me{
 		}
 		return $output;
 	}
-	public function show_paypal()
+	public function show()
 	{
 		$output = false;
-		global $paypal_me_show_paypal;
+		global $paypal_me_show;
 		
-		if(isset($paypal_me_show_paypal))
+		if(isset($paypal_me_show))
 		{
 			$output = true;
 		}
@@ -112,7 +113,7 @@ class paypal_me{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS['paypal_me_show_paypal'] = true;
+					$GLOBALS['paypal_me_show'] = true;
 					$output = true;
 				}
 			}			
@@ -273,7 +274,7 @@ class paypal_me{
 	public function settings_page()
 		 { 
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
 			<h1><?php esc_html(_e("Paypal.me", "dynamicpackages")); ?></h1>	
 			<?php
@@ -287,7 +288,7 @@ class paypal_me{
 	}	
 	public function button($output)
 	{
-		if($this->show_paypal() && in_array('Paypal', $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
 			$output .= ' <button class="pure-button bottom-20 pure-button-paypal withpaypal rounded" type="button"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages')).'</button>';
 		}
@@ -296,19 +297,37 @@ class paypal_me{
 	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
-	}		
+	}
+	
 	public function add_gateway($array)
 	{
-		if($this->show_paypal() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		global $dy_valid_recaptcha;
+		$add = false;
+		
+		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
-			$array[] = 'Paypal';		
+			$add = true;
 		}
-		return $array;
+		
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		{
+			if($_POST['dy_request'] == 'request')
+			{
+				$add = true;
+			}	
+		}		
+		
+		if($add)
+		{
+			$array[] = $this->gateway_title;
+		}
+		
+		return $array;	
 	}
 	
 	public function scripts()
 	{
-		if($this->show_paypal())
+		if($this->show())
 		{
 			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');
@@ -340,7 +359,7 @@ class paypal_me{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(paypal_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -355,7 +374,7 @@ class paypal_me{
 					var dy_vars = checkout_vars();
 					var eventArgs = {};
 					eventArgs.eventAction = 'Click';
-					eventArgs.eventLabel = 'Paypal';
+					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';
 					eventArgs.eventCategory = 'Gateway';
 					ga('send', 'event', eventArgs);	
 				}				
@@ -369,7 +388,7 @@ class paypal_me{
 	}
 	public function icon($icon)
 	{
-		if($this->show_paypal() && in_array('Paypal', $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
 			$icon .= ' <i class="fab fa-paypal"></i>';
 		}

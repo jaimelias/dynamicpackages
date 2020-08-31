@@ -1294,7 +1294,7 @@ class dy_Public {
 	public static function description()
 	{	
 		global $post;
-		$date = date_i18n(get_option('date_format'), strtotime(sanitize_text_field($_GET['booking_date'])));
+		$date = dy_utilities::format_date($_GET['booking_date']);
 		$pax_discount = 0;
 		$discount = 0;
 		$free = 0;

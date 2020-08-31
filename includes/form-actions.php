@@ -73,8 +73,6 @@ class dy_Actions{
         
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
 		
-		//write_log($email_template);
-		
         wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['first_name']).': '. sanitize_text_field($_POST['description'])), $email_template, $headers);
     }
 

@@ -138,6 +138,7 @@ class dy_Admin {
 		register_setting('dy_settings', 'dy_phone', 'esc_html');
 		register_setting('dy_settings', 'dy_whatsapp', 'intval');
 		register_setting('dy_settings', 'dy_address', 'esc_html');
+		register_setting('dy_settings', 'dy_tax_id', 'esc_html');
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
@@ -228,6 +229,15 @@ class dy_Admin {
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'dy_address', 'type' => 'text')
+		);
+
+		add_settings_field( 
+			'dy_tax_id', 
+			esc_html(__( 'Tax Identification Number', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'dy_tax_id', 'type' => 'text')
 		);		
 		
 

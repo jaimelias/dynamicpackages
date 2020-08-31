@@ -5,6 +5,7 @@ class bank_transfer{
 	function __construct()
 	{
 		$this->gateway_name = 'bank_transfer';
+		$this->gateway_title = __('Local Bank', 'dynamicpackages');
 		$this->init();
 	}
 	public function init()
@@ -61,12 +62,12 @@ class bank_transfer{
 		}
 		return $output;
 	}
-	public function show_bank()
+	public function show()
 	{
 		$output = false;
-		global $bank_transfer_show_bank;
+		global $bank_transfer_show;
 		
-		if(isset($bank_transfer_show_bank))
+		if(isset($bank_transfer_show))
 		{
 			$output = true;
 		}
@@ -76,7 +77,7 @@ class bank_transfer{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS['bank_transfer_show_bank'] = true;
+					$GLOBALS['bank_transfer_show'] = true;
 					$output = true;
 				}
 			}			
@@ -368,9 +369,9 @@ class bank_transfer{
 	public function settings_page()
 		 { 
 		?><div class="wrap">
-		<form action='options.php' method='post'>
+		<form action="options.php" method="post">
 			
-			<h1><?php echo esc_html(__('Local Bank', 'dynamicpackages')); ?></h1>	
+			<h1><?php echo esc_html($this->gateway_title); ?></h1>	
 			<?php
 			settings_fields( 'bank_transfer_settings' );
 			do_settings_sections( 'bank_transfer_settings' );
@@ -382,9 +383,9 @@ class bank_transfer{
 	}
 	public function button($output)
 	{
-		if($this->show_bank() && in_array($this->gateway_name(), $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_name(), $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-bank  withbank rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html(__('Local Bank', 'dynamicpackages')).'</button>';			
+			$output .= ' <button class="pure-button bottom-20 pure-button-bank  withbank rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html($this->gateway_title).'</button>';			
 		}
 		return $output;
 	}
@@ -398,15 +399,32 @@ class bank_transfer{
 	}
 	public function add_gateway($array)
 	{
-		if($this->show_bank() && is_singular('packages') && package_field('package_auto_booking') > 0)
+		global $dy_valid_recaptcha;
+		$add = false;
+		
+		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
 		{
-			$array[] = $this->gateway_name();
+			$add = true;
 		}
+		
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		{
+			if($_POST['dy_request'] == 'request')
+			{
+				$add = true;
+			}	
+		}		
+		
+		if($add)
+		{
+			$array[] = $this->gateway_title;
+		}
+		
 		return $array;	
 	}
 	public function scripts()
 	{
-		if($this->show_bank())
+		if($this->show())
 		{
 			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
@@ -438,7 +456,7 @@ class bank_transfer{
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(bank_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo $this->gateway_name ?>');
+				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -453,7 +471,7 @@ class bank_transfer{
 					var dy_vars = checkout_vars();
 					var eventArgs = {};
 					eventArgs.eventAction = 'Click';
-					eventArgs.eventLabel = 'Bank';
+					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';
 					eventArgs.eventCategory = 'Gateway';
 					ga('send', 'event', eventArgs);	
 				}				

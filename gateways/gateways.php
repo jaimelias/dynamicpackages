@@ -53,15 +53,15 @@ class dy_Gateways
 					{
 						if(sanitize_text_field($_GET['booking_date']) == '')
 						{
-							$content = '<p class="minimal_alert"><strong>'.esc_html(self::hour_restriction()).'</strong></p>';		
+							$content = '<p class="minimal_alert"><strong>'.esc_html(dy_Public::hour_restriction()).'</strong></p>';		
 						}
 						else
 						{
 							if($pax_regular < package_field('package_min_persons') || $sum_people > package_field('package_max_persons'))
 							{
-								$content = '<p class="minimal_success strong">'.esc_html(self::people_restriction()).'</p>';
+								$content = '<p class="minimal_success strong">'.esc_html(dy_Public::people_restriction()).'</p>';
 								$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
-								$content .= self::booking_sidebar();							
+								$content .= dy_Public::booking_sidebar();							
 							}
 							else
 							{

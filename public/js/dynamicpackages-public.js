@@ -121,9 +121,15 @@ function booking_args()
 	
 	if(add_ons_price > 0)
 	{
+		
+		if(args.package_included)
+		{
+			new_args.package_included = args.package_included + ', ' + add_ons_description.join(', ');
+		}
+		
 		regular_amount = regular_amount + add_ons_price;
 		amount = amount + add_ons_price;
-		description = args.duration + ' - ' + args.title + ' (' + args.departure_date + ' ';
+		description = args.duration + ' - ' + args.title + ' (' + args.departure_format_date + ' ';
 		
 		if(args.hasOwnProperty('booking_hour'))
 		{
@@ -178,11 +184,11 @@ function booking_args()
 		
 		if(args.deposit == 0)
 		{
-			description += total_label + ' ' + amount.toFixed(2) + '.';
+			description += total_label + ' ' + args.currency_symbol + amount.toFixed(2) + '.';
 		}
 		else
 		{
-			description += deposit_label + ' ' + (amount * deposit).toFixed(2) + ', ' + outstanding_label + ' ' + (amount - (amount * deposit)).toFixed(2) + '.';
+			description += deposit_label + ' ' + args.currency_symbol + (amount * deposit).toFixed(2) + ', ' + outstanding_label + ' ' + args.currency_symbol + (amount - (amount * deposit)).toFixed(2) + '.';
 		}
 		
 	}
@@ -406,6 +412,7 @@ function dy_request_form(token)
 		
 		if(invalids == 0)
 		{
+			var args = booking_args();
 			dy_populate_form(form);
 			jQuery(form).find('input[name="dy_recaptcha"]').val(token);
 			//console.log(jQuery(form).serializeArray());
@@ -422,8 +429,8 @@ function dy_request_form(token)
 				else
 				{
 					console.log('Purchase');
-					var total = parseFloat(jQuery(form).find('input[name="total"]').val());
-					fbq('track', 'Purchase', {value: total, currency: 'USD'});
+					var total = parseFloat(args.total);
+					fbq('track', 'Purchase', {value: total, currency: args.currency_name});
 				}
 			}
 			
