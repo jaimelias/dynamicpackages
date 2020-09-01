@@ -73,9 +73,8 @@ class dy_Actions{
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
 		
-		$html2pdf = new Html2Pdf();
+		$html2pdf = new Html2Pdf('P', 'A4', substr(get_locale(), 0, -3));
 		$html2pdf->writeHTML($email_pdf);
-		$html2pdf->setDefaultFont('Arial');
 		//$pdfContent = $html2pdf->output('estimate.pdf', 'S');
 		$pdfContent = $html2pdf->output('estimate.pdf', 'D');
 		
