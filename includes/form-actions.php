@@ -67,13 +67,16 @@ class dy_Actions{
     }
 
     public function send_quote_email()
-    {
-        $headers = array('Content-type: text/html');
-        array_push($headers, 'Reply-To: '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).' <'.sanitize_text_field($_POST['email']).'>');
-        
+    {        
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
 		
-        wp_mail(get_option('admin_email'), esc_html(sanitize_text_field($_POST['first_name']).': '. sanitize_text_field($_POST['description'])), $email_template, $headers);
+		$args = array(
+			'subject' => sanitize_text_field($_POST['description']),
+			'to' => sanitize_text_field($_POST['email']),
+			'message' => $email_template
+		);
+		
+		sg_mail($args);
     }
 
     public function wp_title($title)
@@ -89,10 +92,13 @@ class dy_Actions{
 
     public function the_title($title)
     {
-        if(is_singular('packages') && $this->is_request_submitted())
-        {
-            $title = esc_html(__('Thank you for your Inquiry', 'dynamicpackages'));
-        }
+		if(in_the_loop())
+		{
+			if(is_singular('packages') && $this->is_request_submitted())
+			{
+				$title = esc_html(__('Thank you for your Inquiry', 'dynamicpackages'));
+			}			
+		}
 
         return $title;
     }

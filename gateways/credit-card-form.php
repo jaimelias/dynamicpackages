@@ -4,7 +4,7 @@
 	<div id="dynamic_terms">
 		<form id="dy_checkout_form" class="hidden" method="post" action="<?php echo esc_url(get_permalink().'#checkout'); ?>">
 		
-	<input type="hidden" name="dy_recaptcha" />
+		<input type="hidden" name="dy_recaptcha" />
 		
 	<div class="text-center bottom-20">
 		<img width="250" height="50" alt="Visa - Mastercard" src="<?php echo esc_url(plugin_dir_url( __FILE__ ).'matrix/visa-mastercard.svg'); ?>" />
