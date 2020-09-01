@@ -14,11 +14,12 @@ if(!class_exists('Sendgrid_Mailer'))
 		{
 			$this->web_api_key = get_option('sendgrid_web_api_key');
 			$this->email = get_option('sendgrid_email');
+			$this->email_bcc = get_option('sendgrid_email_bcc');
 			$this->name = (get_option('sendgrid_name')) ? get_option('sendgrid_name') : get_bloginfo('name');
 			$this->smtp_api_key = get_option('sendgrid_smtp_api_key');
 			$this->smtp_username = get_option('sendgrid_smtp_username');
 			$this->host = 'smtp.sendgrid.net';
-			$this->settings_title = 'Sendgrid API Mailer';
+			$this->settings_title = 'Sendgrid Mailer';
 			$this->init();
 		}
 		
@@ -93,6 +94,7 @@ if(!class_exists('Sendgrid_Mailer'))
 		{
 			register_setting('sendgrid_settings', 'sendgrid_web_api_key', 'sanitize_user');
 			register_setting('sendgrid_settings', 'sendgrid_email', 'sanitize_text_field');
+			register_setting('sendgrid_settings', 'sendgrid_email_bcc', 'sanitize_text_field');
 			register_setting('sendgrid_settings', 'sendgrid_name', 'sanitize_text_field');
 			
 			register_setting('sendgrid_settings', 'sendgrid_smtp_api_key', 'sanitize_text_field');
@@ -122,6 +124,15 @@ if(!class_exists('Sendgrid_Mailer'))
 				'sendgrid_settings_section',
 				array('name' => 'sendgrid_email', 'type' => 'email') 
 			);
+			
+			add_settings_field( 
+				'sendgrid_email_bcc', 
+				'Bcc', 
+				array(&$this, 'settings_input'), 
+				'sendgrid_settings', 
+				'sendgrid_settings_section',
+				array('name' => 'sendgrid_email_bcc', 'type' => 'email') 
+			);			
 
 			add_settings_field( 
 				'sendgrid_name', 
@@ -173,27 +184,26 @@ if(!class_exists('Sendgrid_Mailer'))
 				$email->setFrom(sanitize_email($this->email), esc_html($this->name));
 				$email->setSubject($subject);
 				$email->addTo($to);
-				$email->addContent('text/html', $message);				
 				
-				if(is_array($attachments))
+				if($this->email_bcc)
 				{
-					if(count($attachments) > 0)
-					{
-						for($x = 0; $x < count($attachments); $x++)
-						{
-							if(array_key_exists('filename', $attachments[$x]) && array_key_exists('data', $attachments[$x]))
-							{
-								$attachment = new Attachment();
-								$attachment->setContent($attachments[$x]['data']);
-								$attachment->setType('application/pdf');
-								$attachment->setFilename($attachments[$x]['filename']);
-								$attachment->setDisposition("attachment");
-								$email->addAttachment($attachment);								
-							}
-						}
-					}
+					$email->addBcc($this->email_bcc);
 				}
 				
+				$email->addContent('text/html', $message);				
+				
+				if($this->has_attachments($attachments))
+				{
+					for($x = 0; $x < count($attachments); $x++)
+					{
+						$attachment = new Attachment();
+						$attachment->setContent($attachments[$x]['data']);
+						$attachment->setType('application/pdf');
+						$attachment->setFilename($attachments[$x]['filename']);
+						$attachment->setDisposition('attachment');
+						$email->addAttachment($attachment);	
+					}							
+				}
 				
 				$sendgrid = new \SendGrid(esc_html($this->web_api_key));
 				
@@ -220,6 +230,27 @@ if(!class_exists('Sendgrid_Mailer'))
 				$headers = array('Content-Type: text/html; charset=UTF-8');
 				wp_mail($to, $subject, $message, $headers);
 			}
+		}
+		
+		public function has_attachments($attachments)
+		{
+			$output = false;
+			
+			if(is_array($attachments))
+			{
+				if(count($attachments) > 0)
+				{	
+					for($x = 0; $x < count($attachments); $x++)
+					{
+						if(array_key_exists('filename', $attachments[$x]) && array_key_exists('data', $attachments[$x]))
+						{
+							$output = true;
+						}
+					}
+				}
+			}
+			
+			return $output;
 		}
 		
 		public function minify_html($template)
