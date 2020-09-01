@@ -9,11 +9,11 @@ if(!class_exists('Sendgrid_Mailer'))
 		
 		public function __construct()
 		{
-			$this->api_key = get_option('sendgrid_api_key');
+			$this->web_api_key = get_option('sendgrid_web_api_key');
 			$this->email = get_option('sendgrid_email');
 			$this->name = (get_option('sendgrid_name')) ? get_option('sendgrid_name') : get_bloginfo('name');
 			$this->smtp_api_key = get_option('sendgrid_smtp_api_key');
-			$this->smtp_username = get_option('sendgrid_username');
+			$this->smtp_username = get_option('sendgrid_smtp_username');
 			$this->host = 'smtp.sendgrid.net';
 			$this->settings_title = 'Sendgrid API Mailer';
 			$this->init();
@@ -21,7 +21,7 @@ if(!class_exists('Sendgrid_Mailer'))
 		
 		public function is_transactional()
 		{
-			$output = (($this->api_key ||  ($this->smtp_api_key && $this->smtp_username)) && is_email($this->email)) ? true : false;
+			$output = (($this->web_api_key ||  ($this->smtp_api_key && $this->smtp_username)) && is_email($this->email)) ? true : false;
 			
 			return $output;
 		}
@@ -33,16 +33,17 @@ if(!class_exists('Sendgrid_Mailer'))
 			
 			if($this->is_transactional())
 			{
-				add_action( 'phpmailer_init', array(&$this, 'disable_phpmailer'), 100, 1 );
 				add_filter('wp_mail_from', array(&$this, 'from_email'), 100, 1);
 				add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
 				add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 10, 1 );
 				add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
 			}
 		}
-		
+
 		public function phpmailer($mailer)
 		{
+			global $SENDGRID_TO;
+			
 			$mailer->IsSMTP();
 			$mailer->Host = $this->host;
 			$mailer->Port = 587;
@@ -59,9 +60,9 @@ if(!class_exists('Sendgrid_Mailer'))
 			}
 		}		
 		
-		public function phpmailer_failed($mailer)
+		public function phpmailer_failed($wp_error)
 		{
-			write_log($mailer->ErrorInfo);
+			write_log($wp_error->get_error_message());
 		}
 		
 		public function add_settings_page()
@@ -87,7 +88,7 @@ if(!class_exists('Sendgrid_Mailer'))
 		
 		public function settings_init()
 		{
-			register_setting('sendgrid_settings', 'sendgrid_api_key', 'sanitize_user');
+			register_setting('sendgrid_settings', 'sendgrid_web_api_key', 'sanitize_user');
 			register_setting('sendgrid_settings', 'sendgrid_email', 'sanitize_text_field');
 			register_setting('sendgrid_settings', 'sendgrid_name', 'sanitize_text_field');
 			
@@ -102,12 +103,12 @@ if(!class_exists('Sendgrid_Mailer'))
 			);
 			
 			add_settings_field( 
-				'sendgrid_api_key', 
+				'sendgrid_web_api_key', 
 				'API Key', 
 				array(&$this, 'settings_input'), 
 				'sendgrid_settings', 
 				'sendgrid_settings_section',
-				array('name' => 'sendgrid_api_key') 
+				array('name' => 'sendgrid_web_api_key') 
 			);
 
 			add_settings_field( 
@@ -162,14 +163,14 @@ if(!class_exists('Sendgrid_Mailer'))
 			$subject = esc_html($args['subject']);
 			$message = $this->minify_html($args['message']);
 			
-			if($this->api_key)
+			if($this->web_api_key)
 			{
 				$email = new \SendGrid\Mail\Mail(); 
 				$email->setFrom(sanitize_email($this->email), esc_html($this->name));
 				$email->setSubject($subject);
 				$email->addTo($to);
 				$email->addContent('text/html', $message);
-				$sendgrid = new \SendGrid(esc_html($this->api_key));
+				$sendgrid = new \SendGrid(esc_html($this->web_api_key));
 				
 				try {
 					
@@ -191,14 +192,9 @@ if(!class_exists('Sendgrid_Mailer'))
 			}
 			else
 			{
-				$headers = array('Content-type: text/html');
+				$headers = array('Content-Type: text/html; charset=UTF-8');
 				wp_mail($to, $subject, $message, $headers);
 			}
-		}
-		
-		public function disable_phpmailer($phpmailer)
-		{
-			$phpmailer->ClearAllRecipients();
 		}
 		
 		public function minify_html($template)

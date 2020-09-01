@@ -139,7 +139,7 @@ if ( ! function_exists('write_log')) {
 
 			$log .= ' '.sanitize_text_field($_SERVER['REQUEST_URI']);  
 			$log .= ' '.sanitize_text_field($_SERVER['HTTP_USER_AGENT']);  
-			error_log( print_r( $log, true ) );
+			error_log( json_encode($log) );
 		}
 		else
 		{
