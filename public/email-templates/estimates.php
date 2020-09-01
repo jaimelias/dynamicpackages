@@ -96,7 +96,7 @@ $email_template = <<<EOT
 		</style>
 	</head>
 
-	<body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #666666; line-height: 1.5; font-size: 16px;">
+	<body style="font-family: Arial, sans-serif; color: #666666; line-height: 1.5; font-size: 16px;">
 	
 		<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
 	

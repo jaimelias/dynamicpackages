@@ -1,6 +1,8 @@
 <?php
 
 
+use Spipu\Html2Pdf\Html2Pdf;
+
 class dy_Actions{
 
     public function __construct()
@@ -67,16 +69,24 @@ class dy_Actions{
     }
 
     public function send_quote_email()
-    {        
+    {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
+		
+		$html2pdf = new Html2Pdf();
+		$html2pdf->writeHTML($email_pdf);
+		$html2pdf->setDefaultFont('Arial');
+		//$pdfContent = $html2pdf->output('estimate.pdf', 'S');
+		$pdfContent = $html2pdf->output('estimate.pdf', 'D');
 		
 		$args = array(
 			'subject' => sanitize_text_field($_POST['description']),
 			'to' => sanitize_text_field($_POST['email']),
-			'message' => $email_template
+			'message' => $email_template,
+			'attachments' => array($pdfContent)
 		);
 		
-		sg_mail($args);
+		//sg_mail($args);
     }
 
     public function wp_title($title)

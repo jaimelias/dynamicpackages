@@ -2,8 +2,11 @@
 
 if ( !defined( 'ABSPATH' ) ) exit;
 
+use SendGrid\Mail\Attachment;
+
 if(!class_exists('Sendgrid_Mailer'))
 {
+	
 	class Sendgrid_Mailer
 	{
 		
@@ -104,7 +107,7 @@ if(!class_exists('Sendgrid_Mailer'))
 			
 			add_settings_field( 
 				'sendgrid_web_api_key', 
-				'API Key', 
+				'Web API Key', 
 				array(&$this, 'settings_input'), 
 				'sendgrid_settings', 
 				'sendgrid_settings_section',
@@ -162,6 +165,7 @@ if(!class_exists('Sendgrid_Mailer'))
 			$to = sanitize_email($args['to']);
 			$subject = esc_html($args['subject']);
 			$message = $this->minify_html($args['message']);
+			$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
 			
 			if($this->web_api_key)
 			{
@@ -169,7 +173,25 @@ if(!class_exists('Sendgrid_Mailer'))
 				$email->setFrom(sanitize_email($this->email), esc_html($this->name));
 				$email->setSubject($subject);
 				$email->addTo($to);
-				$email->addContent('text/html', $message);
+				$email->addContent('text/html', $message);				
+				
+				if(is_array($attachments))
+				{
+					if(count($attachments) > 0)
+					{
+						for($x = 0; $x < count($attachments); $x++)
+						{
+							$attachment = new Attachment();
+							$attachment->setContent($attachments[$x]);
+							$attachment->setType('application/pdf');
+							$attachment->setFilename('estimate.pdf');
+							$attachment->setDisposition("attachment");
+							$email->addAttachment($attachment);							
+						}
+					}
+				}
+				
+				
 				$sendgrid = new \SendGrid(esc_html($this->web_api_key));
 				
 				try {

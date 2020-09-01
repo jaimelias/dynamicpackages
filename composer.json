@@ -1,5 +1,6 @@
 {
   "require": {
-    "sendgrid/sendgrid": "~7"
+    "sendgrid/sendgrid": "~7",
+    "spipu/html2pdf": "^5.2"
   }
 }
