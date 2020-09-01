@@ -7,6 +7,7 @@ class dy_Actions{
 
     public function __construct()
     {
+		$this->lang = substr(get_locale(), 0, -3);
         $this->init();
     }
     public function init()
@@ -73,19 +74,36 @@ class dy_Actions{
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
 		
-		$html2pdf = new Html2Pdf('P', 'A4', substr(get_locale(), 0, -3));
-		$html2pdf->writeHTML($email_pdf);
-		//$pdfContent = $html2pdf->output('estimate.pdf', 'S');
-		$pdfContent = $html2pdf->output('estimate.pdf', 'D');
+		$attachments = array();
+		$estimate_pdf = new Html2Pdf('P', 'A4', $this->lang);
+		$estimate_pdf->pdf->SetDisplayMode('fullpage');
+		$estimate_pdf->writeHTML($email_pdf);
+		$attachments[] = array(
+			'filename' => 'Estimate',
+			'data' => $estimate_pdf->output('estimate.pdf', 'S')
+		);
 		
+		$terms_pdf = dy_PDF::get_terms_conditions_pages();
+
+		if(is_array($terms_pdf))
+		{
+			if(count($terms_pdf) > 0)
+			{
+				for($x = 0; $x < count($terms_pdf); $x++)
+				{
+					$attachments[] = $terms_pdf[$x];
+				}
+			}
+		}		
+			
 		$args = array(
 			'subject' => sanitize_text_field($_POST['description']),
 			'to' => sanitize_text_field($_POST['email']),
 			'message' => $email_template,
-			'attachments' => array($pdfContent)
+			'attachments' => $attachments
 		);
 		
-		//sg_mail($args);
+		sg_mail($args);
     }
 
     public function wp_title($title)

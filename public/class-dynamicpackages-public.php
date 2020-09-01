@@ -995,9 +995,16 @@ class dy_Public {
 		$locations = get_the_term_list( $termid, 'package_category', $label, '</li><li><i class="fas fa-tags"></i> ', '</li></ul>');
 		echo $locations;
 	}	
-	public static function get_terms_conditions()
+	public static function get_terms_conditions($post_id = null)
 	{
-		global $post;
+		if($post_id == null)
+		{
+			global $post;
+		}
+		else
+		{
+			$post = get_post($post_id);
+		}
 		
 		if(isset($post))
 		{

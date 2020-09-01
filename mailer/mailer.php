@@ -181,12 +181,15 @@ if(!class_exists('Sendgrid_Mailer'))
 					{
 						for($x = 0; $x < count($attachments); $x++)
 						{
-							$attachment = new Attachment();
-							$attachment->setContent($attachments[$x]);
-							$attachment->setType('application/pdf');
-							$attachment->setFilename('estimate.pdf');
-							$attachment->setDisposition("attachment");
-							$email->addAttachment($attachment);							
+							if(array_key_exists('filename', $attachments[$x]) && array_key_exists('data', $attachments[$x]))
+							{
+								$attachment = new Attachment();
+								$attachment->setContent($attachments[$x]['data']);
+								$attachment->setType('application/pdf');
+								$attachment->setFilename($attachments[$x]['filename']);
+								$attachment->setDisposition("attachment");
+								$email->addAttachment($attachment);								
+							}
 						}
 					}
 				}

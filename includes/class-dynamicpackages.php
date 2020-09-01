@@ -124,6 +124,7 @@ class dynamicpackages {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-json.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-utilities.php';		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/form-actions.php';		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/pdf.php';		
 
 		$this->loader = new dynamicpackages_Loader();
 
