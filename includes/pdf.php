@@ -36,9 +36,11 @@ class dy_PDF {
 					$pdf->writeHTML($page);
 		
 					//OUTPUT
+					$filename = $name . '.pdf';
+					
 					$output[] = array(
-						'filename' => $name,
-						'data' => $pdf->output('terms_conditions_'.esc_html($number).'.pdf', 'S')
+						'filename' => $filename,
+						'data' => $pdf->output($filename, 'S')
 					);
 				}		
 			}

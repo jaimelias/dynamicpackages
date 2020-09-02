@@ -195,11 +195,11 @@ if(!class_exists('Sendgrid_Mailer'))
 				if($this->has_attachments($attachments))
 				{
 					for($x = 0; $x < count($attachments); $x++)
-					{
+					{						
 						$attachment = new Attachment();
 						$attachment->setContent($attachments[$x]['data']);
 						$attachment->setType('application/pdf');
-						$attachment->setFilename($attachments[$x]['filename']);
+						$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
 						$attachment->setDisposition('attachment');
 						$email->addAttachment($attachment);	
 					}							

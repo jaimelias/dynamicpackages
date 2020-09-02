@@ -1,6 +1,5 @@
 <?php
 
-
 $currency_symbol = dy_utilities::currency_symbol();
 $total = dy_utilities::total();
 $company_name = get_bloginfo('name');
@@ -9,7 +8,7 @@ $company_email = get_option('dy_email');
 $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
 $company_address = get_option('dy_address');
 $company_tax_id = get_option('dy_tax_id');
-$label_estimate = __('ESTIMATE', 'dynamicpackages');
+$label_doc = __('Estimate', 'dynamicpackages');
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
 $label_item = __('Service', 'dynamicpackages');
@@ -20,13 +19,12 @@ $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
-$accept = __('We accept', 'dynamicpackages');
-$all_gateways = dy_Gateways::join_gateways();
-$notes = (dy_Gateways::join_gateways()) ? $accept . ' ' . $all_gateways : null;
+$notes = apply_filters('dy_pdf_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
+$label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
 $footer = $company_address;
 $label_whatsapp = (get_option('dy_whatsapp')) ? __('Feel free to contact us using Whatsapp:', 'dynamicpackages') : null;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
-$whatsapp = (get_option('dy_whatsapp')) ? '<a style="padding: 16px; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">Whatsapp</a>' : null ;
+$whatsapp = (get_option('dy_whatsapp')) ? '<a style="padding: 16px; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">Whatsapp</a>' : null;
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -111,7 +109,7 @@ $email_template = <<<EOT
 									<small style="color: #777777">${company_tax_id}</small>
 								</td>
 								<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
-									<small style="color: #777777">${label_estimate}</small>
+									<small style="color: #777777">${label_doc}</small>
 								</td>
 							</tr>
 						</table>
@@ -161,7 +159,9 @@ $email_template = <<<EOT
 				</tr>
 				<tr>
 					<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
-						<small style="color: #666666; ">${notes}.</small>
+						<strong style="color: #666666;">${label_notes}</strong>
+						<br>
+						${notes}.
 					</td>
 				</tr>
 				<tr>

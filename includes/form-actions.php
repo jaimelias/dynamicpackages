@@ -85,9 +85,10 @@ class dy_Actions{
 		$attachments = array();
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
 		
+		$filename = __('Estimate', 'dynamicpackages') . '.pdf';
 		
 		$attachments[] = array(
-			'filename' => 'Estimate',
+			'filename' => $filename,
 			'data' => $this->estimate_pdf()
 		);
 		

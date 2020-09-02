@@ -10,7 +10,7 @@ $company_email = get_option('dy_email');
 $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
 $company_address = get_option('dy_address');
 $company_tax_id = get_option('dy_tax_id');
-$label_estimate = __('Estimate', 'dynamicpackages');
+$label_doc = apply_filters('dy_pdf_label_doc', __('Estimate', 'dynamicpackages'));
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
 $label_item = __('Service', 'dynamicpackages');
@@ -21,9 +21,7 @@ $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
-$accept = __('We accept', 'dynamicpackages');
-$all_gateways = dy_Gateways::join_gateways();
-$notes = (dy_Gateways::join_gateways()) ? $accept . ' ' . $all_gateways : null;
+$notes = apply_filters('dy_pdf_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
 $label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
 $footer = $company_address;
 
@@ -32,7 +30,7 @@ $email_pdf = <<<EOT
 	<!--
 	table { vertical-align: top; }
 	tr { vertical-align: top; }
-	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.5}
+	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.2}
 	-->
 	</style>
 	<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
@@ -48,7 +46,7 @@ $email_pdf = <<<EOT
 				</td>
 				<td style="width: 50%;">
 					<div style="text-align: right;">
-						<span style="color: #666666;">${label_estimate}</span>
+						<span style="color: #666666;">${label_doc}</span>
 						<br>
 						${date}
 						<br>
@@ -128,7 +126,7 @@ $email_pdf = <<<EOT
 
 
 		<page_footer>
-			<div style="line-height: 1.5; text-align: center;">
+			<div style="line-height: 1.2; text-align: center;">
 				${company_contact}
 				<br>
 				${footer}				
