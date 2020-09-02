@@ -69,18 +69,26 @@ class dy_Actions{
         return $content;
     }
 
-    public function send_quote_email()
-    {
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+	public function estimate_pdf()
+	{
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
 		
-		$attachments = array();
 		$estimate_pdf = new Html2Pdf('P', 'A4', $this->lang);
 		$estimate_pdf->pdf->SetDisplayMode('fullpage');
 		$estimate_pdf->writeHTML($email_pdf);
+		$estimate_pdf_content = $estimate_pdf->output('estimate.pdf', 'S');
+		return $estimate_pdf_content;
+	}
+
+    public function send_quote_email()
+    {
+		$attachments = array();
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+		
+		
 		$attachments[] = array(
 			'filename' => 'Estimate',
-			'data' => $estimate_pdf->output('estimate.pdf', 'S')
+			'data' => $this->estimate_pdf()
 		);
 		
 		$terms_pdf = dy_PDF::get_terms_conditions_pages();
