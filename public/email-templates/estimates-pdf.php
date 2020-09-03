@@ -3,14 +3,13 @@
 
 $date = sanitize_text_field($_POST['departure_format_date']);
 $currency_symbol = dy_utilities::currency_symbol();
-$total = dy_utilities::total();
-$company_name = get_bloginfo('name');
+$total = apply_filters('dy_email_total', dy_utilities::total());$company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');
 $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
 $company_address = get_option('dy_address');
 $company_tax_id = get_option('dy_tax_id');
-$label_doc = apply_filters('dy_pdf_label_doc', __('Estimate', 'dynamicpackages'));
+$label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
 $label_item = __('Service', 'dynamicpackages');
@@ -21,7 +20,7 @@ $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
-$notes = apply_filters('dy_pdf_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
+$notes = apply_filters('dy_email_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
 $label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
 $footer = $company_address;
 
@@ -30,7 +29,8 @@ $email_pdf = <<<EOT
 	<!--
 	table { vertical-align: top; }
 	tr { vertical-align: top; }
-	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.2}
+	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.2;}
+	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.2;}
 	-->
 	</style>
 	<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">

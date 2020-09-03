@@ -17,11 +17,11 @@ class paypal_me{
 		}
 		else
 		{
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('the_content', array(&$this, 'filter_content'), 101);
-			add_filter('the_title', array(&$this, 'title'), 101);
-			add_filter('pre_get_document_title', array(&$this, 'title'), 101);
+			
+			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
+			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 101);
+			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 2);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 			add_filter('gateway_icons', array(&$this, 'icon'), 2);
@@ -37,8 +37,7 @@ class paypal_me{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
-				$this->send();
+				add_filter('dy_email_message', array(&$this, 'message'));
 			}
 		}
 
@@ -60,7 +59,7 @@ class paypal_me{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				$content = $this->message();
+				$content = $this->message(null);
 			}
 			else
 			{
@@ -394,27 +393,9 @@ class paypal_me{
 		}
 		return $icon;
 	}
-	public function send()
-	{
-		
-		$admin_email = get_option('admin_email');
-		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['first_name']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
-		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
-		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
-		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';
-		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
-		
-		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',</p>'.$this->message();
-		
-		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
-		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
-	}
 	
-	public function message()
+	public function message($message)
 	{
-		$output = '';
 		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
 		$url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.$total;
 		$amount = number_format($total, 2, '.', ',');
@@ -427,14 +408,14 @@ class paypal_me{
 			$label = __('deposit of', 'dynamicpackages');
 		}	
 		
-		$output .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
+		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
 		
-		$output .= '<p class="large">'.esc_html(__('You will be paying a ', 'dynamicpackages').' '.$label.' '.$amount).'</p>';
+		$message .= '<p class="large">'.esc_html(__('You will be paying a ', 'dynamicpackages').' '.$label.' '.$amount).'</p>';
 		
-		$output .= '<p class="large dy_pad">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
+		$message .= '<p class="large dy_pad">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
-		$output .= '<p class="large"><a class="pure-button pure-button-paypal" target="_blank" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';
+		$message .= '<p class="large"><a class="pure-button pure-button-paypal" target="_blank" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';
 
-		return $output;
+		return $message;
 	}	
 }

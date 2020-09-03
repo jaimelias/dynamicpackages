@@ -24,10 +24,10 @@ class dy_PDF {
 					$name = $terms_conditions[$x]->name;
 					
 					//PAGE
-					$page = '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
+					$page = '<style type="text/css">p {line-height: 2;}</style>';
+					$page .= '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
 					$page .= '<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">'.esc_html($name).'</h1>';
 					$page .= wpautop($terms_conditions[$x]->description);
-					$page .= '<page_footer>'.esc_html($name).'</page_footer>';
 					$page .= '</page>';		
 					
 					//PDF

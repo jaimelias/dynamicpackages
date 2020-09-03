@@ -17,11 +17,10 @@ class bank_transfer{
 		}
 		else
 		{
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('the_content', array(&$this, 'filter_content'), 102);
-			add_filter('the_title', array(&$this, 'title'), 102);
-			add_filter('pre_get_document_title', array(&$this, 'title'), 102);
+			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
+			add_filter('dy_request_the_title', array(&$this, 'title'), 102);
 			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 102);
+			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 4);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 4);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
@@ -36,8 +35,7 @@ class bank_transfer{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
-				$this->send();
+				add_filter('dy_email_message', array(&$this, 'message'));
 			}
 		}
 
@@ -123,7 +121,7 @@ class bank_transfer{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				$content = $this->message();
+				$content = $this->message(null);
 			}
 			else
 			{
@@ -132,24 +130,7 @@ class bank_transfer{
 		}
 		return $content;
 	}
-	
-	public function send()
-	{
 		
-		$admin_email = get_option('admin_email');
-		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['first_name']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
-		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
-		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
-		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';
-		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
-		
-		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',</p>'.$this->message();
-		
-		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
-		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
-	}	
 	public function title($title)
 	{
 		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
@@ -158,7 +139,7 @@ class bank_transfer{
 		}
 		return $title;
 	}
-	public function message()
+	public function message($message)
 	{
 		
 		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
@@ -170,17 +151,17 @@ class bank_transfer{
 			$label = __('deposit', 'dynamicpackages');
 		}		
 		
-		$output = '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
-		$output .= ' '.$label.' (';
-		$output .= $amount;
+		$message .= '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
+		$message .= ' '.$label.' (';
+		$message .= $amount;
 		
-		$output .= ') '. __('to the following account', 'dynamicpackages').'.</p>';
+		$message .= ') '. __('to the following account', 'dynamicpackages').'.</p>';
 		
-		$output .= '<p class="large dy_pad padding-10">'.$this->account().'</p>';
+		$message .= '<p class="large dy_pad padding-10">'.$this->account().'</p>';
 		
-		$output .= '<p class="large">'.esc_html(__('Once we receive the slip and payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
+		$message .= '<p class="large">'.esc_html(__('Once we receive the slip and payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
-		return $output;
+		return $message;
 	}
 	
 	public function account()
@@ -383,7 +364,7 @@ class bank_transfer{
 	}
 	public function button($output)
 	{
-		if($this->show() && in_array($this->gateway_name(), $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
 			$output .= ' <button class="pure-button bottom-20 pure-button-bank  withbank rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html($this->gateway_title).'</button>';			
 		}
@@ -392,10 +373,6 @@ class bank_transfer{
 	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
-	}
-	public function gateway_name()
-	{
-		return __('Local Bank Transfer', 'dynamicpackages');
 	}
 	public function add_gateway($array)
 	{

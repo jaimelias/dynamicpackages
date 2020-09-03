@@ -14,7 +14,7 @@ class dy_Actions{
     {
         add_filter('wp_headers', array(&$this, 'send_data'));
         add_filter('the_content', array(&$this, 'the_content'), 101);
-        add_filter( 'wp_title', array(&$this, 'wp_title'), 101);
+        add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 101);
         add_filter( 'the_title', array(&$this, 'the_title'), 101);
     }
 
@@ -24,10 +24,7 @@ class dy_Actions{
 		
         if(isset($_POST['dy_request']))
         {
-            if($_POST['dy_request'] == 'request')
-            {
-                $output = true;
-            }	
+			$output = true;
         }
 
         return $output;
@@ -39,7 +36,7 @@ class dy_Actions{
 
         if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_Validators::is_request_valid())
         {
-            $this->send_quote_email();
+            $this->send_email();
             dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
         }   
     }
@@ -66,21 +63,21 @@ class dy_Actions{
             }
         }
 
-        return $content;
+        return apply_filters('dy_request_the_content', $content);
     }
 
-	public function estimate_pdf()
+	public function doc_pdf()
 	{
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
 		
-		$estimate_pdf = new Html2Pdf('P', 'A4', $this->lang);
-		$estimate_pdf->pdf->SetDisplayMode('fullpage');
-		$estimate_pdf->writeHTML($email_pdf);
-		$estimate_pdf_content = $estimate_pdf->output('estimate.pdf', 'S');
-		return $estimate_pdf_content;
+		$doc_pdf = new Html2Pdf('P', 'A4', $this->lang);
+		$doc_pdf->pdf->SetDisplayMode('fullpage');
+		$doc_pdf->writeHTML($email_pdf);
+		$doc_pdf_content = $doc_pdf->output('doc.pdf', 'S');
+		return $doc_pdf_content;
 	}
 
-    public function send_quote_email()
+    public function send_email()
     {
 		$attachments = array();
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
@@ -89,7 +86,7 @@ class dy_Actions{
 		
 		$attachments[] = array(
 			'filename' => $filename,
-			'data' => $this->estimate_pdf()
+			'data' => $this->doc_pdf()
 		);
 		
 		$terms_pdf = dy_PDF::get_terms_conditions_pages();
@@ -106,21 +103,30 @@ class dy_Actions{
 		}		
 			
 		$args = array(
-			'subject' => sanitize_text_field($_POST['description']),
+			'subject' => sanitize_text_field($this->subject()),
 			'to' => sanitize_text_field($_POST['email']),
 			'message' => $email_template,
 			'attachments' => $attachments
 		);
 		
-		sg_mail($args);
+		//die($email_template);
+		
+		//sg_mail($args);
     }
+	
+	public function subject()
+	{
+		$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['title']);
+		
+		return apply_filters('dy_email_subject', $output);
+	}
 
     public function wp_title($title)
     {
 
         if(is_singular('packages') && $this->is_request_submitted())
         {
-            $title = esc_html(__('Quote', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
+            $title = esc_html(__('Thank You For Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
 
         return $title;
@@ -136,7 +142,7 @@ class dy_Actions{
 			}			
 		}
 
-        return $title;
+        return apply_filters('dy_request_the_title', $title);
     }
 }
 

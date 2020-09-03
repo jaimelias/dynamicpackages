@@ -17,11 +17,11 @@ class yappy_direct{
 		}
 		else
 		{
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('the_content', array(&$this, 'filter_content'), 101);
-			add_filter('the_title', array(&$this, 'title'), 101);
-			add_filter('pre_get_document_title', array(&$this, 'title'), 101);
+			
+			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
+			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 101);
+			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 3);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 101);
@@ -37,8 +37,7 @@ class yappy_direct{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
-				$this->send();
+				add_filter('dy_email_message', array(&$this, 'message'));
 			}
 		}
 
@@ -123,7 +122,7 @@ class yappy_direct{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				$content = $this->message();
+				$content = $this->message(null);
 			}
 			else
 			{
@@ -141,25 +140,7 @@ class yappy_direct{
 		return $title;
 	}
 	
-	public function send()
-	{
-		
-		$admin_email = get_option('admin_email');
-		$headers = array('Content-type: text/html');
-		$admin_subject = sanitize_text_field($_POST['first_name']).' '.__('attempts to pay using', 'dynamicpackages').' '. sanitize_text_field($_POST['dy_request']);
-		$admin_body = '<p>'.$admin_subject.'</p>'.sanitize_text_field($_POST['description']);
-		$admin_body .= '<p>'.__('Name', 'dynamicpackages').': '.sanitize_text_field($_POST['first_name']).' '.sanitize_text_field($_POST['lastname']).'<br/>';
-		$admin_body .= __('Email', 'dynamicpackages').': '.sanitize_text_field($_POST['email']).'<br/>';
-		$admin_body .= __('Phone', 'dynamicpackages').': '.sanitize_text_field($_POST['phone']).'</p>';
-		
-		$user_subject = __('Payment Instructions', 'dynamicpackages').' - '.get_bloginfo('name');
-		$user_body = '<p>'.__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',</p>'.$this->message();
-		
-		wp_mail($admin_email, $admin_subject, $admin_body, $headers);
-		wp_mail(sanitize_email($_POST['email']), $user_subject, $user_body, $headers);
-	}
-	
-	public function message()
+	public function message($message)
 	{
 		
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
@@ -172,13 +153,13 @@ class yappy_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$output = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
+		$message .= '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
 		
-		$output .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
+		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
 		
-		$output .= '<p class="large">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
+		$message .= '<p class="large">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
-		return $output;
+		return $message;
 	}
 
 	public function is_valid()
