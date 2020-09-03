@@ -105,15 +105,7 @@ $email_pdf = <<<EOT
 				</td>
 			</tr>
 			<tr>
-				<td style="width: 80%; border-top: 1pt solid #cccccc;">
-					<br>
-					<br>
-					<br>
-					<br>
-					<span style="color: #666666;">${label_notes}</span>
-					<br>
-					${notes}.				
-				</td>
+				<td style="width: 80%; border-top: 1pt solid #cccccc;"></td>
 				<td style="width: 20%; border-top: 1pt solid #cccccc;">
 					<div style="text-align: right;">
 						<span style="color: #666666;">${label_total}</span>
@@ -121,7 +113,17 @@ $email_pdf = <<<EOT
 						${currency_symbol}${total}
 					</div>
 				</td>
-			</tr>			
+			</tr>
+
+			<tr>
+				<td style="width: 80%;">
+					<span style="color: #666666;">${label_notes}</span>
+					<br>
+					${notes}			
+				</td>
+				<td style="width: 20%;"></td>
+			</tr>
+			
 		</table>
 
 

@@ -37,7 +37,8 @@ class paypal_me{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				add_filter('dy_email_message', array(&$this, 'message'));
+				add_filter('dy_email_notes', array(&$this, 'message'));
+				add_action('dy_email_action_button', array(&$this, 'action_button'));
 			}
 		}
 
@@ -394,10 +395,17 @@ class paypal_me{
 		return $icon;
 	}
 	
-	public function message($message)
+	public function action_button($button)
 	{
 		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
 		$url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.$total;
+		
+		return '<p style="margin-bottom: 40px;"><a target="_blank" style="padding: 16px; text-align: center; background-color: #FFD700; color: #000000; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';
+	}
+	
+	public function message($message)
+	{
+		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
 		$amount = number_format($total, 2, '.', ',');
 		$amount = dy_utilities::currency_symbol().''.$amount;
 		
@@ -408,13 +416,11 @@ class paypal_me{
 			$label = __('deposit of', 'dynamicpackages');
 		}	
 		
-		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
+		$message = '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
 		
 		$message .= '<p class="large">'.esc_html(__('You will be paying a ', 'dynamicpackages').' '.$label.' '.$amount).'</p>';
 		
 		$message .= '<p class="large dy_pad">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
-		
-		$message .= '<p class="large"><a class="pure-button pure-button-paypal" target="_blank" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';
 
 		return $message;
 	}	

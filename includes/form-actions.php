@@ -111,7 +111,7 @@ class dy_Actions{
 		
 		//die($email_template);
 		
-		//sg_mail($args);
+		sg_mail($args);
     }
 	
 	public function subject()

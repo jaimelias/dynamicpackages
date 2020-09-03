@@ -35,7 +35,7 @@ class wire_transfer{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				add_filter('dy_email_message', array(&$this, 'message'));
+				add_filter('dy_email_notes', array(&$this, 'message'));
 			}
 		}
 
@@ -151,7 +151,7 @@ class wire_transfer{
 			$label = __('deposit', 'dynamicpackages');
 		}		
 		
-		$message .= '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
+		$message = '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
 		$message .= ' '.$label.' (';
 		$message .= $amount;
 		

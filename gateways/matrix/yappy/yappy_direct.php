@@ -37,7 +37,7 @@ class yappy_direct{
 
 			if(isset($dy_valid_recaptcha))
 			{
-				add_filter('dy_email_message', array(&$this, 'message'));
+				add_filter('dy_email_notes', array(&$this, 'message'));
 			}
 		}
 
@@ -153,7 +153,7 @@ class yappy_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$message .= '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
+		$message = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
 		
 		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
 		

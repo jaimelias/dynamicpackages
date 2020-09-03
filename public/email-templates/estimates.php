@@ -26,9 +26,9 @@ $label_not_included = __('Not Included', 'dynamicpackages');
 $notes = apply_filters('dy_email_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
 $label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
 $footer = $company_address;
-$label_whatsapp = (get_option('dy_whatsapp')) ? __('Feel free to contact us using Whatsapp:', 'dynamicpackages') : null;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
-$whatsapp = (get_option('dy_whatsapp')) ? '<a style="padding: 16px; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">Whatsapp</a>' : null;
+$whatsapp = (get_option('dy_whatsapp')) ? '<a style="padding: 16px; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.esc_html(__('Whatsapp Advisory', 'dynamicpackages')).'</a>' : null;
+$action_button = apply_filters('dy_email_action_button', null);
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -99,101 +99,101 @@ $email_template = <<<EOT
 	</head>
 
 	<body style="font-family: Arial, sans-serif; color: #666666; line-height: 1.5; font-size: 16px;">
-	
-	
-		<div style="max-width: 800px; margin: 20px auto 60px auto; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 40px;">
-			<p>${greeting}</p>
-			<p>${intro}</p>
-			<div>${message}</div>
-		</div>
-	
-		<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
-	
-		<div class="estimate-box" style="max-width: 800px;margin: 0 auto 20px auto;padding: 20px;border: 1px solid #eee; box-sizing: border-box">
-			<table cellpadding="0" cellspacing="0" style="width: 100%">
-				<tr class="top">
-					<td colspan="2" style="padding: 5px;vertical-align: top">
-						<table style="width: 100%; line-height: inherit; text-align: left">
-							<tr>
-								<td class="title" style="padding: 0;vertical-align: top; padding: 5px 5px 20px 5px">
-									<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">${company_name}</h1>
-									<small style="color: #777777">${company_tax_id}</small>
-								</td>
-								<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
-									<small style="color: #777777">${label_doc}</small>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="information">
-					<td colspan="2" style="padding: 5px;vertical-align: top; text-align: right;">
-						<small style="color: #777777">${label_client}</small>
-						<br/> ${client_name}
-						<br/>${client_phone}
-						<br />${client_email}
-						<br/>
-						<br/>
-					</td>
-				</tr>
-				<tr>
-					<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
-						<strong style="color:#666666;">${label_item}</strong>
-					</td>
-					<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
-						<strong style="color:#666666;">${label_subtotal}</strong>
-					</td>
-				</tr>
-				
-				<tr>
-					<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
-						<span style="color:#666666;">${description}</span>
-					</td>
-					<td style="padding: 5px;vertical-align: top; text-align: right; ">
-						<span style="color:#666666;">${currency_symbol}${total}</span>
-					</td>
-				</tr>
-				
-				<tr>
-					<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
-						<span style="color:#666666;">${label_included}: ${included}</span>
-					</td>
-					<td></td>
-				</tr>
-				
-				<tr>
-					<td style="padding: 5px;vertical-align: top; line-height: 2;">
-						<span style="color:#666666;">${label_not_included}: ${not_included}</span>
-					</td>
-					<td></td>
-				</tr>				
-				
-				<tr>
-					<td style="padding: 5px; vertical-align: top"></td>
-					<td style="padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
-						<span style="color: #666666"><strong>${label_total}</strong><br/>${currency_symbol}${total}</span>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
-						<strong style="color: #666666;">${label_notes}</strong>
-						<br>
-						<div style="line-height: 2;">${notes}</div>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" style="padding: 5px; vertical-align: top; text-align: center;">
-						<small style="color: #666666">${company_contact}</small>
-						<br/>
-						<small style="color: #666666;">${footer}</small>
-					</td>
-				</tr>          
-			</table>
-		</div>
-		<p style="text-align: center;">
-			<small style="color: #666666">${label_whatsapp}</small>
-		</p>
-		<p style="max-width: 800px; margin: 0 auto;">${whatsapp}</p>
+		<div style="max-width: 800px; width: 100%; margin: 0 auto 0 auto;">
+			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
+		
+			<div style="margin: 20px 0 40px 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+				<p>${greeting}</p>
+				<p>${intro}</p>
+				<div>${message}</div>
+			</div>
+		
+			<div class="estimate-box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
+				<table cellpadding="0" cellspacing="0" style="width: 100%">
+					<tr class="top">
+						<td colspan="2" style="padding: 5px;vertical-align: top">
+							<table style="width: 100%; line-height: inherit; text-align: left">
+								<tr>
+									<td class="title" style="padding: 0;vertical-align: top; padding: 5px 5px 20px 5px">
+										<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">${company_name}</h1>
+										<small style="color: #777777">${company_tax_id}</small>
+									</td>
+									<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
+										<small style="color: #777777">${label_doc}</small>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="information">
+						<td colspan="2" style="padding: 5px;vertical-align: top; text-align: right;">
+							<small style="color: #777777">${label_client}</small>
+							<br/> ${client_name}
+							<br/>${client_phone}
+							<br />${client_email}
+							<br/>
+							<br/>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
+							<strong style="color:#666666;">${label_item}</strong>
+						</td>
+						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+							<strong style="color:#666666;">${label_subtotal}</strong>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
+							<span style="color:#666666;">${description}</span>
+						</td>
+						<td style="padding: 5px;vertical-align: top; text-align: right; ">
+							<span style="color:#666666;">${currency_symbol}${total}</span>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
+							<span style="color:#666666;">${label_included}: ${included}</span>
+						</td>
+						<td></td>
+					</tr>
+					
+					<tr>
+						<td style="padding: 5px;vertical-align: top; line-height: 2;">
+							<span style="color:#666666;">${label_not_included}: ${not_included}</span>
+						</td>
+						<td></td>
+					</tr>				
+					
+					<tr>
+						<td style="padding: 5px; vertical-align: top"></td>
+						<td style="padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+							<span style="color: #666666"><strong>${label_total}</strong><br/>${currency_symbol}${total}</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
+							<strong style="color: #666666;">${label_notes}</strong>
+							<br>
+							<div style="line-height: 2;">${notes}</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" style="padding: 5px; vertical-align: top; text-align: center;">
+							<small style="color: #666666">${company_contact}</small>
+							<br/>
+							<small style="color: #666666;">${footer}</small>
+						</td>
+					</tr>          
+				</table>
+			</div>
+			
+			${action_button}
+			
+			<p>${whatsapp}</p>
+		</div>		
 	</body>
 </html>
 EOT;
