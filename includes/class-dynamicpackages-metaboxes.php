@@ -236,19 +236,11 @@ class dy_Metaboxes
 							<option value="1" <?php echo (package_field( 'package_auto_booking' ) == 1 ) ? 'selected' : ''; ?> >Yes</option>
 						</select>
 					</p>
-				<?php endif; ?>
-		
-				<p>
-					<label for="package_free"><span><?php _e( 'Children free up to', 'dynamicpackages' ); ?></span></br>
-					<?php self::select_number('package_free', 0, 17); ?>
-					 <?php _e( 'year old', 'dynamicpackages' ); ?></label>
-				</p>
-				<p>
-					<label for="package_discount"><span><?php _e( 'Children Discount up to', 'dynamicpackages' ); ?></span></br>
-					<?php self::select_number('package_discount', 0, 17); ?>
-					 <?php _e( 'year old', 'dynamicpackages' ); ?></label>
-				</p>					
+				<?php endif; ?>					
 			<?php endif; ?>
+			
+			<?php if(dy_Validators::is_child()) : ?>
+			
 			<p>
 				<label for="package_min_persons"><?php _e( 'Minimum Number of participants', 'dynamicpackages' ); ?></label><br />
 				
@@ -259,26 +251,38 @@ class dy_Metaboxes
 				<label for="package_max_persons"><?php _e( 'Maximum Number of participants', 'dynamicpackages' ); ?></label><br />
 				<?php self::select_number('package_max_persons', (intval(package_field( 'package_min_persons' ))+1), 100); ?>
 			</p>
+			<p>
+				<label for="package_free"><span><?php _e( 'Children free up to', 'dynamicpackages' ); ?></span></br>
+				<?php self::select_number('package_free', 0, 17); ?>
+				 <?php _e( 'year old', 'dynamicpackages' ); ?></label>
+			</p>
+			<p>
+				<label for="package_discount"><span><?php _e( 'Children Discount up to', 'dynamicpackages' ); ?></span></br>
+				<?php self::select_number('package_discount', 0, 17); ?>
+				 <?php _e( 'year old', 'dynamicpackages' ); ?></label>
+			</p>
+			<p>
+				<label for="package_increase_persons"><?php _e( 'Increase maximum number of participants by', 'dynamicpackages' ); ?></label><br />
+				<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo package_field( 'package_increase_persons' ); ?>"> <?php _e( 'get more leads even if the prices are not defined', 'dynamicpackages' ); ?>.</span>
+			</p>	
+		<?php endif; ?>
 			
-			<?php if(!dy_Validators::is_child()) : ?>
+		<?php if(!dy_Validators::is_child()) : ?>
+
+			
+			<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active() === true): ?>
 				<p>
-					<label for="package_increase_persons"><?php _e( 'Increase maximum number of participants by', 'dynamicpackages' ); ?></label><br />
-					<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo package_field( 'package_increase_persons' ); ?>"> <?php _e( 'get more leads even if the prices are not defined', 'dynamicpackages' ); ?>.</span>
+					<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
+					<select name="package_payment" id="package_payment">
+						<option value="0" <?php echo (package_field( 'package_payment' ) == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Full Payment', 'dynamicpackages')); ?></option>
+						<option value="1" <?php echo (package_field( 'package_payment' ) == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Deposit', 'dynamicpackages')); ?></option>
+					</select>
+					<?php if(package_field( 'package_payment' ) == 1): ?>
+						<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo package_field( 'package_deposit' ); ?>">%</label>
+					<?php endif; ?>			
 				</p>
-				
-				<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active() === true): ?>
-					<p>
-						<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
-						<select name="package_payment" id="package_payment">
-							<option value="0" <?php echo (package_field( 'package_payment' ) == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Full Payment', 'dynamicpackages')); ?></option>
-							<option value="1" <?php echo (package_field( 'package_payment' ) == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Deposit', 'dynamicpackages')); ?></option>
-						</select>
-						<?php if(package_field( 'package_payment' ) == 1): ?>
-							<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo package_field( 'package_deposit' ); ?>">%</label>
-						<?php endif; ?>			
-					</p>
-				<?php endif; ?>
 			<?php endif; ?>
+		<?php endif; ?>
 		
 		<?php if(package_field( 'package_package_type' ) == 1 ): ?>
 			<fieldset>		

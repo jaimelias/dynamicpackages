@@ -80,7 +80,7 @@ function package_field($name, $this_id = null)
 		{
 			if(property_exists($post, 'post_parent'))
 			{
-				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title');
+				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
 				
 				if($polylang)
 				{

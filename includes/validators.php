@@ -488,6 +488,27 @@ class dy_Validators
 		
 		return $output;
 	}
+
+	public static function is_parent_with_no_child()
+	{
+		$output = false;
+		global $$dy_is_parent_with_no_child;
+		
+		if(isset($$dy_is_parent_with_no_child))
+		{
+			$output = $$dy_is_parent_with_no_child;
+		}
+		else
+		{
+			if(!self::has_children() && !self::is_child())
+			{
+				$output = true;
+				$GLOBALS['dy_is_parent_with_no_child'] = $output;
+			}			
+		}
+		
+		return $output;
+	}
 	
 	public static function event()
 	{
