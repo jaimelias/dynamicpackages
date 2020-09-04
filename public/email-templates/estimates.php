@@ -177,7 +177,7 @@ $email_template = <<<EOT
 						<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<strong style="color: #666666;">${label_notes}</strong>
 							<br>
-							<div style="line-height: 2;">${notes}</div>
+							<div>${notes}</div>
 						</td>
 					</tr>
 					<tr>

@@ -153,8 +153,7 @@ class wire_transfer{
 	public function message($message)
 	{
 		
-		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
-		
+		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');		
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_Validators::has_deposit())
@@ -165,19 +164,15 @@ class wire_transfer{
 		$message = '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
 		$message .= ' '.$label.' (';
 		$message .= $amount;
-		
 		$message .= ') '. __('to the following account', 'dynamicpackages').'.</p>';
-		
 		$message .= '<div class="large dy_pad">'.$this->account().'</div>';
-		
-		$message .= '<p class="large">'.esc_html(__('Once we receive the slip and payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
 		return $message;
 	}
 	
 	public function account()
 	{
-		$wire = '<h3>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</h3><p>';
+		$wire = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
 		
 		if(get_option($this->gateway_name . '_name') != '')
 		{
@@ -209,7 +204,7 @@ class wire_transfer{
 			$wire .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_iban')).'</strong><br/>';
 		}		
 		
-		$wire .= '</p><h3>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</h3><p>';
+		$wire .= '<br/><strong>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</strong><br/>';
 		
 		if(get_option($this->gateway_name . '_name_i') != '')
 		{

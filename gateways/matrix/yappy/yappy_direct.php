@@ -148,8 +148,7 @@ class yappy_direct{
 	}
 	
 	public function message($message)
-	{
-		
+	{		
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
 		$last = __('to the number', 'dynamicpackages');
 		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
@@ -160,11 +159,8 @@ class yappy_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$message = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';
-		
+		$message = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';	
 		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
-		
-		$message .= '<p class="large">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
 		return $message;
 	}

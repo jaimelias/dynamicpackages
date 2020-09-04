@@ -155,7 +155,6 @@ class bank_transfer{
 	{
 		
 		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
-		
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_Validators::has_deposit())
@@ -166,12 +165,8 @@ class bank_transfer{
 		$message = '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
 		$message .= ' '.$label.' (';
 		$message .= $amount;
-		
 		$message .= ') '. __('to the following account', 'dynamicpackages').'.</p>';
-		
 		$message .= '<p class="large dy_pad padding-10">'.$this->account().'</p>';
-		
-		$message .= '<p class="large">'.esc_html(__('Once we receive the slip and payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
 		
 		return $message;
 	}

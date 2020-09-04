@@ -96,13 +96,7 @@ $email_pdf = <<<EOT
 				<td style="width: 80%;">
 					${label_not_included}: ${not_included}
 				</td>
-				<td style="width: 20%;">
-					<br>
-					<br>
-					<br>
-					<br>
-					<br>
-				</td>
+				<td style="width: 20%;"></td>
 			</tr>
 			<tr>
 				<td style="width: 80%; border-top: 1pt solid #cccccc;"></td>
@@ -119,7 +113,7 @@ $email_pdf = <<<EOT
 				<td style="width: 80%;">
 					<span style="color: #666666;">${label_notes}</span>
 					<br>
-					${notes}			
+					<div>${notes}</div>			
 				</td>
 				<td style="width: 20%;"></td>
 			</tr>
