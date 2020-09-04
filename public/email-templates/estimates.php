@@ -1,6 +1,6 @@
 <?php
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
-$intro = apply_filters('dy_email_intro', __('Thank you for your request!'));
+$intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' .__('Please find a detailed copy of your estimated this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages') . '</p>');
 $currency_symbol = esc_html(dy_utilities::currency_symbol());
 $calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();

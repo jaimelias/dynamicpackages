@@ -4,7 +4,6 @@ class wire_transfer{
 	
 	function __construct()
 	{
-		$this->gateway_name = 'wire_transfer';
 		$this->init();
 	}
 	public function init()
@@ -30,7 +29,28 @@ class wire_transfer{
 	
 	public function args()
 	{
-		$this->gateway_title = __('Wire Transfer', 'dynamicpackages');		
+		$this->gateway_name = 'wire_transfer';
+		$this->gateway_title = __('Wire Transfer', 'dynamicpackages');
+		
+		//Beneficiary
+		$this->b_account_number = get_option($this->gateway_name);	
+		$this->b_account_name = get_option($this->gateway_name . '_b_account_name');
+		$this->b_bank = get_option($this->gateway_name . '_b_bank');
+		$this->b_bank_address = get_option($this->gateway_name . '_b_bank_address');
+		$this->b_bank_swift = get_option($this->gateway_name . '_b_bank_swift');
+		$this->b_bank_iban = get_option($this->gateway_name . '_b_bank_iban');
+		
+		//Intermediary
+		$this->i_account_number = get_option($this->gateway_name . '_i_account_number');
+		$this->i_account_name = get_option($this->gateway_name . '_i_account_name');
+		$this->i_bank = get_option($this->gateway_name . '_i_bank');
+		$this->i_bank_address = get_option($this->gateway_name . '_i_bank_address');
+		$this->i_bank_swift = get_option($this->gateway_name . '_i_bank_swift');
+		$this->i_bank_iban = get_option($this->gateway_name . '_i_bank_iban');		
+		
+		//controls
+		$this->show = get_option($this->gateway_name . '_show');
+		$this->min = get_option($this->gateway_name . '_min');			
 	}
 
 	public function send_data()
@@ -63,7 +83,7 @@ class wire_transfer{
 		}
 		else
 		{
-			if(get_option($this->gateway_name) != '')
+			if($this->b_account_number != '')
 			{
 				$GLOBALS[$this->gateway_name . '_is_active'] = true;
 				$output = true;
@@ -174,66 +194,66 @@ class wire_transfer{
 	{
 		$wire = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
 		
-		if(get_option($this->gateway_name . '_name') != '')
+		if($this->b_bank != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Name', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_name')).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank).'</strong><br/>';
 		}
 		
-		if(get_option($this->gateway_name . '_address') != '')
+		if($this->b_bank_address != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Address', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_address')).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_address).'</strong><br/>';
 		}
 
-		if(get_option($this->gateway_name . '_swift') != '')
+		if($this->b_bank_swift != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_swift')).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_swift).'</strong><br/>';
 		}		
 		
-		if(get_option($this->gateway_name . '_account') != '')
+		if($this->b_account_name != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account Name', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_account')).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_name).'</strong><br/>';
 		}		
 		
-		if(get_option($this->gateway_name) != '')
+		if($this->b_account_number != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account Number', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name)).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_number).'</strong><br/>';
 		}
 		
-		if(get_option($this->gateway_name . '_iban') != '')
+		if($this->b_bank_iban != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_iban')).'</strong><br/>';
+			$wire .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_iban).'</strong><br/>';
 		}		
 		
 		$wire .= '<br/><strong>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</strong><br/>';
 		
-		if(get_option($this->gateway_name . '_name_i') != '')
+		if($this->i_bank != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Name', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_name_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank).'</strong><br/>';
 		}
 		
-		if(get_option($this->gateway_name . '_address_i') != '')
+		if($this->i_bank_address != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Address', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_address_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_address).'</strong><br/>';
 		}
 
-		if(get_option($this->gateway_name . '_swift_i') != '')
+		if($this->i_bank_swift != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_swift_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_swift).'</strong><br/>';
 		}		
 		
-		if(get_option($this->gateway_name . '_account_i') != '')
+		if($this->i_account_name != '')
 		{
-			$wire .= esc_html(__('Intermediary Account Name', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_account_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_name).'</strong><br/>';
 		}		
 		
-		if(get_option($this->gateway_name . '_i') != '')
+		if($this->i_account_number != '')
 		{
-			$wire .= esc_html(__('Intermediary Account Number', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_number).'</strong><br/>';
 		}
 		
-		if(get_option($this->gateway_name . '_iban_i') != '')
+		if($this->i_bank_iban != '')
 		{
-			$wire .= esc_html(__('Intermediary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_iban_i')).'</strong><br/>';
+			$wire .= esc_html(__('Intermediary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_iban).'</strong><br/>';
 		}
 		
 		$wire .= '</p>';
@@ -254,8 +274,8 @@ class wire_transfer{
 		{
 			if($this->is_active() && !isset($_GET['quote']))
 			{
-				$min = floatval(get_option(sanitize_title($this->gateway_name . '_min')));
-				$show = intval(get_option(sanitize_title($this->gateway_name . '_show')));
+				$min = floatval($this->min);
+				$show = intval($this->show);
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				
@@ -306,19 +326,19 @@ class wire_transfer{
 	{
 		//Beneficiary
 		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_account', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_name', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_address', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_swift', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_iban', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_b_account_name', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_b_bank', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_b_bank_address', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_b_bank_swift', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_b_bank_iban', 'sanitize_text_field');
 		
 		//Intermediary
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_account_i', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_name_i', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_address_i', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_swift_i', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_iban_i', 'sanitize_text_field');		
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_account_number', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_account_name', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_bank', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_bank_address', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_bank_swift', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_i_bank_iban', 'sanitize_text_field');		
 		
 		//controls
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
@@ -335,7 +355,7 @@ class wire_transfer{
 		
 		//section
 		add_settings_section(
-			$this->gateway_name . '_beneficiary_section', 
+			$this->gateway_name . '_b_section', 
 			esc_html(__( 'Beneficiary Bank Settings', 'dynamicpackages' )), 
 			'', 
 			$this->gateway_name . '_settings'
@@ -343,7 +363,7 @@ class wire_transfer{
 		
 		//section
 		add_settings_section(
-			$this->gateway_name . '_intermediary_section', 
+			$this->gateway_name . '_i_section', 
 			esc_html(__( 'Intermediary Bank Settings', 'dynamicpackages' )), 
 			'', 
 			$this->gateway_name . '_settings'
@@ -353,32 +373,32 @@ class wire_transfer{
 		
 		//Beneficiary		
 		add_settings_field( 
-			$this->gateway_name . '_name', 
+			$this->gateway_name . '_b_bank', 
 			esc_html(__( 'Beneficiary Bank Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name . '_name'
+			$this->gateway_name . '_b_section', $this->gateway_name . '_b_bank'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_address', 
+			$this->gateway_name . '_b_bank_address', 
 			esc_html(__( 'Beneficiary Bank Address', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name . '_address'
+			$this->gateway_name . '_b_section', $this->gateway_name . '_b_bank_address'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_swift', 
+			$this->gateway_name . '_b_bank_swift', 
 			esc_html(__( 'Beneficiary Bank Swift', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name . '_swift'
+			$this->gateway_name . '_b_section', $this->gateway_name . '_b_bank_swift'
 		);				
 		add_settings_field( 
-			$this->gateway_name . '_account', 
+			$this->gateway_name . '_b_account_name', 
 			esc_html(__( 'Beneficiary Account Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name . '_account'
+			$this->gateway_name . '_b_section', $this->gateway_name . '_b_account_name'
 		);			
 		
 		add_settings_field( 
@@ -386,59 +406,59 @@ class wire_transfer{
 			esc_html(__( 'Beneficiary Account Number', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name
+			$this->gateway_name . '_b_section', $this->gateway_name
 		);
 		add_settings_field( 
-			$this->gateway_name . '_iban', 
+			$this->gateway_name . '_b_bank_iban', 
 			esc_html(__( 'Beneficiary Account IBAN', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_beneficiary_section', $this->gateway_name . '_iban'
+			$this->gateway_name . '_b_section', $this->gateway_name . '_b_bank_iban'
 		);	
 		
 		//Intermediary			
 		add_settings_field( 
-			$this->gateway_name . '_name_i', 
+			$this->gateway_name . '_i_bank', 
 			esc_html(__( 'Intermediary Bank Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_name_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_bank'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_address_i', 
+			$this->gateway_name . '_i_bank_address', 
 			esc_html(__( 'Intermediary Bank Address', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_address_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_bank_address'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_swift_i', 
+			$this->gateway_name . '_i_bank_swift', 
 			esc_html(__( 'Intermediary Bank Swift', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_swift_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_bank_swift'
 		);		
 		add_settings_field( 
-			$this->gateway_name . '_account_i', 
+			$this->gateway_name . '_i_account_name', 
 			esc_html(__( 'Intermediary Account Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_account_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_account_name'
 		);			
 		
 		add_settings_field( 
-			$this->gateway_name . '_i', 
+			$this->gateway_name . '_i_account_number', 
 			esc_html(__( 'Intermediary Account Number', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_account_number'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_iban_i', 
+			$this->gateway_name . '_i_bank_iban', 
 			esc_html(__( 'Intermediary Account IBAN', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_intermediary_section', $this->gateway_name . '_iban_i'
+			$this->gateway_name . '_i_section', $this->gateway_name . '_i_bank_iban'
 		);			
 
 		//controls
@@ -474,8 +494,8 @@ class wire_transfer{
 	
 	public function display_wire_transfer_show() { ?>
 		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
-			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
+			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
+			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }	
 
