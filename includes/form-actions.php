@@ -116,7 +116,9 @@ class dy_Actions{
 	
 	public function subject()
 	{
-		$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['title']);
+		$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
+
+		$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), $calculate_total, $_POST['title']);
 		
 		return apply_filters('dy_email_subject', $output);
 	}

@@ -391,7 +391,6 @@ class nequi_direct{
 				//google analytics
 				if(typeof ga !== typeof undefined)
 				{
-					var dy_vars = checkout_vars();
 					var eventArgs = {};
 					eventArgs.eventAction = 'Click';
 					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';

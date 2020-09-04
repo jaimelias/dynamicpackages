@@ -421,7 +421,15 @@ class dy_Validators
 						$GLOBALS['dy_has_deposit'] = $output;
 					}			
 				}		
-			}			
+			}
+			if(isset($_POST['deposit']))
+			{
+				if($_POST['deposit'] > 0)
+				{
+					$output = true;
+					$GLOBALS['dy_has_deposit'] = $output;					
+				}
+			}
 		}
 		
 		return $output;

@@ -3,7 +3,9 @@
 
 $date = sanitize_text_field($_POST['departure_format_date']);
 $currency_symbol = dy_utilities::currency_symbol();
-$total = apply_filters('dy_email_total', dy_utilities::total());$company_name = get_bloginfo('name');
+$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
+$total = apply_filters('dy_email_total', $calculate_total);
+$company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');
 $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
