@@ -21,7 +21,7 @@ $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
 $notes = apply_filters('dy_email_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
-$label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
+$label_notes = ($notes) ? apply_filters('dy_email_label_notes', esc_html(__('Notes', 'dynamicpackages'))) : null;
 $footer = $company_address;
 
 $email_pdf = <<<EOT

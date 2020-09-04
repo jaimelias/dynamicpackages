@@ -6,6 +6,7 @@ class paypal_me{
 	{
 		$this->gateway_name = 'paypal_me';
 		$this->gateway_title = 'Paypal';
+		$this->gateway_domain = 'Paypal.me';
 		$this->init();
 	}
 	public function init()
@@ -38,10 +39,14 @@ class paypal_me{
 			if(isset($dy_valid_recaptcha))
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
-				add_action('dy_email_action_button', array(&$this, 'action_button'));
+				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
 			}
 		}
-
+	}
+	
+	public function label_notes($notes)
+	{
+		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->gateway_title);
 	}
 
 	public function filter_excerpt($excerpt)
@@ -92,7 +97,7 @@ class paypal_me{
 		{
 			if(get_option($this->gateway_name) != '')
 			{
-				$GLOBALS['paypal_me_is_active'] = true;
+				$GLOBALS[$this->gateway_name . '_is_active'] = true;
 				$output = true;
 			}
 		}
@@ -113,7 +118,7 @@ class paypal_me{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS['paypal_me_show'] = true;
+					$GLOBALS[$this->gateway_name . '_show'] = true;
 					$output = true;
 				}
 			}			
@@ -162,8 +167,8 @@ class paypal_me{
 		{
 			if($this->is_active() && !isset($_GET['quote']))
 			{
-				$max = floatval(get_option(sanitize_title('paypal_me_max')));
-				$show = intval(get_option(sanitize_title('paypal_me_show')));
+				$max = floatval(get_option(sanitize_title($this->gateway_name . '_max')));
+				$show = intval(get_option(sanitize_title($this->gateway_name . '_show')));
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				
@@ -203,7 +208,7 @@ class paypal_me{
 			}
 			
 			if($output == true){
-				$GLOBALS['paypal_me_is_valid'] = true;
+				$GLOBALS[$this->gateway_name . '_is_valid'] = true;
 			}
 		}
 		return $output;
@@ -213,37 +218,37 @@ class paypal_me{
 	{
 		//paypal.me
 		
-		register_setting('paypal_me_settings', $this->gateway_name, 'sanitize_user');
-		register_setting('paypal_me_settings', 'paypal_me_show', 'intval');
-		register_setting('paypal_me_settings', 'paypal_me_max', 'floatval');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_user');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'floatval');
 		
 		add_settings_section(
-			'paypal_me_settings_section', 
+			$this->gateway_name . '_settings_section', 
 			esc_html(__( 'General Settings', 'dynamicpackages' )), 
 			'', 
-			'paypal_me_settings'
+			$this->gateway_name . '_settings'
 		);
 		
 		add_settings_field( 
 			$this->gateway_name, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
-			'paypal_me_settings', 
-			'paypal_me_settings_section', $this->gateway_name
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_settings_section', $this->gateway_name
 		);	
 		add_settings_field( 
-			'paypal_me_max', 
+			$this->gateway_name . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			'paypal_me_settings', 
-			'paypal_me_settings_section', 'paypal_me_max'
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_settings_section', $this->gateway_name . '_max'
 		);
 		add_settings_field( 
-			'paypal_me_show', 
+			$this->gateway_name . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
 			array(&$this, 'display_paypal_me_show'), 
-			'paypal_me_settings', 
-			'paypal_me_settings_section'
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_settings_section'
 		);		
 	}
 	
@@ -261,25 +266,25 @@ class paypal_me{
 		<?php
 	}
 	public function display_paypal_me_show() { ?>
-		<select name='paypal_me_show'>
-			<option value="0" <?php selected(get_option('paypal_me_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option('paypal_me_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
+		<select name=$this->gateway_name . '_show'>
+			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
+			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }	
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', 'Paypal.me', 'Paypal.me', 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_domain, $this->gateway_domain, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html(_e("Paypal.me", "dynamicpackages")); ?></h1>	
+			<h1><?php esc_html_e($this->gateway_domain); ?></h1>	
 			<?php
-			settings_fields( 'paypal_me_settings' );
-			do_settings_sections( 'paypal_me_settings' );
+			settings_fields( $this->gateway_name . '_settings' );
+			do_settings_sections( $this->gateway_name . '_settings' );
 			submit_button();
 			?>			
 		</form>
@@ -395,17 +400,10 @@ class paypal_me{
 		return $icon;
 	}
 	
-	public function action_button($button)
-	{
-		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
-		$url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.$total;
-		
-		return '<p style="margin-bottom: 40px;"><a target="_blank" style="padding: 16px; text-align: center; background-color: #FFD700; color: #000000; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';
-	}
-	
 	public function message($message)
 	{
 		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
+		$url = 'https://paypal.me/'.get_option($this->gateway_name).'/'.$total;
 		$amount = number_format($total, 2, '.', ',');
 		$amount = dy_utilities::currency_symbol().''.$amount;
 		
@@ -421,6 +419,8 @@ class paypal_me{
 		$message .= '<p class="large">'.esc_html(__('You will be paying a ', 'dynamicpackages').' '.$label.' '.$amount).'</p>';
 		
 		$message .= '<p class="large dy_pad">'.esc_html(__('Once we receive the payment your booking will be completed this way', 'dynamicpackages')).': <strong>'.sanitize_text_field($_POST['description']).'</strong></p>';
+		
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: #FFD700; color: #000000; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		
 
 		return $message;
 	}	

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-09-04 03:43+0000\n"
-"PO-Revision-Date: 2020-09-04 04:02+0000\n"
+"PO-Revision-Date: 2020-09-04 03:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1379,7 +1379,7 @@ msgstr "Precios"
 
 #: gateways/matrix/bank/international.php:8
 msgid "Wire Transfer"
-msgstr "Transferencia internacional"
+msgstr "Transferencia bancaria internacional"
 
 #: gateways/matrix/bank/international.php:46 gateways/matrix/bank/local.php:46
 #: gateways/matrix/nequi/nequi_direct.php:48

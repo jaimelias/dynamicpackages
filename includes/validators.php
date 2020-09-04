@@ -492,11 +492,11 @@ class dy_Validators
 	public static function is_parent_with_no_child()
 	{
 		$output = false;
-		global $$dy_is_parent_with_no_child;
+		global $dy_is_parent_with_no_child;
 		
-		if(isset($$dy_is_parent_with_no_child))
+		if(isset($dy_is_parent_with_no_child))
 		{
-			$output = $$dy_is_parent_with_no_child;
+			$output = $dy_is_parent_with_no_child;
 		}
 		else
 		{

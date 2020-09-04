@@ -1,34 +1,34 @@
 <?php
-$greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,'), sanitize_text_field($_POST['first_name'])));
+$greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank you for your request!'));
-$message = apply_filters('dy_email_message', '<p>' .__('Please check this estimate in detail and the Terms & Conditions (attached) before booking.', 'dynamicpackages') . '</p>');
-$currency_symbol = dy_utilities::currency_symbol();
+$message = apply_filters('dy_email_message', '<p>' .__('Please find a detailed copy of your estimated this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages') . '</p>');
+$currency_symbol = esc_html(dy_utilities::currency_symbol());
 $total = apply_filters('dy_email_total', dy_utilities::total());
-$company_name = get_bloginfo('name');
-$company_phone = get_option('dy_phone');
-$company_email = get_option('dy_email');
-$company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
-$company_address = get_option('dy_address');
-$company_tax_id = get_option('dy_tax_id');
+$company_name = esc_html(get_bloginfo('name'));
+$company_phone = esc_html(get_option('dy_phone'));
+$company_email = sanitize_email(get_option('dy_email'));
+$company_contact = ($company_phone) ?  esc_html($company_phone . ' / ' . $company_email) : esc_html($company_email);
+$company_address = esc_html(get_option('dy_address'));
+$company_tax_id = esc_html(get_option('dy_tax_id'));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
-$label_client = __('Client', 'dynamicpackages');
-$client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
-$client_email = sanitize_text_field($_POST['email']);
+$label_client = esc_html(__('Client', 'dynamicpackages'));
+$client_name = esc_html(sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']));
+$client_email = sanitize_email($_POST['email']);
 $client_phone = sanitize_text_field($_POST['phone']);
-$label_item = __('Service', 'dynamicpackages');
-$label_total = __('Total', 'dynamicpackages');
-$label_subtotal = __('Subtotal', 'dynamicpackages');
+$label_item = esc_html(__('Service', 'dynamicpackages'));
+$label_total = esc_html(__('Total', 'dynamicpackages'));
+$label_subtotal = esc_html(__('Subtotal', 'dynamicpackages'));
 $description = sanitize_text_field($_POST['description']);
 $included = sanitize_text_field($_POST['package_included']);
-$label_included = __('Included', 'dynamicpackages');
-$not_included = sanitize_text_field($_POST['package_not_included']);
-$label_not_included = __('Not Included', 'dynamicpackages');
+$label_included = esc_html(__('Included', 'dynamicpackages'));
+$not_included = esc_html(sanitize_text_field($_POST['package_not_included']));
+$label_not_included = esc_html(__('Not Included', 'dynamicpackages'));
 $notes = apply_filters('dy_email_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
-$label_notes = ($notes) ? __('Notes', 'dynamicpackages') : null;
+$label_notes = ($notes) ? apply_filters('dy_email_label_notes', esc_html(__('Notes', 'dynamicpackages'))) : null;
 $footer = $company_address;
-$whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
-$whatsapp = (get_option('dy_whatsapp')) ? '<a style="padding: 16px; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.esc_html(__('Whatsapp Advisory', 'dynamicpackages')).'</a>' : null;
-$action_button = apply_filters('dy_email_action_button', null);
+$whatsapp_url = 'https://wa.me/' . esc_html(get_option('dy_whatsapp')) . '?text=' . urlencode($description);
+$whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.esc_html(__('Whatsapp Advisory', 'dynamicpackages')).'</a>' : null;
+$action_button = apply_filters('dy_email_action_button', $whatsapp);
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -191,8 +191,7 @@ $email_template = <<<EOT
 			</div>
 			
 			${action_button}
-			
-			<p>${whatsapp}</p>
+
 		</div>		
 	</body>
 </html>

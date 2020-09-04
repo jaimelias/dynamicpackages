@@ -239,7 +239,7 @@ class dy_Metaboxes
 				<?php endif; ?>					
 			<?php endif; ?>
 			
-			<?php if(dy_Validators::is_child()) : ?>
+			<?php if(dy_Validators::is_child() || dy_Validators::is_parent_with_no_child()) : ?>
 			
 			<p>
 				<label for="package_min_persons"><?php _e( 'Minimum Number of participants', 'dynamicpackages' ); ?></label><br />
