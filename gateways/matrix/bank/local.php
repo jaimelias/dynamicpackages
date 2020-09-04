@@ -4,7 +4,6 @@ class bank_transfer{
 	
 	function __construct()
 	{
-		$this->gateway_name = 'bank_transfer';
 		$this->init();
 	}
 	
@@ -31,7 +30,12 @@ class bank_transfer{
 	
 	public function args()
 	{
+		$this->gateway_name = 'bank_transfer';
 		$this->gateway_title = __('Local Bank', 'dynamicpackages');
+		$this->bank = get_option($this->gateway_name . '_bank');
+		$this->number = get_option($this->gateway_name);
+		$this->type = get_option($this->gateway_name . '_type');
+		$this->beneficiary = get_option($this->gateway_name . '_beneficiary');
 	}	
 
 	public function send_data()
@@ -64,7 +68,7 @@ class bank_transfer{
 		}
 		else
 		{
-			if(get_option($this->gateway_name) != '')
+			if($this->number != '')
 			{
 				$GLOBALS[$this->gateway_name . '_is_active'] = true;
 				$output = true;
@@ -176,15 +180,15 @@ class bank_transfer{
 		
 		$type = __('Saving Account', 'dynamicpackages');
 		
-		if(get_option($this->gateway_name . '_type') == 1)
+		if($this->type == 1)
 		{
 			$type = __('Checking Account', 'dynamicpackages');
 		}
 		
-		$bank = esc_html(__('Bank', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_name')).'</strong> <br/>';
+		$bank = esc_html(__('Bank', 'dynamicpackages')).': <strong>'.esc_html($this->bank).'</strong> <br/>';
 		$bank .= esc_html(__('Account Type', 'dynamicpackages')).': <strong>'.esc_html($type).'</strong><br/>';
-		$bank .= esc_html(__('Account Number', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name)).'</strong><br/>';
-		$bank .= esc_html(__('Account Name', 'dynamicpackages')).': <strong>'.esc_html(get_option($this->gateway_name . '_account')).'</strong>';
+		$bank .= esc_html(__('Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->number).'</strong><br/>';
+		$bank .= esc_html(__('Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->beneficiary).'</strong>';
 
 		return $bank;
 	}
@@ -255,8 +259,8 @@ class bank_transfer{
 		//Bank
 		
 		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_account', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_name', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_beneficiary', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_bank', 'sanitize_text_field');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_type', 'sanitize_text_field');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_min', 'floatval');
@@ -276,11 +280,11 @@ class bank_transfer{
 		);
 		
 		add_settings_field( 
-			$this->gateway_name . '_name', 
+			$this->gateway_name . '_bank', 
 			esc_html(__( 'Bank Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name . '_name'
+			$this->gateway_name . '_settings_section', $this->gateway_name . '_bank'
 		);		
 		add_settings_field( 
 			$this->gateway_name . '_type', 
@@ -290,11 +294,11 @@ class bank_transfer{
 			$this->gateway_name . '_settings_section'
 		);	
 		add_settings_field( 
-			$this->gateway_name . '_account', 
+			$this->gateway_name . '_beneficiary', 
 			esc_html(__( 'Account Name', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
 			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name . '_account'
+			$this->gateway_name . '_settings_section', $this->gateway_name . '_beneficiary'
 		);			
 		
 		add_settings_field( 
@@ -337,8 +341,8 @@ class bank_transfer{
 	
 	public function display_bank_transfer_type() { ?>
 		<select name="<?php esc_html_e($this->gateway_name . '_type'); ?>">
-			<option value="0" <?php selected(get_option($this->gateway_name . '_type'), 0); ?>><?php echo esc_html('Saving', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option($this->gateway_name . '_type'), 1); ?>><?php echo esc_html('Checking', 'dynamicpackages'); ?></option>
+			<option value="0" <?php selected($this->type, 0); ?>><?php echo esc_html('Saving', 'dynamicpackages'); ?></option>
+			<option value="1" <?php selected($this->type, 1); ?>><?php echo esc_html('Checking', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }
 			
@@ -435,7 +439,7 @@ class bank_transfer{
 		$(function(){
 			$('.withbank').click(function()
 			{
-				var bank_logo = $('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html(get_option($this->gateway_name . '_name')); ?></strong></p>').addClass('text-muted');
+				var bank_logo = $('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
 				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
 				$('#dy_form_icon').html(bank_logo);
