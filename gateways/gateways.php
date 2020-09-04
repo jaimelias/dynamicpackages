@@ -10,9 +10,21 @@ class dy_Gateways
 		$this->init();
 	}
 	
+	public static function load_gateways()
+	{
+		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
+		require_once plugin_dir_path(__FILE__).'cc-gateways.php';		
+		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
+		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
+		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
+		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
+		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
+	}	
+	
 	public function load_classes()
 	{
 		$this->plugin_checkout = new dy_CC_Checkout($this->add_to_calendar);
+		$this->paguelo_facil_on = new paguelo_facil_on();
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
 		$this->yappy_direct = new yappy_direct();	
@@ -25,7 +37,8 @@ class dy_Gateways
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
 		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);
-		add_filter('the_content', array(&$this, 'the_content'), 102);		
+		add_filter('the_content', array(&$this, 'the_content'), 102);
+		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
 	}
 
 	public function the_content($content)
@@ -94,15 +107,6 @@ class dy_Gateways
 		}
 
 		return $content;
-	}
-	public static function load_gateways()
-	{
-		require_once plugin_dir_path(__FILE__).'cc-gateways.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
-		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
-		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
-		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
 	}
 
 	public static function gateway_buttons()
@@ -221,6 +225,36 @@ class dy_Gateways
 		$output .= dy_Public::booking_sidebar();	
 		echo $output;	
 	}
+	
+	public function terms_conditions()
+	{
+		$terms_conditions = dy_Public::get_terms_conditions();
+		$output = null;
+		
+		if(is_array($terms_conditions))
+		{
+			if(count($terms_conditions) > 0)
+			{
+				$output = '<h3>'.esc_html('Terms & Conditions', 'dynamicpackages').'</h3><p>';
+				
+				for($x = 0; $x < count($terms_conditions); $x++ )
+				{
+					$term = $terms_conditions[$x];
+					$id = $term->term_taxonomy_id;
+					$url = get_term_link($id);
+					$name = $term->name;
+					
+					$output .= '<label for="terms_conditions_'.esc_html($id).'"><span class="large"><input type="checkbox" name="terms_conditions_'.esc_html($id).'"></span> <a href="'.esc_url($url).'" target="_blank">'.esc_html($name).'</a></label>';
+				}
+
+				$output .= '</p><hr/>';
+			}
+		}
+
+		echo $output;
+		
+	}
+	
 }
 
 ?>

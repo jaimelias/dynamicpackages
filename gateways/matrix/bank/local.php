@@ -36,6 +36,8 @@ class bank_transfer{
 		$this->number = get_option($this->gateway_name);
 		$this->type = get_option($this->gateway_name . '_type');
 		$this->beneficiary = get_option($this->gateway_name . '_beneficiary');
+		$this->min = get_option($this->gateway_name . '_min');
+		$this->show = get_option($this->gateway_name . '_show');
 	}	
 
 	public function send_data()
@@ -206,8 +208,8 @@ class bank_transfer{
 		{
 			if($this->is_active() && !isset($_GET['quote']))
 			{
-				$min = floatval(get_option(sanitize_title($this->gateway_name . '_min')));
-				$show = intval(get_option(sanitize_title($this->gateway_name . '_show')));
+				$min = floatval($this->min);
+				$show = intval($this->show);
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				

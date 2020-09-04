@@ -20,14 +20,14 @@ class dy_CC_Checkout
 		}
 		else
 		{
-			add_filter('wp_headers', array(&$this, 'checkout'), 101);
-			add_filter('the_content', array(&$this, 'the_content'), 101);
-			add_filter('the_title', array(&$this, 'the_title'), 102);
-			add_filter('wp_title', array(&$this, 'wp_title'), 102);
-			add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 102);
-			add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 0);
-			add_filter('list_gateways', array(&$this, 'add_gateway'), 0);
+			//add_filter('wp_headers', array(&$this, 'checkout'), 101);
+			//add_filter('the_content', array(&$this, 'the_content'), 101);
+			//add_filter('the_title', array(&$this, 'the_title'), 102);
+			//add_filter('wp_title', array(&$this, 'wp_title'), 102);
+			//add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 102);
+			//add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+			//add_filter('gateway_buttons', array(&$this, 'button'), 0);
+			//add_filter('list_gateways', array(&$this, 'add_gateway'), 0);
 		}
 	}
 
