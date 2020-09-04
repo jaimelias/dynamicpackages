@@ -4,12 +4,12 @@ class yappy_direct{
 	
 	function __construct()
 	{
-		$this->gateway_title = 'Yappy';
-		$this->gateway_name = 'yappy_direct';
 		$this->init();
 	}
 	public function init()
 	{
+		add_action('init', array(&$this, 'args'));
+		
 		if(is_admin())
 		{
 			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
@@ -29,6 +29,16 @@ class yappy_direct{
 			add_filter('coupon_gateway_hide', array(&$this, 'single_coupon_hide'), 10, 3);
 		}		
 	}
+	
+	public function args()
+	{
+		$this->gateway_title = 'Yappy';
+		$this->gateway_name = 'yappy_direct';		
+		$this->number = get_option($this->gateway_name);
+		$this->max = get_option($this->gateway_name . '_max');
+		$this->show = get_option($this->gateway_name . '_show');
+	}
+	
 	public function send_data()
 	{		
 		if(dy_Validators::is_request_valid() && $this->is_valid_request())
@@ -60,7 +70,7 @@ class yappy_direct{
 		}
 		else
 		{
-			if(get_option($this->gateway_name) != '')
+			if($this->number != '')
 			{
 				$GLOBALS[$this->gateway_name . '_is_active'] = true;
 				$output = true;
@@ -159,8 +169,8 @@ class yappy_direct{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$message = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html(get_option($this->gateway_name)).'</strong>.</p>';	
-		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.get_option($this->gateway_name)).'</p>';
+		$message = '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html($this->number).'</strong>.</p>';	
+		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.$this->number).'</p>';
 		
 		return $message;
 	}
@@ -178,8 +188,8 @@ class yappy_direct{
 		{
 			if($this->is_active() && !isset($_GET['quote']))
 			{
-				$max = floatval(get_option(sanitize_title($this->gateway_name . '_max')));
-				$show = intval(get_option(sanitize_title($this->gateway_name . '_show')));
+				$max = floatval($this->max);
+				$show = intval($this->show);
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				
@@ -277,9 +287,9 @@ class yappy_direct{
 		<?php
 	}
 	public function display_yappy_direct_show() { ?>
-		<select name=$this->gateway_name . '_show'>
-			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
+		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
+			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
+			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }
 

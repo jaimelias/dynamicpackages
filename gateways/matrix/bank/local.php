@@ -336,7 +336,7 @@ class bank_transfer{
 		
 	
 	public function display_bank_transfer_type() { ?>
-		<select name=$this->gateway_name . '_type'>
+		<select name="<?php esc_html_e($this->gateway_name . '_type'); ?>">
 			<option value="0" <?php selected(get_option($this->gateway_name . '_type'), 0); ?>><?php echo esc_html('Saving', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option($this->gateway_name . '_type'), 1); ?>><?php echo esc_html('Checking', 'dynamicpackages'); ?></option>
 		</select>
@@ -344,7 +344,7 @@ class bank_transfer{
 			
 	
 	public function display_bank_transfer_show() { ?>
-		<select name=$this->gateway_name . '_show'>
+		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
 			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
