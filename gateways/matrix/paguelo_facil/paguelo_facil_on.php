@@ -65,6 +65,7 @@ class paguelo_facil_on{
 		if(dy_Validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($dy_checkout_success))
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
+			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
 			add_filter('dy_email_intro', array(&$this, 'subject'));
 			add_filter('dy_email_subject', array(&$this, 'subject'));
 			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
@@ -97,9 +98,7 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{
-				
 				$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				
 				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['title']);
 			}
 			else if($dy_checkout_success === 1)
@@ -115,23 +114,14 @@ class paguelo_facil_on{
 		return $output;
 	}
 	
-	public function message($output)
+	public function email_message_bottom($output)
 	{
 		global $dy_checkout_success;
-		
 		if(isset($dy_checkout_success))
 		{
 			if($dy_checkout_success === 2)
 			{
 				$terms_conditions = dy_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
-				
-				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
-								
-				$output .= ($_POST['message']) ? '<p><strong>' . sanitize_text_field($_POST['message']) . '</strong></p>' : null;
-				
-				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
-				
-				$output .= '<p>'. __('Take your time to review our invoice in detail.', 'dynamicpackages') . '</p>';
 				
 				if(is_array($terms_conditions))
 				{
@@ -140,7 +130,25 @@ class paguelo_facil_on{
 						$output .= '<p>🗎 ' . sprintf(__('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
 					}
 				}
-
+				
+				$output .= '<p>'. __('Take your time to review our invoice in detail.', 'dynamicpackages') . '</p>';
+			}
+		}
+		
+		return $output;
+	}
+	
+	public function message($output)
+	{
+		global $dy_checkout_success;
+		
+		if(isset($dy_checkout_success))
+		{
+			if($dy_checkout_success === 2)
+			{	
+				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
+				$output .= ($_POST['message']) ? '<p>⚠️ ' . sanitize_text_field($_POST['message']) . '</p>' : null;
+				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
 			}
 			else if($dy_checkout_success === 1)
 			{
@@ -229,14 +237,22 @@ class paguelo_facil_on{
 		{
 			if(isset($dy_valid_recaptcha))
 			{
-				$output = '<p>' . $this->subject(null) . '</p>';
-				$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
-				
-				$add_to_calendar = apply_filters('dy_add_to_calendar', null);
-				
-				if($add_to_calendar)
+				if($dy_checkout_success === 2)
 				{
-					$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
+					$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+					
+					$output = '<p>✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['description']) . '</p>';
+					
+					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
+					
+					$output .= '<p>📧 '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
+					
+					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
+					
+					if($add_to_calendar)
+					{
+						$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
+					}					
 				}
 			}
 			else
@@ -255,15 +271,15 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{
-				$output = 'TITLE: PAYMENT APPROVED';
+				$output = __('Payment Approved', 'dynamicpackages');
 			}
 			else if($dy_checkout_success === 1)
 			{
-				$output = 'TITLE: PAYMENT DECLINED';
+				$output = __('Payment Declined', 'dynamicpackages');
 			}
 			else
 			{
-				$output = 'TITLE: ERROR';
+				$output = __('Checkout Error', 'dynamicpackages');
 			}
 		}
 		return $output;
@@ -279,7 +295,7 @@ class paguelo_facil_on{
 			if($dy_checkout_success === 2)
 			{
 
-				$message = ($_POST['message']) ? '<p>' . __('Important', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['message']) . '</p>' : null;
+				$message = ($_POST['message']) ? '<p>' . sanitize_text_field($_POST['message']) . '</p>' : null;
 
 				$address = ($_POST['departure_address']) ? __('Meeting Point', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_address']) . '<br />' : null;
 				

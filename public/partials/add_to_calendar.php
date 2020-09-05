@@ -4,8 +4,12 @@ class dy_Add_To_Calendar
 {
 	function __construct()
 	{
+		$this->init();
+	}
+	public function init()
+	{
 		add_filter('dy_add_to_calendar', array(&$this, 'show'));
-		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts'));
+		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts'));		
 	}
 	public function scripts()
 	{
