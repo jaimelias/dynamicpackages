@@ -1,7 +1,8 @@
 <?php
+$label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
-$message = apply_filters('dy_email_message', '<p>' .__('Please find a detailed copy of your estimated this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages') . '</p>');
+$message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
 $currency_symbol = esc_html(dy_utilities::currency_symbol());
 $calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
 $total = apply_filters('dy_email_total', $calculate_total);
@@ -11,7 +12,6 @@ $company_email = sanitize_email(get_option('dy_email'));
 $company_contact = ($company_phone) ?  esc_html($company_phone . ' / ' . $company_email) : esc_html($company_email);
 $company_address = esc_html(get_option('dy_address'));
 $company_tax_id = esc_html(get_option('dy_tax_id'));
-$label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $label_client = esc_html(__('Client', 'dynamicpackages'));
 $client_name = esc_html(sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']));
 $client_email = sanitize_email($_POST['email']);
@@ -24,7 +24,8 @@ $included = sanitize_text_field($_POST['package_included']);
 $label_included = esc_html(__('Included', 'dynamicpackages'));
 $not_included = esc_html(sanitize_text_field($_POST['package_not_included']));
 $label_not_included = esc_html(__('Not Included', 'dynamicpackages'));
-$notes = apply_filters('dy_email_notes', __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways());
+$notes_content = (dy_Gateways::join_gateways()) ? __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways() : null;
+$notes = apply_filters('dy_email_notes', $notes_content);
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', esc_html(__('Notes', 'dynamicpackages'))) : null;
 $footer = $company_address;
 $whatsapp_url = 'https://wa.me/' . esc_html(get_option('dy_whatsapp')) . '?text=' . urlencode($description);

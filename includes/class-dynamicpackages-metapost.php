@@ -256,9 +256,9 @@ class dy_Metapost{
 				{
 					if($key == 'slug')
 					{
-						if(isset( $_POST['package_provider_message_'.$value]))
+						if(isset( $_POST['package_client_message_'.$value]))
 						{
-							update_post_meta( $post_id, 'package_provider_message_'.$value, esc_attr($_POST['package_provider_message_'.$value] ));						
+							update_post_meta( $post_id, 'package_client_message_'.$value, esc_attr($_POST['package_client_message_'.$value] ));						
 						}
 						if(isset( $_POST['package_child_title_'.$value]))
 						{
@@ -270,9 +270,9 @@ class dy_Metapost{
 		}
 		else
 		{
-			if(isset( $_POST['package_provider_message']))
+			if(isset( $_POST['package_client_message']))
 			{
-				update_post_meta( $post_id, 'package_provider_message', esc_attr($_POST['package_provider_message'] ));					
+				update_post_meta( $post_id, 'package_client_message', esc_attr($_POST['package_client_message'] ));					
 			}
 			if(isset( $_POST['package_child_title']))
 			{

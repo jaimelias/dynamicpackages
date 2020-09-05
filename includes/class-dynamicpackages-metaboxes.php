@@ -162,8 +162,8 @@ class dy_Metaboxes
 							
 							?>
 								<p>
-									<label for="package_provider_message_<?php echo esc_html($value); ?>"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?> - <?php echo esc_html($value);?></label></br>
-									<textarea cols="40" rows="6" type="text" name="package_provider_message_<?php echo esc_html($value); ?>" id="package_provider_message_<?php echo esc_html($value); ?>"><?php echo package_field( 'package_provider_message_'.$value ); ?></textarea>
+									<label for="package_client_message_<?php echo esc_html($value); ?>"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?> - <?php echo esc_html($value);?></label></br>
+									<textarea cols="40" rows="6" type="text" name="package_client_message_<?php echo esc_html($value); ?>" id="package_client_message_<?php echo esc_html($value); ?>"><?php echo package_field( 'package_client_message_'.$value ); ?></textarea>
 								</p>	
 							<?php
 						}
@@ -174,8 +174,8 @@ class dy_Metaboxes
 			{
 				?>
 					<p>
-						<label for="package_provider_message"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?></label></br>
-						<textarea cols="40" rows="6" type="text" name="package_provider_message" id="package_provider_message"><?php echo package_field( 'package_provider_message' ); ?></textarea>
+						<label for="package_client_message"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?></label></br>
+						<textarea cols="40" rows="6" type="text" name="package_client_message" id="package_client_message"><?php echo package_field( 'package_client_message' ); ?></textarea>
 					</p>				
 				<?php
 			}

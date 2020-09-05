@@ -20,9 +20,8 @@ class paguelo_facil_on{
 		{
 			add_action('init', array(&$this, 'checkout'));
 			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
-			add_filter('dy_request_the_title', array(&$this, 'title'), 102);
-			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 102);
+			add_filter('dy_request_the_content', array(&$this, 'the_content'), 102);
+			add_filter('dy_request_the_title', array(&$this, 'the_title'), 102);
 			add_filter('gateway_buttons', array(&$this, 'button'), 1);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
@@ -39,7 +38,7 @@ class paguelo_facil_on{
 		$this->cclw = get_option($this->gateway_name);
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->min = get_option($this->gateway_name . '_min');
-	}	
+	}
 	
 	public function checkout()
 	{
@@ -65,24 +64,68 @@ class paguelo_facil_on{
 		
 		if(dy_Validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($dy_checkout_success))
 		{
-			if($dy_checkout_success === 2)
-			{
-				add_filter('dy_email_notes', array(&$this, 'message'));
-				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));				
-			}
+			add_filter('dy_email_message', array(&$this, 'message'));
+			add_filter('dy_email_intro', array(&$this, 'subject'));
+			add_filter('dy_email_subject', array(&$this, 'subject'));
+			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
+			add_filter('dy_email_notes', array(&$this, 'email_notes'));
 		}
 	}
 	
-	public function message($output)
+	public function label_doc($output)
 	{
+		
 		global $dy_checkout_success;
-		$output = null;
 		
 		if(isset($dy_checkout_success))
 		{
 			if($dy_checkout_success === 2)
 			{
-				$output = 'MESSAGE: PAYMENT APPROVED';
+				$output = __('Invoice', 'dynamicpackages');
+			}
+		}
+		
+		return $output;
+	}	
+	
+	public function subject($output)
+	{
+		
+		global $dy_checkout_success;
+		
+		if(isset($dy_checkout_success))
+		{
+			if($dy_checkout_success === 2)
+			{
+				
+				$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+				
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['title']) . ' ✔️';
+			}
+			else if($dy_checkout_success === 1)
+			{
+				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' ⚠️';
+			}
+			else
+			{
+				$output = '⚠️ ' . sprintf(__('%s Aero Albrook is having problems processing your payment', 'dynamicpackages'), get_bloginfo('name')) . ' ⚠️';
+			}
+		}
+		
+		return $output;
+	}
+	
+	public function message($output)
+	{
+		global $dy_checkout_success;
+		
+		if(isset($dy_checkout_success))
+		{
+			if($dy_checkout_success === 2)
+			{
+				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports of each participant. Remember it is not allowed to book for third parties.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' ⚠️</p>';
+				
+				$output .= '<p>🗎 ' . sprintf(__('The invoice and the Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' 🗎</p>';
 			}
 			else if($dy_checkout_success === 1)
 			{
@@ -90,36 +133,12 @@ class paguelo_facil_on{
 			}
 			else
 			{
-				$output = 'MESSAGE: ERROR DECLINED';
+				$output = 'MESSAGE: ERROR';
 			}
 		}
 		
 		return $output;
 	}	
-	
-	public function label_notes($output)
-	{
-		global $dy_checkout_success;
-		$output = null;
-		
-		if(isset($dy_checkout_success))
-		{
-			if($dy_checkout_success === 2)
-			{
-				$output = 'LABEL_NOTES: PAYMENT APPROVED';
-			}
-			else if($dy_checkout_success === 1)
-			{
-				$output = 'LABEL_NOTES: PAYMENT DECLINED';
-			}
-			else
-			{
-				$output = 'LABEL_NOTES: ERROR DECLINED';
-			}
-		}
-		
-		return $output;
-	}
 
 	public function is_active()
 	{
@@ -185,35 +204,11 @@ class paguelo_facil_on{
 		
 		return $output;
 	}
-	public function filter_excerpt($output)
-	{
-		global $dy_checkout_success;
-		$output = null;
-		
-		if(isset($dy_checkout_success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
-		{
-			if($dy_checkout_success === 2)
-			{
-				$output = 'EXCERPT: PAYMENT APPROVED';
-			}
-			else if($dy_checkout_success === 1)
-			{
-				$output = 'EXCERPT: PAYMENT DECLINED';
-			}
-			else
-			{
-				$output = 'EXCERPT: ERROR DECLINED';
-			}
-		}		
-
-		return $output;
-	}
 	
-	public function filter_content($output)
+	public function the_content($output)
 	{
 		global $dy_valid_recaptcha;
 		global $dy_checkout_success;
-		$output = null;	
 		
 		if(isset($dy_checkout_success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
@@ -229,26 +224,52 @@ class paguelo_facil_on{
 		return $output;
 	}
 		
-	public function title($output)
+	public function the_title($output)
 	{
 		global $dy_checkout_success;
-		$output = null;
 		
 		if(isset($dy_checkout_success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			if($dy_checkout_success === 2)
 			{
-				$output = 'EXCERPT: PAYMENT APPROVED';
+				$output = 'TITLE: PAYMENT APPROVED';
 			}
 			else if($dy_checkout_success === 1)
 			{
-				$output = 'EXCERPT: PAYMENT DECLINED';
+				$output = 'TITLE: PAYMENT DECLINED';
 			}
 			else
 			{
-				$output = 'EXCERPT: ERROR DECLINED';
+				$output = 'TITLE: ERROR';
 			}
 		}
+		return $output;
+	}
+
+	public function email_notes($output)
+	{
+		global $dy_checkout_success;
+		$output = null;
+		
+		if(isset($dy_checkout_success))
+		{
+			if($dy_checkout_success === 2)
+			{
+
+				$message = ($_POST['message']) ? '<p>' . __('Important', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['message']) . '</p>' : null;
+
+				$address = ($_POST['departure_address']) ? __('Meeting Point', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_address']) . '<br />' : null;
+				
+				$date = ($_POST['departure_format_date']) ? __('Date', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_format_date']) . '<br />' : null;
+
+				$check_in = ($_POST['check_in_hour']) ? __('Check In', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['check_in_hour']) . '<br />' : null;
+
+				$booking_hour = ($_POST['booking_hour']) ? __('Booking Hour', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['booking_hour']) : null;
+				
+				$output = $message . '<p>' . $address . $date . $check_in . $booking_hour . '</p>';
+			}
+		}
+		
 		return $output;
 	}
 

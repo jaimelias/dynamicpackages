@@ -25,7 +25,7 @@ class dy_CC_Checkout
 			//add_filter('the_title', array(&$this, 'the_title'), 102);
 			//add_filter('wp_title', array(&$this, 'wp_title'), 102);
 			//add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 102);
-			//add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+			add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 			//add_filter('gateway_buttons', array(&$this, 'button'), 0);
 			//add_filter('list_gateways', array(&$this, 'add_gateway'), 0);
 		}
@@ -559,7 +559,7 @@ class dy_CC_Checkout
 			$deposit = dy_sum_tax(dy_utilities::amount());
 			$total = dy_sum_tax(dy_utilities::total());
 			$outstanding = $total-$deposit;
-			$output .= '- '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
+			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
 		}
 		return $output;
 	}
@@ -652,14 +652,14 @@ class dy_CC_Checkout
 				{
 					if($key == 'slug' && $value == substr(get_locale(), 0, -3))
 					{
-						$output = package_field( 'package_provider_message_'.$value, $the_id);
+						$output = package_field( 'package_client_message_'.$value, $the_id);
 					}
 				}	
 			}
 		}
 		else
 		{
-			$output = package_field( 'package_provider_message', $the_id);
+			$output = package_field( 'package_client_message', $the_id);
 		}
 		return $output;
 	}

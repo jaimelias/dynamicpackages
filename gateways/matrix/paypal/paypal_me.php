@@ -21,7 +21,6 @@ class paypal_me{
 			
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 101);
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 2);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
@@ -58,15 +57,7 @@ class paypal_me{
 	{
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->gateway_title);
 	}
-
-	public function filter_excerpt($excerpt)
-	{
-		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
-		{
-			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',');
-		}
-		return $excerpt;
-	}
+	
 	public function filter_content($content)
 	{
 		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())

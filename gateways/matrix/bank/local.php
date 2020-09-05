@@ -20,7 +20,6 @@ class bank_transfer{
 		{
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
 			add_filter('dy_request_the_title', array(&$this, 'title'), 102);
-			add_filter('get_the_excerpt', array(&$this, 'filter_excerpt'), 102);
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 4);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 4);
@@ -123,14 +122,7 @@ class bank_transfer{
 		
 		return $output;
 	}
-	public function filter_excerpt($excerpt)
-	{
-		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
-		{
-			$excerpt = esc_html(__('Hello', 'dynamicpackages').' '.sanitize_text_field($_POST['first_name']).',');
-		}
-		return $excerpt;
-	}
+
 	public function filter_content($content)
 	{
 		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
