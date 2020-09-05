@@ -114,7 +114,7 @@ class dy_Actions{
 			'attachments' => $attachments
 		);
 		
-		die($email_template);
+		//die($email_template);
 		
 		//sg_mail($args);
     }

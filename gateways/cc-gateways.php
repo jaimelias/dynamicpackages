@@ -14,8 +14,8 @@ class dy_CC_Checkout
 		{
 			if(dy_Validators::is_gateway_active())
 			{
-				add_action('admin_init', array(&$this, 'settings_init'));
-				add_action('admin_menu', array(&$this, 'add_primary_gateway_page'), 100);				
+				//add_action('admin_init', array(&$this, 'settings_init'));
+				//add_action('admin_menu', array(&$this, 'add_primary_gateway_page'), 100);				
 			}
 		}
 		else
@@ -25,7 +25,7 @@ class dy_CC_Checkout
 			//add_filter('the_title', array(&$this, 'the_title'), 102);
 			//add_filter('wp_title', array(&$this, 'wp_title'), 102);
 			//add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 102);
-			add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+			//add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 			//add_filter('gateway_buttons', array(&$this, 'button'), 0);
 			//add_filter('list_gateways', array(&$this, 'add_gateway'), 0);
 		}
@@ -398,215 +398,7 @@ class dy_CC_Checkout
 		}
 		return $output;
 	}
-	public function outstanding()
-	{
-		global $dy_outstanding;
-		$output = 0;
-		
-		if(isset($dy_outstanding))
-		{
-			$output = $dy_outstanding;
-		}
-		else
-		{
-			//outstanding balance
-			$total = dy_utilities::total();
-			$amount = $total;
-			
-			
-			if(package_field('package_payment' ) == 1)
-			{
-				$deposit = floatval(dy_utilities::get_deposit());
-				
-				if($deposit > 0)
-				{
-					$amount = floatval(dy_utilities::total())*(floatval($deposit)*0.01);
-					$output = floatval($total)-$amount;					
-				}
-				if(isset($_GET['quote']))
-				{
-					$output = $total;
-				}					
-			}
-
-			$GLOBALS['dy_outstanding'] = $output;
-		}
-		return $output;
-	}
 	
-	public function payment_type()
-	{
-		global $dy_payment_type;
-		$output = 'full';
-		
-		if(isset($dy_payment_type))
-		{
-			$output = $dy_payment_type;
-		}
-		else
-		{
-			if(package_field('package_payment' ) == 1 && intval(package_field('package_auto_booking')) == 1)
-			{
-				$output = 'deposit';
-				
-				if(isset($_GET['quote']))
-				{
-					$output = 'full';
-				}
-			}
-			
-			$GLOBALS['dy_payment_type'] = $dy_payment_type;
-		}
-		return $output;
-	}
-	
-	public function checkout_vars()
-	{
-		global $post;
-		
-		$tax = floatval(dy_utilities::tax());
-		$description = $this->get_description();
-		$coupon_code = null;
-		$coupon_discount = null;
-		
-		if(dy_Validators::valid_coupon())
-		{
-			$coupon_code = dy_utilities::get_coupon('code');
-			$coupon_discount = dy_utilities::get_coupon('discount');
-			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
-		}
-		
-		$checkout_vars = array(
-			'post_id' => intval($post->ID),
-			'description' => esc_html($description),
-			'coupon_code' => esc_html($coupon_code),
-			'coupon_discount' => esc_html($coupon_discount),
-			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())),
-			'departure_date' => sanitize_text_field($_GET['booking_date']),
-			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
-			'departure_address' => esc_html(package_field('package_departure_address')),
-			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
-			'booking_hour' => esc_html(dy_utilities::hour()),
-			'duration' => esc_html(dy_Public::show_duration()),
-			'pax_num' => intval(dy_utilities::pax_num()),
-			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
-			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
-			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
-			'package_code' => esc_html(package_field('package_trip_code')),
-			'title' => esc_html($post->post_title),
-			'package_type' => esc_html($this->get_type()),
-			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
-			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
-			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
-			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
-			'message' => esc_html($this->get_notes()),
-			'TRANSLATIONS' => array('i_accept' => __('I accept', 'dynamicpackages')),
-			'TERMS_CONDITIONS' => $this->accept(),
-			'package_url' => esc_url(get_permalink()),
-			'hash' => sanitize_text_field($_GET['hash']),
-			'currency_name' => dy_utilities::currency_name(),
-			'currency_symbol' => dy_utilities::currency_symbol(),
-			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),
-			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
-			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),
-			'payment_type' => esc_html($this->payment_type()),
-			'deposit' => floatval(dy_utilities::get_deposit())
-		);
-		
-		if($tax > 0)
-		{
-			$checkout_vars['tax'] = $tax;
-			$checkout_vars['tax_amount'] = $this->tax_amount();
-		}		
-		
-		$add_ons = dy_Tax_Mod::get_add_ons();
-		
-		if(is_array($add_ons))
-		{
-			if(count($add_ons) > 0)
-			{
-				$checkout_vars['add_ons'] = $add_ons;
-			}
-		}
-		
-		$checkout_vars = json_encode($checkout_vars);
-		$script = 'function checkout_vars(){return ';
-		$script .= $checkout_vars;
-		$script .= '}';
-		return $script;			
-	}
-	
-	public function tax_amount()
-	{
-		$output = 0;
-		$tax = floatval(dy_utilities::tax());
-		$total = floatval(dy_utilities::total());
-		
-		if($tax > 0 && $total > 0)
-		{
-			$output =dy_utilities::currency_format($total * ($tax / 100));
-		}
-		
-		return $output;
-	}
-
-	public function get_description()
-	{
-		$output = dy_Public::description();
-		
-		if(dy_Validators::has_deposit())
-		{
-			$deposit = dy_sum_tax(dy_utilities::amount());
-			$total = dy_sum_tax(dy_utilities::total());
-			$outstanding = $total-$deposit;
-			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
-		}
-		return $output;
-	}
-	
-	
-	public function get_type()
-	{
-		$output = 'one day';
-		
-		if(package_field( 'package_package_type' ) == 1)
-		{
-			$output = 'multi-day';
-		}
-		else if(package_field( 'package_package_type' ) == 2)
-		{
-			$output = 'per day';
-		}
-		else if(package_field( 'package_package_type' ) == 3)
-		{
-			$output = 'per hour';
-		}
-		return $output;
-	}
-	public function accept()
-	{
-		$output = array();
-		$terms = dy_Public::get_terms_conditions();
-		
-		if(is_array($terms))
-		{
-			if(count($terms) > 0)
-			{
-				$terms_conditions = $terms;
-				$terms_conditions_clean = array();
-				for($x = 0; $x < count($terms_conditions); $x++ )
-				{
-					$terms_conditions_item = array();
-					$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
-					$terms_conditions_item['name'] = $terms_conditions[$x]->name;
-					$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
-					array_push($terms_conditions_clean, $terms_conditions_item);
-				}
-				$output = $terms_conditions_clean;
-			}			
-		}
-		return $output;
-	}
 	public function agreements()
 	{
 		$output = null;
@@ -628,41 +420,7 @@ class dy_CC_Checkout
 
 		return json_encode($output);
 	}	
-	public function get_notes()
-	{
-		global $polylang;
-		global $post;
-		
-		$the_id = $post->ID;
-		
-		if(property_exists($post, 'post_parent'))
-		{
-			$the_id = $post->post_parent;
-		}
-		
-		$language_list = array();
-		$output = '';
-		if(isset($polylang))
-		{
-			$languages = PLL()->model->get_languages_list();
-			
-			for($x = 0; $x < count($languages); $x++)
-			{
-				foreach($languages[$x] as $key => $value)
-				{
-					if($key == 'slug' && $value == substr(get_locale(), 0, -3))
-					{
-						$output = package_field( 'package_client_message_'.$value, $the_id);
-					}
-				}	
-			}
-		}
-		else
-		{
-			$output = package_field( 'package_client_message', $the_id);
-		}
-		return $output;
-	}
+
 	
 	public function facebook_pixel()
 	{

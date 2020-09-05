@@ -997,6 +997,8 @@ class dy_Public {
 	}	
 	public static function get_terms_conditions($post_id = null)
 	{
+		$terms_conditions = array();
+		
 		if($post_id == null)
 		{
 			global $post;
@@ -1018,8 +1020,7 @@ class dy_Public {
 				}		
 				
 				$terms = get_the_terms( $termid, 'package_terms_conditions');
-						
-				$terms_conditions = array();
+
 				
 				if($terms)
 				{
@@ -1027,14 +1028,11 @@ class dy_Public {
 					{
 						array_push($terms_conditions, $terms[$x]);
 					}			
-				}
-				
-				if(count($terms_conditions) > 0)
-				{
-					return $terms_conditions;
-				}			
+				}	
 			}			
-		}		
+		}
+		
+		return $terms_conditions;
 	}
 	public static function get_terms_conditions_list($this_post)
 	{

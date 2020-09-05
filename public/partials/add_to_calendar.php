@@ -4,6 +4,7 @@ class dy_Add_To_Calendar
 {
 	function __construct()
 	{
+		add_filter('dy_add_to_calendar', array(&$this, 'show'));
 		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts'));
 	}
 	public function scripts()
@@ -84,7 +85,7 @@ class dy_Add_To_Calendar
 			<?php
 			$output = ob_get_contents();
 			ob_end_clean();
-			echo $output;				
+			return $output;				
 		}
 	}
 	

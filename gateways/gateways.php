@@ -5,7 +5,6 @@ class dy_Gateways
 	function __construct()
 	{
 		$this->load_gateways();
-		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->load_classes();
 		$this->init();
 	}
@@ -23,7 +22,7 @@ class dy_Gateways
 	
 	public function load_classes()
 	{
-		$this->plugin_checkout = new dy_CC_Checkout($this->add_to_calendar);
+		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->paguelo_facil_on = new paguelo_facil_on();
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
@@ -33,12 +32,14 @@ class dy_Gateways
 	}
 	public function init()
 	{
+		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
 		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
+		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 	}
 
 	public function the_content($content)
@@ -51,7 +52,6 @@ class dy_Gateways
 				{
 					$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
 					$sum_people = $pax_regular;	
-					$GLOBALS['dy_add_to_calendar'] = $this->add_to_calendar;
 
 					if(isset($_GET['pax_discount']))
 					{
@@ -253,6 +253,276 @@ class dy_Gateways
 
 		echo $output;
 		
+	}
+	
+	public function cc_form($output)
+	{
+		ob_start();
+		require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
+		$content = ob_get_contents();
+		ob_end_clean();
+		
+		echo $content;
+	}
+	
+	public function enqueue_scripts()
+	{
+		if(is_singular('packages'))
+		{
+			if(is_booking_page())
+			{
+				wp_enqueue_script('checkout_script', plugin_dir_url( __FILE__ ) . 'checkout_script.js', array( 'jquery', 'dynamicpackages'), time(), true);
+				wp_add_inline_script('checkout_script', $this->checkout_vars(), 'before');		
+			}
+		}
+	}
+
+
+	public function checkout_vars()
+	{
+		global $post;
+		
+		$tax = floatval(dy_utilities::tax());
+		$description = $this->get_description();
+		$coupon_code = null;
+		$coupon_discount = null;
+		
+		if(dy_Validators::valid_coupon())
+		{
+			$coupon_code = dy_utilities::get_coupon('code');
+			$coupon_discount = dy_utilities::get_coupon('discount');
+			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
+		}
+		
+		$checkout_vars = array(
+			'post_id' => intval($post->ID),
+			'description' => esc_html($description),
+			'coupon_code' => esc_html($coupon_code),
+			'coupon_discount' => esc_html($coupon_discount),
+			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())),
+			'departure_date' => sanitize_text_field($_GET['booking_date']),
+			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
+			'departure_address' => esc_html(package_field('package_departure_address')),
+			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
+			'booking_hour' => esc_html(dy_utilities::hour()),
+			'duration' => esc_html(dy_Public::show_duration()),
+			'pax_num' => intval(dy_utilities::pax_num()),
+			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
+			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
+			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
+			'package_code' => esc_html(package_field('package_trip_code')),
+			'title' => esc_html($post->post_title),
+			'package_type' => esc_html($this->get_type()),
+			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
+			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
+			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
+			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
+			'message' => esc_html($this->get_notes()),
+			'TRANSLATIONS' => array('i_accept' => __('I accept', 'dynamicpackages')),
+			'TERMS_CONDITIONS' => $this->accept(),
+			'package_url' => esc_url(get_permalink()),
+			'hash' => sanitize_text_field($_GET['hash']),
+			'currency_name' => dy_utilities::currency_name(),
+			'currency_symbol' => dy_utilities::currency_symbol(),
+			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),
+			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
+			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),
+			'payment_type' => esc_html($this->payment_type()),
+			'deposit' => floatval(dy_utilities::get_deposit())
+		);
+		
+		if($tax > 0)
+		{
+			$checkout_vars['tax'] = $tax;
+			$checkout_vars['tax_amount'] = $this->tax_amount();
+		}		
+		
+		$add_ons = dy_Tax_Mod::get_add_ons();
+		
+		if(is_array($add_ons))
+		{
+			if(count($add_ons) > 0)
+			{
+				$checkout_vars['add_ons'] = $add_ons;
+			}
+		}
+		
+		$checkout_vars = json_encode($checkout_vars);
+		$script = 'function checkout_vars(){return ';
+		$script .= $checkout_vars;
+		$script .= '}';
+		return $script;			
+	}
+	
+	public function get_description()
+	{
+		$output = dy_Public::description();
+		
+		if(dy_Validators::has_deposit())
+		{
+			$deposit = dy_sum_tax(dy_utilities::amount());
+			$total = dy_sum_tax(dy_utilities::total());
+			$outstanding = $total-$deposit;
+			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
+		}
+		return $output;
+	}
+	
+	
+	public function get_type()
+	{
+		$output = 'one day';
+		
+		if(package_field( 'package_package_type' ) == 1)
+		{
+			$output = 'multi-day';
+		}
+		else if(package_field( 'package_package_type' ) == 2)
+		{
+			$output = 'per day';
+		}
+		else if(package_field( 'package_package_type' ) == 3)
+		{
+			$output = 'per hour';
+		}
+		return $output;
+	}	
+	
+	public function get_notes()
+	{
+		global $polylang;
+		global $post;
+		
+		$the_id = $post->ID;
+		
+		if(property_exists($post, 'post_parent'))
+		{
+			$the_id = $post->post_parent;
+		}
+		
+		$language_list = array();
+		$output = '';
+		if(isset($polylang))
+		{
+			$languages = PLL()->model->get_languages_list();
+			
+			for($x = 0; $x < count($languages); $x++)
+			{
+				foreach($languages[$x] as $key => $value)
+				{
+					if($key == 'slug' && $value == substr(get_locale(), 0, -3))
+					{
+						$output = package_field( 'package_provider_message_'.$value, $the_id);
+					}
+				}	
+			}
+		}
+		else
+		{
+			$output = package_field( 'package_provider_message', $the_id);
+		}
+		return $output;
+	}
+	
+	public function accept()
+	{
+		$output = array();
+		$terms = dy_Public::get_terms_conditions();
+		
+		if(is_array($terms))
+		{
+			if(count($terms) > 0)
+			{
+				$terms_conditions = $terms;
+				$terms_conditions_clean = array();
+				for($x = 0; $x < count($terms_conditions); $x++ )
+				{
+					$terms_conditions_item = array();
+					$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
+					$terms_conditions_item['name'] = $terms_conditions[$x]->name;
+					$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
+					array_push($terms_conditions_clean, $terms_conditions_item);
+				}
+				$output = $terms_conditions_clean;
+			}			
+		}
+		return $output;
+	}
+	
+	public function outstanding()
+	{
+		global $dy_outstanding;
+		$output = 0;
+		
+		if(isset($dy_outstanding))
+		{
+			$output = $dy_outstanding;
+		}
+		else
+		{
+			//outstanding balance
+			$total = dy_utilities::total();
+			$amount = $total;
+			
+			
+			if(package_field('package_payment' ) == 1)
+			{
+				$deposit = floatval(dy_utilities::get_deposit());
+				
+				if($deposit > 0)
+				{
+					$amount = floatval(dy_utilities::total())*(floatval($deposit)*0.01);
+					$output = floatval($total)-$amount;					
+				}
+				if(isset($_GET['quote']))
+				{
+					$output = $total;
+				}					
+			}
+
+			$GLOBALS['dy_outstanding'] = $output;
+		}
+		return $output;
+	}
+	
+	public function payment_type()
+	{
+		global $dy_payment_type;
+		$output = 'full';
+		
+		if(isset($dy_payment_type))
+		{
+			$output = $dy_payment_type;
+		}
+		else
+		{
+			if(package_field('package_payment' ) == 1 && intval(package_field('package_auto_booking')) == 1)
+			{
+				$output = 'deposit';
+				
+				if(isset($_GET['quote']))
+				{
+					$output = 'full';
+				}
+			}
+			
+			$GLOBALS['dy_payment_type'] = $dy_payment_type;
+		}
+		return $output;
+	}
+	
+	public function tax_amount()
+	{
+		$output = 0;
+		$tax = floatval(dy_utilities::tax());
+		$total = floatval(dy_utilities::total());
+		
+		if($tax > 0 && $total > 0)
+		{
+			$output =dy_utilities::currency_format($total * ($tax / 100));
+		}
+		
+		return $output;
 	}
 	
 }

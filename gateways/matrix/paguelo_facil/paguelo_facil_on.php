@@ -100,7 +100,7 @@ class paguelo_facil_on{
 				
 				$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
 				
-				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['title']) . ' ✔️';
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['title']);
 			}
 			else if($dy_checkout_success === 1)
 			{
@@ -108,7 +108,7 @@ class paguelo_facil_on{
 			}
 			else
 			{
-				$output = '⚠️ ' . sprintf(__('%s Aero Albrook is having problems processing your payment', 'dynamicpackages'), get_bloginfo('name')) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('%s is having problems processing your payment', 'dynamicpackages'), get_bloginfo('name')) . ' ⚠️';
 			}
 		}
 		
@@ -123,9 +123,24 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{
-				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports of each participant. Remember it is not allowed to book for third parties.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' ⚠️</p>';
+				$terms_conditions = dy_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
 				
-				$output .= '<p>🗎 ' . sprintf(__('The invoice and the Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' 🗎</p>';
+				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
+								
+				$output .= ($_POST['message']) ? '<p><strong>' . sanitize_text_field($_POST['message']) . '</strong></p>' : null;
+				
+				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
+				
+				$output .= '<p>'. __('Take your time to review our invoice in detail.', 'dynamicpackages') . '</p>';
+				
+				if(is_array($terms_conditions))
+				{
+					if(count($terms_conditions) > 0)
+					{
+						$output .= '<p>🗎 ' . sprintf(__('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
+					}
+				}
+
 			}
 			else if($dy_checkout_success === 1)
 			{
@@ -214,7 +229,15 @@ class paguelo_facil_on{
 		{
 			if(isset($dy_valid_recaptcha))
 			{
-				$output = $this->message(null);
+				$output = '<p>' . $this->subject(null) . '</p>';
+				$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
+				
+				$add_to_calendar = apply_filters('dy_add_to_calendar', null);
+				
+				if($add_to_calendar)
+				{
+					$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
+				}
 			}
 			else
 			{
@@ -262,7 +285,7 @@ class paguelo_facil_on{
 				
 				$date = ($_POST['departure_format_date']) ? __('Date', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_format_date']) . '<br />' : null;
 
-				$check_in = ($_POST['check_in_hour']) ? __('Check In', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['check_in_hour']) . '<br />' : null;
+				$check_in = ($_POST['check_in_hour']) ? __('Check-in', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['check_in_hour']) . '<br />' : null;
 
 				$booking_hour = ($_POST['booking_hour']) ? __('Booking Hour', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['booking_hour']) : null;
 				
@@ -272,6 +295,7 @@ class paguelo_facil_on{
 		
 		return $output;
 	}
+
 
 	public function is_valid()
 	{
