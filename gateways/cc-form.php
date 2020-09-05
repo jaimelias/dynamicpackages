@@ -2,8 +2,8 @@
 
 <div>
 	<h3><?php echo esc_html(__('Before Booking', 'dynamicpackages')); ?></h3>
-	<p class="small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('It is not allowed to book for third parties.', 'dynamicpackages')); ?></p>
-	<p class="small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages')); ?></p>
+	<p class="minimal_alert small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('It is not allowed to book for third parties.', 'dynamicpackages')); ?></p>
+	<p class="minimal_alert small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages')); ?></p>
 </div>
 
 <hr/>

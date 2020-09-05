@@ -51,7 +51,7 @@ class paguelo_facil_on{
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$GLOBALS['dy_checkout_success'] = 2;
+					$GLOBALS['dy_checkout_success'] = 0;
 				}
 			}			
 		}		
@@ -152,11 +152,11 @@ class paguelo_facil_on{
 			}
 			else if($dy_checkout_success === 1)
 			{
-				$output = 'MESSAGE: PAYMENT DECLINED';
+				$output = '<p>☎️ ' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . ' ☎️</p>';
 			}
 			else
 			{
-				$output = 'MESSAGE: ERROR';
+				$output = '<p>' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
 			}
 		}
 		
@@ -241,7 +241,7 @@ class paguelo_facil_on{
 				{
 					$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
 					
-					$output = '<p>✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['description']) . '</p>';
+					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['description']) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
@@ -254,10 +254,18 @@ class paguelo_facil_on{
 						$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
 					}					
 				}
+				else if($dy_checkout_success === 1)
+				{
+					$output = '<p class="minimal_alert strong">' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . '</p>';
+				}
+				else
+				{
+					$output = '<p class="minimal_alert strong">' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
+				}				
 			}
 			else
 			{
-				$output = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+				$output = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
 			}	
 		}
 		return $output;

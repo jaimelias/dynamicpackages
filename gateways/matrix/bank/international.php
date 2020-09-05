@@ -148,7 +148,7 @@ class wire_transfer{
 			}
 			else
 			{
-				$content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
 			}	
 		}
 		return $content;

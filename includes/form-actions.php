@@ -55,16 +55,16 @@ class dy_Actions{
             {
                 if(isset($dy_valid_recaptcha))
                 {
-                    $content = '<p class="minimal_success"><strong>'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</strong></p>';
+                    $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
                 }
                 else
                 {
-                    $content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</strong></p>';
+                    $content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
                 }                  
             }
             else
             {
-                $content = '<p class="minimal_alert"><strong>'.esc_html( __('Invalid Request', 'dynamicpackages')).'</strong></p>';
+                $content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
             }
         }
 
@@ -114,7 +114,7 @@ class dy_Actions{
 			'attachments' => $attachments
 		);
 		
-		//die($email_template);
+		die($email_template);
 		
 		//sg_mail($args);
     }
