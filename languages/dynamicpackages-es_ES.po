@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-05 22:25+0000\n"
-"PO-Revision-Date: 2020-09-05 22:28+0000\n"
+"POT-Creation-Date: 2020-09-06 22:15+0000\n"
+"PO-Revision-Date: 2020-09-06 22:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -34,7 +34,7 @@ msgstr "Semanal"
 #: gateways/matrix/bank/international.php:343
 #: gateways/matrix/bank/local.php:264
 #: gateways/matrix/nequi/nequi_direct.php:240
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:393
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:397
 #: gateways/matrix/paypal/paypal_me.php:228
 #: gateways/matrix/yappy/yappy_direct.php:241
 msgid "General Settings"
@@ -152,7 +152,7 @@ msgstr "Ir a pagos"
 #: gateways/matrix/bank/international.php:151
 #: gateways/matrix/bank/local.php:138
 #: gateways/matrix/nequi/nequi_direct.php:136
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:268
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:273
 #: gateways/matrix/paypal/paypal_me.php:73
 #: gateways/matrix/yappy/yappy_direct.php:138
 msgid "Invalid Recaptcha"
@@ -188,7 +188,7 @@ msgstr ""
 "confirmación en su email"
 
 #: gateways/cc-gateways.php:383
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:286
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:291
 msgid "Payment Declined"
 msgstr "Pago declinado"
 
@@ -202,8 +202,8 @@ msgstr "Saldo"
 
 #: gateways/checkout-page.php:61
 #: includes/class-dynamicpackages-metaboxes.php:278
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:101
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:242
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:106
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:247
 msgid "Deposit"
 msgstr "Deposito"
 
@@ -524,8 +524,8 @@ msgid "get more leads even if the prices are not defined"
 msgstr "obtén más solicitudes aún si los precios no esta definidos"
 
 #: includes/class-dynamicpackages-metaboxes.php:275
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:101
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:242
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:106
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:247
 msgid "Payment"
 msgstr "Pago"
 
@@ -1158,7 +1158,7 @@ msgid "Schedule"
 msgstr "Horario"
 
 #: public/class-dynamicpackages-public.php:1720
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:312
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:316
 msgid "Check-in"
 msgstr "Check-in"
 
@@ -1260,7 +1260,7 @@ msgstr "caros a baratos"
 #: public/partials/forms.php:80 public/partials/forms.php:81
 #: public/partials/forms.php:82 public/partials/forms.php:83
 #: public/partials/forms.php:114
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:310
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:314
 msgid "Date"
 msgstr "Fecha"
 
@@ -1506,14 +1506,14 @@ msgstr "Configuración del banco del intermediario"
 
 #: gateways/matrix/bank/international.php:459
 #: gateways/matrix/bank/local.php:307
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:414
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:418
 msgid "Min. Amount"
 msgstr "Cantidad Min."
 
 #: gateways/matrix/bank/international.php:466
 #: gateways/matrix/bank/local.php:314
 #: gateways/matrix/nequi/nequi_direct.php:261
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:421
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:425
 #: gateways/matrix/paypal/paypal_me.php:249
 #: gateways/matrix/yappy/yappy_direct.php:262
 msgid "Show"
@@ -1612,36 +1612,36 @@ msgstr "Visa o Mastercard"
 msgid "Visa, Mastercard"
 msgstr "Visa, Mastercard"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:85
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:90
 msgid "Invoice"
 msgstr "Factura"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:102
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:244
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:107
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:249
 #, php-format
 msgid "Thank You for Your %s of %s%s: %s"
 msgstr "Gracias por tu %s de %s%s: %s"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:106
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:111
 #, php-format
 msgid "Your Payment to %s for %s%s was Declined"
 msgstr "Tu pago a %s por %s%s fue declinado"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:110
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:115
 #, php-format
 msgid "%s is having problems processing your payment"
 msgstr "%s está teniendo problemas procesando tu pago"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:130
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:135
 msgid "The Terms & Conditions you accepted are attached to this email."
 msgstr ""
 "Los Términos y condiciones que aceptó se adjuntan a este correo electrónico."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:134
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:139
 msgid "Take your time to review our invoice in detail."
 msgstr "Tómese su tiempo para revisar nuestra factura en detalle."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:149
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:154
 msgid ""
 "To complete this reservation we require images of the passports (foreigners) "
 "or valid Identity Documents (nationals) of each participant. The documents "
@@ -1652,17 +1652,17 @@ msgstr ""
 "Los documentos que envíe se compararán con los originales en el punto de "
 "encuentro."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:151
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:156
 msgid "It is not allowed to book for third parties."
 msgstr "No está permitido reservar para terceros."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:155
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:259
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:160
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:264
 msgid "Please contact your bank to authorize the transaction."
 msgstr "Por favor contacta a tu banco para autorizar la transferencia."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:159
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:263
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:164
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:268
 msgid ""
 "Please try again in a few minutes. Our staff will be in touch with you very "
 "soon."
@@ -1670,7 +1670,7 @@ msgstr ""
 "Por favor intenta de nuevo en unos minutos. Nuestro personal estará en "
 "contacto muy pronto."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:248
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:253
 #, php-format
 msgid ""
 "We have sent you an email to %s with more details and the confirmation of "
@@ -1679,32 +1679,40 @@ msgstr ""
 "Te hemos enviado un email a %s con más detalles y la confirmación de esta "
 "reserva."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:282
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:287
 msgid "Payment Approved"
 msgstr "Pago aprobado"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:290
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:295
 msgid "Checkout Error"
 msgstr "Error de pago"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:308
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:312
 msgid "Meeting Point"
 msgstr "Punto de encuentro"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:314
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:318
 msgid "Booking Hour"
 msgstr "Hora de reservación"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:400
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:404
 #, php-format
 msgid "%s Settings"
 msgstr "Configuración de %s"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:407
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:411
 msgid "CCLW"
 msgstr "CCLW"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:534
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:521
+msgid "Paid"
+msgstr "Pagado"
+
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:522
+msgid "Amount Due"
+msgstr "Saldo"
+
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:558
 #, php-format
 msgid "Pay with %s thanks to"
 msgstr "Paga con %s gracias a "

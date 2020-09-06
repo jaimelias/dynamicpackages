@@ -3,34 +3,36 @@ $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
-$currency_symbol = esc_html(dy_utilities::currency_symbol());
+$currency_symbol = dy_utilities::currency_symbol();
 $calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
 $total = apply_filters('dy_email_total', $calculate_total);
-$company_name = esc_html(get_bloginfo('name'));
-$company_phone = esc_html(get_option('dy_phone'));
+$company_name = get_bloginfo('name');
+$company_phone = get_option('dy_phone');
 $company_email = sanitize_email(get_option('dy_email'));
-$company_contact = ($company_phone) ?  esc_html($company_phone . ' / ' . $company_email) : esc_html($company_email);
-$company_address = esc_html(get_option('dy_address'));
-$company_tax_id = esc_html(get_option('dy_tax_id'));
-$label_client = esc_html(__('Client', 'dynamicpackages'));
-$client_name = esc_html(sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']));
+$company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email : $company_email;
+$company_address = get_option('dy_address');
+$company_tax_id = get_option('dy_tax_id');
+$label_client = __('Client', 'dynamicpackages');
+$client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
 $client_email = sanitize_email($_POST['email']);
 $client_phone = sanitize_text_field($_POST['phone']);
-$label_item = esc_html(__('Service', 'dynamicpackages'));
-$label_total = esc_html(__('Total', 'dynamicpackages'));
-$label_subtotal = esc_html(__('Subtotal', 'dynamicpackages'));
+$label_item = __('Service', 'dynamicpackages');
+$label_total = __('Total', 'dynamicpackages');
+$label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = sanitize_text_field($_POST['description']);
 $included = sanitize_text_field($_POST['package_included']);
-$label_included = esc_html(__('Included', 'dynamicpackages'));
-$not_included = esc_html(sanitize_text_field($_POST['package_not_included']));
-$label_not_included = esc_html(__('Not Included', 'dynamicpackages'));
+$label_included = __('Included', 'dynamicpackages');
+$not_included = sanitize_text_field($_POST['package_not_included']);
+$label_not_included = __('Not Included', 'dynamicpackages');
 $notes_content = (dy_Gateways::join_gateways()) ? __('We accept', 'dynamicpackages') .' '. dy_Gateways::join_gateways() : null;
 $notes = apply_filters('dy_email_notes', $notes_content);
-$label_notes = ($notes) ? apply_filters('dy_email_label_notes', esc_html(__('Notes', 'dynamicpackages'))) : null;
+$label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
-$whatsapp_url = 'https://wa.me/' . esc_html(get_option('dy_whatsapp')) . '?text=' . urlencode($description);
-$whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.esc_html(__('Whatsapp Advisory', 'dynamicpackages')).'</a>' : null;
+$whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
+$whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
+
+$totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -42,16 +44,20 @@ $email_template = <<<EOT
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<style type="text/css">
-			@media only screen and (max-width: 600px) {
-				.estimate-box {
+			@media (max-width: 600px) {
+				.sm-hide
+				{
+					display: none;
+				}
+				.doc_box {
 					font-size: 14px;
 				}
-				.estimate-box table tr.top table td {
+				.doc_box table tr.top table td {
 					width: 100%;
 					display: block;
 					text-align: center;
 				}
-				.estimate-box table tr.information table td {
+				.doc_box table tr.information table td {
 					width: 100%;
 					display: block;
 					text-align: center;
@@ -110,7 +116,7 @@ $email_template = <<<EOT
 				<div>${message}</div>
 			</div>
 		
-			<div class="estimate-box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
+			<div class="doc_box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
 				<table cellpadding="0" cellspacing="0" style="width: 100%">
 					<tr class="top">
 						<td colspan="2" style="padding: 5px;vertical-align: top">
@@ -141,7 +147,7 @@ $email_template = <<<EOT
 						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
 							<strong style="color:#666666;">${label_item}</strong>
 						</td>
-						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+						<td style="width: 150px;padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
 							<strong style="color:#666666;">${label_subtotal}</strong>
 						</td>
 					</tr>
@@ -150,7 +156,7 @@ $email_template = <<<EOT
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<span style="color:#666666;">${description}</span>
 						</td>
-						<td style="padding: 5px;vertical-align: top; text-align: right; ">
+						<td style="width: 150px;padding: 5px;vertical-align: top; text-align: right; ">
 							<span style="color:#666666;">${currency_symbol}${total}</span>
 						</td>
 					</tr>
@@ -159,27 +165,27 @@ $email_template = <<<EOT
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<span style="color:#666666;">${label_included}: ${included}</span>
 						</td>
-						<td></td>
+						<td style="width: 150px;"></td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; line-height: 2;">
 							<span style="color:#666666;">${label_not_included}: ${not_included}</span>
 						</td>
-						<td></td>
+						<td style="width: 150px;"></td>
 					</tr>				
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
-						<td style="padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
-							<span style="color: #666666"><strong>${label_total}</strong><br/>${currency_symbol}${total}</span>
+						<td style="width: 150px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+							${totals_area}
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<strong style="color: #666666;">${label_notes}</strong>
-							<br>
-							<div>${notes}</div>
+							<br/>
+							${notes}
 						</td>
 					</tr>
 					<tr>

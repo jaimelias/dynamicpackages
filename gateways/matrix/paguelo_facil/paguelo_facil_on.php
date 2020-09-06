@@ -51,7 +51,7 @@ class paguelo_facil_on{
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$GLOBALS['dy_checkout_success'] = 0;
+					$GLOBALS['dy_checkout_success'] = 2;
 				}
 			}			
 		}		
@@ -70,9 +70,14 @@ class paguelo_facil_on{
 			add_filter('dy_email_subject', array(&$this, 'subject'));
 			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
+			
+			if($dy_checkout_success == 2)
+			{
+				add_filter('dy_totals_area', array(&$this, 'totals_area'));
+			}
 		}
 	}
-	
+
 	public function label_doc($output)
 	{
 		
@@ -296,7 +301,6 @@ class paguelo_facil_on{
 	public function email_notes($output)
 	{
 		global $dy_checkout_success;
-		$output = null;
 		
 		if(isset($dy_checkout_success))
 		{
@@ -488,7 +492,7 @@ class paguelo_facil_on{
 		}
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
-		{
+		{			
 			if($_POST['dy_request'] == 'request')
 			{
 				$add = true;
@@ -502,6 +506,26 @@ class paguelo_facil_on{
 		
 		return $array;	
 	}
+	
+	public function totals_area($output)
+	{
+		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && isset($_POST['total']) && isset($_POST['departure_date']))
+		{
+			$deposit = sanitize_text_field($_POST['deposit']);
+			$outstanding = dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
+			$total =  dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
+			$date = sanitize_text_field($_POST['departure_date']);
+			
+			if($deposit > 0)
+			{
+				$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').' <span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
+				$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;
+			}
+		}
+		
+		return $output;
+	}
+	
 	public function scripts()
 	{
 		if($this->show())
