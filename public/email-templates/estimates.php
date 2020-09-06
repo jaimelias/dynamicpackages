@@ -106,7 +106,7 @@ $email_template = <<<EOT
 		</style>
 	</head>
 
-	<body style="font-family: Arial, sans-serif; color: #666666; line-height: 1.5; font-size: 16px;">
+	<body style="font-family: Arial, sans-serif; line-height: 1.5; font-size: 16px;">
 		<div style="max-width: 800px; width: 100%; margin: 0 auto 0 auto;">
 			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
 		
@@ -124,10 +124,10 @@ $email_template = <<<EOT
 								<tr>
 									<td class="title" style="padding: 0;vertical-align: top; padding: 5px 5px 20px 5px">
 										<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">${company_name}</h1>
-										<small style="color: #777777">${company_tax_id}</small>
+										<small style="color: #666666">${company_tax_id}</small>
 									</td>
 									<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
-										<small style="color: #777777">${label_doc}</small>
+										<strong style="color: #666666">${label_doc}</strong>
 									</td>
 								</tr>
 							</table>
@@ -135,7 +135,7 @@ $email_template = <<<EOT
 					</tr>
 					<tr class="information">
 						<td colspan="2" style="padding: 5px;vertical-align: top; text-align: right;">
-							<small style="color: #777777">${label_client}</small>
+							<strong style="color: #666666">${label_client}</strong>
 							<br/> ${client_name}
 							<br/>${client_phone}
 							<br />${client_email}
@@ -147,37 +147,37 @@ $email_template = <<<EOT
 						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
 							<strong style="color:#666666;">${label_item}</strong>
 						</td>
-						<td style="width: 150px;padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
 							<strong style="color:#666666;">${label_subtotal}</strong>
 						</td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
-							<span style="color:#666666;">${description}</span>
+							${description}
 						</td>
-						<td style="width: 150px;padding: 5px;vertical-align: top; text-align: right; ">
+						<td style="padding: 5px;vertical-align: top; text-align: right; ">
 							<span style="color:#666666;">${currency_symbol}${total}</span>
 						</td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
-							<span style="color:#666666;">${label_included}: ${included}</span>
+							<strong style="color:#666666;">${label_included}:</strong> ${included}
 						</td>
-						<td style="width: 150px;"></td>
+						<td style=""></td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; line-height: 2;">
-							<span style="color:#666666;">${label_not_included}: ${not_included}</span>
+							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
 						</td>
-						<td style="width: 150px;"></td>
+						<td style=""></td>
 					</tr>				
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
-						<td style="width: 150px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+						<td style=" padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
 							${totals_area}
 						</td>
 					</tr>
