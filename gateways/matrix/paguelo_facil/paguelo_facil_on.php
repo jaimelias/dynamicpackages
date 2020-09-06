@@ -51,7 +51,7 @@ class paguelo_facil_on{
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$GLOBALS['dy_checkout_success'] = 2;
+					$GLOBALS['dy_checkout_success'] = 1;
 				}
 			}			
 		}		
@@ -75,7 +75,16 @@ class paguelo_facil_on{
 			{
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
 			}
+			else
+			{
+				add_filter('dy_fail_checkout_gateway_name', array(&$this, 'gateway_name'));
+			}
 		}
+	}
+	
+	public function gateway_name($output)
+	{
+		return $this->gateway_name;
 	}
 
 	public function label_doc($output)
@@ -493,7 +502,7 @@ class paguelo_facil_on{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
 		{			
-			if($_POST['dy_request'] == 'request')
+			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	
@@ -501,6 +510,7 @@ class paguelo_facil_on{
 		
 		if($add)
 		{
+			write_log(apply_filters('dy_fail_checkout_gateway_name', null));
 			$array[] = $this->gateway_methods_c;
 		}
 		

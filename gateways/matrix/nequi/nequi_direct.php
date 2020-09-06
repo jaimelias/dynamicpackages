@@ -328,7 +328,7 @@ class nequi_direct{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
 		{
-			if($_POST['dy_request'] == 'request')
+			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	

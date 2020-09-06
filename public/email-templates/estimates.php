@@ -1,4 +1,5 @@
 <?php
+$date = sanitize_text_field($_POST['departure_format_date']);
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
@@ -106,7 +107,7 @@ $email_template = <<<EOT
 		</style>
 	</head>
 
-	<body style="font-family: Arial, sans-serif; line-height: 1.5; font-size: 16px;">
+	<body style="font-family: Arial, sans-serif; line-height: 1.5; font-size: 14px;">
 		<div style="max-width: 800px; width: 100%; margin: 0 auto 0 auto;">
 			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
 		
@@ -128,6 +129,7 @@ $email_template = <<<EOT
 									</td>
 									<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
 										<strong style="color: #666666">${label_doc}</strong>
+										<br/>${date}
 									</td>
 								</tr>
 							</table>
@@ -147,7 +149,7 @@ $email_template = <<<EOT
 						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
 							<strong style="color:#666666;">${label_item}</strong>
 						</td>
-						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+						<td style="width: 200px; padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
 							<strong style="color:#666666;">${label_subtotal}</strong>
 						</td>
 					</tr>
@@ -156,8 +158,8 @@ $email_template = <<<EOT
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							${description}
 						</td>
-						<td style="padding: 5px;vertical-align: top; text-align: right; ">
-							<span style="color:#666666;">${currency_symbol}${total}</span>
+						<td style="width: 200px; padding: 5px;vertical-align: top; text-align: right; ">
+							${currency_symbol}${total}
 						</td>
 					</tr>
 					
@@ -165,19 +167,19 @@ $email_template = <<<EOT
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<strong style="color:#666666;">${label_included}:</strong> ${included}
 						</td>
-						<td style=""></td>
+						<td style="width: 200px;"></td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; line-height: 2;">
 							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
 						</td>
-						<td style=""></td>
+						<td style="width: 200px;"></td>
 					</tr>				
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
-						<td style=" padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+						<td style="width: 200px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
 							${totals_area}
 						</td>
 					</tr>
