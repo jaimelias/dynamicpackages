@@ -512,7 +512,6 @@ class paguelo_facil_on{
 		
 		if($add)
 		{
-			write_log(apply_filters('dy_fail_checkout_gateway_name', null));
 			$array[] = $this->gateway_methods_c;
 		}
 		

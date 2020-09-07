@@ -273,9 +273,9 @@ class dy_Validators
 		{
 			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']))
 			{
-				if(empty($_POST['CCNum']))
+				if(!self::luhn_check($_POST['CCNum']))
 				{
-					$invalids[] = __('Invalid credit card length.', 'dynamicpackages');
+					$invalids[] = __('Invalid Credit Card.', 'dynamicpackages');
 				}
 				if(empty($_POST['ExpMonth']))
 				{
@@ -731,7 +731,36 @@ class dy_Validators
 			}			
 		}
 		return $output;
-	}	
+	}
+	public static function luhn_check($number) 
+	{
+	  $number = preg_replace('/\D/', '', $number);
+	  $number_length = strlen($number);
+	  $parity = $number_length % 2;
+	  $total = 0;
+	  
+	  for ($i=0; $i < $number_length; $i++)
+	  {
+		$digit = $number[$i];
+		
+		if ($i % 2 == $parity)
+		{
+		  $digit*=2;
+		  
+		  if ($digit > 9) 
+		  {
+			$digit-=9;
+		  }
+		}
+	 
+		$total+=$digit;
+	  }
+
+	  return ($total % 10 == 0) ? TRUE : FALSE;
+
+	}
+
+	
 }
 
 
