@@ -226,6 +226,7 @@ class paguelo_facil_on{
 		$output = false;
 		$which_var = $this->gateway_name . '_is_valid_request';
 		global $$which_var;
+		global $dy_request_invalids;
 		
 		if(isset($$which_var))
 		{
@@ -233,7 +234,7 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']))
+			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
 			{
 				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
