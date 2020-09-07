@@ -48,23 +48,19 @@ class dy_Actions{
     public function the_content($content)
     {
         global $dy_valid_recaptcha;
+		global $dy_request_invalids;
 
-        if(is_singular('packages') && $this->is_request_submitted())
+        if(is_singular('packages') && $this->is_request_submitted() && !isset($dy_request_invalids))
         {               
             if(dy_Validators::is_request_valid())
             {
                 if(isset($dy_valid_recaptcha))
                 {
-                    $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
-                }
-                else
-                {
-                    $content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
-                }                  
-            }
-            else
-            {
-                $content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
+					if($_POST['dy_request'] == 'request')
+					{
+						 $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
+					}  
+                }                 
             }
         }
 
@@ -114,7 +110,7 @@ class dy_Actions{
 			'attachments' => $attachments
 		);
 		
-		die($email_template);
+		//die($email_template);
 		
 		//sg_mail($args);
     }
@@ -130,8 +126,9 @@ class dy_Actions{
 
     public function wp_title($title)
     {
+		global $dy_request_invalids;
 
-        if(is_singular('packages') && $this->is_request_submitted())
+        if(is_singular('packages') && $this->is_request_submitted() && !isset($dy_request_invalids))
         {
             $title = esc_html(__('Thank You For Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
@@ -141,7 +138,9 @@ class dy_Actions{
 
     public function the_title($title)
     {
-		if(in_the_loop())
+		global $dy_request_invalids;
+		
+		if(in_the_loop() && !isset($dy_request_invalids))
 		{
 			if(is_singular('packages') && $this->is_request_submitted())
 			{

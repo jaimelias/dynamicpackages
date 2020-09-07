@@ -142,7 +142,6 @@ class dy_Admin {
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
-		register_setting( 'dy_settings', 'primary_gateway', 'esc_html');
 		register_setting( 'dy_settings', 'dy_tax', 'intval');
 		register_setting( 'dy_settings', 'dy_webhook', 'esc_url');
 		register_setting( 'dy_settings', 'dy_quote_webhook', 'esc_url');
@@ -168,14 +167,6 @@ class dy_Admin {
 			esc_html(__( 'Integrations Settings', 'dynamicpackages' )), 
 			'', 
 			'dy_settings'
-		);			
-		
-		add_settings_field( 
-			'primary_gateway', 
-			esc_html(__( 'Payment Gateway', 'dynamicpackages' )), 
-			array(&$this, 'text_field_dynamicpackages_0_render'), 
-			'dy_settings', 
-			'dy_gateways_section', array('primary_gateway', dy_utilities::get_gateways())
 		);
 
 		add_settings_field( 
@@ -296,28 +287,6 @@ class dy_Admin {
 
 	<?php }	
 	
-	public static function text_field_dynamicpackages_0_render($gateways) { 
-		$options = get_option($gateways[0]);
-		?>
-		
-		<select name="<?php echo esc_html($gateways[0]); ?>">
-			<option value="0" <?php echo ($options == '0' ) ? 'selected' : ''; ?> ><?php echo esc_html(__('None', 'dynamicpackages')); ?></option>		
-			<?php
-				for($x = 0; $x < count($gateways[1]); $x++)
-				{
-					$selected = '';
-					
-					if($options == $gateways[1][$x]['name'] )
-					{
-						$selected = 'selected';
-					}
-					
-					echo '<option '.esc_html($selected).' value="'.esc_html($gateways[1][$x]['name']).'">'.esc_html($gateways[1][$x]['name']).'</option>';
-				}
-			?>
-		</select>
-		<?php
-	}
 	
 	public static function dy_packages_breadcrump_render() { 
 		global $polylang;

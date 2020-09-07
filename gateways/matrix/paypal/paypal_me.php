@@ -67,10 +67,6 @@ class paypal_me{
 			if(isset($dy_valid_recaptcha))
 			{
 				$content = $this->message(null);
-			}
-			else
-			{
-				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
 			}			
 		}
 		return $content;
@@ -129,26 +125,29 @@ class paypal_me{
 	public function is_valid_request()
 	{
 		$output = false;
-		global $paypal_is_valid_request;
+		$which_var = $this->gateway_name . '_is_valid_request';
+		global $$which_var;
+		global $dy_request_invalids;
 		
-		if(isset($paypal_is_valid_request))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']))
+			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
 			{
 				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
-					$GLOBALS['paypal_is_valid_request'] = true;
 					$output = true;
+					$GLOBALS[$which_var] = true;	
 				}
 			}		
 		}
 		
 		return $output;
 	}
+	
 	public function redirect()
 	{
 		$paypal_url = 'https://paypal.me/'.$this->username.'/'.esc_html($_POST['total']);

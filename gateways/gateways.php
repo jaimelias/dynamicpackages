@@ -12,7 +12,6 @@ class dy_Gateways
 	public static function load_gateways()
 	{
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
-		require_once plugin_dir_path(__FILE__).'cc-gateways.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
 		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
@@ -200,26 +199,11 @@ class dy_Gateways
 	
 	public static function add_to_checkout_area()
 	{
-		$output = '';
+		$output = null;
+		
 		if(dy_Gateways::has_any_gateway())
 		{
 			$output .= '<p class="text-center bottom-20 large">'.self::choose_gateway().'.</p><div class="text-center bottom-20">'.self::gateway_buttons().'</div>';
-		}
-		
-		if(intval(package_field('package_auto_booking' )) == 1 && !isset($_GET['quote']))
-		{
-			$gateway = dy_utilities::get_this_gateway();
-			
-			if($gateway)
-			{
-				if(array_key_exists('form', $gateway))
-				{
-					ob_start();
-					require_once(plugin_dir_path(__FILE__).$gateway['form']);
-					$output .= ob_get_contents();
-					ob_end_clean();						
-				}
-			}
 		}
 		
 		$output .= dy_Public::booking_sidebar();	

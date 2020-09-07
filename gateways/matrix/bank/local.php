@@ -102,20 +102,22 @@ class bank_transfer{
 	public function is_valid_request()
 	{
 		$output = false;
-		global $bank_is_valid_request;
+		$which_var = $this->gateway_name . '_is_valid_request';
+		global $$which_var;
+		global $dy_request_invalids;
 		
-		if(isset($bank_is_valid_request))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']))
+			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
 			{
 				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
-					$GLOBALS['bank_is_valid_request'] = true;
 					$output = true;
+					$GLOBALS[$which_var] = true;	
 				}
 			}		
 		}

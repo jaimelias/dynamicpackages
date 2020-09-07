@@ -47,11 +47,11 @@ class paguelo_facil_on{
 		
 		if(!isset($dy_checkout_success))
 		{
-			if(dy_Validators::validate_checkout())
+			if(dy_Validators::validate_checkout($this->gateway_name))
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$GLOBALS['dy_checkout_success'] = 1;
+					$GLOBALS['dy_checkout_success'] = 2;
 				}
 			}			
 		}		
@@ -180,9 +180,11 @@ class paguelo_facil_on{
 	public function is_active()
 	{
 		$output = false;
-		global $paguelo_facil_on_is_active;
+		$which_var = $this->gateway_name . '_is_active';
 		
-		if(isset($paguelo_facil_on_is_active))
+		global $$which_var;
+		
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -190,7 +192,7 @@ class paguelo_facil_on{
 		{
 			if($this->cclw != '')
 			{
-				$GLOBALS[$this->gateway_name . '_is_active'] = true;
+				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
 		}
@@ -199,9 +201,10 @@ class paguelo_facil_on{
 	public function show()
 	{
 		$output = false;
-		global $paguelo_facil_on_show;
+		$which_var = $this->gateway_name . '_show';
+		global $$which_var;
 		
-		if(isset($paguelo_facil_on_show))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -211,7 +214,7 @@ class paguelo_facil_on{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->gateway_name . '_show'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}			
@@ -221,9 +224,10 @@ class paguelo_facil_on{
 	public function is_valid_request()
 	{
 		$output = false;
-		global $paguelo_facil_on_is_valid_request;
+		$which_var = $this->gateway_name . '_is_valid_request';
+		global $$which_var;
 		
-		if(isset($paguelo_facil_on_is_valid_request))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -233,7 +237,7 @@ class paguelo_facil_on{
 			{
 				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
 				{
-					$GLOBALS['paguelo_facil_on_is_valid_request'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}		
@@ -337,9 +341,10 @@ class paguelo_facil_on{
 	public function is_valid()
 	{
 		$output = false;
-		global $paguelo_facil_on_is_valid;
+		$which_var = $this->gateway_name . '_is_valid';
+		global $$which_var;
 		
-		if(isset($paguelo_facil_on_is_valid))
+		if(isset($$which_var))
 		{
 			return true;
 		}
@@ -389,7 +394,7 @@ class paguelo_facil_on{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->gateway_name . '_is_valid'] = true;
+				$GLOBALS[$which_var] = true;
 			}
 		}
 		return $output;
@@ -432,7 +437,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->gateway_name . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_paguelo_facil_on_show'), 
+			array(&$this, 'input_select_on_show'), 
 			$this->gateway_name . '_settings', 
 			$this->gateway_name . '_control_section'
 		);
@@ -452,7 +457,7 @@ class paguelo_facil_on{
 		<?php
 	}	
 		
-	public function display_paguelo_facil_on_show() { ?>
+	public function input_select_on_show() { ?>
 		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
 			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
@@ -565,10 +570,10 @@ class paguelo_facil_on{
 		$(function(){
 			$('.withcc').click(function()
 			{
-				var paguelo_facil_on_logo = $('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
+				var <?php echo esc_html($this->gateway_name); ?>_logo = $('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
 				$('#dy_checkout_form').addClass('hidden');
 				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(paguelo_facil_on_logo);
+				$('#dy_form_icon').html(<?php echo esc_html($this->gateway_name); ?>_logo);
 				$('#dynamic_form').find('input[name="name"]').focus();
 				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				

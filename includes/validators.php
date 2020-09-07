@@ -130,6 +130,7 @@ class dy_Validators
 	public static function contact_details()
 	{
 		$output = false;
+		$invalids = array();
 		global $dy_contact_details;
 		
 		if(isset($dy_contact_details))
@@ -138,21 +139,62 @@ class dy_Validators
 		}
 		else
 		{
-			if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']))
+			if(isset($_POST['dy_request']))
 			{
-				if(is_email($_POST['email']) && !empty($_POST['first_name']) && !empty($_POST['lastname']) && !empty($_POST['phone']))
+				if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']) && isset($_POST['repeat_email']))
 				{
-					$output = true;
-					$GLOBALS['dy_contact_details'] = $output;
+					if(!is_email($_POST['email']))
+					{
+						$invalids[] = __('Invalid email.', 'dynamicpackages');
+					}
+					if(!is_email($_POST['repeat_email']))
+					{
+						$invalids[] = __('Invalid repeated email.', 'dynamicpackages');
+					}
+					if($_POST['email'] != $_POST['repeat_email'])
+					{
+						$invalids[] = __('Email and repeated email are not equal.', 'dynamicpackages');
+					}
+					if(empty($_POST['first_name']))
+					{
+						$invalids[] = __('First name is empty.', 'dynamicpackages');
+					}
+					if(empty($_POST['lastname']))
+					{
+						$invalids[] = __('Lastname is empty.', 'dynamicpackages');
+					}
+					if(empty($_POST['phone']))
+					{
+						$invalids[] = __('Phone is empty.', 'dynamicpackages');
+					}
 				}
-			}		
+				else
+				{
+					$invalids[] = __('Invalid Request.', 'dynamicpackages');
+				}				
+			}
 		}
+		
+		if(is_array($invalids))
+		{
+			if(count($invalids) === 0)
+			{
+				$output = true;
+				$GLOBALS['dy_contact_details'] = $output;						
+			}
+			else
+			{
+				$GLOBALS['dy_request_invalids'] = $invalids;
+			}
+		}
+		
 		return $output;
 	}
 	
 	public static function validate_recaptcha()
 	{
 		global $dy_valid_recaptcha;
+		$invalids = array();
 		
 		if(!isset($dy_valid_recaptcha))
 		{
@@ -177,19 +219,23 @@ class dy_Validators
 				}
 				if(array_key_exists('error-codes', $verify_response))
 				{
+					$GLOBALS['dy_request_invalids'] = array(__('Invalid Recaptcha', 'dynamicpackages'));
 					write_log(json_encode($verify_response['error-codes']));
 				}
 			}
 		}
 	}
 	
-	public static function validate_checkout()
+	public static function validate_checkout($gateway_name)
 	{
 		$output = false;
 
-		if(self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details() && self::credit_card())
+		if(isset($_POST['dy_request']) && self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details() && self::credit_card())
 		{
-			$output = true;
+			if($gateway_name == $_POST['dy_request'])
+			{
+				$output = true;
+			}
 		}	
 		
 		return $output;
@@ -215,6 +261,7 @@ class dy_Validators
 	}
 	public static function credit_card()
 	{
+		$invalids = array();
 		$output = false;
 		global $credit_card;
 		
@@ -226,10 +273,38 @@ class dy_Validators
 		{
 			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']))
 			{
-				$output = true;
-				$GLOBALS['credit_card'] = $output;
+				if(empty($_POST['CCNum']))
+				{
+					$invalids[] = __('Invalid credit card length.', 'dynamicpackages');
+				}
+				if(empty($_POST['ExpMonth']))
+				{
+					$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
+				}
+				if(empty($_POST['ExpYear']))
+				{
+					$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
+				}
+				if(empty($_POST['CVV2']))
+				{
+					$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
+				}
 			}		
 		}
+		
+		if(is_array($invalids))
+		{
+			if(count($invalids) === 0)
+			{
+				$output = true;
+				$GLOBALS['credit_card'] = $output;				
+			}
+			else
+			{
+				$GLOBALS['dy_request_invalids'] = $invalids;
+			}
+		}
+		
 		return $output;
 	}
 

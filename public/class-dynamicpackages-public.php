@@ -47,25 +47,63 @@ class dy_Public {
 	
 	public function init()
 	{
+		add_action('wp_headers', array(&$this, 'request_invalids'));
 		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_scripts'), 11);
 		add_action('pre_get_posts', array('dy_Public', 'global_vars'));
-		add_filter( 'template_include', array('dy_Public', 'package_template'), 99);
-		add_filter( 'the_content', array('dy_Public', 'filter_content'), 100);
-		add_filter( 'pre_get_document_title', array('dy_Public', 'modify_wp_title'), 100);
-		add_filter( 'wp_title', array('dy_Public', 'modify_wp_title'), 100);
-		add_filter("the_title", array('dy_Public', 'modify_title'), 100);
-		add_filter("single_term_title", array('dy_Public', 'modify_tax_title'));
+		add_filter('template_include', array('dy_Public', 'package_template'), 99);
+		add_filter('the_content', array('dy_Public', 'the_content'), 100);
+		add_filter('pre_get_document_title', array('dy_Public', 'wp_title'), 100);
+		add_filter('wp_title', array('dy_Public', 'wp_title'), 100);
+		add_filter('the_title', array('dy_Public', 'modify_title'), 100);
+		add_filter('single_term_title', array('dy_Public', 'modify_tax_title'));
 		add_action('pre_get_posts', array('dy_Public', 'fix_multiple_tax'));
 		add_action('wp_head', array('dy_Public', 'booking_head'));
 		add_action('wp_head', array('dy_Public', 'meta_tags'));
-		add_filter("get_the_excerpt", array('dy_Public', 'modify_excerpt'));
-		add_filter("term_description", array('dy_Public', 'modify_term_description'));
+		add_filter('get_the_excerpt', array('dy_Public', 'modify_excerpt'));
+		add_filter('term_description', array('dy_Public', 'modify_term_description'));
 		add_action('wp_head', array('dy_Public', 'location_category_canonical'));
 		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
 		add_filter('package_details', array('dy_Public', 'details_add'));		
 	}
-	 
+
+	public function create_alert($row) {
+		return '<p class="strong minimal_alert">'.esc_html($row).'</p>';
+	}	
+	public function create_alert_cb($output)
+	{
+		global $dy_request_invalids;
+		
+		if(isset($dy_request_invalids))
+		{
+			if(is_array($dy_request_invalids))
+			{
+				if(count($dy_request_invalids) > 0)
+				{
+					$output = implode('', array_map(array(&$this, 'create_alert'), $dy_request_invalids));
+				}
+			}
+		}		
+		
+		return $output;
+	}
+	
+	public function request_invalids()
+	{
+		global $dy_request_invalids;
+		
+		if(isset($dy_request_invalids))
+		{
+			if(is_array($dy_request_invalids))
+			{
+				if(count($dy_request_invalids) > 0)
+				{
+					add_filter('dy_request_invalids', array(&$this, 'create_alert_cb'));					
+				}
+			}
+		}
+	}
+	
 	public static function enqueue_styles() {
 		
 		if(!is_404())
@@ -275,54 +313,63 @@ class dy_Public {
 		return $output;
 	}
 
-	public static function filter_content($content)
+	public static function the_content($content)
 	{
 		global $post;
 		global $polylang;
+		$dy_request_invalids = apply_filters('dy_request_invalids', null);
 		
-		if(is_tax('package_location') || is_tax('package_category'))
+		if($dy_request_invalids)
 		{
-			ob_start();
-			require_once(dirname( __FILE__ ) . '/partials/archive.php');
-			$content = ob_get_contents();
-			ob_end_clean();
+			$content = $dy_request_invalids;
 		}
-		if(is_tax('package_terms_conditions'))
+		else
 		{
-			$content = wpautop(get_term(get_queried_object()->term_id)->description);
-		}
-		if(is_singular('packages'))
-		{
-			if(!is_booking_page())
+			if(is_tax('package_location') || is_tax('package_category'))
 			{
-				if(dy_Validators::is_child())
-				{
-					
-					$subpackage_name = 'package_child_title';
-					
-					if(isset($polylang))
-					{
-						$subpackage_name .= '_'.pll_get_post_language($post->ID);
-					}
-					
-					if(package_field($subpackage_name) != '')
-					{
-						$content = '<h2>'.esc_html(package_field($subpackage_name)).'</h2>' . $content;
-					}
-					
-					$parent_content = get_post($post->post_parent)->post_content;
-					$content .= $parent_content;
-				}
-				
-				$GLOBALS['new_content'] = $content;
-				
 				ob_start();
-				require_once(dirname( __FILE__ ) . '/partials/single.php');
+				require_once(dirname( __FILE__ ) . '/partials/archive.php');
 				$content = ob_get_contents();
-				ob_end_clean();	
-
+				ob_end_clean();
 			}
+			if(is_tax('package_terms_conditions'))
+			{
+				$content = wpautop(get_term(get_queried_object()->term_id)->description);
+			}
+			if(is_singular('packages'))
+			{
+				if(!is_booking_page())
+				{
+					if(dy_Validators::is_child())
+					{
+						
+						$subpackage_name = 'package_child_title';
+						
+						if(isset($polylang))
+						{
+							$subpackage_name .= '_'.pll_get_post_language($post->ID);
+						}
+						
+						if(package_field($subpackage_name) != '')
+						{
+							$content = '<h2>'.esc_html(package_field($subpackage_name)).'</h2>' . $content;
+						}
+						
+						$parent_content = get_post($post->post_parent)->post_content;
+						$content .= $parent_content;
+					}
+					
+					$GLOBALS['new_content'] = $content;
+					
+					ob_start();
+					require_once(dirname( __FILE__ ) . '/partials/single.php');
+					$content = ob_get_contents();
+					ob_end_clean();	
+
+				}
+			}			
 		}
+		
 		return $content;
 	}
 
@@ -438,245 +485,82 @@ class dy_Public {
 		}
 	}
 	
-	public static function modify_wp_title($title)
+	public static function wp_title($title)
 	{
 		global $polylang;
+		global $dy_request_invalids;
 		
-		if(is_tax())
+		if(isset($dy_request_invalids))
 		{
-			$title = single_term_title( '', false );
-						
-			if(is_tax('package_location') || is_tax('package_category'))
-			{
-				$tax = get_taxonomy( get_queried_object()->taxonomy );	
-				
-				$tax_title_modifier = null;
-				$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
-				
-				if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
-				{
-					$title = $tax_title_modifier;
-				}				
-				
-				if(is_tax('package_location'))
-				{
-					if($tax_title_modifier == null)
-					{
-						$packages_in = __('Packages in', 'dynamicpackages');
-						
-						if($polylang)
-						{
-							$packages_in = pll__('Packages in');
-						}
-						
-						$title = $packages_in.' '.$title;
-						
-						if(get_queried_object()->parent > 0)
-						{
-							$title .= ', '.get_term(get_queried_object()->parent)->name;
-						}						
-					}
-				}
-			}
-			$title .= ' | '.esc_html(get_bloginfo( 'name' ));
+			$title = __('Error', 'dynamicpackages');
 		}
-		if(is_singular('packages'))
+		else
 		{
-			if(is_booking_page())
+			if(is_tax())
 			{
-				$title = esc_html(__('Online Booking', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-			}	
-			
-			global $post;
-			if($post->post_parent > 0)
-			{
-				remove_action('wp_head', 'rel_canonical');
-				$args = array('p' => $post->post_parent, 'posts_per_page' => 1, 'post_type' => 'packages');
-				$parent_query = new WP_Query($args);
-				
-				$title = get_the_title();
-				
-				if ( $parent_query->have_posts() )
-				{
-					while ( $parent_query->have_posts() )
-					{
-						$parent_query->the_post();
-						$title .= ' | '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
-					}
-					
-					wp_reset_postdata();
-				}
-			}				
-		}
-		elseif(is_page())
-		{
-			if(dy_Validators::validate_category_location())
-			{
-				$location = '';
-				$category = '';
-				$title = __('Find Packages', 'dynamicpackages').': ';
-				
-				if(isset($polylang))
-				{
-					$title = pll__('Find Packages').': ';
-				}
-				
-				if(isset($_GET['package_search']))
-				{
-					if($_GET['package_search'] != '')
-					{
-						$search = strtolower(sanitize_text_field($_GET['package_search']));
-						$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
-						$search =  preg_replace('/\s+/', ' ', $search);
-						$search =  substr($search, 0, 25);
-						$title .= '"'.$search.'" ';						
-					}
-				}					
-				
-				if(isset($_GET['package_category']))
-				{
-					if($_GET['package_category'] != 'any' && $_GET['package_category'] != '')
-					{
-						$category = get_term_by('slug', sanitize_text_field($_GET['package_category']), 'package_category');
-						
-						if(is_object($category))
-						{
-							$title .= $category->name;							
-						}
-					}
-				}				
-				
-				if(isset($_GET['package_location']))
-				{
-					if($_GET['package_location'] != 'any' && $_GET['package_location'] != '')
-					{
-						$location = get_term_by('slug', sanitize_text_field($_GET['package_location']), 'package_location');
-						
-						if(is_object($location))
-						{
-							$location_name = $location->name;
-							
-							if(intval($location->parent) > 0)
-							{
-								$location_parent = get_term_by('id', $location->parent, 'package_location');
-								$location_name .= ', '.$location_parent->name;
-							}
-							
-							if(is_object($category))
-							{
-								$title .= ' ';
-							}
-							$title .= $location_name;							
-						}
-					}
-				}
-
-				if(isset($_GET['package_sort']))
-				{
-					if($_GET['package_sort'] == 'new')
-					{
-						$title .= esc_html(' ('.__('Newest', 'dynamicpackages').')');
-					}
-					else if($_GET['package_sort'] == 'low')
-					{
-						$title .= esc_html(' ('.__('low to high', 'dynamicpackages').')');
-					}
-					else if($_GET['package_sort'] == 'high')
-					{
-						$title .= esc_html(' ('.__('high to low', 'dynamicpackages').')');
-					}	
-					else if($_GET['package_sort'] == 'today')
-					{
-						$title .= esc_html(' ('.__('today', 'dynamicpackages').')');
-					}
-					else if($_GET['package_sort'] == 'tomorrow')
-					{
-						$title .= esc_html(' ('.__('tomorrow', 'dynamicpackages').')');
-					}					
-					else if($_GET['package_sort'] == 'week')
-					{
-						$title .= esc_html(' ('.__('next 7 days', 'dynamicpackages').')');
-					}	
-					else if($_GET['package_sort'] == 'month')
-					{
-						$title .= esc_html(' ('.__('next 30 days', 'dynamicpackages').')');
-					}						
-				}
-				
-				$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-				
-				if($paged > 1)
-				{
-					$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
-				}
-				
-				
-				$title .= ' | '.get_bloginfo( 'name');
-			}
-		}		
-
-		return esc_html($title);
-	}
-	
-	public static function modify_title($title)
-	{
-		global $post;
-		global $polylang;
-		
-		if(in_the_loop())
-		{
-			
-			if(is_tax('package_location') || is_tax('package_category'))
-			{
-				$tax = get_taxonomy( get_queried_object()->taxonomy );
-				$tax_title_modifier = null;
-				$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
 				$title = single_term_title( '', false );
-				
-				if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
+							
+				if(is_tax('package_location') || is_tax('package_category'))
 				{
-					$title = $tax_title_modifier;
-				}				
-				
-				if(is_tax('package_location'))
-				{
-					if($tax_title_modifier == null)
+					$tax = get_taxonomy( get_queried_object()->taxonomy );	
+					
+					$tax_title_modifier = null;
+					$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
+					
+					if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
 					{
-						$packages_in = __('Packages in', 'dynamicpackages');
-						
-						if($polylang)
+						$title = $tax_title_modifier;
+					}				
+					
+					if(is_tax('package_location'))
+					{
+						if($tax_title_modifier == null)
 						{
-							$packages_in = pll__('Packages in');
+							$packages_in = __('Packages in', 'dynamicpackages');
+							
+							if($polylang)
+							{
+								$packages_in = pll__('Packages in');
+							}
+							
+							$title = $packages_in.' '.$title;
+							
+							if(get_queried_object()->parent > 0)
+							{
+								$title .= ', '.get_term(get_queried_object()->parent)->name;
+							}						
 						}
-						
-						$title = esc_html($packages_in).' <span class="linkcolor">'.esc_html($title).'</span>';
-						
-						if(get_queried_object()->parent > 0)
-						{
-							$title .= ', '.esc_html(get_term(get_queried_object()->parent)->name);
-						}						
 					}
 				}
+				$title .= ' | '.esc_html(get_bloginfo( 'name' ));
 			}
-			
 			if(is_singular('packages'))
-			{				
+			{
 				if(is_booking_page())
 				{
-					$our_awesome = __('Booking Page', 'dynamicpackages');
-					
-					if($polylang)
-					{
-						$our_awesome = pll__('Booking Page');
-					}
-					
-					$title = '<span class="linkcolor">'.esc_html($our_awesome).'</span>: <span data-id="package-title">'.esc_html($title).'</span> <span class="large linkcolor"></span>';
-				}			
-				else
-				{
-					$title = '<span itemprop="name">'.esc_html($title).'</span>';
-				}
+					$title = esc_html(__('Online Booking', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
+				}	
 				
+				global $post;
+				if($post->post_parent > 0)
+				{
+					remove_action('wp_head', 'rel_canonical');
+					$args = array('p' => $post->post_parent, 'posts_per_page' => 1, 'post_type' => 'packages');
+					$parent_query = new WP_Query($args);
+					
+					$title = get_the_title();
+					
+					if ( $parent_query->have_posts() )
+					{
+						while ( $parent_query->have_posts() )
+						{
+							$parent_query->the_post();
+							$title .= ' | '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
+						}
+						
+						wp_reset_postdata();
+					}
+				}				
 			}
 			elseif(is_page())
 			{
@@ -684,13 +568,13 @@ class dy_Public {
 				{
 					$location = '';
 					$category = '';
-					$title = __('Find Packages').': ';
+					$title = __('Find Packages', 'dynamicpackages').': ';
 					
 					if(isset($polylang))
 					{
 						$title = pll__('Find Packages').': ';
 					}
-
+					
 					if(isset($_GET['package_search']))
 					{
 						if($_GET['package_search'] != '')
@@ -699,10 +583,10 @@ class dy_Public {
 							$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
 							$search =  preg_replace('/\s+/', ' ', $search);
 							$search =  substr($search, 0, 25);
-							$title .= '"'.$search.'" ';							
+							$title .= '"'.$search.'" ';						
 						}
-					}						
-							
+					}					
+					
 					if(isset($_GET['package_category']))
 					{
 						if($_GET['package_category'] != 'any' && $_GET['package_category'] != '')
@@ -711,34 +595,36 @@ class dy_Public {
 							
 							if(is_object($category))
 							{
-								$title .= $category->name;
+								$title .= $category->name;							
 							}
 						}
-					}					
+					}				
 					
 					if(isset($_GET['package_location']))
 					{
-						if($_GET['package_location'] != 'any' && ($_GET['package_location'] != ''))
+						if($_GET['package_location'] != 'any' && $_GET['package_location'] != '')
 						{
 							$location = get_term_by('slug', sanitize_text_field($_GET['package_location']), 'package_location');
 							
 							if(is_object($location))
 							{
+								$location_name = $location->name;
+								
+								if(intval($location->parent) > 0)
+								{
+									$location_parent = get_term_by('id', $location->parent, 'package_location');
+									$location_name .= ', '.$location_parent->name;
+								}
+								
 								if(is_object($category))
 								{
 									$title .= ' ';
 								}
-								
-								$title .= $location->name;
-
-								if(intval($location->parent) > 0)
-								{
-									$location_parent = get_term_by('id', $location->parent, 'package_location');
-									$title .= ', '.$location_parent->name;
-								}								
+								$title .= $location_name;							
 							}
-						}	
+						}
 					}
+
 					if(isset($_GET['package_sort']))
 					{
 						if($_GET['package_sort'] == 'new')
@@ -752,7 +638,7 @@ class dy_Public {
 						else if($_GET['package_sort'] == 'high')
 						{
 							$title .= esc_html(' ('.__('high to low', 'dynamicpackages').')');
-						}		
+						}	
 						else if($_GET['package_sort'] == 'today')
 						{
 							$title .= esc_html(' ('.__('today', 'dynamicpackages').')');
@@ -760,7 +646,7 @@ class dy_Public {
 						else if($_GET['package_sort'] == 'tomorrow')
 						{
 							$title .= esc_html(' ('.__('tomorrow', 'dynamicpackages').')');
-						}						
+						}					
 						else if($_GET['package_sort'] == 'week')
 						{
 							$title .= esc_html(' ('.__('next 7 days', 'dynamicpackages').')');
@@ -769,17 +655,195 @@ class dy_Public {
 						{
 							$title .= esc_html(' ('.__('next 30 days', 'dynamicpackages').')');
 						}						
+					}
+					
+					$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+					
+					if($paged > 1)
+					{
+						$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
+					}
+					
+					
+					$title .= ' | '.get_bloginfo( 'name');
+				}
+			}			
+		}
+
+		return esc_html($title);
+	}
+	
+	public static function modify_title($title)
+	{
+		global $post;
+		global $polylang;
+		global $dy_request_invalids;
+		
+		if(isset($dy_request_invalids))
+		{
+			$title = __('Error', 'dynamicpackages');
+		}
+		else
+		{
+			if(in_the_loop())
+			{
+				
+				if(is_tax('package_location') || is_tax('package_category'))
+				{
+					$tax = get_taxonomy( get_queried_object()->taxonomy );
+					$tax_title_modifier = null;
+					$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
+					$title = single_term_title( '', false );
+					
+					if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
+					{
+						$title = $tax_title_modifier;
 					}				
+					
+					if(is_tax('package_location'))
+					{
+						if($tax_title_modifier == null)
+						{
+							$packages_in = __('Packages in', 'dynamicpackages');
+							
+							if($polylang)
+							{
+								$packages_in = pll__('Packages in');
+							}
+							
+							$title = esc_html($packages_in).' <span class="linkcolor">'.esc_html($title).'</span>';
+							
+							if(get_queried_object()->parent > 0)
+							{
+								$title .= ', '.esc_html(get_term(get_queried_object()->parent)->name);
+							}						
+						}
+					}
 				}
 				
-				$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-				
-				if($paged > 1)
+				if(is_singular('packages'))
+				{				
+					if(is_booking_page())
+					{
+						$our_awesome = __('Booking Page', 'dynamicpackages');
+						
+						if($polylang)
+						{
+							$our_awesome = pll__('Booking Page');
+						}
+						
+						$title = '<span class="linkcolor">'.esc_html($our_awesome).'</span>: <span data-id="package-title">'.esc_html($title).'</span> <span class="large linkcolor"></span>';
+					}			
+					else
+					{
+						$title = '<span itemprop="name">'.esc_html($title).'</span>';
+					}
+					
+				}
+				elseif(is_page())
 				{
-					$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
+					if(dy_Validators::validate_category_location())
+					{
+						$location = '';
+						$category = '';
+						$title = __('Find Packages').': ';
+						
+						if(isset($polylang))
+						{
+							$title = pll__('Find Packages').': ';
+						}
+
+						if(isset($_GET['package_search']))
+						{
+							if($_GET['package_search'] != '')
+							{
+								$search = strtolower(sanitize_text_field($_GET['package_search']));
+								$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
+								$search =  preg_replace('/\s+/', ' ', $search);
+								$search =  substr($search, 0, 25);
+								$title .= '"'.$search.'" ';							
+							}
+						}						
+								
+						if(isset($_GET['package_category']))
+						{
+							if($_GET['package_category'] != 'any' && $_GET['package_category'] != '')
+							{
+								$category = get_term_by('slug', sanitize_text_field($_GET['package_category']), 'package_category');
+								
+								if(is_object($category))
+								{
+									$title .= $category->name;
+								}
+							}
+						}					
+						
+						if(isset($_GET['package_location']))
+						{
+							if($_GET['package_location'] != 'any' && ($_GET['package_location'] != ''))
+							{
+								$location = get_term_by('slug', sanitize_text_field($_GET['package_location']), 'package_location');
+								
+								if(is_object($location))
+								{
+									if(is_object($category))
+									{
+										$title .= ' ';
+									}
+									
+									$title .= $location->name;
+
+									if(intval($location->parent) > 0)
+									{
+										$location_parent = get_term_by('id', $location->parent, 'package_location');
+										$title .= ', '.$location_parent->name;
+									}								
+								}
+							}	
+						}
+						if(isset($_GET['package_sort']))
+						{
+							if($_GET['package_sort'] == 'new')
+							{
+								$title .= esc_html(' ('.__('Newest', 'dynamicpackages').')');
+							}
+							else if($_GET['package_sort'] == 'low')
+							{
+								$title .= esc_html(' ('.__('low to high', 'dynamicpackages').')');
+							}
+							else if($_GET['package_sort'] == 'high')
+							{
+								$title .= esc_html(' ('.__('high to low', 'dynamicpackages').')');
+							}		
+							else if($_GET['package_sort'] == 'today')
+							{
+								$title .= esc_html(' ('.__('today', 'dynamicpackages').')');
+							}
+							else if($_GET['package_sort'] == 'tomorrow')
+							{
+								$title .= esc_html(' ('.__('tomorrow', 'dynamicpackages').')');
+							}						
+							else if($_GET['package_sort'] == 'week')
+							{
+								$title .= esc_html(' ('.__('next 7 days', 'dynamicpackages').')');
+							}	
+							else if($_GET['package_sort'] == 'month')
+							{
+								$title .= esc_html(' ('.__('next 30 days', 'dynamicpackages').')');
+							}						
+						}				
+					}
+					
+					$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+					
+					if($paged > 1)
+					{
+						$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
+					}			
 				}			
 			}			
-		}		
+		}
+		
 		return $title;
 	}
 	
