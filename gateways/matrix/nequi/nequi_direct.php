@@ -132,10 +132,6 @@ class nequi_direct{
 			if(isset($dy_valid_recaptcha))
 			{
 				$content = $this->message(null);
-			}
-			else
-			{
-				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
 			}				
 		}
 		return $content;

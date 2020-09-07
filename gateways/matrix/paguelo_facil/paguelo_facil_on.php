@@ -281,10 +281,6 @@ class paguelo_facil_on{
 					$output = '<p class="minimal_alert strong">' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
 				}				
 			}
-			else
-			{
-				$output = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
-			}	
 		}
 		return $output;
 	}

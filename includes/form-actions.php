@@ -25,9 +25,10 @@ class dy_Actions{
 
 	public function is_request_submitted()
 	{
+		global $dy_request_invalids;
 		$output = false;
 		
-        if(isset($_POST['dy_request']))
+        if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
         {
 			$output = true;
         }
@@ -48,9 +49,9 @@ class dy_Actions{
     public function the_content($content)
     {
         global $dy_valid_recaptcha;
-		global $dy_request_invalids;
+		
 
-        if(is_singular('packages') && $this->is_request_submitted() && !isset($dy_request_invalids))
+        if(is_singular('packages') && $this->is_request_submitted())
         {               
             if(dy_Validators::is_request_valid())
             {
@@ -126,9 +127,7 @@ class dy_Actions{
 
     public function wp_title($title)
     {
-		global $dy_request_invalids;
-
-        if(is_singular('packages') && $this->is_request_submitted() && !isset($dy_request_invalids))
+        if(is_singular('packages') && $this->is_request_submitted())
         {
             $title = esc_html(__('Thank You For Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
@@ -137,10 +136,8 @@ class dy_Actions{
     }
 
     public function the_title($title)
-    {
-		global $dy_request_invalids;
-		
-		if(in_the_loop() && !isset($dy_request_invalids))
+    {	
+		if(in_the_loop())
 		{
 			if(is_singular('packages') && $this->is_request_submitted())
 			{

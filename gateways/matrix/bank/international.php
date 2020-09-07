@@ -148,10 +148,6 @@ class wire_transfer{
 			{
 				$content = $this->message(null);
 			}
-			else
-			{
-				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Recaptcha', 'dynamicpackages')).'</p>';
-			}	
 		}
 		return $content;
 	}
