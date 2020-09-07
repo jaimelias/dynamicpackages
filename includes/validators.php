@@ -275,7 +275,14 @@ class dy_Validators
 			{
 				if(!self::luhn_check($_POST['CCNum']))
 				{
-					$invalids[] = __('Invalid Credit Card.', 'dynamicpackages');
+					$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
+				}
+				else
+				{					
+					if( self::american_express_check($_POST['CCNum']) )
+					{
+						$invalids[] = __('American Express is not accepted. At the moment we only accept Visa or Mastercard.', 'dynamicpackages');
+					}
 				}
 				if(empty($_POST['ExpMonth']))
 				{
@@ -731,6 +738,18 @@ class dy_Validators
 			}			
 		}
 		return $output;
+	}
+	
+	public static function american_express_check($number)
+	{
+		if(substr($number, 0, 2 ) === '34' || substr($number, 0, 2 ) === '37' && strlen($number) === 15)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	public static function luhn_check($number) 
 	{

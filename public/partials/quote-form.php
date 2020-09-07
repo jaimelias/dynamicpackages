@@ -18,7 +18,12 @@
 		<input type="hidden" name="landing_domain" class="landing_domain" value="" />
 		<input type="hidden" name="landing_path" class="landing_path" value="" />
 		<input type="hidden" name="city" class="city" value="" />
+		<input type="hidden" name="state_prov" class="state_prov" value="" />
 		<input type="hidden" name="countrycode" class="country_code2" value="" />
+		<input type="hidden" name="latitude" class="latitude" value="" />
+		<input type="hidden" name="longitude" class="longitude" value="" />
+		<input type="hidden" name="ip" class="ip" value="" />
+		<input type="hidden" name="isp" class="isp" value="" />
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
 		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())); ?>" />
 

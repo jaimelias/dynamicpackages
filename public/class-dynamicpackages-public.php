@@ -204,7 +204,7 @@ class dy_Public {
 		
 		if(is_tax('package_category') ||is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
 		{
-			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array( 'jquery'), time(), true );
+			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
 		}
 		
 		$ipgeolocation = null;
