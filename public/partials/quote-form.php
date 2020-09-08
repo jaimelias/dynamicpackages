@@ -67,6 +67,6 @@
 		
 		<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
 		
-	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded"><?php echo (isset($_GET['quote'])) ? esc_html(__('Send Request!', 'dynamicpackages')) : esc_html(__('Pay Now!', 'dynamicpackages')); ?></button></p>	
+	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded"><?php echo (isset($_GET['quote']) || dy_utilities::pax_num() > package_field('package_max_persons')) ? esc_html(__('Send Request!', 'dynamicpackages')) : esc_html(__('Pay Now!', 'dynamicpackages')); ?></button></p>	
 
 </form>

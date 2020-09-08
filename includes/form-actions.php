@@ -81,47 +81,71 @@ class dy_Actions{
 
     public function send_email()
     {
-		$attachments = array();
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
-		
-		$filename = __('Estimate', 'dynamicpackages') . '.pdf';
-		
-		$attachments[] = array(
-			'filename' => $filename,
-			'data' => $this->doc_pdf()
-		);
-		
-		$terms_pdf = $this->get_terms_conditions_pages();
-
-		if(is_array($terms_pdf))
-		{
-			if(count($terms_pdf) > 0)
-			{
-				for($x = 0; $x < count($terms_pdf); $x++)
-				{
-					$attachments[] = $terms_pdf[$x];
-				}
-			}
-		}		
-			
 		$args = array(
 			'subject' => sanitize_text_field($this->subject()),
-			'to' => sanitize_text_field($_POST['email']),
-			'message' => $email_template,
-			'attachments' => $attachments
+			'to' => sanitize_text_field($_POST['email'])
 		);
-		
-		//die($email_template);
+
+		if($_POST['total'] > 0)
+		{
+			$attachments = array();
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+			$filename = __('Estimate', 'dynamicpackages') . '.pdf';
+			
+			$attachments[] = array(
+				'filename' => $filename,
+				'data' => $this->doc_pdf()
+			);
+			
+			$terms_pdf = $this->get_terms_conditions_pages();
+
+			if(is_array($terms_pdf))
+			{
+				if(count($terms_pdf) > 0)
+				{
+					for($x = 0; $x < count($terms_pdf); $x++)
+					{
+						$attachments[] = $terms_pdf[$x];
+					}
+				}
+			}
+
+			$args['message'] = $email_template;
+			$args['attachments'] = $attachments;
+		}
+		else
+		{
+			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
+			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($_POST['description']).'</strong>').'</p>';
+			
+			if(get_option('dy_phone') && get_option('dy_email'))
+			{
+				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(get_option('dy_phone')), sanitize_email(get_option('dy_email')))).'</p>';
+			}
+			
+			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</p>';
+			
+			$args['message'] = $message;
+		}
+	
+		die($args['message']);
 		
 		//sg_mail($args);
     }
 	
 	public function subject()
 	{
-		$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
+		if($_POST['total'] > 0)
+		{
+			$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
+			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), $calculate_total, $_POST['title']);			
+		}
+		else
+		{
+			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), $_POST['first_name'], $_POST['title']);	
+		}
 
-		$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), $calculate_total, $_POST['title']);
-		
+			
 		return apply_filters('dy_email_subject', $output);
 	}
 

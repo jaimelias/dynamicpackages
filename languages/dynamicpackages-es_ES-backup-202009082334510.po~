@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-08 20:13+0000\n"
-"PO-Revision-Date: 2020-09-08 20:48+0000\n"
+"POT-Creation-Date: 2020-09-08 23:31+0000\n"
+"PO-Revision-Date: 2020-09-08 23:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -120,19 +120,19 @@ msgstr "Ciudad"
 msgid "Address"
 msgstr "Dirección"
 
-#: gateways/cc-form.php:33
+#: gateways/cc-form.php:32
 msgid "Card Details"
 msgstr "Datos de la tarjeta"
 
-#: gateways/cc-form.php:34
+#: gateways/cc-form.php:33
 msgid "Card Numbers"
 msgstr "Números de la tarjeta"
 
-#: gateways/cc-form.php:39 gateways/credit-card-form.php:72
+#: gateways/cc-form.php:38 gateways/credit-card-form.php:72
 msgid "Expiration Month"
 msgstr "Mes de expiración"
 
-#: gateways/cc-form.php:53 gateways/credit-card-form.php:86
+#: gateways/cc-form.php:52 gateways/credit-card-form.php:86
 msgid "Expiration Year"
 msgstr "Año de expiración"
 
@@ -193,7 +193,7 @@ msgstr "Saldo"
 msgid "Deposit"
 msgstr "Deposito"
 
-#: gateways/checkout-page.php:125 gateways/gateways.php:278
+#: gateways/checkout-page.php:125 gateways/gateways.php:280
 msgid "Coupon"
 msgstr "Cupón"
 
@@ -335,7 +335,7 @@ msgstr "Tarjeta de crédido"
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
 
-#: gateways/credit-card-form.php:107
+#: gateways/credit-card-form.php:107 public/partials/quote-form.php:70
 msgid "Pay Now!"
 msgstr "¡Pagar Ya!"
 
@@ -363,15 +363,15 @@ msgstr "el deposito"
 msgid "with"
 msgstr "con"
 
-#: gateways/gateways.php:278
+#: gateways/gateways.php:280
 msgid "off"
 msgstr "descuento"
 
-#: gateways/gateways.php:305
-msgid "I accept"
-msgstr "Acepto"
+#: gateways/gateways.php:307
+msgid "Error: please correct the invalid fields in color red."
+msgstr "Error: corrige los campos inválidos en color rojo."
 
-#: gateways/gateways.php:350 public/class-dynamicpackages-public.php:1578
+#: gateways/gateways.php:352 public/class-dynamicpackages-public.php:1578
 #: gateways/matrix/bank/international.php:173
 #: gateways/matrix/bank/local.php:160
 #: gateways/matrix/nequi/nequi_direct.php:160
@@ -379,7 +379,7 @@ msgstr "Acepto"
 msgid "deposit"
 msgstr "deposito"
 
-#: gateways/gateways.php:350
+#: gateways/gateways.php:352
 msgid "outstanding balance"
 msgstr "saldo"
 
@@ -912,21 +912,40 @@ msgstr "por persona"
 msgid "Thank you for contacting us. Our staff will be in touch with you soon."
 msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 
-#: includes/form-actions.php:87 public/email-templates/estimates-pdf.php:14
+#: includes/form-actions.php:93 public/email-templates/estimates-pdf.php:14
 #: public/email-templates/estimates.php:3
 msgid "Estimate"
 msgstr "Cotización"
 
-#: includes/form-actions.php:123
+#: includes/form-actions.php:119
+#, php-format
+msgid ""
+"Our staff will be in touch with you very soon with more information about "
+"your request: %s"
+msgstr ""
+"Nuestro equipo se pondrá en contacto contigo muy pronto para darte más "
+"información sobre tu solicitud: %s"
+
+#: includes/form-actions.php:126
+#, php-format
+msgid "When is a good time to call you at %s? Or do you prefer Whatsapp?"
+msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
+
+#: includes/form-actions.php:141
 #, php-format
 msgid "%s, %s has sent you an estimate for %s%s - %s"
 msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 
-#: includes/form-actions.php:132 public/email-templates/estimates.php:5
+#: includes/form-actions.php:145
+#, php-format
+msgid "%s, thanks for your request: %s"
+msgstr "%s, Gracias por tu solicitud: %s"
+
+#: includes/form-actions.php:156 public/email-templates/estimates.php:5
 msgid "Thank You For Your Request"
 msgstr "Gracias por tu solicitud"
 
-#: includes/form-actions.php:144
+#: includes/form-actions.php:168
 msgid "Thank you for your Inquiry"
 msgstr "Gracias por su solicitud"
 
@@ -958,7 +977,11 @@ msgstr "Teléfono no es inválido."
 msgid "Invalid Request."
 msgstr "Solicitud inválida."
 
-#: includes/validators.php:278
+#: includes/validators.php:270
+msgid "Please you must accept our Terms & Conditions before booking"
+msgstr "Debes aceptar nuestros términos y condiciones antes de reservar"
+
+#: includes/validators.php:311
 msgid ""
 "Invalid Credit Card. Please return to the previous page to correct the "
 "numbers."
@@ -966,21 +989,21 @@ msgstr ""
 "Tarjeta invalida. Por favor regrese a la página anterior para corregir los "
 "números."
 
-#: includes/validators.php:284
+#: includes/validators.php:317
 msgid ""
 "American Express is not accepted. At the moment we only accept Visa or "
 "Mastercard."
 msgstr "No aceptamos American Express. Por el momento solo Visa o Mastercard."
 
-#: includes/validators.php:289
+#: includes/validators.php:322
 msgid "Invalid expiration month."
 msgstr "Fecha de expiración inválida."
 
-#: includes/validators.php:293
+#: includes/validators.php:326
 msgid "Invalid expiration year."
 msgstr "Año de espiración invalido."
 
-#: includes/validators.php:297
+#: includes/validators.php:330
 msgid "Invalid CVV (security code on the back of the card)."
 msgstr ""
 "Código de seguridad invalido (los 3 números en la parte de posterior de la "

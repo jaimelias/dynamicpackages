@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-08 22:29+0000\n"
-"PO-Revision-Date: 2020-09-08 22:30+0000\n"
+"POT-Creation-Date: 2020-09-08 23:34+0000\n"
+"PO-Revision-Date: 2020-09-08 23:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -335,7 +335,7 @@ msgstr "Tarjeta de crédido"
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
 
-#: gateways/credit-card-form.php:107
+#: gateways/credit-card-form.php:107 public/partials/quote-form.php:70
 msgid "Pay Now!"
 msgstr "¡Pagar Ya!"
 
@@ -912,21 +912,48 @@ msgstr "por persona"
 msgid "Thank you for contacting us. Our staff will be in touch with you soon."
 msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 
-#: includes/form-actions.php:87 public/email-templates/estimates-pdf.php:14
+#: includes/form-actions.php:93 public/email-templates/estimates-pdf.php:14
 #: public/email-templates/estimates.php:3
 msgid "Estimate"
 msgstr "Cotización"
 
+#: includes/form-actions.php:119
+#, php-format
+msgid ""
+"Our staff will be in touch with you very soon with more information about "
+"your request: %s"
+msgstr ""
+"Nuestro equipo se pondrá en contacto contigo muy pronto para darte más "
+"información sobre tu solicitud: %s"
+
 #: includes/form-actions.php:123
+#, php-format
+msgid ""
+"Do not hesitate to call us at %s or email us at %s if you have any questions."
+msgstr ""
+"No dude en llamarnos al %s o enviarnos un correo electrónico al %s si tienes "
+"alguna pregunta."
+
+#: includes/form-actions.php:126
+#, php-format
+msgid "When is a good time to call you at %s? Or do you prefer Whatsapp?"
+msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
+
+#: includes/form-actions.php:141
 #, php-format
 msgid "%s, %s has sent you an estimate for %s%s - %s"
 msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 
-#: includes/form-actions.php:132 public/email-templates/estimates.php:5
+#: includes/form-actions.php:145
+#, php-format
+msgid "%s, thanks for your request: %s"
+msgstr "%s, Gracias por tu solicitud: %s"
+
+#: includes/form-actions.php:156 public/email-templates/estimates.php:5
 msgid "Thank You For Your Request"
 msgstr "Gracias por tu solicitud"
 
-#: includes/form-actions.php:144
+#: includes/form-actions.php:168
 msgid "Thank you for your Inquiry"
 msgstr "Gracias por su solicitud"
 
@@ -960,7 +987,7 @@ msgstr "Solicitud inválida."
 
 #: includes/validators.php:270
 msgid "Please you must accept our Terms & Conditions before booking"
-msgstr ""
+msgstr "Debes aceptar nuestros términos y condiciones antes de reservar"
 
 #: includes/validators.php:311
 msgid ""
