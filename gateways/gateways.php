@@ -241,12 +241,14 @@ class dy_Gateways
 	
 	public function cc_form($output)
 	{
-		ob_start();
-		require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
-		$content = ob_get_contents();
-		ob_end_clean();
-		
-		echo $content;
+		if(!isset($_GET['quote']))
+		{
+			ob_start();
+			require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
+			$content = ob_get_contents();
+			ob_end_clean();
+			echo $content;			
+		}
 	}
 	
 	public function enqueue_scripts()
@@ -302,7 +304,7 @@ class dy_Gateways
 			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
 			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
 			'message' => esc_html($this->get_notes()),
-			'TRANSLATIONS' => array('i_accept' => __('I accept', 'dynamicpackages')),
+			'TRANSLATIONS' => array('submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
 			'hash' => sanitize_text_field($_GET['hash']),

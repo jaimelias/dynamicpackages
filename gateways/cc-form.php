@@ -8,7 +8,7 @@
 
 <hr/>
 
-<div>
+<div class="with_cc_show hidden">
 
 	<h3><?php echo esc_html(__('Billing Address', 'dynamicpackages')); ?></h3>
 	<div class="pure-g gutters">
@@ -25,11 +25,10 @@
 			<input type="text" name="address" id="address" class="bottom-20" />
 		</div>					
 	</div>
+	<hr/>
 </div>
 
-<hr/>
-
-<div>
+<div class="with_cc_show hidden">
 	<h3><?php echo esc_html(__('Card Details', 'dynamicpackages')); ?></h3>
 	<p><label for="CCNum"><?php echo esc_html(__('Card Numbers', 'dynamicpackages')); ?></label>
 	<input class="large" min="16" type="number" name="CCNum" id="CCNum" /></p>
@@ -67,8 +66,9 @@
 			<input min="0" max="999" type="number" name="CVV2" id="CVV2" class="bottom-20"/>
 		</div>
 	</div>
+	<hr/>
 </div>
 
-<hr/>
+
 
 <?php echo do_action('dy_form_terms_conditions'); ?>

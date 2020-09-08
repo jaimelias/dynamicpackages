@@ -48,12 +48,14 @@ const booking_open_form = () => {
 	jQuery('#dy_payment_buttons').find('button').click(function(){
 		if(jQuery(this).hasClass('with_cc'))
 		{
+			$('.with_cc_show').toggleClass('hidden');
 			cc_required.forEach(name => {
 				jQuery(thisForm).find('[name="'+name+'"]').addClass('required');
 			});
 		}
 		else
 		{
+			$('.with_cc_show').addClass('hidden');
 			cc_required.forEach(name => {
 				jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
 				jQuery(thisForm).find('label[for="'+name+'"]').removeClass('invalid_checkmark');
@@ -519,7 +521,7 @@ const dy_request_form = (token) => {
 		}
 		else
 		{
-			window.scrollTo(0, 0);
+			alert(booking_args().TRANSLATIONS.submit_error);
 		}
 	});
 	return false;
