@@ -230,9 +230,9 @@ class dy_Validators
 	{
 		$output = false;
 
-		if(isset($_POST['dy_request']) && self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details() && self::credit_card())
+		if(isset($_POST['dy_request']) && self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details())
 		{
-			if($gateway_name == $_POST['dy_request'])
+			if($gateway_name == $_POST['dy_request'] && self::credit_card() && self::validate_terms_conditions($_POST))
 			{
 				$output = true;
 			}
@@ -240,6 +240,39 @@ class dy_Validators
 		
 		return $output;
 	}
+	
+	public static function validate_terms_conditions($fields)
+	{
+		$output = true;
+				
+		if(is_array($fields))
+		{
+			if(count($fields) > 0)
+			{
+				foreach($fields as $k => $v)
+				{
+					$string = 'terms_conditions_';
+					$string_length = strlen($string);
+					
+					if(substr($k, 0, $string_length) === $string)
+					{
+						if($v != 'true')
+						{
+							$output = false;
+						}
+					}
+				}
+			}
+		}
+		
+		if($output === false)
+		{
+			$GLOBALS['dy_request_invalids'] = array(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
+		}
+		
+		return $output;
+	}
+	
 	public static function booking_details()
 	{
 		$output = false;

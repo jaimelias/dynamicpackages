@@ -31,7 +31,7 @@
 
 <div>
 	<h3><?php echo esc_html(__('Card Details', 'dynamicpackages')); ?></h3>
-	<p><label for="CCNum"><?php echo esc_html(__('Credit Card Number', 'dynamicpackages')); ?></label>
+	<p><label for="CCNum"><?php echo esc_html(__('Card Numbers', 'dynamicpackages')); ?></label>
 	<input class="large" min="16" type="number" name="CCNum" id="CCNum" /></p>
 
 	<div class="pure-g gutters">

@@ -514,9 +514,8 @@ const dy_request_form = (token) => {
 				ga('send', 'event', eventArgs);	
 			}
 			
-			console.log(jQuery(thisForm).formToArray());
-
-			//jQuery(thisForm).submit();
+			//console.log(jQuery(thisForm).formToArray());
+			createFormSubmit(thisForm);
 		}
 		else
 		{
@@ -826,7 +825,25 @@ const isValidCard = (value) => {
 	return (nCheck % 10) == 0;
 }
 
-function isEmail(email) {
+const isEmail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
+
+const createFormSubmit = (form) => {
+	const formFields = jQuery(form).formToArray();
+	const newForm =  document.createElement('form');
+	const action = formFields.find(i => i.name === 'package_url').value;
+	newForm.method = 'POST';
+	newForm.action = action;
+	
+	formFields.forEach(i => {
+		let input = document.createElement('input');
+		input.name = i.name;
+		input.value = i.value;
+		newForm.appendChild(input);
+	});
+	
+	document.body.appendChild(newForm);
+	newForm.submit();
+};
