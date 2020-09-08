@@ -49,7 +49,9 @@ class wire_transfer{
 		
 		//controls
 		$this->show = get_option($this->gateway_name . '_show');
-		$this->min = get_option($this->gateway_name . '_min');			
+		$this->min = get_option($this->gateway_name . '_min');
+		$this->color = '#fff';
+		$this->background_color = '#262626';		
 	}
 
 	public function send_data()
@@ -512,7 +514,7 @@ class wire_transfer{
 	{
 		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-wire  withwire rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->gateway_title).'</button>';			
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 pure-button-wire  with_' . esc_html($this->gateway_name) . ' rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->gateway_title).'</button>';			
 		}
 		return $output;
 	}
@@ -573,16 +575,15 @@ class wire_transfer{
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withwire').click(function()
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var wire_logo = $('<span style="font-size: 3em;"></span>').addClass('text-muted');
+				var wire_logo = jQuery('<span style="font-size: 3em;"></span>').addClass('text-muted');
 				wire_logo.append('<i class="fas fa-globe"></i>');
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(wire_logo);
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(wire_logo);
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)

@@ -38,6 +38,8 @@ class paguelo_facil_on{
 		$this->cclw = get_option($this->gateway_name);
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->min = get_option($this->gateway_name . '_min');
+		$this->color = '#fff';
+		$this->background_color = '#262626';		
 	}
 	
 	public function checkout()
@@ -484,7 +486,7 @@ class paguelo_facil_on{
 	{
 		if($this->show() && in_array($this->gateway_methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-cc  withcc rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->gateway_methods_o).'</button>';			
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc with_' . esc_html($this->gateway_name) . ' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->gateway_methods_o).'</button>';			
 		}
 		return $output;
 	}
@@ -541,37 +543,22 @@ class paguelo_facil_on{
 	{
 		if($this->show())
 		{
-			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public function css()
-	{
-		ob_start();
-		?>
-			.pure-button.pure-button-cc, .pure-button-cc
-			{
-				background-color: #262626;
-				color: #fff;
-			}
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}
+
 	public function js()
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withcc').click(function()
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var <?php echo esc_html($this->gateway_name); ?>_logo = $('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(<?php echo esc_html($this->gateway_name); ?>_logo);
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+				var <?php echo esc_html($this->gateway_name); ?>_logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(<?php echo esc_html($this->gateway_name); ?>_logo);
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)

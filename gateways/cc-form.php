@@ -14,7 +14,7 @@
 	<div class="pure-g gutters">
 		<div class="pure-u-1 pure-u-lg-1-3">
 			<label for="country"><?php echo esc_html(__('Country', 'dynamicpackages')); ?></label>
-			<select name="country" class="countrylist bottom-20"><option>--</option></select>
+			<select name="country" class="countrylist bottom-20"><option value="">--</option></select>
 		</div>
 		<div class="pure-u-1 pure-u-lg-1-3">
 			<label for="city"><?php echo esc_html(__('City', 'dynamicpackages')); ?></label>
@@ -39,6 +39,7 @@
 			<label for="ExpMonth"><?php echo esc_html(__('Expiration Month', 'dynamicpackages')); ?></label>
 		
 			<select name="ExpMonth" class="bottom-20">
+			<option value="">--</option>
 			<?php 
 				for($x = 0; $x < 12; $x++ )
 				{
@@ -50,6 +51,7 @@
 		<div class="pure-u-1 pure-u-lg-1-3">
 			<label for="ExpYear"><?php echo esc_html(__('Expiration Year', 'dynamicpackages')); ?></label>
 			<select name="ExpYear" class="bottom-20">
+			<option value="">--</option>
 			<?php 
 				for($x = intval(date('y')); $x < intval(date('y'))+10; $x++ )
 				{

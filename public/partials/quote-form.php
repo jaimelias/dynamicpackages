@@ -41,20 +41,23 @@
 			</div>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<div>
-						<label for="email"><?php echo esc_html(__('Email', 'dynamicpackages')); ?></label>
-						<input type="email" name="email" class="bottom-20 required" />
-					</div>
-					<div>
-						<label for="repeat_email"><?php echo esc_html(__('Repeat Email', 'dynamicpackages')); ?></label>
-						<input type="email" name="repeat_email" class="bottom-20 required" />
-					</div>					
+					<label for="email"><?php echo esc_html(__('Email', 'dynamicpackages')); ?></label>
+					<input type="email" name="email" class="bottom-20 required" />				
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="phone"><?php echo esc_html(__('Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
-					<input type="text" name="phone" class="bottom-20 required" />
+						<label for="repeat_email"><?php echo esc_html(__('Repeat Email', 'dynamicpackages')); ?></label>
+						<input type="email" name="repeat_email" class="bottom-20 required" />
 				</div>
 			</div>
+			
+			<div class="pure-g gutters">
+				<div class="pure-u-1 pure-u-md-1-2">
+					<label for="phone"><?php echo esc_html(__('Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
+					<input type="text" name="phone" class="bottom-20 required" />				
+				</div>
+				<div class="pure-u-1 pure-u-md-1-2"></div>
+			</div>			
+			
 		</div>
 		
 		<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>

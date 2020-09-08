@@ -33,9 +33,12 @@ class yappy_direct{
 	{
 		$this->gateway_title = 'Yappy';
 		$this->gateway_name = 'yappy_direct';		
+		$this->gateway_short_name = 'yappy';		
 		$this->number = get_option($this->gateway_name);
 		$this->max = get_option($this->gateway_name . '_max');
 		$this->show = get_option($this->gateway_name . '_show');
+		$this->color = '#fff';
+		$this->background_color = '#013685';
 	}
 	
 	public function send_data()
@@ -61,9 +64,11 @@ class yappy_direct{
 	public function is_active()
 	{
 		$output = false;
-		global $yappy_direct_is_active;
+		$which_var = $this->gateway_name . '_is_active';
 		
-		if(isset($yappy_direct_is_active))
+		global $$which_var;
+		
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -71,12 +76,13 @@ class yappy_direct{
 		{
 			if($this->number != '')
 			{
-				$GLOBALS[$this->gateway_name . '_is_active'] = true;
+				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
 		}
 		return $output;
 	}
+	
 	public function show()
 	{
 		$output = false;
@@ -306,7 +312,7 @@ class yappy_direct{
 	{
 		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-yappy withyappy rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy-icon.svg').'"/> '.esc_html(__('Pay with Yappy', 'dynamicpackages')).'</button>';			
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';"  class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy-icon.svg').'"/> '.esc_html(__('Pay with Yappy', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
@@ -345,41 +351,26 @@ class yappy_direct{
 	{
 		if($this->show())
 		{
-			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public function css()
-	{
-		ob_start();
-		?>
-			.pure-button.pure-button-yappy, .pure-button-yappy
-			{
-				background-color: #013685;
-				color: #fff;
-			}
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}
+
 	public function js()
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withyappy').click(function()
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var yappy_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/yappy/yappy.svg'});
-				$(yappy_logo).attr({'width': '80', 'height': '69'});
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(yappy_logo);
-				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+				var yappy_logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/yappy/yappy.svg'});
+				jQuery(yappy_logo).attr({'width': '80', 'height': '69'});
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(yappy_logo);
+				jQuery('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
-				$('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
+				jQuery('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -408,7 +399,7 @@ class yappy_direct{
 	
 	public function single_coupon($str, $gateway)
 	{
-		if(strtolower($gateway) == 'yappy')
+		if(strtolower($gateway) == $this->gateway_short_name)
 		{
 			$str = '<aside class="dy_show_country dy_show_country_PA"><div class="pure-g gutters text-center"><div class="pure-u-1-5"><img style="vertical-align: middle" width="40" alt="yappy" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Yappy', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
 		}
@@ -417,7 +408,7 @@ class yappy_direct{
 	}
 	public function single_coupon_hide($str, $gateway)
 	{
-		if(strtolower($gateway) == 'yappy')
+		if(strtolower($gateway) == $this->gateway_short_name)
 		{
 			$str = 'hidden';
 		}

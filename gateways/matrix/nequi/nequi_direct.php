@@ -31,10 +31,13 @@ class nequi_direct{
 	public function args()
 	{
 		$this->gateway_name = 'nequi_direct';
+		$this->gateway_short_name = 'nequi';
 		$this->gateway_title = 'Nequi';
 		$this->number = get_option($this->gateway_name);
 		$this->max = get_option($this->gateway_name . '_max');
 		$this->show = get_option($this->gateway_name . '_show');
+		$this->background_color = '#ff2f73';
+		$this->color = '#fff';
 	}
 
 	public function send_data()
@@ -305,7 +308,7 @@ class nequi_direct{
 	{
 		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-nequi withnequi rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
@@ -344,41 +347,26 @@ class nequi_direct{
 	{
 		if($this->show())
 		{
-			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public function css()
-	{
-		ob_start();
-		?>
-			.pure-button.pure-button-nequi, .pure-button-nequi
-			{
-				background-color: #ff2f73;
-				color: #fff;
-			}
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}
+
 	public function js()
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withnequi').click(function()
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var nequi_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
-				$(nequi_logo).attr({'width': '214', 'height': '48'});
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(nequi_logo);
-				$('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+				var nequi_logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
+				jQuery(nequi_logo).attr({'width': '214', 'height': '48'});
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(nequi_logo);
+				jQuery('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
-				$('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
+				jQuery('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -406,7 +394,7 @@ class nequi_direct{
 	}
 	public function single_coupon($str, $gateway)
 	{
-		if(strtolower($gateway) == 'nequi')
+		if(strtolower($gateway) == $this->gateway_short_name)
 		{
 			$str = '<aside class="dy_show_country dy_show_country_PA"><div class="pure-g gutters text-center"><div class="pure-u-1-5"><img style="vertical-align: middle" alt="nequi" width="80" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
 		}
@@ -415,7 +403,7 @@ class nequi_direct{
 	}
 	public function single_coupon_hide($str, $gateway)
 	{
-		if(strtolower($gateway) == 'nequi')
+		if(strtolower($gateway) == $this->gateway_short_name)
 		{
 			$str = 'hidden';
 		}

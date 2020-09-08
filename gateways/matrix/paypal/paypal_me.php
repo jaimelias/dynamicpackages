@@ -37,6 +37,8 @@ class paypal_me{
 		$this->username = get_option($this->gateway_name);
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->max = get_option($this->gateway_name . '_max');
+		$this->color = '#000';
+		$this->background_color = '#FFD700';		
 	}
 
 	public function send_data()
@@ -295,7 +297,7 @@ class paypal_me{
 	{
 		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-paypal withpaypal rounded" type="button"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages')).'</button>';
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages')).'</button>';
 		}
 		return $output;
 	}
@@ -334,37 +336,23 @@ class paypal_me{
 	{
 		if($this->show())
 		{
-			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');
 		}
 	}
-	public function css()
-	{
-		ob_start();
-		?>
-			.pure-button.pure-button-paypal, .pure-button-paypal
-			{
-				color: #000;
-				background-color: gold;
-			}
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;		
-	}
+
 	public function js()
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withpaypal').click(function(){
-				var paypal_logo = $('<img>').attr({'src': dy_url()+'gateways/matrix/paypal/paypal.svg'});
-				$(paypal_logo).attr({'width': '205', 'height': '50'});
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(paypal_logo);
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
+			{
+				var paypal_logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/paypal/paypal.svg'});
+				jQuery(paypal_logo).attr({'width': '205', 'height': '50'});
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(paypal_logo);
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
@@ -415,7 +403,7 @@ class paypal_me{
 		
 		$message = '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(__('You will be paying a ', 'dynamicpackages').' '.$label.' '.$amount).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: #FFD700; color: #000000; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		
 
 		return $message;
 	}	

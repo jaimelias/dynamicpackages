@@ -37,6 +37,8 @@ class bank_transfer{
 		$this->beneficiary = get_option($this->gateway_name . '_beneficiary');
 		$this->min = get_option($this->gateway_name . '_min');
 		$this->show = get_option($this->gateway_name . '_show');
+		$this->color = '#fff';
+		$this->background_color = '#262626';
 	}	
 
 	public function send_data()
@@ -369,7 +371,7 @@ class bank_transfer{
 	{
 		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button class="pure-button bottom-20 pure-button-bank  withbank rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html($this->gateway_title).'</button>';			
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 pure-button-bank  with_' . esc_html($this->gateway_name) . ' rounded" type="button"><i class="fas fa-money-check-alt"></i> '.esc_html($this->gateway_title).'</button>';			
 		}
 		return $output;
 	}
@@ -406,37 +408,22 @@ class bank_transfer{
 	{
 		if($this->show())
 		{
-			wp_add_inline_style('minimalLayout', $this->css());
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
 	}
-	public function css()
-	{
-		ob_start();
-		?>
-			.pure-button.pure-button-bank, .pure-button-bank
-			{
-				background-color: #262626;
-				color: #fff;
-			}
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}
+
 	public function js()
 	{
 		ob_start();
 		?>
-		$(function(){
-			$('.withbank').click(function()
+		jQuery(function(){
+			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var bank_logo = $('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
-				$('#dy_checkout_form').addClass('hidden');
-				$('#dynamic_form').removeClass('hidden');
-				$('#dy_form_icon').html(bank_logo);
-				$('#dynamic_form').find('input[name="name"]').focus();
-				$('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
+				var bank_logo = jQuery('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
+				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(bank_logo);
+				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)

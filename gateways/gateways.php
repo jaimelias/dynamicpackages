@@ -203,7 +203,7 @@ class dy_Gateways
 		
 		if(dy_Gateways::has_any_gateway())
 		{
-			$output .= '<p class="text-center bottom-20 large">'.self::choose_gateway().'.</p><div class="text-center bottom-20">'.self::gateway_buttons().'</div>';
+			$output .= '<p class="text-center bottom-20 large">'.self::choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.self::gateway_buttons().'</div>';
 		}
 		
 		$output .= dy_Public::booking_sidebar();	

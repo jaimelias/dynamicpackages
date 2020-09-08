@@ -6,7 +6,8 @@ jQuery(() => {
 	booking_submit();
 	booking_populate(jQuery('#dynamic_form'));
 	booking_if_country();
-	booking_coupon();
+	booking_coupon();	
+	booking_open_form();
 	
 	if(typeof dy_url !== typeof undefined)
 	{
@@ -20,6 +21,39 @@ jQuery(() => {
 	
 });
 
+
+jQuery.fn.formToArray = function () {
+   
+   var data = jQuery(this).serializeArray();
+   
+	jQuery('form input:checkbox').each(function () { 
+		data.push({ name: this.name, value: this.checked });
+	});
+	
+	return data;
+};
+
+const booking_open_form = () => {
+	
+	const thisForm = jQuery('#dynamic_form');
+	const cc_required = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
+	
+	jQuery('#dy_payment_buttons').find('button').click(function(){
+		if(jQuery(this).hasClass('with_cc'))
+		{
+			console.log('with_cc');
+			cc_required.forEach(field => {
+				jQuery(thisForm).find('[name="'+field+'"]').addClass('required');
+			});
+		}
+		else
+		{
+			cc_required.forEach(field => {
+				jQuery(thisForm).find('[name="'+field+'"]').removeClass('required').removeClass('invalid_field');
+			});			
+		}
+	});
+};
 
 const dy_lang = () => {
 	const htmllang = jQuery('html').attr('lang');
@@ -367,17 +401,15 @@ const dy_request_form = (token) => {
 		  {
 			  if(!excludeGeolocation.includes(k))
 			  {
-				const value = data[k];
-				const field = jQuery('[name="'+k+'"]');
-				jQuery(field).val(value);
+				jQuery('[name="'+k+'"]').val(data[k]);
 			  }
 		  }
 		}		
 	}).always(() => {
 		
 		let invalids = 0;
-		const formFields = jQuery(thisForm).serializeArray();
-		
+		const formFields = jQuery(thisForm).formToArray();
+				
 		formFields.forEach(i => {
 			const name = i.name;
 			const value = i.value;
@@ -410,7 +442,7 @@ const dy_request_form = (token) => {
 		{
 			dy_populate_form(thisForm);
 			jQuery(thisForm).find('input[name="dy_recaptcha"]').val(token);
-			//console.log(jQuery(thisForm).serializeArray());
+			//console.log(formFields);
 			//console.log(token); 
 
 			//facebook pixel
@@ -445,7 +477,9 @@ const dy_request_form = (token) => {
 					eventArgs.eventCategory = 'Purchase';
 				}
 				ga('send', 'event', eventArgs);	
-			}			
+			}
+			
+			console.log(jQuery(thisForm).formToArray());
 
 			//jQuery(thisForm).submit();
 		}	
