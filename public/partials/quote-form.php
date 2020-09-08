@@ -11,21 +11,26 @@
 		
 		<hr />
 	
+		<!-- Config -->
 		<input type="hidden" name="dy_request" value="request" />
 		<input type="hidden" name="dy_recaptcha" />
+		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
+		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())); ?>" />		
+		
+		<!-- Cookies -->
 		<input type="hidden" name="channel" class="channel" value="" />
 		<input type="hidden" name="device" class="device" value="" />
 		<input type="hidden" name="landing_domain" class="landing_domain" value="" />
 		<input type="hidden" name="landing_path" class="landing_path" value="" />
-		<input type="hidden" name="city" class="city" value="" />
-		<input type="hidden" name="state_prov" class="state_prov" value="" />
-		<input type="hidden" name="countrycode" class="country_code2" value="" />
-		<input type="hidden" name="latitude" class="latitude" value="" />
-		<input type="hidden" name="longitude" class="longitude" value="" />
-		<input type="hidden" name="ip" class="ip" value="" />
-		<input type="hidden" name="isp" class="isp" value="" />
-		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
-		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())); ?>" />
+		
+		<!-- Geolocation -->
+		<input type="hidden" name="geo_city" value="" />
+		<input type="hidden" name="geo_state_prov" value="" />
+		<input type="hidden" name="geo_countrycode2"  value="" />
+		<input type="hidden" name="geo_latitude"  value="" />
+		<input type="hidden" name="geo_longitude" value="" />
+		<input type="hidden" name="geo_ip"  value="" />
+		<input type="hidden" name="geo_isp" value="" />
 
 		<div>
 			<h3><?php echo esc_html(__('Contact Details', 'dynamicpackages')); ?></h3>

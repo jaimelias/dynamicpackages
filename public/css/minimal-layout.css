@@ -33,10 +33,6 @@
     display:inline-block;
     zoom:1
 }
-.pure-g [class*=pure-u]{
-    font-family:sans-serif
-}
-
 .pure-u-1-6{
     width:16.6667%
 }
@@ -356,6 +352,12 @@ strong, .strong
 .minimal_success
 {
 	background-color: #7ecd7e;
+	color: #000;
+	padding: 10px;	
+}
+.minimal_warning
+{
+	background-color:  #ffff4d;
 	color: #000;
 	padding: 10px;	
 }

@@ -228,7 +228,7 @@ class dy_Gateways
 					$url = get_term_link($id);
 					$name = $term->name;
 					
-					$output .= '<label for="terms_conditions_'.esc_html($id).'"><span class="large"><input type="checkbox" name="terms_conditions_'.esc_html($id).'"></span> <a href="'.esc_url($url).'" target="_blank">'.esc_html($name).'</a></label>';
+					$output .= '<label for="terms_conditions_'.esc_html($id).'" class="checkmark-container"><input type="checkbox" name="terms_conditions_'.esc_html($id).'" id="terms_conditions_'.esc_html($id).'" class="required"  /><span class="checkmark"></span> <a href="'.esc_url($url).'" target="_blank">'.esc_html($name).'</a></label>';
 				}
 
 				$output .= '</p><hr/>';

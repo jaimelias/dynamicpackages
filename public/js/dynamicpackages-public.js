@@ -4,7 +4,7 @@ jQuery(() => {
 	booking_hourpicker();
 	booking_quote();
 	booking_submit();
-	booking_populate(jQuery('#dynamic_form'));
+	storePopulate();
 	booking_if_country();
 	booking_coupon();	
 	booking_open_form();
@@ -37,19 +37,26 @@ const booking_open_form = () => {
 	
 	const thisForm = jQuery('#dynamic_form');
 	const cc_required = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
-	
+	const formFields = jQuery(thisForm).formToArray();
+	formFields.forEach(field => {
+		if(field.name.startsWith('terms_conditions_'))
+		{
+			cc_required.push(field.name);
+		}
+	});
+		
 	jQuery('#dy_payment_buttons').find('button').click(function(){
 		if(jQuery(this).hasClass('with_cc'))
 		{
-			console.log('with_cc');
-			cc_required.forEach(field => {
-				jQuery(thisForm).find('[name="'+field+'"]').addClass('required');
+			cc_required.forEach(name => {
+				jQuery(thisForm).find('[name="'+name+'"]').addClass('required');
 			});
 		}
 		else
 		{
-			cc_required.forEach(field => {
-				jQuery(thisForm).find('[name="'+field+'"]').removeClass('required').removeClass('invalid_field');
+			cc_required.forEach(name => {
+				jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
+				jQuery(thisForm).find('label[for="'+name+'"]').removeClass('invalid_checkmark');
 			});			
 		}
 	});
@@ -171,7 +178,7 @@ const booking_args = () => {
 		
 		if(args.hasOwnProperty('booking_hour'))
 		{
-			if(args.booking_hour != '')
+			if(args.booking_hour != null)
 			{
 				description += '@ ' + args.booking_hour;
 			}
@@ -306,9 +313,9 @@ const booking_if_country = () => {
 	jQuery(window).on('load', () => {
 		if(jQuery('.dy_show_country').length)
 		{
-			if(dy_ipgeolocation() != '')
+			if(dy_ipgeolocation() != null)
 			{
-				if(getCookie('country_code') == '')
+				if(getCookie('country_code') == null)
 				{
 					jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), data => {
 						if(data.hasOwnProperty('country_code2'))
@@ -327,25 +334,36 @@ const booking_if_country = () => {
 	});
 }
 
-const booking_populate = (form) => {
+const storePopulate = () => {
 	
-	var input = jQuery(form).find('input');
-	
-	jQuery(input).each(function(){
+	const thisForm = jQuery('#dynamic_form');
+	const formFields = jQuery(thisForm).formToArray();
+
+	formFields.forEach(i => {
+		const name = i.name;
+		const value = sessionStorage.getItem(name);
+		const field = jQuery(thisForm).find('[name="'+name+'"]');
+		const tag = jQuery(field).prop('tagName');
+		const type = jQuery(field).attr('type');
+		const isRequired = (jQuery(field).hasClass('required')) ? true : false;
 		
-		var field = jQuery(this);
-		var name = jQuery(field).attr('name');
-		
-		if (typeof(Storage) !== 'undefined')
+		if(value)
 		{
-			if (typeof name !== typeof undefined && name !== false)
+			if(tag == 'INPUT')
 			{
-				if(sessionStorage.getItem(name) != null && sessionStorage.getItem(name) != '')
+				if(type == 'checkbox' || type == 'radio')
 				{
-					var item = sessionStorage.getItem(name);
-					jQuery(field).val(item);
+					jQuery(field).prop('checked', true);
+				}
+				else
+				{
+					jQuery(field).val(value);
 				}
 			}
+			else if(tag == 'TEXTAREA' || tag == 'SELECT')
+			{
+				jQuery(field).val(value);
+			}			
 		}
 	});
 }
@@ -388,7 +406,7 @@ function dy_recaptcha()
 }
 
 const dy_request_form = (token) => {
-	const excludeGeolocation = ['city', 'country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
+	const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	const thisForm = jQuery('#dynamic_form');
 	const excludeStore = ['dy_recaptcha', 'total', 'dy_request'];
 	const args = booking_args();
@@ -401,7 +419,7 @@ const dy_request_form = (token) => {
 		  {
 			  if(!excludeGeolocation.includes(k))
 			  {
-				jQuery('[name="'+k+'"]').val(data[k]);
+				jQuery('[name="geo_'+k+'"]').val(data[k]);
 			  }
 		  }
 		}		
@@ -409,26 +427,43 @@ const dy_request_form = (token) => {
 		
 		let invalids = 0;
 		const formFields = jQuery(thisForm).formToArray();
-				
+		
 		formFields.forEach(i => {
 			const name = i.name;
 			const value = i.value;
-			const field = jQuery('[name="'+name+'"]');
+			const field = jQuery(thisForm).find('[name="'+name+'"]');
+			const label = jQuery(thisForm).find('label[for="'+name+'"]');
 			const tag = jQuery(field).prop('tagName');
 			const isRequired = (jQuery(field).hasClass('required')) ? true : false;
 			const isNull = (value) ? false : true;
 			
 			if(isRequired)
 			{
-				if(isNull)
+				if(isNull || isInvalid(name, value))
 				{
-					invalids++;
-					jQuery(field).addClass('invalid_field');
-					console.log(jQuery(field).attr('name')+ ' invalid');
+					if(name.startsWith('terms_conditions_'))
+					{
+						invalids++;
+						jQuery(label).addClass('invalid_checkmark');
+						console.log(jQuery(field).attr('name')+ ' invalid');
+					}
+					else
+					{
+						invalids++;
+						jQuery(field).addClass('invalid_field');
+						console.log(jQuery(field).attr('name')+ ' invalid');
+					}
 				}
 				else
 				{
-					jQuery(this).removeClass('invalid_field');
+					if(name.startsWith('terms_conditions_'))
+					{
+						jQuery(label).removeClass('invalid_checkmark');
+					}
+					else
+					{
+						jQuery(this).removeClass('invalid_field');
+					}
 					
 					if(!excludeStore.includes(name))
 					{
@@ -482,7 +517,11 @@ const dy_request_form = (token) => {
 			console.log(jQuery(thisForm).formToArray());
 
 			//jQuery(thisForm).submit();
-		}	
+		}
+		else
+		{
+			window.scrollTo(0, 0);
+		}
 	});
 	return false;
 }
@@ -539,7 +578,7 @@ const dy_country_options = (data) => {
 			{
 				if (typeof name !== typeof undefined && name !== false)
 				{
-					if(sessionStorage.getItem(name) != null && sessionStorage.getItem(name) != '')
+					if(sessionStorage.getItem(name) != null && sessionStorage.getItem(name) != null)
 					{
 						var item = sessionStorage.getItem(name);
 						
@@ -585,7 +624,7 @@ const booking_datepicker = () => {
 				jQuery(field).attr({'type': 'text'});
 				jQuery(field).pickadate(args);
 			}
-			jQuery(field).removeAttr('disabled').attr({'placeholder': ''});
+			jQuery(field).removeAttr('disabled').attr({'placeholder': null});
 		});
 	});			
 
@@ -665,7 +704,7 @@ const booking_validate = (form) => {
 	var invalids = 0;
 				
 	jQuery(form).find('input[type="text"]').each(function(){
-		if(jQuery(this).val() == '' && jQuery(this).hasClass('required'))
+		if(jQuery(this).val() == null && jQuery(this).hasClass('required'))
 		{
 			jQuery(this).addClass('invalid_field');
 			invalids++;
@@ -735,4 +774,59 @@ const booking_coupon = () => {
 		jQuery(input).toggleClass('hidden');
 		jQuery(input).focus();
 	});	
+}
+
+const isInvalid = (name, value) => {
+	let output = false;
+
+	if(name === 'CVV2' && value.length !== 3)
+	{
+		output =  true;
+	}
+	else if(name === 'CCNum' && !isValidCard(value))
+	{
+		output =  true;
+	}
+	else if(name === 'email' && !isEmail(value))
+	{
+		output =  true;
+	}
+	else if(name === 'repeat_email' && !isEmail(value))
+	{
+		output =  true;
+	}
+	
+	return output;
+};
+
+const isValidCard = (value) => {
+  
+	if (/[^0-9-\s]+/.test(value))
+	{
+		return false;
+	}
+
+	let nCheck = 0;
+	let bEven = false;
+	value = value.replace(/\D/g, null);
+
+	for (let n = value.length - 1; n >= 0; n--)
+	{
+		let cDigit = value.charAt(n);
+		let nDigit = parseInt(cDigit, 10);
+
+		if (bEven && (nDigit *= 2) > 9){
+			nDigit -= 9;
+		};
+
+		nCheck += nDigit;
+		bEven = !bEven;
+	}
+
+	return (nCheck % 10) == 0;
+}
+
+function isEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
