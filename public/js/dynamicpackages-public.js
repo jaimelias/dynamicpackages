@@ -38,12 +38,6 @@ const booking_open_form = () => {
 	const thisForm = jQuery('#dynamic_form');
 	const cc_required = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
 	const formFields = jQuery(thisForm).formToArray();
-	formFields.forEach(field => {
-		if(field.name.startsWith('terms_conditions_'))
-		{
-			cc_required.push(field.name);
-		}
-	});
 		
 	jQuery('#dy_payment_buttons').find('button').click(function(){
 		if(jQuery(this).hasClass('with_cc'))
@@ -58,7 +52,6 @@ const booking_open_form = () => {
 			$('.with_cc_show').addClass('hidden');
 			cc_required.forEach(name => {
 				jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
-				jQuery(thisForm).find('label[for="'+name+'"]').removeClass('invalid_checkmark');
 			});			
 		}
 	});
