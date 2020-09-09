@@ -38,7 +38,7 @@ class dy_Gateways
 		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
-		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
 	}
 	
@@ -269,8 +269,7 @@ class dy_Gateways
 		{
 			if(is_booking_page())
 			{
-				wp_enqueue_script('checkout_script', plugin_dir_url( __FILE__ ) . 'checkout_script.js', array( 'jquery', 'dynamicpackages'), time(), true);
-				wp_add_inline_script('checkout_script', $this->checkout_vars(), 'before');		
+				wp_add_inline_script('dynamicpackages', $this->checkout_vars(), 'before');		
 			}
 		}
 	}

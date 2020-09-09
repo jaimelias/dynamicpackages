@@ -71,7 +71,6 @@ const booking_args = () => {
 	var amount = parseFloat(args.amount);
 	var regular_amount = parseFloat(args.regular_amount);
 	var total = parseFloat(args.total);
-	var description = args.description;
 	var deposit = 0;
 	var payment_amount = 0;
 	var add_ons_id = [];
@@ -103,32 +102,6 @@ const booking_args = () => {
 			add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
 		}
 	});
-	
-	var add_ons_description = add_ons_id.map(id => {
-		var output = [];
-		var args = checkout_vars();
-		var add_ons = args;
-		
-		if(add_ons.hasOwnProperty('add_ons'))
-		{
-			add_ons = add_ons.add_ons;
-		}
-		
-		for(var x = 0; x < add_ons.length; x++)
-		{
-			if(id == add_ons[x].id)
-			{
-				output.push(add_ons[x].name);
-			}
-		}
-		
-		return output;
-	});
-	
-	if(add_ons_id.length)
-	{
-		description = description + ' | ' + add_ons_description.join(', ');
-	}
 
 	var add_ons_price = add_ons_id.map(id => {
 		var output = 0;
@@ -158,81 +131,6 @@ const booking_args = () => {
 		add_ons_price = add_ons_price + (add_ons_price * tax);
 	}
 	
-	
-	if(add_ons_price > 0)
-	{
-		
-		if(args.package_included)
-		{
-			new_args.package_included = args.package_included + ', ' + add_ons_description.join(', ');
-		}
-		
-		regular_amount = regular_amount + add_ons_price;
-		amount = amount + add_ons_price;
-		description = args.duration + ' - ' + args.title + ' (' + args.departure_format_date + ' ';
-		
-		if(args.hasOwnProperty('booking_hour'))
-		{
-			if(args.booking_hour != null)
-			{
-				description += '@ ' + args.booking_hour;
-			}
-		}
-		
-		description += '): ';
-		var pax_label = 'pax';
-		var discount_label = 'discount'
-		var free_label = 'free';
-		var deposit_label = 'deposit';
-		var total_label = 'total';
-		var outstanding_label = 'outstanding balance';
-		
-		if(args.hasOwnProperty('pax_num') && args.hasOwnProperty('pax_regular'))
-		{
-			if(args.pax_num > 0 && args.pax_regular > 0)
-			{
-				description += args.pax_regular + ' ';
-				
-				if(args.hasOwnProperty('pax_discount') || args.hasOwnProperty('pax_free'))
-				{
-					if(args.pax_discount > 0 || args.pax_free > 0)
-					{
-						pax_label = 'adults';
-					}
-				}
-				description += pax_label + ' ';
-
-				if(args.hasOwnProperty('pax_discount'))
-				{
-					if(args.pax_discount > 0)
-					{
-						description += ', ' + args.pax_discount + ' ' + discount_label;
-					}
-				}
-				
-				if(args.hasOwnProperty('pax_free'))
-				{
-					if(args.pax_free > 0)
-					{
-						description += ', ' + args.pax_free + ' ' + free_label;
-					}
-				}
-				
-			}
-		}
-		description += ' - ';
-		
-		if(args.deposit == 0)
-		{
-			description += total_label + ' ' + args.currency_symbol + amount.toFixed(2) + '.';
-		}
-		else
-		{
-			description += deposit_label + ' ' + args.currency_symbol + (amount * deposit).toFixed(2) + ', ' + outstanding_label + ' ' + args.currency_symbol + (amount - (amount * deposit)).toFixed(2) + '.';
-		}
-		
-	}
-	
 	payment_amount = amount;
 	
 	if(deposit != 0)
@@ -251,7 +149,6 @@ const booking_args = () => {
 	new_args.total = payment_amount.toFixed(2);
 	new_args.amount = amount.toFixed(2);
 	new_args.regular_amount = regular_amount.toFixed(2);
-	new_args.description = description;	
 	
 	for(k in new_args)
 	{
