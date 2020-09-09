@@ -102,7 +102,28 @@ const booking_args = () => {
 			add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
 		}
 	});
-
+	
+	var add_ons_description = add_ons_id.map(id => {
+		var output = [];
+		var args = checkout_vars();
+		var add_ons = args;
+		
+		if(add_ons.hasOwnProperty('add_ons'))
+		{
+			add_ons = add_ons.add_ons;
+		}
+		
+		for(var x = 0; x < add_ons.length; x++)
+		{
+			if(id == add_ons[x].id)
+			{
+				output.push(add_ons[x].name);
+			}
+		}
+		
+		return output;
+	});
+	
 	var add_ons_price = add_ons_id.map(id => {
 		var output = 0;
 		var args = checkout_vars();
@@ -129,6 +150,13 @@ const booking_args = () => {
 	{
 		tax_amount = tax_amount + (add_ons_price * tax);
 		add_ons_price = add_ons_price + (add_ons_price * tax);
+	}
+	
+	
+	if(add_ons_price > 0)
+	{
+		regular_amount = regular_amount + add_ons_price;
+		amount = amount + add_ons_price;		
 	}
 	
 	payment_amount = amount;
