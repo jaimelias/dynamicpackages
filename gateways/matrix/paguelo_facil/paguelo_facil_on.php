@@ -115,11 +115,11 @@ class paguelo_facil_on{
 			if($dy_checkout_success === 2)
 			{
 				$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['title']);
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['title']);
 			}
 			else if($dy_checkout_success === 1)
 			{
-				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . ' ⚠️';
 			}
 			else
 			{
@@ -143,7 +143,7 @@ class paguelo_facil_on{
 				{
 					if(count($terms_conditions) > 0)
 					{
-						$output .= '<p>🗎 ' . sprintf(__('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
+						$output .= '<p>🗎 ' . sprintf(__('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . '</p>';
 					}
 				}
 				
@@ -162,7 +162,7 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{	
-				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), $_POST['total']) . '</p>';
+				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . '</p>';
 				$output .= ($_POST['message']) ? '<p>⚠️ ' . sanitize_text_field($_POST['message']) . '</p>' : null;
 				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
 			}
@@ -236,9 +236,9 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && dy_utilities::total() && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && intval(dy_utilities::total()) > 1)
 				{
 					$GLOBALS[$which_var] = true;
 					$output = true;
@@ -262,7 +262,7 @@ class paguelo_facil_on{
 				{
 					$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), $_POST['total'], $_POST['description']) . '</p>';
+					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['description']) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
@@ -318,18 +318,17 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{
-
-				$message = ($_POST['message']) ? '<p>' . sanitize_text_field($_POST['message']) . '</p>' : null;
-
-				$address = ($_POST['departure_address']) ? __('Meeting Point', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_address']) . '<br />' : null;
-				
-				$date = ($_POST['departure_format_date']) ? __('Date', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['departure_format_date']) . '<br />' : null;
-
-				$check_in = ($_POST['check_in_hour']) ? __('Check-in', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['check_in_hour']) . '<br />' : null;
-
-				$booking_hour = ($_POST['booking_hour']) ? __('Booking Hour', 'dynamicpackages') . ': ' . sanitize_text_field($_POST['booking_hour']) : null;
-				
-				$output = $message . '<p>' . $address . $date . $check_in . $booking_hour . '</p>';
+				$output = null;
+				$message = package_field('package_provider_message');
+				$address = package_field('package_departure_address');
+				$date = $_POST['departure_format_date'];
+				$check_in = package_field('package_check_in_hour');
+				$booking_hour = dy_utilities::hour();		
+				$output .= ($message) ? esc_html($message) . '<br/><br/>' : null;
+				$output .= ($address) ? __('Meeting Point', 'dynamicpackages') . ': ' . esc_html($address) . '<br />' : null;
+				$output .= ($date) ? __('Date', 'dynamicpackages') . ': ' . sanitize_text_field($date) . '<br />' : null;
+				$output .= ($check_in) ? __('Check-in', 'dynamicpackages') . ': ' . esc_html($check_in) . '<br />' : null;
+				$output .= ($booking_hour) ? __('Booking Hour', 'dynamicpackages') . ': ' . esc_html($booking_hour) : null;
 			}
 		}
 		
@@ -522,7 +521,7 @@ class paguelo_facil_on{
 	
 	public function totals_area($output)
 	{
-		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && isset($_POST['total']) && isset($_POST['departure_date']))
+		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && dy_utilities::total() && isset($_POST['departure_date']))
 		{
 			$deposit = sanitize_text_field($_POST['deposit']);
 			$outstanding = dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);

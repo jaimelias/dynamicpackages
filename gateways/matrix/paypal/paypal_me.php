@@ -38,7 +38,8 @@ class paypal_me{
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->max = get_option($this->gateway_name . '_max');
 		$this->color = '#000';
-		$this->background_color = '#FFD700';		
+		$this->background_color = '#FFD700';
+		$this->total = dy_utilities::total();
 	}
 
 	public function send_data()
@@ -137,9 +138,9 @@ class paypal_me{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && $this->total && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && $this->total > 1)
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -152,7 +153,7 @@ class paypal_me{
 	
 	public function redirect()
 	{
-		$paypal_url = 'https://paypal.me/'.$this->username.'/'.esc_html($_POST['total']);
+		$paypal_url = 'https://paypal.me/'.$this->username.'/'.esc_html($this->total);
 		wp_redirect(esc_url($paypal_url));
 		exit;		
 	}
@@ -389,7 +390,7 @@ class paypal_me{
 	
 	public function message($message)
 	{
-		$total = number_format(sanitize_text_field($_POST['total']), 2, '.', '');
+		$total = number_format($this->total, 2, '.', '');
 		$url = 'https://paypal.me/'.$this->username.'/'.$total;
 		$amount = number_format($total, 2, '.', ',');
 		$amount = dy_utilities::currency_symbol().''.$amount;

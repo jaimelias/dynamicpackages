@@ -86,7 +86,7 @@ class dy_Actions{
 			'to' => sanitize_text_field($_POST['email'])
 		);
 
-		if($_POST['total'] > 0)
+		if(dy_utilities::total() > 0)
 		{
 			$attachments = array();
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
@@ -128,14 +128,14 @@ class dy_Actions{
 			$args['message'] = $message;
 		}
 	
-		die($args['message']);
+		//die($args['message']);
 		
 		//sg_mail($args);
     }
 	
 	public function subject()
 	{
-		if($_POST['total'] > 0)
+		if(dy_utilities::total() > 0)
 		{
 			$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
 			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), $calculate_total, $_POST['title']);			

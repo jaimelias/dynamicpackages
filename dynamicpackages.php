@@ -70,10 +70,23 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 function package_field($name, $this_id = null)
 {
 	if($this_id == null)
-	{
-		global $post;
+	{		
 		global $polylang;
-		$this_id = get_the_ID();
+				
+		if(isset($_POST['post_id']))
+		{
+			$this_id = intval(sanitize_text_field($_POST['post_id']));
+			$post = get_post($this_id);
+		}
+		else
+		{
+			global $post;
+			
+			if(isset($post))
+			{
+				$this_id = $post->ID;
+			}
+		}
 		
 		//pull all the fields from parent package with exceptions
 		if(isset($post))
