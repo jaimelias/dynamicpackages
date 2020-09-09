@@ -146,11 +146,12 @@ function is_has_package()
 if ( ! function_exists('write_log')) {
 	function write_log ( $log )  {
 		
-		if ( is_array( $log ) || is_object( $log ) ) {
-
+		if ( is_array( $log ) || is_object( $log ) ) 
+		{
+			$log = json_encode($log);
 			$log .= ' '.sanitize_text_field($_SERVER['REQUEST_URI']);  
 			$log .= ' '.sanitize_text_field($_SERVER['HTTP_USER_AGENT']);  
-			error_log( json_encode($log) );
+			error_log( $log );
 		}
 		else
 		{

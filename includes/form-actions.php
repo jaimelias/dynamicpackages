@@ -130,7 +130,7 @@ class dy_Actions{
 	
 		//die($args['message']);
 		
-		sg_mail($args);
+		//sg_mail($args);
     }
 	
 	public function subject()

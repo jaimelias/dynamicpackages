@@ -13,18 +13,17 @@ class paguelo_facil_on{
 		
 		if(is_admin())
 		{
-			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-			add_action('admin_menu', array(&$this, 'add_settings_page'), 101);			
+			add_action('admin_init', array(&$this, 'settings_init'), 1);
+			add_action('admin_menu', array(&$this, 'add_settings_page'), 100);			
 		}
 		else
 		{
-			add_action('init', array(&$this, 'checkout'));
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('dy_request_the_content', array(&$this, 'the_content'), 102);
-			add_filter('dy_request_the_title', array(&$this, 'the_title'), 102);
+			add_action('init', array(&$this, 'checkout'), 50);
+			add_filter('dy_request_the_content', array(&$this, 'the_content'));
+			add_filter('dy_request_the_title', array(&$this, 'the_title'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 1);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
-			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
+			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 100);
 		}
 	}
 	
@@ -39,21 +38,63 @@ class paguelo_facil_on{
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->min = get_option($this->gateway_name . '_min');
 		$this->color = '#fff';
-		$this->background_color = '#262626';		
+		$this->background_color = '#262626';
+		$this->endpoint = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 	}
 	
 	public function checkout()
 	{
 		global $dy_valid_recaptcha;
-		global $dy_checkout_success;
 		
-		if(!isset($dy_checkout_success))
+		if(!isset($this->success))
 		{
 			if(dy_Validators::validate_checkout($this->gateway_name))
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$GLOBALS['dy_checkout_success'] = 2;
+					$process_request = json_decode($this->process_request(), true);
+					$number = 2;
+					
+					if(is_array($process_request))
+					{
+						if(array_key_exists('error', $process_request))
+						{
+							$number = 0;
+							$this->error_codes = array(
+								'error' => $process_request['error']
+							);
+						}
+						else if(array_key_exists('Status', $process_request))
+						{
+							if($process_request['Status'] == 'Declined')
+							{
+								$number = 1;
+								$this->error_codes = array(
+									'RespText' => $process_request['RespText'],
+									'RespCode' => $process_request['RespCode']
+								);								
+							}
+							else if($process_request['Status'] == 'Approved')
+							{
+								$number = 2;
+							}
+						}
+					}
+					else
+					{
+						$number = 0;
+						$this->error_codes = array(
+							'error' => 'connection_timeout'
+						);	
+					}
+					
+					if(isset($this->error_codes))
+					{
+						write_log($this->error_codes);
+					}
+					
+					$this->success = $number;
+					$this->send_data();
 				}
 			}			
 		}		
@@ -62,9 +103,8 @@ class paguelo_facil_on{
 	public function send_data()
 	{
 		global $dy_valid_recaptcha;
-		global $dy_checkout_success;
 		
-		if(dy_Validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($dy_checkout_success))
+		if(dy_Validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($this->success))
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
@@ -73,7 +113,7 @@ class paguelo_facil_on{
 			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
 			
-			if($dy_checkout_success == 2)
+			if($this->success == 2)
 			{
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
 			}
@@ -92,11 +132,9 @@ class paguelo_facil_on{
 	public function label_doc($output)
 	{
 		
-		global $dy_checkout_success;
-		
-		if(isset($dy_checkout_success))
+		if(isset($this->success))
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{
 				$output = __('Invoice', 'dynamicpackages');
 			}
@@ -106,18 +144,15 @@ class paguelo_facil_on{
 	}	
 	
 	public function subject($output)
-	{
-		
-		global $dy_checkout_success;
-		
-		if(isset($dy_checkout_success))
+	{		
+		if(isset($this->success))
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{
 				$payment = (dy_Validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
 				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);
 			}
-			else if($dy_checkout_success === 1)
+			else if($this->success === 1)
 			{
 				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . ' ⚠️';
 			}
@@ -132,10 +167,9 @@ class paguelo_facil_on{
 	
 	public function email_message_bottom($output)
 	{
-		global $dy_checkout_success;
-		if(isset($dy_checkout_success))
+		if(isset($this->success))
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{
 				$terms_conditions = dy_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
 				
@@ -156,17 +190,17 @@ class paguelo_facil_on{
 	
 	public function message($output)
 	{
-		global $dy_checkout_success;
 		
-		if(isset($dy_checkout_success))
+		
+		if(isset($this->success))
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{	
 				$output = '<p>⚠️ ' . __('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages') . '</p>';
 				$output .= ($_POST['message']) ? '<p>⚠️ ' . sanitize_text_field($_POST['message']) . '</p>' : null;
 				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
 			}
-			else if($dy_checkout_success === 1)
+			else if($this->success === 1)
 			{
 				$output = '<p>☎️ ' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . ' ☎️</p>';
 			}
@@ -252,13 +286,13 @@ class paguelo_facil_on{
 	public function the_content($output)
 	{
 		global $dy_valid_recaptcha;
-		global $dy_checkout_success;
 		
-		if(isset($dy_checkout_success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		
+		if(isset($this->success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
 			if(isset($dy_valid_recaptcha))
 			{
-				if($dy_checkout_success === 2)
+				if($this->success === 2)
 				{
 					$payment = (dy_Validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
@@ -276,30 +310,45 @@ class paguelo_facil_on{
 						$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
 					}					
 				}
-				else if($dy_checkout_success === 1)
+				else if($this->success === 1)
 				{
 					$output = '<p class="minimal_alert strong">' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . '</p>';
+					$output .= $this->get_errors();
 				}
 				else
 				{
 					$output = '<p class="minimal_alert strong">' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
+					$output .= $this->get_errors();
 				}				
 			}
 		}
 		return $output;
 	}
 		
+		
+	public function get_errors()
+	{
+		$output = null;
+		
+		foreach($this->error_codes as $k => $v)
+		{
+			$output .= '<p class="minimal_alert strong">'.$k .': '.$v.'</p>';
+		}
+		
+		return $output;
+	}		
+		
 	public function the_title($output)
 	{
-		global $dy_checkout_success;
 		
-		if(isset($dy_checkout_success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		
+		if(isset($this->success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{
 				$output = __('Payment Approved', 'dynamicpackages');
 			}
-			else if($dy_checkout_success === 1)
+			else if($this->success === 1)
 			{
 				$output = __('Payment Declined', 'dynamicpackages');
 			}
@@ -313,11 +362,11 @@ class paguelo_facil_on{
 
 	public function email_notes($output)
 	{
-		global $dy_checkout_success;
 		
-		if(isset($dy_checkout_success))
+		
+		if(isset($this->success))
 		{
-			if($dy_checkout_success === 2)
+			if($this->success === 2)
 			{
 				$output = null;
 				$message = package_field('package_provider_message');
@@ -541,6 +590,57 @@ class paguelo_facil_on{
 		{
 			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
 		}
+	}
+	
+	public function build_request()
+	{
+		$ip = $_SERVER['REMOTE_ADDR'];
+		
+		if(array_key_exists('HTTP_CF_CONNECTING_IP ', $_SERVER))
+		{
+			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+		}
+		
+		$CCNum = sanitize_text_field($_POST['CCNum']);
+		$CVV2 = sanitize_text_field($_POST['CVV2']);
+		$email = sanitize_text_field($_POST['email']);
+		$hash = $CCNum.$CVV2.$email;
+		
+		$data = array(
+			'CCLW' => $this->cclw,
+			'txType' => 'SALE',
+			'CMTN' => dy_utilities::payment_amount(),
+			'CDSC' => substr(dy_Public::description(), 0, 150),
+			'CCNum' => $CCNum,
+			'ExpMonth' => sanitize_text_field($_POST['ExpMonth']),
+			'ExpYear' => sanitize_text_field($_POST['ExpYear']),
+			'CVV2' => $CVV2,
+			'Name' => sanitize_text_field($_POST['first_name']),
+			'LastName' => sanitize_text_field($_POST['lastname']),
+			'Email' => $email,
+			'Address' => sanitize_text_field($_POST['address']),
+			'Tel' => sanitize_text_field($_POST['phone']),
+			'Ip'=> $ip,
+			'SecretHash' => hash('sha512', $hash)
+		);
+				
+		return $data;
+	}
+	
+	public function process_request()
+	{
+		$params = http_build_query($this->build_request());
+		
+		$ch = curl_init();
+		curl_setopt($ch,CURLOPT_URL, $this->endpoint);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true );
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'Accept: */*'));
+		curl_setopt($ch,CURLOPT_POSTFIELDS, $params);
+		$result = curl_exec($ch);
+		return $result;
 	}
 
 	public function js()

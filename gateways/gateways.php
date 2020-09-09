@@ -39,7 +39,7 @@ class dy_Gateways
 		add_filter('the_content', array(&$this, 'the_content'), 102);
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-		add_action('wp_headers', array(&$this, 'set_post_on_checkout_page'));
+		add_action('init', array(&$this, 'set_post_on_checkout_page'));
 	}
 	
 	public static function set_post_on_checkout_page()
@@ -299,7 +299,7 @@ class dy_Gateways
 			'coupon_discount' => esc_html($coupon_discount),
 			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())),
 			'booking_date' => sanitize_text_field($_GET['booking_date']),
-			'booking_extra' => sanitize_text_field($_GET['booking_extra']),
+			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
 			'departure_address' => esc_html(package_field('package_departure_address')),
 			'check_in_hour' => esc_html(package_field('package_check_in_hour')),

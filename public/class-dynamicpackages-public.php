@@ -1363,95 +1363,99 @@ class dy_Public {
 	public static function description()
 	{	
 		global $post;
-		$date = dy_utilities::format_date($_REQUEST['booking_date']);
-		$pax_discount = 0;
-		$discount = 0;
-		$free = 0;
-		$adults = intval(sanitize_text_field($_REQUEST['pax_regular']));
-		$people = array();
-		$people['adults'] = $adults;
 		
-		if(package_field('package_free' ) != '')
+		if(isset($post))
 		{
-			$free = package_field('package_free');
-		}
-		if(package_field('package_discount' ) != '')
-		{
-			$discount = package_field('package_discount');
-		}
-		
-		if(isset($_REQUEST['pax_discount']))
-		{
-			$pax_discount = intval($_REQUEST['pax_discount']);
+			$date = dy_utilities::format_date($_REQUEST['booking_date']);
+			$pax_discount = 0;
+			$discount = 0;
+			$free = 0;
+			$adults = intval(sanitize_text_field($_REQUEST['pax_regular']));
+			$people = array();
+			$people['adults'] = $adults;
 			
-			if($pax_discount > 0)
+			if(package_field('package_free' ) != '')
 			{
-				$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
+				$free = package_field('package_free');
 			}
-		}
-		if(isset($_REQUEST['pax_free']))
-		{
-			$pax_free = intval($_REQUEST['pax_free']);
+			if(package_field('package_discount' ) != '')
+			{
+				$discount = package_field('package_discount');
+			}
 			
-			if($pax_free > 0)
+			if(isset($_REQUEST['pax_discount']))
 			{
-				$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
-			}			
-		}		
-		
-		$participants = array(__('person', 'dynamicpackages'), __('persons', 'dynamicpackages'));
-		
-		if(array_key_exists('free', $people) || array_key_exists('discount', $people))
-		{
-			$participants = array(__('adult', 'dynamicpackages'), __('adults', 'dynamicpackages'));
-		}
-		
-		$labels_singular = array($participants[0], __('child under', 'dynamicpackages'));
-		$labels_plural = array($participants[1], __('children under', 'dynamicpackages'));
-		$labels = $labels_singular;
-		
-		$people_imp = array();
-		
-		foreach($people as $k => $v)
-		{
-			if($v > 0)
-			{
-				$text = null;
-				if($v > 1)
-				{
-					$labels = $labels_plural;
-				}
+				$pax_discount = intval($_REQUEST['pax_discount']);
 				
-				if($k == 'adults')
+				if($pax_discount > 0)
 				{
-					$text = $v.' '.$labels[0];
+					$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
 				}
-				if($k == 'discount')
-				{
-					$text = $v.' '.$labels[1].' '.$discount.' '.__('years old');
-				}	
-				if($k == 'free')
-				{
-					$text = $v.' '.$labels[1].' '.$free.' '.__('years old');
-				}
-				array_push($people_imp, $text);
 			}
-		}
-		
-		$people_imp = implode(', ', $people_imp);
-		
-		$description = self::show_duration().' - '.$post->post_title;
-		$description .= ' ('.$date;
-		
-		if(dy_utilities::hour() != '')
-		{
-			$description .= ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour();
-		}
-		
-		$description .= ')';
-		
-		$description .= ': '.$people_imp;
-		return $description;
+			if(isset($_REQUEST['pax_free']))
+			{
+				$pax_free = intval($_REQUEST['pax_free']);
+				
+				if($pax_free > 0)
+				{
+					$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
+				}			
+			}		
+			
+			$participants = array(__('person', 'dynamicpackages'), __('persons', 'dynamicpackages'));
+			
+			if(array_key_exists('free', $people) || array_key_exists('discount', $people))
+			{
+				$participants = array(__('adult', 'dynamicpackages'), __('adults', 'dynamicpackages'));
+			}
+			
+			$labels_singular = array($participants[0], __('child under', 'dynamicpackages'));
+			$labels_plural = array($participants[1], __('children under', 'dynamicpackages'));
+			$labels = $labels_singular;
+			
+			$people_imp = array();
+			
+			foreach($people as $k => $v)
+			{
+				if($v > 0)
+				{
+					$text = null;
+					if($v > 1)
+					{
+						$labels = $labels_plural;
+					}
+					
+					if($k == 'adults')
+					{
+						$text = $v.' '.$labels[0];
+					}
+					if($k == 'discount')
+					{
+						$text = $v.' '.$labels[1].' '.$discount.' '.__('years old');
+					}	
+					if($k == 'free')
+					{
+						$text = $v.' '.$labels[1].' '.$free.' '.__('years old');
+					}
+					array_push($people_imp, $text);
+				}
+			}
+			
+			$people_imp = implode(', ', $people_imp);
+			
+			$description = self::show_duration().' - '.$post->post_title;
+			$description .= ' ('.$date;
+			
+			if(dy_utilities::hour() != '')
+			{
+				$description .= ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour();
+			}
+			
+			$description .= ')';
+			
+			$description .= ': '.$people_imp;
+			return $description;			
+		}		
 	}
 	
 	public static function show_badge()
