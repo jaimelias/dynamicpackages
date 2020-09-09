@@ -173,6 +173,8 @@ const booking_args = () => {
 
 const booking_calc = () => {
 	
+	jQuery('#dynamic_table select.add_ons').val(0);
+	
 	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
 		
 		var args = booking_args();

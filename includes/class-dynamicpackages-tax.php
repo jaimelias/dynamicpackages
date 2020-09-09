@@ -291,7 +291,7 @@ class dy_Tax_Mod
 					
 					if(intval($price) > 0)
 					{
-						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.$term_id.'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
+						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.$term_id.'"><option value="0" selected>'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
 					}					
 				}
 			}
