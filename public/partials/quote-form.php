@@ -15,7 +15,6 @@
 		<input type="hidden" name="dy_request" value="request" />
 		<input type="hidden" name="dy_recaptcha" />
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
-		<input type="hidden" name="total" value="<?php echo dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())); ?>" />		
 		
 		<!-- Cookies -->
 		<input type="hidden" name="channel" class="channel" value="" />

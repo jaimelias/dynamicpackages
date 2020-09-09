@@ -103,27 +103,6 @@ const booking_args = () => {
 		}
 	});
 	
-	var add_ons_description = add_ons_id.map(id => {
-		var output = [];
-		var args = checkout_vars();
-		var add_ons = args;
-		
-		if(add_ons.hasOwnProperty('add_ons'))
-		{
-			add_ons = add_ons.add_ons;
-		}
-		
-		for(var x = 0; x < add_ons.length; x++)
-		{
-			if(id == add_ons[x].id)
-			{
-				output.push(add_ons[x].name);
-			}
-		}
-		
-		return output;
-	});
-	
 	var add_ons_price = add_ons_id.map(id => {
 		var output = 0;
 		var args = checkout_vars();
@@ -200,8 +179,6 @@ const booking_calc = () => {
 	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
 		
 		var args = booking_args();
-		
-		jQuery('input[name="total"]').val(args.total);
 				
 		jQuery('.dy_calc').each(function(){
 			
@@ -328,7 +305,7 @@ function dy_recaptcha()
 const dy_request_form = (token) => {
 	const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	const thisForm = jQuery('#dynamic_form');
-	const excludeStore = ['dy_recaptcha', 'total', 'dy_request'];
+	const excludeStore = ['dy_recaptcha', 'dy_request'];
 	const args = booking_args();
 	
 	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), data => {
