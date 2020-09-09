@@ -76,7 +76,7 @@
 				
 				if(dy_Validators::valid_coupon())
 				{
-					$each_adult = $each_adult * ((100 - floatval(self::get_coupon('discount'))) /100);
+					$each_adult = $each_adult * ((100 - floatval(dy_utilities::get_coupon('discount'))) /100);
 				}
 				
 				$sum_adults = $each_adult*floatval(sanitize_text_field($_GET['pax_regular']));
@@ -98,7 +98,7 @@
 
 					if(dy_Validators::valid_coupon())
 					{
-						$each_child = $each_child * ((100 - floatval(self::get_coupon('discount'))) /100);
+						$each_child = $each_child * ((100 - floatval(dy_utilities::get_coupon('discount'))) /100);
 					}					
 					
 					$sum_children = $each_child*floatval(sanitize_text_field($_GET['pax_discount']));
