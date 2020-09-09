@@ -362,7 +362,7 @@ class dy_Tax_Mod
 				{
 					if($package_type == 1 || $package_type == 2)
 					{
-						$package_duration = (isset($_GET['booking_extra'])) ? intval(sanitize_text_field($_GET['booking_extra'])) : 1;
+						$package_duration = (isset($_REQUEST['booking_extra'])) ? intval(sanitize_text_field($_REQUEST['booking_extra'])) : 1;
 						
 						if($package_unit > 1)
 						{

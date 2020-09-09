@@ -177,6 +177,7 @@ class dy_utilities {
 		$sum_adults = 0;
 		$each_adult = 0;
 		$sum_children = 0;
+		$pax_num = self::pax_num();
 		$each_child = 0;
 		$length_unit = package_field('package_length_unit');
 	
@@ -217,10 +218,31 @@ class dy_utilities {
 		if(self::increase_by_hour() || self::increase_by_day())
 		{
 			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
-		}		
+		}
+		
+		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
+		{
+			$add_ons = dy_Tax_Mod::get_add_ons();
+			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
+			$add_ons_price = 0;
+			$add_ons_count = count($add_ons);
+			
+			if(is_array($add_ons) && is_array($add_ons_included))
+			{
+				for($x = 0; $x < $add_ons_count; $x++)
+				{
+					if(in_array($add_ons[$x]['id'], $add_ons_included))
+					{
+						$add_ons_price = floatval($pax_num) * floatval($add_ons[$x]['price']);
+					}
+				}
 				
+				$sum = $sum + $add_ons_price;			
+			}			
+		}
+						
 		return $sum;
-	}	
+	}
 
 	public static function starting_at_archive($id = '')
 	{
