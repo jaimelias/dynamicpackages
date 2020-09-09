@@ -230,7 +230,7 @@ class dy_Validators
 	{
 		$output = false;
 
-		if(isset($_POST['dy_request']) && self::contact_details() && isset($_POST['country']) && isset($_POST['address']) && self::booking_details())
+		if(isset($_POST['dy_request']) && self::contact_details() && self::booking_details())
 		{
 			if($gateway_name == $_POST['dy_request'] && self::credit_card() && self::validate_terms_conditions($_POST))
 			{
@@ -304,7 +304,7 @@ class dy_Validators
 		}
 		else
 		{
-			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']))
+			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']) && isset($_POST['country']) && isset($_POST['address']) && isset($_POST['city']))
 			{
 				if(!self::luhn_check($_POST['CCNum']))
 				{
@@ -328,6 +328,18 @@ class dy_Validators
 				if(empty($_POST['CVV2']))
 				{
 					$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
+				}
+				if(empty($_POST['country']))
+				{
+					$invalids[] = __('Invalid country.', 'dynamicpackages');
+				}
+				if(empty($_POST['city']))
+				{
+					$invalids[] = __('Invalid city.', 'dynamicpackages');
+				}
+				if(empty($_POST['address']))
+				{
+					$invalids[] = __('Invalid address.', 'dynamicpackages');
 				}
 			}		
 		}

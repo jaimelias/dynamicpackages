@@ -64,20 +64,19 @@ const dy_lang = () => {
 };
 
 const booking_args = () => {
-	var output = {};
-	var args  = checkout_vars();
-	var add_ons = args;
-	var pax = parseFloat(args.pax_num);
-	var amount = parseFloat(args.amount);
-	var regular_amount = parseFloat(args.regular_amount);
-	var total = parseFloat(args.total);
-	var deposit = 0;
-	var payment_amount = 0;
-	var add_ons_id = [];
-	var tax = 0;
-	var tax_amount = parseFloat(args.tax_amount);
-	var new_args = {};
-	var outstanding = 0;
+	const args  = checkout_vars();
+	const pax = parseFloat(args.pax_num);
+	const tax = 0;	
+	let output = {};
+	let amount = parseFloat(args.amount);
+	let regular_amount = parseFloat(args.regular_amount);
+	let total = parseFloat(args.total);
+	let deposit = 0;
+	let payment_amount = 0;
+	let add_ons_id = [];
+	let tax_amount = parseFloat(args.tax_amount);
+	let new_args = {};
+	let outstanding = 0;
 	
 	if(args.hasOwnProperty('deposit'))
 	{
@@ -94,6 +93,9 @@ const booking_args = () => {
 		}
 	}
 	
+	const thisForm = jQuery('#dynamic_form');
+	jQuery(thisForm).find('[name="add_ons"]').val();
+	
 	jQuery('#dynamic_table').find('select.add_ons').each(function(){
 		var field = jQuery(this);
 		
@@ -103,21 +105,16 @@ const booking_args = () => {
 		}
 	});
 	
-	var add_ons_price = add_ons_id.map(id => {
-		var output = 0;
-		var args = checkout_vars();
-		var add_ons = args;
+	jQuery(thisForm).find('[name="add_ons"]').val(add_ons_id.join(','));
+	
+	let add_ons_price = add_ons_id.map(id => {
+		let output = 0;
 		
-		if(add_ons.hasOwnProperty('add_ons'))
+		for(let x = 0; x < args.add_ons.length; x++)
 		{
-			add_ons = add_ons.add_ons;
-		}
-		
-		for(var x = 0; x < add_ons.length; x++)
-		{
-			if(id == add_ons[x].id)
+			if(id == args.add_ons[x].id)
 			{
-				output = parseFloat(add_ons[x].price) * parseFloat(args.pax_num);
+				output = parseFloat(args.add_ons[x].price) * parseFloat(args.pax_num);
 			}
 		}
 		return output;

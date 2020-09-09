@@ -14,6 +14,7 @@
 		<!-- Config -->
 		<input type="hidden" name="dy_request" value="request" />
 		<input type="hidden" name="dy_recaptcha" />
+		<input type="hidden" name="add_ons" />
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
 		
 		<!-- Cookies -->
