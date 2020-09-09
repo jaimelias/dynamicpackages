@@ -156,7 +156,7 @@ class paguelo_facil_on{
 			{
 				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . ' ⚠️';
 			}
-			else
+			else if($this->success === 0)
 			{
 				$output = '⚠️ ' . sprintf(__('%s is having problems processing your payment', 'dynamicpackages'), get_bloginfo('name')) . ' ⚠️';
 			}
@@ -190,8 +190,6 @@ class paguelo_facil_on{
 	
 	public function message($output)
 	{
-		
-		
 		if(isset($this->success))
 		{
 			if($this->success === 2)
@@ -203,10 +201,12 @@ class paguelo_facil_on{
 			else if($this->success === 1)
 			{
 				$output = '<p>☎️ ' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . ' ☎️</p>';
+				$output .= $this->get_errors();
 			}
 			else
 			{
 				$output = '<p>' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
+				$output .= $this->get_errors();
 			}
 		}
 		
