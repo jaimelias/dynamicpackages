@@ -284,7 +284,7 @@ class dy_Validators
 		}
 		else
 		{
-			if(isset($_POST['departure_date']) && isset($_POST['check_in_hour']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['description']) && isset($_POST['pax_num']) && isset($_POST['total']))
+			if(isset($_POST['booking_date']) && isset($_POST['check_in_hour']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['description']) && isset($_POST['pax_num']) && isset($_POST['total']))
 			{	
 				$output = true;
 				$GLOBALS['booking_details'] = $output;

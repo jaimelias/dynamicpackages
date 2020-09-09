@@ -33,7 +33,7 @@ $gate['headers'] = array();
 array_push($gate['headers'], 'Content-Type: application/x-www-form-urlencoded');
 array_push($gate['headers'], 'Accept: */*');
 $gate['auth'] = array();
-$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'first_name', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'departure_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message');
+$gate['post_fields'] = array('CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'first_name', 'lastname', 'phone', 'email', 'country', 'city', 'address', 'description', 'total', 'booking_date', 'check_in_hour', 'booking_hour', 'duration', 'pax_num', 'channel', 'message');
 $gate['custom_fields'] = array('CCLW');
 $gate['hidden_fields'] = array();
 array_push($gate['hidden_fields'], array('TxType' => 'SALE'));
@@ -68,7 +68,7 @@ if(!is_admin())
 		$gate_webhook['Email'] = 'return $sanitized_fields["email"];';
 		$gate_webhook['Tel'] = 'return $sanitized_fields["phone"];';
 		$gate_webhook['Address'] = 'return $sanitized_fields["country"].", ".$sanitized_fields["city"]."  ".$sanitized_fields["address"];';
-		$gate_webhook['departure_date'] = 'return $sanitized_fields["departure_date"];';
+		$gate_webhook['booking_date'] = 'return $sanitized_fields["booking_date"];';
 		$gate_webhook['check_in_hour'] = 'return $sanitized_fields["check_in_hour"];';
 		$gate_webhook['booking_hour'] = 'return $sanitized_fields["booking_hour"];';
 		$gate_webhook['duration'] = 'return $sanitized_fields["duration"];';

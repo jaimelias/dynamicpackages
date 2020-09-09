@@ -521,12 +521,12 @@ class paguelo_facil_on{
 	
 	public function totals_area($output)
 	{
-		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && dy_utilities::total() && isset($_POST['departure_date']))
+		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && dy_utilities::total() && isset($_POST['booking_date']))
 		{
 			$deposit = sanitize_text_field($_POST['deposit']);
 			$outstanding = dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
 			$total =  dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
-			$date = sanitize_text_field($_POST['departure_date']);
+			$date = sanitize_text_field($_POST['booking_date']);
 			
 			if($deposit > 0)
 			{

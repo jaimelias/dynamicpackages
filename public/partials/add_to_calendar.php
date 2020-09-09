@@ -39,9 +39,9 @@ class dy_Add_To_Calendar
 			{
 				$hour = $_GET['booking_hour'];
 			}
-			if(isset($_POST['departure_date']))
+			if(isset($_POST['booking_date']))
 			{
-				$date = $_POST['departure_date'];
+				$date = $_POST['booking_date'];
 			}
 			if(isset($_POST['booking_hour']))
 			{
@@ -71,7 +71,7 @@ class dy_Add_To_Calendar
 			
 			$description = (isset($_POST['description'])) ? sanitize_text_field($_POST['description']) : get_the_excerpt();
 
-			$calendar = (isset($_POST['departure_date']) && isset($_POST['booking_hour'])) ? sanitize_text_field($_POST['departure_date']).' '.sanitize_text_field($_POST['booking_hour']) : dy_Public::date().' '.dy_utilities::hour();
+			$calendar = (isset($_POST['booking_date']) && isset($_POST['booking_hour'])) ? sanitize_text_field($_POST['booking_date']).' '.sanitize_text_field($_POST['booking_hour']) : dy_Public::date().' '.dy_utilities::hour();
 			
 			global $post;
 			ob_start();

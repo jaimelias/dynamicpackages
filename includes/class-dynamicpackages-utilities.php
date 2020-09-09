@@ -19,9 +19,9 @@ class dy_utilities {
 	
 	public static function booking_date()
 	{
-		if(isset($_GET['booking_date']))
+		if(isset($_REQUEST['booking_date']))
 		{
-			return strtotime(sanitize_text_field($_GET['booking_date']));
+			return strtotime(sanitize_text_field($_REQUEST['booking_date']));
 		}
 	}
 
@@ -43,19 +43,19 @@ class dy_utilities {
 	{
 		$output = 0;
 		
-		if(isset($_GET['pax_regular']))
+		if(isset($_REQUEST['pax_regular']))
 		{
-			$output = intval(sanitize_text_field($_GET['pax_regular']));
+			$output = intval(sanitize_text_field($_REQUEST['pax_regular']));
 		}
 		
-		if(isset($_GET['pax_discount']))
+		if(isset($_REQUEST['pax_discount']))
 		{
-			$output = $output + intval(sanitize_text_field($_GET['pax_discount']));
+			$output = $output + intval(sanitize_text_field($_REQUEST['pax_discount']));
 		}
 		
-		if(isset($_GET['pax_free']))
+		if(isset($_REQUEST['pax_free']))
 		{
-			$output = $output + intval(sanitize_text_field($_GET['pax_free']));
+			$output = $output + intval(sanitize_text_field($_REQUEST['pax_free']));
 		}		
 		
 		return $output;
@@ -192,24 +192,24 @@ class dy_utilities {
 	
 		for($a = 0;  $a < count($price_chart); $a++)
 		{
-			if(floatval(sanitize_text_field($_GET['pax_regular'])) == ($a+1))
+			if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 			{
 				if($price_chart[$a][0] != '')
 				{
 					$each_adult = floatval($price_chart[$a][0]);
 				}
 				
-				$sum_adults = $each_adult*floatval(sanitize_text_field($_GET['pax_regular']));
+				$sum_adults = $each_adult*floatval(sanitize_text_field($_REQUEST['pax_regular']));
 				$sum = $sum + $sum_adults;		
 			}
-			if(isset($_GET['pax_discount']))
+			if(isset($_REQUEST['pax_discount']))
 			{
-				if(floatval(sanitize_text_field($_GET['pax_discount'])) == floatval(($a+1)))
+				if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
 				{
 					if(floatval($price_chart[$a][1]) > 0 && $price_chart[$a][1] != 0)
 					{
 						$each_child = floatval($price_chart[$a][1]);
-						$sum_children = $each_child*floatval(sanitize_text_field($_GET['pax_discount']));
+						$sum_children = $each_child*floatval(sanitize_text_field($_REQUEST['pax_discount']));
 						$sum = $sum + $sum_children;
 					}			
 				}			
@@ -223,7 +223,7 @@ class dy_utilities {
 
 		if(self::increase_by_hour() || self::increase_by_day())
 		{
-			$sum = $sum * intval(sanitize_text_field($_GET['booking_extra']));
+			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 		}		
 				
 		return $sum;
@@ -523,21 +523,21 @@ class dy_utilities {
 
 	public static function get_min_nights()
 	{
-		if(is_booking_page() && isset($_GET['booking_date']))
+		if(is_booking_page() && isset($_REQUEST['booking_date']))
 		{
 			$duration = intval(package_field('package_duration'));
 			
-			if(isset($_GET['booking_extra']))
+			if(isset($_REQUEST['booking_extra']))
 			{
-				if($_GET['booking_extra'] > $duration)
+				if($_REQUEST['booking_extra'] > $duration)
 				{
-					$duration = intval(sanitize_text_field($_GET['booking_extra']));
+					$duration = intval(sanitize_text_field($_REQUEST['booking_extra']));
 				}
 			}
 			
 			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
 			
-			if($seasons != null)
+			if(is_array($seasons))
 			{
 				if(array_key_exists('seasons_chart', $seasons))
 				{
@@ -545,7 +545,7 @@ class dy_utilities {
 					
 					for($d = 1; $d < $duration; $d++)
 					{
-						$booking_date = sanitize_text_field($_GET['booking_date']);
+						$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 						$new_date = strtotime($booking_date . " +$d days");
 						
 						for($x = 0; $x < count($seasons); $x++)
@@ -604,13 +604,13 @@ class dy_utilities {
 
 	public static function get_price_per_night()
 	{
-		if(isset($_GET['booking_date']))
+		if(isset($_REQUEST['booking_date']))
 		{
 			$sum = 0;
 			$package_occupancy_chart = json_decode(html_entity_decode(package_field('package_occupancy_chart' )), true);
 			$duration = self::get_min_nights();
 			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
-			$booking_date = sanitize_text_field($_GET['booking_date']);
+			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 
 			$seasons_array = array();
 						
@@ -640,21 +640,21 @@ class dy_utilities {
 					{
 						for($a = 0;  $a < count($package_occupancy_chart[$seasons_array[$s]]); $a++)
 						{
-							if(floatval(sanitize_text_field($_GET['pax_regular'])) == ($a+1))
+							if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 							{	
 								if($package_occupancy_chart[$seasons_array[$s]][$a][0] != '')
 								{
 									//total occupancy price
 									$each_adult = floatval($package_occupancy_chart[$seasons_array[$s]][$a][0]);
-									$sum = $each_adult * floatval(sanitize_text_field($_GET['pax_regular']));
+									$sum = $each_adult * floatval(sanitize_text_field($_REQUEST['pax_regular']));
 									
 									//total children discounts
-									if(isset($_GET['pax_discount']))
+									if(isset($_REQUEST['pax_discount']))
 									{
-										if($_GET['pax_discount'] > 0 && $package_occupancy_chart[$seasons_array[$s]][$a][1] != '')
+										if($_REQUEST['pax_discount'] > 0 && $package_occupancy_chart[$seasons_array[$s]][$a][1] != '')
 										{
 											$each_child = floatval($package_occupancy_chart[$seasons_array[$s]][$a][1]);
-											$sum = $sum + ($each_child * floatval(sanitize_text_field($_GET['pax_discount'])));										}
+											$sum = $sum + ($each_child * floatval(sanitize_text_field($_REQUEST['pax_discount'])));										}
 									}
 									
 									$sum = $sum * $duration;
@@ -681,7 +681,7 @@ class dy_utilities {
 			$occupancy_chart = self::get_occupancy_chart();	
 			$duration = floatval(self::get_min_nights());
 			$seasons = self::get_season_chart();
-			$booking_date = sanitize_text_field($_GET['booking_date']);
+			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$seasons_array = array();
 						
 			for($d = 0; $d < $duration; $d++)
@@ -706,7 +706,7 @@ class dy_utilities {
 
 			for ($x = 0; $x < count($price_chart); $x++)
 			{
-				if(floatval(sanitize_text_field($_GET['pax_regular'])) == ($x+1))
+				if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($x+1))
 				{
 					if($price_chart[$x][0] != '')
 					{
@@ -715,25 +715,29 @@ class dy_utilities {
 				}
 			}
 			
-			for($s = 0; $s < count($seasons_array); $s++)
+			
+			if(is_array($seasons_array) && is_array($occupancy_chart))
 			{
-				if(array_key_exists($s, $seasons_array))
+				for($s = 0; $s < count($seasons_array); $s++)
 				{
-					if(array_key_exists($seasons_array[$s], $occupancy_chart))
+					if(array_key_exists($s, $seasons_array))
 					{
-						for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
+						if(array_key_exists($seasons_array[$s], $occupancy_chart))
 						{
-							if(floatval(sanitize_text_field($_GET['pax_regular'])) == ($a+1))
+							for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
 							{
-								if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
+								if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 								{
-									$occupancy_price = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
-									$occupancy_price = $occupancy_price * $duration;
-								}
-							}		
-						}						
+									if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
+									{
+										$occupancy_price = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
+										$occupancy_price = $occupancy_price * $duration;
+									}
+								}		
+							}						
+						}
 					}
-				}
+				}				
 			}
 			
 			$sum = $base_price + $occupancy_price;
@@ -760,7 +764,7 @@ class dy_utilities {
 			$package_occupancy_chart = self::get_occupancy_chart();	
 			$duration = self::get_min_nights();
 			$seasons = self::get_season_chart();
-			$booking_date = sanitize_text_field($_GET['booking_date']);
+			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$seasons_array = array();
 		
 			for($d = 0; $d < $duration; $d++)
@@ -782,9 +786,9 @@ class dy_utilities {
 			
 			for($x = 0; $x < count($price_chart); $x++)
 			{
-				if(isset($_GET['pax_discount']))
+				if(isset($_REQUEST['pax_discount']))
 				{
-					if(floatval(sanitize_text_field($_GET['pax_discount'])) == floatval(($x+1)))
+					if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($x+1)))
 					{
 						$base_price = 0;
 						
@@ -806,9 +810,9 @@ class dy_utilities {
 						{
 							for($a = 0;  $a < count($package_occupancy_chart[$seasons_array[$s]]); $a++)
 							{
-								if(isset($_GET['pax_discount']))
+								if(isset($_REQUEST['pax_discount']))
 								{
-									if(floatval(sanitize_text_field($_GET['pax_discount'])) == floatval(($a+1)))
+									if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
 									{
 										$occupancy_price = 0;
 										
@@ -958,7 +962,7 @@ class dy_utilities {
 		}
 	}
 	
-	public static function amount()
+	public static function payment_amount()
 	{
 		$total = floatval(dy_utilities::total());
 		

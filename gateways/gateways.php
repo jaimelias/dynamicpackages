@@ -162,7 +162,7 @@ class dy_Gateways
 				$output .= ' '.__('the deposit', 'dynamicpackages');
 			}
 			
-			$output .= ' ('.dy_utilities::currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dy_utilities::amount(), 2, '.', ',').'</span>';
+			$output .= ' ('.dy_utilities::currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dy_utilities::payment_amount(), 2, '.', ',').'</span>';
 			
 			$output .= ') '.__('with', 'dynamicpackages');
 			
@@ -270,23 +270,24 @@ class dy_Gateways
 		
 		$tax = floatval(dy_utilities::tax());
 		$description = $this->get_description();
-		$coupon_code = null;
+		$booking_coupon = null;
 		$coupon_discount = null;
 		
 		if(dy_Validators::valid_coupon())
 		{
-			$coupon_code = dy_utilities::get_coupon('code');
+			$booking_coupon = dy_utilities::get_coupon('code');
 			$coupon_discount = dy_utilities::get_coupon('discount');
-			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
+			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$booking_coupon.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
 			'description' => esc_html($description),
-			'coupon_code' => esc_html($coupon_code),
+			'booking_coupon' => esc_html($booking_coupon),
 			'coupon_discount' => esc_html($coupon_discount),
-			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::amount())),
-			'departure_date' => sanitize_text_field($_GET['booking_date']),
+			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())),
+			'booking_date' => sanitize_text_field($_GET['booking_date']),
+			'booking_extra' => sanitize_text_field($_GET['booking_extra']),
 			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
 			'departure_address' => esc_html(package_field('package_departure_address')),
 			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
@@ -320,7 +321,7 @@ class dy_Gateways
 		if($tax > 0)
 		{
 			$checkout_vars['tax'] = $tax;
-			$checkout_vars['tax_amount'] = $this->tax_amount();
+			$checkout_vars['tax_amount'] = $this->tax_payment_amount();
 		}		
 		
 		$add_ons = dy_Tax_Mod::get_add_ons();
@@ -346,7 +347,7 @@ class dy_Gateways
 		
 		if(dy_Validators::has_deposit())
 		{
-			$deposit = dy_sum_tax(dy_utilities::amount());
+			$deposit = dy_sum_tax(dy_utilities::payment_amount());
 			$total = dy_sum_tax(dy_utilities::total());
 			$outstanding = $total-$deposit;
 			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
@@ -497,7 +498,7 @@ class dy_Gateways
 		return $output;
 	}
 	
-	public function tax_amount()
+	public function tax_payment_amount()
 	{
 		$output = 0;
 		$tax = floatval(dy_utilities::tax());
