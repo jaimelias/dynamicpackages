@@ -284,7 +284,7 @@ class dy_Validators
 		}
 		else
 		{
-			if(isset($_POST['booking_date']) && isset($_POST['check_in_hour']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['description']) && isset($_POST['pax_num']) && isset($_POST['total']))
+			if(isset($_POST['booking_date']) && isset($_POST['check_in_hour']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']))
 			{	
 				$output = true;
 				$GLOBALS['booking_details'] = $output;
@@ -536,14 +536,6 @@ class dy_Validators
 						$GLOBALS['dy_has_deposit'] = $output;
 					}			
 				}		
-			}
-			if(isset($_POST['deposit']))
-			{
-				if($_POST['deposit'] > 0)
-				{
-					$output = true;
-					$GLOBALS['dy_has_deposit'] = $output;					
-				}
 			}
 		}
 		

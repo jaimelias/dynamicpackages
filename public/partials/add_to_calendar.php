@@ -68,28 +68,27 @@ class dy_Add_To_Calendar
 	{
 		if($this->is_valid())
 		{
-			
-			$description = (isset($_POST['description'])) ? sanitize_text_field($_POST['description']) : get_the_excerpt();
-
-			$calendar = (isset($_POST['booking_date']) && isset($_POST['booking_hour'])) ? sanitize_text_field($_POST['booking_date']).' '.sanitize_text_field($_POST['booking_hour']) : dy_Public::date().' '.dy_utilities::hour();
-			
 			global $post;
-			ob_start();
-			?>
-				<div class="bottom-20 addevent_container">
-					<div title="<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
-						<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>
-						<span class="start"><?php echo esc_html($calendar); ?></span>
-						<span class="timezone"><?php echo esc_html(get_option('timezone_string')); ?></span>
-						<span class="title"><?php echo esc_html($post->post_title); ?></span>
-						<span class="description"><?php echo esc_html($description); ?></span>
-						<span class="location"><?php echo esc_html(package_field('package_departure_address')); ?></span>
+			
+			if(isset($post))
+			{
+				ob_start();
+				?>
+					<div class="bottom-20 addevent_container">
+						<div title="<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
+							<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>
+							<span class="start"><?php echo esc_html(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
+							<span class="timezone"><?php echo esc_html(get_option('timezone_string')); ?></span>
+							<span class="title"><?php echo esc_html($post->post_title); ?></span>
+							<span class="description"><?php echo esc_html(dy_Public::description()); ?></span>
+							<span class="location"><?php echo esc_html(package_field('package_departure_address')); ?></span>
+						</div>
 					</div>
-				</div>
-			<?php
-			$output = ob_get_contents();
-			ob_end_clean();
-			return $output;				
+				<?php
+				$output = ob_get_contents();
+				ob_end_clean();
+				return $output;	
+			}
 		}
 	}
 	

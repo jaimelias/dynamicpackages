@@ -39,6 +39,18 @@ class dy_Gateways
 		add_filter('the_content', array(&$this, 'the_content'), 102);
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('wp_headers', array(&$this, 'set_post_on_checkout_page'));
+	}
+	
+	public static function set_post_on_checkout_page()
+	{
+		global $post;
+		
+		if(is_checkout_page() && !isset($post))
+		{
+			$this_id = intval(sanitize_text_field($_POST['post_id']));
+			$GLOBALS['post'] = get_post($this_id);
+		}
 	}
 
 	public function the_content($content)

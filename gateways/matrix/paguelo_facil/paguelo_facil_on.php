@@ -114,12 +114,12 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{
-				$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['title']);
+				$payment = (dy_Validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);
 			}
 			else if($dy_checkout_success === 1)
 			{
-				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . ' ⚠️';
 			}
 			else
 			{
@@ -143,7 +143,7 @@ class paguelo_facil_on{
 				{
 					if(count($terms_conditions) > 0)
 					{
-						$output .= '<p>🗎 ' . sprintf(__('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . '</p>';
+						$output .= '<p>🗎 ' . __('The Terms & Conditions you accepted are attached to this email.', 'dynamicpackages') . '</p>';
 					}
 				}
 				
@@ -162,7 +162,7 @@ class paguelo_facil_on{
 		{
 			if($dy_checkout_success === 2)
 			{	
-				$output = '<p>⚠️ ' . sprintf(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total()) . '</p>';
+				$output = '<p>⚠️ ' . __('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages') . '</p>';
 				$output .= ($_POST['message']) ? '<p>⚠️ ' . sanitize_text_field($_POST['message']) . '</p>' : null;
 				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
 			}
@@ -236,9 +236,9 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && dy_utilities::total() && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && intval(dy_utilities::total()) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
 				{
 					$GLOBALS[$which_var] = true;
 					$output = true;
@@ -260,13 +260,14 @@ class paguelo_facil_on{
 			{
 				if($dy_checkout_success === 2)
 				{
-					$payment = ($_POST['deposit'] > 0) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+					$payment = (dy_Validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['description']) . '</p>';
+					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
+					$output .= '<div class="bottom-20">' . dy_Public::description() . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
-					$output .= '<p>📧 '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
+					$output .= '<p class="minimal_success strong"><i class="fas fa-envelope"></i> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
 					
 					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 					
@@ -357,7 +358,7 @@ class paguelo_facil_on{
 				
 				if(is_booking_page())
 				{
-					$total = dy_utilities::total();
+					$total = dy_utilities::payment_amount();
 				}
 				else
 				{
@@ -521,18 +522,14 @@ class paguelo_facil_on{
 	
 	public function totals_area($output)
 	{
-		if(isset($_POST['deposit']) && isset($_POST['outstanding']) && dy_utilities::total() && isset($_POST['booking_date']))
+		if(dy_Validators::has_deposit())
 		{
-			$deposit = sanitize_text_field($_POST['deposit']);
-			$outstanding = dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
-			$total =  dy_utilities::currency_symbol().sanitize_text_field($_POST['outstanding']);
+			$outstanding = dy_utilities::currency_symbol().dy_utilities::outstanding_amount();
+			$total =  dy_utilities::currency_symbol().dy_utilities::payment_amount();
 			$date = sanitize_text_field($_POST['booking_date']);
 			
-			if($deposit > 0)
-			{
-				$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').' <span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
-				$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;
-			}
+			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').' <span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
+			$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;
 		}
 		
 		return $output;

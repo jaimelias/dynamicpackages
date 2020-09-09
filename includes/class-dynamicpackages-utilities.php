@@ -76,7 +76,7 @@ class dy_utilities {
 			$option = strtolower($option);
 			$coupons = json_decode(html_entity_decode(package_field('package_coupons' )), true);
 			$output = 'option not selected';
-			$booking_coupon = strtolower(sanitize_text_field($_GET['booking_coupon']));
+			$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
 			$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
 			
 			if(array_key_exists('coupons', $coupons))
@@ -133,29 +133,20 @@ class dy_utilities {
 		}
 		else
 		{
-			if(is_booking_page())
-			{
-				$subtotal = self::subtotal();
-				
+			if(is_booking_page() || is_checkout_page())
+			{	
 				if($regular == 'regular')
 				{
-					$subtotal = self::subtotal_regular();
+					$total = self::subtotal_regular();
 				}
 				else
 				{
-					$total = $subtotal;
+					$total = self::subtotal();
 				}			
 			}
 			else
 			{
-				if(isset($_POST['total']))
-				{
-					$total = sanitize_text_field($_POST['total']);
-				}
-				else
-				{
-					$total = self::starting_at();
-				}
+				$total = self::starting_at();
 			}
 			
 			if($total != 0)
@@ -189,31 +180,33 @@ class dy_utilities {
 		$each_child = 0;
 		$length_unit = package_field('package_length_unit');
 	
-	
-		for($a = 0;  $a < count($price_chart); $a++)
+		if(is_array($price_chart))
 		{
-			if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
+			for($a = 0;  $a < count($price_chart); $a++)
 			{
-				if($price_chart[$a][0] != '')
+				if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 				{
-					$each_adult = floatval($price_chart[$a][0]);
-				}
-				
-				$sum_adults = $each_adult*floatval(sanitize_text_field($_REQUEST['pax_regular']));
-				$sum = $sum + $sum_adults;		
-			}
-			if(isset($_REQUEST['pax_discount']))
-			{
-				if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
-				{
-					if(floatval($price_chart[$a][1]) > 0 && $price_chart[$a][1] != 0)
+					if($price_chart[$a][0] != '')
 					{
-						$each_child = floatval($price_chart[$a][1]);
-						$sum_children = $each_child*floatval(sanitize_text_field($_REQUEST['pax_discount']));
-						$sum = $sum + $sum_children;
+						$each_adult = floatval($price_chart[$a][0]);
+					}
+					
+					$sum_adults = $each_adult*floatval(sanitize_text_field($_REQUEST['pax_regular']));
+					$sum = $sum + $sum_adults;		
+				}
+				if(isset($_REQUEST['pax_discount']))
+				{
+					if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
+					{
+						if(floatval($price_chart[$a][1]) > 0 && $price_chart[$a][1] != 0)
+						{
+							$each_child = floatval($price_chart[$a][1]);
+							$sum_children = $each_child*floatval(sanitize_text_field($_REQUEST['pax_discount']));
+							$sum = $sum + $sum_children;
+						}			
 					}			
-				}			
-			}		
+				}		
+			}			
 		}
 		
 		if(intval($length_unit) == 2 || intval($length_unit) == 3)
@@ -523,7 +516,7 @@ class dy_utilities {
 
 	public static function get_min_nights()
 	{
-		if(is_booking_page() && isset($_REQUEST['booking_date']))
+		if((is_booking_page() || is_checkout_page()) && isset($_REQUEST['booking_date']))
 		{
 			$duration = intval(package_field('package_duration'));
 			
@@ -570,7 +563,7 @@ class dy_utilities {
 	}	
 	public static function get_season($booking_date)
 	{
-		if(is_booking_page())
+		if(is_booking_page() || is_checkout_page())
 		{
 			$season = 'price_chart';
 			$seasons = self::get_season_chart();
@@ -672,7 +665,7 @@ class dy_utilities {
 
 	public static function get_price_adults()
 	{
-		if(is_booking_page())
+		if(is_booking_page() || is_checkout_page())
 		{
 			$sum = 0;
 			$base_price = 0;
@@ -755,7 +748,7 @@ class dy_utilities {
 	
 	public static function get_price_discount()
 	{
-		if(is_booking_page())
+		if(is_booking_page() || is_checkout_page())
 		{
 			$sum = 0;
 			$base_price = 0;
@@ -905,9 +898,9 @@ class dy_utilities {
 			}
 		}
 		
-		if(isset($_GET['booking_hour']))
+		if(isset($_REQUEST['booking_hour']))
 		{
-			$hour = sanitize_text_field($_GET['booking_hour']);
+			$hour = sanitize_text_field($_REQUEST['booking_hour']);
 		}
 		
 		return $hour;
@@ -974,7 +967,13 @@ class dy_utilities {
 		
 		return $total;
 	}	
-	
+
+	public static function outstanding_amount()
+	{
+		$total = (self::total()) ? floatval(self::total()) : 0;
+		$payment_amount = (self::payment_amount()) ? floatval(self::payment_amount()) : 0;
+		return $total - $payment_amount;
+	}
 	public static function format_date($date)
 	{
 		return date_i18n(get_option('date_format'), strtotime(sanitize_text_field($date)));

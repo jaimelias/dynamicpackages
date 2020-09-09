@@ -1348,9 +1348,9 @@ class dy_Public {
 	{
 		$date = null;
 		
-		if(isset($_GET['booking_date']))
+		if(isset($_REQUEST['booking_date']))
 		{
-			$date = sanitize_text_field($_GET['booking_date']);
+			$date = sanitize_text_field($_REQUEST['booking_date']);
 		}
 		if(package_field('package_event_date') != '')
 		{
@@ -1363,11 +1363,11 @@ class dy_Public {
 	public static function description()
 	{	
 		global $post;
-		$date = dy_utilities::format_date($_GET['booking_date']);
+		$date = dy_utilities::format_date($_REQUEST['booking_date']);
 		$pax_discount = 0;
 		$discount = 0;
 		$free = 0;
-		$adults = intval(sanitize_text_field($_GET['pax_regular']));
+		$adults = intval(sanitize_text_field($_REQUEST['pax_regular']));
 		$people = array();
 		$people['adults'] = $adults;
 		
@@ -1380,22 +1380,22 @@ class dy_Public {
 			$discount = package_field('package_discount');
 		}
 		
-		if(isset($_GET['pax_discount']))
+		if(isset($_REQUEST['pax_discount']))
 		{
-			$pax_discount = intval($_GET['pax_discount']);
+			$pax_discount = intval($_REQUEST['pax_discount']);
 			
 			if($pax_discount > 0)
 			{
-				$people['discount'] = intval(sanitize_text_field($_GET['pax_discount']));
+				$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
 			}
 		}
-		if(isset($_GET['pax_free']))
+		if(isset($_REQUEST['pax_free']))
 		{
-			$pax_free = intval($_GET['pax_free']);
+			$pax_free = intval($_REQUEST['pax_free']);
 			
 			if($pax_free > 0)
 			{
-				$people['free'] = intval(sanitize_text_field($_GET['pax_free']));
+				$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
 			}			
 		}		
 		

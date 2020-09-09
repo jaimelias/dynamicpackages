@@ -113,9 +113,9 @@ class nequi_direct{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -152,7 +152,7 @@ class nequi_direct{
 	{
 		$first = __('To complete the booking please enter your Nequi App and send the', 'dynamicpackages');
 		$last = __('to the number', 'dynamicpackages');
-		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
+		$amount = dy_utilities::currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_Validators::has_deposit())
@@ -187,7 +187,7 @@ class nequi_direct{
 				
 				if(is_booking_page())
 				{
-					$total = dy_utilities::total();
+					$total = dy_utilities::payment_amount();
 				}
 				else
 				{

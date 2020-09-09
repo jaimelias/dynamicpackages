@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-08 23:31+0000\n"
+"POT-Creation-Date: 2020-09-08 23:34+0000\n"
 "PO-Revision-Date: 2020-09-08 23:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
@@ -925,6 +925,14 @@ msgid ""
 msgstr ""
 "Nuestro equipo se pondrá en contacto contigo muy pronto para darte más "
 "información sobre tu solicitud: %s"
+
+#: includes/form-actions.php:123
+#, php-format
+msgid ""
+"Do not hesitate to call us at %s or email us at %s if you have any questions."
+msgstr ""
+"No dude en llamarnos al %s o enviarnos un correo electrónico al %s si tienes "
+"alguna pregunta."
 
 #: includes/form-actions.php:126
 #, php-format

@@ -114,9 +114,9 @@ class bank_transfer{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['total']) && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && intval($_POST['total']) > 1)
+				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -152,7 +152,7 @@ class bank_transfer{
 	public function message($message)
 	{
 		
-		$amount = dy_utilities::currency_symbol().number_format(sanitize_text_field($_POST['total']), 2, '.', ',');
+		$amount = dy_utilities::currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_Validators::has_deposit())

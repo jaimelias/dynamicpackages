@@ -116,7 +116,7 @@ class dy_Actions{
 		else
 		{
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
-			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($_POST['description']).'</strong>').'</p>';
+			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html(dy_Public::description()).'</strong>').'</p>';
 			
 			if(get_option('dy_phone') && get_option('dy_email'))
 			{
@@ -130,15 +130,14 @@ class dy_Actions{
 	
 		//die($args['message']);
 		
-		//sg_mail($args);
+		sg_mail($args);
     }
 	
 	public function subject()
 	{
 		if(dy_utilities::total() > 0)
 		{
-			$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
-			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), $calculate_total, $_POST['title']);			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);			
 		}
 		else
 		{

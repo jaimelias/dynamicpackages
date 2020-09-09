@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-08 23:34+0000\n"
-"PO-Revision-Date: 2020-09-08 23:34+0000\n"
+"POT-Creation-Date: 2020-09-09 18:05+0000\n"
+"PO-Revision-Date: 2020-09-09 18:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -35,7 +35,7 @@ msgstr "Semanal"
 #: gateways/matrix/bank/local.php:264
 #: gateways/matrix/nequi/nequi_direct.php:241
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:410
-#: gateways/matrix/paypal/paypal_me.php:229
+#: gateways/matrix/paypal/paypal_me.php:223
 #: gateways/matrix/yappy/yappy_direct.php:245
 msgid "General Settings"
 msgstr "Configuración General"
@@ -144,8 +144,8 @@ msgstr "Ir a pagos"
 msgid "Invalid Recaptcha"
 msgstr "Recaptcha invalido"
 
-#: gateways/cc-gateways.php:81 gateways/gateways.php:97
-#: gateways/gateways.php:104
+#: gateways/cc-gateways.php:81 gateways/gateways.php:109
+#: gateways/gateways.php:116
 msgid "Invalid Request"
 msgstr "Solicitud invalida"
 
@@ -174,7 +174,7 @@ msgstr ""
 "confirmación en su email"
 
 #: gateways/cc-gateways.php:383
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:303
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:304
 msgid "Payment Declined"
 msgstr "Pago declinado"
 
@@ -189,11 +189,10 @@ msgstr "Saldo"
 #: gateways/checkout-page.php:61
 #: includes/class-dynamicpackages-metaboxes.php:278
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:117
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:263
 msgid "Deposit"
 msgstr "Deposito"
 
-#: gateways/checkout-page.php:125 gateways/gateways.php:280
+#: gateways/checkout-page.php:125 gateways/gateways.php:292
 msgid "Coupon"
 msgstr "Cupón"
 
@@ -222,8 +221,8 @@ msgstr "Descripción"
 msgid "Unit Price"
 msgstr "Precio unitario"
 
-#: gateways/checkout-page.php:149 public/email-templates/estimates-pdf.php:19
-#: public/email-templates/estimates.php:22
+#: gateways/checkout-page.php:149 public/email-templates/estimates-pdf.php:18
+#: public/email-templates/estimates.php:21
 msgid "Subtotal"
 msgstr "Subtotal"
 
@@ -250,16 +249,16 @@ msgstr "años"
 #: gateways/checkout-page.php:182
 #: includes/class-dynamicpackages-post-type.php:109
 #: includes/class-dynamicpackages-post-type.php:110
-#: public/email-templates/estimates-pdf.php:22
-#: public/email-templates/estimates.php:25
+#: public/email-templates/estimates-pdf.php:21
+#: public/email-templates/estimates.php:24
 msgid "Included"
 msgstr "Incluido"
 
 #: gateways/checkout-page.php:185
 #: includes/class-dynamicpackages-post-type.php:129
 #: includes/class-dynamicpackages-post-type.php:130
-#: public/email-templates/estimates-pdf.php:24
-#: public/email-templates/estimates.php:27
+#: public/email-templates/estimates-pdf.php:23
+#: public/email-templates/estimates.php:26
 msgid "Not Included"
 msgstr "No incluido"
 
@@ -276,8 +275,8 @@ msgstr "¿Incluir?"
 msgid "Regular Price"
 msgstr "Precio regular"
 
-#: gateways/checkout-page.php:217 public/email-templates/estimates-pdf.php:18
-#: public/email-templates/estimates.php:21
+#: gateways/checkout-page.php:217 public/email-templates/estimates-pdf.php:17
+#: public/email-templates/estimates.php:20
 msgid "Total"
 msgstr "Total"
 
@@ -339,47 +338,48 @@ msgstr "Términos y Condiciones"
 msgid "Pay Now!"
 msgstr "¡Pagar Ya!"
 
-#: gateways/gateways.php:75
+#: gateways/gateways.php:87
 msgid "Contact The Experts"
 msgstr "Contacta a los expertos"
 
-#: gateways/gateways.php:75
+#: gateways/gateways.php:87
 msgid "Request Quote"
 msgstr "Solicitar cotización"
 
-#: gateways/gateways.php:137
+#: gateways/gateways.php:149
 msgid "or"
 msgstr "o"
 
-#: gateways/gateways.php:158
+#: gateways/gateways.php:170
 msgid "Pay"
 msgstr "Pagar"
 
-#: gateways/gateways.php:162
+#: gateways/gateways.php:174
 msgid "the deposit"
 msgstr "el deposito"
 
-#: gateways/gateways.php:167
+#: gateways/gateways.php:179
 msgid "with"
 msgstr "con"
 
-#: gateways/gateways.php:280
+#: gateways/gateways.php:292
 msgid "off"
 msgstr "descuento"
 
-#: gateways/gateways.php:307
+#: gateways/gateways.php:320
 msgid "Error: please correct the invalid fields in color red."
 msgstr "Error: corrige los campos inválidos en color rojo."
 
-#: gateways/gateways.php:352 public/class-dynamicpackages-public.php:1578
+#: gateways/gateways.php:365 public/class-dynamicpackages-public.php:1578
 #: gateways/matrix/bank/international.php:173
 #: gateways/matrix/bank/local.php:160
 #: gateways/matrix/nequi/nequi_direct.php:160
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:263
 #: gateways/matrix/yappy/yappy_direct.php:165
 msgid "deposit"
 msgstr "deposito"
 
-#: gateways/gateways.php:352
+#: gateways/gateways.php:365
 msgid "outstanding balance"
 msgstr "saldo"
 
@@ -515,7 +515,6 @@ msgstr "obtén más solicitudes aún si los precios no esta definidos"
 
 #: includes/class-dynamicpackages-metaboxes.php:275
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:117
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:263
 msgid "Payment"
 msgstr "Pago"
 
@@ -912,10 +911,15 @@ msgstr "por persona"
 msgid "Thank you for contacting us. Our staff will be in touch with you soon."
 msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 
-#: includes/form-actions.php:93 public/email-templates/estimates-pdf.php:14
+#: includes/form-actions.php:93 public/email-templates/estimates-pdf.php:13
 #: public/email-templates/estimates.php:3
 msgid "Estimate"
 msgstr "Cotización"
+
+#: includes/form-actions.php:118 public/email-templates/estimates.php:4
+#, php-format
+msgid "Hello %s,"
+msgstr "Hola %s,"
 
 #: includes/form-actions.php:119
 #, php-format
@@ -939,21 +943,21 @@ msgstr ""
 msgid "When is a good time to call you at %s? Or do you prefer Whatsapp?"
 msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
 
-#: includes/form-actions.php:141
+#: includes/form-actions.php:140
 #, php-format
 msgid "%s, %s has sent you an estimate for %s%s - %s"
 msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 
-#: includes/form-actions.php:145
+#: includes/form-actions.php:144
 #, php-format
 msgid "%s, thanks for your request: %s"
 msgstr "%s, Gracias por tu solicitud: %s"
 
-#: includes/form-actions.php:156 public/email-templates/estimates.php:5
+#: includes/form-actions.php:155 public/email-templates/estimates.php:5
 msgid "Thank You For Your Request"
 msgstr "Gracias por tu solicitud"
 
-#: includes/form-actions.php:168
+#: includes/form-actions.php:167
 msgid "Thank you for your Inquiry"
 msgstr "Gracias por su solicitud"
 
@@ -1240,7 +1244,7 @@ msgid "Schedule"
 msgstr "Horario"
 
 #: public/class-dynamicpackages-public.php:1784
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:328
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:331
 msgid "Check-in"
 msgstr "Check-in"
 
@@ -1264,30 +1268,25 @@ msgstr "Paquetes similares"
 msgid "Similar accommodations"
 msgstr "Acomodaciones similares"
 
-#: public/email-templates/estimates-pdf.php:15
-#: public/email-templates/estimates.php:16
+#: public/email-templates/estimates-pdf.php:14
+#: public/email-templates/estimates.php:15
 msgid "Client"
 msgstr "Cliente"
 
-#: public/email-templates/estimates-pdf.php:17
-#: public/email-templates/estimates.php:20
+#: public/email-templates/estimates-pdf.php:16
+#: public/email-templates/estimates.php:19
 msgid "Service"
 msgstr "Servicio"
 
-#: public/email-templates/estimates-pdf.php:25
-#: public/email-templates/estimates.php:28
+#: public/email-templates/estimates-pdf.php:24
+#: public/email-templates/estimates.php:27
 msgid "We accept"
 msgstr "Aceptamos"
 
-#: public/email-templates/estimates-pdf.php:27
-#: public/email-templates/estimates.php:30
+#: public/email-templates/estimates-pdf.php:26
+#: public/email-templates/estimates.php:29
 msgid "Notes"
 msgstr "Notas"
-
-#: public/email-templates/estimates.php:4
-#, php-format
-msgid "Hello %s,"
-msgstr "Hola %s,"
 
 #: public/email-templates/estimates.php:6
 #, php-format
@@ -1298,12 +1297,12 @@ msgstr ""
 "Encontrarás una detallada %s en este email. Recuerda revisar nuestros "
 "Términos y Condiciones (adjuntos) antes de reservar."
 
-#: public/email-templates/estimates.php:33
+#: public/email-templates/estimates.php:32
 msgid "Whatsapp Advisory"
 msgstr "Asesoría por Whatsapp"
 
-#: public/partials/add_to_calendar.php:80
-#: public/partials/add_to_calendar.php:81
+#: public/partials/add_to_calendar.php:78
+#: public/partials/add_to_calendar.php:79
 msgid "Add to Calendar"
 msgstr "Guarda en tu calendario"
 
@@ -1342,7 +1341,7 @@ msgstr "caros a baratos"
 #: public/partials/forms.php:80 public/partials/forms.php:81
 #: public/partials/forms.php:82 public/partials/forms.php:83
 #: public/partials/forms.php:114
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:326
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:330
 msgid "Date"
 msgstr "Fecha"
 
@@ -1500,6 +1499,7 @@ msgstr "Paga con una transferencia bancaria internacional"
 #: gateways/matrix/bank/international.php:169
 #: gateways/matrix/bank/local.php:156
 #: gateways/matrix/nequi/nequi_direct.php:156
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:263
 #: gateways/matrix/yappy/yappy_direct.php:161
 msgid "payment"
 msgstr "Pago"
@@ -1600,7 +1600,7 @@ msgstr "Cantidad Min."
 #: gateways/matrix/bank/local.php:314
 #: gateways/matrix/nequi/nequi_direct.php:262
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:438
-#: gateways/matrix/paypal/paypal_me.php:250
+#: gateways/matrix/paypal/paypal_me.php:244
 #: gateways/matrix/yappy/yappy_direct.php:266
 msgid "Show"
 msgstr "Mostrar"
@@ -1672,7 +1672,7 @@ msgid "Nequi Cell Phone Number"
 msgstr "Número celular Nequi"
 
 #: gateways/matrix/nequi/nequi_direct.php:255
-#: gateways/matrix/paypal/paypal_me.php:243
+#: gateways/matrix/paypal/paypal_me.php:237
 #: gateways/matrix/yappy/yappy_direct.php:259
 msgid "Max. Amount"
 msgstr "Cantidad Máxima"
@@ -1703,7 +1703,6 @@ msgid "Invoice"
 msgstr "Factura"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:118
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:265
 #, php-format
 msgid "Thank You for Your %s of %s%s: %s"
 msgstr "Gracias por tu %s de %s%s: %s"
@@ -1743,12 +1742,12 @@ msgid "It is not allowed to book for third parties."
 msgstr "No está permitido reservar para terceros."
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:171
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:280
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:281
 msgid "Please contact your bank to authorize the transaction."
 msgstr "Por favor contacta a tu banco para autorizar la transferencia."
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:175
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:284
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:285
 msgid ""
 "Please try again in a few minutes. Our staff will be in touch with you very "
 "soon."
@@ -1756,7 +1755,12 @@ msgstr ""
 "Por favor intenta de nuevo en unos minutos. Nuestro personal estará en "
 "contacto muy pronto."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:269
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:265
+#, php-format
+msgid "Thank you for your %s of %s%s."
+msgstr "Gracias por tu %s de %s%s."
+
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:270
 #, php-format
 msgid ""
 "We have sent you an email to %s with more details and the confirmation of "
@@ -1765,19 +1769,19 @@ msgstr ""
 "Te hemos enviado un email a %s con más detalles y la confirmación de esta "
 "reserva."
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:299
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:300
 msgid "Payment Approved"
 msgstr "Pago aprobado"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:307
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:308
 msgid "Checkout Error"
 msgstr "Error de pago"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:324
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:329
 msgid "Meeting Point"
 msgstr "Punto de encuentro"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:330
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:332
 msgid "Booking Hour"
 msgstr "Hora de reservación"
 
@@ -1790,15 +1794,15 @@ msgstr "Configuración de %s"
 msgid "CCLW"
 msgstr "CCLW"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:534
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:531
 msgid "Paid"
 msgstr "Pagado"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:535
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:532
 msgid "Amount Due"
 msgstr "Saldo"
 
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:557
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:553
 #, php-format
 msgid "Pay with %s thanks to"
 msgstr "Paga con %s gracias a "
@@ -1807,24 +1811,24 @@ msgstr "Paga con %s gracias a "
 msgid "Thank you for choosing Paypal"
 msgstr "Gracias por elegir Paypal"
 
-#: gateways/matrix/paypal/paypal_me.php:236
+#: gateways/matrix/paypal/paypal_me.php:230
 msgid "Username"
 msgstr "Usuario"
 
-#: gateways/matrix/paypal/paypal_me.php:300
-#: gateways/matrix/paypal/paypal_me.php:406
+#: gateways/matrix/paypal/paypal_me.php:294
+#: gateways/matrix/paypal/paypal_me.php:400
 msgid "Pay with Paypal"
 msgstr "Paga con Paypal"
 
-#: gateways/matrix/paypal/paypal_me.php:397
+#: gateways/matrix/paypal/paypal_me.php:391
 msgid "full payment of"
 msgstr "pago completo de"
 
-#: gateways/matrix/paypal/paypal_me.php:401
+#: gateways/matrix/paypal/paypal_me.php:395
 msgid "deposit of"
 msgstr "deposito de"
 
-#: gateways/matrix/paypal/paypal_me.php:404
+#: gateways/matrix/paypal/paypal_me.php:398
 msgid ""
 "To complete the booking please click on the following link and enter your "
 "Paypal account."
@@ -1832,11 +1836,11 @@ msgstr ""
 "Para completar esta reserva por favor haga click en el siguiente link y "
 "entre a su cuenta Paypal."
 
-#: gateways/matrix/paypal/paypal_me.php:405
+#: gateways/matrix/paypal/paypal_me.php:399
 msgid "You will be paying a "
 msgstr "Usted pagará"
 
-#: gateways/matrix/paypal/paypal_me.php:406
+#: gateways/matrix/paypal/paypal_me.php:400
 msgid "now"
 msgstr "ya"
 

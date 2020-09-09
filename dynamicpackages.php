@@ -71,26 +71,13 @@ function package_field($name, $this_id = null)
 {
 	if($this_id == null)
 	{		
-		global $polylang;
-				
-		if(isset($_POST['post_id']))
-		{
-			$this_id = intval(sanitize_text_field($_POST['post_id']));
-			$post = get_post($this_id);
-		}
-		else
-		{
-			global $post;
-			
-			if(isset($post))
-			{
-				$this_id = $post->ID;
-			}
-		}
+		global $polylang;		
+		global $post;
 		
-		//pull all the fields from parent package with exceptions
 		if(isset($post))
 		{
+			$this_id = $post->ID;
+			
 			if(property_exists($post, 'post_parent'))
 			{
 				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
@@ -139,6 +126,17 @@ function get_price_chart()
 function is_booking_page()
 {
 	return dy_Validators::is_booking_page();
+}
+function is_checkout_page()
+{
+	$output = false;
+	
+	if(isset($_POST['dy_request']) && isset($_POST['post_id']))
+	{
+		$output = true;
+	}
+	
+	return $output;
 }
 function is_has_package()
 {

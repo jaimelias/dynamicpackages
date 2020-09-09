@@ -3,8 +3,7 @@
 
 $date = sanitize_text_field($_POST['departure_format_date']);
 $currency_symbol = dy_utilities::currency_symbol();
-$calculate_total = ($_POST['amount'] > dy_utilities::total()) ? $_POST['amount'] : dy_utilities::total();
-$total = apply_filters('dy_email_total', $calculate_total);
+$total = apply_filters('dy_email_total', dy_utilities::payment_amount());
 $company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');
@@ -17,7 +16,7 @@ $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_f
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
-$description = sanitize_text_field($_POST['description']);
+$description = dy_Public::description();
 $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
