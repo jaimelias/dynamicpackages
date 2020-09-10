@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-09-10 19:20+0000\n"
-"PO-Revision-Date: 2020-09-10 19:22+0000\n"
+"PO-Revision-Date: 2020-09-10 19:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -942,15 +942,15 @@ msgstr ""
 
 #: includes/validators.php:334
 msgid "Invalid country."
-msgstr ""
+msgstr "País inválido."
 
 #: includes/validators.php:338
 msgid "Invalid city."
-msgstr ""
+msgstr "Ciudad inválida."
 
 #: includes/validators.php:342
 msgid "Invalid address."
-msgstr ""
+msgstr "Dirección inválida."
 
 #: public/class-dynamicpackages-public.php:495
 #: public/class-dynamicpackages-public.php:684
