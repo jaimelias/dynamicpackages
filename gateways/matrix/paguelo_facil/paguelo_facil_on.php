@@ -714,7 +714,10 @@ class paguelo_facil_on{
 		
 	public function debug_instructions()
 	{
-		return '<p style="line-height: 2; color: #696969; background-color: #ADD8E6; padding: 10px;">🤖 '.sprintf(__('Use the card %s together with the email %s to test Paguelo Facil Development Enviroment. Use the CVV code 222 to generate approved transactions, 111 to generate declined transaction and 000 to generate errors and any other number will retreive Paguelo Facil original response.', 'dynamicpackages'), '<strong>'.esc_html($this->dummy_cc).'</strong>', '<strong>'.esc_html($this->debug_email).'</strong>').'</p>';
+		if($this->user_can_debug())
+		{
+			return '<p style="line-height: 2; color: #696969; background-color: #ADD8E6; padding: 10px;">🤖 '.sprintf(__('Use the card %s together with the email %s to test Paguelo Facil Development Enviroment. Use the CVV code 222 to generate approved transactions, 111 to generate declined transaction and 000 to generate errors and any other number will retreive Paguelo Facil original response.', 'dynamicpackages'), '<strong>'.esc_html($this->dummy_cc).'</strong>', '<strong>'.esc_html($this->debug_email).'</strong>').'</p>';			
+		}
 	}
 
 	public function js()

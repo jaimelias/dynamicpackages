@@ -35,12 +35,13 @@ class dy_Gateways
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
-		add_action('checkout_area', array(&$this, 'add_to_checkout_area'), 1);
+		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
 		add_filter('dy_has_any_gateway', array(&$this, 'has_any_gateway'));
+		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
 	}
 	
 	public static function set_post_on_checkout_page()
@@ -129,16 +130,7 @@ class dy_Gateways
 	{
 		return apply_filters('gateway_buttons', '');
 	}
-	
-	public static function checkout_area()
-	{
 		
-		do_action('checkout_area');
-	}
-	public static function checkout_items()
-	{
-		do_action('checkout_items');
-	}	
 	public static function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
@@ -210,7 +202,7 @@ class dy_Gateways
 		return $array;
 	}
 	
-	public static function add_to_checkout_area()
+	public static function checkout_area()
 	{
 		$output = null;
 		

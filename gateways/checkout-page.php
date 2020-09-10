@@ -145,7 +145,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php dy_Gateways::checkout_items(); ?>
+						<?php do_action('dy_checkout_items'); ?>
 					</tbody>
 				<?php endif; ?>
 								
@@ -192,4 +192,4 @@
 
 <hr />
 
-<?php dy_Gateways::checkout_area(); ?>
+<?php do_action('dy_checkout_area'); ?>
