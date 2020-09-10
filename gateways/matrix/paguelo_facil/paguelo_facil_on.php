@@ -597,8 +597,8 @@ class paguelo_facil_on{
 	{
 		if(dy_Validators::has_deposit())
 		{
-			$outstanding = dy_utilities::currency_symbol().dy_utilities::outstanding_amount();
-			$total =  dy_utilities::currency_symbol().dy_utilities::payment_amount();
+			$outstanding = dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::outstanding_amount());
+			$total =  dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::payment_amount());
 			$date = sanitize_text_field($_POST['booking_date']);
 			
 			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').' <span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
