@@ -31,8 +31,9 @@ $footer = $company_address;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
-
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
+
+$add_ons = apply_filters('dy_included_add_ons_list', null);
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -165,6 +166,7 @@ $email_template = <<<EOT
 					<tr>
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<strong style="color:#666666;">${label_included}:</strong> ${included}
+							${add_ons}
 						</td>
 						<td style="width: 200px;"></td>
 					</tr>
@@ -182,6 +184,7 @@ $email_template = <<<EOT
 							${totals_area}
 						</td>
 					</tr>
+					
 					<tr>
 						<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							<strong style="color: #666666;">${label_notes}</strong>

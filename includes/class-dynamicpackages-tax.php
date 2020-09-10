@@ -4,10 +4,16 @@ class dy_Tax_Mod
 {
 	function __construct()
 	{
-		add_action('init', array('dy_Tax_Mod', 'add_ons'));
-		add_action('admin_init', array('dy_Tax_Mod', 'title_modifier'), 10, 2);
-		add_action('admin_enqueue_scripts', array('dy_Tax_Mod', 'enqueue'));
-		add_action('checkout_items', array('dy_Tax_Mod', 'checkout_items'), 10);
+		$this->init();
+	}
+	
+	public function init()
+	{
+		add_action('init', array(&$this, 'add_ons'));
+		add_action('admin_init', array(&$this, 'title_modifier'), 10, 2);
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue'));
+		add_action('checkout_items', array(&$this, 'checkout_items'), 10);
+		add_filter('dy_included_add_ons_list', array(&$this, 'included_add_ons_list'));
 	}
 	
 	public static function enqueue()
@@ -389,6 +395,31 @@ class dy_Tax_Mod
 		}
 		return $output;	
 	}
+	
+	public function included_add_ons_list($output)
+	{
+		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
+		{
+			$add_ons = dy_Tax_Mod::get_add_ons();
+			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
+			$add_ons_count = count($add_ons);
+			
+			if(is_array($add_ons) && is_array($add_ons_included))
+			{
+				for($x = 0; $x < $add_ons_count; $x++)
+				{
+					if(in_array($add_ons[$x]['id'], $add_ons_included))
+					{
+						$separator = ($add_ons[$x]['description']) ? ': ' : null;
+						$output .= '<br/><strong style="color:#666666;">'.$add_ons[$x]['name'].$separator.'</strong>' . $add_ons[$x]['description'];
+					}
+				}					
+			}			
+		}
+
+		return $output;
+	}
+	
 }
 
 ?>

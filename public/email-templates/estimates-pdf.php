@@ -1,6 +1,5 @@
 <?php
 
-
 $date = sanitize_text_field($_POST['departure_format_date']);
 $currency_symbol = dy_utilities::currency_symbol();
 $total = apply_filters('dy_email_total', dy_utilities::payment_amount());
@@ -27,6 +26,8 @@ $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dyn
 $footer = $company_address;
 
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
+$add_ons = apply_filters('dy_included_add_ons_list', null);
+
 
 
 $email_pdf = <<<EOT
@@ -90,6 +91,7 @@ $email_pdf = <<<EOT
 			<tr>
 				<td style="width: 70%; border-bottom: 1pt solid #cccccc;">
 					<strong style="color: #666666;">${label_included}:</strong> ${included}
+					${add_ons}
 				</td>
 				<td style="width: 30%;">
 					<div style="text-align: right;"></div>
