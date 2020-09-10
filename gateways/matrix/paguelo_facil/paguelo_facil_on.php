@@ -24,6 +24,7 @@ class paguelo_facil_on{
 			add_filter('gateway_buttons', array(&$this, 'button'), 1);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 100);
+			add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
 		}
 	}
 	
@@ -39,7 +40,12 @@ class paguelo_facil_on{
 		$this->min = get_option($this->gateway_name . '_min');
 		$this->color = '#fff';
 		$this->background_color = '#262626';
-		$this->endpoint = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
+		$this->dummy_cc = '4321502106746398';
+		$this->debug_email = (get_option('dy_email')) ? get_option('dy_email') : get_option('admin_email');
+		$this->debug($this->dummy_cc, $this->debug_email);		
+		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
+		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
+		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
 	}
 	
 	public function checkout()
@@ -52,45 +58,62 @@ class paguelo_facil_on{
 			{
 				if(isset($dy_valid_recaptcha))
 				{
-					$process_request = json_decode($this->process_request(), true);
-					$number = 2;
+					$force_status = false;
 					
-					if(is_array($process_request))
+					if(isset($this->debug_mode))
 					{
-						if(array_key_exists('error', $process_request))
+						if($this->debug_mode !== 3)
+						{
+							$force_status = true;
+						}
+					}
+					
+					if($force_status === false)
+					{
+						$process_request = json_decode($this->process_request(), true);
+						$number = 0;
+						
+						if(is_array($process_request))
+						{
+							if(array_key_exists('error', $process_request))
+							{
+								$number = 0;
+								$this->error_codes = array(
+									'error' => $process_request['error']
+								);
+							}
+							else if(array_key_exists('Status', $process_request))
+							{
+								if($process_request['Status'] == 'Declined')
+								{
+									$number = 1;
+									$this->error_codes = array(
+										'RespText' => $process_request['RespText'],
+										'RespCode' => $process_request['RespCode']
+									);								
+								}
+								else if($process_request['Status'] == 'Approved')
+								{
+									$number = 2;
+								}
+							}
+						}
+						else
 						{
 							$number = 0;
 							$this->error_codes = array(
-								'error' => $process_request['error']
-							);
+								'error' => 'connection_timeout'
+							);	
 						}
-						else if(array_key_exists('Status', $process_request))
+						
+						if(isset($this->error_codes))
 						{
-							if($process_request['Status'] == 'Declined')
-							{
-								$number = 1;
-								$this->error_codes = array(
-									'RespText' => $process_request['RespText'],
-									'RespCode' => $process_request['RespCode']
-								);								
-							}
-							else if($process_request['Status'] == 'Approved')
-							{
-								$number = 2;
-							}
-						}
+							write_log($this->error_codes);
+						}						
 					}
 					else
 					{
-						$number = 0;
-						$this->error_codes = array(
-							'error' => 'connection_timeout'
-						);	
-					}
-					
-					if(isset($this->error_codes))
-					{
-						write_log($this->error_codes);
+						$number = $this->debug_mode;
 					}
 					
 					$this->success = $number;
@@ -522,6 +545,7 @@ class paguelo_facil_on{
 		<form action="options.php" method="post">
 			
 			<h1><?php esc_html_e($this->gateway_title); ?></h1>	
+			<?php echo $this->debug_instructions(); ?>
 			<?php
 			settings_fields( $this->gateway_name . '_settings' );
 			do_settings_sections( $this->gateway_name . '_settings' );
@@ -641,6 +665,54 @@ class paguelo_facil_on{
 		curl_setopt($ch,CURLOPT_POSTFIELDS, $params);
 		$result = curl_exec($ch);
 		return $result;
+	}
+
+	public function debug($dummy_cc)
+	{	
+		if(isset($_POST['CCNum']) && isset($_POST['CVV2']) && isset($_POST['email']))
+		{			
+			if($_POST['CCNum'] == $dummy_cc && $this->user_can_debug() && $_POST['email'] == $this->debug_email)
+			{
+				if($_POST['CVV2'] == '222')
+				{
+					$this->debug_mode = 2;
+				}
+				else if($_POST['CVV2'] == '111')
+				{
+					$this->debug_mode = 1;
+				}
+				else if($_POST['CVV2'] == '000')
+				{
+					$this->debug_mode = 0;
+				}
+				else
+				{
+					$this->debug_mode = 3;
+				}
+			}
+		}
+	}
+	
+	public function user_can_debug()
+	{
+		$output = false;
+		
+		if(is_user_logged_in())
+		{
+			if(current_user_can('editor') || current_user_can('administrator'))
+			{
+				$output = true;
+			}
+		}
+		
+		return $output;
+	}
+	
+	
+		
+	public function debug_instructions()
+	{
+		return '<p style="line-height: 2; color: #696969; background-color: #ADD8E6; padding: 10px;">🤖 '.sprintf(__('Use the card %s together with the email %s to test Paguelo Facil Development Enviroment. Use the CVV code 222 to generate approved transactions, 111 to generate declined transaction and 000 to generate errors and any other number will retreive Paguelo Facil original response.', 'dynamicpackages'), '<strong>'.esc_html($this->dummy_cc).'</strong>', '<strong>'.esc_html($this->debug_email).'</strong>').'</p>';
 	}
 
 	public function js()

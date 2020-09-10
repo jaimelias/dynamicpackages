@@ -2,8 +2,8 @@
 
 <div>
 	<h3><?php echo esc_html(__('Before Booking', 'dynamicpackages')); ?></h3>
-	<p class="minimal_warning small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('It is not allowed to book for third parties.', 'dynamicpackages')); ?></p>
-	<p class="minimal_warning small"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages')); ?></p>
+	<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('It is not allowed to book for third parties.', 'dynamicpackages')); ?></p>
+	<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e(__('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages')); ?></p>
 </div>
 
 <hr/>
@@ -30,6 +30,7 @@
 
 <div class="with_cc_show hidden">
 	<h3><?php echo esc_html(__('Card Details', 'dynamicpackages')); ?></h3>
+	<?php echo apply_filters('dy_debug_instructions', null); ?>
 	<p><label for="CCNum"><?php echo esc_html(__('Card Numbers', 'dynamicpackages')); ?></label>
 	<input class="large" min="16" type="number" name="CCNum" id="CCNum" /></p>
 
