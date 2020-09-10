@@ -66,7 +66,7 @@ class dy_Metaboxes
 			);		
 						
 			//if e-commerce if off disable metabox
-			if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active())
+			if(intval(package_field( 'package_auto_booking' )) > 0)
 			{	
 				add_meta_box(
 					'package-f',
@@ -228,15 +228,13 @@ class dy_Metaboxes
 					</select>
 				</p>
 
-				<?php if(dy_Validators::is_gateway_active()): ?>
-					<p>
-						<label for="package_auto_booking"><?php _e( 'Enable Automatic Booking', 'dynamicpackages' ); ?></label><br />
-						<select name="package_auto_booking" id="package_auto_booking">
-							<option value="0" <?php echo (package_field( 'package_auto_booking' ) == 0 ) ? 'selected' : ''; ?> >No</option>
-							<option value="1" <?php echo (package_field( 'package_auto_booking' ) == 1 ) ? 'selected' : ''; ?> >Yes</option>
-						</select>
-					</p>
-				<?php endif; ?>					
+				<p>
+					<label for="package_auto_booking"><?php _e( 'Enable Automatic Booking', 'dynamicpackages' ); ?></label><br />
+					<select name="package_auto_booking" id="package_auto_booking">
+						<option value="0" <?php echo (package_field( 'package_auto_booking' ) == 0 ) ? 'selected' : ''; ?> >No</option>
+						<option value="1" <?php echo (package_field( 'package_auto_booking' ) == 1 ) ? 'selected' : ''; ?> >Yes</option>
+					</select>
+				</p>				
 			<?php endif; ?>
 			
 			<?php if(dy_Validators::is_child() || dy_Validators::is_parent_with_no_child()) : ?>
@@ -269,8 +267,7 @@ class dy_Metaboxes
 			
 		<?php if(!dy_Validators::is_child()) : ?>
 
-			
-			<?php if(intval(package_field( 'package_auto_booking' )) > 0 && dy_Validators::is_gateway_active() === true): ?>
+			<?php if(intval(package_field( 'package_auto_booking' )) > 0): ?>
 				<p>
 					<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
 					<select name="package_payment" id="package_payment">

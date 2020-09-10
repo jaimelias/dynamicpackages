@@ -751,31 +751,7 @@ class dy_Validators
 		
 		return $output;
 	}
-	
-	public static function is_gateway_active()
-	{
-		$output = false;
-		global $is_gateway_active;
-		
-		if(isset($is_gateway_active))
-		{
-			$output = true;
-		}
-		else
-		{
-			if(get_option('primary_gateway') != '' && !isset($_GET['quote']))
-			{
-				$option = get_option('primary_gateway');
-				
-				if($option != '0')
-				{
-					$GLOBALS['is_gateway_active'] = true;
-					$output = true;
-				}
-			}			
-		}
-		return $output;
-	}
+
 	
 	public static function american_express_check($number)
 	{
