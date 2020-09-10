@@ -37,7 +37,8 @@ class paguelo_facil_on{
 		$this->gateway_methods_c = __('Visa, Mastercard', 'dynamicpackages');
 		$this->cclw = get_option($this->gateway_name);
 		$this->show = get_option($this->gateway_name . '_show');
-		$this->min = get_option($this->gateway_name . '_min');
+		$this->min = (get_option($this->gateway_name . '_min')) ? get_option($this->gateway_name . '_min') : 5;
+		$this->max = (get_option($this->gateway_name . '_max')) ? get_option($this->gateway_name . '_max') : 500;
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
@@ -423,8 +424,6 @@ class paguelo_facil_on{
 		{
 			if($this->is_active() && !isset($_GET['quote']))
 			{
-				$min = floatval($this->min);
-				$show = intval($this->show);
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				
@@ -442,15 +441,10 @@ class paguelo_facil_on{
 					}
 					
 				}
-
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
 				
-				if($total >= $min)
+				if($total >= $this->min && $total <= $this->max)
 				{
-					if($payment == $show && $payment == 0)
+					if($payment == $this->show && $payment == 0)
 					{
 						$output = true;
 					}
@@ -475,6 +469,7 @@ class paguelo_facil_on{
 	{
 		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_text_field');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_min', 'intval');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'sanitize_text_field');
 		
 		add_settings_section(
@@ -504,6 +499,13 @@ class paguelo_facil_on{
 			array(&$this, 'input_number'), 
 			$this->gateway_name . '_settings', 
 			$this->gateway_name . '_control_section', $this->gateway_name . '_min'
+		);
+		add_settings_field( 
+			$this->gateway_name . '_max', 
+			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
+			array(&$this, 'input_number'), 
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_control_section', $this->gateway_name . '_max'
 		);
 		add_settings_field( 
 			$this->gateway_name . '_show', 

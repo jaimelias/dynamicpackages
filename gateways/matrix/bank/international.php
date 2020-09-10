@@ -285,12 +285,7 @@ class wire_transfer{
 					}
 					
 				}
-
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
-				
+			
 				if($total >= $min)
 				{
 					if($payment == $show && $payment == 0)

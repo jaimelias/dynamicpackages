@@ -200,11 +200,6 @@ class nequi_direct{
 					
 				}
 
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
-				
 				if($total <= $max)
 				{
 					if($payment == $show && $payment == 0)

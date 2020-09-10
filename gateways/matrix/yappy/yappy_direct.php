@@ -204,10 +204,6 @@ class yappy_direct{
 					
 				}
 
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
 				
 				if($total <= $max)
 				{

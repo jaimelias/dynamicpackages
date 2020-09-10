@@ -182,11 +182,6 @@ class paypal_me{
 					}
 				}
 				
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
-				
 				if($total <= $max)
 				{
 					if($payment == $show && $payment == 0)

@@ -219,11 +219,6 @@ class bank_transfer{
 					}
 					
 				}
-
-				if(dy_Validators::has_deposit())
-				{
-					$total = $total * ($deposit/100);
-				}
 				
 				if($total >= $min)
 				{
