@@ -104,7 +104,7 @@ class dynamicpackages_Forms
 		
 		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
 		
-		if(dy_Gateways::has_any_gateway())
+		if(apply_filters('dy_has_any_gateway', false))
 		{	
 			$form .= '<h3 class="linkcolor uppercase">'.esc_html(__('Book  Now', 'dynamicpackages')).'</h3>';
 		}
