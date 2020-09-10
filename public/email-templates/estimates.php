@@ -111,7 +111,7 @@ $email_template = <<<EOT
 		<div style="max-width: 800px; width: 100%; margin: 0 auto 0 auto;">
 			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
 		
-			<div style="margin: 20px 0 40px 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+			<div style="margin: 20px 0 40px 0; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
 				<p>${greeting}</p>
 				<p>${intro}</p>
 				<div>${message}</div>

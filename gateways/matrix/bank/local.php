@@ -205,7 +205,7 @@ class bank_transfer{
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
 				
-				if(is_booking_page())
+				if(is_booking_page() || is_checkout_page())
 				{
 					$total = dy_utilities::total();
 				}
