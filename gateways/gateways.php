@@ -40,6 +40,7 @@ class dy_Gateways
 		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
+		add_filter('dy_has_any_gateway', array(&$this, 'has_any_gateway'));
 	}
 	
 	public static function set_post_on_checkout_page()
