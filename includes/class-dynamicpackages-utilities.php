@@ -762,6 +762,12 @@ class dy_utilities {
 				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 			}
 
+
+			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
+			{
+				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			}
+
 			return $sum;			
 		}
 	}	
@@ -845,6 +851,11 @@ class dy_utilities {
 			}
 			
 			$sum = $base_price + $occupancy_price;
+			
+			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
+			{
+				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			}			
 			
 			if(dy_Validators::valid_coupon())
 			{
