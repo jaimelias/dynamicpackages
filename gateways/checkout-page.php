@@ -7,10 +7,7 @@
 	$free = 0;
 	$start_free = 0;
 	$start_discount = 0;
-	$sum = 0;
-	$sum_adults = 0;
 	$each_adult = dy_utilities::get_price_adults();
-	$sum_children = 0;
 	$each_child = dy_utilities::get_price_discount();
 	$payment = 0;
 	$deposit = 25;
@@ -61,53 +58,6 @@
 		$deposit_label = esc_html(__('Deposit', 'dynamicpackages')).' '.dy_money($payment_amount, 'dy_calc dy_calc_total').' ('.esc_html($deposit).'%)';
 	}
 	
-	for($a = 0;  $a < count($price_chart); $a++)
-	{
-		if(floatval(sanitize_text_field($_GET['pax_regular'])) == ($a+1))
-		{
-			if(floatval($price_chart[$a][0]) > 0 && $price_chart[$a][0] != 0)
-			{
-				$each_adult = floatval($each_adult)+floatval($price_chart[$a][0]);
-				
-				if(dy_utilities::increase_by_hour() || dy_utilities::increase_by_day())
-				{
-					$each_adult = $each_adult * floatval(sanitize_text_field($_GET['booking_extra']));
-				}
-				
-				if(dy_Validators::valid_coupon())
-				{
-					$each_adult = $each_adult * ((100 - floatval(dy_utilities::get_coupon('discount'))) /100);
-				}
-				
-				$sum_adults = $each_adult*floatval(sanitize_text_field($_GET['pax_regular']));
-				$sum = $sum + $sum_adults;
-			}			
-		}
-		if(isset($_GET['pax_discount']))
-		{
-			if(floatval(sanitize_text_field($_GET['pax_discount'])) == ($a+1))
-			{
-				if(floatval($price_chart[$a][1]) > 0 && $price_chart[$a][1] != 0)
-				{
-					$each_child = floatval($each_child) + floatval($price_chart[$a][1]);
-					
-					if(dy_utilities::increase_by_hour() || dy_utilities::increase_by_day())
-					{
-						$each_child = $each_child * floatval(sanitize_text_field($_GET['booking_extra']));
-					}	
-
-					if(dy_Validators::valid_coupon())
-					{
-						$each_child = $each_child * ((100 - floatval(dy_utilities::get_coupon('discount'))) /100);
-					}					
-					
-					$sum_children = $each_child*floatval(sanitize_text_field($_GET['pax_discount']));
-					$sum = $sum + $sum_children;
-				}			
-			}			
-		}		
-	}
-	
 ?>
 <hr/>
 
@@ -151,7 +101,7 @@
 				</thead>
 				<tbody>
 					<tr>
-						<?php if($sum_children == 0): ?>
+						<?php if($each_child == 0): ?>
 						<td><?php echo esc_html(__('Participants', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php else: ?>
 						<td><?php echo esc_html(__('Adults', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
