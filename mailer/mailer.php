@@ -282,9 +282,13 @@ if(!class_exists('Sendgrid_Mailer'))
 	}
 	
 	
+	global $SENDGRID_API_MAILER;
 	
-	$GLOBALS['SENDGRID_API_MAILER'] = new Sendgrid_Mailer();	
-	
+	if(!isset($SENDGRID_API_MAILER))
+	{
+		$GLOBALS['SENDGRID_API_MAILER'] = new Sendgrid_Mailer();
+	}
+
 }
 
 
