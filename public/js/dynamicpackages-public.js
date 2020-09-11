@@ -493,7 +493,7 @@ const dy_country_options = (data) => {
 const booking_datepicker = () => {
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 	
-	jQuery('.booking_form').find('input[name="booking_date"]').each(function()
+	jQuery('.booking_form').find('input.booking_datepicker').each(function()
 	{
 		var field = jQuery(this);
 		var d = new Date();
@@ -540,7 +540,7 @@ const booking_hourpicker = () => {
 			}
 		}
 		
-		jQuery('.booking_form').find('input[name="booking_hour"]').each(function()
+		jQuery('.booking_form').find('input.booking_hourpicker').each(function()
 		{
 			jQuery(this).pickatime(args);
 		});			

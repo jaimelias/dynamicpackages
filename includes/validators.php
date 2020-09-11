@@ -791,6 +791,18 @@ class dy_Validators
 	  return ($total % 10 == 0) ? TRUE : FALSE;
 
 	}
+	
+	public static function is_package_transport()
+	{
+		$output = false;
+		
+		if(package_field( 'package_package_type' ) == 4)
+		{
+			$output = true;
+		}
+		
+		return $output;
+	}
 
 	
 }

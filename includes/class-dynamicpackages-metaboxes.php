@@ -303,14 +303,16 @@ class dy_Metaboxes
 		
 		
 		<fieldset>	
-		<?php if(intval(package_field( 'package_package_type' )) > 1): ?>
-			<?php if(intval(package_field( 'package_package_type' )) > 2): ?>
-				<h3><?php _e( 'Hourly Rental Per Person', 'dynamicpackages' ); ?></h3>
-			<?php else: ?>
-				<h3><?php _e( 'Daily Rental Per Person', 'dynamicpackages' ); ?></h3>
+		<?php if(package_field( 'package_package_type' ) > 1): ?>
+			<?php if(package_field( 'package_package_type' ) == 2): ?>
+				<h3><?php esc_html_e( 'Daily Rental Per Person', 'dynamicpackages' ); ?></h3>
+			<?php elseif(package_field( 'package_package_type' ) == 3): ?>
+				<h3><?php esc_html_e( 'Hourly Rental Per Person', 'dynamicpackages' ); ?></h3>
+			<?php elseif(package_field( 'package_package_type' ) == 4): ?>
+				<h3><?php esc_html_e( 'One-way price per person', 'dynamicpackages' ); ?></h3>
 			<?php endif; ?>
 		<?php else: ?>
-			<h3><?php _e( 'Base Prices Per Person', 'dynamicpackages' ); ?></h3>
+			<h3><?php esc_html_e( 'Base Prices Per Person', 'dynamicpackages' ); ?></h3>
 		<?php endif; ?>
 
 
@@ -461,7 +463,8 @@ class dy_Metaboxes
 					<option value="0" <?php echo (package_field( 'package_package_type' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'One day', 'dynamicpackages' ); ?></option>
 					<option value="1" <?php echo (package_field( 'package_package_type' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'Multi-day', 'dynamicpackages' ); ?></option>
 					<option value="2" <?php echo (package_field( 'package_package_type' ) == 2 ) ? 'selected' : ''; ?> ><?php _e( 'Rental (per day)', 'dynamicpackages' ); ?></option>
-					<option value="3" <?php echo (package_field( 'package_package_type' ) == 3 ) ? 'selected' : ''; ?> ><?php _e( 'Rental (per hour)', 'dynamicpackages' ); ?></option>				
+					<option value="3" <?php echo (package_field( 'package_package_type' ) == 3 ) ? 'selected' : ''; ?> ><?php _e( 'Rental (per hour)', 'dynamicpackages' ); ?></option>
+					<option value="4" <?php echo (package_field( 'package_package_type' ) == 4 ) ? 'selected' : ''; ?> ><?php _e( 'Transport', 'dynamicpackages' ); ?></option>	
 				</select>
 			</p>	
 

@@ -1366,41 +1366,28 @@ class dy_Public {
 		
 		if(isset($post))
 		{
-			$date = dy_utilities::format_date($_REQUEST['booking_date']);
-			$pax_discount = 0;
-			$discount = 0;
-			$free = 0;
+			$departure_date = dy_utilities::format_date($_REQUEST['booking_date']);
+			$departure_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
+			$itinerary = $departure_date.$departure_hour;
+			$return_date = (isset($_REQUEST['return_date'])) ? dy_utilities::format_date($_REQUEST['return_date']) : null;
+			$pax_discount = (isset($_REQUEST['pax_discount'])) ? intval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
+			$discount = (package_field('package_discount' )) ? package_field('package_discount' ) : 0;
+			$free = (package_field('package_free')) ? package_field('package_free') : 0;
 			$adults = intval(sanitize_text_field($_REQUEST['pax_regular']));
 			$people = array();
 			$people['adults'] = $adults;
+			$pax_free = (isset($_REQUEST['pax_free'])) ? intval(sanitize_text_field($_REQUEST['pax_free'])) : 0;
 			
-			if(package_field('package_free' ) != '')
+			if($pax_discount > 0)
 			{
-				$free = package_field('package_free');
-			}
-			if(package_field('package_discount' ) != '')
-			{
-				$discount = package_field('package_discount');
+				$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
 			}
 			
-			if(isset($_REQUEST['pax_discount']))
+			if($pax_free > 0)
 			{
-				$pax_discount = intval($_REQUEST['pax_discount']);
-				
-				if($pax_discount > 0)
-				{
-					$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
-				}
-			}
-			if(isset($_REQUEST['pax_free']))
-			{
-				$pax_free = intval($_REQUEST['pax_free']);
-				
-				if($pax_free > 0)
-				{
-					$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
-				}			
-			}		
+				$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
+			}			
+	
 			
 			$participants = array(__('person', 'dynamicpackages'), __('persons', 'dynamicpackages'));
 			
@@ -1412,7 +1399,6 @@ class dy_Public {
 			$labels_singular = array($participants[0], __('child under', 'dynamicpackages'));
 			$labels_plural = array($participants[1], __('children under', 'dynamicpackages'));
 			$labels = $labels_singular;
-			
 			$people_imp = array();
 			
 			foreach($people as $k => $v)
@@ -1431,11 +1417,11 @@ class dy_Public {
 					}
 					if($k == 'discount')
 					{
-						$text = $v.' '.$labels[1].' '.$discount.' '.__('years old');
+						$text = $v.' '.$labels[1].' '.$discount.' '.__('years old', 'dynamicpackages');
 					}	
 					if($k == 'free')
 					{
-						$text = $v.' '.$labels[1].' '.$free.' '.__('years old');
+						$text = $v.' '.$labels[1].' '.$free.' '.__('years old', 'dynamicpackages');
 					}
 					array_push($people_imp, $text);
 				}
@@ -1443,17 +1429,31 @@ class dy_Public {
 			
 			$people_imp = implode(', ', $people_imp);
 			
-			$description = self::show_duration().' - '.$post->post_title;
-			$description .= ' ('.$date;
-			
-			if(dy_utilities::hour() != '')
+			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
 			{
-				$description .= ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour();
+				$itinerary = __('Departure', 'dynamicpackages') .' '. $departure_date;
+				
+				if(strlen($_REQUEST['return_date']) > 5)
+				{
+					$description = __('Round trip', 'dynamicpackages');
+					$itinerary .= ' | ' . __('Return', 'dynamicpackages') . ' ' . $return_date;
+				}
+				else
+				{
+					$description = __('One-way', 'dynamicpackages');
+				}
 			}
+			else
+			{
+				$description = self::show_duration();
+			}
+					
+			$description .= ' | ' . $post->post_title;
+			$description .= ' ('.$itinerary.'): ';
+			$description .= $people_imp;
+								
+			//die($description);
 			
-			$description .= ')';
-			
-			$description .= ': '.$people_imp;
 			return $description;			
 		}		
 	}

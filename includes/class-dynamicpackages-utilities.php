@@ -220,6 +220,14 @@ class dy_utilities {
 			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 		}
 		
+		if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+		{
+			if(strlen($_REQUEST['return_date']) >= 5)
+			{
+				$sum = $sum * 2;
+			}
+		}
+		
 		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
 		{
 			$add_ons = dy_Tax_Mod::get_add_ons();
@@ -756,18 +764,25 @@ class dy_utilities {
 			}
 			
 			$sum = $base_price + $occupancy_price;
-			
-			if(dy_Validators::valid_coupon())
-			{
-				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
-			}
-
 
 			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
 			{
 				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 			}
 
+			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+			{
+				if(strlen($_REQUEST['return_date']) >= 5)
+				{
+					$sum = $sum * 2;
+				}
+			}
+			
+			if(dy_Validators::valid_coupon())
+			{
+				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+			}
+			
 			return $sum;			
 		}
 	}	
@@ -855,6 +870,14 @@ class dy_utilities {
 			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
 			{
 				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			}
+
+			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+			{
+				if(strlen($_REQUEST['return_date']) >= 5)
+				{
+					$sum = $sum * 2;
+				}
 			}			
 			
 			if(dy_Validators::valid_coupon())
