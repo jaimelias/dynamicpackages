@@ -353,10 +353,13 @@ class paguelo_facil_on{
 	public function get_errors()
 	{
 		$output = null;
-		
-		foreach($this->error_codes as $k => $v)
+
+		if(isset($this->error_codes))
 		{
-			$output .= '<p class="minimal_alert strong">'.$k .': '.$v.'</p>';
+			foreach($this->error_codes as $k => $v)
+			{
+				$output .= '<p class="minimal_alert strong">'.$k .': '.$v.'</p>';
+			}			
 		}
 		
 		return $output;

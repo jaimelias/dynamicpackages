@@ -1791,7 +1791,11 @@ class dy_Public {
 			'departure_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
 			'departure_address' => array('marker', package_field('package_departure_address')),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
-			'return_date' => array('calendar', $return_date)
+			'return_date' => array('calendar', $return_date),
+			'check_in_return_hour' => array('clock', package_field('package_check_in_return_hour')),
+			'return_hour' => array('clock', package_field('package_return_hour')),
+			'return_address' => array('clock', package_field('package_return_address'))
+			
 		);
 		
 		if(!self::enabled_days())
