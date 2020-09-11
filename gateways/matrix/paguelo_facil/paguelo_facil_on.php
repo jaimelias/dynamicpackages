@@ -42,7 +42,7 @@ class paguelo_facil_on{
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
-		$this->debug_email = (get_option('dy_email')) ? get_option('dy_email') : get_option('admin_email');
+		$this->debug_email = (get_option($this->gateway_name . '_debug_email')) ? get_option($this->gateway_name . '_debug_email') : get_option('admin_email');
 		$this->debug($this->dummy_cc, $this->debug_email);		
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
@@ -219,7 +219,7 @@ class paguelo_facil_on{
 			if($this->success === 2)
 			{	
 				$output = '<p>⚠️ ' . __('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages') . '</p>';
-				$output .= ($_POST['message']) ? '<p>⚠️ ' . sanitize_text_field($_POST['message']) . '</p>' : null;
+				$output .= $this->email_notes(null);
 				$output .= '<p>❌ '. __('It is not allowed to book for third parties.', 'dynamicpackages') . '</p>';
 			}
 			else if($this->success === 1)
@@ -391,18 +391,12 @@ class paguelo_facil_on{
 		if(isset($this->success))
 		{
 			if($this->success === 2)
-			{
+			{				
 				$output = null;
 				$message = package_field('package_provider_message');
-				$address = package_field('package_departure_address');
-				$date = dy_utilities::format_date(sanitize_text_field($_POST['booking_date']));
-				$check_in = package_field('package_check_in_hour');
-				$booking_hour = dy_utilities::hour();		
-				$output .= ($message) ? esc_html($message) . '<br/><br/>' : null;
-				$output .= ($address) ? __('Meeting Point', 'dynamicpackages') . ': ' . esc_html($address) . '<br />' : null;
-				$output .= ($date) ? __('Date', 'dynamicpackages') . ': ' . sanitize_text_field($date) . '<br />' : null;
-				$output .= ($check_in) ? __('Check-in', 'dynamicpackages') . ': ' . esc_html($check_in) . '<br />' : null;
-				$output .= ($booking_hour) ? __('Booking Hour', 'dynamicpackages') . ': ' . esc_html($booking_hour) : null;
+				$details = apply_filters('dy_package_details', null); 
+				$output .= ($details) ? $details : null;
+				$output .= ($message) ? '<br/><br/>' . esc_html($message) : null;				
 			}
 		}
 		
@@ -471,6 +465,7 @@ class paguelo_facil_on{
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_min', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'sanitize_text_field');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_debug_email', 'sanitize_email');
 		
 		add_settings_section(
 			$this->gateway_name . '_control_section', 
@@ -513,6 +508,14 @@ class paguelo_facil_on{
 			array(&$this, 'input_select_on_show'), 
 			$this->gateway_name . '_settings', 
 			$this->gateway_name . '_control_section'
+		);
+		
+		add_settings_field( 
+			$this->gateway_name . '_debug_email', 
+			esc_html(__( 'Debug Email', 'dynamicpackages' )), 
+			array(&$this, 'input_text'), 
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_control_section', $this->gateway_name . '_debug_email'
 		);
 	}
 	

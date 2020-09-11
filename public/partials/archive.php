@@ -327,7 +327,7 @@ else
 								<p itemprop="description" class="bottom-10 small hide-sm"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
-							<div class="small hide-sm"><?php do_action('dy_package_details'); ?></div>
+							<div class="small hide-sm"><?php echo apply_filters('dy_package_details', null); ?></div>
 							
 							
 							<?php if(dy_utilities::starting_at_archive() > 0): ?>

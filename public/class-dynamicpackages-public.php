@@ -64,7 +64,7 @@ class dy_Public {
 		add_filter('term_description', array('dy_Public', 'modify_term_description'));
 		add_action('wp_head', array('dy_Public', 'location_category_canonical'));
 		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
-		add_action('dy_package_details', array(&$this, 'details'));
+		add_filter('dy_package_details', array(&$this, 'details'));
 		add_action('dy_package_description', array(&$this, 'description'));
 	}
 
@@ -1755,73 +1755,97 @@ class dy_Public {
 		return $output;
 	}
 	
+	public static function icon($icon)
+	{
+		$output = null;
+		
+		if($icon == 'calendar')
+		{
+			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-calendar"></i>';
+		}
+		else if($icon == 'clock')
+		{
+			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-clock"></i>';
+		}
+		else if($icon == 'marker')
+		{
+			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-map-marker"></i>';
+		}
+		
+		return $output;
+	}
+	
 	public static function details()
 	{
-		$output = array();
+		$output = null;
+		$booking_date = (isset($_REQUEST['booking_date'])) ? dy_utilities::format_date(sanitize_text_field($_REQUEST['booking_date'])) : null;
+		$return_date = (isset($_REQUEST['return_date'])) ? date_i18n(get_option('date_format'), dy_utilities::return_date()) : null;
 		
-
-		if(!is_booking_page())
-		{
-			if(package_field('package_event_date') == '')
-			{
-				array_push($output, '<i class="fas fa-calendar"></i> '.esc_html(self::enabled_days()));
-			}
-			else
-			{
-				$booking_date = date_i18n(get_option('date_format'), strtotime(package_field('package_event_date')));
-				array_push($output, '<i class="fas fa-calendar"></i> '.esc_html($booking_date));
-			}
-			
-			if(package_field('package_min_hour' ) && package_field('package_max_hour' ))
-			{
-				array_push($output, '<i class="fas fa-clock"></i> '.esc_html(__('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )));
-			}
-		}
+		$args = array(
+			'enabled_days' => array('calendar', self::enabled_days()),
+			'schedule' => array('clock', __('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )),
+			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
+			'booking_date' => array('calendar', $booking_date),
+			'duration' => array('clock', self::show_duration()),
+			'check_in' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_hour' )),
+			'departure_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
+			'departure_address' => array('marker', package_field('package_departure_address')),
+			'label_return' => array(null, __('Return', 'dynamicpackages')),
+			'return_date' => array('calendar', $return_date)
+		);
 		
-		if(dy_Validators::is_package_transport() && (is_booking_page() || is_singular('packages')))
+		if(!self::enabled_days())
 		{
-			array_push($output, '<strong>'.esc_html(__('Departure', 'dynamicpackages')).'</strong>');
+			unset($args['enabled_days']);
 		}
-				
-		
-		if(is_booking_page())
+		if(!$booking_date)
 		{
-			$booking_date = date_i18n(get_option('date_format'), dy_utilities::booking_date());
-			array_push($output, '<i class="fas fa-calendar"></i> '.esc_html($booking_date));
-			
-			if(!dy_Validators::is_package_transport())
-			{
-				array_push($output, '<i class="fas fa-clock"></i> '.esc_html(self::show_duration()));
-			}			
+			unset($args['booking_date']);
 		}
-		
-		if(is_singular('packages') && package_field('package_check_in_hour' ))
+		if(!package_field('package_min_hour' ) && !package_field('package_max_hour'))
 		{
-			array_push($output, '<i class="fas fa-clock"></i> '.esc_html(__('Check-in', 'dynamicpackages').' '.package_field('package_check_in_hour' )));
+			unset($args['schedule']);
 		}
-		if(dy_utilities::hour() != '' && is_singular('packages'))
+		if(is_checkout_page() || is_booking_page())
 		{
-			array_push($output, '<i class="fas fa-clock"></i> '.esc_html(__('Hour', 'dynamicpackages').' '.dy_utilities::hour()));
+			unset($args['enabled_days']);
 		}
-		if(package_field('package_departure_address' ))
+		if(!package_field('package_check_in_hour'))
 		{
-			array_push($output, '<i class="fas fa-map-marker"></i> '.esc_html(package_field('package_departure_address' )));
+			unset($args['check_in']);
 		}
-		if(!is_booking_page() && !dy_Validators::is_package_transport())
+		if(!dy_utilities::hour())
 		{
-			$booking_date = date_i18n(get_option('date_format'), dy_utilities::booking_date());
-			array_push($output, '<i class="fas fa-check"></i> '.esc_html(self::show_duration(true)));
+			unset($args['departure_hour']);
 		}
-		
+		if(!package_field('package_departure_address'))
+		{
+			unset($args['departure_address']);
+		}
+		if(!$return_date)
+		{
+			unset($args['return_date']);
+		}
 		if(dy_Validators::is_package_transport())
 		{
-			array_push($output, null);
-			array_push($output, '<strong>'.esc_html(__('Return', 'dynamicpackages')).'</strong>');
-			$return_date = date_i18n(get_option('date_format'), dy_utilities::return_date());
-			array_push($output, '<i class="fas fa-calendar"></i> '.esc_html($return_date));
+			unset($args['duration']);
+		}
+		if(!dy_Validators::is_package_transport() || is_page() || is_tax())
+		{
+			unset($args['duration']);
+			unset($args['label_departure']);
+			unset($args['label_return']);
+			unset($args['return_date']);
 		}
 		
-		echo '<div class="dy_pad bottom-5">'.implode('</div><div class="dy_pad bottom-5">', $output).'</div>';
+		foreach($args as $k => $v)
+		{
+			$output .= '<div class="dy_pad bottom-5">';
+			$output .= ($v[0]) ? self::icon($v[0]) .' '. esc_html($v[1]) : '<strong>'.esc_html($v[1]).'</strong>';
+			$output .= '</div>';
+		}
+		
+		return $output;
 	}
 	
 	public static function event_date_update($the_id)

@@ -82,7 +82,7 @@
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
-			<?php do_action('dy_package_details'); ?>
+			<?php echo apply_filters('dy_package_details', null); ?>
 			<?php if(isset($dy_add_to_calendar)) : ?>
 				<div class="text-center bottom-10"><?php $dy_add_to_calendar->show(); ?></div>
 			<?php endif; ?>

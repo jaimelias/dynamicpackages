@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-11 15:54+0000\n"
-"PO-Revision-Date: 2020-09-11 15:55+0000\n"
+"POT-Creation-Date: 2020-09-11 16:03+0000\n"
+"PO-Revision-Date: 2020-09-11 16:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1820,19 +1820,19 @@ msgid "Username"
 msgstr "Usuario"
 
 #: gateways/matrix/paypal/paypal_me.php:289
-#: gateways/matrix/paypal/paypal_me.php:395
+#: gateways/matrix/paypal/paypal_me.php:394
 msgid "Pay with Paypal"
 msgstr "Paga con Paypal"
 
-#: gateways/matrix/paypal/paypal_me.php:386
+#: gateways/matrix/paypal/paypal_me.php:385
 msgid "full payment of"
 msgstr "pago completo de"
 
-#: gateways/matrix/paypal/paypal_me.php:390
+#: gateways/matrix/paypal/paypal_me.php:389
 msgid "deposit of"
 msgstr "deposito de"
 
-#: gateways/matrix/paypal/paypal_me.php:393
+#: gateways/matrix/paypal/paypal_me.php:392
 msgid ""
 "To complete the booking please click on the following link and enter your "
 "Paypal account."
@@ -1840,11 +1840,12 @@ msgstr ""
 "Para completar esta reserva por favor haga click en el siguiente link y "
 "entre a su cuenta Paypal."
 
-#: gateways/matrix/paypal/paypal_me.php:394
-msgid "You will be paying a "
-msgstr "Usted pagará"
+#: gateways/matrix/paypal/paypal_me.php:393
+#, php-format
+msgid "Please send us the %s %s to complete these booking."
+msgstr "Por favor envía el %s %s para completar esta reserva."
 
-#: gateways/matrix/paypal/paypal_me.php:395
+#: gateways/matrix/paypal/paypal_me.php:394
 msgid "now"
 msgstr "ya"
 
