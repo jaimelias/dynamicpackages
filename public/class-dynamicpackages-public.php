@@ -1834,12 +1834,27 @@ class dy_Public {
 		{
 			unset($args['duration']);
 		}
+		if(!package_field('package_check_in_return_hour'))
+		{
+			unset($args['check_in_return_hour']);
+		}
+		if(!package_field('package_return_hour'))
+		{
+			unset($args['return_hour']);
+		}
+		if(!package_field('package_return_address'))
+		{
+			unset($args['return_address']);
+		}
 		if(!dy_Validators::is_package_transport() || is_page() || is_tax())
 		{
 			unset($args['duration']);
 			unset($args['label_departure']);
 			unset($args['label_return']);
 			unset($args['return_date']);
+			unset($args['check_in_return_hour']);
+			unset($args['return_hour']);
+			unset($args['return_address']);
 		}
 		
 		foreach($args as $k => $v)
