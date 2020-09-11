@@ -18,7 +18,7 @@
 	</div>
 
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
-		<div class="bottom-20"><?php dy_Public::details(); ?></div>
+		<div class="bottom-20"><?php do_action('dy_package_details'); ?></div>
 		<div class="bottom-20"><?php dy_Public::show_coupons(); ?></div>
 	
 	<?php  echo  $new_content; ?>
@@ -76,7 +76,7 @@
 <hr/>
 
 	<h4><?php echo esc_html(__('Booking Details', 'dynamicpackages')); ?>:</h4>
-	<div class="bottom-20"><?php dy_Public::details(); ?></div>
+	<div class="bottom-20"><?php do_action('dy_package_details'); ?></div>
 
 
 <hr/>

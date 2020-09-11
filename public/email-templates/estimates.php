@@ -1,5 +1,5 @@
 <?php
-$date = sanitize_text_field($_POST['departure_format_date']);
+$today = dy_utilities::format_date(null);
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
@@ -19,7 +19,7 @@ $client_phone = sanitize_text_field($_POST['phone']);
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
-$description = dy_Public::description();
+$description = apply_filters('dy_package_description', null);
 $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
@@ -130,7 +130,7 @@ $email_template = <<<EOT
 									</td>
 									<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
 										<strong style="color: #666666">${label_doc}</strong>
-										<br/>${date}
+										<br/>${today}
 									</td>
 								</tr>
 							</table>

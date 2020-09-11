@@ -82,11 +82,11 @@
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
-			<?php dy_Public::details(); ?>
+			<?php do_action('dy_package_details'); ?>
 			<?php if(isset($dy_add_to_calendar)) : ?>
 				<div class="text-center bottom-10"><?php $dy_add_to_calendar->show(); ?></div>
 			<?php endif; ?>
-			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), dy_Public::description().' '.dy_money()); ?></div>
+			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), apply_filters('dy_package_description', null).' '.dy_money()); ?></div>
 		</div>
 	</div>
 	<div class="pure-u-1 pure-u-md-2-3">

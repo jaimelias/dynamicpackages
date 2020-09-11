@@ -1,6 +1,6 @@
 <?php
 
-$date = sanitize_text_field($_POST['departure_format_date']);
+$today = dy_utilities::format_date(null);
 $currency_symbol = dy_utilities::currency_symbol();
 $total = apply_filters('dy_email_total', dy_utilities::currency_format(dy_utilities::total()));
 $company_name = get_bloginfo('name');
@@ -15,7 +15,7 @@ $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_f
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
-$description = dy_Public::description();
+$description = apply_filters('dy_package_description', null);
 $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
@@ -54,7 +54,7 @@ $email_pdf = <<<EOT
 					<div style="text-align: right;">
 						<strong style="color: #666666;">${label_doc}</strong>
 						<br>
-						${date}
+						${today}
 						<br>
 						<br>
 						<strong style="color: #666666;">${label_client}</strong>

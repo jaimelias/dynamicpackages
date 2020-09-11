@@ -322,7 +322,7 @@ class paguelo_facil_on{
 					
 					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
-					$output .= '<div class="bottom-20">' . dy_Public::description() . '</div>';
+					$output .= '<div class="bottom-20">' . apply_filters('dy_package_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
 					$output .= '<p class="minimal_success strong"><i class="fas fa-envelope"></i> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
@@ -395,7 +395,7 @@ class paguelo_facil_on{
 				$output = null;
 				$message = package_field('package_provider_message');
 				$address = package_field('package_departure_address');
-				$date = $_POST['departure_format_date'];
+				$date = dy_utilities::format_date(sanitize_text_field($_POST['booking_date']));
 				$check_in = package_field('package_check_in_hour');
 				$booking_hour = dy_utilities::hour();		
 				$output .= ($message) ? esc_html($message) . '<br/><br/>' : null;
@@ -636,7 +636,7 @@ class paguelo_facil_on{
 			'CCLW' => $this->cclw,
 			'txType' => 'SALE',
 			'CMTN' => dy_utilities::payment_amount(),
-			'CDSC' => substr(dy_Public::description(), 0, 150),
+			'CDSC' => substr(apply_filters('dy_package_description', null), 0, 150),
 			'CCNum' => $CCNum,
 			'ExpMonth' => sanitize_text_field($_POST['ExpMonth']),
 			'ExpYear' => sanitize_text_field($_POST['ExpYear']),

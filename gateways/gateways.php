@@ -292,10 +292,9 @@ class dy_Gateways
 			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())),
 			'booking_date' => sanitize_text_field($_GET['booking_date']),
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
-			'departure_format_date' => dy_utilities::format_date($_GET['booking_date']),
-			'departure_address' => esc_html(package_field('package_departure_address')),
-			'check_in_hour' => esc_html(package_field('package_check_in_hour')),
 			'booking_hour' => esc_html(dy_utilities::hour()),
+			'return_format_date' => (isset($_GET['return_date'])) ? dy_utilities::format_date($_GET['return_date']) : null,
+			'return_hour' => esc_html(dy_utilities::return_hour()),
 			'duration' => esc_html(dy_Public::show_duration()),
 			'pax_num' => intval(dy_utilities::pax_num()),
 			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
@@ -347,7 +346,7 @@ class dy_Gateways
 	
 	public function get_description()
 	{
-		$output = dy_Public::description();
+		$output = apply_filters('dy_package_description', null);
 		
 		if(dy_Validators::has_deposit())
 		{

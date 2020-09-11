@@ -24,6 +24,14 @@ class dy_utilities {
 			return strtotime(sanitize_text_field($_REQUEST['booking_date']));
 		}
 	}
+	
+	public static function return_date()
+	{
+		if(isset($_REQUEST['return_date']))
+		{
+			return strtotime(sanitize_text_field($_REQUEST['return_date']));
+		}
+	}
 
 	public static function min_range()
 	{
@@ -79,36 +87,39 @@ class dy_utilities {
 			$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
 			$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
 			
-			if(array_key_exists('coupons', $coupons))
+			if(is_array($coupons))
 			{
-				$coupons = $coupons['coupons'];
-				
-				for($x = 0; $x < count($coupons); $x++)
+				if(array_key_exists('coupons', $coupons))
 				{
-					if($booking_coupon == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
+					$coupons = $coupons['coupons'];
+					
+					for($x = 0; $x < count($coupons); $x++)
 					{
-						if($option == 'code')
+						if($booking_coupon == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
 						{
-							$output = $coupons[$x][0];
+							if($option == 'code')
+							{
+								$output = $coupons[$x][0];
+							}
+							else if($option == 'discount')
+							{
+								$output = $coupons[$x][1];
+							}	
+							else if($option == 'expiration')
+							{
+								$output = $coupons[$x][2];
+							}
+							else if($option == 'from')
+							{
+								$output = $coupons[$x][3];
+							}
+							else if($option == 'to')
+							{
+								$output = $coupons[$x][4];
+							}					
 						}
-						else if($option == 'discount')
-						{
-							$output = $coupons[$x][1];
-						}	
-						else if($option == 'expiration')
-						{
-							$output = $coupons[$x][2];
-						}
-						else if($option == 'from')
-						{
-							$output = $coupons[$x][3];
-						}
-						else if($option == 'to')
-						{
-							$output = $coupons[$x][4];
-						}					
 					}
-				}
+				}				
 			}
 			
 			if($output != null)
@@ -961,6 +972,26 @@ class dy_utilities {
 		
 		return $hour;
 	}	
+	
+	public static function return_hour()
+	{
+		$hour = null;
+
+		if(package_field('package_return_hour' ))
+		{
+			if(package_field('package_return_hour' ) != '')
+			{
+				$hour = package_field('package_return_hour');
+			}
+		}
+		
+		if(isset($_REQUEST['return_hour']))
+		{
+			$hour = sanitize_text_field($_REQUEST['return_hour']);
+		}
+		
+		return $hour;
+	}
 
 
 	public static function webhook($option, $data)

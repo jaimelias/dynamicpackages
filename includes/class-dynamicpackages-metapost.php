@@ -226,12 +226,20 @@ class dy_Metapost{
 			update_post_meta( $post_id, 'package_max_hour', esc_attr($_POST['package_max_hour']));		
 		if(isset( $_POST['package_min_hour']))
 			update_post_meta( $post_id, 'package_min_hour', esc_attr($_POST['package_min_hour']));
+		//departure
 		if(isset( $_POST['package_check_in_hour']))
 			update_post_meta( $post_id, 'package_check_in_hour', esc_attr($_POST['package_check_in_hour']));
 		if(isset( $_POST['package_departure_hour']))
 			update_post_meta( $post_id, 'package_departure_hour', esc_attr($_POST['package_departure_hour']));
 		if(isset( $_POST['package_departure_address']))
-			update_post_meta( $post_id, 'package_departure_address', esc_attr($_POST['package_departure_address']));	
+			update_post_meta( $post_id, 'package_departure_address', esc_attr($_POST['package_departure_address']));
+		//return
+		if(isset( $_POST['package_check_in_return_hour']))
+			update_post_meta( $post_id, 'package_check_in_return_hour', esc_attr($_POST['package_check_in_return_hour']));
+		if(isset( $_POST['package_return_hour']))
+			update_post_meta( $post_id, 'package_return_hour', esc_attr($_POST['package_return_hour']));
+		if(isset( $_POST['package_return_address']))
+			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));		
 		
 		//provider
 		if(isset( $_POST['package_provider_name']))

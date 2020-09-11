@@ -116,7 +116,7 @@ class dy_Actions{
 		else
 		{
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
-			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html(dy_Public::description()).'</strong>').'</p>';
+			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html(apply_filters('dy_package_description', null)).'</strong>').'</p>';
 			
 			if(get_option('dy_phone') && get_option('dy_email'))
 			{

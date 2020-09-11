@@ -64,7 +64,8 @@ class dy_Public {
 		add_filter('term_description', array('dy_Public', 'modify_term_description'));
 		add_action('wp_head', array('dy_Public', 'location_category_canonical'));
 		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
-		add_filter('package_details', array('dy_Public', 'details_add'));		
+		add_action('dy_package_details', array(&$this, 'details'));
+		add_action('dy_package_description', array(&$this, 'description'));
 	}
 
 	public function create_alert($row) {
@@ -1754,10 +1755,11 @@ class dy_Public {
 		return $output;
 	}
 	
-	public static function details_add()
+	public static function details()
 	{
 		$output = array();
 		
+
 		if(!is_booking_page())
 		{
 			if(package_field('package_event_date') == '')
@@ -1776,11 +1778,21 @@ class dy_Public {
 			}
 		}
 		
+		if(dy_Validators::is_package_transport() && (is_booking_page() || is_singular('packages')))
+		{
+			array_push($output, '<strong>'.esc_html(__('Departure', 'dynamicpackages')).'</strong>');
+		}
+				
+		
 		if(is_booking_page())
 		{
 			$booking_date = date_i18n(get_option('date_format'), dy_utilities::booking_date());
 			array_push($output, '<i class="fas fa-calendar"></i> '.esc_html($booking_date));
-			array_push($output, '<i class="fas fa-clock"></i> '.esc_html(self::show_duration()));
+			
+			if(!dy_Validators::is_package_transport())
+			{
+				array_push($output, '<i class="fas fa-clock"></i> '.esc_html(self::show_duration()));
+			}			
 		}
 		
 		if(is_singular('packages') && package_field('package_check_in_hour' ))
@@ -1795,21 +1807,21 @@ class dy_Public {
 		{
 			array_push($output, '<i class="fas fa-map-marker"></i> '.esc_html(package_field('package_departure_address' )));
 		}
-		if(!is_booking_page())
+		if(!is_booking_page() && !dy_Validators::is_package_transport())
 		{
 			$booking_date = date_i18n(get_option('date_format'), dy_utilities::booking_date());
 			array_push($output, '<i class="fas fa-check"></i> '.esc_html(self::show_duration(true)));
 		}
 		
-		return $output;
-	}
-	public static function details_cb()
-	{
-		return apply_filters('package_details', array());
-	}
-	public static function details()
-	{
-		echo '<div class="dy_pad bottom-5">'.implode('</div><div class="dy_pad bottom-5">', self::details_cb()).'</div>';
+		if(dy_Validators::is_package_transport())
+		{
+			array_push($output, null);
+			array_push($output, '<strong>'.esc_html(__('Return', 'dynamicpackages')).'</strong>');
+			$return_date = date_i18n(get_option('date_format'), dy_utilities::return_date());
+			array_push($output, '<i class="fas fa-calendar"></i> '.esc_html($return_date));
+		}
+		
+		echo '<div class="dy_pad bottom-5">'.implode('</div><div class="dy_pad bottom-5">', $output).'</div>';
 	}
 	
 	public static function event_date_update($the_id)

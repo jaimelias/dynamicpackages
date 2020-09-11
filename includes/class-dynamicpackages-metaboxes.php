@@ -117,7 +117,7 @@ class dy_Metaboxes
 		<div class="hot-container">
 			<div id="coupons" class="hot" data-sensei-min="package_max_coupons" data-sensei-max="package_max_coupons" data-sensei-container="coupons" data-sensei-table="package_coupons" data-sensei-headers="<?php _e( 'Code', 'dynamicpackages' ); ?>,<?php _e( 'Discount (%)', 'dynamicpackages' ); ?>, <?php _e( 'Expiration', 'dynamicpackages' ); ?>, <?php _e( 'Publish', 'dynamicpackages' ); ?>" data-sensei-type="text,numeric,date,checkbox"></div>
 		</div>
-		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo package_field( 'package_coupons' ); ?></textarea></div>		
+		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '[[nul,null,null,null]]'; ?></textarea></div>		
 	<?php
 	}
 	
@@ -188,6 +188,10 @@ class dy_Metaboxes
 	public static function package_departure_html( $post) {
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 
+		<?php if(dy_Validators::is_package_transport()): ?>
+			<h3><?php esc_html_e('Departure', 'dynamicpackages'); ?></h3>
+		<?php endif; ?>
+
 		<p>
 			<label for="package_check_in_hour"><?php _e( 'Check-in Hour', 'dynamicpackages' ); ?></label></br>
 			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo package_field( 'package_check_in_hour' ); ?>">
@@ -199,7 +203,28 @@ class dy_Metaboxes
 		<p>
 			<label for="package_departure_address"><?php _e( 'Departure Address', 'dynamicpackages' ); ?></label></br>
 			<textarea cols="60" type="text" name="package_departure_address" id="package_departure_address"><?php echo package_field( 'package_departure_address' ); ?></textarea>
-		</p>			
+		</p>
+
+		<?php if(dy_Validators::is_package_transport()): ?>
+			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
+			
+			<p>
+				<label for="package_check_in_return_hour"><?php _e( 'Check-in Hour', 'dynamicpackages' ); ?></label></br>
+				<input class="timepicker" type="text" name="package_check_in_return_hour" id="package_check_in_return_hour" value="<?php echo package_field( 'package_check_in_return_hour' ); ?>">
+			</p>
+			<p>
+				<label for="package_return_hour"><?php _e( 'Departure Hour', 'dynamicpackages' ); ?></label></br>
+				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo package_field( 'package_return_hour' ); ?>">
+			</p>				
+			<p>
+				<label for="package_return_address"><?php _e( 'Departure Address', 'dynamicpackages' ); ?></label></br>
+				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo package_field( 'package_return_address' ); ?></textarea>
+			</p>			
+			
+		<?php endif; ?>
+
+
+		
 		<?php
 	}
 	
@@ -288,7 +313,7 @@ class dy_Metaboxes
 				<div id="seasons_chart" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_num_seasons" data-sensei-max="package_num_seasons" data-sensei-container="seasons_chart" data-sensei-table="package_seasons_chart" data-sensei-headers="Name,From,To,Nights,ID" data-sensei-type="text,date,date,dropdown,readonly" data-sensei-disabled="<?php echo esc_html($disable_child); ?>"></div>
 			</div>
 			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_seasons_chart" id="package_seasons_chart" ><?php echo package_field( 'package_seasons_chart' ); ?></textarea> 
+				<textarea class="hidden" rows="4" cols="50" name="package_seasons_chart" id="package_seasons_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_seasons_chart')), true))) ? package_field( 'package_seasons_chart' ) : '[[nul,null,null,null,null]]'; ?></textarea> 
 			</p>	
 			</fieldset>	
 		<?php endif; ?>	
@@ -320,7 +345,7 @@ class dy_Metaboxes
 			<div id="price_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="price_chart" data-sensei-table="package_price_chart" data-sensei-headers="Adults,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
 		</div>
 		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_price_chart" id="package_price_chart" ><?php echo package_field( 'package_price_chart' ); ?></textarea>
+			<textarea class="hidden" rows="4" cols="50" name="package_price_chart" id="package_price_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_price_chart')), true))) ? package_field( 'package_price_chart' ) : '[[nul,null]]'; ?></textarea>
 		</p>	
 		</fieldset>
 	
@@ -333,7 +358,7 @@ class dy_Metaboxes
 				<div id="occupancy_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="occupancy_chart" data-sensei-table="package_occupancy_chart" data-sensei-headers="<?php _e( 'Adults', 'dynamicpackages' ); ?>,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
 			</div>
 			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_occupancy_chart" id="package_occupancy_chart" ><?php echo package_field( 'package_occupancy_chart' ); ?></textarea>
+				<textarea class="hidden" rows="4" cols="50" name="package_occupancy_chart" id="package_occupancy_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_occupancy_chart')), true))) ? package_field( 'package_occupancy_chart' ) : '[[nul,null]]'; ?></textarea>
 			</p>	
 		</fieldset>
 		<?php endif; ?>
@@ -392,7 +417,7 @@ class dy_Metaboxes
 			<div id="disabled_dates" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_disabled_num" data-sensei-max="package_disabled_num" data-sensei-container="disabled_dates" data-sensei-table="package_disabled_dates" data-sensei-headers="From,To" data-sensei-type="date,date" ></div>
 		</div>
 		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo package_field( 'package_disabled_dates' ); ?></textarea> 
+			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_disabled_dates')), true))) ? package_field( 'package_disabled_dates' ) : '[[nul,null]]'; ?></textarea> 
 		</p>	
 		</fieldset>			
 

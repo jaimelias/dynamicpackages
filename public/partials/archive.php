@@ -317,15 +317,17 @@ else
 							<?php dy_Reviews::stars($post->ID); ?>
 							</div>
 
-							<div class="dy_pad bottom-10 semibold">
-								<?php echo esc_html(dy_Public::show_duration()); ?>
-							</div>
+							<?php if(!dy_Validators::is_package_transport()) : ?>
+								<div class="dy_pad bottom-10 semibold">
+									<?php echo esc_html(dy_Public::show_duration()); ?>
+								</div>
+							<?php endif; ?>
 
 							<?php if(has_excerpt()): ?>
 								<p itemprop="description" class="bottom-10 small hide-sm"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
-							<div class="small hide-sm"><?php dy_Public::details(); ?></div>
+							<div class="small hide-sm"><?php do_action('dy_package_details'); ?></div>
 							
 							
 							<?php if(dy_utilities::starting_at_archive() > 0): ?>
