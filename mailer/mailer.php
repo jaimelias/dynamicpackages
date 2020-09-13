@@ -39,28 +39,31 @@ if(!class_exists('Sendgrid_Mailer'))
 			{
 				add_filter('wp_mail_from', array(&$this, 'from_email'), 100, 1);
 				add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
-				add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 10, 1 );
+				add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 100, 1 );
 				add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
+				add_filter('sg_mail', array(&$this, 'send'));
 			}
 		}
 
 		public function phpmailer($mailer)
 		{
-			global $SENDGRID_TO;
-			
-			$mailer->IsSMTP();
-			$mailer->Host = $this->host;
-			$mailer->Port = 587;
-			$mailer->SMTPAuth = true;
-			$mailer->CharSet  = "utf-8";
-			$mailer->SMTPSecure = 'tls';
-			$mailer->IsHTML(true);
-			$mailer->Username = $this->smtp_username;
-			$mailer->Password = $this->smtp_api_key;
-			$mailer->SMTPDebug = 0;
-
-			if(!$mailer->Send()) {
-			   exit;
+			if(!isset($this->email_sent))
+			{
+				$mailer->IsSMTP();
+				$mailer->Host = $this->host;
+				$mailer->Port = 587;
+				$mailer->SMTPAuth = true;
+				$mailer->CharSet  = 'utf-8';
+				$mailer->SMTPSecure = 'tls';
+				$mailer->IsHTML(true);
+				$mailer->Username = $this->smtp_username;
+				$mailer->Password = $this->smtp_api_key;
+				$mailer->SMTPDebug = 0;
+				$this->email_sent = true;				
+			}
+			else
+			{
+				exit;
 			}
 		}		
 		
@@ -171,64 +174,70 @@ if(!class_exists('Sendgrid_Mailer'))
 
 		<?php }		
 
-		public function send($args)
+		public function send($args = array())
 		{
-			$to = sanitize_email($args['to']);
-			$subject = esc_html($args['subject']);
-			$message = $this->minify_html($args['message']);
-			$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
-			
-			if($this->web_api_key)
+			if(is_array($args))
 			{
-				$email = new \SendGrid\Mail\Mail(); 
-				$email->setFrom(sanitize_email($this->email), esc_html($this->name));
-				$email->setSubject($subject);
-				$email->addTo($to);
-				
-				if($this->email_bcc)
+				if(count($args) > 0)
 				{
-					$email->addBcc($this->email_bcc);
-				}
-				
-				$email->addContent('text/html', $message);				
-				
-				if($this->has_attachments($attachments))
-				{
-					for($x = 0; $x < count($attachments); $x++)
-					{						
-						$attachment = new Attachment();
-						$attachment->setContent($attachments[$x]['data']);
-						$attachment->setType('application/pdf');
-						$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
-						$attachment->setDisposition('attachment');
-						$email->addAttachment($attachment);	
-					}							
-				}
-				
-				$sendgrid = new \SendGrid(esc_html($this->web_api_key));
-				
-				try {
+					$to = sanitize_email($args['to']);
+					$subject = esc_html($args['subject']);
+					$message = $this->minify_html($args['message']);
+					$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
 					
-					$response = $sendgrid->send($email);
-					
-					if($response->statusCode() >= 200 && $response->statusCode() <= 299)
+					if($this->web_api_key)
 					{
-						return $args;
+						$email = new \SendGrid\Mail\Mail(); 
+						$email->setFrom(sanitize_email($this->email), esc_html($this->name));
+						$email->setSubject($subject);
+						$email->addTo($to);
+						
+						if($this->email_bcc)
+						{
+							$email->addBcc($this->email_bcc);
+						}
+						
+						$email->addContent('text/html', $message);				
+						
+						if($this->has_attachments($attachments))
+						{
+							for($x = 0; $x < count($attachments); $x++)
+							{						
+								$attachment = new Attachment();
+								$attachment->setContent($attachments[$x]['data']);
+								$attachment->setType('application/pdf');
+								$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
+								$attachment->setDisposition('attachment');
+								$email->addAttachment($attachment);	
+							}							
+						}
+						
+						$sendgrid = new \SendGrid(esc_html($this->web_api_key));
+						
+						try {
+							
+							$response = $sendgrid->send($email);
+							
+							if($response->statusCode() >= 200 && $response->statusCode() <= 299)
+							{
+								return $args;
+							}
+							else
+							{
+								write_log($response->body());
+							}
+						} 
+						catch(Exception $e)
+						{
+							write_log($e->getMessage());
+						}				
 					}
 					else
 					{
-						write_log($response->body());
-					}
-				} 
-				catch(Exception $e)
-				{
-					write_log($e->getMessage());
-				}				
-			}
-			else
-			{
-				$headers = array('Content-Type: text/html; charset=UTF-8');
-				wp_mail($to, $subject, $message, $headers);
+						$headers = array('Content-Type: text/html; charset=UTF-8');
+						wp_mail($to, $subject, $message, $headers);
+					}					
+				}
 			}
 		}
 		
@@ -281,14 +290,7 @@ if(!class_exists('Sendgrid_Mailer'))
 		}
 	}
 	
-	
-	global $SENDGRID_API_MAILER;
-	
-	if(!isset($SENDGRID_API_MAILER))
-	{
-		$GLOBALS['SENDGRID_API_MAILER'] = new Sendgrid_Mailer();
-	}
-
+	$SENDGRID_API_MAILER = new Sendgrid_Mailer();
 }
 
 
@@ -296,10 +298,7 @@ if(!function_exists('sg_mail'))
 {
 	function sg_mail($args)
 	{
-		global $SENDGRID_API_MAILER;
-		
-		$SENDGRID_API_MAILER->send($args);
-		
+		return apply_filters('sg_mail', $args);
 	}
 }
 
