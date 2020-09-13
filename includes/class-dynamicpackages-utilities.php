@@ -161,33 +161,15 @@ class dy_utilities {
 		
 		return $total;
 	}
-	
+
 	public static function subtotal($regular = null)
 	{
-		$length_unit = package_field('package_length_unit');
+		
 		$price_chart = self::get_price_chart();	
 		$sum = 0;
-		$sum = floatval(self::get_price_adults($regular)) + $sum;
-		$sum_children = floatval(self::get_price_discount($regular)) + $sum;
+		$sum = floatval(self::get_price_regular($regular)) + $sum;
+		$sum = floatval(self::get_price_discount($regular)) + $sum;
 		$pax_num = self::pax_num();
-		
-		if(intval($length_unit) == 2 || intval($length_unit) == 3)
-		{
-			$sum = $sum + floatval(self::get_price_per_night());
-		}
-
-		if(self::increase_by_hour() || self::increase_by_day())
-		{
-			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
-		}
-		
-		if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
-		{
-			if(strlen($_REQUEST['return_date']) >= 5)
-			{
-				$sum = $sum * 2;
-			}
-		}
 		
 		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
 		{
@@ -586,12 +568,12 @@ class dy_utilities {
 	}
 	
 
-	public static function get_price_per_night()
+	public static function get_price_occupancy($type = null)
 	{
 		if(isset($_REQUEST['booking_date']))
 		{
 			$sum = 0;
-			$package_occupancy_chart = json_decode(html_entity_decode(package_field('package_occupancy_chart' )), true);
+			$occupancy_chart = json_decode(html_entity_decode(package_field('package_occupancy_chart' )), true);
 			$duration = self::get_min_nights();
 			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
@@ -618,27 +600,31 @@ class dy_utilities {
 			
 			for($s = 0; $s < count($seasons_array); $s++)
 			{
-				if(array_key_exists($s, $seasons_array) && $package_occupancy_chart != '')
+				if(array_key_exists($s, $seasons_array) && $occupancy_chart != '')
 				{
-					if(array_key_exists($seasons_array[$s], $package_occupancy_chart))
+					if(array_key_exists($seasons_array[$s], $occupancy_chart))
 					{
-						for($a = 0;  $a < count($package_occupancy_chart[$seasons_array[$s]]); $a++)
+						for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
 						{
 							if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 							{	
-								if($package_occupancy_chart[$seasons_array[$s]][$a][0] != '')
+								if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
 								{
 									//total occupancy price
-									$each_adult = floatval($package_occupancy_chart[$seasons_array[$s]][$a][0]);
-									$sum = $each_adult * floatval(sanitize_text_field($_REQUEST['pax_regular']));
+									if($type == 'regular')
+									{
+										$each_adult = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
+										$sum = $each_adult * floatval(sanitize_text_field($_REQUEST['pax_regular']));
+									}
 									
 									//total children discounts
-									if(isset($_REQUEST['pax_discount']))
+									if(isset($_REQUEST['pax_discount']) && $type == 'discount')
 									{
-										if($_REQUEST['pax_discount'] > 0 && $package_occupancy_chart[$seasons_array[$s]][$a][1] != '')
+										if($_REQUEST['pax_discount'] > 0 && $occupancy_chart[$seasons_array[$s]][$a][1] != '')
 										{
-											$each_child = floatval($package_occupancy_chart[$seasons_array[$s]][$a][1]);
-											$sum = $sum + ($each_child * floatval(sanitize_text_field($_REQUEST['pax_discount'])));										}
+											$each_child = floatval($occupancy_chart[$seasons_array[$s]][$a][1]);
+											$sum = $each_child * floatval(sanitize_text_field($_REQUEST['pax_discount']));
+										}
 									}
 									
 									$sum = $sum * $duration;
@@ -648,45 +634,19 @@ class dy_utilities {
 					}
 				}
 			}
-			
 
 			return $sum;			
 		}
 	}
 
-	public static function get_price_adults($regular = null)
+	public static function get_price_regular($regular = null)
 	{
 		if(is_booking_page() || is_checkout_page())
-		{
-			$sum = 0;
+		{			
 			$base_price = 0;
-			$occupancy_price = 0;			
+			$occupancy_price = 0;
+			$length_unit = package_field('package_length_unit');
 			$price_chart = self::get_price_chart();
-			$occupancy_chart = self::get_occupancy_chart();	
-			$duration = floatval(self::get_min_nights());
-			$seasons = self::get_season_chart();
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-			$seasons_array = array();
-						
-			for($d = 0; $d < $duration; $d++)
-			{
-				$new_date = date('Y-m-d', strtotime($booking_date . " +$d days"));
-				$is_season = self::get_season($new_date);
-				
-				if($is_season == 'price_chart')
-				{
-					$occupancy_key = 'occupancy_chart';
-				}
-				else
-				{
-					$occupancy_key = 'price_chart'.$is_season;
-				}
-				
-				if(package_field('package_package_type' ) == 1)
-				{
-					array_push($seasons_array, $occupancy_key);	
-				}
-			}
 
 			for ($x = 0; $x < count($price_chart); $x++)
 			{
@@ -700,29 +660,10 @@ class dy_utilities {
 			}
 			
 			
-			if(is_array($seasons_array) && is_array($occupancy_chart))
+			if(intval($length_unit) == 2 || intval($length_unit) == 3)
 			{
-				for($s = 0; $s < count($seasons_array); $s++)
-				{
-					if(array_key_exists($s, $seasons_array))
-					{
-						if(array_key_exists($seasons_array[$s], $occupancy_chart))
-						{
-							for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
-							{
-								if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
-								{
-									if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
-									{
-										$occupancy_price = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
-										$occupancy_price = $occupancy_price * $duration;
-									}
-								}		
-							}						
-						}
-					}
-				}				
-			}
+				$occupancy_price = self::get_price_occupancy('regular');
+			}			
 			
 			$sum = $base_price + $occupancy_price;
 
@@ -754,33 +695,11 @@ class dy_utilities {
 	{
 		if(is_booking_page() || is_checkout_page())
 		{
-			$sum = 0;
 			$base_price = 0;
-			$occupancy_price = 0;			
+			$occupancy_price = 0;
+			$length_unit = package_field('package_length_unit');
 			$price_chart = self::get_price_chart();
-			$package_occupancy_chart = self::get_occupancy_chart();	
-			$duration = self::get_min_nights();
-			$seasons = self::get_season_chart();
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-			$seasons_array = array();
-		
-			for($d = 0; $d < $duration; $d++)
-			{
-				$new_date = date('Y-m-d', strtotime($booking_date . " +$d days"));
-				$is_season = self::get_season($new_date);
-				
-				if($is_season == 'price_chart')
-				{
-					$occupancy_key = 'occupancy_chart';
-				}
-				else
-				{
-					$occupancy_key = 'price_chart'.$is_season;
-				}
-				
-				array_push($seasons_array, $occupancy_key);	
-			}
-			
+
 			for($x = 0; $x < count($price_chart); $x++)
 			{
 				if(isset($_REQUEST['pax_discount']))
@@ -797,34 +716,10 @@ class dy_utilities {
 				}
 			}
 			
-			for($s = 0; $s < count($seasons_array); $s++)
+			if(intval($length_unit) == 2 || intval($length_unit) == 3)
 			{
-				if(array_key_exists($s, $seasons_array))
-				{
-					if($seasons_array[$s] != '' && $package_occupancy_chart != '')
-					{
-						if(array_key_exists($seasons_array[$s], $package_occupancy_chart))
-						{
-							for($a = 0;  $a < count($package_occupancy_chart[$seasons_array[$s]]); $a++)
-							{
-								if(isset($_REQUEST['pax_discount']))
-								{
-									if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
-									{
-										$occupancy_price = 0;
-										
-										if($package_occupancy_chart[$seasons_array[$s]][$a][1] != '')
-										{
-											$occupancy_price = floatval($package_occupancy_chart[$seasons_array[$s]][$a][1]);
-											$occupancy_price = $occupancy_price * $duration;
-										}		
-									}			
-								}		
-							}						
-						}						
-					}
-				}				
-			}
+				$occupancy_price = self::get_price_occupancy('discount');
+			}			
 			
 			$sum = $base_price + $occupancy_price;
 			

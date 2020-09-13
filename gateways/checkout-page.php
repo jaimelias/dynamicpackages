@@ -7,7 +7,7 @@
 	$free = 0;
 	$start_free = 0;
 	$start_discount = 0;
-	$each_adult = dy_utilities::get_price_adults();
+	$each_adult = dy_utilities::get_price_regular();
 	$each_child = dy_utilities::get_price_discount();
 	$payment = 0;
 	$deposit = 25;
@@ -106,8 +106,8 @@
 						<?php else: ?>
 						<td><?php echo esc_html(__('Adults', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php endif; ?>
-						<td><?php echo dy_money(dy_utilities::get_price_adults()); ?></td>
-						<td><?php echo dy_money(dy_utilities::get_price_adults()*floatval($_GET['pax_regular'])); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_regular()); ?></td>
+						<td><?php echo dy_money(dy_utilities::get_price_regular()*floatval($_GET['pax_regular'])); ?></td>
 					</tr>
 					
 					<?php if(isset($_GET['pax_free'])): ?>
