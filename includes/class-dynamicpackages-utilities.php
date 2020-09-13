@@ -695,6 +695,7 @@ class dy_utilities {
 	public static function get_price_calc($sum, $regular, $type)
 	{
 		$length_unit = package_field('package_length_unit');
+		$occupancy_price = 0;
 		
 		if(intval($length_unit) == 2 || intval($length_unit) == 3)
 		{
