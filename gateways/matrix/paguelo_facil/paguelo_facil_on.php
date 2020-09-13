@@ -609,7 +609,7 @@ class paguelo_facil_on{
 			$total =  dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::payment_amount());
 			$date = sanitize_text_field($_POST['booking_date']);
 			
-			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').' <span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
+			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').'<br/><span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
 			$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;
 		}
 		

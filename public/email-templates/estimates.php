@@ -150,7 +150,7 @@ $email_template = <<<EOT
 						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
 							<strong style="color:#666666;">${label_item}</strong>
 						</td>
-						<td style="width: 200px; padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
+						<td style="width: 100px; padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
 							<strong style="color:#666666;">${label_subtotal}</strong>
 						</td>
 					</tr>
@@ -159,7 +159,7 @@ $email_template = <<<EOT
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							${description}
 						</td>
-						<td style="width: 200px; padding: 5px;vertical-align: top; text-align: right; ">
+						<td style="width: 100px; padding: 5px;vertical-align: top; text-align: right; ">
 							${currency_symbol}${total}
 						</td>
 					</tr>
@@ -169,19 +169,19 @@ $email_template = <<<EOT
 							<strong style="color:#666666;">${label_included}:</strong> ${included}
 							${add_ons}
 						</td>
-						<td style="width: 200px;"></td>
+						<td style="width: 100px;"></td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px;vertical-align: top; line-height: 2;">
 							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
 						</td>
-						<td style="width: 200px;"></td>
+						<td style="width: 100px;"></td>
 					</tr>				
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
-						<td style="width: 200px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
+						<td style="width: 100px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
 							${totals_area}
 						</td>
 					</tr>
