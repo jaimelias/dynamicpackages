@@ -1857,6 +1857,12 @@ class dy_Public {
 			unset($args['return_address']);
 		}
 		
+		if(is_page() || is_tax())
+		{
+			unset($args['check_in']);
+			unset($args['departure_address']);
+		}
+		
 		foreach($args as $k => $v)
 		{
 			$output .= '<div class="dy_pad bottom-5">';
