@@ -205,10 +205,6 @@ if(is_array($args))
 	{
 		$hide = true;
 	}
-	if(is_tax('package_location') || is_tax('package_category') || isset($cat_imp) || isset($loc_imp))
-	{
-		$hide = false;
-	}
 	
 	if($hide === true)
 	{
