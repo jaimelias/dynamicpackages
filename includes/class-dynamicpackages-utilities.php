@@ -695,13 +695,7 @@ class dy_utilities {
 	public static function get_price_calc($sum, $regular, $type)
 	{
 		$length_unit = package_field('package_length_unit');
-		$occupancy_price = 0;
-		
-		if(intval($length_unit) == 2 || intval($length_unit) == 3)
-		{
-			$occupancy_price = self::get_price_occupancy($type);
-		}
-		
+		$occupancy_price = ($length_unit == 2 || $length_unit == 3) ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
 		
 		if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
