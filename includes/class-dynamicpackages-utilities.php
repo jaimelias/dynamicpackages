@@ -611,8 +611,7 @@ class dy_utilities {
 									//total occupancy price
 									if($type == 'regular')
 									{
-										$each_adult = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
-										$sum = $each_adult * floatval(sanitize_text_field($_REQUEST['pax_regular']));
+										$sum = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
 									}
 									
 									//total children discounts
@@ -620,8 +619,7 @@ class dy_utilities {
 									{
 										if($_REQUEST['pax_discount'] > 0 && $occupancy_chart[$seasons_array[$s]][$a][1] != '')
 										{
-											$each_child = floatval($occupancy_chart[$seasons_array[$s]][$a][1]);
-											$sum = $each_child * floatval(sanitize_text_field($_REQUEST['pax_discount']));
+											$sum = floatval($occupancy_chart[$seasons_array[$s]][$a][1]);
 										}
 									}
 									
