@@ -123,7 +123,7 @@ class dynamicpackages_Forms
 		if($by_hour == 1)
 		{
 			$form .= '<label>'.esc_html(__('Hour', 'dynamicpackages')).'</label>';
-			$form .= '<p><input type="text" name="booking_hour"  class="required" /></p>';	
+			$form .= '<p><input type="text" name="booking_hour"  class="required booking_hourpicker" /></p>';	
 		}
 		
 		if(dy_Validators::is_package_transport())

@@ -316,7 +316,7 @@ class dy_Gateways
 			'currency_symbol' => dy_utilities::currency_symbol(),
 			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),
 			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
-			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal_regular())),
+			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal())),
 			'payment_type' => esc_html($this->payment_type()),
 			'deposit' => floatval(dy_utilities::get_deposit())
 		);

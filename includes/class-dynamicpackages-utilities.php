@@ -132,7 +132,7 @@ class dy_utilities {
 	}	
 
 
-	public static function total($regular = '')
+	public static function total($regular = null)
 	{ 
 		$which_var = 'dy_total_'.$regular;
 		global $$which_var; 
@@ -146,14 +146,7 @@ class dy_utilities {
 		{
 			if(is_booking_page() || is_checkout_page())
 			{	
-				if($regular == 'regular')
-				{
-					$total = self::subtotal_regular();
-				}
-				else
-				{
-					$total = self::subtotal();
-				}			
+				$total = self::subtotal($regular);
 			}
 			else
 			{
@@ -168,58 +161,15 @@ class dy_utilities {
 		
 		return $total;
 	}
-
-	public static function subtotal()
-	{
-		$sum = self::subtotal_regular();
-		
-		if(dy_Validators::valid_coupon())
-		{
-			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
-		}
-		
-		return $sum;
-	}
 	
-	public static function subtotal_regular()
+	public static function subtotal($regular = null)
 	{
+		$length_unit = package_field('package_length_unit');
 		$price_chart = self::get_price_chart();	
 		$sum = 0;
-		$sum_adults = 0;
-		$each_adult = 0;
-		$sum_children = 0;
+		$sum = floatval(self::get_price_adults($regular)) + $sum;
+		$sum_children = floatval(self::get_price_discount($regular)) + $sum;
 		$pax_num = self::pax_num();
-		$each_child = 0;
-		$length_unit = package_field('package_length_unit');
-	
-		if(is_array($price_chart))
-		{
-			for($a = 0;  $a < count($price_chart); $a++)
-			{
-				if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
-				{
-					if($price_chart[$a][0] != '')
-					{
-						$each_adult = floatval($price_chart[$a][0]);
-					}
-					
-					$sum_adults = $each_adult*floatval(sanitize_text_field($_REQUEST['pax_regular']));
-					$sum = $sum + $sum_adults;		
-				}
-				if(isset($_REQUEST['pax_discount']))
-				{
-					if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($a+1)))
-					{
-						if(floatval($price_chart[$a][1]) > 0 && $price_chart[$a][1] != 0)
-						{
-							$each_child = floatval($price_chart[$a][1]);
-							$sum_children = $each_child*floatval(sanitize_text_field($_REQUEST['pax_discount']));
-							$sum = $sum + $sum_children;
-						}			
-					}			
-				}		
-			}			
-		}
 		
 		if(intval($length_unit) == 2 || intval($length_unit) == 3)
 		{
@@ -704,7 +654,7 @@ class dy_utilities {
 		}
 	}
 
-	public static function get_price_adults()
+	public static function get_price_adults($regular = null)
 	{
 		if(is_booking_page() || is_checkout_page())
 		{
@@ -789,7 +739,7 @@ class dy_utilities {
 				}
 			}
 			
-			if(dy_Validators::valid_coupon())
+			if(dy_Validators::valid_coupon() && $regular === null)
 			{
 				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 			}
@@ -800,7 +750,7 @@ class dy_utilities {
 
 
 	
-	public static function get_price_discount()
+	public static function get_price_discount($regular = null)
 	{
 		if(is_booking_page() || is_checkout_page())
 		{
@@ -891,7 +841,7 @@ class dy_utilities {
 				}
 			}			
 			
-			if(dy_Validators::valid_coupon())
+			if(dy_Validators::valid_coupon() && $regular === null)
 			{
 				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 			}			
