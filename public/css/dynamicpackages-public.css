@@ -69,13 +69,12 @@ fieldset.package_terms_conditions > label > span
   line-height: 25px;
   letter-spacing: 1px;
   color: #f0f0f0;
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-   top: 20px;
-  right: -25px;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  text-shadow: 1px 1px 1px rgba(0,0,0,.3); 
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  text-shadow: 1px 1px 1px rgba(0,0,0,.3);
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 .corner-ribbon.white{background: #f0f0f0; color: #555;}
