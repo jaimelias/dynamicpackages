@@ -642,8 +642,6 @@ class dy_utilities {
 		if(is_booking_page() || is_checkout_page())
 		{			
 			$base_price = 0;
-			$occupancy_price = 0;
-			$length_unit = package_field('package_length_unit');
 			$price_chart = self::get_price_chart();
 
 			for ($x = 0; $x < count($price_chart); $x++)
@@ -657,31 +655,7 @@ class dy_utilities {
 				}
 			}
 			
-			
-			if(intval($length_unit) == 2 || intval($length_unit) == 3)
-			{
-				$occupancy_price = self::get_price_occupancy('regular');
-			}			
-			
-			$sum = $base_price + $occupancy_price;
-
-			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
-			{
-				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
-			}
-
-			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
-			{
-				if(strlen($_REQUEST['return_date']) >= 5)
-				{
-					$sum = $sum * 2;
-				}
-			}
-			
-			if(dy_Validators::valid_coupon() && $regular === null)
-			{
-				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
-			}
+			$sum = self::get_price_calc($base_price, $regular, 'regular');
 			
 			return $sum;			
 		}
@@ -694,8 +668,6 @@ class dy_utilities {
 		if(is_booking_page() || is_checkout_page())
 		{
 			$base_price = 0;
-			$occupancy_price = 0;
-			$length_unit = package_field('package_length_unit');
 			$price_chart = self::get_price_chart();
 
 			for($x = 0; $x < count($price_chart); $x++)
@@ -714,33 +686,42 @@ class dy_utilities {
 				}
 			}
 			
-			if(intval($length_unit) == 2 || intval($length_unit) == 3)
-			{
-				$occupancy_price = self::get_price_occupancy('discount');
-			}			
-			
-			$sum = $base_price + $occupancy_price;
-			
-			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
-			{
-				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
-			}
-
-			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
-			{
-				if(strlen($_REQUEST['return_date']) >= 5)
-				{
-					$sum = $sum * 2;
-				}
-			}			
-			
-			if(dy_Validators::valid_coupon() && $regular === null)
-			{
-				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
-			}			
+			$sum = self::get_price_calc($base_price, $regular, 'discount');
 			
 			return $sum;			
 		}
+	}
+	
+	public static function get_price_calc($sum, $regular, $type)
+	{
+		$length_unit = package_field('package_length_unit');
+		
+		if(intval($length_unit) == 2 || intval($length_unit) == 3)
+		{
+			$occupancy_price = self::get_price_occupancy($type);
+		}
+		
+		$sum = $sum + $occupancy_price;
+		
+		if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
+		{
+			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+		}
+
+		if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+		{
+			if(strlen($_REQUEST['return_date']) >= 5)
+			{
+				$sum = $sum * 2;
+			}
+		}
+		
+		if(dy_Validators::valid_coupon() && $regular === null)
+		{
+			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+		}
+
+		return $sum;
 	}
 
 	public static function get_deposit()
