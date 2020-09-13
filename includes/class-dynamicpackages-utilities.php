@@ -240,11 +240,11 @@ class dy_utilities {
 		
 		return $output;
 	}
-	public static function starting_at($id = '')
+	public static function starting_at($id = null)
 	{
 		$the_id = $id;
 		
-		if($the_id == '')
+		if($the_id === null)
 		{
 			$the_id = get_the_ID();
 		}
@@ -267,9 +267,7 @@ class dy_utilities {
 			$price_chart = self::get_price_chart($the_id);
 			$occupancy_chart = self::get_occupancy_chart($the_id);	
 			$occupancy_chart = (is_array($occupancy_chart)) ? $occupancy_chart['occupancy_chart'] : null;
-			$price_type = package_field('package_starting_at_unit');
-			$package_type = package_field('package_package_type');
-			$mix = array();
+			$price_type = package_field('package_starting_at_unit', $the_id);
 					
 			for($t = 0; $t < intval($max); $t++)
 			{
@@ -324,9 +322,9 @@ class dy_utilities {
 	}
 
 
-	public static function get_price_chart($the_id = '')
+	public static function get_price_chart($the_id = null)
 	{
-		if($the_id == '')
+		if($the_id === null)
 		{
 			$the_id = get_the_ID();
 		}
