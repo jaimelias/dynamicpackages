@@ -167,8 +167,8 @@ class dy_utilities {
 		
 		$price_chart = self::get_price_chart();	
 		$sum = 0;
-		$sum = floatval(self::get_price_regular($regular)) + $sum;
-		$sum = floatval(self::get_price_discount($regular)) + $sum;
+		$sum = floatval(self::get_price_regular($regular, 'total')) + $sum;
+		$sum = floatval(self::get_price_discount($regular, 'total')) + $sum;
 		$pax_num = self::pax_num();
 		
 		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
@@ -637,16 +637,17 @@ class dy_utilities {
 		}
 	}
 
-	public static function get_price_regular($regular = null)
+	public static function get_price_regular($regular = null, $type = null)
 	{
 		if(is_booking_page() || is_checkout_page())
 		{			
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
+			$pax_regular = (isset($_REQUEST['pax_regular'])) ? floatval(sanitize_text_field($_REQUEST['pax_regular'])) : 0;
 
 			for ($x = 0; $x < count($price_chart); $x++)
 			{
-				if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($x+1))
+				if($pax_regular == ($x+1))
 				{
 					if($price_chart[$x][0] != '')
 					{
@@ -657,24 +658,29 @@ class dy_utilities {
 			
 			$sum = self::get_price_calc($base_price, $regular, 'regular');
 			
+			if($type == 'total' && $pax_regular > 0)
+			{
+				$sum = $sum * $pax_regular;
+			}
+			
 			return $sum;			
 		}
 	}	
 
 
 	
-	public static function get_price_discount($regular = null)
+	public static function get_price_discount($regular = null, $type = null)
 	{
 		if(is_booking_page() || is_checkout_page())
 		{
+			$sum = 0;
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
+			$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
 
 			for($x = 0; $x < count($price_chart); $x++)
 			{
-				if(isset($_REQUEST['pax_discount']))
-				{
-					if(floatval(sanitize_text_field($_REQUEST['pax_discount'])) == floatval(($x+1)))
+					if($pax_discount == floatval(($x+1)))
 					{
 						$base_price = 0;
 						
@@ -682,11 +688,15 @@ class dy_utilities {
 						{
 							$base_price = floatval($price_chart[$x][1]);
 						}
-					}					
-				}
+					}
 			}
 			
 			$sum = self::get_price_calc($base_price, $regular, 'discount');
+			
+			if($type == 'total' && $pax_discount > 0)
+			{
+				$sum = $sum * $pax_discount;
+			}
 			
 			return $sum;			
 		}
