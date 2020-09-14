@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-09-14 07:25+0000\n"
-"PO-Revision-Date: 2020-09-14 07:26+0000\n"
+"PO-Revision-Date: 2020-09-14 20:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -94,19 +94,19 @@ msgstr "Recaptcha Secret Key"
 
 #: admin/class-dynamicpackages-admin.php:275
 msgid "Max. Disabled Dates"
-msgstr ""
+msgstr "Máximo de fechas desabilitadas."
 
 #: admin/class-dynamicpackages-admin.php:284
 msgid "Global Disabled Dates"
-msgstr ""
+msgstr "Deshabilitar fechas globalmente"
 
 #: admin/class-dynamicpackages-admin.php:306
 msgid "From"
-msgstr ""
+msgstr "Desde"
 
 #: admin/class-dynamicpackages-admin.php:306
 msgid "To"
-msgstr ""
+msgstr "Hasta"
 
 #: admin/class-dynamicpackages-admin.php:356
 msgid "Dynamicpackages"
@@ -302,7 +302,7 @@ msgstr "Cupón inválido o expirado"
 #: gateways/gateways.php:557
 #, php-format
 msgid "You have chosen %s %s, but the minimum duration is %s %s."
-msgstr ""
+msgstr "Haz elegido %s %s, pero el mínimo es de %s %s."
 
 #: includes/class-dynamicpackages-metaboxes.php:27
 msgid "Pricing Controls"
@@ -1334,7 +1334,7 @@ msgstr "Mañana"
 
 #: public/partials/forms.php:104
 msgid "Date of Departure"
-msgstr ""
+msgstr "Fecha de partida"
 
 #: public/partials/forms.php:110
 msgid "Book  Now"
@@ -1796,7 +1796,7 @@ msgstr "CCLW"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:518
 msgid "Debug Email"
-msgstr ""
+msgstr "Email de pruebas"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:612
 msgid "Paid"
