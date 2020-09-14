@@ -305,7 +305,7 @@ class dy_Admin {
 			<div class="hot-container">
 				<div id="<?php esc_html_e($obj); ?>" class="hot" data-sensei-min="<?php esc_html_e($max); ?>" data-sensei-max="<?php esc_html_e($max); ?>" data-sensei-container="<?php esc_html_e($obj); ?>" data-sensei-table="<?php esc_html_e($name); ?>" data-sensei-headers="<?php esc_html_e( 'From', 'dynamicpackages' ); ?>,<?php esc_html_e( 'To', 'dynamicpackages' ); ?>" data-sensei-type="date,date"></div>
 			</div>
-			<div class=""><textarea name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>"><?php echo $value ?></textarea></div>		
+			<div class="hidden"><textarea name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>"><?php echo $value ?></textarea></div>		
 		<?php
 	}
 

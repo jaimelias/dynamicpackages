@@ -405,40 +405,60 @@ class dy_Public {
 			$disable['min'] = $from;
 			$disable['max'] = $to;	
 
-			$get_dates = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
+			$disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
+			$global_disabled_dates = json_decode(html_entity_decode(get_option('dy_disabled_dates' )), true);
 			
-			if(array_key_exists('disabled_dates', $get_dates))
-			{		
-				$disabled_dates = $get_dates['disabled_dates'];
-						
-				for($x = 0; $x < count($disabled_dates); $x++)
-				{
-					$period = new DatePeriod(
-						 new DateTime($disabled_dates[$x][0]),
-						 new DateInterval('P1D'),
-						 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
-					);
+			if(is_array($disabled_dates))
+			{
+				if(array_key_exists('disabled_dates', $disabled_dates))
+				{		
+					$disabled_dates = $disabled_dates['disabled_dates'];
 					
-					$range = array();
-					$range_fix = array();
-					
-					foreach ($period as $key => $value)
+					if(is_array($global_disabled_dates))
 					{
-						$this_date = $value->format('Y-m-d');
-						$this_date = explode("-", $this_date);
-						$this_date = array_map('intval', $this_date);
-						$this_date = array_map(function($arr, $keys){
-							if($keys == 1)
+						if(array_key_exists('disabled_dates', $global_disabled_dates))
+						{
+							$global_disabled_dates = $global_disabled_dates['disabled_dates'];
+							$count_global_disabled = count($global_disabled_dates);
+							
+							for($x = 0; $x < $count_global_disabled; $x++)
 							{
-								$arr = $arr - 1;
+								array_push($disabled_dates, $global_disabled_dates[$x]);
 							}
-							return $arr;
-						}, $this_date, array_keys($this_date));
-						
-						array_push($disable['disable'], $this_date);
+						}
 					}
-				}
-			}				
+					
+					write_log($disabled_dates);
+							
+					for($x = 0; $x < count($disabled_dates); $x++)
+					{
+						$period = new DatePeriod(
+							 new DateTime($disabled_dates[$x][0]),
+							 new DateInterval('P1D'),
+							 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
+						);
+						
+						$range = array();
+						$range_fix = array();
+						
+						foreach ($period as $key => $value)
+						{
+							$this_date = $value->format('Y-m-d');
+							$this_date = explode("-", $this_date);
+							$this_date = array_map('intval', $this_date);
+							$this_date = array_map(function($arr, $keys){
+								if($keys == 1)
+								{
+									$arr = $arr - 1;
+								}
+								return $arr;
+							}, $this_date, array_keys($this_date));
+							
+							array_push($disable['disable'], $this_date);
+						}
+					}
+				}				
+			}
 
 			if(count($disable) > 0)
 			{
