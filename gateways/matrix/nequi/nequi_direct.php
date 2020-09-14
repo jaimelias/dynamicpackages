@@ -24,7 +24,6 @@ class nequi_direct{
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 3);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 101);
 			add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
-			add_filter('coupon_gateway_hide', array(&$this, 'single_coupon_hide'), 10, 3);
 		}		
 	}
 	
@@ -391,17 +390,9 @@ class nequi_direct{
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="dy_show_country dy_show_country_PA"><div class="pure-g gutters text-center"><div class="pure-u-1-5"><img style="vertical-align: middle" alt="nequi" width="80" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
+			$str = '<aside><div class="pure-g gutters"><div class="pure-u-1-5 text-center"><img style="vertical-align: middle;" alt="nequi" width="130"  height="34" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
 		}
 		
-		return $str;
-	}
-	public function single_coupon_hide($str, $gateway)
-	{
-		if(strtolower($gateway) == $this->gateway_short_name)
-		{
-			$str = 'hidden';
-		}
 		return $str;
 	}	
 }

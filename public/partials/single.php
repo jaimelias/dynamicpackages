@@ -19,7 +19,7 @@
 
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
 		<div class="bottom-20"><?php echo apply_filters('dy_package_details', null); ?></div>
-		<div class="bottom-20"><?php dy_Public::show_coupons(); ?></div>
+		<div class="bottom-20"><?php do_action('dy_show_coupons'); ?></div>
 	
 	<?php  echo  $new_content; ?>
 	

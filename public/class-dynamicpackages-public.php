@@ -66,6 +66,7 @@ class dy_Public {
 		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
 		add_filter('dy_package_details', array(&$this, 'details'));
 		add_action('dy_package_description', array(&$this, 'description'));
+		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
 	}
 
 	public function create_alert($row) {
@@ -2052,7 +2053,7 @@ class dy_Public {
 							if($valid === true)
 							{
 								$label = '';
-								$output .= '<div class="large dy_coupon bottom-20">';
+								$output .= '<div class="large dy_coupon bottom-20 dy_pad">';
 								$label .= esc_html(__('Get a', 'dynamicpackages'));
 								$label .= ' <strong>'.esc_html($coupons[$x][1]).'%</strong>';
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));

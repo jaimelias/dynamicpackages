@@ -5,7 +5,6 @@ jQuery(() => {
 	booking_quote();
 	booking_submit();
 	storePopulate();
-	booking_if_country();
 	booking_coupon();	
 	booking_open_form();
 	
@@ -202,31 +201,6 @@ const booking_calc = () => {
 				jQuery(this).text(args.tax_amount);
 			}				
 		});		
-	});
-}
-
-const booking_if_country = () => {
-	jQuery(window).on('load', () => {
-		if(jQuery('.dy_show_country').length)
-		{
-			if(dy_ipgeolocation() != null)
-			{
-				if(getCookie('country_code') == null)
-				{
-					jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), data => {
-						if(data.hasOwnProperty('country_code2'))
-						{
-							jQuery('.dy_show_country_' + data.country_code2).closest('.dy_coupon').removeClass('hidden');
-							setCookie('country_code', data.country_code2, 30);
-						}
-					});				
-				}
-				else
-				{
-					jQuery('.dy_show_country_' + getCookie('country_code')).closest('.dy_coupon').removeClass('hidden');
-				}
-			}
-		}		
 	});
 }
 
