@@ -9,7 +9,7 @@ class dy_Gateways
 		$this->init();
 	}
 	
-	public static function load_gateways()
+	public function load_gateways()
 	{
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
@@ -44,7 +44,7 @@ class dy_Gateways
 		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
 	}
 	
-	public static function set_post_on_checkout_page()
+	public function set_post_on_checkout_page()
 	{
 		global $post;
 		
@@ -122,31 +122,31 @@ class dy_Gateways
 		return $content;
 	}
 
-	public static function gateway_buttons()
+	public function gateway_buttons()
 	{
-		return self::gateway_buttons_cb();
+		return $this->gateway_buttons_cb();
 	}	
-	public static function gateway_buttons_cb()
+	public function gateway_buttons_cb()
 	{
 		return apply_filters('gateway_buttons', '');
 	}
 		
-	public static function list_gateways_cb()
+	public function list_gateways_cb()
 	{
 		return apply_filters('list_gateways', array());
 	}
 	
-	public static function join_gateways()
+	public function join_gateways()
 	{
-		$array = self::list_gateways_cb();
+		$array = $this->list_gateways_cb();
 		return join(' '.__('or', 'dynamicpackages').' ', array_filter(array_merge(array(join(', ', array_slice($array, 0, -1))), array_slice($array, -1)), 'strlen'));
 	}
 	
-	public static function has_any_gateway()
+	public function has_any_gateway()
 	{
 		$output = false;
 		
-		if(count(self::list_gateways_cb()) > 0 && dy_utilities::pax_num() <= package_field('package_max_persons'))
+		if(count($this->list_gateways_cb()) > 0 && dy_utilities::pax_num() <= package_field('package_max_persons'))
 		{
 			$GLOBALS['has_any_gateway'] = true;
 			$output = true;
@@ -154,11 +154,11 @@ class dy_Gateways
 		
 		return $output;
 	}
-	public static function choose_gateway()
+	public function choose_gateway()
 	{
 		$output = null;
 		
-		if(count(self::list_gateways_cb()) > 0)
+		if(count($this->list_gateways_cb()) > 0)
 		{
 			$output = __('Pay', 'dynamicpackages');
 			
@@ -171,19 +171,19 @@ class dy_Gateways
 			
 			$output .= ') '.__('with', 'dynamicpackages');
 			
-			if(count(self::list_gateways_cb()) == 1)
+			if(count($this->list_gateways_cb()) == 1)
 			{
-				$this_gateway = self::list_gateways_cb();
+				$this_gateway = $this->list_gateways_cb();
 				$output .= ' '.$this_gateway[0];
 			}
 			else
 			{
-				$output .= ' '.self::join_gateways();
+				$output .= ' '.$this->join_gateways();
 			}
 		}
 		return $output;		
 	}
-	public static function coupon($array)
+	public function coupon($array)
 	{
 		if(is_singular('packages') && package_field('package_auto_booking') > 0)
 		{	
@@ -202,13 +202,13 @@ class dy_Gateways
 		return $array;
 	}
 	
-	public static function checkout_area()
+	public function checkout_area()
 	{
 		$output = null;
 		
-		if(dy_Gateways::has_any_gateway())
+		if($this->has_any_gateway())
 		{
-			$output .= '<p class="text-center bottom-20 large">'.self::choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.self::gateway_buttons().'</div>';
+			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
 		
 		$output .= dy_Public::booking_sidebar();	
