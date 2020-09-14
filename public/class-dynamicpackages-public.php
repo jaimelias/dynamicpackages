@@ -914,6 +914,10 @@ class dy_Public {
 			{
 				$output .=__('Per Day', 'dynamicpackages');
 			}
+			else if(dy_Validators::is_package_transport())
+			{
+				$output .=__('One-way', 'dynamicpackages');
+			}
 			else
 			{
 				if(is_singular('packages'))
