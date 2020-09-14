@@ -492,29 +492,26 @@ class dy_Metaboxes
 					<option value="4" <?php echo (package_field( 'package_package_type' ) == 4 ) ? 'selected' : ''; ?> ><?php _e( 'Transport', 'dynamicpackages' ); ?></option>	
 				</select>
 			</p>	
-
-			<?php if(intval(package_field( 'package_package_type' )) < 2) : ?>		
-			<p>
-				<label for="package_length_unit"><?php _e( 'Length Unit', 'dynamicpackages' ); ?></label><br />
-				<select name="package_length_unit" id="package_length_unit">
-				
-					<?php if(intval(package_field( 'package_package_type' )) == 0): ?>
-						<option value="0" <?php echo (package_field( 'package_length_unit' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Minutes', 'dynamicpackages' ); ?></option>		
-						<option value="1" <?php echo (package_field( 'package_length_unit' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'Hours', 'dynamicpackages' ); ?></option>
-					<?php endif; ?>
+			<?php if(package_field( 'package_package_type' ) < 2 || package_field( 'package_package_type' ) == 4) : ?>
+				<p>
+					<label for="package_length_unit"><?php _e( 'Length Unit', 'dynamicpackages' ); ?></label><br />
+					<select name="package_length_unit" id="package_length_unit">
 					
-					<?php if(intval(package_field( 'package_package_type' )) > 0): ?>
-						<option value="2" <?php echo (package_field( 'package_length_unit' ) == 2 ) ? 'selected' : ''; ?> ><?php _e( 'Days', 'dynamicpackages' ); ?></option>
-						<?php if(intval(package_field( 'package_package_type' )) == 1): ?>
-							<option value="3" <?php echo (package_field( 'package_length_unit' ) == 3 ) ? 'selected' : ''; ?> ><?php _e( 'Nights', 'dynamicpackages' ); ?></option>		<option value="4" <?php echo (package_field( 'package_length_unit' ) == 4 ) ? 'selected' : ''; ?> ><?php _e( 'Weeks', 'dynamicpackages' ); ?></option>
+						<?php if(package_field( 'package_package_type' ) == 0 || package_field( 'package_package_type' ) == 4): ?>
+							<option value="0" <?php echo (package_field( 'package_length_unit' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Minutes', 'dynamicpackages' ); ?></option>		
+							<option value="1" <?php echo (package_field( 'package_length_unit' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'Hours', 'dynamicpackages' ); ?></option>
 						<?php endif; ?>
-					<?php endif; ?>
-					
-				</select>
-			</p>
-			<?php endif; ?>
-			
-			<?php if(intval(package_field( 'package_package_type' )) < 2) : ?>
+						
+						<?php if(intval(package_field( 'package_package_type' )) > 0): ?>
+							<option value="2" <?php echo (package_field( 'package_length_unit' ) == 2 ) ? 'selected' : ''; ?> ><?php _e( 'Days', 'dynamicpackages' ); ?></option>
+							<?php if(intval(package_field( 'package_package_type' )) == 1): ?>
+								<option value="3" <?php echo (package_field( 'package_length_unit' ) == 3 ) ? 'selected' : ''; ?> ><?php _e( 'Nights', 'dynamicpackages' ); ?></option>		<option value="4" <?php echo (package_field( 'package_length_unit' ) == 4 ) ? 'selected' : ''; ?> ><?php _e( 'Weeks', 'dynamicpackages' ); ?></option>
+							<?php endif; ?>
+						<?php endif; ?>
+						
+					</select>
+				</p>
+
 				<p>
 					<label for="package_duration"><?php _e( 'Duration', 'dynamicpackages' ); ?></label><br />
 					<input type="number" name="package_duration" id="package_duration" value="<?php echo (intval(package_field( 'package_duration' )) > 0) ? package_field( 'package_duration' ) : 1; ?>">
