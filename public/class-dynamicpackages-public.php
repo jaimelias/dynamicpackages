@@ -1877,7 +1877,11 @@ class dy_Public {
 		}
 		if(!dy_Validators::is_package_transport() || is_page() || is_tax())
 		{
-			unset($args['duration']);
+			if(!is_booking_page() && !is_checkout_page())
+			{
+				unset($args['duration']);
+			}
+			
 			unset($args['label_departure']);
 			unset($args['label_return']);
 			unset($args['return_date']);

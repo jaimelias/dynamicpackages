@@ -67,17 +67,8 @@
 
 <hr/>
 
-
-
-<?php if(isset($_GET['booking_coupon'])): ?>
-	<?php if($_GET['booking_coupon'] != ''): ?>
-		<?php if(dy_Validators::valid_coupon()): ?>
-			<p class="minimal_success large"><?php echo esc_html(__('Coupon', 'dynamicpackages').' '.dy_utilities::get_coupon('code').' '.__('activated', 'dynamicpackages').'. '.dy_utilities::get_coupon('discount').'% '.__('discount already applied on rate. This coupon expires on', 'dynamicpackages').' '.date_i18n(get_option('date_format' ), strtotime(dy_utilities::get_coupon('expiration')))); ?></p>
-		<?php else: ?> 
-			<p class="minimal_alert"><?php echo esc_html(__('Invalid or expired coupon', 'dynamicpackages')); ?></p>
-		<?php endif; ?>
-	<?php endif; ?>
-<?php endif; ?>
+<?php do_action('dy_show_coupon_confirmation'); ?>
+<?php do_action('dy_invalid_min_duration'); ?>
 
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">

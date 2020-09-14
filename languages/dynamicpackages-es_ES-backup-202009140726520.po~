@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-11 16:01+0000\n"
-"PO-Revision-Date: 2020-09-11 16:03+0000\n"
+"POT-Creation-Date: 2020-09-11 16:03+0000\n"
+"PO-Revision-Date: 2020-09-11 16:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1842,7 +1842,7 @@ msgstr ""
 
 #: gateways/matrix/paypal/paypal_me.php:393
 #, php-format
-msgid "Please send us the %s of %s to complete these booking."
+msgid "Please send us the %s %s to complete these booking."
 msgstr "Por favor envía el %s %s para completar esta reserva."
 
 #: gateways/matrix/paypal/paypal_me.php:394

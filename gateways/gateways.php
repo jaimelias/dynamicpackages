@@ -42,6 +42,8 @@ class dy_Gateways
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
 		add_filter('dy_has_any_gateway', array(&$this, 'has_any_gateway'));
 		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
+		add_action('dy_invalid_min_duration', array(&$this, 'invalid_min_duration'));
+		add_action('dy_show_coupon_confirmation', array(&$this, 'show_coupon_confirmation'));
 	}
 	
 	public function set_post_on_checkout_page()
@@ -509,10 +511,52 @@ class dy_Gateways
 		
 		if($tax > 0 && $total > 0)
 		{
-			$output =dy_utilities::currency_format($total * ($tax / 100));
+			$output = dy_utilities::currency_format($total * ($tax / 100));
 		}
 		
 		return $output;
+	}
+	
+	public function show_coupon_confirmation()
+	{
+		if(isset($_GET['booking_coupon']) && is_booking_page())
+		{
+			if($_GET['booking_coupon'] != '')
+			{
+				if(dy_Validators::valid_coupon())
+				{
+					$expiration = dy_utilities::get_coupon('expiration');
+					
+					echo '<p class="minimal_success strong">'.esc_html(sprintf(__('Coupon %s activated. %s off applied on the rate.', 'dynamicpackages'), dy_utilities::get_coupon('code'), dy_utilities::get_coupon('discount').'%')).'</p>';
+					
+					if($expiration)
+					{
+						$expiration = date_i18n(get_option('date_format' ), strtotime($expiration));
+						echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('This coupon expires on %s.', 'dynamicpackages'), $expiration)).'</p>';
+					}
+					
+				}
+				else
+				{
+					echo '<p class="minimal_alert">'.esc_html(__('Invalid or expired coupon', 'dynamicpackages')).'</p>';
+				}
+			}
+		}
+	}
+	
+	public function invalid_min_duration()
+	{
+		if(isset($_GET['booking_extra']) && is_booking_page())
+		{
+			$booking_extra = intval(sanitize_text_field($_GET['booking_extra']));
+			$min_duration = dy_utilities::get_min_nights();
+			$duration_unit = package_field('package_length_unit');
+			
+			if($booking_extra < $min_duration)
+			{
+				echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('You have chosen %s %s, but the minimum duration is %s %s.', 'dynamicpackages'), $booking_extra, dy_Public::duration_label($duration_unit, $booking_extra), $min_duration, dy_Public::duration_label($duration_unit, $min_duration))).'</p>';
+			}
+		}
 	}
 	
 }
