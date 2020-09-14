@@ -427,9 +427,7 @@ class dy_Public {
 							}
 						}
 					}
-					
-					write_log($disabled_dates);
-							
+											
 					for($x = 0; $x < count($disabled_dates); $x++)
 					{
 						$period = new DatePeriod(
