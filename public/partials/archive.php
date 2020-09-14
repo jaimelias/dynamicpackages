@@ -199,13 +199,6 @@
 
 if(is_array($args))
 {
-	$hide = false;
-	
-	if(!isset($all_imp))
-	{
-		$hide = true;
-	}
-	
 	if($hide === true)
 	{
 		//exclude display archive
