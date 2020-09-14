@@ -272,7 +272,7 @@ else
 				
 				<div class="padding-10 dy_package">
 					<div class="pure-g gutters">
-						<div class="pure-u-1 pure-u-sm-1-2 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
+						<div class="pure-u-1 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
 								<a title="<?php echo esc_html($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
@@ -282,7 +282,7 @@ else
 							<?php endif;?>
 						</div>	
 							
-						<div class="pure-u-1 pure-u-sm-1-2 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
+						<div class="pure-u-1 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
 						
 							<?php if($package_code != ''): ?>
 								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html(__('ID', 'dynamicpackages')).esc_html($package_code); ?></div>
