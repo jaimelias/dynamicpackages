@@ -2052,8 +2052,7 @@ class dy_Public {
 							if($valid === true)
 							{
 								$label = '';
-								$coupon_hide = apply_filters('coupon_gateway_hide', '', $coupons[$x][0]);
-								$output .= '<div class="large dy_coupon bottom-20 '.esc_html($coupon_hide).'">';
+								$output .= '<div class="large dy_coupon bottom-20">';
 								$label .= esc_html(__('Get a', 'dynamicpackages'));
 								$label .= ' <strong>'.esc_html($coupons[$x][1]).'%</strong>';
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));

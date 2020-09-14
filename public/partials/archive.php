@@ -197,22 +197,13 @@
 	}
 
 
-if(is_array($args))
-{
-	if($hide === true)
-	{
-		//exclude display archive
-		$display = array(
-			'key' => 'package_display',
-			'value' => '1',
-			'compare' => '!='
-		);	
-		
-		array_push($args['meta_query'], $display);
-	}	
-}
+$display = array(
+	'key' => 'package_display',
+	'value' => '1',
+	'compare' => '!='
+);	
 
-
+array_push($args['meta_query'], $display);
 
 $args['posts_per_page'] = $posts_per_page;		
 	
