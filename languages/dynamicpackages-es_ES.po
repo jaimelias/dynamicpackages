@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-09-14 07:25+0000\n"
-"PO-Revision-Date: 2020-09-14 07:26+0000\n"
+"PO-Revision-Date: 2020-09-14 07:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -302,7 +302,7 @@ msgstr "Cupón inválido o expirado"
 #: gateways/gateways.php:557
 #, php-format
 msgid "You have chosen %s %s, but the minimum duration is %s %s."
-msgstr ""
+msgstr "Haz elegido %s %s, pero el mínimo es de %s %s."
 
 #: includes/class-dynamicpackages-metaboxes.php:27
 msgid "Pricing Controls"
