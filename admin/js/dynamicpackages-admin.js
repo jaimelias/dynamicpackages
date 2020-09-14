@@ -31,7 +31,10 @@
 
 function register_grid(textareas, container, min, max, index)
 {	
-	var data = $(textareas).text();	
+	var data = $(textareas).text();
+
+	console.log(data);
+	
 	var max_num = parseInt($(max).val());
 	var grid_id_name = $(container).attr('id');
 	

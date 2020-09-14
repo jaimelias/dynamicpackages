@@ -146,6 +146,8 @@ class dy_Admin {
 		register_setting( 'dy_settings', 'dy_webhook', 'esc_url');
 		register_setting( 'dy_settings', 'dy_quote_webhook', 'esc_url');
 		register_setting('dy_settings', 'ipgeolocation', 'sanitize_user');	
+		register_setting('dy_settings', 'dy_disabled_dates', 'esc_html');	
+		register_setting('dy_settings', 'dy_max_disabled_dates', 'intval');	
 
 
 		add_settings_section(
@@ -266,16 +268,45 @@ class dy_Admin {
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'captcha_secret_key') 
-		);		
-		
+		);	
+
 		add_settings_field( 
-			'ipgeolocation', 
-			esc_html(__( 'IPGeolocation API Key', 'dynamicpackages' )), 
+			'dy_max_disabled_dates', 
+			esc_html(__( 'Max. Disabled Dates', 'dynamicpackages' )), 
 			array(&$this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
-			array('name' => 'ipgeolocation', 'url' => 'https://app.ipgeolocation.io/auth/login') 
+			array('name' => 'dy_max_disabled_dates', 'type' => 'number')
+		);		
+		
+		add_settings_field( 
+			'dy_disabled_dates', 
+			esc_html(__( 'Global Disabled Dates', 'dynamicpackages' )), 
+			array(&$this, 'settings_hot'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array(
+				'name' => 'dy_disabled_dates', 
+				'value' => '["disabled_dates":[null, null]]',
+				'max' => 'dy_max_disabled_dates', 
+				'obj' => 'disabled_dates'
+			) 
 		);	
+	}
+
+
+	public static function settings_hot($arr)
+	{
+		$name = $arr['name'];
+		$value = (is_array(json_decode(html_entity_decode(get_option($name)), true))) ? get_option($name) : $arr['value'];
+		$max = $arr['max'];
+		$obj = $arr['obj'];
+		?>
+			<div class="hot-container">
+				<div id="<?php esc_html_e($obj); ?>" class="hot" data-sensei-min="<?php esc_html_e($max); ?>" data-sensei-max="<?php esc_html_e($max); ?>" data-sensei-container="<?php esc_html_e($obj); ?>" data-sensei-table="<?php esc_html_e($name); ?>" data-sensei-headers="<?php esc_html_e( 'From', 'dynamicpackages' ); ?>,<?php esc_html_e( 'To', 'dynamicpackages' ); ?>" data-sensei-type="date,date"></div>
+			</div>
+			<div class=""><textarea name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>"><?php echo $value ?></textarea></div>		
+		<?php
 	}
 
 	public static function settings_input($arr){
