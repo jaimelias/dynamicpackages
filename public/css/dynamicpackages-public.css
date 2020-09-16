@@ -107,6 +107,8 @@ ul.tax_list > li.cat-item  > ul.children
 .dy_package
 {
 	padding: 10px;
+	max-width: 350px;
+	margin: 0 auto;
 }
 .dy_package, .dy_pad
 {
