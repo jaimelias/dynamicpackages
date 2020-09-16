@@ -204,3 +204,9 @@ ul.tax_list > li.cat-item  > ul.children
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+.minimal-box > .container 
+{
+	max-width: 960px;
+	margin: 0 auto;
+}
