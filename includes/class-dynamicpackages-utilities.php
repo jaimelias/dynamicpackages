@@ -417,7 +417,7 @@ class dy_utilities {
 	{
 		//package_seasons_chart
 		$output = null;
-		$which_var = '$seasons_chart_'.get_the_ID();
+		$which_var = 'seasons_chart_'.get_the_ID();
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -434,12 +434,17 @@ class dy_utilities {
 		return $output;
 	}	
 
-	public static function get_date_range($from, $to)
+	public static function get_date_range($from, $to, $add_extra = true)
 	{
 		$output = array();
 		$from = new DateTime($from);
 		$to = new DateTime($to);
-		$to = $to->modify('+1 day');
+		
+		if($add_extra === true)
+		{
+			$to = $to->modify('+1 day');
+		}
+			
 		
 		$range = new DatePeriod($from, new DateInterval('P1D'), $to);
 
@@ -487,9 +492,14 @@ class dy_utilities {
 
 	public static function get_min_nights()
 	{
-		if((is_booking_page() || is_checkout_page()) && isset($_REQUEST['booking_date']))
+		if(is_booking_page() || is_checkout_page())
 		{
 			$duration = intval(package_field('package_duration'));
+			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
+			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
+			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
+			$duration_arr = [];
 			
 			if(isset($_REQUEST['booking_extra']))
 			{
@@ -499,35 +509,50 @@ class dy_utilities {
 				}
 			}
 			
-			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
-			
 			if(is_array($seasons))
 			{
 				if(array_key_exists('seasons_chart', $seasons))
 				{
 					$seasons = $seasons['seasons_chart'];
 					
-					for($d = 1; $d < $duration; $d++)
-					{
-						$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-						$new_date = strtotime($booking_date . " +$d days");
-						
-						for($x = 0; $x < count($seasons); $x++)
-						{
-							$from_season = strtotime($seasons[$x][1]);
-							$to_season = strtotime($seasons[$x][2]);
 					
-							if($new_date >= $from_season && $new_date <= $to_season)
+					
+
+					
+					for($s = 0; $s < count($seasons); $s++)
+					{
+						$from_season = $seasons[$s][1];
+						$to_season = $seasons[$s][2];
+						$duration_season = $seasons[$s][3];
+						$seasons_dates_range = self::get_date_range($from_season, $to_season, false);
+						
+						if(is_array($seasons_dates_range))
+						{
+							for($x = 0; $x < count($seasons_dates_range); $x++)
 							{
-								if($seasons[$x][3] > $duration)
+								for($d = 0; $d < count($booking_dates_range); $d++)
 								{
-									$duration = $seasons[$x][3];
+									if(in_array($booking_dates_range[$d], $seasons_dates_range))
+									{
+										array_push($duration_arr, intval($duration_season));
+									}
 								}
-							}			
+							}							
 						}
 					}
 				}
 			}
+			
+			if(is_array($duration_arr))
+			{
+				$max_duration = max($duration_arr);
+				
+				if(count($duration_arr) > 0 && $max_duration > $duration)
+				{
+					$duration = $max_duration;
+				}
+			}
+			
 			$output = $duration;
 			return $output;	
 		}
@@ -575,60 +600,64 @@ class dy_utilities {
 			$duration = self::get_min_nights();
 			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-
+			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
+			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
 			$seasons_array = array();
-						
-			for($d = 0; $d < $duration; $d++)
+
+			if(is_array($occupancy_chart) && is_array($seasons) && is_array($occupancy_chart) && is_array($booking_dates_range))
 			{
-				$new_date = date('Y-m-d', strtotime($booking_date . " +$d days"));
-				$is_season = self::get_season($new_date);
-				
-				if($is_season == 'price_chart')
+				if($duration == count($booking_dates_range))
 				{
-					$occupancy_key = 'occupancy_chart';
-				}
-				else
-				{
-					$occupancy_key = 'price_chart'.$is_season;
-				}
-				
-				array_push($seasons_array, $occupancy_key);	
-			}
-			
-			
-			for($s = 0; $s < count($seasons_array); $s++)
-			{
-				if(array_key_exists($s, $seasons_array) && $occupancy_chart != '')
-				{
-					if(array_key_exists($seasons_array[$s], $occupancy_chart))
+					for($d = 0; $d < $duration; $d++)
 					{
-						for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
+						$new_date = date('Y-m-d', strtotime($booking_date . " +$d days"));
+						$season = self::get_season($booking_dates_range[$d]);
+						
+						if($season == 'price_chart')
 						{
-							if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
-							{	
-								if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
-								{
-									//total occupancy price
-									if($type == 'regular')
-									{
-										$sum = floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
-									}
-									
-									//total children discounts
-									if(isset($_REQUEST['pax_discount']) && $type == 'discount')
-									{
-										if($_REQUEST['pax_discount'] > 0 && $occupancy_chart[$seasons_array[$s]][$a][1] != '')
-										{
-											$sum = floatval($occupancy_chart[$seasons_array[$s]][$a][1]);
-										}
-									}
-									
-									$sum = $sum * $duration;
-								}
-							}	
-						}						
+							$occupancy_key = 'occupancy_chart';
+						}
+						else
+						{
+							$occupancy_key = 'occupancy_chart'.$season;
+						}
+						
+						array_push($seasons_array, $occupancy_key);
 					}
-				}
+								
+					for($s = 0; $s < count($seasons_array); $s++)
+					{
+						if(array_key_exists($s, $seasons_array) && $occupancy_chart != '')
+						{
+							if(array_key_exists($seasons_array[$s], $occupancy_chart))
+							{
+								for($a = 0;  $a < count($occupancy_chart[$seasons_array[$s]]); $a++)
+								{
+									if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
+									{	
+										if($occupancy_chart[$seasons_array[$s]][$a][0] != '')
+										{									
+											//total occupancy price
+											if($type == 'regular')
+											{
+												$sum = $sum + floatval($occupancy_chart[$seasons_array[$s]][$a][0]);
+											}
+											
+											//total children discounts
+											if(isset($_REQUEST['pax_discount']) && $type == 'discount')
+											{
+												if($_REQUEST['pax_discount'] > 0 && $occupancy_chart[$seasons_array[$s]][$a][1] != '')
+												{
+													$sum = $sum + floatval($occupancy_chart[$seasons_array[$s]][$a][1]);
+												}
+											}
+										}
+									}	
+								}						
+							}
+						}
+					}					
+				}				
 			}
 
 			return $sum;			
