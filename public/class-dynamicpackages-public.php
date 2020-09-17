@@ -237,7 +237,7 @@ class dy_Public {
 		
 		if($dequeu === true)
 		{
-			wp_dequeue_script('google-recaptcha');
+			wp_dequeue_script('google-recaptcha-js');
 		}
 	}
 	
