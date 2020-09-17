@@ -545,11 +545,14 @@ class dy_utilities {
 			
 			if(is_array($duration_arr))
 			{
-				$max_duration = max($duration_arr);
-				
-				if(count($duration_arr) > 0 && $max_duration > $duration)
+				if(count() > 0)
 				{
-					$duration = $max_duration;
+					$max_duration = max($duration_arr);
+					
+					if(count($duration_arr) > 0 && $max_duration > $duration)
+					{
+						$duration = $max_duration;
+					}					
 				}
 			}
 			
