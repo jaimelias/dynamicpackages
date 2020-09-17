@@ -545,7 +545,7 @@ class dy_utilities {
 			
 			if(is_array($duration_arr))
 			{
-				if(count() > 0)
+				if(count($duration_arr) > 0)
 				{
 					$max_duration = max($duration_arr);
 					
