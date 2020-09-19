@@ -1,135 +1,127 @@
-(function( $ ) {
+jQuery(() => {
 	'use strict';
-
-	$(function(){
+	jQuery('.timepicker').pickatime();
+	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
+	buildSeasonsGrid();
+	submitSavePost();
+	loadGrids();
+});
 	
-		$('.timepicker').pickatime();
-		$('.datepicker').pickadate({format: 'yyyy-mm-dd'});
-		build_season_grids();
-		submit_save_post();
-		
-		$(window).on('load', function(e){
-			$('[data-sensei-container]').each(function(x){
-								
-				var textareas = String('#'+$(this).attr('data-sensei-table'));
-				var container = String('#'+$(this).attr('data-sensei-container'));
-				
-				if($(this).attr('data-sensei-min'))
-				{
-					var min = String('#'+$(this).attr('data-sensei-min'));
-				}
-				if($(this).attr('data-sensei-max'))
-				{
-					
-					var max = String('#'+$(this).attr('data-sensei-max'));
-				}
-				var index = x+1;
-				register_grid(textareas, container, min, max, index);			
-			});				
-		});
+const loadGrids = () => {
+	jQuery(window).on('load', () =>{
+		jQuery('[data-sensei-container]').each(function(x){
+							
+			const textareas = (jQuery(this).attr('data-sensei-table')) ? String('#'+jQuery(this).attr('data-sensei-table')) : null;
+			const container = (jQuery(this).attr('data-sensei-container')) ? String('#'+jQuery(this).attr('data-sensei-container')) : null;
+			const min = (jQuery(this).attr('data-sensei-min')) ? String('#'+jQuery(this).attr('data-sensei-min')) : null;
+			const max = (jQuery(this).attr('data-sensei-max')) ? String('#'+jQuery(this).attr('data-sensei-max')) : null;
+			const index = x+1;
+			
+			if(textareas && container && min && max)
+			{
+				registerGrid(textareas, container, min, max, index);
+			}						
+		});				
 	});
+};
 
-function register_grid(textareas, container, min, max, index)
-{	
-	var data = $(textareas).text();	
-	var max_num = parseInt($(max).val());
-	var grid_id_name = $(container).attr('id');
+const registerGrid = (textareas, container, min, max, index) => {	
+	let data = jQuery(textareas).text();	
+	let maxNum = parseInt(jQuery(max).val());
+	const gridIdName = jQuery(container).attr('id');
 	
 	try
 	{
 		data = JSON.parse(data);
-		data = add_row_id(data[grid_id_name], container);
+		data = addRowId(data[gridIdName], container);
 	}
 	catch(e)
 	{
-		data = initial_grid(textareas, max, container, index);
-		data = data[grid_id_name];
+		data = initialGrid(textareas, max, container, index);
+		data = data[gridIdName];
 		//console.log(data);
 	}	
 		
-	var grid = $(container);
-	var headers = get_headers($(container));
-	var columns = get_col_type($(container));
-	var cols_num = 2;
+	const grid = jQuery(container);
+	const headers = getHeaders(jQuery(container));
+	const columns = getColType(jQuery(container));
+	let colsNum = 2;
 	
-	if(headers.length > cols_num)
+	if(headers.length > colsNum)
 	{
-		cols_num = headers.length;
+		colsNum = headers.length;
 	}
 
-	var menu = {};
+	const menu = {};
 	menu.items = {};
 	menu.items.undo = {name: 'undo'};
 	menu.items.redo = {name: 'redo'};
 		
-	var args = {
+	const args = {
 		data: data,
 		stretchH: 'all',
 		columns: columns,
-		startCols: cols_num,
-		minCols: cols_num,
+		startCols: colsNum,
+		minCols: colsNum,
 		rowHeaders: true,
 		colHeaders: headers,
 		contextMenu: menu,
-		maxRows: max_num,
-		afterChange: function(changes, source)
-		{
+		maxRows: maxNum,
+		afterChange: (changes, source) => {
 			if (source !== 'loadData')
 			{
-				$(textareas).text(JSON.stringify(update_grid(textareas, grid.handsontable('getData'), container, index)));
+				jQuery(textareas).text(JSON.stringify(updateGrid(textareas, grid.handsontable('getData'), container, index)));
 			}
 		}
 	}
 				
 	grid.handsontable(args);
 	
-	$(min).add(max).on('change blur keyup click', function(){
+	jQuery(min).add(max).on('change blur keyup click', () => {
 		
-		var row_num = parseInt(grid.handsontable('countRows'));
-		var max_num = parseInt($(max).val());
-		var instance = grid.handsontable('getInstance');
+		const rowNum = parseInt(grid.handsontable('countRows'));
+		const maxNum = parseInt(jQuery(max).val());
+		const instance = grid.handsontable('getInstance');
+		let diff = 1;
 		
-		if(row_num != max_num)
+		if(rowNum != maxNum)
 		{
-			if(row_num < max_num)
+			if(rowNum < maxNum)
 			{
-				var diff = max_num - row_num;
-				instance.alter('insert_row', row_num, diff);
+				diff = maxNum - rowNum;
+				instance.alter('insert_row', rowNum, diff);
 			}
 			else
 			{
-				var diff = row_num - max_num;
-				instance.alter('remove_row', (row_num-diff), diff);				
+				diff = rowNum - maxNum;
+				instance.alter('remove_row', (rowNum-diff), diff);				
 			}
 
-			$(textareas).text(JSON.stringify(update_grid(textareas, grid.handsontable('getData'), container, index)));
+			jQuery(textareas).text(JSON.stringify(updateGrid(textareas, grid.handsontable('getData'), container, index)));
 		}
 		
-		instance.updateSettings({maxRows: max_num, data: add_row_id(grid.handsontable('getData'), container)});
+		instance.updateSettings({maxRows: maxNum, data: addRowId(grid.handsontable('getData'), container)});
 		instance.render();
 	});		
 }
 
 
-function get_headers(container)
-{
-	var headers = [];
-	headers = $(container).attr('data-sensei-headers');
-	//headers = headers.replace(/\s+/g, '');
+const getHeaders = (container) => {
+	let headers = [];
+	headers = jQuery(container).attr('data-sensei-headers');
 	headers = headers.split(',');
 	return headers;
 }
 
-function get_col_type(container)
-{
-	var columns = [];
-	columns = $(container).attr('data-sensei-type');
+const getColType = (container) => {
+	let columns = [];
+	columns = jQuery(container).attr('data-sensei-type');
 	columns = columns.replace(/\s+/g, '');
 	columns = columns.split(',');
-	var select_option = [];
-	var output = [];
-	var readOnly = false;
-	var isDisabled = $(container).attr('data-sensei-disabled');
+	let selectOption = null;
+	const output = [];
+	let readOnly = false;
+	const isDisabled = jQuery(container).attr('data-sensei-disabled');
 	
 	if(typeof isDisabled != 'undefined')
 	{
@@ -163,11 +155,11 @@ function get_col_type(container)
 		else if(columns[x] == 'dropdown')
 		{
 			
-			select_option = $(container).attr('data-sensei-dropdown');
-			select_option = select_option.replace(/\s+/g, '');
-			select_option = select_option.split(',');
+			selectOption = jQuery(container).attr('data-sensei-dropdown');
+			selectOption = selectOption.replace(/\s+/g, '');
+			selectOption = selectOption.split(',');
 			row.type = 'dropdown';
-			row.source = select_option;
+			row.source = selectOption;
 		}
 		else if(columns[x] == 'readonly')
 		{
@@ -194,25 +186,24 @@ function get_col_type(container)
 	return output;	
 }
 
-function initial_grid(textareas, max, container, index)
-{
-	var headers = get_headers($(container));
-	var max_num = parseInt($(max).val());  
-	var scale = {};
-	var new_grid = [];
-	var grid_id_name = $(container).attr('id');
+const initialGrid = (textareas, max, container, index) => {
+	const headers = getHeaders(jQuery(container));
+	const maxNum = parseInt(jQuery(max).val());  
+	const scale = {};
+	const newGrid = [];
+	const gridIdName = jQuery(container).attr('id');
 	
-	for(var x = 0; x < max_num; x++)
+	for(let x = 0; x < maxNum; x++)
 	{
-		var row = [];
+		const row = [];
 		
-		for(var y = 0; y < headers.length; y++)
+		for(let y = 0; y < headers.length; y++)
 		{
-			if(grid_id_name == 'seasons_chart')
+			if(gridIdName == 'seasons_chart')
 			{
 				if((y+1) == headers.length)
 				{
-					row.push(grid_id_name+'_'+(x+1));
+					row.push(gridIdName+'_'+(x+1));
 				}
 				else
 				{
@@ -224,37 +215,35 @@ function initial_grid(textareas, max, container, index)
 				row.push(null);
 			}
 		}
-		new_grid.push(row);
+		newGrid.push(row);
 	}
-	scale[grid_id_name] = new_grid;
+	scale[gridIdName] = newGrid;
 	
-	$(textareas).text(JSON.stringify(scale));
+	jQuery(textareas).text(JSON.stringify(scale));
 	
 	return scale;
 }
 
-function update_grid(textareas, data, container, index)
-{
-	var grid_id_name = $(container).attr('id');
-	var textareas_data = {};
+const updateGrid = (textareas, data, container, index) => {
+	const gridIdName = jQuery(container).attr('id');
+	let textAreasData = {};
 	
 	try
 	{
-		textareas_data = JSON.parse($(textareas).text());
+		textAreasData = JSON.parse(jQuery(textareas).text());
 	}
 	catch(e)
 	{
-		textareas_data = {};
+		textAreasData = {};
 	}	
 	
-	textareas_data[grid_id_name] = data;
-	return textareas_data;
+	textAreasData[gridIdName] = data;
+	return textAreasData;
 }
 
-function add_row_id(data, container)
-{
-	var output = [];
-	var grid_id_name = $(container).attr('id');
+const addRowId = (data, container) => {
+	const output = [];
+	const gridIdName = jQuery(container).attr('id');
 	
 	if(data)
 	{
@@ -266,11 +255,11 @@ function add_row_id(data, container)
 			{
 				var item = [];
 				
-				if(grid_id_name == 'seasons_chart')
+				if(gridIdName == 'seasons_chart')
 				{
 					if((y+1) == data[x].length)
 					{
-						item = grid_id_name+'_'+(x+1);
+						item = gridIdName+'_'+(x+1);
 					}
 					else
 					{
@@ -292,12 +281,10 @@ function add_row_id(data, container)
 
 }
 
-function build_season_grids()
-{
-	var data = $('#package_seasons_chart').text();
-	var num_seasons = parseInt($('[name="package_num_seasons"]').val());
-	
-	var pre_render = $('<div>');
+const buildSeasonsGrid = () => {
+	let data = jQuery('#package_seasons_chart').text();
+	const numSeasons = parseInt(jQuery('[name="package_numSeasons"]').val());
+	const preRender = jQuery('<div>');
 
 	try
 	{
@@ -315,55 +302,53 @@ function build_season_grids()
 		
 		var max = data.length;
 				
-		if(max > num_seasons)
+		if(max > numSeasons)
 		{
-			max = num_seasons;
+			max = numSeasons;
 		}
 				
 		for(var x = 0; x < max; x++)
 		{
-			var is_row_ready = true;
+			var isRowReady = true;
 			
 			for(var y = 0; y < data[x].length; y++)
 			{
 				if(data[x][y] === null || data[x][y] == '')
 				{
-					is_row_ready = false;
+					isRowReady = false;
 				}
 			}
 			
-			if(is_row_ready === true)
+			if(isRowReady === true)
 			{
-				var last_cell = data[x][data[x].length - 1];
-				var occupancy_chart = $('#occupancy_chart').clone();
-				var occupancy_chart_wrap = $('<div>').addClass('hot-container');
-				$(occupancy_chart).attr({'id': $(occupancy_chart).attr('id')+last_cell, 'data-sensei-container': $(occupancy_chart).attr('id')+last_cell});				
-				$(occupancy_chart_wrap).html(occupancy_chart);
-				$(pre_render).append($('<h3></h3>').text($('#accommodation').text()+': '+data[x][0]+' ('+data[x][4]+')'));
-				$(pre_render).append(occupancy_chart_wrap);	
+				const lastCell = data[x][data[x].length - 1];
+				const occupancyChart = jQuery('#occupancy_chart').clone();
+				const occupancyWrap = jQuery('<div>').addClass('hot-container');
+				jQuery(occupancyChart).attr({'id': jQuery(occupancyChart).attr('id')+lastCell, 'data-sensei-container': jQuery(occupancyChart).attr('id')+lastCell});				
+				jQuery(occupancyWrap).html(occupancyChart);
+				jQuery(preRender).append(jQuery('<h3></h3>').text(jQuery('#accommodation').text()+': '+data[x][0]+' ('+data[x][4]+')'));
+				jQuery(preRender).append(occupancyWrap);	
 			}
 
 		}
 		
-		$('#special_seasons').html(pre_render);
+		jQuery('#special_seasons').html(preRender);
 	}
 }
-function submit_save_post()
-{
-	var this_form = $('#post');
-	
-	$('#package_package_type').add('#package_payment').add('#package_auto_booking').change(function(){
+const submitSavePost = () => {
+
+	jQuery('#package_package_type').add('#package_payment').add('#package_auto_booking').add('#package_num_seasons').change(() =>{
 		
 		if(parseInt(dy_wp_version()) < 5)
 		{
-			$('#post').submit();
+			jQuery('#post').submit();
 		}
 		else
 		{
 			wp.data.dispatch('core/editor').savePost();
 			
-			setTimeout(function(){
-				var reloader = setInterval(function(){
+			setTimeout(() => {
+				let reloader = setInterval(() => {
 					if(wp.data.select('core/editor').didPostSaveRequestSucceed())
 					{
 						clearInterval(reloader);
@@ -374,4 +359,3 @@ function submit_save_post()
 		}
 	});
 }
-})( jQuery );
