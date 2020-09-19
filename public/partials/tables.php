@@ -12,13 +12,12 @@ class dynamicpackages_Tables{
 			$max = package_field( 'package_max_persons' );
 			$duration = intval(package_field('package_duration'));
 			$package_type = intval(package_field('package_package_type'));
+			$duration_max = package_field('package_duration_max');
 			$price_type = package_field( 'package_starting_at_unit' );
 			$price_fixed = package_field( 'package_fixed_price' );
-
-			
 			$package_occupancy_chart = json_decode(html_entity_decode(package_field( 'package_occupancy_chart' )), true);	
 			$package_occupancy_chart = (is_array($package_occupancy_chart)) ? $package_occupancy_chart['occupancy_chart'] : null;	
-
+			$hide_table = false;
 			
 			if(intval($price_fixed) == 1)
 			{
@@ -67,7 +66,12 @@ class dynamicpackages_Tables{
 					{
 						if($package_type == 1)
 						{
-							$price =  $base_price + ($duration * $occupancy_price);
+							if(intval($max) == 0)
+							{
+								$occupancy_price =  $duration * $occupancy_price;
+							}
+							
+							$price =  $base_price + $occupancy_price;
 						}
 						else
 						{
@@ -78,7 +82,12 @@ class dynamicpackages_Tables{
 					{						
 						if($package_type == 1)
 						{
-							$price =  ($base_price + ($duration * $occupancy_price)) * $person;
+							if(intval($max) == 0)
+							{
+								$occupancy_price = $duration * $occupancy_price;
+							}
+							
+							$price =  ($base_price + $occupancy_price) * $person;
 						}
 						else if($package_type == 0)
 						{
@@ -95,10 +104,7 @@ class dynamicpackages_Tables{
 					}
 					
 					if($x == 0)
-					{	
-
-						
-						
+					{
 						if($max == 1 && package_field( 'package_max_persons' ) > $max)
 						{
 							$person .= ' - '.package_field( 'package_max_persons' );
