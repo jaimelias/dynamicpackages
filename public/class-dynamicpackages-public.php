@@ -558,13 +558,13 @@ class dy_Public {
 						}
 					}
 				}
-				$title .= ' | '.esc_html(get_bloginfo( 'name' ));
+				$title .= ' | '. get_bloginfo( 'name' );
 			}
 			if(is_singular('packages'))
 			{
 				if(is_booking_page())
 				{
-					$title = esc_html(__('Online Booking', 'dynamicpackages')).' '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
+					$title = __('Online Booking', 'dynamicpackages').' '.get_the_title().' | '. get_bloginfo( 'name' );
 				}	
 				
 				global $post;
@@ -581,7 +581,7 @@ class dy_Public {
 						while ( $parent_query->have_posts() )
 						{
 							$parent_query->the_post();
-							$title .= ' | '.esc_html(get_the_title()).' | '.esc_html(get_bloginfo( 'name' ));
+							$title .= ' | '. get_the_title().' | '. get_bloginfo( 'name' );
 						}
 						
 						wp_reset_postdata();
@@ -655,31 +655,31 @@ class dy_Public {
 					{
 						if($_GET['package_sort'] == 'new')
 						{
-							$title .= esc_html(' ('.__('Newest', 'dynamicpackages').')');
+							$title .= ' ('.__('Newest', 'dynamicpackages').')';
 						}
 						else if($_GET['package_sort'] == 'low')
 						{
-							$title .= esc_html(' ('.__('low to high', 'dynamicpackages').')');
+							$title .= ' ('.__('low to high', 'dynamicpackages').')';
 						}
 						else if($_GET['package_sort'] == 'high')
 						{
-							$title .= esc_html(' ('.__('high to low', 'dynamicpackages').')');
+							$title .= ' ('.__('high to low', 'dynamicpackages').')';
 						}	
 						else if($_GET['package_sort'] == 'today')
 						{
-							$title .= esc_html(' ('.__('today', 'dynamicpackages').')');
+							$title .= ' ('.__('today', 'dynamicpackages').')';
 						}
 						else if($_GET['package_sort'] == 'tomorrow')
 						{
-							$title .= esc_html(' ('.__('tomorrow', 'dynamicpackages').')');
+							$title .= ' ('.__('tomorrow', 'dynamicpackages').')';
 						}					
 						else if($_GET['package_sort'] == 'week')
 						{
-							$title .= esc_html(' ('.__('next 7 days', 'dynamicpackages').')');
+							$title .= ' ('.__('next 7 days', 'dynamicpackages').')';
 						}	
 						else if($_GET['package_sort'] == 'month')
 						{
-							$title .= esc_html(' ('.__('next 30 days', 'dynamicpackages').')');
+							$title .= ' ('.__('next 30 days', 'dynamicpackages').')';
 						}						
 					}
 					
@@ -687,7 +687,7 @@ class dy_Public {
 					
 					if($paged > 1)
 					{
-						$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
+						$title .= ' | '.__('Page', 'dynamicpackages').' '.$paged;
 					}
 					
 					
@@ -696,7 +696,7 @@ class dy_Public {
 			}			
 		}
 
-		return esc_html($title);
+		return $title;
 	}
 	
 	public static function modify_title($title)
@@ -737,11 +737,11 @@ class dy_Public {
 								$packages_in = pll__('Packages in');
 							}
 							
-							$title = esc_html($packages_in).' <span class="linkcolor">'.esc_html($title).'</span>';
+							$title = $packages_in.' <span class="linkcolor">'. $title .'</span>';
 							
 							if(get_queried_object()->parent > 0)
 							{
-								$title .= ', '.esc_html(get_term(get_queried_object()->parent)->name);
+								$title .= ', '. get_term(get_queried_object()->parent)->name;
 							}						
 						}
 					}
@@ -758,11 +758,11 @@ class dy_Public {
 							$our_awesome = pll__('Booking Page');
 						}
 						
-						$title = '<span class="linkcolor">'.esc_html($our_awesome).'</span>: <span data-id="package-title">'.esc_html($title).'</span> <span class="large linkcolor"></span>';
+						$title = '<span class="linkcolor">'. $our_awesome.'</span>: <span data-id="package-title">'. $title .'</span>';
 					}			
 					else
 					{
-						$title = '<span itemprop="name">'.esc_html($title).'</span>';
+						$title = '<span itemprop="name">'. $title.'</span>';
 					}
 					
 				}
@@ -864,7 +864,7 @@ class dy_Public {
 					
 					if($paged > 1)
 					{
-						$title .= esc_html(' | '.__('Page', 'dynamicpackages').' '.$paged);
+						$title .= ' | '.__('Page', 'dynamicpackages').' '.$paged;
 					}			
 				}			
 			}			
@@ -1623,11 +1623,11 @@ class dy_Public {
 				}
 				else
 				{
-					$excerpt = '<span class="linkcolor strong small">'.esc_html(self::show_duration(true)).'</span> - ';
+					$excerpt = self::show_duration(true) . ' - ';
 				}		
-				
-				$excerpt .= esc_html($post->post_excerpt);
-				
+								
+				$excerpt .= $post->post_excerpt;
+
 			}
 		}
 		elseif(is_page())
