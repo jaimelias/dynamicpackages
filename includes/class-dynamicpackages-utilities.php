@@ -268,6 +268,10 @@ class dy_utilities {
 			$occupancy_chart = self::get_occupancy_chart($the_id);	
 			$occupancy_chart = (is_array($occupancy_chart)) ? $occupancy_chart['occupancy_chart'] : null;
 			$price_type = package_field('package_starting_at_unit', $the_id);
+			
+			$duration_unit = package_field('package_length_unit');
+			$duration_max = package_field('package_duration_max');
+			$package_type = package_field('package_package_type');
 					
 			for($t = 0; $t < intval($max); $t++)
 			{
@@ -292,7 +296,13 @@ class dy_utilities {
 						{
 							if($occupancy_chart[$t][0] != '')
 							{
-								$occupancy_price = floatval($occupancy_chart[$t][0]) * $duration;
+								
+								$occupancy_price = floatval($occupancy_chart[$t][0]);
+								
+								if(intval($duration_max) == 0 && $package_type != 1)
+								{
+									$occupancy_price = $occupancy_price * $duration;
+								}
 							}
 						}
 					}

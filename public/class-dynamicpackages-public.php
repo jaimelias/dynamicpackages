@@ -897,6 +897,8 @@ class dy_Public {
 		else
 		{
 			$price_type = package_field('package_starting_at_unit');
+			$package_type = package_field('package_package_type');
+			$duration_max = package_field('package_duration_max');
 			$duration = package_field('package_duration');
 			$duration_unit = package_field('package_length_unit');
 			$output = '';
@@ -905,8 +907,11 @@ class dy_Public {
 			{
 				$output = __('Per Person', 'dynamicpackages').' ';
 			}
-			
-			if(dy_utilities::increase_by_hour())
+			if($duration_max > 0 && $package_type == 1)
+			{
+				$output .= __(' / ', 'dynamicpackages').self::duration_label($duration_unit, 1);
+			}
+			else if(dy_utilities::increase_by_hour())
 			{
 				$output .= __('Per Hour', 'dynamicpackages');
 			}
@@ -1007,8 +1012,10 @@ class dy_Public {
 				$duration = dy_utilities::get_min_nights();
 				$duration_label = $duration;
 			}
-						
-			$duration_label .= ' '.self::duration_label($duration_unit, $duration);
+			
+			
+			$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
+			$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
 		}
 		else
 		{
