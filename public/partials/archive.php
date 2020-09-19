@@ -298,7 +298,7 @@ else
 							</div>
 
 							<?php if(!dy_Validators::is_package_transport()) : ?>
-								<div class="dy_pad bottom-10 semibold small">
+								<div class="dy_pad bottom-10 semibold">
 									<?php echo esc_html(dy_Public::show_duration(true)); ?>
 								</div>
 							<?php endif; ?>

@@ -1003,7 +1003,7 @@ class dy_Public {
 					
 					if($max === true)
 					{
-						$duration_label = __('Bookings', 'dynamicpackages').' '.$duration_label.' - '.$duration_max;
+						$duration_label .= ' - '.$duration_max;
 					}
 				}			
 			}
