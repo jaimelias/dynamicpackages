@@ -210,6 +210,13 @@ class dy_Tax_Mod
 				}
 				else if($args[$k]['tag'] == 'textarea')
 				{
+					if(array_key_exists('handsontable', $args[$k]))
+					{
+						if($args[$k]['handsontable'] == true)
+						{
+							$value = (is_array(json_decode(html_entity_decode($value), true))) ? $value : '["'.$name.'":[[null]]]';
+						}
+					}
 					$field = '<textarea '.$input.'>'.$value.'</textarea>';
 				}
 				

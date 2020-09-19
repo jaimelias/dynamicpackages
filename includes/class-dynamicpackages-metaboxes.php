@@ -117,7 +117,7 @@ class dy_Metaboxes
 		<div class="hot-container">
 			<div id="coupons" class="hot" data-sensei-min="package_max_coupons" data-sensei-max="package_max_coupons" data-sensei-container="coupons" data-sensei-table="package_coupons" data-sensei-headers="<?php _e( 'Code', 'dynamicpackages' ); ?>,<?php _e( 'Discount (%)', 'dynamicpackages' ); ?>, <?php _e( 'Expiration', 'dynamicpackages' ); ?>, <?php _e( 'Publish', 'dynamicpackages' ); ?>" data-sensei-type="text,numeric,date,checkbox"></div>
 		</div>
-		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '["coupons":[null,null,null,null]]'; ?></textarea></div>		
+		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '["coupons":[[null,null,null,null]]]'; ?></textarea></div>		
 	<?php
 	}
 	
@@ -313,7 +313,7 @@ class dy_Metaboxes
 				<div id="seasons_chart" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_num_seasons" data-sensei-max="package_num_seasons" data-sensei-container="seasons_chart" data-sensei-table="package_seasons_chart" data-sensei-headers="Name,From,To,Nights,ID" data-sensei-type="text,date,date,dropdown,readonly" data-sensei-disabled="<?php echo esc_html($disable_child); ?>"></div>
 			</div>
 			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_seasons_chart" id="package_seasons_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_seasons_chart')), true))) ? package_field( 'package_seasons_chart' ) : '["seasons_chart":[null,null,null,null,null]]'; ?></textarea> 
+				<textarea class="hidden" rows="4" cols="50" name="package_seasons_chart" id="package_seasons_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_seasons_chart')), true))) ? package_field( 'package_seasons_chart' ) : '["seasons_chart":[[null,null,null,null,null]]]'; ?></textarea> 
 			</p>	
 			</fieldset>	
 		<?php endif; ?>	
@@ -345,7 +345,7 @@ class dy_Metaboxes
 			<div id="price_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="price_chart" data-sensei-table="package_price_chart" data-sensei-headers="Adults,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
 		</div>
 		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_price_chart" id="package_price_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_price_chart')), true))) ? package_field( 'package_price_chart' ) : '["price_chart":[null,null]]'; ?></textarea>
+			<textarea class="hidden" rows="4" cols="50" name="package_price_chart" id="package_price_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_price_chart')), true))) ? package_field( 'package_price_chart' ) : '["price_chart":[[null,null]]]'; ?></textarea>
 		</p>	
 		</fieldset>
 	
@@ -358,7 +358,7 @@ class dy_Metaboxes
 				<div id="occupancy_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="occupancy_chart" data-sensei-table="package_occupancy_chart" data-sensei-headers="<?php _e( 'Adults', 'dynamicpackages' ); ?>,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
 			</div>
 			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_occupancy_chart" id="package_occupancy_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_occupancy_chart')), true))) ? package_field( 'package_occupancy_chart' ) : '["occupancy_chart":[null,null]]'; ?></textarea>
+				<textarea class="hidden" rows="4" cols="50" name="package_occupancy_chart" id="package_occupancy_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_occupancy_chart')), true))) ? package_field( 'package_occupancy_chart' ) : '["occupancy_chart":[[null,null]]]'; ?></textarea>
 			</p>	
 		</fieldset>
 		<?php endif; ?>
@@ -417,7 +417,7 @@ class dy_Metaboxes
 			<div id="disabled_dates" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_disabled_num" data-sensei-max="package_disabled_num" data-sensei-container="disabled_dates" data-sensei-table="package_disabled_dates" data-sensei-headers="From,To" data-sensei-type="date,date" ></div>
 		</div>
 		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_disabled_dates')), true))) ? package_field( 'package_disabled_dates' ) : '["disabled_dates":[null,null]]'; ?></textarea> 
+			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_disabled_dates')), true))) ? package_field( 'package_disabled_dates' ) : '["disabled_dates":[[null,null]]]'; ?></textarea> 
 		</p>	
 		</fieldset>			
 

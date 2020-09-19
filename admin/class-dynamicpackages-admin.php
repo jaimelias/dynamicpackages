@@ -287,7 +287,7 @@ class dy_Admin {
 			'dy_settings_section',
 			array(
 				'name' => 'dy_disabled_dates', 
-				'value' => '["disabled_dates":[null, null]]',
+				'value' => '["disabled_dates":[[null, null]]]',
 				'max' => 'dy_max_disabled_dates', 
 				'obj' => 'disabled_dates'
 			) 
