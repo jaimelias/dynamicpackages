@@ -17,8 +17,10 @@ const loadGrids = () => {
 			const max = (jQuery(this).attr('data-sensei-max')) ? String('#'+jQuery(this).attr('data-sensei-max')) : null;
 			const index = x+1;
 			
-			if(textareas && container && min && max)
+			console.log(max);
+			if(textareas && container && max)
 			{
+				console.log(container);
 				registerGrid(textareas, container, min, max, index);
 			}						
 		});				
