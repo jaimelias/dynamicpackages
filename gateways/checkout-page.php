@@ -172,7 +172,7 @@
 			<div class="hidden" data-id="participants"><?php echo esc_html($participants); ?></div>
 			<div class="hidden" data-id="traveling-children"><?php echo esc_html($traveling_children); ?></div>
 
-			<?php if($payment == 1 && !isset($_GET['quote']) && intval(package_field('package_auto_booking')) == 1): ?>
+			<?php if($payment == 1 && intval(package_field('package_auto_booking')) == 1): ?>
 				<div class="text-muted large strong text-center bottom-20"><?php echo ($outstanding_label); ?></div>
 			<?php endif; ?>
 		<?php endif; ?>	

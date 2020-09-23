@@ -785,11 +785,6 @@ class dy_utilities {
 				if(floatval(package_field('package_deposit' )) > 0)
 				{
 					$output = package_field('package_deposit');
-					
-					if(isset($_GET['quote']))
-					{
-						$output = 0;
-					}
 				}
 			}
 			else

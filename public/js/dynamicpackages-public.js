@@ -2,7 +2,6 @@
 jQuery(() => {
 	booking_datepicker();
 	booking_hourpicker();
-	booking_quote();
 	booking_submit();
 	storePopulate();
 	booking_coupon();	
@@ -548,26 +547,6 @@ const booking_submit = () => {
 	});
 }
 
-const booking_quote = () =>
-{
-	
-	const this_form = jQuery('.booking_form');
-	
-	jQuery(this_form).find('.booking_quote').click( () => {
-		
-		if(booking_validate(this_form) == true)
-		{
-			jQuery(this_form).find('input[name="quote"]').remove();
-			var args = {};
-			args.name = 'quote';
-			args.type = 'hidden';
-			args.value = true;
-			jQuery(this_form).append(jQuery('<input />').attr(args));
-			ga_click(this_form, 'Quote');
-			jQuery(this_form).submit();				
-		}
-	});
-}
 
 const booking_validate = (form) => {
 	var invalids = 0;

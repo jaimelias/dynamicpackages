@@ -137,7 +137,7 @@ class dy_Actions{
 	{
 		if(dy_utilities::total() > 0)
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::total(), $_POST['title']);			
 		}
 		else
 		{

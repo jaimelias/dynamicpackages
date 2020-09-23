@@ -264,7 +264,7 @@ class wire_transfer{
 		}
 		else
 		{
-			if($this->is_active() && !isset($_GET['quote']))
+			if($this->is_active() )
 			{
 				$min = floatval($this->min);
 				$show = intval($this->show);

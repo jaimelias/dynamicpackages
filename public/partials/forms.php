@@ -105,10 +105,17 @@ class dynamicpackages_Forms
 		
 		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
 		
-		if(apply_filters('dy_has_any_gateway', false))
-		{	
-			$form .= '<h3 class="linkcolor uppercase">'.esc_html(__('Book  Now', 'dynamicpackages')).'</h3>';
-		}
+		if($auto_booking == 1)
+		{
+			
+			if(package_field('package_payment') == 1)
+			{
+				$deposit = dy_utilities::get_deposit();
+				$percent = '%';
+				$form .=  '<div class="strong large bottom-20 text-muted">'.sprintf(__('Book now with a %s%s deposit!', 'dynamicpackages'), $deposit, $percent).'</div>';
+				
+			}
+		}		
 
 		if(package_field('package_event_date') == '')
 		{
@@ -172,27 +179,7 @@ class dynamicpackages_Forms
 			$form .= '</select></p>';					
 		}
 		
-		$book_now_text = __('Book Now', 'dynamicpackages');
-		$book_now_icon = '<i class="fas fa-envelope"></i>';
-		$get_quote = '';
-		$quote_now_text = $book_now_text;
-		$margin = '';
-		
-
-		if($auto_booking == 1)
-		{
-			$quote_now_text = __('Get Quote', 'dynamicpackages');
-			$book_now_icon = '<i class="fas fa-credit-card"></i>';
-			$get_quote = '<div class="text-center"><button type="button" class="booking_quote pure-button width-100 borderbox block rounded">'.esc_html($quote_now_text).' <i class="fas fa-envelope"></i></button></div>';
-			$margin = ' bottom-20 ';
-			
-			if(package_field('package_payment') == 1)
-			{
-				$deposit = dy_utilities::get_deposit();
-				$book_now_text =  __('Pay Deposit', 'dynamicpackages').' '.$deposit.'% ';
-				
-			}
-		}
+		$book_now_text = __('Check Pricing', 'dynamicpackages');
 						
 		$form .= self::adults_select($price_chart, $min, $max, $option_disc, $option_free);
 		$form .= self::discount_select($price_chart, $min, $max, $option_disc, $option_free);		
@@ -216,8 +203,7 @@ class dynamicpackages_Forms
 			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="light bottom-5 block">'.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_html($get_coupon).'" /></div>';
 		}		
 		
-		$form .= '<div><button type="submit" class="width-100 booking_submit '.esc_html($margin).' block pure-button pure-button-primary rounded">'.esc_html($book_now_text).' '.$book_now_icon.'</button></div>';
-		$form .= $get_quote;		
+		$form .= '<div><button type="submit" class="width-100 booking_submit block pure-button pure-button-primary rounded">'.esc_html($book_now_text).'</button></div>';	
 		$form .= '</form></div>';
 		echo $form;			
 

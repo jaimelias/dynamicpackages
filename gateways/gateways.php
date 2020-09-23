@@ -17,11 +17,13 @@ class dy_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
 		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
+		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
 	}	
 	
 	public function load_classes()
 	{
 		$this->add_to_calendar = new dy_Add_To_Calendar();
+		$this->estimate = new estimate_request();
 		$this->paguelo_facil_on = new paguelo_facil_on();
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
@@ -248,14 +250,11 @@ class dy_Gateways
 	
 	public function cc_form($output)
 	{
-		if(!isset($_GET['quote']))
-		{
-			ob_start();
-			require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
-			$content = ob_get_contents();
-			ob_end_clean();
-			echo $content;			
-		}
+		ob_start();
+		require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
+		$content = ob_get_contents();
+		ob_end_clean();
+		echo $content;
 	}
 	
 	public function enqueue_scripts()
@@ -465,10 +464,6 @@ class dy_Gateways
 				{
 					$amount = floatval(dy_utilities::total())*(floatval($deposit)*0.01);
 					$output = floatval($total)-$amount;					
-				}
-				if(isset($_GET['quote']))
-				{
-					$output = $total;
 				}					
 			}
 
@@ -491,11 +486,6 @@ class dy_Gateways
 			if(package_field('package_payment' ) == 1 && intval(package_field('package_auto_booking')) == 1)
 			{
 				$output = 'deposit';
-				
-				if(isset($_GET['quote']))
-				{
-					$output = 'full';
-				}
 			}
 			
 			$GLOBALS['dy_payment_type'] = $dy_payment_type;

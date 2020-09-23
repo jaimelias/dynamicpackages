@@ -21,7 +21,7 @@ class paguelo_facil_on{
 			add_action('init', array(&$this, 'checkout'), 50);
 			add_filter('dy_request_the_content', array(&$this, 'the_content'));
 			add_filter('dy_request_the_title', array(&$this, 'the_title'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 1);
+			add_filter('gateway_buttons', array(&$this, 'button'), 2);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 100);
 			add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
@@ -419,7 +419,7 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if($this->is_active() && !isset($_GET['quote']))
+			if($this->is_active() )
 			{
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());

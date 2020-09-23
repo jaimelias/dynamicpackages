@@ -22,7 +22,7 @@ class paypal_me{
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 2);
+			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 			add_filter('gateway_icons', array(&$this, 'icon'), 2);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
@@ -161,7 +161,7 @@ class paypal_me{
 		}
 		else
 		{
-			if($this->is_active() && !isset($_GET['quote']))
+			if($this->is_active() )
 			{
 				$max = floatval($this->max);
 				$show = intval($this->show);

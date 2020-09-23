@@ -1,6 +1,6 @@
-<?php global $post; ?>
+<?php global $post; $has_any_gateway = apply_filters('dy_has_any_gateway', false); ?>
 
-<form id="dynamic_form"  <?php if(apply_filters('dy_has_any_gateway', false)) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dynamic_form"  <?php if($has_any_gateway) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
 	
 	    <div class="text-center bottom-20" id="dy_form_icon">
@@ -69,6 +69,6 @@
 			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
 		<?php endif; ?>
 		
-	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded"><?php echo (isset($_GET['quote']) || dy_utilities::pax_num() > package_field('package_max_persons')) ? esc_html(__('Send Request!', 'dynamicpackages')) : esc_html(__('Pay Now!', 'dynamicpackages')); ?></button></p>	
+	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php echo esc_html(__('Proceed', 'dynamicpackages')); ?></button></p>	
 
 </form>

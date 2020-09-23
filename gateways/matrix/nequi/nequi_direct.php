@@ -177,7 +177,7 @@ class nequi_direct{
 		}
 		else
 		{
-			if($this->is_active() && !isset($_GET['quote']))
+			if($this->is_active() )
 			{
 				$max = floatval($this->max);
 				$show = intval($this->show);

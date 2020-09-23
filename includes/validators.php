@@ -538,16 +538,13 @@ class dy_Validators
 		}
 		else
 		{
-			if(!isset($_GET['quote']))
+			if(package_field('package_auto_booking'))
 			{
-				if(package_field('package_auto_booking'))
+				if(package_field( 'package_payment' ) == 1 && package_field('package_deposit') > 0 && dy_utilities::total() > 0)
 				{
-					if(package_field( 'package_payment' ) == 1 && package_field('package_deposit') > 0 && dy_utilities::total() > 0)
-					{
-						$output = true;
-						$GLOBALS['dy_has_deposit'] = $output;
-					}			
-				}		
+					$output = true;
+					$GLOBALS['dy_has_deposit'] = $output;
+				}			
 			}
 		}
 		
