@@ -165,7 +165,10 @@ class estimate_request{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
+				
+				var estimate_logo = jQuery('<p class="large"><?php echo esc_html(__('Get Your Quote Now!', 'dynamicpackages')); ?></p>').addClass('text-muted');					
 				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('#dy_form_icon').html(estimate_logo);
 				jQuery('#dynamic_form').find('input[name="name"]').focus();
 				
 				//facebook pixel
