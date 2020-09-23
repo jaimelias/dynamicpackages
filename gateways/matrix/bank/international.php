@@ -577,7 +577,7 @@ class wire_transfer{
 				wire_logo.append('<i class="fas fa-globe"></i>');
 				jQuery('#dynamic_form').removeClass('hidden');
 				jQuery('#dy_form_icon').html(wire_logo);
-				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				
 				//facebook pixel

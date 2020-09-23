@@ -361,11 +361,8 @@ class yappy_direct{
 				jQuery(yappy_logo).attr({'width': '80', 'height': '69'});
 				jQuery('#dynamic_form').removeClass('hidden');
 				jQuery('#dy_form_icon').html(yappy_logo);
-				jQuery('#dynamic_form').find('input[name="phone"]').attr({'min': '60000000', 'max': '69999999', 'type': 'number'});
-				jQuery('#dynamic_form').find('input[name="name"]').focus();
+				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
-				
-				jQuery('#dynamic_form').find('span.dy_mobile_payment').text('<?php echo esc_html($this->gateway_title); ?>');
 				
 				//facebook pixel
 				if(typeof fbq !== typeof undefined)
