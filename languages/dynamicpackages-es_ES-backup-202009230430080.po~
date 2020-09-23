@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-09-23 04:24+0000\n"
-"PO-Revision-Date: 2020-09-23 04:25+0000\n"
+"POT-Creation-Date: 2020-09-23 04:28+0000\n"
+"PO-Revision-Date: 2020-09-23 04:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1338,8 +1338,8 @@ msgstr "Fecha de partida"
 
 #: public/partials/forms.php:115
 #, php-format
-msgid "Book with %s%s deposit"
-msgstr ""
+msgid "Book now with a %s%s deposit!"
+msgstr "¡Reserva ahora con un %s%s de deposito!"
 
 #: public/partials/forms.php:138
 msgid "Date of Return"
@@ -1387,7 +1387,7 @@ msgstr "Teléfono"
 
 #: public/partials/quote-form.php:72
 msgid "Proceed"
-msgstr ""
+msgstr "Proceder"
 
 #: public/partials/reviews-template.php:5
 msgid "Rated"
