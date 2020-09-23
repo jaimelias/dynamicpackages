@@ -11,7 +11,6 @@ class estimate_request{
 		add_action('init', array(&$this, 'args'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 1);
 		add_filter('list_gateways', array(&$this, 'add_gateway'), 10);
-		add_filter('gateway_icons', array(&$this, 'icon'), 2);
 		add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);		
 	}
 	

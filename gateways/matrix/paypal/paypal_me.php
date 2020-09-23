@@ -24,7 +24,6 @@ class paypal_me{
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
-			add_filter('gateway_icons', array(&$this, 'icon'), 2);
 			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
 		}		
 	}
@@ -366,14 +365,6 @@ class paypal_me{
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;	
-	}
-	public function icon($icon)
-	{
-		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
-		{
-			$icon .= ' <i class="fab fa-paypal"></i>';
-		}
-		return $icon;
 	}
 	
 	public function message($message)
