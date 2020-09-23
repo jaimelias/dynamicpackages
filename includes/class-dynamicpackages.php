@@ -101,7 +101,6 @@ class dynamicpackages {
 		 */
 		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/autoload.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/sitemap.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-loader.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/Parsedown.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-dynamicpackages-i18n.php';
