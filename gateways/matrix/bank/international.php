@@ -273,7 +273,7 @@ class wire_transfer{
 				
 				if(is_booking_page() || is_checkout_page())
 				{
-					$total = dy_utilities::total();
+					$total = dy_utilities::payment_amount();
 				}
 				else
 				{
