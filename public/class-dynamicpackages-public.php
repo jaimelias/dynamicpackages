@@ -334,11 +334,12 @@ class dy_Public {
 				$content = ob_get_contents();
 				ob_end_clean();
 			}
-			if(is_tax('package_terms_conditions'))
+			else if(is_tax('package_terms_conditions'))
 			{
-				$content = wpautop(get_term(get_queried_object()->term_id)->description);
+				$Parsedown = new Parsedown();
+				$content = $Parsedown->text(get_term(get_queried_object()->term_id)->description);
 			}
-			if(is_singular('packages'))
+			else if(is_singular('packages'))
 			{
 				if(!is_booking_page())
 				{

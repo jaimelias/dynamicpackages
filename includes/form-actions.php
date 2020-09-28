@@ -175,7 +175,8 @@ class dy_Actions{
 	{		
 		$output = array();
 		$terms_conditions = dy_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
-
+		$Parsedown = new Parsedown();
+		
 		if(is_array($terms_conditions))
 		{
 			if(count($terms_conditions) > 0)
@@ -186,10 +187,10 @@ class dy_Actions{
 					$name = $terms_conditions[$x]->name;
 					
 					//PAGE
-					$page = '<style type="text/css">p {line-height: 2;}</style>';
+					$page = '<style type="text/css">p{line-height: 1.25;}ul{line-height: 1.25;}ol{line-height: 1.25;}</style>';
 					$page .= '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
 					$page .= '<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">'.esc_html($name).'</h1>';
-					$page .= wpautop($terms_conditions[$x]->description);
+					$page .= $Parsedown->text($terms_conditions[$x]->description);
 					$page .= '</page>';		
 					
 					//PDF
