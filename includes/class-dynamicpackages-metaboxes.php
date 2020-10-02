@@ -407,18 +407,20 @@ class dy_Metaboxes
 				</select>
 				<?php _e( 'between', 'dynamicpackages' ); ?>
 				<input type="text" class="timepicker" name="package_min_hour" id="package_min_hour" value="<?php echo package_field( 'package_min_hour' ); ?>" > 
-				<?php _e( 'and', 'dynamicpackages' ); ?>
+				<?php esc_html_e( 'and', 'dynamicpackages' ); ?>
 				<input type="text" class="timepicker" name="package_max_hour" id="package_max_hour" value="<?php echo package_field( 'package_max_hour' ); ?>" > 			
 			</p>	
 		<?php endif; ?>
 		<fieldset>		
-		<h3><?php _e( 'Disabled Dates', 'dynamicpackages' ); ?> <?php self::select_number('package_disabled_num', 0, 20); ?></h3>
+		<h3><?php esc_html_e( 'Disabled Dates', 'dynamicpackages' ); ?> <?php self::select_number('package_disabled_num', 0, 20); ?></h3>
 		<div class="hot-container">
 			<div id="disabled_dates" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_disabled_num" data-sensei-max="package_disabled_num" data-sensei-container="disabled_dates" data-sensei-table="package_disabled_dates" data-sensei-headers="From,To" data-sensei-type="date,date" ></div>
 		</div>
 		<p>
 			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_disabled_dates')), true))) ? package_field( 'package_disabled_dates' ) : '["disabled_dates":[[null,null]]]'; ?></textarea> 
-		</p>	
+		</p>
+		<h3><?php esc_html_e(__('Disabled Dates API Endpoint', 'dynamicpackages')); ?></h3>
+		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api' )); ?>" > </p>
 		</fieldset>			
 
 		<?php

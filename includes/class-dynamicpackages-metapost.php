@@ -90,7 +90,8 @@ class dy_Metapost{
 			update_post_meta( $post_id, 'package_disabled_num', esc_attr($_POST['package_disabled_num']));
 		if(isset( $_POST['package_disabled_dates']))
 			update_post_meta( $post_id, 'package_disabled_dates', esc_attr($_POST['package_disabled_dates']));		
-		
+		if(isset( $_POST['package_disabled_dates_api']))
+			update_post_meta( $post_id, 'package_disabled_dates_api', esc_url($_POST['package_disabled_dates_api']));		
 
 		//package_event_date
 		if(isset( $_POST['package_event_date']))
