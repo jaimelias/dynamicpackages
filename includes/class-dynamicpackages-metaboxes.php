@@ -115,9 +115,9 @@ class dy_Metaboxes
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 		<p><label><?php _e( 'Number of coupons', 'dynamicpackages' ); ?> <?php self::select_number('package_max_coupons', 1, 10); ?></label></p>
 		<div class="hot-container">
-			<div id="coupons" class="hot" data-sensei-min="package_max_coupons" data-sensei-max="package_max_coupons" data-sensei-container="coupons" data-sensei-table="package_coupons" data-sensei-headers="<?php _e( 'Code', 'dynamicpackages' ); ?>,<?php _e( 'Discount (%)', 'dynamicpackages' ); ?>, <?php _e( 'Expiration', 'dynamicpackages' ); ?>, <?php _e( 'Publish', 'dynamicpackages' ); ?>" data-sensei-type="text,numeric,date,checkbox"></div>
+			<div id="coupons" class="hot" data-sensei-min="package_max_coupons" data-sensei-max="package_max_coupons" data-sensei-container="coupons" data-sensei-table="package_coupons" data-sensei-headers="<?php _e( 'Code', 'dynamicpackages' ); ?>,<?php _e( 'Discount (%)', 'dynamicpackages' ); ?>, <?php _e( 'Expiration', 'dynamicpackages' ); ?>, <?php _e( 'Publish', 'dynamicpackages' ); ?>,<?php _e( 'Minimum Duration', 'dynamicpackages' ); ?>" data-sensei-type="text,numeric,date,checkbox,numeric"></div>
 		</div>
-		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '["coupons":[[null,null,null,null]]]'; ?></textarea></div>		
+		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '["coupons":[[null,null,null,null,null]]]'; ?></textarea></div>		
 	<?php
 	}
 	

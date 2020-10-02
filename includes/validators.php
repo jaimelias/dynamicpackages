@@ -439,14 +439,21 @@ class dy_Validators
 					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
 					$get_coupon = strtolower(dy_utilities::get_coupon('code'));
 					$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+					$duration = dy_utilities::get_min_nights();
+					$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+					$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
+					$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
 					
 					if($get_coupon == $booking_coupon)
 					{
 						$expiration = dy_utilities::get_coupon('expiration');
+						$min_duration = dy_utilities::get_coupon('min_duration');
+						$valid_expiration = false;
+						$valid_duration = false;
 
 						if($expiration == '')
 						{
-							$output = true;
+							$valid_expiration = true;
 						}
 						else
 						{
@@ -456,13 +463,55 @@ class dy_Validators
 							
 							if($expiration_stamp >= dy_strtotime('today midnight'))
 							{
-									$output = true;
+								if(!self::is_package_transport() && !self::is_package_single_day())
+								{
+									for($x = 0; $x < count($booking_dates_range); $x++)
+									{
+										$range_date = new DateTime($booking_dates_range[$x]);
+										$range_date->setTime(0,0,0);
+										$range_date = $range_date->getTimestamp();
+										
+										if($expiration_stamp > $range_date)
+										{
+											$valid_expiration = true;
+										}
+										else
+										{
+											$valid_expiration = false;
+										}
+									}
+								}
+								else
+								{
+									$valid_expiration = true;
+								}	
 							}							
 						}
-					}					
+						
+						if($min_duration == '')
+						{
+							$valid_duration = true;
+						}
+						else
+						{
+							if($duration >= $min_duration)
+							{
+								$valid_duration = true;
+							}
+							else
+							{
+								$valid_duration = false;
+							}
+						}
+						
+						if($valid_expiration && $valid_duration)
+						{
+							$output = true;
+						}
+					}				
 				}
 				
-				if($output === true)
+				if($output)
 				{
 					$GLOBALS['valid_coupon'] = $output;
 				}
@@ -787,6 +836,18 @@ class dy_Validators
 
 	  return ($total % 10 == 0) ? TRUE : FALSE;
 
+	}
+	
+	public static function is_package_single_day()
+	{
+		$output = false;
+		
+		if(package_field( 'package_package_type' ) == 0)
+		{
+			$output = true;
+		}
+		
+		return $output;		
 	}
 	
 	public static function is_package_transport()

@@ -99,23 +99,23 @@ class dy_utilities {
 						{
 							if($option == 'code')
 							{
-								$output = $coupons[$x][0];
+								$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
 							}
 							else if($option == 'discount')
 							{
-								$output = $coupons[$x][1];
+								$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
 							}	
 							else if($option == 'expiration')
 							{
-								$output = $coupons[$x][2];
+								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
 							}
-							else if($option == 'from')
+							else if($option == 'publish')
 							{
-								$output = $coupons[$x][3];
+								$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : null;
 							}
-							else if($option == 'to')
+							else if($option == 'min_duration')
 							{
-								$output = $coupons[$x][4];
+								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
 							}					
 						}
 					}
@@ -524,10 +524,6 @@ class dy_utilities {
 				if(array_key_exists('seasons_chart', $seasons))
 				{
 					$seasons = $seasons['seasons_chart'];
-					
-					
-					
-
 					
 					for($s = 0; $s < count($seasons); $s++)
 					{
