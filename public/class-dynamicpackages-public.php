@@ -400,7 +400,6 @@ class dy_Public {
 				$from = true;
 			}
 			
-			
 			$to = intval(package_field('package_booking_to'));
 			
 			$disable['min'] = $from;
@@ -414,14 +413,14 @@ class dy_Public {
 				if(array_key_exists('disabled_dates', $global_disabled_dates))
 				{
 					$global_disabled_dates = $global_disabled_dates['disabled_dates'];
-					
+										
 					for($x = 0; $x < count($global_disabled_dates); $x++)
 					{
 						$disabled_dates[] = $global_disabled_dates[$x];
 					}
 				}
 			}
-
+			
 			if(is_array($get_disabled_dates))
 			{
 				if(array_key_exists('disabled_dates', $get_disabled_dates))
@@ -459,10 +458,43 @@ class dy_Public {
 							}
 							return $arr;
 						}, $this_date, array_keys($this_date));
-						
-						array_push($disable['disable'], $this_date);
+						$disable['disable'][] = $this_date;
 					}
 				}			
+			}
+		
+			$api_disabled_endpoint = package_field('package_disabled_dates_api');
+			
+			if (filter_var($api_disabled_endpoint, FILTER_VALIDATE_URL) !== false)
+			{
+				$api_disabled_dates = wp_remote_get($api_disabled_endpoint);
+				
+				if(array_key_exists('body', $api_disabled_dates))
+				{
+					$api_disabled_dates = json_decode($api_disabled_dates['body']);
+					
+					if(is_array($api_disabled_dates))
+					{	
+						for($x = 0; $x < count($api_disabled_dates); $x++)
+						{
+							$is_date = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
+							if (preg_match($is_date, $api_disabled_dates[$x]))
+							{
+								$api_date = $api_disabled_dates[$x];
+								$api_date = explode("-", $api_date);
+								$api_date = array_map('intval', $api_date);
+								$api_date = array_map(function($arr, $keys){
+									if($keys == 1)
+									{
+										$arr = $arr - 1;
+									}
+									return $arr;
+								}, $api_date, array_keys($api_date));
+								$disable['disable'][] = $api_date;									
+							}
+						}
+					}
+				}
 			}
 
 			if(count($disable) > 0)
