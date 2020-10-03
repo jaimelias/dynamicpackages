@@ -24,7 +24,46 @@ class dy_utilities {
 			return strtotime(sanitize_text_field($_REQUEST['booking_date']));
 		}
 	}
-	
+	public static function handsontable($args)
+	{
+		$output = null;
+		
+		if(is_array($args))
+		{
+			if(array_key_exists('container', $args) && array_key_exists('textarea', $args) && array_key_exists('headers', $args) && array_key_exists('type', $args) && array_key_exists('max', $args) && array_key_exists('value', $args))
+			{				
+				if(!array_key_exists('min', $args))
+				{
+					$args['min'] = $args['max'];
+				}
+				
+				$default = array();
+				
+				for($x = 0; $x < count($args['headers']); $x++)
+				{
+					$default[] = 'null';
+				}
+				
+				$args['value'] = (is_array(json_decode(html_entity_decode($args['value']), true))) ? $args['value'] : '["'.$args['container'].'":[['.implode(',', $default).']]]';
+				
+				$dropdown = (array_key_exists('dropdown', $args)) ? 'data-sensei-dropdown="'.implode(',', $args['dropdown']).'"' : null;
+				
+				$disabled = (array_key_exists('disabled', $args)) ? $args['disabled'] : null;
+				
+				ob_start();
+				?>
+					<div class="hot-container">
+						<div id="<?php esc_html_e($args['container']); ?>" class="hot" data-sensei-min="<?php esc_html_e($args['min']); ?>" data-sensei-max="<?php esc_html_e($args['max']); ?>" data-sensei-container="<?php esc_html_e($args['container']); ?>" data-sensei-textarea="<?php esc_html_e($args['textarea']); ?>" data-sensei-headers="<?php esc_html_e(implode(',', $args['headers'])); ?>" data-sensei-type="<?php esc_html_e(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php esc_html_e($disabled); ?>"></div>
+					</div>
+					<div class="hidden"><textarea name="<?php esc_html_e($args['textarea']); ?>" id="<?php esc_html_e($args['textarea']); ?>"><?php echo esc_attr($args['value']); ?></textarea></div>
+				<?php
+				$output = ob_get_contents();
+				ob_end_clean();
+			}
+		}
+		
+		return $output;
+	}
 	public static function return_date()
 	{
 		if(isset($_REQUEST['return_date']))

@@ -11,7 +11,7 @@ const loadGrids = () => {
 	jQuery(window).on('load', () =>{
 		jQuery('[data-sensei-container]').each(function(x){
 							
-			const textareas = (jQuery(this).attr('data-sensei-table')) ? String('#'+jQuery(this).attr('data-sensei-table')) : null;
+			const textareas = (jQuery(this).attr('data-sensei-textarea')) ? String('#'+jQuery(this).attr('data-sensei-textarea')) : null;
 			const container = (jQuery(this).attr('data-sensei-container')) ? String('#'+jQuery(this).attr('data-sensei-container')) : null;
 			const min = (jQuery(this).attr('data-sensei-min')) ? String('#'+jQuery(this).attr('data-sensei-min')) : null;
 			const max = (jQuery(this).attr('data-sensei-max')) ? String('#'+jQuery(this).attr('data-sensei-max')) : null;

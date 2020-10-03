@@ -287,26 +287,29 @@ class dy_Admin {
 			'dy_settings_section',
 			array(
 				'name' => 'dy_disabled_dates', 
-				'value' => '["disabled_dates":[[null, null]]]',
+				'value' => null,
 				'max' => 'dy_max_disabled_dates', 
-				'obj' => 'disabled_dates'
+				'container' => 'disabled_dates',
+				'headers' => array(__('From', 'dynamicpackages'), __('To', 'dynamicpackages')),
+				'type' => array('date', 'date'),
 			) 
 		);	
 	}
 
 
 	public static function settings_hot($arr)
-	{
-		$name = $arr['name'];
-		$value = (is_array(json_decode(html_entity_decode(get_option($name)), true))) ? get_option($name) : $arr['value'];
-		$max = $arr['max'];
-		$obj = $arr['obj'];
-		?>
-			<div class="hot-container">
-				<div id="<?php esc_html_e($obj); ?>" class="hot" data-sensei-min="<?php esc_html_e($max); ?>" data-sensei-max="<?php esc_html_e($max); ?>" data-sensei-container="<?php esc_html_e($obj); ?>" data-sensei-table="<?php esc_html_e($name); ?>" data-sensei-headers="<?php esc_html_e( 'From', 'dynamicpackages' ); ?>,<?php esc_html_e( 'To', 'dynamicpackages' ); ?>" data-sensei-type="date,date"></div>
-			</div>
-			<div class="hidden"><textarea name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>"><?php echo $value ?></textarea></div>		
-		<?php
+	{		
+		$args = array(
+			'container' => $arr['container'],
+			'textarea' => $arr['name'],
+			'headers' => $arr['headers'],
+			'type' => $arr['type'],
+			'min' => $arr['max'],
+			'max' => $arr['max'],
+			'value' => get_option($arr['name'])
+		);
+		
+		echo dy_utilities::handsontable($args);
 	}
 
 	public static function settings_input($arr){

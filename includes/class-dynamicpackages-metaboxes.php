@@ -114,10 +114,21 @@ class dy_Metaboxes
 		
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 		<p><label><?php _e( 'Number of coupons', 'dynamicpackages' ); ?> <?php self::select_number('package_max_coupons', 1, 10); ?></label></p>
-		<div class="hot-container">
-			<div id="coupons" class="hot" data-sensei-min="package_max_coupons" data-sensei-max="package_max_coupons" data-sensei-container="coupons" data-sensei-table="package_coupons" data-sensei-headers="<?php _e( 'Code', 'dynamicpackages' ); ?>,<?php _e( 'Discount (%)', 'dynamicpackages' ); ?>, <?php _e( 'Expiration', 'dynamicpackages' ); ?>, <?php _e( 'Publish', 'dynamicpackages' ); ?>,<?php _e( 'Minimum Duration', 'dynamicpackages' ); ?>" data-sensei-type="text,numeric,date,checkbox,numeric"></div>
-		</div>
-		<div class="hidden"><textarea name="package_coupons" id="package_coupons"><?php echo (is_array(json_decode(html_entity_decode(package_field('package_coupons')), true))) ? package_field('package_coupons') : '["coupons":[[null,null,null,null,null]]]'; ?></textarea></div>		
+		
+		<?php 
+		
+		$args = array(
+					'container' => 'coupons',
+					'textarea' => 'package_coupons',
+					'headers' => array(__( 'Code', 'dynamicpackages'), __('Discount (%)', 'dynamicpackages'), __( 'Expiration', 'dynamicpackages' ), __( 'Publish', 'dynamicpackages' ), __( 'Minimum Duration', 'dynamicpackages' )),
+					'type' => array('text', 'numeric', 'date', 'checkbox', 'numeric'),
+					'min' => 'package_max_coupons',
+					'max' => 'package_max_coupons',
+					'value' => package_field('package_coupons'),
+				);		
+		
+		echo dy_utilities::handsontable($args); ?>
+		
 	<?php
 	}
 	
@@ -309,12 +320,23 @@ class dy_Metaboxes
 		<?php if(package_field( 'package_package_type' ) == 1 ): ?>
 			<fieldset>		
 			<h3><?php _e( 'Number of Special Seasons', 'dynamicpackages' ); ?> <?php self::select_number('package_num_seasons', 1, 10, $disable_child); ?></h3>
-			<div class="hot-container">
-				<div id="seasons_chart" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_num_seasons" data-sensei-max="package_num_seasons" data-sensei-container="seasons_chart" data-sensei-table="package_seasons_chart" data-sensei-headers="Name,From,To,Nights,ID" data-sensei-type="text,date,date,dropdown,readonly" data-sensei-disabled="<?php echo esc_html($disable_child); ?>"></div>
-			</div>
-			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_seasons_chart" id="package_seasons_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_seasons_chart')), true))) ? package_field( 'package_seasons_chart' ) : '["seasons_chart":[[null,null,null,null,null]]]'; ?></textarea> 
-			</p>	
+			
+			<?php 
+			
+			$args = array(
+						'container' => 'seasons_chart',
+						'textarea' => 'package_seasons_chart',
+						'headers' => array(__('Name', 'dynamicpackages'), __('From', 'dynamicpackages'), __('To', 'dynamicpackages'), __('Duration', 'dynamicpackages'), __('ID', 'dynamicpackages')),
+						'type' => array('text','date','date','dropdown','readonly'),
+						'dropdown' => array(1,2,3,4,5,6,7),
+						'min' => 'package_num_seasons',
+						'max' => 'package_num_seasons',
+						'value' => package_field('package_seasons_chart'),
+						'disabled' => $disable_child
+					);		
+					
+			echo dy_utilities::handsontable($args); ?>			
+		
 			</fieldset>	
 		<?php endif; ?>	
 
@@ -340,13 +362,20 @@ class dy_Metaboxes
 			<h3><?php esc_html_e( 'Base Prices Per Person', 'dynamicpackages' ); ?></h3>
 		<?php endif; ?>
 
-
-		<div class="hot-container">
-			<div id="price_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="price_chart" data-sensei-table="package_price_chart" data-sensei-headers="Adults,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
-		</div>
-		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_price_chart" id="package_price_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_price_chart')), true))) ? package_field( 'package_price_chart' ) : '["price_chart":[[null,null]]]'; ?></textarea>
-		</p>	
+		<?php
+	
+			$args = array(
+						'container' => 'price_chart',
+						'textarea' => 'package_price_chart',
+						'headers' => array(__('Regular', 'dynamicpackages'), __('Discount', 'dynamicpackages')),
+						'type' => array('currency', 'currency'),
+						'min' => 'package_min_persons',
+						'max' => 'package_max_persons',
+						'value' => package_field('package_price_chart')
+					);		
+					
+			echo dy_utilities::handsontable($args);
+		?>	
 		</fieldset>
 	
 		<?php if(package_field( 'package_package_type' ) == 1): ?>
@@ -354,12 +383,21 @@ class dy_Metaboxes
 			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit()?> <?php _e( 'Accomodation Prices Per Person', 'dynamicpackages' ); ?></h3>
 			
 			
-			<div class="hot-container">
-				<div id="occupancy_chart" class="hot" data-sensei-min="package_min_persons" data-sensei-max="package_max_persons" data-sensei-container="occupancy_chart" data-sensei-table="package_occupancy_chart" data-sensei-headers="<?php _e( 'Adults', 'dynamicpackages' ); ?>,<?php _e( 'Children Under', 'dynamicpackages' ); ?> <?php echo package_field( 'package_discount' ); ?>" data-sensei-type="currency,currency"></div>
-			</div>
-			<p>
-				<textarea class="hidden" rows="4" cols="50" name="package_occupancy_chart" id="package_occupancy_chart" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_occupancy_chart')), true))) ? package_field( 'package_occupancy_chart' ) : '["occupancy_chart":[[null,null]]]'; ?></textarea>
-			</p>	
+		<?php
+	
+			$args = array(
+						'container' => 'occupancy_chart',
+						'textarea' => 'package_occupancy_chart',
+						'headers' => array(__('Regular', 'dynamicpackages'), __('Discount', 'dynamicpackages')),
+						'type' => array('currency', 'currency'),
+						'min' => 'package_min_persons',
+						'max' => 'package_max_persons',
+						'value' => package_field('package_occupancy_chart')
+					);		
+					
+			echo dy_utilities::handsontable($args);
+		?>	
+				
 		</fieldset>
 		<?php endif; ?>
 		
@@ -413,12 +451,23 @@ class dy_Metaboxes
 		<?php endif; ?>
 		<fieldset>		
 		<h3><?php esc_html_e( 'Disabled Dates', 'dynamicpackages' ); ?> <?php self::select_number('package_disabled_num', 0, 20); ?></h3>
-		<div class="hot-container">
-			<div id="disabled_dates" class="hot" data-sensei-dropdown="1,2,3,4,5,6,7" data-sensei-min="package_disabled_num" data-sensei-max="package_disabled_num" data-sensei-container="disabled_dates" data-sensei-table="package_disabled_dates" data-sensei-headers="From,To" data-sensei-type="date,date" ></div>
-		</div>
-		<p>
-			<textarea class="hidden" rows="4" cols="50" name="package_disabled_dates" id="package_disabled_dates" ><?php echo (is_array(json_decode(html_entity_decode(package_field('package_disabled_dates')), true))) ? package_field( 'package_disabled_dates' ) : '["disabled_dates":[[null,null]]]'; ?></textarea> 
-		</p>
+		
+		
+		<?php
+	
+			$args = array(
+						'container' => 'disabled_dates',
+						'textarea' => 'package_disabled_dates',
+						'headers' => array(__('From', 'dynamicpackages'), __('To', 'dynamicpackages')),
+						'type' => array('date', 'date'),
+						'min' => 'package_disabled_num',
+						'max' => 'package_disabled_num',
+						'value' => package_field('package_disabled_dates')
+					);		
+					
+			echo dy_utilities::handsontable($args);
+		?>		
+		
 		<h3><?php esc_html_e(__('Disabled Dates API Endpoint', 'dynamicpackages')); ?></h3>
 		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api' )); ?>" > </p>
 		</fieldset>			

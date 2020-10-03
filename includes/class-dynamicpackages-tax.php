@@ -146,7 +146,6 @@ class dy_Tax_Mod
 				$input .= ' name="'.$k.'" ';
 				$input .= ' id="'.$k.'" ';
 				$label = $args[$k]['label'];
-				$handsontable = '';
 				
 				if(array_key_exists('class', $args[$k]))
 				{
@@ -162,14 +161,6 @@ class dy_Tax_Mod
 						{
 							$input .= ' min="'.$args[$k]['min'].'" ';
 						}
-					}
-				}
-				
-				if(array_key_exists('handsontable', $args[$k]))
-				{
-					if($args[$k]['handsontable'] == true)
-					{
-						$handsontable = '<div class="hot-container"><div id="'.$k.'_c" class="hot" data-sensei-max="tax_add_ons_max" data-sensei-container="'.$k.'_c" data-sensei-table="'.$k.'" data-sensei-headers="Prices" data-sensei-type="currency"></div></div>';
 					}
 				}
 				
@@ -213,11 +204,27 @@ class dy_Tax_Mod
 					if(array_key_exists('handsontable', $args[$k]))
 					{
 						if($args[$k]['handsontable'] == true)
+						{							
+							$field = dy_utilities::handsontable(array(
+								'container' => $k.'_c',
+								'textarea' => $k,
+								'headers' => array(__('Prices', 'dynamicpackages')),
+								'type' => array('currency'),
+								'min' => 'tax_add_ons_max',
+								'max' => 'tax_add_ons_max',
+								'value' => $value
+							));
+						}
+						else
 						{
-							$value = (is_array(json_decode(html_entity_decode($value), true))) ? $value : '["'.$name.'":[[null]]]';
+							$field = '<textarea '.$input.'>'.$value.'</textarea>';
 						}
 					}
-					$field = '<textarea '.$input.'>'.$value.'</textarea>';
+					else
+					{
+						$field = '<textarea '.$input.'>'.$value.'</textarea>';
+					}
+					
 				}
 				
 				if(array_key_exists('description', $args[$k]))
@@ -245,7 +252,7 @@ class dy_Tax_Mod
 				$label = 'Invalid Field';
 				$field = '<strong>'.$k.':</strong>'.$err;
 			}
-			$field = '<tr class="form-field"><th scope="row" valign="top"><label for="'.$k.'">'.esc_html($label).'</label></th><td>'.$field.$handsontable.'</td></tr>';
+			$field = '<tr class="form-field"><th scope="row" valign="top"><label for="'.$k.'">'.esc_html($label).'</label></th><td>'.$field.'</td></tr>';
 
 			$form .= $field;
 		}
