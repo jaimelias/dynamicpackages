@@ -2093,14 +2093,14 @@ class dy_Public {
 		{
 			$duration_unit = package_field('package_length_unit');
 			$coupons = self::get_all_coupons();
-			$output = null;
+			$output = null;			
 						
 			if(is_array($coupons))
 			{
 				for($x = 0; $x < count($coupons); $x++)
 				{
-					if($coupons[$x][3] === true && $coupons[$x][0] != '')
-					{
+					if($coupons[$x][3] == 'true' && $coupons[$x][0])
+					{						
 						$expiration = new DateTime($coupons[$x][2]);
 						$expiration->setTime(0,0,0);
 						$expiration = $expiration->getTimestamp();	
