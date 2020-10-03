@@ -179,29 +179,32 @@ const booking_calc = () => {
 				
 		jQuery('.dy_calc').each(function(){
 			
-			if(jQuery(this).hasClass('dy_calc_amount'))
-			{
-				jQuery(this).text(args.amount);
-			}
-			if(jQuery(this).hasClass('dy_calc_regular'))
-			{
-				jQuery(this).text(args.regular_amount);
-			}			
-			if(jQuery(this).hasClass('dy_calc_total'))
-			{
-				jQuery(this).text(args.total);
-			}
-			if(jQuery(this).hasClass('dy_calc_outstanding'))
-			{
-				jQuery(this).text(args.outstanding);
-			}
-			if(jQuery(this).hasClass('dy_calc_tax_amount'))
-			{
-				jQuery(this).text(args.tax_amount);
-			}
 			jQuery(this).addClass('animate');
+			jQuery(this).html('<span class="padding-10"><i class="fas fa-sync fa-spin"></i></span>');
 			
 			setTimeout(()=>{
+				
+				if(jQuery(this).hasClass('dy_calc_amount'))
+				{
+					jQuery(this).text(args.amount);
+				}
+				if(jQuery(this).hasClass('dy_calc_regular'))
+				{
+					jQuery(this).text(args.regular_amount);
+				}			
+				if(jQuery(this).hasClass('dy_calc_total'))
+				{
+					jQuery(this).text(args.total);
+				}
+				if(jQuery(this).hasClass('dy_calc_outstanding'))
+				{
+					jQuery(this).text(args.outstanding);
+				}
+				if(jQuery(this).hasClass('dy_calc_tax_amount'))
+				{
+					jQuery(this).text(args.tax_amount);
+				}
+
 				jQuery(this).removeClass('animate');
 			}, 1000);
 			
