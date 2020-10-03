@@ -1,6 +1,6 @@
 <?php
 
-class dy_Validators
+class dy_validators
 {
 	public static function validate_booking_date()
 	{
@@ -419,7 +419,18 @@ class dy_Validators
 		
 		return $output;
 	}
-	
+	public static function is_date($str)
+	{
+		$output = false;
+		$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
+		
+		if(preg_match($regex, $str))
+		{
+			$output = true;
+		}
+		
+		return $output;
+	}
 	public static function valid_coupon()
 	{
 		$output = false;
@@ -447,7 +458,7 @@ class dy_Validators
 					if($get_coupon == $booking_coupon)
 					{
 						$expiration = dy_utilities::get_coupon('expiration');
-						$min_duration = dy_utilities::get_coupon('min_duration');
+						$min_duration = (is_numeric(dy_utilities::get_coupon('min_duration'))) ? dy_utilities::get_coupon('min_duration') : 0;
 						$valid_expiration = false;
 						$valid_duration = false;
 
@@ -488,7 +499,7 @@ class dy_Validators
 							}							
 						}
 						
-						if($min_duration == '')
+						if($min_duration)
 						{
 							$valid_duration = true;
 						}

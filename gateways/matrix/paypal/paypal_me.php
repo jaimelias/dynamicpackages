@@ -42,7 +42,7 @@ class paypal_me{
 
 	public function send_data()
 	{		
-		if(dy_Validators::is_request_valid() && $this->is_valid_request())
+		if(dy_validators::is_request_valid() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -61,7 +61,7 @@ class paypal_me{
 	
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -74,7 +74,7 @@ class paypal_me{
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Thank you for choosing Paypal', 'dynamicpackages'));
 		}
@@ -189,7 +189,7 @@ class paypal_me{
 					}
 					else
 					{
-						if(dy_Validators::has_deposit())
+						if(dy_validators::has_deposit())
 						{
 							$output = true;
 						}
@@ -304,7 +304,7 @@ class paypal_me{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{
 			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
@@ -375,7 +375,7 @@ class paypal_me{
 		
 		$label = __('full payment of', 'dynamicpackages');
 		
-		if(dy_Validators::has_deposit())
+		if(dy_validators::has_deposit())
 		{
 			$label = __('deposit of', 'dynamicpackages');
 		}	

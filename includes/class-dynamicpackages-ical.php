@@ -34,7 +34,7 @@ class dy_Ical
 	{
 		if(self::is_valid())
 		{
-			$event = dy_Validators::event();
+			$event = dy_validators::event();
 			$events = array();
 			$event_max = count($event);
 			

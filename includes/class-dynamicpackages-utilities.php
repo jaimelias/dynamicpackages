@@ -104,10 +104,12 @@ class dy_utilities {
 							else if($option == 'discount')
 							{
 								$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
+								$output = (is_numeric($output)) ? $output : null;
 							}	
 							else if($option == 'expiration')
 							{
 								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
+								$output = (dy_validators::is_date($output)) ? $output : null;
 							}
 							else if($option == 'publish')
 							{
@@ -116,6 +118,7 @@ class dy_utilities {
 							else if($option == 'min_duration')
 							{
 								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
+								$output = (is_numeric($output)) ? $output : null;
 							}					
 						}
 					}
@@ -216,10 +219,10 @@ class dy_utilities {
 		{
 			$output = self::starting_at();
 			
-			if(dy_Validators::has_children() && in_the_loop())
+			if(dy_validators::has_children() && in_the_loop())
 			{
 				$prices = array();
-				$children = dy_Validators::has_children();
+				$children = dy_validators::has_children();
 				
 				foreach ( $children as $child )
 				{
@@ -749,7 +752,7 @@ class dy_utilities {
 			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 		}
 
-		if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+		if(dy_validators::is_package_transport() && isset($_REQUEST['return_date']))
 		{
 			if(strlen($_REQUEST['return_date']) >= 5)
 			{
@@ -757,7 +760,7 @@ class dy_utilities {
 			}
 		}
 		
-		if(dy_Validators::valid_coupon() && $regular === null)
+		if(dy_validators::valid_coupon() && $regular === null)
 		{
 			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
 		}
@@ -906,7 +909,7 @@ class dy_utilities {
 	{
 		$total = floatval(dy_utilities::total());
 		
-		if(dy_Validators::has_deposit())
+		if(dy_validators::has_deposit())
 		{
 			$deposit = floatval(dy_utilities::get_deposit());
 			$total = $total*($deposit*0.01);			

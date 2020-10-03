@@ -8,7 +8,7 @@
 		
 		<?php dy_Public::children_package(); ?>
 		
-		<?php if(!dy_Validators::has_children()):?>
+		<?php if(!dy_validators::has_children()):?>
 			<div id="auto_booking"><?php dynamicpackages_Forms::auto_booking(); ?></div>
 		<?php endif; ?>
 		
@@ -23,7 +23,7 @@
 	
 	<?php  echo  $new_content; ?>
 	
-	<?php if(dy_Validators::is_child()): ?><p><?php dy_Public::return_parent();?></p><?php endif; ?>
+	<?php if(dy_validators::is_child()): ?><p><?php dy_Public::return_parent();?></p><?php endif; ?>
 	<hr />
 
 

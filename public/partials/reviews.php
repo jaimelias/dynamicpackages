@@ -50,7 +50,7 @@ class dy_Reviews
 
 					$schema = '';
 					
-					if(dy_Validators::is_valid_schema())
+					if(dy_validators::is_valid_schema())
 					{
 						$schema = 'itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating"';
 					}					

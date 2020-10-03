@@ -65,7 +65,7 @@ class dy_Gateways
 		{
 			if(is_booking_page())
 			{
-				if(dy_Validators::validate_hash())
+				if(dy_validators::validate_hash())
 				{
 					$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
 					$sum_people = $pax_regular;	
@@ -166,7 +166,7 @@ class dy_Gateways
 		{
 			$output = __('Pay', 'dynamicpackages');
 			
-			if(dy_Validators::has_deposit())
+			if(dy_validators::has_deposit())
 			{
 				$output .= ' '.__('the deposit', 'dynamicpackages');
 			}
@@ -191,7 +191,7 @@ class dy_Gateways
 	{
 		if(is_singular('packages') && package_field('package_auto_booking') > 0)
 		{	
-			if(is_booking_page() && dy_Validators::valid_coupon())
+			if(is_booking_page() && dy_validators::valid_coupon())
 			{
 				$coupon = ucwords(strtolower(sanitize_text_field($_GET['booking_coupon'])));
 				
@@ -278,7 +278,7 @@ class dy_Gateways
 		$booking_coupon = null;
 		$coupon_discount = null;
 		
-		if(dy_Validators::valid_coupon())
+		if(dy_validators::valid_coupon())
 		{
 			$booking_coupon = dy_utilities::get_coupon('code');
 			$coupon_discount = dy_utilities::get_coupon('discount');
@@ -349,7 +349,7 @@ class dy_Gateways
 	{
 		$output = apply_filters('dy_package_description', null);
 		
-		if(dy_Validators::has_deposit())
+		if(dy_validators::has_deposit())
 		{
 			$deposit = dy_sum_tax(dy_utilities::payment_amount());
 			$total = dy_sum_tax(dy_utilities::total());
@@ -513,7 +513,7 @@ class dy_Gateways
 		{
 			if($_GET['booking_coupon'] != '')
 			{
-				if(dy_Validators::valid_coupon())
+				if(dy_validators::valid_coupon())
 				{
 					$expiration = dy_utilities::get_coupon('expiration');
 					

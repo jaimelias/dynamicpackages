@@ -152,14 +152,14 @@
 					<?php endif; ?>
 					<tr>
 						<td colspan="3">
-							<?php if(dy_Validators::valid_coupon()): ?>
+							<?php if(dy_validators::valid_coupon()): ?>
 								<s class="small light text-muted"><?php echo esc_html(__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::total('regular'), 'dy_calc dy_calc_regular'); ?></span></s><br/>
 							<?php endif; ?>
 							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dy_utilities::total()), 'dy_calc dy_calc_amount'); ?></span>
 						</td>
 					</tr>
 					
-					<?php if(dy_Validators::has_deposit()): ?>
+					<?php if(dy_validators::has_deposit()): ?>
 						<tr>
 							<td colspan="3"><?php echo ($deposit_label) ?></td>
 						</tr>

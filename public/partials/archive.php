@@ -260,10 +260,10 @@ else
 			$package_code = package_field( 'package_trip_code' );
 		?>
 
-			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_Validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
+			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
 				
 				
-				<?php if(dy_Validators::is_valid_schema($post->ID)): ?>
+				<?php if(dy_validators::is_valid_schema($post->ID)): ?>
 					<link itemprop="url" href="<?php the_permalink(); ?>" />
 					<meta itemprop="brand" content="<?php bloginfo('name'); ?>" />
 					<meta itemprop="sku" content="<?php echo esc_html(md5(package_field( 'package_trip_code' ))); ?>" />
@@ -297,7 +297,7 @@ else
 							<?php dy_Reviews::stars($post->ID); ?>
 							</div>
 
-							<?php if(!dy_Validators::is_package_transport()) : ?>
+							<?php if(!dy_validators::is_package_transport()) : ?>
 								<div class="dy_pad bottom-10 semibold">
 									<?php echo esc_html(dy_Public::show_duration(true)); ?>
 								</div>

@@ -343,7 +343,7 @@ class dy_Public {
 			{
 				if(!is_booking_page())
 				{
-					if(dy_Validators::is_child())
+					if(dy_validators::is_child())
 					{
 						
 						$subpackage_name = 'package_child_title';
@@ -477,8 +477,7 @@ class dy_Public {
 					{	
 						for($x = 0; $x < count($api_disabled_dates); $x++)
 						{
-							$is_date = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
-							if (preg_match($is_date, $api_disabled_dates[$x]))
+							if(dy_validators::is_date($api_disabled_dates[$x]))
 							{
 								$api_date = $api_disabled_dates[$x];
 								$api_date = explode("-", $api_date);
@@ -623,7 +622,7 @@ class dy_Public {
 			}
 			elseif(is_page())
 			{
-				if(dy_Validators::validate_category_location())
+				if(dy_validators::validate_category_location())
 				{
 					$location = '';
 					$category = '';
@@ -801,7 +800,7 @@ class dy_Public {
 				}
 				elseif(is_page())
 				{
-					if(dy_Validators::validate_category_location())
+					if(dy_validators::validate_category_location())
 					{
 						$location = '';
 						$category = '';
@@ -952,7 +951,7 @@ class dy_Public {
 			{
 				$output .=__('Per Day', 'dynamicpackages');
 			}
-			else if(dy_Validators::is_package_transport())
+			else if(dy_validators::is_package_transport())
 			{
 				$output .=__('One-way', 'dynamicpackages');
 			}
@@ -1499,7 +1498,7 @@ class dy_Public {
 			
 			$people_imp = implode(', ', $people_imp);
 			
-			if(dy_Validators::is_package_transport() && isset($_REQUEST['return_date']))
+			if(dy_validators::is_package_transport() && isset($_REQUEST['return_date']))
 			{
 				$itinerary = __('Departure', 'dynamicpackages') .' '. $departure_date;
 				
@@ -1549,7 +1548,7 @@ class dy_Public {
 		global $post;
 		global $polylang;
 		
-		if(!dy_Validators::is_child() && isset($post))
+		if(!dy_validators::is_child() && isset($post))
 		{
 			$label = __('Packages', 'dynamicpackages');
 			
@@ -1669,7 +1668,7 @@ class dy_Public {
 			
 			if(is_object($post))
 			{
-				if(dy_Validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
+				if(dy_validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
 				{
 					$excerpt = null;
 				}				
@@ -1681,7 +1680,7 @@ class dy_Public {
 	
 	public static function deque_jetpack()
 	{	
-		if(is_page() && dy_Validators::validate_category_location())
+		if(is_page() && dy_validators::validate_category_location())
 		{	
 			remove_action( 'wp_head', 'rel_canonical');
 			return false;
@@ -1700,7 +1699,7 @@ class dy_Public {
 	}
 	public static function location_category_canonical()
 	{
-		if(dy_Validators::validate_category_location())
+		if(dy_validators::validate_category_location())
 		{
 			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 			$url = get_the_permalink().'?';
@@ -1899,7 +1898,7 @@ class dy_Public {
 		{
 			unset($args['return_date']);
 		}
-		if(dy_Validators::is_package_transport())
+		if(dy_validators::is_package_transport())
 		{
 			unset($args['duration']);
 		}
@@ -1915,7 +1914,7 @@ class dy_Public {
 		{
 			unset($args['return_address']);
 		}
-		if(!dy_Validators::is_package_transport() || is_page() || is_tax())
+		if(!dy_validators::is_package_transport() || is_page() || is_tax())
 		{
 			if(!is_booking_page() && !is_checkout_page())
 			{
@@ -2090,8 +2089,9 @@ class dy_Public {
 	
 	public static function show_coupons()
 	{
-		if(dy_Validators::has_coupon())
+		if(dy_validators::has_coupon())
 		{
+			$duration_unit = package_field('package_length_unit');
 			$coupons = self::get_all_coupons();
 			$output = null;
 						
@@ -2131,10 +2131,19 @@ class dy_Public {
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));
 								$label .= ' <strong>'.strtoupper(esc_html($coupons[$x][0])).'</strong>.';
 								
+								if(isset($coupons[$x][4]) && !dy_validators::is_package_transport() && !dy_validators::is_package_single_day())
+								{
+									if(is_numeric($coupons[$x][4]))
+									{
+										write_log($coupons[$x][4]);
+										$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(self::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
+									}
+								}
+								
 								if($expiration != '')
 								{
-									$label .= ' '.esc_html(__('Offer valid until', 'dynamicpackages'));
-									$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.';
+									$label .= '<br/><small>'.esc_html(__('Offer valid until', 'dynamicpackages'));
+									$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.</small>';
 								}
 								$label = apply_filters('coupon_gateway', $label, $coupons[$x][0]);
 								$output .= $label;
@@ -2167,7 +2176,7 @@ class dy_Public {
 	{
 		global $post;
 		
-		if(isset($post) && dy_Validators::is_child())
+		if(isset($post) && dy_validators::is_child())
 		{
 			$label = __('Similar packages', 'dynamicpackages');
 			

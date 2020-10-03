@@ -31,7 +31,7 @@ class dy_Metaboxes
 			'default'
 		);
 
-		if(!dy_Validators::has_children())
+		if(!dy_validators::has_children())
 		{
 			add_meta_box(
 				'package-c',
@@ -54,7 +54,7 @@ class dy_Metaboxes
 		);		
 		
 		
-		if(!dy_Validators::is_child())
+		if(!dy_validators::is_child())
 		{			
 			add_meta_box(
 				'package-e',
@@ -188,7 +188,7 @@ class dy_Metaboxes
 	public static function package_departure_html( $post) {
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 
-		<?php if(dy_Validators::is_package_transport()): ?>
+		<?php if(dy_validators::is_package_transport()): ?>
 			<h3><?php esc_html_e('Departure', 'dynamicpackages'); ?></h3>
 		<?php endif; ?>
 
@@ -205,7 +205,7 @@ class dy_Metaboxes
 			<textarea cols="60" type="text" name="package_departure_address" id="package_departure_address"><?php echo package_field( 'package_departure_address' ); ?></textarea>
 		</p>
 
-		<?php if(dy_Validators::is_package_transport()): ?>
+		<?php if(dy_validators::is_package_transport()): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
 			<p>
@@ -236,7 +236,7 @@ class dy_Metaboxes
 		
 			$disable_child = '';
 
-			if(dy_Validators::is_child())
+			if(dy_validators::is_child())
 			{
 				$disable_child = 'disabled';
 			}
@@ -244,7 +244,7 @@ class dy_Metaboxes
 		
 		
 		
-		<?php if(!dy_Validators::is_child()) : ?>	
+		<?php if(!dy_validators::is_child()) : ?>	
 				<p>
 					<label for="package_show_pricing"><?php _e( 'Show Price Table', 'dynamicpackages' ); ?></label><br />
 					<select name="package_show_pricing" id="package_show_pricing">
@@ -262,7 +262,7 @@ class dy_Metaboxes
 				</p>				
 			<?php endif; ?>
 			
-			<?php if(dy_Validators::is_child() || dy_Validators::is_parent_with_no_child()) : ?>
+			<?php if(dy_validators::is_child() || dy_validators::is_parent_with_no_child()) : ?>
 			
 			<p>
 				<label for="package_min_persons"><?php _e( 'Minimum Number of participants', 'dynamicpackages' ); ?></label><br />
@@ -290,7 +290,7 @@ class dy_Metaboxes
 			</p>	
 		<?php endif; ?>
 			
-		<?php if(!dy_Validators::is_child()) : ?>
+		<?php if(!dy_validators::is_child()) : ?>
 
 			<?php if(intval(package_field( 'package_auto_booking' )) > 0): ?>
 				<p>
@@ -373,7 +373,7 @@ class dy_Metaboxes
 	public static function package_availability_html( $post) {
 		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
 		
-		<?php if(!dy_Validators::is_child()) : ?>
+		<?php if(!dy_validators::is_child()) : ?>
 			<h4><?php _e( 'Event Date', 'dynamicpackages' ); ?></h4>
 				<p>
 					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo package_field( 'package_event_date' ); ?>">
@@ -431,7 +431,7 @@ class dy_Metaboxes
 		
 		<?php 
 
-			if(dy_Validators::is_child())
+			if(dy_validators::is_child())
 			{
 				global $polylang; 
 				$language_list = array();
@@ -470,7 +470,7 @@ class dy_Metaboxes
 			}
 		?>		
 		
-		<?php if(!dy_Validators::is_child()) : ?>
+		<?php if(!dy_validators::is_child()) : ?>
 			<p>
 				<label for="package_display"><?php _e( 'Hide Package', 'dynamicpackages' ); ?></label><br />
 				<select name="package_display" id="package_display">

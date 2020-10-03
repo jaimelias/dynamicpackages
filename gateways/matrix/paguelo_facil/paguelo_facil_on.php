@@ -55,7 +55,7 @@ class paguelo_facil_on{
 		
 		if(!isset($this->success))
 		{
-			if(dy_Validators::validate_checkout($this->gateway_name))
+			if(dy_validators::validate_checkout($this->gateway_name))
 			{
 				if(isset($dy_valid_recaptcha))
 				{
@@ -128,7 +128,7 @@ class paguelo_facil_on{
 	{
 		global $dy_valid_recaptcha;
 		
-		if(dy_Validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($this->success))
+		if(dy_validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($this->success))
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
@@ -173,7 +173,7 @@ class paguelo_facil_on{
 		{
 			if($this->success === 2)
 			{
-				$payment = (dy_Validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+				$payment = (dy_validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
 				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);
 			}
 			else if($this->success === 1)
@@ -312,13 +312,13 @@ class paguelo_facil_on{
 		global $dy_valid_recaptcha;
 		
 		
-		if(isset($this->success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		if(isset($this->success) && in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
 		{
 			if(isset($dy_valid_recaptcha))
 			{
 				if($this->success === 2)
 				{
-					$payment = (dy_Validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
+					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
 					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
@@ -369,7 +369,7 @@ class paguelo_facil_on{
 	{
 		
 		
-		if(isset($this->success) && in_the_loop() && dy_Validators::is_request_valid() && $this->is_valid_request())
+		if(isset($this->success) && in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
 		{
 			if($this->success === 2)
 			{
@@ -447,7 +447,7 @@ class paguelo_facil_on{
 					}
 					else
 					{
-						if(dy_Validators::has_deposit())
+						if(dy_validators::has_deposit())
 						{
 							$output = true;
 						}
@@ -585,7 +585,7 @@ class paguelo_facil_on{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_Validators::is_request_valid())
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{			
 			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
@@ -603,7 +603,7 @@ class paguelo_facil_on{
 	
 	public function totals_area($output)
 	{
-		if(dy_Validators::has_deposit())
+		if(dy_validators::has_deposit())
 		{
 			$outstanding = dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::outstanding_amount());
 			$total =  dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::payment_amount());

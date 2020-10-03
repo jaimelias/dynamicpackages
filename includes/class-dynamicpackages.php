@@ -74,7 +74,7 @@ class dynamicpackages {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->validate_recaptcha = dy_Validators::validate_recaptcha();
+		$this->validate_recaptcha = dy_validators::validate_recaptcha();
 	}
 
 	/**

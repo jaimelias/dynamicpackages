@@ -45,11 +45,11 @@ class dy_Json
 				global $post;
 				$event_id = $post->ID;
 				
-				if(dy_Validators::has_children())
+				if(dy_validators::has_children())
 				{
 					$ids = array();
-					//dy_Validators::has_children() returns the children obj
-					$children = dy_Validators::has_children();
+					//dy_validators::has_children() returns the children obj
+					$children = dy_validators::has_children();
 					
 					foreach ( $children as $child )
 					{
@@ -75,10 +75,10 @@ class dy_Json
 				
 				$starting_at = floatval(number_format(dy_utilities::starting_at($event_id), 2, '.', ''));
 				
-				if(dy_Validators::is_valid_schema())
+				if(dy_validators::is_valid_schema())
 				{
 					global $post;
-					$event = dy_Validators::event();
+					$event = dy_validators::event();
 					
 					//offers
 					$offers = array();

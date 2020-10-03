@@ -40,7 +40,7 @@ class dy_Actions{
     {
         global $dy_valid_recaptcha;
 
-        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_Validators::is_request_valid())
+        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::is_request_valid())
         {
             $this->send_email();
             dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
@@ -53,7 +53,7 @@ class dy_Actions{
 
         if(is_singular('packages') && $this->is_request_submitted())
         {               
-            if(dy_Validators::is_request_valid())
+            if(dy_validators::is_request_valid())
             {
                 if(isset($dy_valid_recaptcha))
                 {
