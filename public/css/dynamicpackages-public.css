@@ -248,5 +248,5 @@ ul.tax_list > li.cat-item  > ul.children
 .dy_calc.animate
 {
 	transition: background-color 1s ease;
-	background-color: rgba(0,0,0,0.1);
+	background-color: #ccc;
 }
