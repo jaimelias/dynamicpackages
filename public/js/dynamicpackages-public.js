@@ -198,7 +198,13 @@ const booking_calc = () => {
 			if(jQuery(this).hasClass('dy_calc_tax_amount'))
 			{
 				jQuery(this).text(args.tax_amount);
-			}				
+			}
+			jQuery(this).addClass('animate');
+			
+			setTimeout(()=>{
+				jQuery(this).removeClass('animate');
+			}, 1000);
+			
 		});		
 	});
 }
