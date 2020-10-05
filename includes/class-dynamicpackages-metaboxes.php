@@ -468,7 +468,7 @@ class dy_Metaboxes
 			echo dy_utilities::handsontable($args);
 		?>		
 		
-		<h3><?php esc_html_e(__('Disabled Dates API Endpoint', 'dynamicpackages')); ?></h3>
+		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
 		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api' )); ?>" > </p>
 		</fieldset>			
 
