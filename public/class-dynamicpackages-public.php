@@ -2136,7 +2136,6 @@ class dy_Public {
 								{
 									if(is_numeric($coupons[$x][4]))
 									{
-										write_log($coupons[$x][4]);
 										$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(self::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
 									}
 								}
