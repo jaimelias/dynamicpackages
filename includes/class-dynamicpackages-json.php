@@ -215,7 +215,10 @@ class dy_Json
 							$item['startDate'] = esc_html($event_date_format);
 							$item['endDate'] = esc_html($event_date_end);
 							$item['description'] = $post->post_excerpt;
-							$item['organizer'] = esc_html(get_bloginfo('name'));
+							$item['organizer'] = array(
+								'name' => esc_html(get_bloginfo('name')),
+								'url' => esc_url(get_bloginfo('url'))
+							);
 							$item['performer'] = esc_html(get_bloginfo('name'));
 							$item['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
 							$item['eventStatus'] = 'https://schema.org/EventScheduled';
@@ -231,11 +234,12 @@ class dy_Json
 							
 							$offers['priceValidUntil'] = esc_html($event[$x]);
 							$item['offers'] = $offers;
-							$location = array();
-							$location['@type'] = 'Place';
-							$location['name'] = esc_html(get_bloginfo('name'));
-							$location['address'] = esc_html(package_field('package_departure_address'));
-							$item['location'] = $location;
+
+							$item['location'] = array(
+								'@type' => 'Place',
+								'name' => esc_html(get_bloginfo('name')),
+								'address' => esc_html(package_field('package_departure_address'))
+							);
 							
 							array_push($event_arr, $item);
 						}
