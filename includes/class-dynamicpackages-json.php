@@ -142,7 +142,6 @@ class dy_Json
 						//is not event
 						$arr['@context'] = 'https://www.schema.org';
 						$arr['@type'] = 'Product';
-						$arr['organizer'] = esc_html(get_bloginfo('name'));
 						$arr['brand'] = array();
 						$arr['brand']['@type'] = 'Thing';
 						$arr['brand']['name'] = esc_html(get_bloginfo('name'));
@@ -216,6 +215,7 @@ class dy_Json
 							$item['startDate'] = esc_html($event_date_format);
 							$item['endDate'] = esc_html($event_date_end);
 							$item['description'] = $post->post_excerpt;
+							$item['organizer'] = esc_html(get_bloginfo('name'));
 							$item['performer'] = esc_html(get_bloginfo('name'));
 							$item['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
 							$item['eventStatus'] = 'https://schema.org/EventScheduled';
