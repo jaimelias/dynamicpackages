@@ -258,11 +258,11 @@ class dy_utilities {
 		{
 			$output = self::starting_at();
 			
-			if(dy_validators::has_children() && in_the_loop())
+			if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
 			{
 				$prices = array();
 				$children = dy_validators::has_children();
-				
+		
 				foreach ( $children as $child )
 				{
 					array_push($prices, self::starting_at($child->ID));

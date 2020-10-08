@@ -2196,10 +2196,11 @@ class dy_Public {
 	{
 		if(is_singular('packages'))
 		{
-			$starting_at = dy_utilities::starting_at();
+			$starting_at = (dy_validators::has_children()) ? dy_utilities::starting_at_archive() : dy_utilities::starting_at();
 			
 			if($starting_at > 0)
 			{
+				$description = (empty($description)) ? get_the_title() : $description;
 				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.self::price_type() . '.';
 			}			
 		}
