@@ -67,6 +67,7 @@ class dy_Public {
 		add_filter('dy_package_details', array(&$this, 'details'));
 		add_action('dy_package_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
+		add_filter('minimal_description', array(&$this, 'meta_description'));
 	}
 
 	public function create_alert($row) {
@@ -2189,5 +2190,20 @@ class dy_Public {
 			echo '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html(self::count_child($post->post_parent)).'</strong> '.esc_html($label).'</a>';			
 			
 		}
+	}
+	
+	public static function meta_description($description)
+	{
+		if(is_singular('packages'))
+		{
+			$starting_at = dy_utilities::starting_at();
+			
+			if($starting_at > 0)
+			{
+				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.self::price_type() . '.';
+			}			
+		}
+		
+		return $description;
 	}
 }
