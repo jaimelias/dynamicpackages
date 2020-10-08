@@ -142,6 +142,7 @@ class dy_Json
 						//is not event
 						$arr['@context'] = 'https://www.schema.org';
 						$arr['@type'] = 'Product';
+						$arr['organizer'] = esc_html(get_bloginfo('name'));
 						$arr['brand'] = array();
 						$arr['brand']['@type'] = 'Thing';
 						$arr['brand']['name'] = esc_html(get_bloginfo('name'));
