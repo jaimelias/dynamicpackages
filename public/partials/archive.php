@@ -241,7 +241,7 @@ else
 	<?php $term_description = do_shortcode($term_description); ?>
 	<?php $term_description = $Parsedown->text($term_description); ?>
 	<div class="bottom-20"><?php echo $term_description; ?> </div>
-	<?php echo dy_Shortcodes::package_filter_form();?>
+	<?php do_action('dy_package_filter');?>
 <?php endif; ?>
 
 	<div id="dy_archive" class="dy_archive">
@@ -352,5 +352,5 @@ else
 	</div><!-- .tp_grid -->
 	
 <?php if(isset($pagination_imp) || is_tax('package_location') || is_tax('package_category')): ?>	
-	<?php dynamicpackages_Forms::pagination($archive_query, $posts_per_page); ?>
+	<?php do_action('dy_archive_pagination', array('archive_query' => $archive_query, 'posts_per_page' => $posts_per_page)); ?>
 <?php endif; ?>

@@ -175,6 +175,7 @@ class dynamicpackages {
 		$plugin_search = new dy_Search();
 		$plugin_reviewes = new dy_Reviews();
 		$plugins_shortcodes = new dy_Shortcodes();
+		$plugins_forms = new dy_Forms();
 		$plugins_json = new dy_Json();
 		$plugins_ical = new dy_Ical();
 		$plugin_form_actions = new dy_Actions();

@@ -1,18 +1,24 @@
-<?php global $post; $has_any_gateway = apply_filters('dy_has_any_gateway', false); ?>
+<?php 
+	global $post; 
+	$has_any_gateway = apply_filters('dy_has_any_gateway', false);
+	$hide_form = ($has_any_gateway) ? 'class="hidden"' : null;
+	$submit_form = ($has_any_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
+	$header_form = (is_singular('packages')) ? __('Get Your Quote Now!', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
+	$request_form = (is_singular('packages')) ? 'request' : 'contact';
+?>
 
-<form id="dynamic_form"  <?php if($has_any_gateway) : ?>class="hidden"<?php endif;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dynamic_form"  <?php echo esc_attr($hide_form);?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
-	
 	    <div class="text-center bottom-20" id="dy_form_icon">
 			<p class="large text-muted">
-				<?php echo esc_html(__('Get Your Quote Now!', 'dynamicpackages')); ?>
+				<?php echo esc_html($header_form); ?>
 			</p>
 		</div>
 		
 		<hr />
 	
 		<!-- Config -->
-		<input type="hidden" name="dy_request" value="request" />
+		<input type="hidden" name="dy_request" value="<?php esc_html_e($request_form); ?>" />
 		<input type="hidden" name="dy_recaptcha" />
 		<input type="hidden" name="add_ons" />
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
@@ -65,10 +71,10 @@
 			
 		</div>
 		
-		<?php if(apply_filters('dy_has_any_gateway', false)) : ?>
+		<?php if($has_any_gateway) : ?>
 			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
 		<?php endif; ?>
 		
-	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php echo esc_html(__('Proceed', 'dynamicpackages')); ?></button></p>	
+	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php echo esc_html($submit_form); ?></button></p>	
 
 </form>

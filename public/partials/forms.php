@@ -1,8 +1,20 @@
 <?php
 
-class dynamicpackages_Forms
+class dy_Forms
 {
-	public static function package_filter_form()
+	public function __construct()
+	{
+		add_filter('dy_package_filter_form', array(&$this, 'package_filter_form'));
+		add_action('dy_package_filter', array(&$this, 'package_filter_form_cb'));
+		add_action('dy_check_prices_form', array(&$this, 'check_prices_form'));
+		add_action('dy_archive_pagination', array(&$this, 'pagination'));
+	}
+
+	public function package_filter_form_cb()
+	{
+		echo $this->package_filter_form();
+	}
+	public function package_filter_form()
 	{
 		global $polylang;
 		
@@ -17,6 +29,7 @@ class dynamicpackages_Forms
 			}
 		}	
 		
+		ob_start();
 		?>
 		<form id="dy_package_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get">
 		
@@ -25,25 +38,25 @@ class dynamicpackages_Forms
 			
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="bottom-20">
-						<?php echo self::get_all_terms_select('package_location', __('Select Location', 'dynamicpackages')); ?>
+						<?php echo $this->get_all_terms_select('package_location', __('Select Location', 'dynamicpackages')); ?>
 					</div>
 				</div>	
 				
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="bottom-20">
-						<?php echo self::get_all_terms_select('package_category', __('Select Category', 'dynamicpackages')); ?>
+						<?php echo $this->get_all_terms_select('package_category', __('Select Category', 'dynamicpackages')); ?>
 					</div>
 				</div>
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="bottom-20">
-						<?php echo self::sort_by(); ?>
+						<?php echo $this->sort_by(); ?>
 					</div>
 				</div>
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="pure-g">
 						<div class="pure-u-1 pure-u-md-4-5">
 							<div class="bottom-20">
-								<input placeholder="<?php echo esc_html(__('Search Keyword', 'dynamicpackages')); ?>" type="text" name="package_search" value="<?php if(isset($_GET['package_search'])) {echo sanitize_text_field(strtolower(substr($_GET['package_search'], 0, 25))); } ?>" />	
+								<input placeholder="<?php esc_html_e(__('Search Keyword', 'dynamicpackages')); ?>" type="text" name="package_search" value="<?php if(isset($_GET['package_search'])) {echo sanitize_text_field(strtolower(substr($_GET['package_search'], 0, 25))); } ?>" />	
 							</div>
 						</div>
 						<div class="pure-u-1 pure-u-md-1-5 small">
@@ -54,11 +67,13 @@ class dynamicpackages_Forms
 			</div>
 				
 			</form>		
-			
 		<?php
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
 	}
 	
-	public static function sort_by()
+	public function sort_by()
 	{
 		$sort = 'any';
 		
@@ -88,7 +103,7 @@ class dynamicpackages_Forms
 		return $output;		
 	}
 	
-	public static function auto_booking()
+	public function check_prices_form()
 	{
 		$auto_booking = package_field('package_auto_booking');
 		$price_chart = dy_utilities::get_price_chart();
@@ -181,9 +196,9 @@ class dynamicpackages_Forms
 		
 		$book_now_text = __('Check Pricing', 'dynamicpackages');
 						
-		$form .= self::adults_select($price_chart, $min, $max, $option_disc, $option_free);
-		$form .= self::discount_select($price_chart, $min, $max, $option_disc, $option_free);		
-		$form .= self::free_select($price_chart, $min, $max, $option_disc, $option_free);	
+		$form .= $this->adults_select($price_chart, $min, $max, $option_disc, $option_free);
+		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
+		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);	
 
 		if(dy_validators::has_coupon())
 		{
@@ -209,7 +224,7 @@ class dynamicpackages_Forms
 
 	}
 	
-	public static function adults_select($price_chart, $min, $max, $option_disc, $option_free)
+	public function adults_select($price_chart, $min, $max, $option_disc, $option_free)
 	{	
 		$adults_select = null;
 		
@@ -239,7 +254,7 @@ class dynamicpackages_Forms
 		$adults .= '<p><select name="pax_regular" >'.$adults_select.'</select></p>';	
 		return $adults;
 	}
-	public static function discount_select($price_chart, $min, $max, $option_disc, $option_free)
+	public function discount_select($price_chart, $min, $max, $option_disc, $option_free)
 	{
 		$disc = null;		
 		
@@ -269,7 +284,7 @@ class dynamicpackages_Forms
 			}
 		}
 	}
-	public static function free_select($price_chart, $min, $max, $option_disc, $option_free)
+	public function free_select($price_chart, $min, $max, $option_disc, $option_free)
 	{		
 		$free = null;
 		 
@@ -295,7 +310,7 @@ class dynamicpackages_Forms
 		}
 	}
 	
-	public static function get_all_terms_select($tax)
+	public function get_all_terms_select($tax)
 	{
 		$taxonomy = get_taxonomy($tax);
 		
@@ -413,32 +428,38 @@ class dynamicpackages_Forms
 		return $output;
 	}
 	
-	public static function pagination($wp_query, $posts_per_page)
+	public function pagination($args)
 	{
-		if($wp_query->found_posts > $posts_per_page)
+		$output = null;
+		$archive_query = $args['archive_query'];
+		$posts_per_page = $args['posts_per_page'];
+		
+		if($archive_query->found_posts > $posts_per_page)
 		{
 			$big = 999999999;
 
 			$pages =  paginate_links( array(
 				'format' => '?paged=%#%',
 				'current' => max( 1, get_query_var('paged') ),
-				'total' => $wp_query->max_num_pages,
+				'total' => $archive_query->max_num_pages,
 				'type'  => 'array',
 			));
 			
 			if(is_array($pages))
 			{	
-				echo '<div class="bottom-40 dy_pagination"><ul class="list-style-none text-right small">';
+				$output .= '<div class="bottom-40 dy_pagination"><ul class="list-style-none text-right small">';
 				
 				foreach ( $pages as $page )
 				{
 					$page = str_replace( 'page-numbers', ' pure-button pure-button-bordered page-numbers ', $page);
 					$page = str_replace( 'current', ' disabled ', $page);
-					echo ' <li class="small inline-block">'.html_entity_decode($page).'</li>';
+					$output .= ' <li class="small inline-block">'.html_entity_decode($page).'</li>';
 				}
-				echo '</ul></div>';
+				$output .= '</ul></div>';
 			}		 
-		}		
+		}
+		
+		echo $output;
 	}
 }
 

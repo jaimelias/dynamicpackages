@@ -2,27 +2,28 @@
 
 class dy_Shortcodes {
 	
-	function __construct()
+	public function __construct()
 	{
-		add_shortcode( 'packages', array('dy_Shortcodes', 'package_shortcode_full') );
-		add_shortcode('page_title', array('dy_Shortcodes', 'render_title'));
-		add_shortcode('page_excerpt', array('dy_Shortcodes', 'render_excerpt'));
-		add_shortcode('package_locations', array('dy_Shortcodes', 'get_locations'));
-		add_shortcode('package_categories', array('dy_Shortcodes', 'get_categories'));
-		add_shortcode('package_filter', array('dy_Shortcodes', 'package_filter_form'));		
+		$this->init();
 	}
 	
-	public static function package_filter_form($content = '')
+	public function init()
 	{
-		ob_start();
-		dynamicpackages_Forms::package_filter_form();
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
+		add_shortcode('packages', array(&$this, 'package_shortcode_full'));
+		add_shortcode('package_locations', array(&$this, 'get_locations'));
+		add_shortcode('package_categories', array(&$this, 'get_categories'));
+		add_shortcode('package_filter', array(&$this, 'package_filter'));
+	}
+	
+	public function package_filter($content = null)
+	{
+		return apply_filters('dy_package_filter_form', $content);
 	}	
 	
-	public static function package_shortcode_full($attr, $content = "")
+	public function package_shortcode_full($attr, $content = "")
 	{
+		global $polylang;
+		
 		if(is_array($attr))
 		{
 			if(array_key_exists('category', $attr))
@@ -67,6 +68,30 @@ class dy_Shortcodes {
 					$pagination_imp = true;
 				}
 			}
+			else
+			{
+				if(is_tax('package_categories') || is_tax('package_location'))
+				{
+					$pagination_imp = true;
+				}
+				else
+				{
+					$package_main = (get_option('dy_packages_breadcrump')) ? get_option('dy_packages_breadcrump') : get_option('page_on_front');
+					
+					if(isset($polylang))
+					{	
+						if(pll_current_language() != pll_default_language())
+						{
+							$package_main = pll_get_post($package_main, pll_current_language());
+						}
+					}
+					
+					if(get_the_ID() == $package_main)
+					{
+						$pagination_imp = true;
+					}					
+				}
+			}
 			if(array_key_exists('sortby', $attr))
 			{
 				if($attr['sortby'] != null)
@@ -104,50 +129,9 @@ class dy_Shortcodes {
 		ob_end_clean();	
 
 		return $content;
-	}	
-	
-	
-	public static function render_title()
-	{
-		if(is_singular())
-		{
-			$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-			
-			$output = '<h1 data-id="page-title" class="entry-title';
-			
-			if(isset($_GET['search']) || isset($_GET['package_category']) || isset($_GET['package_location']) || $paged > 1)
-			{
-				$output .= ' small light';
-			}
-			
-			$output .= '">'.esc_html(get_the_title()).'</h1>';
-			
-			return $output;
-		}
 	}
-	public static function render_excerpt()
-	{
-		$output = null;
-		
-		if(is_singular() && has_excerpt())
-		{
-			if(get_the_excerpt() != null)
-			{
-				if(is_singular('packages'))
-				{
-					$output = '<p class="large strong text-muted">'.get_the_excerpt().'</p>';
-				}
-				else
-				{
-					$output = '<p>'.get_the_excerpt().'</p>';
-				}
-			}
-		}
-		
-		return $output;
-	}	
 	
-	public static function get_locations($attr, $content = "")
+	public function get_locations($attr, $content = "")
 	{
 		if(is_array($attr))
 		{
@@ -171,7 +155,7 @@ class dy_Shortcodes {
 		
 		return $content;
 	}
-	public static function get_categories($attr, $content = "")
+	public function get_categories($attr, $content = "")
 	{
 		if(is_array($attr))
 		{
