@@ -176,7 +176,6 @@ class dy_Public {
 		$enqueue_recaptcha = false;
 		$enqueue_sha512 = false;
 		$enqueue_datepicker = false;
-		$enqueue_ipgeolocation = false;
 		
 		wp_enqueue_script('landing-cookies', plugin_dir_url( __FILE__ ) . 'js/cookies.js', array('jquery'), '', true);
 		
@@ -199,10 +198,6 @@ class dy_Public {
 				if(!is_booking_page())
 				{
 					$enqueue_datepicker = true;
-				}			
-				if(get_option('ipgeolocation') != null)
-				{
-					$enqueue_ipgeolocation = true;
 				}
 			}			
 		}
@@ -231,9 +226,7 @@ class dy_Public {
 			
 			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');
 			
-			$ipgeolocation = (get_option('ipgeolocation')) ? get_option('ipgeolocation') : null;
-
- 			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html($ipgeolocation).'";}', 'before');
+ 			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html(get_option('ipgeolocation')).'";}', 'before');
 		}
 		
 		if($enqueue_datepicker)

@@ -268,6 +268,14 @@ class dy_Admin {
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'captcha_secret_key') 
+		);			
+		add_settings_field( 
+			'ipgeolocation', 
+			esc_html(__( 'IPGeolocation.io', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'ipgeolocation', 'url' => 'http://ipgeolocation.io/') 
 		);	
 
 		add_settings_field( 
