@@ -717,67 +717,75 @@ class dy_utilities {
 
 	public static function get_price_regular($regular = null, $type = null)
 	{
+		$sum = 0;
+		
 		if(is_booking_page() || is_checkout_page())
 		{			
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
 			$pax_regular = (isset($_REQUEST['pax_regular'])) ? floatval(sanitize_text_field($_REQUEST['pax_regular'])) : 0;
 
-			for ($x = 0; $x < count($price_chart); $x++)
+			if(is_array($price_chart))
 			{
-				if($pax_regular == ($x+1))
+				for ($x = 0; $x < count($price_chart); $x++)
 				{
-					if($price_chart[$x][0] != '')
+					if($pax_regular == ($x+1))
 					{
-						$base_price = floatval($price_chart[$x][0]);
+						if($price_chart[$x][0] != '')
+						{
+							$base_price = floatval($price_chart[$x][0]);
+						}
 					}
 				}
+				
+				$sum = self::get_price_calc($base_price, $regular, 'regular');
+				
+				if($type == 'total' && $pax_regular > 0)
+				{
+					$sum = $sum * $pax_regular;
+				}				
 			}
-			
-			$sum = self::get_price_calc($base_price, $regular, 'regular');
-			
-			if($type == 'total' && $pax_regular > 0)
-			{
-				$sum = $sum * $pax_regular;
-			}
-			
-			return $sum;			
 		}
+		return $sum;
 	}	
 
 
 	
 	public static function get_price_discount($regular = null, $type = null)
 	{
+		$sum = 0;
+		
 		if(is_booking_page() || is_checkout_page())
 		{
-			$sum = 0;
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
 			$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
 
-			for($x = 0; $x < count($price_chart); $x++)
+			if(is_array($price_chart))
 			{
-					if($pax_discount == floatval(($x+1)))
-					{
-						$base_price = 0;
-						
-						if($price_chart[$x][1] != '')
+				for($x = 0; $x < count($price_chart); $x++)
+				{
+						if($pax_discount == floatval(($x+1)))
 						{
-							$base_price = floatval($price_chart[$x][1]);
+							$base_price = 0;
+							
+							if($price_chart[$x][1] != '')
+							{
+								$base_price = floatval($price_chart[$x][1]);
+							}
 						}
-					}
+				}
+				
+				$sum = self::get_price_calc($base_price, $regular, 'discount');
+				
+				if($type == 'total' && $pax_discount > 0)
+				{
+					$sum = $sum * $pax_discount;
+				}				
 			}
-			
-			$sum = self::get_price_calc($base_price, $regular, 'discount');
-			
-			if($type == 'total' && $pax_discount > 0)
-			{
-				$sum = $sum * $pax_discount;
-			}
-			
-			return $sum;			
 		}
+		
+		return $sum;
 	}
 	
 	public static function get_price_calc($sum, $regular, $type)

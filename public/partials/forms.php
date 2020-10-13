@@ -56,7 +56,7 @@ class dy_Forms
 					<div class="pure-g">
 						<div class="pure-u-1 pure-u-md-4-5">
 							<div class="bottom-20">
-								<input placeholder="<?php esc_html_e(__('Search Keyword', 'dynamicpackages')); ?>" type="text" name="package_search" value="<?php if(isset($_GET['package_search'])) {echo sanitize_text_field(strtolower(substr($_GET['package_search'], 0, 25))); } ?>" />	
+								<input placeholder="<?php esc_html_e('Search Keyword', 'dynamicpackages'); ?>" type="text" name="package_search" value="<?php if(isset($_GET['package_search'])) {echo sanitize_text_field(strtolower(substr($_GET['package_search'], 0, 25))); } ?>" />	
 							</div>
 						</div>
 						<div class="pure-u-1 pure-u-md-1-5 small">
@@ -88,14 +88,14 @@ class dy_Forms
 		ob_start();
 		?>
 			<select name="package_sort">
-				<option value="any" <?php echo ($sort == 'any') ? 'selected':''; ?>>-- <?php echo esc_html(__('Sort by', 'dynamicpackages')); ?> --</option>
-				<option value="new" <?php echo ($sort == 'new') ? 'selected':''; ?>><?php echo esc_html(__('Newest', 'dynamicpackages')); ?></option>
-				<option value="low" <?php echo ($sort == 'low') ? 'selected':''; ?>><?php echo esc_html(__('Price', 'dynamicpackages')); ?>: <?php echo esc_html(__('low to high', 'dynamicpackages')); ?></option>
-				<option value="high" <?php echo ($sort == 'high') ? 'selected':''; ?>><?php echo esc_html(__('Price', 'dynamicpackages')); ?>: <?php echo esc_html(__('hight to low', 'dynamicpackages')); ?></option>
-				<option value="today" <?php echo ($sort == 'today') ? 'selected':''; ?>><?php echo esc_html(__('Date', 'dynamicpackages')); ?>: <?php echo esc_html(__('Today', 'dynamicpackages')); ?></option>
-				<option value="tomorrow" <?php echo ($sort == 'tomorrow') ? 'selected':''; ?>><?php echo esc_html(__('Date', 'dynamicpackages')); ?>: <?php echo esc_html(__('Tomorrow', 'dynamicpackages')); ?></option>
-				<option value="week" <?php echo ($sort == 'week') ? 'selected':''; ?>><?php echo esc_html(__('Date', 'dynamicpackages')); ?>: <?php echo esc_html(__('next 7 days', 'dynamicpackages')); ?></option>
-				<option value="month" <?php echo ($sort == 'month') ? 'selected':''; ?>><?php echo esc_html(__('Date', 'dynamicpackages')); ?>: <?php echo esc_html(__('next 30 days', 'dynamicpackages')); ?></option>
+				<option value="any" <?php echo ($sort == 'any') ? 'selected':''; ?>>-- <?php esc_html_e('Sort by', 'dynamicpackages'); ?> --</option>
+				<option value="new" <?php echo ($sort == 'new') ? 'selected':''; ?>><?php esc_html_e('Newest', 'dynamicpackages'); ?></option>
+				<option value="low" <?php echo ($sort == 'low') ? 'selected':''; ?>><?php esc_html_e('Price', 'dynamicpackages'); ?>: <?php esc_html_e('low to high', 'dynamicpackages'); ?></option>
+				<option value="high" <?php echo ($sort == 'high') ? 'selected':''; ?>><?php esc_html_e('Price', 'dynamicpackages'); ?>: <?php esc_html_e('hight to low', 'dynamicpackages'); ?></option>
+				<option value="today" <?php echo ($sort == 'today') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('Today', 'dynamicpackages'); ?></option>
+				<option value="tomorrow" <?php echo ($sort == 'tomorrow') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('Tomorrow', 'dynamicpackages'); ?></option>
+				<option value="week" <?php echo ($sort == 'week') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('next 7 days', 'dynamicpackages'); ?></option>
+				<option value="month" <?php echo ($sort == 'month') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('next 30 days', 'dynamicpackages'); ?></option>
 			</select>
 		<?php
 		$output = ob_get_contents();

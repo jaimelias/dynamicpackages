@@ -13,6 +13,49 @@ class dy_Shortcodes {
 		add_shortcode('package_locations', array(&$this, 'get_locations'));
 		add_shortcode('package_categories', array(&$this, 'get_categories'));
 		add_shortcode('package_filter', array(&$this, 'package_filter'));
+		add_shortcode('package_contact', array(&$this, 'contact'));
+		add_action('dy_contact_inquiry_textarea', array(&$this, 'inquiry_textarea'));
+	}
+	
+	public function contact($content = null)
+	{
+		$output = null;
+		
+		if($this->is_contact_form())
+		{
+			ob_start();
+			require_once plugin_dir_path(__FILE__).'quote-form.php';	
+			$output = ob_get_contents();
+			ob_end_clean();			
+		}
+		
+		return $output;		
+	}
+	public function is_contact_form()
+	{
+		global $post;
+		$output = false;
+		
+		if(isset($post))
+		{
+			if(has_shortcode($post->post_content, 'package_contact'))
+			{
+				$output = true;
+			}
+		}
+		
+		return $output;
+	}
+	public function inquiry_textarea()
+	{
+		if($this->is_contact_form())
+		{
+			?>
+			<p><label for="inquiry"><?php esc_html_e('Message', 'dynamicpackages'); ?></label>
+				<textarea id="inquiry" name="inquiry" ></textarea>
+			</p>
+			<?php
+		}
 	}
 	
 	public function package_filter($content = null)

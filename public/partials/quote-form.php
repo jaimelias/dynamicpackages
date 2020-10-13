@@ -75,6 +75,8 @@
 			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
 		<?php endif; ?>
 		
+		<?php do_action('dy_contact_inquiry_textarea'); ?>
+		
 	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php echo esc_html($submit_form); ?></button></p>	
 
 </form>

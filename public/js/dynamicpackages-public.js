@@ -7,12 +7,12 @@ jQuery(() => {
 	booking_coupon();	
 	booking_open_form();
 	
-	if(typeof dy_url !== typeof undefined)
+	if(typeof dy_url !== 'undefined')
 	{
 		dy_country_dropdown();
 	}
 	
-	if(typeof checkout_vars !== typeof undefined)
+	if(typeof checkout_vars !== 'undefined')
 	{
 		booking_calc();
 	}	
@@ -62,108 +62,114 @@ const dy_lang = () => {
 };
 
 const booking_args = () => {
-	const args  = checkout_vars();
-	const pax = parseFloat(args.pax_num);
-	const tax = 0;	
+	
 	let output = {};
-	let amount = parseFloat(args.amount);
-	let regular_amount = parseFloat(args.regular_amount);
-	let total = parseFloat(args.total);
-	let deposit = 0;
-	let payment_amount = 0;
-	let add_ons_id = [];
-	let tax_amount = parseFloat(args.tax_amount);
-	let new_args = {};
-	let outstanding = 0;
 	
-	if(args.hasOwnProperty('deposit'))
+	if(typeof checkout_vars == 'function')
 	{
-		if(args.deposit > 0)
-		{
-			deposit = parseFloat(args.deposit) / 100;
-		}
-	}
-	if(args.hasOwnProperty('tax'))
-	{
-		if(args.tax > 0)
-		{
-			tax = parseFloat(args.tax) / 100;
-		}
-	}
-	
-	const thisForm = jQuery('#dynamic_form');
-	jQuery(thisForm).find('[name="add_ons"]').val();
-	
-	jQuery('#dynamic_table').find('select.add_ons').each(function(){
-		var field = jQuery(this);
+		const args  = checkout_vars();
+		const pax = parseFloat(args.pax_num);
+		const tax = 0;
+		let amount = parseFloat(args.amount);
+		let regular_amount = parseFloat(args.regular_amount);
+		let total = parseFloat(args.total);
+		let deposit = 0;
+		let payment_amount = 0;
+		let add_ons_id = [];
+		let tax_amount = parseFloat(args.tax_amount);
+		let new_args = {};
+		let outstanding = 0;
 		
-		if(jQuery(field).val() == 1)
+		if(args.hasOwnProperty('deposit'))
 		{
-			add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
-		}
-	});
-	
-	jQuery(thisForm).find('[name="add_ons"]').val(add_ons_id.join(','));
-	
-	let add_ons_price = add_ons_id.map(id => {
-		let output = 0;
-		
-		for(let x = 0; x < args.add_ons.length; x++)
-		{
-			if(id == args.add_ons[x].id)
+			if(args.deposit > 0)
 			{
-				output = parseFloat(args.add_ons[x].price) * parseFloat(args.pax_num);
+				deposit = parseFloat(args.deposit) / 100;
 			}
 		}
-		return output;
-	});
-	
-	add_ons_price = add_ons_price.reduce((a, b) => a + b, 0);
-	
-	if(tax > 0)
-	{
-		tax_amount = tax_amount + (add_ons_price * tax);
-		add_ons_price = add_ons_price + (add_ons_price * tax);
-	}
-	
-	
-	if(add_ons_price > 0)
-	{
-		regular_amount = regular_amount + add_ons_price;
-		amount = amount + add_ons_price;		
-	}
-	
-	payment_amount = amount;
-	
-	if(deposit != 0)
-	{
-		payment_amount = payment_amount * deposit;
-		outstanding = amount - payment_amount;
-	}
-	
-	if(payment_amount == amount)
-	{
-		outstanding = amount;
-	}
-	
-	new_args.tax_amount = tax_amount.toFixed(2);
-	new_args.outstanding = outstanding.toFixed(2);
-	new_args.total = payment_amount.toFixed(2);
-	new_args.amount = amount.toFixed(2);
-	new_args.regular_amount = regular_amount.toFixed(2);
-	
-	for(k in new_args)
-	{
-		for(k2 in args)
+		if(args.hasOwnProperty('tax'))
 		{
-			if(k == k2)
+			if(args.tax > 0)
 			{
-				args[k2] = new_args[k];
+				tax = parseFloat(args.tax) / 100;
 			}
+		}
+		
+		const thisForm = jQuery('#dynamic_form');
+		jQuery(thisForm).find('[name="add_ons"]').val();
+		
+		jQuery('#dynamic_table').find('select.add_ons').each(function(){
+			var field = jQuery(this);
 			
-			output[k2] = args[k2];
+			if(jQuery(field).val() == 1)
+			{
+				add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
+			}
+		});
+		
+		jQuery(thisForm).find('[name="add_ons"]').val(add_ons_id.join(','));
+		
+		let add_ons_price = add_ons_id.map(id => {
+			let output = 0;
+			
+			for(let x = 0; x < args.add_ons.length; x++)
+			{
+				if(id == args.add_ons[x].id)
+				{
+					output = parseFloat(args.add_ons[x].price) * parseFloat(args.pax_num);
+				}
+			}
+			return output;
+		});
+		
+		add_ons_price = add_ons_price.reduce((a, b) => a + b, 0);
+		
+		if(tax > 0)
+		{
+			tax_amount = tax_amount + (add_ons_price * tax);
+			add_ons_price = add_ons_price + (add_ons_price * tax);
 		}
+		
+		
+		if(add_ons_price > 0)
+		{
+			regular_amount = regular_amount + add_ons_price;
+			amount = amount + add_ons_price;		
+		}
+		
+		payment_amount = amount;
+		
+		if(deposit != 0)
+		{
+			payment_amount = payment_amount * deposit;
+			outstanding = amount - payment_amount;
+		}
+		
+		if(payment_amount == amount)
+		{
+			outstanding = amount;
+		}
+		
+		new_args.tax_amount = tax_amount.toFixed(2);
+		new_args.outstanding = outstanding.toFixed(2);
+		new_args.total = payment_amount.toFixed(2);
+		new_args.amount = amount.toFixed(2);
+		new_args.regular_amount = regular_amount.toFixed(2);
+		
+		for(k in new_args)
+		{
+			for(k2 in args)
+			{
+				if(k == k2)
+				{
+					args[k2] = new_args[k];
+				}
+				
+				output[k2] = args[k2];
+			}
+		}		
 	}
+	
 
 	return output;
 }
@@ -393,6 +399,7 @@ const dy_request_form = (token) => {
 			}
 			
 			//console.log(jQuery(thisForm).formToArray());
+			
 			createFormSubmit(thisForm);
 		}
 		else

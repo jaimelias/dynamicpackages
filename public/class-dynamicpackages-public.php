@@ -169,77 +169,84 @@ class dy_Public {
 		 * class.
 		 */	 
 		global $post;
+		$dep = array( 'jquery', 'landing-cookies');
+		$ipgeolocation = null;
+		$enqueue_public = false;
+		$enqueue_archive = false;
+		$enqueue_recaptcha = false;
+		$enqueue_sha512 = false;
+		$enqueue_datepicker = false;
+		$enqueue_ipgeolocation = false;
 		
-		self::cf7_dequeue_recaptcha();
+		wp_enqueue_script('landing-cookies', plugin_dir_url( __FILE__ ) . 'js/cookies.js', array('jquery'), '', true);
 		
-		if(is_singular('packages'))
+		if(isset($post))
 		{
-			$dep = array( 'jquery', 'landing-cookies');			
-			wp_enqueue_script('landing-cookies', plugin_dir_url( __FILE__ ) . 'js/cookies.js', array( 'jquery'), '', true );
-			
-			if(is_booking_page())
+			if(is_singular('packages') || is_page())
 			{
-				wp_enqueue_script('invisible-recaptcha', 'https://www.google.com/recaptcha/api.js?onload=dy_recaptcha&render=explicit', array(), 'async_defer', true );
-				array_push($dep, 'invisible-recaptcha');
-			}
-
-			if(!is_booking_page())
-			{
-				wp_enqueue_script('sha512', plugin_dir_url( __FILE__ ) . 'js/sha512.js', array(), 'async_defer', true );
-				array_push($dep, 'sha512');
-			}	
-			
-			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );			
-			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');	
-
-			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');					
-			
-			if(!is_booking_page())
-			{
-				self::datepickerJS();
-
-				if(get_theme_mod('min_sharethis'))
+				$enqueue_public = true;
+				
+				if(is_booking_page() || has_shortcode( $post->post_content, 'package_contact'))
 				{
-					wp_enqueue_script( 'min_sharethis');
+					$enqueue_recaptcha = true;
+				}
+
+				if(!is_booking_page())
+				{
+					$enqueue_sha512 = true;
+				}				
+				
+				if(!is_booking_page())
+				{
+					$enqueue_datepicker = true;
+				}			
+				if(get_option('ipgeolocation') != null)
+				{
+					$enqueue_ipgeolocation = true;
 				}
 			}			
 		}
+
+		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
+		{
+			$enqueue_archive = true;
+		}		
 		
-		if(is_tax('package_category') ||is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
+		if($enqueue_recaptcha)
+		{
+			wp_enqueue_script('invisible-recaptcha', 'https://www.google.com/recaptcha/api.js?onload=dy_recaptcha&render=explicit', array(), 'async_defer', true );
+			array_push($dep, 'invisible-recaptcha');
+		}
+		if($enqueue_sha512)
+		{
+			wp_enqueue_script('sha512', plugin_dir_url( __FILE__ ) . 'js/sha512.js', array(), 'async_defer', true );
+				array_push($dep, 'sha512');
+		}
+		
+		if($enqueue_public)
+		{
+			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );
+			
+			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');
+			
+			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');
+			
+			$ipgeolocation = (get_option('ipgeolocation')) ? get_option('ipgeolocation') : null;
+
+ 			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html($ipgeolocation).'";}', 'before');
+		}
+		
+		if($enqueue_datepicker)
+		{
+			self::datepickerJS();
+		}
+		
+		if($enqueue_archive)
 		{
 			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
 		}
 		
-		$ipgeolocation = null;
-		
-		if(get_option('ipgeolocation') != null)
-		{
-			$ipgeolocation = get_option('ipgeolocation');
-		}
-		wp_add_inline_script( 'dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html($ipgeolocation).'";}', 'before');
-		
-		wp_enqueue_script( 'minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);		
-		
-	}
-	
-	public static function cf7_dequeue_recaptcha()
-	{
-		$dequeu = true;
-		
-		if(is_singular())
-		{
-			global $post;
-			
-			if(has_shortcode($post->post_content, 'contact-form-7'))
-			{
-				$dequeu = false;
-			}
-		}
-		
-		if($dequeu === true)
-		{
-			wp_dequeue_script('google-recaptcha-js');
-		}
+		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
 	}
 	
 	public static function datepickerCSS()
@@ -1433,8 +1440,9 @@ class dy_Public {
 	public static function description()
 	{	
 		global $post;
+		$output = null;
 		
-		if(isset($post))
+		if(isset($post) && isset($_REQUEST['booking_date']))
 		{
 			$departure_date = dy_utilities::format_date($_REQUEST['booking_date']);
 			$departure_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
@@ -1520,12 +1528,11 @@ class dy_Public {
 					
 			$description .= ' | ' . $post->post_title;
 			$description .= ' ('.$itinerary.'): ';
-			$description .= $people_imp;
-								
-			//die($description);
-			
-			return $description;			
+			$description .= $people_imp;			
+			$output = $description;			
 		}		
+	
+		return $output;
 	}
 	
 	public static function show_badge()

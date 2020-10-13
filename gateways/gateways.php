@@ -259,13 +259,33 @@ class dy_Gateways
 	
 	public function enqueue_scripts()
 	{
-		if(is_singular('packages'))
+		global $post;
+		$show_checkout_vars = false;
+		
+		
+		if(isset($post))
 		{
-			if(is_booking_page())
+			if(is_singular('packages'))
 			{
-				wp_add_inline_script('dynamicpackages', $this->checkout_vars(), 'before');		
+				if(is_booking_page() )
+				{
+					$show_checkout_vars = true;	
+				}
+			}
+			else if(is_page())
+			{
+				if(has_shortcode( $post->post_content, 'package_contact'))
+				{
+					$show_checkout_vars = true;	
+				}
 			}
 		}
+		
+		if($show_checkout_vars)
+		{
+			wp_add_inline_script('dynamicpackages', $this->checkout_vars(), 'before');	
+		}
+		
 	}
 
 
@@ -291,7 +311,7 @@ class dy_Gateways
 			'booking_coupon' => esc_html($booking_coupon),
 			'coupon_discount' => esc_html($coupon_discount),
 			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())),
-			'booking_date' => sanitize_text_field($_GET['booking_date']),
+			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'booking_hour' => esc_html(dy_utilities::hour()),
 			'return_date' => (isset($_GET['return_date'])) ? $_GET['return_date'] : null,
@@ -312,7 +332,7 @@ class dy_Gateways
 			'TRANSLATIONS' => array('submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
-			'hash' => sanitize_text_field($_GET['hash']),
+			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
 			'currency_name' => dy_utilities::currency_name(),
 			'currency_symbol' => dy_utilities::currency_symbol(),
 			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),

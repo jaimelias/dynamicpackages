@@ -35,6 +35,29 @@ class dy_Actions{
 
         return $output;
 	}    
+	
+	public function has_form()
+	{
+		global $post;
+		$output = false;
+		
+		if(isset($post))
+		{
+			if(is_singular('packages'))
+			{
+				$output = true;
+			}
+			if(is_page())
+			{
+				if(has_shortcode( $post->post_content, 'package_contact'))
+				{
+					$output = true;
+				}
+			}
+		}
+		
+		return $output;
+	}
 
     public function send_data()
     {
@@ -51,13 +74,13 @@ class dy_Actions{
         global $dy_valid_recaptcha;
 		
 
-        if(is_singular('packages') && $this->is_request_submitted())
+        if($this->has_form() && $this->is_request_submitted())
         {               
             if(dy_validators::is_request_valid())
             {
                 if(isset($dy_valid_recaptcha))
                 {
-					if($_POST['dy_request'] == 'request')
+					if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == 'contact')
 					{
 						 $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
 					}  
@@ -115,8 +138,9 @@ class dy_Actions{
 		}
 		else
 		{
+			$request = (isset($_POST['inquiry'])) ?  sanitize_text_field($_POST['inquiry']) : apply_filters('dy_package_description', null);
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
-			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html(apply_filters('dy_package_description', null)).'</strong>').'</p>';
+			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
 			
 			if(get_option('dy_phone') && get_option('dy_email'))
 			{
@@ -141,7 +165,10 @@ class dy_Actions{
 		}
 		else
 		{
-			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), $_POST['first_name'], $_POST['title']);	
+			global $post;
+			
+			$request = (is_singular('packages') && isset($post)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
+			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), $_POST['first_name'], $request);	
 		}
 
 			
@@ -150,7 +177,7 @@ class dy_Actions{
 
     public function wp_title($title)
     {
-        if(is_singular('packages') && $this->is_request_submitted())
+        if($this->has_form() && $this->is_request_submitted())
         {
             $title = esc_html(__('Thank You For Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
@@ -162,7 +189,7 @@ class dy_Actions{
     {	
 		if(in_the_loop())
 		{
-			if(is_singular('packages') && $this->is_request_submitted())
+			if($this->has_form() && $this->is_request_submitted())
 			{
 				$title = esc_html(__('Thank you for your Inquiry', 'dynamicpackages'));
 			}			
