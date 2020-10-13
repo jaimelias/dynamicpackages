@@ -124,9 +124,9 @@ class dy_Public {
 			{
 				global $post;
 				
-				if(is_object($post))
+				if(isset($post))
 				{
-					if(has_shortcode( $post->post_content, 'packages'))
+					if(has_shortcode( $post->post_content, 'packages') || has_shortcode( $post->post_content, 'package_contact'))
 					{
 						self::css();
 					}					
