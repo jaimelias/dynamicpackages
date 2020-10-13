@@ -118,10 +118,27 @@ class dy_validators
 		}
 		else
 		{
-			if(self::contact_details() && self::booking_details())
+			if(self::contact_details())
 			{
-				$output = true;
-				$GLOBALS['dy_is_request_valid'] = $output;
+				if(isset($_POST['booking_date']))
+				{
+					if(self::is_date($_POST['booking_date']))
+					{
+						if(self::booking_details())
+						{
+							$output = true;
+						}
+					}
+					else
+					{
+						$output = true;
+					}
+				}
+				
+				if($output)
+				{
+					$GLOBALS['dy_is_request_valid'] = $output;
+				}
 			}		
 		}
 		return $output;

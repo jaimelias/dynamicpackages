@@ -258,22 +258,8 @@ function dy_recaptcha()
 	args.sitekey = dy_recaptcha_sitekey();
 	args.isolated = true;
 	args.badge = 'inline';
-	var checkout_widget;
 	var quote_widget;
 	
-	if(jQuery('#dy_checkout_form').length)
-	{
-		args.callback = (token) => {
-			return new Promise((resolve, reject) => { 
-				if(checkout_paguelo(token) == false)
-				{
-					grecaptcha.reset(checkout_widget);
-				}
-				resolve();
-			});
-		};
-		checkout_widget = grecaptcha.render('confirm_checkout', args);
-	}
 	if(jQuery('#dynamic_form').length)
 	{
 		args.callback = (token) => {
@@ -418,7 +404,7 @@ const dy_populate_form = (form) => {
 	{
 		if(checkout_obj.hasOwnProperty(key))
 		{
-			if(typeof checkout_obj[key] == 'string' || Number.isInteger(checkout_obj[key]))
+			if(typeof checkout_obj[key] == 'string' || Number.isInteger(checkout_obj[key]) || checkout_obj[key] === null)
 			{
 				form.append(jQuery('<input>').attr({'type': 'hidden', 'name': key, 'value': checkout_obj[key]}));						
 			}
