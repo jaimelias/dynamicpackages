@@ -359,7 +359,8 @@ class dy_Public {
 							$content = '<h2>'.esc_html(package_field($subpackage_name)).'</h2>' . $content;
 						}
 						
-						$parent_content = get_post($post->post_parent)->post_content;
+						$parent_content = do_blocks(get_post($post->post_parent)->post_content);
+						
 						$content .= $parent_content;
 					}
 					
