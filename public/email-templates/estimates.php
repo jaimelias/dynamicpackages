@@ -1,5 +1,5 @@
 <?php
-$today = dy_utilities::format_date(null);
+$today = dy_utilities::format_date(strtotime(null));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');

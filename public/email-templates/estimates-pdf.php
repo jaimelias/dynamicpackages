@@ -1,6 +1,6 @@
 <?php
 
-$today = dy_utilities::format_date(null);
+$today = dy_utilities::format_date(strtotime(null));
 $currency_symbol = dy_utilities::currency_symbol();
 $total = apply_filters('dy_email_total', dy_utilities::currency_format(dy_utilities::total()));
 $company_name = get_bloginfo('name');

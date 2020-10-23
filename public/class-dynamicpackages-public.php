@@ -1438,10 +1438,10 @@ class dy_Public {
 		
 		if(isset($post) && isset($_REQUEST['booking_date']))
 		{
-			$departure_date = dy_utilities::format_date($_REQUEST['booking_date']);
+			$departure_date = dy_utilities::format_date(dy_utilities::booking_date());
 			$departure_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
 			$itinerary = $departure_date.$departure_hour;
-			$return_date = (isset($_REQUEST['return_date'])) ? dy_utilities::format_date($_REQUEST['return_date']) : null;
+			$return_date = (isset($_REQUEST['return_date'])) ? dy_utilities::format_date(dy_utilities::return_date()) : null;
 			$pax_discount = (isset($_REQUEST['pax_discount'])) ? intval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
 			$discount = (package_field('package_discount' )) ? package_field('package_discount' ) : 0;
 			$free = (package_field('package_free')) ? package_field('package_free') : 0;
@@ -1848,8 +1848,8 @@ class dy_Public {
 	public static function details()
 	{
 		$output = null;
-		$booking_date = (isset($_REQUEST['booking_date'])) ? dy_utilities::format_date(sanitize_text_field($_REQUEST['booking_date'])) : null;
-		$return_date = (isset($_REQUEST['return_date'])) ? date_i18n(get_option('date_format'), dy_utilities::return_date()) : null;
+		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
+		$return_date = (dy_utilities::return_date()) ? dy_utilities::format_date(dy_utilities::return_date()) : null;
 		
 		$args = array(
 			'enabled_days' => array('calendar', self::enabled_days()),
@@ -1898,7 +1898,10 @@ class dy_Public {
 		}
 		if(!$return_date)
 		{
+			unset($args['label_return']);
 			unset($args['return_date']);
+			unset($args['return_hour']);
+			unset($args['return_address']);
 		}
 		if(dy_validators::is_package_transport())
 		{
