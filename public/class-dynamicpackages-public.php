@@ -930,7 +930,7 @@ class dy_Public {
 		}
 		else
 		{
-			$price_type = package_field('package_starting_at_unit');
+			$price_type = package_field('package_fixed_price');
 			$package_type = package_field('package_package_type');
 			$duration_max = package_field('package_duration_max');
 			$duration = package_field('package_duration');

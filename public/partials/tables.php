@@ -13,13 +13,12 @@ class dynamicpackages_Tables{
 			$duration = intval(package_field('package_duration'));
 			$package_type = intval(package_field('package_package_type'));
 			$duration_max = package_field('package_duration_max');
-			$price_type = package_field( 'package_starting_at_unit' );
-			$price_fixed = package_field( 'package_fixed_price' );
+			$price_type = package_field( 'package_fixed_price' );
 			$package_occupancy_chart = json_decode(html_entity_decode(package_field( 'package_occupancy_chart' )), true);	
 			$package_occupancy_chart = (is_array($package_occupancy_chart)) ? $package_occupancy_chart['occupancy_chart'] : null;	
 			$hide_table = false;
 			
-			if(intval($price_fixed) == 1)
+			if(intval($price_type) == 1)
 			{
 				$max = 1;
 			}				

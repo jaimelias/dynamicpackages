@@ -581,17 +581,8 @@ class dy_Metaboxes
 					<option value="0" <?php echo (package_field( 'package_fixed_price' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Yes', 'dynamicpackages' ); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
 					<option value="1" <?php echo (package_field( 'package_fixed_price' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'No', 'dynamicpackages' ); ?> (<?php echo esc_html(__('fixed prices', 'dynamicpackages')); ?>)</option>				
 				</select>
-			</p>		
-			<p>
-				<label for="package_starting_at_unit"><?php _e( 'Pricing Type', 'dynamicpackages' ); ?></label><br />
-				<select name="package_starting_at_unit" id="package_starting_at_unit">
-					<option value="0" <?php echo (package_field( 'package_starting_at_unit' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Per Person', 'dynamicpackages' ); ?></option>		
-					<option value="1" <?php echo (package_field( 'package_starting_at_unit' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'Full Price', 'dynamicpackages' ); ?></option>
-				</select>
-				<input type="hidden" name="package_starting_at" value="<?php echo floatval(package_field('package_starting_at')) ;?>" />
 			</p>
-
-
+			
 			<p>
 				<label for="package_badge"><?php _e( 'Show Badge', 'dynamicpackages' ); ?></label><br />
 				<select name="package_badge" id="package_badge">

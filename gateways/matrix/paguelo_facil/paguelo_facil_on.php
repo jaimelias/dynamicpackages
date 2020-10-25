@@ -433,7 +433,7 @@ class paguelo_facil_on{
 				{
 					$total = floatval(dy_utilities::starting_at());
 					
-					if(package_field('package_starting_at_unit') == 0)
+					if(package_field('package_fixed_price') == 0)
 					{
 						$total = $total * intval(package_field('package_max_persons'));
 					}

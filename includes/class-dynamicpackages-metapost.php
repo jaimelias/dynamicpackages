@@ -81,8 +81,6 @@ class dy_Metapost{
 			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
 		if(isset( $_POST['package_trip_code']))
 			update_post_meta( $post_id, 'package_trip_code', esc_attr($_POST['package_trip_code']));
-		if(isset( $_POST['package_starting_at_unit']))
-			update_post_meta( $post_id, 'package_starting_at_unit', esc_attr($_POST['package_starting_at_unit']));
 		if(isset( $_POST['package_auto_booking']))
 			update_post_meta( $post_id, 'package_auto_booking', esc_attr($_POST['package_auto_booking']));
 		
