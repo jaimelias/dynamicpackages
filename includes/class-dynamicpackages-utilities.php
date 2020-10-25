@@ -809,7 +809,7 @@ class dy_utilities {
 			{
 				$sum = $sum * 2;
 			}
-		}
+		}		
 		
 		if(dy_validators::valid_coupon() && $regular === null)
 		{

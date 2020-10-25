@@ -459,11 +459,11 @@ class dy_validators
 		}
 		else
 		{
-			if(self::has_coupon() && isset($_GET['booking_coupon']))
+			if(self::has_coupon() && isset($_REQUEST['booking_coupon']))
 			{
-				if($_GET['booking_coupon'] != '')
+				if($_REQUEST['booking_coupon'] != '')
 				{
-					$booking_coupon = strtolower(sanitize_text_field($_GET['booking_coupon']));
+					$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
 					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
 					$get_coupon = strtolower(dy_utilities::get_coupon('code'));
 					$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
