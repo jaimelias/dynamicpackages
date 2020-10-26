@@ -76,7 +76,6 @@ class dy_Metapost{
 			}
 		}	
 		
-		
 		if(isset( $_POST['package_display']))
 			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
 		if(isset( $_POST['package_trip_code']))
@@ -89,7 +88,11 @@ class dy_Metapost{
 		if(isset( $_POST['package_disabled_dates']))
 			update_post_meta( $post_id, 'package_disabled_dates', esc_attr($_POST['package_disabled_dates']));		
 		if(isset( $_POST['package_disabled_dates_api']))
-			update_post_meta( $post_id, 'package_disabled_dates_api', esc_url($_POST['package_disabled_dates_api']));		
+			update_post_meta( $post_id, 'package_disabled_dates_api', esc_url($_POST['package_disabled_dates_api']));
+		if(isset( $_POST['package_enabled_num']))
+			update_post_meta( $post_id, 'package_enabled_num', esc_attr($_POST['package_enabled_num']));
+		if(isset( $_POST['package_enabled_dates']))
+			update_post_meta( $post_id, 'package_enabled_dates', esc_attr($_POST['package_enabled_dates']));	
 
 		//package_event_date
 		if(isset( $_POST['package_event_date']))

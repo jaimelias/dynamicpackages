@@ -470,7 +470,26 @@ class dy_Metaboxes
 		
 		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
 		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api' )); ?>" > </p>
-		</fieldset>			
+		</fieldset>
+		
+		<h3><?php esc_html_e( 'Force Enabled Dates', 'dynamicpackages' ); ?> <?php self::select_number('package_enabled_num', 0, 20); ?></h3>
+		
+		
+		<?php
+	
+			$args = array(
+						'container' => 'enabled_dates',
+						'textarea' => 'package_enabled_dates',
+						'headers' => array(__('From', 'dynamicpackages'), __('To', 'dynamicpackages')),
+						'type' => array('date', 'date'),
+						'min' => 'package_enabled_num',
+						'max' => 'package_enabled_num',
+						'value' => package_field('package_enabled_dates')
+					);		
+					
+			echo dy_utilities::handsontable($args);
+		?>		
+	
 
 		<?php
 	}		

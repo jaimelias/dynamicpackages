@@ -409,6 +409,7 @@ class dy_Public {
 			$disabled_dates = array();
 			$get_disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
 			$global_disabled_dates = json_decode(html_entity_decode(get_option('dy_disabled_dates' )), true);
+			$get_enabled_dates = json_decode(html_entity_decode(package_field('package_enabled_dates' )), true);
 			
 			if(is_array($global_disabled_dates))
 			{
@@ -439,28 +440,31 @@ class dy_Public {
 			{
 				for($x = 0; $x < count($disabled_dates); $x++)
 				{
-					$period = new DatePeriod(
-						 new DateTime($disabled_dates[$x][0]),
-						 new DateInterval('P1D'),
-						 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
-					);
-					
-					$range = array();
-					$range_fix = array();
-					
-					foreach ($period as $key => $value)
+					if($disabled_dates[$x][0] && $disabled_dates[$x][1])
 					{
-						$this_date = $value->format('Y-m-d');
-						$this_date = explode("-", $this_date);
-						$this_date = array_map('intval', $this_date);
-						$this_date = array_map(function($arr, $keys){
-							if($keys == 1)
-							{
-								$arr = $arr - 1;
-							}
-							return $arr;
-						}, $this_date, array_keys($this_date));
-						$disable['disable'][] = $this_date;
+						$period = new DatePeriod(
+							 new DateTime($disabled_dates[$x][0]),
+							 new DateInterval('P1D'),
+							 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
+						);
+						
+						$range = array();
+						$range_fix = array();
+						
+						foreach ($period as $key => $value)
+						{
+							$this_date = $value->format('Y-m-d');
+							$this_date = explode("-", $this_date);
+							$this_date = array_map('intval', $this_date);
+							$this_date = array_map(function($arr, $keys){
+								if($keys == 1)
+								{
+									$arr = $arr - 1;
+								}
+								return $arr;
+							}, $this_date, array_keys($this_date));
+							$disable['disable'][] = $this_date;
+						}						
 					}
 				}			
 			}
@@ -496,6 +500,54 @@ class dy_Public {
 						}
 					}
 				}
+			}
+			
+			if(is_array($get_enabled_dates))
+			{
+				if(array_key_exists('enabled_dates', $get_enabled_dates))
+				{		
+					$get_enabled_dates = $get_enabled_dates['enabled_dates'];
+											
+					for($x = 0; $x < count($get_enabled_dates); $x++){
+						$enabled_dates[] = $get_enabled_dates[$x];
+					}
+				}				
+			}
+			
+			if(is_array($enabled_dates))
+			{
+				for($x = 0; $x < count($enabled_dates); $x++)
+				{
+					if($enabled_dates[$x][0] && $enabled_dates[$x][1])
+					{
+						$period = new DatePeriod(
+							 new DateTime($enabled_dates[$x][0]),
+							 new DateInterval('P1D'),
+							 new DateTime(date('Y-m-d', strtotime($enabled_dates[$x][1] . ' +1 day')))
+						);
+						
+						$range = array();
+						$range_fix = array();
+						
+						foreach ($period as $key => $value)
+						{
+							$this_date = $value->format('Y-m-d');
+							$this_date = explode("-", $this_date);
+							$this_date = array_map('intval', $this_date);
+							$this_date = array_map(function($arr, $keys){
+								if($keys == 1)
+								{
+									$arr = $arr - 1;
+								}							
+								return $arr;
+							}, $this_date, array_keys($this_date));
+							
+							$this_date[] = 'inverted';
+							
+							$disable['disable'][] = $this_date;
+						}						
+					}					
+				}			
 			}
 
 			if(count($disable) > 0)
