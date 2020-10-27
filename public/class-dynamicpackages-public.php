@@ -502,12 +502,14 @@ class dy_Public {
 				}
 			}
 			
+			$enabled_dates = array();
+			
 			if(is_array($get_enabled_dates))
 			{
 				if(array_key_exists('enabled_dates', $get_enabled_dates))
 				{		
 					$get_enabled_dates = $get_enabled_dates['enabled_dates'];
-											
+										
 					for($x = 0; $x < count($get_enabled_dates); $x++){
 						$enabled_dates[] = $get_enabled_dates[$x];
 					}
