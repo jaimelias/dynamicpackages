@@ -2182,7 +2182,7 @@ class dy_Public {
 							if($valid === true)
 							{
 								$label = '';
-								$output .= '<div class="large dy_coupon bottom-20 dy_pad">';
+								$output .= '<div class="dy_coupon bottom-20 dy_pad">';
 								$label .= esc_html(__('Get a', 'dynamicpackages'));
 								$label .= ' <strong>'.esc_html($coupons[$x][1]).'%</strong>';
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));

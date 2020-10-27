@@ -387,7 +387,7 @@ class nequi_direct{
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside><div class="pure-g gutters"><div class="pure-u-1-5 text-center"><img style="vertical-align: middle;" alt="nequi" width="130"  height="34" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
+			$str = '<aside><div class="pure-g"><div class="pure-u-1-4 text-center"><div class="padding-10"><img style="vertical-align: middle;" alt="nequi" width="130"  height="34" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi.svg').'"/></div></div><div class="pure-u-3-4"><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
 		}
 		
 		return $str;

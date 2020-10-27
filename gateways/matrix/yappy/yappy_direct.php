@@ -393,7 +393,7 @@ class yappy_direct{
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside><div class="pure-g gutters"><div class="pure-u-1-5 text-center"><img style="vertical-align: middle" width="80" height="69" alt="yappy" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy.svg').'"/></div><div class="pure-u-4-5"><span class="semibold">'.esc_html(__('Pay with Yappy', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
+			$str = '<aside><div class="pure-g"><div class="pure-u-1-4 text-center"><div class="padding-10"><img style="vertical-align: middle" width="80" height="69" alt="yappy" class="img-responsive inline-block" src="'.esc_url(plugin_dir_url( __FILE__ ).'yappy.svg').'"/></div></div><div class="pure-u-3-4"><span class="semibold">'.esc_html(__('Pay with Yappy', 'dynamicpackages')).'.</span> '.$str.'</div></div></aside>';
 		}
 		
 		return $str;
