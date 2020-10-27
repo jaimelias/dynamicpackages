@@ -6,7 +6,7 @@
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-1-3">
 	
 		
-		<div class="hide-md hide-lg small"><?php do_action('dy_show_coupons'); ?></div>
+		<div class="small"><?php do_action('dy_show_coupons'); ?></div>
 		
 		<?php dy_Public::children_package(); ?>
 		
