@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-10-13 01:30+0000\n"
-"PO-Revision-Date: 2020-10-13 01:30+0000\n"
+"POT-Creation-Date: 2020-10-13 01:32+0000\n"
+"PO-Revision-Date: 2020-10-13 01:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1332,7 +1332,7 @@ msgstr "Elegir categoría"
 
 #: public/partials/forms.php:59
 msgid "Search Keyword"
-msgstr ""
+msgstr "Buscar palabra"
 
 #: public/partials/forms.php:91
 msgid "Sort by"

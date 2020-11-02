@@ -58,6 +58,7 @@ const registerGrid = (textareas, container, min, max, index) => {
 	menu.items.redo = {name: 'redo'};
 		
 	const args = {
+		licenseKey: 'non-commercial-and-evaluation',
 		data: data,
 		stretchH: 'all',
 		columns: columns,

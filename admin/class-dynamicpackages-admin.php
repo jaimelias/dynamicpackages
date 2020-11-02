@@ -43,7 +43,7 @@ class dy_Admin {
 	public static function handsontable()
 	{
 		wp_enqueue_style( 'handsontableCss', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.css', array(), time(), 'all' );
-		wp_enqueue_script( 'handsontableJS', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.js', array('jquery'), time(), true );
+		wp_enqueue_script( 'handsontableJS', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
 	}
 
 	/**

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-10-13 01:32+0000\n"
-"PO-Revision-Date: 2020-10-13 01:32+0000\n"
+"PO-Revision-Date: 2020-10-30 18:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "Report-Msgid-Bugs-To: \n"
-"X-Loco-Version: 2.4.3; wp-5.5.1"
+"X-Loco-Version: 2.4.4; wp-5.5.2"
 
 #: admin/class-dynamicpackages-admin.php:116
 msgid "Daily"
@@ -1647,7 +1647,7 @@ msgstr "Cuenta Corriente"
 
 #: gateways/matrix/bank/local.php:179
 msgid "Checking Account"
-msgstr "Cuenta de Ahorro"
+msgstr "Cuenta corriente"
 
 #: gateways/matrix/bank/local.php:182
 msgid "Bank"

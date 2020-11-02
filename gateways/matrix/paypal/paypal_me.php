@@ -18,7 +18,6 @@ class paypal_me{
 		}
 		else
 		{
-			
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 			add_filter('wp_headers', array(&$this, 'send_data'));
