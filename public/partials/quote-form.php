@@ -7,7 +7,7 @@
 	$request_form = (is_singular('packages')) ? 'request' : 'contact';
 ?>
 
-<form id="dynamic_form"  <?php echo esc_attr($hide_form);?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dynamic_form"  <?php echo $hide_form;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
 	    <div class="text-center bottom-20" id="dy_form_icon">
 			<p class="large text-muted">

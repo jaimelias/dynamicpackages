@@ -334,10 +334,10 @@ class paypal_me{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var paypal_logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/paypal/paypal.svg'});
-				jQuery(paypal_logo).attr({'width': '205', 'height': '50'});
+				let logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/paypal/paypal.svg'});
+				jQuery(logo).attr({'width': '205', 'height': '50'});
 				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('#dy_form_icon').html(paypal_logo);
+				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				

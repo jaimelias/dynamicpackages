@@ -352,10 +352,10 @@ class nequi_direct{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var nequi_logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
-				jQuery(nequi_logo).attr({'width': '214', 'height': '48'});
+				let logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
+				jQuery(logo).attr({'width': '214', 'height': '48'});
 				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('#dy_form_icon').html(nequi_logo);
+				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 								

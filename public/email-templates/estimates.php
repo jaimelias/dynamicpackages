@@ -2,7 +2,7 @@
 $today = dy_utilities::format_date(strtotime(null));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
-$intro = apply_filters('dy_email_intro', __('Thank You For Your Request', 'dynamicpackages'). '!');
+$intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
 $currency_symbol = dy_utilities::currency_symbol();
 $total = apply_filters('dy_email_total', dy_utilities::currency_format(dy_utilities::total()));

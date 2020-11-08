@@ -1,7 +1,7 @@
 
 jQuery(() => {
-	booking_datepicker();
 	booking_hourpicker();
+	booking_datepicker();
 	booking_submit();
 	storePopulate();
 	booking_coupon();	
@@ -465,36 +465,67 @@ const dy_country_options = (data) => {
 	});		
 }	
 
-const booking_datepicker = () => {
+const booking_datepicker = async () => {
+	
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 	
-	jQuery('.booking_form').find('input.booking_datepicker').each(function()
-	{
-		var field = jQuery(this);
-		var d = new Date();
+	jQuery('.booking_form').find('input.booking_datepicker').each(async function() {
 		
-		jQuery.getJSON(dy_permalink()+'?json=disabled_dates&stamp='+d.getTime(), data => {
-			var args = {};
-			args.container = '#availability_calendar';
-			args.format = 'yyyy-mm-dd';
-			args.disable = [];
-			args.firstDay = 1;
+		const field = jQuery(this);
+		const d = new Date();
+		
+		fetch(dy_permalink()+'?json=disabled_dates&stamp='+d.getTime(), {
+			headers: {
+			  'Content-Type': 'application/json' 
+			},
+			credentials: 'same-origin'		
+		})
+		.then(response => {
+			if(response.ok)
+			{
+				return response;
+			}
+			else
+			{
+			  let error = new Error('Error ' + response.status + ': ' + response.statusText);
+			  error.response = response;
+			  throw error;			
+			}
+		}, error => {
+			var errmess = new Error(error.message);
+			throw errmess;
+		})
+		.then(response => response.json())
+		.then(data => {
 			
-			var json_parse = data;
-			args.disable = json_parse.disable;
-			args.min = json_parse.min;
-			args.max = json_parse.max;
-						
+			let args = {
+				container: '#availability_calendar',
+				format: 'yyyy-mm-dd',
+				disable: data.disable,
+				firstDay: 1,
+				min: data.min,
+				max: data.max
+			};
+		
 			if(jQuery(field).attr('type') == 'text')
 			{
 				jQuery(field).pickadate(args);
 			}
 			else if(jQuery(field).attr('type') == 'date')
 			{
-				jQuery(field).attr({'type': 'text'});
+				jQuery(field).attr({
+					'type': 'text'
+				});
 				jQuery(field).pickadate(args);
 			}
-			jQuery(field).removeAttr('disabled').attr({'placeholder': null});
+			
+			jQuery(field).removeAttr('disabled').attr({
+				'placeholder': null
+			});
+		
+		})
+		.catch(error => {
+			throw error;
 		});
 	});			
 

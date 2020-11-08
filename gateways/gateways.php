@@ -11,6 +11,7 @@ class dy_Gateways
 	
 	public function load_gateways()
 	{
+		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
@@ -25,6 +26,7 @@ class dy_Gateways
 		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->estimate = new estimate_request();
 		$this->paguelo_facil_on = new paguelo_facil_on();
+		$this->cuanto = new cuanto();
 		$this->paypal_me = new paypal_me();
 		$this->nequi_direct = new nequi_direct();
 		$this->yappy_direct = new yappy_direct();	
@@ -149,11 +151,16 @@ class dy_Gateways
 	public function has_any_gateway()
 	{
 		$output = false;
-		
-		if(count($this->list_gateways_cb()) > 0 && dy_utilities::pax_num() <= package_field('package_max_persons'))
+		$gateways = $this->list_gateways_cb();
+
+		if(is_array($gateways) && dy_utilities::pax_num() <= package_field('package_max_persons'))
 		{
-			$GLOBALS['has_any_gateway'] = true;
-			$output = true;
+			if(count($gateways) > 1)
+			{
+				$GLOBALS['has_any_gateway'] = true;
+				$output = true;
+			}
+
 		}
 		
 		return $output;
@@ -322,7 +329,7 @@ class dy_Gateways
 			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
 			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
 			'package_code' => esc_html(package_field('package_trip_code')),
-			'title' => esc_html($post->post_title),
+			'title' => esc_html(dy_utilities::remove_emoji($post->post_title)),
 			'package_type' => esc_html($this->get_type()),
 			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
 			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),

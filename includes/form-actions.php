@@ -16,6 +16,7 @@ class dy_Actions{
         add_filter('the_content', array(&$this, 'the_content'), 101);
         add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 101);
         add_filter( 'the_title', array(&$this, 'the_title'), 101);
+		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
     }
 
 	public function args()
@@ -179,11 +180,21 @@ class dy_Actions{
     {
         if($this->has_form() && $this->is_request_submitted())
         {
-            $title = esc_html(__('Thank You For Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
+            $title = esc_html(__('Thank You for Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
 
         return $title;
     }
+	
+	public function modify_excerpt($excerpt)
+	{
+        if($this->has_form() && $this->is_request_submitted())
+        {
+            $excerpt = apply_filters('dy_package_description', null);
+        }
+
+        return $excerpt;
+	}
 
     public function the_title($title)
     {	
@@ -191,7 +202,7 @@ class dy_Actions{
 		{
 			if($this->has_form() && $this->is_request_submitted())
 			{
-				$title = esc_html(__('Thank you for your Inquiry', 'dynamicpackages'));
+				$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
 			}			
 		}
 

@@ -414,9 +414,9 @@ class bank_transfer{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var bank_logo = jQuery('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
+				let logo = jQuery('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
 				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('#dy_form_icon').html(bank_logo);
+				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				

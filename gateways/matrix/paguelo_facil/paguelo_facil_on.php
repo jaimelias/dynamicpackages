@@ -752,9 +752,9 @@ class paguelo_facil_on{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				var <?php echo esc_html($this->gateway_name); ?>_logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
+				let logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
 				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('#dy_form_icon').html(<?php echo esc_html($this->gateway_name); ?>_logo);
+				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
 				

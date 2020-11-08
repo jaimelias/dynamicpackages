@@ -1577,7 +1577,7 @@ class dy_Public {
 			$description .= ' | ' . $post->post_title;
 			$description .= ' ('.$itinerary.'): ';
 			$description .= $people_imp;			
-			$output = $description;			
+			$output = dy_utilities::remove_emoji($description);			
 		}		
 	
 		return $output;
