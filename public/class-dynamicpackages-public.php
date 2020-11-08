@@ -218,6 +218,11 @@ class dy_Public {
 				array_push($dep, 'sha512');
 		}
 		
+		if($enqueue_datepicker)
+		{
+			self::datepickerJS();
+		}		
+		
 		if($enqueue_public)
 		{
 			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );
@@ -227,11 +232,6 @@ class dy_Public {
 			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');
 			
  			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html(get_option('ipgeolocation')).'";}', 'before');
-		}
-		
-		if($enqueue_datepicker)
-		{
-			self::datepickerJS();
 		}
 		
 		if($enqueue_archive)
