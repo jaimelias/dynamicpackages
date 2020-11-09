@@ -430,14 +430,14 @@ class dy_Gateways
 				{
 					if($key == 'slug' && $value == substr(get_locale(), 0, -3))
 					{
-						$output = package_field( 'package_provider_message_'.$value, $the_id);
+						$output = package_field( 'package_confirmation_message_'.$value, $the_id);
 					}
 				}	
 			}
 		}
 		else
 		{
-			$output = package_field( 'package_provider_message', $the_id);
+			$output = package_field( 'package_confirmation_message', $the_id);
 		}
 		return $output;
 	}

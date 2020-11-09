@@ -2089,6 +2089,10 @@ class dy_Public {
 		update_post_meta($the_id, 'package_end_hour', package_field('package_return_hour', $the_id));
 		update_post_meta($the_id, 'package_check_in_end_hour', package_field('package_check_in_return_hour', $the_id));
 
+		update_post_meta($the_id, 'package_confirmation_message', package_field('package_provider_message', $the_id));
+		update_post_meta($the_id, 'package_confirmation_message_en', package_field('package_provider_message_en', $the_id));
+		update_post_meta($the_id, 'package_confirmation_message_es', package_field('package_provider_message_es', $the_id));
+
 		return $output;
 	}
 

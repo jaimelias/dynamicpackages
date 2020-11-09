@@ -397,7 +397,7 @@ class paguelo_facil_on{
 			if($this->success === 2)
 			{				
 				$output = null;
-				$message = package_field('package_provider_message');
+				$message = package_field('package_confirmation_message');
 				$details = apply_filters('dy_package_details', null); 
 				$output .= ($details) ? $details : null;
 				$output .= ($message) ? '<br/><br/>' . esc_html($message) : null;				
