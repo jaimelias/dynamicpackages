@@ -1,5 +1,6 @@
 <?php
 
+	$GLOBALS['dy_is_archive'] = true;
 	$posts_per_page = isset($dis_imp) ? $dis_imp : 12;
 	$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 	$today = date("Y-m-d");
@@ -304,7 +305,7 @@ else
 							<?php endif; ?>
 
 							<?php if(has_excerpt()): ?>
-								<p itemprop="description" class="bottom-10 small hide-sm"><?php echo (get_the_excerpt()); ?></p>
+								<p itemprop="description" class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden': 'hide-sm' ?>"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
 							<div class="small hide-sm"><?php echo apply_filters('dy_package_details', null); ?></div>

@@ -151,7 +151,7 @@ class dy_Forms
 		if(dy_validators::is_package_transport())
 		{
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).'</label>';
-			$form .= '<p><input type="text" name="return_date" class="booking_datepicker" placeholder="Loading..."/></p>';	
+			$form .= '<p><input type="text" name="end_date" class="booking_datepicker" placeholder="Loading..."/></p>';	
 		}
 		
 		

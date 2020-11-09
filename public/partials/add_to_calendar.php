@@ -51,9 +51,9 @@ class dy_Add_To_Calendar
 			{
 				$date = package_field('package_event_date');
 			}
-			if(package_field('package_departure_hour') != '')
+			if(package_field('package_start_hour') != '')
 			{
-				$hour = package_field('package_departure_hour');
+				$hour = package_field('package_start_hour');
 			}	
 			if($hour != '' && $date != '')
 			{
@@ -81,7 +81,7 @@ class dy_Add_To_Calendar
 							<span class="timezone"><?php echo esc_html(get_option('timezone_string')); ?></span>
 							<span class="title"><?php echo esc_html($post->post_title); ?></span>
 							<span class="description"><?php echo esc_html(apply_filters('dy_package_description', null)); ?></span>
-							<span class="location"><?php echo esc_html(package_field('package_departure_address')); ?></span>
+							<span class="location"><?php echo esc_html(package_field('package_start_address')); ?></span>
 						</div>
 					</div>
 				<?php

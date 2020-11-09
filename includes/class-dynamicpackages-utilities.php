@@ -64,13 +64,13 @@ class dy_utilities {
 		
 		return $output;
 	}
-	public static function return_date()
+	public static function end_date()
 	{
 		$output = null;
 		
-		if(isset($_REQUEST['return_date']))
+		if(isset($_REQUEST['end_date']))
 		{
-			$output = ($_REQUEST['return_date']) ? strtotime(sanitize_text_field($_REQUEST['return_date'])) : null;	
+			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'])) : null;	
 		}
 		
 		return $output;
@@ -803,9 +803,9 @@ class dy_utilities {
 			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 		}
 
-		if(dy_validators::is_package_transport() && isset($_REQUEST['return_date']))
+		if(dy_validators::is_package_transport() && isset($_REQUEST['end_date']))
 		{
-			if(strlen($_REQUEST['return_date']) >= 5)
+			if(strlen($_REQUEST['end_date']) >= 5)
 			{
 				$sum = $sum * 2;
 			}
@@ -871,11 +871,11 @@ class dy_utilities {
 	{
 		$hour = null;
 
-		if(package_field('package_departure_hour' ))
+		if(package_field('package_start_hour' ))
 		{
-			if(package_field('package_departure_hour' ) != '')
+			if(package_field('package_start_hour' ) != '')
 			{
-				$hour = package_field('package_departure_hour');
+				$hour = package_field('package_start_hour');
 			}
 		}
 		

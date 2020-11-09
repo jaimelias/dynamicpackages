@@ -187,7 +187,7 @@ class dy_Json
 						{
 							$duration = intval(package_field('package_duration'));
 							$unit = package_field('package_length_unit');
-							$event_date = $event[$x].' '.package_field('package_departure_hour');
+							$event_date = $event[$x].' '.package_field('package_start_hour');
 							$event_date_name = date_i18n('M d', strtotime($event_date));
 							$event_date_format = date_i18n('Y-m-d\TH:i', strtotime($event_date));						
 							
@@ -238,7 +238,7 @@ class dy_Json
 							$item['location'] = array(
 								'@type' => 'Place',
 								'name' => esc_html(get_bloginfo('name')),
-								'address' => esc_html(package_field('package_departure_address'))
+								'address' => esc_html(package_field('package_start_address'))
 							);
 							
 							array_push($event_arr, $item);

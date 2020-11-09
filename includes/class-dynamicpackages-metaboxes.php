@@ -208,20 +208,20 @@ class dy_Metaboxes
 			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo package_field( 'package_check_in_hour' ); ?>">
 		</p>
 		<p>
-			<label for="package_departure_hour"><?php _e( 'Departure Hour', 'dynamicpackages' ); ?></label></br>
-			<input class="timepicker" type="text" name="package_departure_hour" id="package_departure_hour" value="<?php echo package_field( 'package_departure_hour' ); ?>">
+			<label for="package_start_hour"><?php _e( 'Departure Hour', 'dynamicpackages' ); ?></label></br>
+			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo package_field( 'package_start_hour' ); ?>">
 		</p>				
 		<p>
-			<label for="package_departure_address"><?php _e( 'Departure Address', 'dynamicpackages' ); ?></label></br>
-			<textarea cols="60" type="text" name="package_departure_address" id="package_departure_address"><?php echo package_field( 'package_departure_address' ); ?></textarea>
+			<label for="package_start_address"><?php _e( 'Departure Address', 'dynamicpackages' ); ?></label></br>
+			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo package_field( 'package_start_address' ); ?></textarea>
 		</p>
 
 		<?php if(dy_validators::is_package_transport()): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
 			<p>
-				<label for="package_check_in_return_hour"><?php _e( 'Check-in Hour', 'dynamicpackages' ); ?></label></br>
-				<input class="timepicker" type="text" name="package_check_in_return_hour" id="package_check_in_return_hour" value="<?php echo package_field( 'package_check_in_return_hour' ); ?>">
+				<label for="package_check_in_end_hour"><?php _e( 'Check-in Hour', 'dynamicpackages' ); ?></label></br>
+				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo package_field( 'package_check_in_end_hour' ); ?>">
 			</p>
 			<p>
 				<label for="package_return_hour"><?php _e( 'Departure Hour', 'dynamicpackages' ); ?></label></br>

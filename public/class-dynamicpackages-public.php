@@ -1493,9 +1493,9 @@ class dy_Public {
 		if(isset($post) && isset($_REQUEST['booking_date']))
 		{
 			$departure_date = dy_utilities::format_date(dy_utilities::booking_date());
-			$departure_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
-			$itinerary = $departure_date.$departure_hour;
-			$return_date = (isset($_REQUEST['return_date'])) ? dy_utilities::format_date(dy_utilities::return_date()) : null;
+			$start_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
+			$itinerary = $departure_date.$start_hour;
+			$end_date = (isset($_REQUEST['end_date'])) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 			$pax_discount = (isset($_REQUEST['pax_discount'])) ? intval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
 			$discount = (package_field('package_discount' )) ? package_field('package_discount' ) : 0;
 			$free = (package_field('package_free')) ? package_field('package_free') : 0;
@@ -1555,14 +1555,14 @@ class dy_Public {
 			
 			$people_imp = implode(', ', $people_imp);
 			
-			if(dy_validators::is_package_transport() && isset($_REQUEST['return_date']))
+			if(dy_validators::is_package_transport() && isset($_REQUEST['end_date']))
 			{
 				$itinerary = __('Departure', 'dynamicpackages') .' '. $departure_date;
 				
-				if(strlen($_REQUEST['return_date']) > 5)
+				if(strlen($_REQUEST['end_date']) > 5)
 				{
 					$description = __('Round trip', 'dynamicpackages');
-					$itinerary .= ' | ' . __('Return', 'dynamicpackages') . ' ' . $return_date;
+					$itinerary .= ' | ' . __('Return', 'dynamicpackages') . ' ' . $end_date;
 				}
 				else
 				{
@@ -1901,9 +1901,11 @@ class dy_Public {
 	
 	public static function details()
 	{
+		global $dy_is_archive;
+		$is_archive = (isset($dy_is_archive)) ? true : false;
 		$output = null;
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
-		$return_date = (dy_utilities::return_date()) ? dy_utilities::format_date(dy_utilities::return_date()) : null;
+		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$args = array(
 			'enabled_days' => array('calendar', self::enabled_days()),
@@ -1912,11 +1914,11 @@ class dy_Public {
 			'booking_date' => array('calendar', $booking_date),
 			'duration' => array('clock', self::show_duration()),
 			'check_in' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_hour' )),
-			'departure_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
-			'departure_address' => array('marker', package_field('package_departure_address')),
+			'start_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
+			'start_address' => array('marker', package_field('package_start_address')),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
-			'return_date' => array('calendar', $return_date),
-			'check_in_return_hour' => array('clock', package_field('package_check_in_return_hour')),
+			'end_date' => array('calendar', $end_date),
+			'check_in_end_hour' => array('clock', package_field('package_check_in_end_hour')),
 			'return_hour' => array('clock', package_field('package_return_hour')),
 			'return_address' => array('clock', package_field('package_return_address'))
 			
@@ -1944,16 +1946,16 @@ class dy_Public {
 		}
 		if(!dy_utilities::hour())
 		{
-			unset($args['departure_hour']);
+			unset($args['start_hour']);
 		}
-		if(!package_field('package_departure_address'))
+		if(!package_field('package_start_address'))
 		{
-			unset($args['departure_address']);
+			unset($args['start_address']);
 		}
-		if(!$return_date)
+		if(!$end_date)
 		{
 			unset($args['label_return']);
-			unset($args['return_date']);
+			unset($args['end_date']);
 			unset($args['return_hour']);
 			unset($args['return_address']);
 		}
@@ -1961,9 +1963,9 @@ class dy_Public {
 		{
 			unset($args['duration']);
 		}
-		if(!package_field('package_check_in_return_hour'))
+		if(!package_field('package_check_in_end_hour'))
 		{
-			unset($args['check_in_return_hour']);
+			unset($args['check_in_end_hour']);
 		}
 		if(!package_field('package_return_hour'))
 		{
@@ -1982,16 +1984,24 @@ class dy_Public {
 			
 			unset($args['label_departure']);
 			unset($args['label_return']);
-			unset($args['return_date']);
-			unset($args['check_in_return_hour']);
+			unset($args['end_date']);
+			unset($args['check_in_end_hour']);
 			unset($args['return_hour']);
 			unset($args['return_address']);
 		}
 		
-		if(is_page() || is_tax())
+		if($is_archive)
 		{
 			unset($args['check_in']);
-			unset($args['departure_address']);
+			
+			if(get_option('dy_archive_hide_start_address'))
+			{
+				unset($args['start_address']);
+			}
+			if(get_option('dy_archive_hide_enabled_days'))
+			{
+				unset($args['enabled_days']);
+			}
 		}
 		
 		foreach($args as $k => $v)
@@ -2070,9 +2080,14 @@ class dy_Public {
 			if($output != '')
 			{
 				update_post_meta($the_id, 'package_date', $output);
-			}
-			
+			}	
 		}
+
+		update_post_meta($the_id, 'package_start_address', package_field('package_departure_address', $the_id));
+		update_post_meta($the_id, 'package_start_hour', package_field('package_departure_hour', $the_id));
+		update_post_meta($the_id, 'package_end_date', package_field('package_return_date', $the_id));
+		update_post_meta($the_id, 'package_end_hour', package_field('package_return_hour', $the_id));
+		update_post_meta($the_id, 'package_check_in_end_hour', package_field('package_check_in_return_hour', $the_id));
 
 		return $output;
 	}

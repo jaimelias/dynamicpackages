@@ -722,10 +722,10 @@ class dy_validators
 		}
 		else
 		{		
-			$package_departure_address = package_field('package_departure_address');
-			$package_departure_hour = package_field('package_departure_hour');
+			$package_start_address = package_field('package_start_address');
+			$package_start_hour = package_field('package_start_hour');
 			
-			if($package_departure_address != '' && $package_departure_hour != '')
+			if($package_start_address != '' && $package_start_hour != '')
 			{
 				$package_event_date = package_field('package_event_date');
 				

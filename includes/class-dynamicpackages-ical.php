@@ -19,7 +19,7 @@ class dy_Ical
 		}
 		else
 		{
-			if(isset($_GET['ical']) && is_singular('packages') && package_field('package_departure_hour') != '')
+			if(isset($_GET['ical']) && is_singular('packages') && package_field('package_start_hour') != '')
 			{
 				$output = true;
 				$GLOBALS['ical_valid'] = $output;
@@ -62,9 +62,9 @@ class dy_Ical
 				$event_item['DTSTAMP'] = esc_html(dy_date(self::date_format()), strtotime(get_the_date()));
 				$event_item['TRANSP'] = 'TRANSPARENT';
 				
-				if(package_field('package_departure_address'))
+				if(package_field('package_start_address'))
 				{
-					$event_item['LOCATION'] = esc_html(package_field('package_departure_address'));
+					$event_item['LOCATION'] = esc_html(package_field('package_start_address'));
 				}
 				
 				$categories = dy_utilities::implode_taxo_names('package_category');
@@ -122,7 +122,7 @@ class dy_Ical
 	
 	public static function start($date)
 	{
-		$hour = package_field('package_departure_hour');
+		$hour = package_field('package_start_hour');
 		return date(self::date_format(), strtotime($date.' '.$hour));
 	}
 	
@@ -130,7 +130,7 @@ class dy_Ical
 	{		
 		$duration = intval(package_field('package_duration'));
 		$unit = package_field('package_length_unit');
-		$event_date = $date.' '.package_field('package_departure_hour');
+		$event_date = $date.' '.package_field('package_start_hour');
 		
 		if($unit == 0)
 		{

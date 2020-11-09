@@ -143,11 +143,16 @@ class dy_Admin {
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
 		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
 		register_setting( 'dy_settings', 'dy_tax', 'intval');
-		register_setting( 'dy_settings', 'dy_webhook', 'esc_url');
-		register_setting( 'dy_settings', 'dy_quote_webhook', 'esc_url');
+		register_setting('dy_settings', 'dy_webhook', 'esc_url');
+		register_setting('dy_settings', 'dy_quote_webhook', 'esc_url');
 		register_setting('dy_settings', 'ipgeolocation', 'sanitize_user');	
 		register_setting('dy_settings', 'dy_disabled_dates', 'esc_html');	
 		register_setting('dy_settings', 'dy_max_disabled_dates', 'intval');	
+
+		//list settings
+		register_setting('dy_settings', 'dy_archive_hide_excerpt', 'esc_html');
+		register_setting('dy_settings', 'dy_archive_hide_enabled_days', 'esc_html');
+		register_setting('dy_settings', 'dy_archive_hide_start_address', 'esc_html');
 
 
 		add_settings_section(
@@ -156,6 +161,15 @@ class dy_Admin {
 			'', 
 			'dy_settings'
 		);
+		
+		add_settings_section(
+			'dy_list_section', 
+			esc_html(__( 'Package List Settings', 'dynamicpackages' )), 
+			'', 
+			'dy_settings'
+		);
+		
+
 		
 		add_settings_section(
 			'dy_gateways_section', 
@@ -302,6 +316,36 @@ class dy_Admin {
 				'type' => array('date', 'date'),
 			) 
 		);	
+		
+		//dy list/archive settings
+		
+		add_settings_field( 
+			'dy_archive_hide_excerpt', 
+			esc_html(__( 'Hide Package Description (Excerpt)', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_list_section',
+			array('name' => 'dy_archive_hide_excerpt', 'type' => 'checkbox')
+		);
+		
+		add_settings_field( 
+			'dy_archive_hide_enabled_days', 
+			esc_html(__( 'Hide Enabled Days', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_list_section',
+			array('name' => 'dy_archive_hide_enabled_days', 'type' => 'checkbox')
+		);
+		
+		add_settings_field( 
+			'dy_archive_hide_start_address', 
+			esc_html(__( 'Hide Start Address', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_list_section',
+			array('name' => 'dy_archive_hide_start_address', 'type' => 'checkbox')
+		);
+		
 	}
 
 
@@ -324,8 +368,9 @@ class dy_Admin {
 			$name = $arr['name'];
 			$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
+			$value = ($type == 'checkbox') ? 1 : get_option($name);
 		?>
-		<input type="<?php echo $type; ?>" name="<?php echo esc_html($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_html(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
+		<input type="<?php echo $type; ?>" name="<?php echo esc_html($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_html($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
 
 	<?php }	
 	
