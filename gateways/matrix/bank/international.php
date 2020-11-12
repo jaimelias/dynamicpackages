@@ -173,7 +173,7 @@ class wire_transfer{
 			$label = __('deposit', 'dynamicpackages');
 		}		
 		
-		$message = '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
+		$message .= '<p class="large">'.__('To complete the booking please send us the', 'dynamicpackages');
 		$message .= ' '.$label.' (';
 		$message .= $amount;
 		$message .= ') '. __('to the following account', 'dynamicpackages').'.</p>';

@@ -389,12 +389,10 @@ class paguelo_facil_on{
 
 	public function email_notes($output)
 	{
-		
-		
 		if(isset($this->success))
 		{
 			if($this->success === 2)
-			{				
+			{
 				$output = null;
 				$message = package_field('package_confirmation_message');
 				$details = apply_filters('dy_package_details', null); 
