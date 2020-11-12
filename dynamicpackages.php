@@ -24,7 +24,6 @@
  * Text Domain:       dynamicpackages
  * Domain Path:       /languages
  * GitHub Plugin URI:       jaimelias/dynamicpackages
- * GitHub Plugin URI:       https://github.com/jaimelias/dynamicpackages
  */
 
 // If this file is called directly, abort.
