@@ -1,4 +1,3 @@
-<?php do_action('dy_cc_warning'); ?>
 
 <hr/>
 

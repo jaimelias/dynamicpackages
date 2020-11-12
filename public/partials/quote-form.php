@@ -70,6 +70,8 @@
 			</div>			
 			
 		</div>
+
+		<?php do_action('dy_cc_warning'); ?>
 		
 		<?php if($has_any_gateway) : ?>
 			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
