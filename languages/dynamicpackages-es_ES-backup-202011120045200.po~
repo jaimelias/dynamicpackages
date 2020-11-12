@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
-"POT-Creation-Date: 2020-11-08 04:36+0000\n"
-"PO-Revision-Date: 2020-11-08 04:37+0000\n"
+"POT-Creation-Date: 2020-11-12 00:23+0000\n"
+"PO-Revision-Date: 2020-11-12 00:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -30,7 +30,7 @@ msgstr "Por noche"
 msgid "Weekly"
 msgstr "Semanal"
 
-#: admin/class-dynamicpackages-admin.php:155
+#: admin/class-dynamicpackages-admin.php:160
 #: gateways/matrix/bank/international.php:338
 #: gateways/matrix/bank/local.php:259 gateways/matrix/cuanto/cuanto.php:209
 #: gateways/matrix/nequi/nequi_direct.php:235
@@ -40,86 +40,102 @@ msgstr "Semanal"
 msgid "General Settings"
 msgstr "Configuración General"
 
-#: admin/class-dynamicpackages-admin.php:162
+#: admin/class-dynamicpackages-admin.php:167
+msgid "Package List Settings"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:176
 msgid "Gateway Settings"
 msgstr "Configuración de plataforma de pagos"
 
-#: admin/class-dynamicpackages-admin.php:169
+#: admin/class-dynamicpackages-admin.php:183
 msgid "Integrations Settings"
 msgstr "Configuración de integraciones"
 
-#: admin/class-dynamicpackages-admin.php:176
+#: admin/class-dynamicpackages-admin.php:190
 msgid "Package Archive Page"
 msgstr "Página de archivo de paquetes"
 
-#: admin/class-dynamicpackages-admin.php:183 gateways/checkout-page.php:148
+#: admin/class-dynamicpackages-admin.php:197 gateways/checkout-page.php:148
 msgid "Tax"
 msgstr "Impuesto"
 
-#: admin/class-dynamicpackages-admin.php:193
+#: admin/class-dynamicpackages-admin.php:207
 msgid "Company Email"
 msgstr "Email de la empresa"
 
-#: admin/class-dynamicpackages-admin.php:202
+#: admin/class-dynamicpackages-admin.php:216
 msgid "Company Phone"
 msgstr "Teléfono de la empresa"
 
-#: admin/class-dynamicpackages-admin.php:211
+#: admin/class-dynamicpackages-admin.php:225
 msgid "Company Whatsapp"
 msgstr "Whatsapp de la empresa"
 
-#: admin/class-dynamicpackages-admin.php:220
+#: admin/class-dynamicpackages-admin.php:234
 msgid "Company Address"
 msgstr "Dirección de la empresa"
 
-#: admin/class-dynamicpackages-admin.php:229
+#: admin/class-dynamicpackages-admin.php:243
 msgid "Tax Identification Number"
 msgstr "Código de identificación del contrubuyente"
 
-#: admin/class-dynamicpackages-admin.php:239
+#: admin/class-dynamicpackages-admin.php:253
 msgid "Checkout Webhook URL"
 msgstr "Webhook URL de pagos"
 
-#: admin/class-dynamicpackages-admin.php:248
+#: admin/class-dynamicpackages-admin.php:262
 msgid "Quote Webhook URL"
 msgstr "URL de webhook de cotizaciones"
 
-#: admin/class-dynamicpackages-admin.php:257
+#: admin/class-dynamicpackages-admin.php:271
 msgid "Recaptcha Site Key"
 msgstr "Recaptcha Site Key"
 
-#: admin/class-dynamicpackages-admin.php:266
+#: admin/class-dynamicpackages-admin.php:280
 msgid "Recaptcha Secret Key"
 msgstr "Recaptcha Secret Key"
 
-#: admin/class-dynamicpackages-admin.php:274
+#: admin/class-dynamicpackages-admin.php:288
 msgid "IPGeolocation.io"
-msgstr ""
+msgstr "IPGeolocation.io"
 
-#: admin/class-dynamicpackages-admin.php:283
+#: admin/class-dynamicpackages-admin.php:297
 msgid "Max. Disabled Dates"
 msgstr "Máximo de fechas desabilitadas."
 
-#: admin/class-dynamicpackages-admin.php:292
+#: admin/class-dynamicpackages-admin.php:306
 msgid "Global Disabled Dates"
 msgstr "Deshabilitar fechas globalmente"
 
-#: admin/class-dynamicpackages-admin.php:301
+#: admin/class-dynamicpackages-admin.php:315
 #: includes/class-dynamicpackages-metaboxes.php:329
 #: includes/class-dynamicpackages-metaboxes.php:461
 #: includes/class-dynamicpackages-metaboxes.php:483
-#: public/class-dynamicpackages-public.php:2261
+#: public/class-dynamicpackages-public.php:2270
 msgid "From"
 msgstr "Desde"
 
-#: admin/class-dynamicpackages-admin.php:301
+#: admin/class-dynamicpackages-admin.php:315
 #: includes/class-dynamicpackages-metaboxes.php:329
 #: includes/class-dynamicpackages-metaboxes.php:461
 #: includes/class-dynamicpackages-metaboxes.php:483
 msgid "To"
 msgstr "Hasta"
 
-#: admin/class-dynamicpackages-admin.php:367
+#: admin/class-dynamicpackages-admin.php:324
+msgid "Hide Package Description (Excerpt)"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:333
+msgid "Hide Enabled Days"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:342
+msgid "Hide Start Address"
+msgstr ""
+
+#: admin/class-dynamicpackages-admin.php:412
 msgid "Dynamicpackages"
 msgstr "Dynamicpackages"
 
@@ -253,31 +269,31 @@ msgstr "Solicitud invalida"
 msgid "or"
 msgstr "o"
 
-#: gateways/gateways.php:169
+#: gateways/gateways.php:174
 msgid "Pay"
 msgstr "Pagar"
 
-#: gateways/gateways.php:173
+#: gateways/gateways.php:178
 msgid "the deposit"
 msgstr "el deposito"
 
-#: gateways/gateways.php:178
+#: gateways/gateways.php:183
 msgid "with"
 msgstr "con"
 
-#: gateways/gateways.php:307
+#: gateways/gateways.php:312
 msgid "Coupon"
 msgstr "Cupón"
 
-#: gateways/gateways.php:307
+#: gateways/gateways.php:312
 msgid "off"
 msgstr "descuento"
 
-#: gateways/gateways.php:334
+#: gateways/gateways.php:339
 msgid "Error: please correct the invalid fields in color red."
 msgstr "Error: corrige los campos inválidos en color rojo."
 
-#: gateways/gateways.php:379 public/class-dynamicpackages-public.php:1707
+#: gateways/gateways.php:384 public/class-dynamicpackages-public.php:1707
 #: gateways/matrix/bank/international.php:173
 #: gateways/matrix/bank/local.php:160
 #: gateways/matrix/nequi/nequi_direct.php:159
@@ -286,25 +302,25 @@ msgstr "Error: corrige los campos inválidos en color rojo."
 msgid "deposit"
 msgstr "deposito"
 
-#: gateways/gateways.php:379
+#: gateways/gateways.php:384
 msgid "outstanding balance"
 msgstr "saldo"
 
-#: gateways/gateways.php:542
+#: gateways/gateways.php:547
 #, php-format
 msgid "Coupon %s activated. %s off applied on the rate."
 msgstr "Cupón %s activado. %s de descuento aplicado a la tarifa."
 
-#: gateways/gateways.php:547
+#: gateways/gateways.php:552
 #, php-format
 msgid "This coupon expires on %s."
 msgstr "Este cupón expira el %s."
 
-#: gateways/gateways.php:553
+#: gateways/gateways.php:558
 msgid "Invalid or expired coupon"
 msgstr "Cupón inválido o expirado"
 
-#: gateways/gateways.php:569
+#: gateways/gateways.php:574
 #, php-format
 msgid "You have chosen %s %s, but the minimum duration is %s %s."
 msgstr "Haz elegido %s %s, pero el mínimo es de %s %s."
@@ -325,7 +341,7 @@ msgstr "Disponibilidad"
 #: includes/class-dynamicpackages-metaboxes.php:61
 #: includes/class-dynamicpackages-metaboxes.php:203
 #: public/class-dynamicpackages-public.php:1560
-#: public/class-dynamicpackages-public.php:1911
+#: public/class-dynamicpackages-public.php:1913
 msgid "Departure"
 msgstr "Partida"
 
@@ -403,7 +419,7 @@ msgstr "Dirección de partida"
 
 #: includes/class-dynamicpackages-metaboxes.php:220
 #: public/class-dynamicpackages-public.php:1565
-#: public/class-dynamicpackages-public.php:1917
+#: public/class-dynamicpackages-public.php:1919
 msgid "Return"
 msgstr "Regreso"
 
@@ -486,7 +502,7 @@ msgid "Duration"
 msgstr "Duración"
 
 #: includes/class-dynamicpackages-metaboxes.php:329
-#: public/partials/archive.php:288
+#: public/partials/archive.php:289
 msgid "ID"
 msgstr "ID"
 
@@ -804,7 +820,7 @@ msgid "Search Package"
 msgstr "Buscar paquete"
 
 #: includes/class-dynamicpackages-post-type.php:35
-#: public/partials/archive.php:349
+#: public/partials/archive.php:350
 msgid "Not found"
 msgstr "No encontrado"
 
@@ -1049,27 +1065,27 @@ msgstr "caros a baratos"
 
 #: public/class-dynamicpackages-public.php:758
 #: public/class-dynamicpackages-public.php:934
-#: public/class-dynamicpackages-public.php:2097
-#: public/class-dynamicpackages-public.php:2124
+#: public/class-dynamicpackages-public.php:2106
+#: public/class-dynamicpackages-public.php:2133
 msgid "today"
 msgstr "hoy"
 
 #: public/class-dynamicpackages-public.php:762
 #: public/class-dynamicpackages-public.php:938
-#: public/class-dynamicpackages-public.php:2103
-#: public/class-dynamicpackages-public.php:2128
+#: public/class-dynamicpackages-public.php:2112
+#: public/class-dynamicpackages-public.php:2137
 msgid "tomorrow"
 msgstr "mañana"
 
 #: public/class-dynamicpackages-public.php:766
 #: public/class-dynamicpackages-public.php:942
-#: public/class-dynamicpackages-public.php:2132 public/partials/forms.php:97
+#: public/class-dynamicpackages-public.php:2141 public/partials/forms.php:97
 msgid "next 7 days"
 msgstr "próximos 7 días"
 
 #: public/class-dynamicpackages-public.php:770
 #: public/class-dynamicpackages-public.php:946
-#: public/class-dynamicpackages-public.php:2136 public/partials/forms.php:98
+#: public/class-dynamicpackages-public.php:2145 public/partials/forms.php:98
 msgid "next 30 days"
 msgstr "próximos 30 días"
 
@@ -1110,7 +1126,7 @@ msgstr "Minuto"
 
 #: public/class-dynamicpackages-public.php:1053
 #: public/class-dynamicpackages-public.php:1130
-#: public/class-dynamicpackages-public.php:1915 public/partials/forms.php:147
+#: public/class-dynamicpackages-public.php:1917 public/partials/forms.php:147
 msgid "Hour"
 msgstr "Hora"
 
@@ -1201,7 +1217,7 @@ msgstr "Ida y vuelta"
 msgid "Accommodations"
 msgstr "Acomodaciones"
 
-#: public/class-dynamicpackages-public.php:1699 public/partials/archive.php:320
+#: public/class-dynamicpackages-public.php:1699 public/partials/archive.php:321
 msgid "Starting at"
 msgstr "Desde"
 
@@ -1245,36 +1261,36 @@ msgstr "Martes"
 msgid "Everyday"
 msgstr "Todos los días"
 
-#: public/class-dynamicpackages-public.php:1910
+#: public/class-dynamicpackages-public.php:1912
 msgid "Schedule"
 msgstr "Horario"
 
-#: public/class-dynamicpackages-public.php:1914
+#: public/class-dynamicpackages-public.php:1916
 msgid "Check-in"
 msgstr "Check-in"
 
-#: public/class-dynamicpackages-public.php:2188
+#: public/class-dynamicpackages-public.php:2197
 msgid "Get a"
 msgstr "Obtén un"
 
-#: public/class-dynamicpackages-public.php:2190
+#: public/class-dynamicpackages-public.php:2199
 msgid "off using the coupon code"
 msgstr "de descuento usando el cupón"
 
-#: public/class-dynamicpackages-public.php:2197
+#: public/class-dynamicpackages-public.php:2206
 #, php-format
 msgid "This coupon is valid for booking of minimum %s %s."
 msgstr "Este cupón es válido para reservas de mínimo %s %s."
 
-#: public/class-dynamicpackages-public.php:2203
+#: public/class-dynamicpackages-public.php:2212
 msgid "Offer valid until"
 msgstr "Oferta válida hasta"
 
-#: public/class-dynamicpackages-public.php:2239
+#: public/class-dynamicpackages-public.php:2248
 msgid "Similar packages"
 msgstr "Paquetes similares"
 
-#: public/class-dynamicpackages-public.php:2243
+#: public/class-dynamicpackages-public.php:2252
 msgid "Similar accommodations"
 msgstr "Acomodaciones similares"
 
@@ -1316,7 +1332,7 @@ msgstr "Asesoría por Whatsapp"
 msgid "Add to Calendar"
 msgstr "Guarda en tu calendario"
 
-#: public/partials/archive.php:328
+#: public/partials/archive.php:329
 msgid "More details"
 msgstr "Ver más"
 
@@ -1400,8 +1416,8 @@ msgid "Submit"
 msgstr "Enviar"
 
 #: public/partials/quote-form.php:6 gateways/matrix/estimate/estimate.php:169
-msgid "Get Your Quote Now!"
-msgstr "¡Solicita tu cotización ahora!"
+msgid "Send Your Request"
+msgstr "¡Envíanos tu solicitud ya!"
 
 #: public/partials/quote-form.php:6
 msgid "Contact Us"

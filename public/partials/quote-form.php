@@ -3,7 +3,7 @@
 	$has_any_gateway = apply_filters('dy_has_any_gateway', false);
 	$hide_form = ($has_any_gateway) ? 'class="hidden"' : null;
 	$submit_form = ($has_any_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
-	$header_form = (is_singular('packages')) ? __('Get Your Quote Now!', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
+	$header_form = (is_singular('packages')) ? __('Send Your Request', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
 	$request_form = (is_singular('packages')) ? 'request' : 'contact';
 ?>
 

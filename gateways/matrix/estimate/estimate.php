@@ -166,7 +166,7 @@ class estimate_request{
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
 				
-				let logo = jQuery('<p class="large"><?php echo esc_html(__('Get Your Quote Now!', 'dynamicpackages')); ?></p>').addClass('text-muted');					
+				let logo = jQuery('<p class="large"><?php echo esc_html(__('Send Your Request', 'dynamicpackages')); ?></p>').addClass('text-muted');					
 				jQuery('#dynamic_form').removeClass('hidden');
 				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
