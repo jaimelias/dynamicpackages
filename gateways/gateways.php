@@ -579,20 +579,23 @@ class dy_Gateways
 
 	public function cc_warning()
 	{
-		ob_start();
-		?>
-			<hr/>
+		if(is_booking_page())
+		{
+			ob_start();
+			?>
+				<hr/>
 
-			<div>
-				<h3><?php echo esc_html(__('Before Booking', 'dynamicpackages')); ?></h3>
-				<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('It is not allowed to book for third parties.', 'dynamicpackages'); ?></p>
-				<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'); ?></p>
-				<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('All card payments may be subject to a verification process where we charge a random amount less than $5. To complete the reservation you must indicate the exact amount of this charge. You can call your card support line or online banking for this.', 'dynamicpackages'); ?></p>
-			</div>		
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		echo $output;
+				<div class="small">
+					<h3><?php echo esc_html(__('Before Booking', 'dynamicpackages')); ?></h3>
+					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('It is not allowed to book for third parties.', 'dynamicpackages'); ?></p>
+					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'); ?></p>
+					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('All card payments may be subject to a verification process where we charge a random amount less than $5. To complete the reservation you must indicate the exact amount of this charge. You can call your card support line or online banking for this.', 'dynamicpackages'); ?></p>
+				</div>		
+			<?php
+			$output = ob_get_contents();
+			ob_end_clean();
+			echo $output;
+		}
 	}
 	
 }
