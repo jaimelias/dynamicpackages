@@ -52,7 +52,7 @@ class dy_Shortcodes {
 		{
 			?>
 			<p><label for="inquiry"><?php esc_html_e('Message', 'dynamicpackages'); ?></label>
-				<textarea id="inquiry" name="inquiry" ></textarea>
+				<textarea id="inquiry" name="inquiry" required></textarea>
 			</p>
 			<?php
 		}
