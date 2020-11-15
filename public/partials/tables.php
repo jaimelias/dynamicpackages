@@ -6,7 +6,7 @@ class dynamicpackages_Tables{
 	{
 		$price_chart = dy_utilities::get_price_chart();
 		
-		if(intval(package_field( 'package_show_pricing' )) == 0 && (dy_validator::is_parent_with_no_child() || dy_validator::is_child())
+		if(intval(package_field( 'package_show_pricing' )) == 0 && (dy_validators::is_parent_with_no_child() || dy_validators::is_child())
 		{
 			$min = package_field( 'package_min_persons' );
 			$max = package_field( 'package_max_persons' );
