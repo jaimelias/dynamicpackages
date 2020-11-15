@@ -1652,7 +1652,7 @@ class dy_Public {
 								$output .= '<tr>';
 								$output .= '<td>'.esc_html($subpackage_name).'</td>';
 								$output .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
-								$output .= '<td><a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(get_the_permalink().$item->post_name.'/').'">'.esc_html(__('Rates', 'dynamicpackages')).'</a></td>';
+								$output .= '<td><a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(get_the_permalink().'/'.$item->post_name.'/').'">'.esc_html(__('Rates', 'dynamicpackages')).'</a></td>';
 								$output .= '</tr>';							
 							}
 							else
