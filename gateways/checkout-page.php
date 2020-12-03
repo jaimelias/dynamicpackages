@@ -177,10 +177,11 @@
 			<?php endif; ?>
 		<?php endif; ?>	
 		
+		<hr />
+
+		<?php do_action('dy_checkout_area'); ?>		
+		
 	</div>
 </div>
 
 
-<hr />
-
-<?php do_action('dy_checkout_area'); ?>
