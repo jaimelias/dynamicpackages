@@ -237,7 +237,31 @@ class dy_validators
 				if(array_key_exists('error-codes', $verify_response))
 				{
 					$GLOBALS['dy_request_invalids'] = array(__('Invalid Recaptcha', 'dynamicpackages'));
-					write_log(json_encode($verify_response['error-codes']));
+					$debug_output = array(
+						'error' => $verify_response['error-codes']
+					);
+					$post_debug = array_map('sanitize_text_field', $_POST);
+					
+					if(array_key_exists('first_name', $post_debug)){
+						$debug_output['name'] = $post_debug['first_name'];
+					}
+					if(array_key_exists('email', $post_debug)){
+						$debug_output['email'] = $post_debug['email'];
+					}
+					if(array_key_exists('phone', $post_debug)){
+						$debug_output['phone'] = $post_debug['phone'];
+					}
+					if(array_key_exists('description', $post_debug)){
+						$debug_output['description'] = $post_debug['description'];
+					}
+					if(array_key_exists('add_ons', $post_debug)){
+						$debug_output['add_ons'] = $post_debug['add_ons'];
+					}
+					if(array_key_exists('total', $post_debug)){
+						$debug_output['total'] = $post_debug['total'];
+					}					
+					
+					write_log(json_encode($debug_output));
 				}
 			}
 		}
