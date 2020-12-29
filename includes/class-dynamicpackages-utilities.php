@@ -352,7 +352,15 @@ class dy_utilities {
 						}
 					}
 					
-					$price = $base_price + $occupancy_price;
+					if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type == 1)
+					{
+						$price = ($base_price + ($occupancy_price * $duration)) / $duration;
+					}
+					else
+					{
+						$price = $base_price + $occupancy_price;
+					}
+					
 					
 					if($price_type == 1)
 					{
@@ -367,6 +375,11 @@ class dy_utilities {
 			{
 				if(count($prices) > 0)
 				{
+					if($min > 1)
+					{
+						array_slice($prices, ($min - 1), count($prices));
+					}
+					
 					$output = floatval(min($prices));
 				}
 			}
