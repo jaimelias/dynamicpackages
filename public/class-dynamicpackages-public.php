@@ -986,7 +986,6 @@ class dy_Public {
 		{
 			$price_type = package_field('package_fixed_price');
 			$package_type = package_field('package_package_type');
-			$duration_max = package_field('package_duration_max');
 			$duration = package_field('package_duration');
 			$duration_unit = package_field('package_length_unit');
 			$output = '';
@@ -995,52 +994,23 @@ class dy_Public {
 			{
 				$output = __('Per Person', 'dynamicpackages').' ';
 			}
-			if($duration_max > 0 && $package_type == 1)
+			if($package_type == 1)
 			{
 				$output .= __(' / ', 'dynamicpackages').self::duration_label($duration_unit, 1);
 			}
-			else if(dy_utilities::increase_by_hour())
+			if(dy_utilities::increase_by_hour())
 			{
 				$output .= __('Per Hour', 'dynamicpackages');
 			}
-			else if(dy_utilities::increase_by_day())
+			if(dy_utilities::increase_by_day())
 			{
 				$output .=__('Per Day', 'dynamicpackages');
 			}
-			else if(dy_validators::is_package_transport())
+			if(dy_validators::is_package_transport())
 			{
 				$output .=__('One-way', 'dynamicpackages');
 			}
-			else
-			{
-				if(is_singular('packages'))
-				{
-					if($duration_unit == 0)
-					{
-						$output .= ' '.$duration.' '.self::duration_label(0, $duration);
-					}
-					else if($duration_unit == 1)
-					{
-						//hours
-						$output .= ' '.$duration.' '.self::duration_label(1, $duration);
-					}
-					else if($duration_unit == 2)
-					{
-						//days
-						$output .= ' '.$duration.' '.self::duration_label(2, $duration);
-					}
-					else if($duration_unit == 3)
-					{
-						//nights
-						$output .= ' '.$duration.' '.self::duration_label(3, $duration);
-					}
-					else if($duration_unit == 4)
-					{
-						//weeks
-						$output .= ' '.$duration.' '.self::duration_label(4, $duration);
-					}						
-				}				
-			}
+
 			$GLOBALS[$which_var] = $output;
 		}
 

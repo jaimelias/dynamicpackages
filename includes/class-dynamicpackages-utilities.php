@@ -313,7 +313,7 @@ class dy_utilities {
 			$price_chart = self::get_price_chart($the_id);
 			$occupancy_chart = self::get_occupancy_chart($the_id);	
 			$occupancy_chart = (is_array($occupancy_chart)) ? $occupancy_chart['occupancy_chart'] : null;
-			$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : $the_id;
+			$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
 			$duration_unit = package_field('package_length_unit');
 			$duration_max = package_field('package_duration_max');
 			$package_type = package_field('package_package_type');
