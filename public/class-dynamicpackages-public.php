@@ -1615,7 +1615,7 @@ class dy_Public {
 								
 								if(($duration_unit == 2 || $duration_unit == 3) && $duration > 1)
 								{
-									$pre_button_label = '<small class="text-muted light">'.esc_html__($duration . ' ' . self::duration_label($duration_unit, $duration)).'</small><br/>';
+									$pre_button_label = '<div class="text-center"><small class="text-muted light">'.esc_html__($duration . ' ' . self::duration_label($duration_unit, $duration)).'</small></div>';
 								}
 								
 								if(isset($polylang))
