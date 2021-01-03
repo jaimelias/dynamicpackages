@@ -1576,9 +1576,12 @@ class dy_Public {
 		
 		if(!dy_validators::is_child() && isset($post))
 		{
+			$duration = package_field('package_duration');
+			$duration_unit = package_field('package_length_unit');
 			$label = __('Packages', 'dynamicpackages');
+			$pre_button_label = '';
 			
-			if(package_field('package_length_unit') == 3)
+			if($duration_unit == 3)
 			{
 				$label = __('Accommodations', 'dynamicpackages');
 			}
@@ -1610,6 +1613,11 @@ class dy_Public {
 								$subpackage_name = 'package_child_title';
 								$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
 								
+								if(($duration_unit == 2 || $duration_unit == 3) && $duration > 1)
+								{
+									$pre_button_label = '<small class="text-muted light">'.esc_html__($duration . ' ' . self::duration_label($duration_unit, $duration)).'</small><br/>';
+								}
+								
 								if(isset($polylang))
 								{
 									$subpackage_name .= '_'.pll_get_post_language($item->ID);
@@ -1625,7 +1633,7 @@ class dy_Public {
 								$output .= '<tr>';
 								$output .= '<td>'.esc_html($subpackage_name).'</td>';
 								$output .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
-								$output .= '<td><a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).'</a></td>';
+								$output .= '<td>'.$pre_button_label.'<a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).'</a></td>';
 								$output .= '</tr>';							
 							}
 							else

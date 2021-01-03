@@ -52,7 +52,7 @@ class dy_Tax_Mod
 		$tax_title_modifier = get_term_meta( $term->term_id, 'tax_title_modifier', true);	
 		?>
 		<tr class="form-field">
-		<th scope="row" valign="top"><label for="tax_title_modifier"><?php _e( 'Title Modifier', 'dynamicpackages' ); ?></label></th>
+		<th scope="row" valign="top"><label for="tax_title_modifier"><?php esc_html_e( 'Title Modifier', 'dynamicpackages' ); ?></label></th>
 			<td>
 				<input type="text" name="tax_title_modifier" id="tax_title_modifier" value="<?php echo $tax_title_modifier; ?>">
 			</td>
@@ -181,7 +181,8 @@ class dy_Tax_Mod
 							{
 								for($o = 0; $o < count($args[$k]['options']); $o++)
 								{
-									$options .= '<option value="'.esc_html($o).'" '.selected($value, $o).'>'.esc_html($args[$k]['options'][$o]).'</option>';
+									$is_selected = ($value == $o) ? 'selected="selected"' : '';
+									$options .= '<option value="'.esc_html($o).'" '.$is_selected.'>'.esc_html($args[$k]['options'][$o]).'</option>';
 								}
 							}
 						}
@@ -190,7 +191,8 @@ class dy_Tax_Mod
 					{
 						for($x = 0; $x < 100; $x++)
 						{
-							$options .= '<option '.selected($value, ($x+1)).'>'.($x+1).'</option>';
+							$is_selected = ($value == ($x+1)) ? 'selected="selected"' : '';
+							$options .= '<option  '.$is_selected.'>'.($x+1).'</option>';
 						}						
 					}
 					
