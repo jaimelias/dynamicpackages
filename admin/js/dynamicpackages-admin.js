@@ -338,8 +338,7 @@ const buildSeasonsGrid = () => {
 }
 const submitSavePost = () => {
 
-	jQuery('#package_package_type').add('#package_payment').add('#package_auto_booking').add('#package_num_seasons').change(function() {
-		const thisId = jQuery(this).attr('id');
+	jQuery('#package_package_type').add('#package_payment').add('#package_auto_booking').add('#package_num_seasons').change(() => {
 		
 		if(parseInt(dy_wp_version()) < 5)
 		{
@@ -347,21 +346,14 @@ const submitSavePost = () => {
 		}
 		else
 		{
-			wp.data.dispatch('core/editor').savePost();
-			
-			setTimeout(() => {
-				let reloader = setInterval(() => {
-					if(wp.data.select('core/editor').didPostSaveRequestSucceed())
-					{
-						const d = new Date();
-						const url = new URL(window.location.href);
-						url.searchParams.set('timestamp', d.getTime());
-						url.hash = thisId;						
-						clearInterval(reloader);
-						window.location.replace(url.href);
-					}
-				}, 1000);				
-			}, 1000);
+			wp.data.dispatch('core/editor').savePost().then(() => {
+				
+				if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+				{
+					const {location} = window;
+					location.reload();					
+				}
+			});
 		}
 	});
 }
