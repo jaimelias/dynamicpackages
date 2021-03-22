@@ -534,24 +534,37 @@ class dy_Public {
 						foreach ($period as $key => $value)
 						{
 							$this_date = $value->format('Y-m-d');
-							$this_date = explode("-", $this_date);
-							$this_date = array_map('intval', $this_date);
-							$this_date = array_map(function($arr, $keys){
-								if($keys == 1)
+							$valid_date = true;
+							
+							if(is_array($api_disabled_dates))
+							{
+								if(in_array($this_date, $api_disabled_dates))
 								{
-									$arr = $arr - 1;
-								}							
-								return $arr;
-							}, $this_date, array_keys($this_date));
+									$valid_date = false;
+								}
+							}
 							
-							$this_date[] = 'inverted';
-							
-							$disable['disable'][] = $this_date;
+							if($valid_date)
+							{
+								$this_date = explode("-", $this_date);
+								$this_date = array_map('intval', $this_date);
+								$this_date = array_map(function($arr, $keys){
+									if($keys == 1)
+									{
+										$arr = $arr - 1;
+									}							
+									return $arr;
+								}, $this_date, array_keys($this_date));
+								
+								$this_date[] = 'inverted';
+								
+								$disable['disable'][] = $this_date;								
+							}
 						}						
 					}					
 				}			
 			}
-
+			
 			if(count($disable) > 0)
 			{
 				return $disable;
