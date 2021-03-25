@@ -63,20 +63,15 @@ class dy_Metaboxes
 				'packages',
 				'normal',
 				'default'
-			);		
-						
-			//if e-commerce if off disable metabox
-			if(intval(package_field( 'package_auto_booking' )) > 0)
-			{	
-				add_meta_box(
-					'package-f',
-					__( 'Provider', 'dynamicpackages' ),
-					array("dy_Metaboxes", "package_provider_html"),
-					'packages',
-					'normal',
-					'default'
-				);			
-			}
+			);
+			add_meta_box(
+				'package-f',
+				__( 'Provider', 'dynamicpackages' ),
+				array("dy_Metaboxes", "package_provider_html"),
+				'packages',
+				'normal',
+				'default'
+			);	
 			add_meta_box(
 				'package-g',
 				__( 'Coupons', 'dynamicpackages' ),

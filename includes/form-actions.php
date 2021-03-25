@@ -66,7 +66,9 @@ class dy_Actions{
 
         if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::is_request_valid())
         {
+			$this->send_provider_email();
             $this->send_email();
+			
             dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
         }   
     }
@@ -101,6 +103,32 @@ class dy_Actions{
 		$doc_pdf->writeHTML($email_pdf);
 		$doc_pdf_content = $doc_pdf->output('doc.pdf', 'S');
 		return $doc_pdf_content;
+	}
+	
+	public function provider_email_template()
+	{
+		$provider_name = package_field('package_provider_name');
+		$template = '<p>' . $provider_name . '</p><p>' . $this->provider_email_subject() . '</p>';
+		
+		return apply_filters('dy_provider_email_template', $template);
+	}
+	
+	public function send_provider_email()
+	{
+		$provider_name = package_field('package_provider_name');
+		$provider_email = package_field('package_provider_email');
+		
+		
+		if(!empty($provider_name) && is_email($provider_email))
+		{			
+			$args = array(
+				'subject' => sanitize_text_field($this->provider_email_subject()),
+				'to' => $provider_email,
+				'message' => $this->provider_email_template()
+			);
+
+			sg_mail($args);
+		}
 	}
 
     public function send_email()
@@ -158,18 +186,25 @@ class dy_Actions{
 		sg_mail($args);
     }
 	
+	public function provider_email_subject()
+	{
+		$output = sprintf(__('Check availability for %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_package_description', null));
+		
+		return apply_filters('dy_email_provider_email_subject', $output);
+	}
+	
 	public function subject()
 	{
 		if(dy_utilities::total() > 0)
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), $_POST['first_name'], get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), $_POST['title']);			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($_POST['title']));			
 		}
 		else
 		{
 			global $post;
 			
 			$request = (is_singular('packages') && isset($post)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
-			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), $_POST['first_name'], $request);	
+			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), $request);	
 		}
 
 			

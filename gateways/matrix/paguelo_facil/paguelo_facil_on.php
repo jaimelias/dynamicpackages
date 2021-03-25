@@ -139,6 +139,8 @@ class paguelo_facil_on{
 			
 			if($this->success == 2)
 			{
+				add_filter('dy_email_provider_email_subject', array(&$this, 'provider_email_subject'));
+				add_filter('dy_provider_email_template', array(&$this, 'provider_email_template'));
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
 			}
 			else
@@ -146,6 +148,17 @@ class paguelo_facil_on{
 				add_filter('dy_fail_checkout_gateway_name', array(&$this, 'gateway_name'));
 			}
 		}
+	}
+	
+	public function provider_email_template()
+	{
+		$provider_name = package_field('package_provider_name');
+		return '<p>' . $provider_name . '</p><p>' . $this->provider_email_subject() . '</p>';
+	}
+	
+	public function provider_email_subject()
+	{
+		return sprintf(__('New Booking %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_package_description', null));
 	}
 	
 	public function gateway_name($output)
