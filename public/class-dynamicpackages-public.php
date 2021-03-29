@@ -536,12 +536,15 @@ class dy_Public {
 							$this_date = $value->format('Y-m-d');
 							$valid_date = true;
 							
-							if(is_array($api_disabled_dates))
+							if(isset($api_disabled_dates))
 							{
-								if(in_array($this_date, $api_disabled_dates))
+								if(is_array($api_disabled_dates))
 								{
-									$valid_date = false;
-								}
+									if(in_array($this_date, $api_disabled_dates))
+									{
+										$valid_date = false;
+									}
+								}								
 							}
 							
 							if($valid_date)
