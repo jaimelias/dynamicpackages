@@ -498,6 +498,10 @@ const booking_datepicker = async () => {
 		.then(response => response.json())
 		.then(data => {
 			
+			const today = new Date();
+			const hour = today.getHours();
+			const weekDay = today.getDay();
+			
 			let args = {
 				container: '#availability_calendar',
 				format: 'yyyy-mm-dd',
@@ -506,7 +510,23 @@ const booking_datepicker = async () => {
 				min: data.min,
 				max: data.max
 			};
-		
+			
+			//stop tomorrow bookings
+			if(args.min === 1)
+			{
+				if(hour >= 15)
+				{
+					args.min = 2;
+				}
+				if(weekDay === 0 || weekDay === 6)
+				{
+					if(hour >= 13)
+					{
+						args.min = 2;
+					}
+				}
+			}
+
 			if(jQuery(field).attr('type') == 'text')
 			{
 				jQuery(field).pickadate(args);
