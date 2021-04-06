@@ -130,7 +130,11 @@ class dy_Forms
 				$form .=  '<div class="strong large bottom-20 text-muted">'.sprintf(__('Book now with a %s%s deposit!', 'dynamicpackages'), $deposit, $percent).'</div>';
 				
 			}
-		}		
+		}
+
+		$form .= $this->adults_select($price_chart, $min, $max, $option_disc, $option_free);
+		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
+		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);			
 
 		if(package_field('package_event_date') == '')
 		{
@@ -151,7 +155,7 @@ class dy_Forms
 		if(dy_validators::is_package_transport())
 		{
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).'</label>';
-			$form .= '<p><input type="text" name="end_date" class="booking_datepicker" placeholder="Loading..."/></p>';	
+			$form .= '<p><input type="text" name="end_date" class="booking_datepicker" placeholder="Loading..." disabled/></p>';	
 		}
 		
 		
@@ -196,9 +200,7 @@ class dy_Forms
 		
 		$book_now_text = __('Check Pricing', 'dynamicpackages');
 						
-		$form .= $this->adults_select($price_chart, $min, $max, $option_disc, $option_free);
-		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
-		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);	
+
 
 		if(dy_validators::has_coupon())
 		{
@@ -251,7 +253,7 @@ class dy_Forms
 		}
 		
 		$adults = '<label>'.esc_html($label_text).'</label>';
-		$adults .= '<p><select name="pax_regular" >'.$adults_select.'</select></p>';	
+		$adults .= '<p><select name="pax_regular" class="booking_select">'.$adults_select.'</select></p>';	
 		return $adults;
 	}
 	public function discount_select($price_chart, $min, $max, $option_disc, $option_free)
@@ -279,7 +281,7 @@ class dy_Forms
 			{
 				$disc = '<option value="0">0</option>'.$disc;
 				$output = '<label>'.esc_html(__('Children', 'dynamicpackages')).' '.esc_html($range).' '.esc_html(__('years old', 'dynamicpackages')).'</label>';		
-				$output .= '<p><select name="pax_discount" >'.$disc.'</select></p>';
+				$output .= '<p><select name="pax_discount" class="booking_select">'.$disc.'</select></p>';
 				return $output;				
 			}
 		}
@@ -304,7 +306,7 @@ class dy_Forms
 			{
 				$free = '<option value="0">0</option>'.$free;
 				$output = '<label>'.esc_html(__('Children', 'dynamicpackages')).' '.esc_html($range).' '.esc_html(__('years old', 'dynamicpackages')).'</label>';
-				$output .= '<p><select name="pax_free" id="pax_free">'.$free.'</select></p>';	
+				$output .= '<p><select name="pax_free" id="pax_free" class="booking_select">'.$free.'</select></p>';	
 				return $output;					
 			}
 		}

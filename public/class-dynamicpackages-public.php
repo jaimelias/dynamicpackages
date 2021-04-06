@@ -236,7 +236,7 @@ class dy_Public {
 		
 		if($enqueue_archive)
 		{
-			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
+			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), '', true );
 		}
 		
 		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
