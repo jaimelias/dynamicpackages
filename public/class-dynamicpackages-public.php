@@ -225,7 +225,7 @@ class dy_Public {
 		
 		if($enqueue_public)
 		{
-			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );
+			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, '', true );
 			
 			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');
 			
