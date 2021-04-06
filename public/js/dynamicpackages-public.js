@@ -568,7 +568,7 @@ const booking_datepicker = async () => {
 		jQuery('.booking_form').find('input.booking_datepicker').attr({
 			disabled: 'disabled',
 			placeholder: 'Loading...'
-		});
+		}).val('');
 		buildPicker();
 	});
 
