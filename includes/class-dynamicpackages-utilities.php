@@ -530,16 +530,19 @@ class dy_utilities {
 		$output = array();
 		$disabled = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
 		
-		if(array_key_exists('disabled_dates', $disabled))
-		{		
-			$disabled_dates = $disabled['disabled_dates'];
-					
-			for($x = 0; $x < count($disabled_dates); $x++)
-			{
-				$from = $disabled_dates[$x][0];
-				$to = $disabled_dates[$x][1];
-				array_push($output, self::get_date_range($from, $to));
-			}
+		if(is_array($disabled))
+		{
+			if(array_key_exists('disabled_dates', $disabled))
+			{		
+				$disabled_dates = $disabled['disabled_dates'];
+						
+				for($x = 0; $x < count($disabled_dates); $x++)
+				{
+					$from = $disabled_dates[$x][0];
+					$to = $disabled_dates[$x][1];
+					array_push($output, self::get_date_range($from, $to));
+				}
+			}			
 		}
 		
 		return self::arrayFlatten($output);
