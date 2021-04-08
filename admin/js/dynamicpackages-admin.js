@@ -351,7 +351,7 @@ const submitSavePost = () => {
 				if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
 				{
 					const {location} = window;
-					location.reload();					
+					location.reload(true);					
 				}
 			});
 		}
