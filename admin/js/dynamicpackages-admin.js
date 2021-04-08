@@ -294,7 +294,6 @@ const buildSeasonsGrid = () => {
 	}
 	catch(e)
 	{
-		console.log(data);
 		data = {};
 	}
 	

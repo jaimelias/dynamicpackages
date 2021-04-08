@@ -475,30 +475,33 @@ class dy_Public {
 			{
 				$api_disabled_dates = wp_remote_get($api_disabled_endpoint);
 				
-				if(array_key_exists('body', $api_disabled_dates))
+				if(is_object($api_disabled_dates))
 				{
-					$api_disabled_dates = json_decode($api_disabled_dates['body']);
-					
-					if(is_array($api_disabled_dates))
-					{	
-						for($x = 0; $x < count($api_disabled_dates); $x++)
-						{
-							if(dy_validators::is_date($api_disabled_dates[$x]))
+					if(property_exists($api_disabled_dates, 'body'))
+					{
+						$api_disabled_dates = json_decode($api_disabled_dates['body']);
+						
+						if(is_array($api_disabled_dates))
+						{	
+							for($x = 0; $x < count($api_disabled_dates); $x++)
 							{
-								$api_date = $api_disabled_dates[$x];
-								$api_date = explode("-", $api_date);
-								$api_date = array_map('intval', $api_date);
-								$api_date = array_map(function($arr, $keys){
-									if($keys == 1)
-									{
-										$arr = $arr - 1;
-									}
-									return $arr;
-								}, $api_date, array_keys($api_date));
-								$disable['disable'][] = $api_date;									
+								if(dy_validators::is_date($api_disabled_dates[$x]))
+								{
+									$api_date = $api_disabled_dates[$x];
+									$api_date = explode("-", $api_date);
+									$api_date = array_map('intval', $api_date);
+									$api_date = array_map(function($arr, $keys){
+										if($keys == 1)
+										{
+											$arr = $arr - 1;
+										}
+										return $arr;
+									}, $api_date, array_keys($api_date));
+									$disable['disable'][] = $api_date;									
+								}
 							}
 						}
-					}
+					}					
 				}
 			}
 			

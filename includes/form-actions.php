@@ -203,7 +203,7 @@ class dy_Actions{
 		{
 			global $post;
 			
-			$request = (is_singular('packages') && isset($post)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
+			$request = (isset($post->post_title)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
 			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), $request);	
 		}
 
