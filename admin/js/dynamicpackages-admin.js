@@ -39,8 +39,9 @@ const registerGrid = (textareas, container, min, max, index) => {
 	{
 		data = initialGrid(textareas, max, container, index);
 		data = data[gridIdName];
-		//console.log(data);
 	}	
+	
+	console.log({[gridIdName]: data});
 		
 	const grid = jQuery(container);
 	const headers = getHeaders(jQuery(container));
