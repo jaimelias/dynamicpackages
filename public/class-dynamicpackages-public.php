@@ -475,9 +475,9 @@ class dy_Public {
 			{
 				$api_disabled_dates = wp_remote_get($api_disabled_endpoint);
 				
-				if(is_object($api_disabled_dates))
-				{
-					if(property_exists($api_disabled_dates, 'body'))
+				if(is_array($api_disabled_dates))
+				{	
+					if(array_key_exists('body', $api_disabled_dates))
 					{
 						$api_disabled_dates = json_decode($api_disabled_dates['body']);
 						
