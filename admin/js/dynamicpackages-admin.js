@@ -8,20 +8,21 @@ jQuery(() => {
 });
 	
 const loadGrids = () => {
-	jQuery(window).on('load', () =>{
-		jQuery('[data-sensei-container]').each(function(x){
-							
-			const textareas = (jQuery(this).attr('data-sensei-textarea')) ? String('#'+jQuery(this).attr('data-sensei-textarea')) : null;
-			const container = (jQuery(this).attr('data-sensei-container')) ? String('#'+jQuery(this).attr('data-sensei-container')) : null;
-			const min = (jQuery(this).attr('data-sensei-min')) ? String('#'+jQuery(this).attr('data-sensei-min')) : null;
-			const max = (jQuery(this).attr('data-sensei-max')) ? String('#'+jQuery(this).attr('data-sensei-max')) : null;
-			const index = x+1;
-			
+	jQuery('[data-sensei-container]').each(function(x){
+				
+		const textareas = (jQuery(this).attr('data-sensei-textarea')) ? '#'+jQuery(this).attr('data-sensei-textarea') : null;
+		const container = (jQuery(this).attr('data-sensei-container')) ? '#'+jQuery(this).attr('data-sensei-container') : null;
+		const min = (jQuery(this).attr('data-sensei-min')) ? '#'+jQuery(this).attr('data-sensei-min'): null;
+		const max = (jQuery(this).attr('data-sensei-max')) ? '#'+jQuery(this).attr('data-sensei-max') : null;
+		const index = x+1;
+				
+		setTimeout(() => { 
 			if(textareas && container && max)
 			{
 				registerGrid(textareas, container, min, max, index);
-			}						
-		});				
+			}
+		}, 1000);
+		
 	});
 };
 
@@ -29,10 +30,19 @@ const registerGrid = (textareas, container, min, max, index) => {
 	let data = jQuery(textareas).text();	
 	let maxNum = parseInt(jQuery(max).val());
 	const gridIdName = jQuery(container).attr('id');
+	const grid = jQuery(container);
+	const headers = getHeaders(jQuery(container));
+	const columns = getColType(jQuery(container));
 	
 	try
 	{
 		data = JSON.parse(data);
+
+		if(data[gridIdName].length === 0)
+		{
+			data[gridIdName] = [headers.map(i => null)];
+		}
+				
 		data = addRowId(data[gridIdName], container);
 	}
 	catch(e)
@@ -41,11 +51,6 @@ const registerGrid = (textareas, container, min, max, index) => {
 		data = data[gridIdName];
 	}	
 	
-	console.log({[gridIdName]: data});
-		
-	const grid = jQuery(container);
-	const headers = getHeaders(jQuery(container));
-	const columns = getColType(jQuery(container));
 	let colsNum = 2;
 	
 	if(headers.length > colsNum)

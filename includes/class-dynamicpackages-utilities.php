@@ -43,8 +43,11 @@ class dy_utilities {
 				{
 					$default[] = 'null';
 				}
+
+				$decoded_value = json_decode(html_entity_decode($args['value']), true);
 				
-				$args['value'] = (is_array(json_decode(html_entity_decode($args['value']), true))) ? $args['value'] : '["'.$args['container'].'":[['.implode(',', $default).']]]';
+				
+				$args['value'] = (is_array($decoded_value)) ? $args['value'] : '["'.$args['container'].'":[['.implode(',', $default).']]]';
 				
 				$dropdown = (array_key_exists('dropdown', $args)) ? 'data-sensei-dropdown="'.implode(',', $args['dropdown']).'"' : null;
 				

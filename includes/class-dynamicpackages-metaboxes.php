@@ -105,9 +105,7 @@ class dy_Metaboxes
 		
 	}
 	
-	public static function package_coupon_html($post) {
-		
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_coupon_html($post) { ?>
 		<p><label><?php _e( 'Number of coupons', 'dynamicpackages' ); ?> <?php self::select_number('package_max_coupons', 1, 10); ?></label></p>
 		
 		<?php 
@@ -127,8 +125,7 @@ class dy_Metaboxes
 	<?php
 	}
 	
-	public static function package_provider_html( $post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_provider_html( $post) { ?>
 
 		<p>
 			<label for="package_provider_name"><?php _e( 'Name', 'dynamicpackages' ); ?></label></br>
@@ -191,8 +188,7 @@ class dy_Metaboxes
 	}
 
 	
-	public static function package_departure_html( $post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_departure_html( $post) { ?>
 
 		<?php if(dy_validators::is_package_transport()): ?>
 			<h3><?php esc_html_e('Departure', 'dynamicpackages'); ?></h3>
@@ -235,8 +231,7 @@ class dy_Metaboxes
 	}
 	
 	
-	public static function package_pricing_html($post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_pricing_html($post) { ?>
 		
 		<?php 
 		
@@ -340,8 +335,7 @@ class dy_Metaboxes
 		<?php
 	}
 	
-	public static function package_rates_html( $post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_rates_html( $post) { ?>
 		
 		
 		<fieldset>	
@@ -403,8 +397,7 @@ class dy_Metaboxes
 		<?php
 	}	
 	
-	public static function package_availability_html( $post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_availability_html( $post) { ?>
 		
 		<?php if(!dy_validators::is_child()) : ?>
 			<h4><?php _e( 'Event Date', 'dynamicpackages' ); ?></h4>
@@ -489,10 +482,11 @@ class dy_Metaboxes
 		<?php
 	}		
 
-	public static function package_description_html( $post) {
-		wp_nonce_field( '_package_nonce', 'package_nonce' ); ?>
+	public static function package_description_html( $post) { ?>
 		
 		<?php 
+
+			wp_nonce_field( '_package_nonce', 'package_nonce' );
 
 			if(dy_validators::is_child())
 			{
