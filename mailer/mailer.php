@@ -174,6 +174,24 @@ if(!class_exists('Sendgrid_Mailer'))
 
 		<?php }		
 
+		public function get_email_arr($str)
+		{
+			if(!empty($str))
+			{
+				$emails = array_map('sanitize_email', explode(',', $str));
+				
+				if(is_array($emails))
+				{
+					if(count($emails) > 0)
+					{
+						return $emails;
+					}
+				}
+			}
+			
+			return false;
+		}
+
 		public function send($args = array())
 		{
 			if(is_array($args))
@@ -183,13 +201,10 @@ if(!class_exists('Sendgrid_Mailer'))
 					$subject = esc_html($args['subject']);
 					$message = $this->minify_html($args['message']);
 					$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
-					$emails = array_map('sanitize_email', explode(',', $args['to']));
+					$emails = $this->get_email_arr($args['to']);
 					
-					if(is_array($emails))
-					{
-						
-						$to = implode(',', $emails);
-												
+					if($emails)
+					{					
 						if($this->web_api_key)
 						{
 							$email = new \SendGrid\Mail\Mail(); 
@@ -199,14 +214,14 @@ if(!class_exists('Sendgrid_Mailer'))
 							for($x = 0; $x < count($emails); $x++)
 							{
 								//allow only 5 recipients
-								if($x >= 4)
+								if($x <= 4)
 								{
-									break;
+									$email->addTo($emails[$x]);
 								}
 								
-								$email->addTo($emails[$x]);
+								break;
 							}
-							
+														
 							if($this->email_bcc)
 							{
 								$email->addBcc($this->email_bcc);
@@ -249,6 +264,7 @@ if(!class_exists('Sendgrid_Mailer'))
 						}
 						else
 						{
+							$to = implode(',', $emails);
 							$headers = array('Content-Type: text/html; charset=UTF-8');
 							wp_mail($to, $subject, $message, $headers);
 						}						

@@ -442,18 +442,21 @@ class dy_validators
 			{
 				$coupons = json_decode(html_entity_decode(package_field( 'package_coupons' )), true);
 				
-				if(array_key_exists('coupons', $coupons) && package_field( 'package_max_coupons' ) > 0)
+				if(is_array($coupons))
 				{
-					if(isset($coupons['coupons'][0]))
+					if(array_key_exists('coupons', $coupons) && package_field( 'package_max_coupons' ) > 0)
 					{
-						$coupons = $coupons['coupons'][0];
-						
-						if($coupons[0] != '' && $coupons[1] != '')
+						if(isset($coupons['coupons'][0]))
 						{
-							$output = true;
-							$GLOBALS['has_coupon'] = $output;
-						}						
-					}
+							$coupons = $coupons['coupons'][0];
+							
+							if($coupons[0] != '' && $coupons[1] != '')
+							{
+								$output = true;
+								$GLOBALS['has_coupon'] = $output;
+							}						
+						}
+					}					
 				}
 			}			
 		}

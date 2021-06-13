@@ -118,8 +118,7 @@ class dy_Actions{
 		$provider_name = package_field('package_provider_name');
 		$provider_email = package_field('package_provider_email');
 		
-		
-		if(!empty($provider_name) && is_email($provider_email))
+		if(!empty($provider_name) && !empty($provider_email))
 		{			
 			$args = array(
 				'subject' => sanitize_text_field($this->provider_email_subject()),
