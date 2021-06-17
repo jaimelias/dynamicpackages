@@ -349,14 +349,12 @@ class paypal_me{
 				}
 				
 				//google analytics
-				if(typeof ga !== typeof undefined)
+				if(typeof gtag !== 'undefined')
 				{
-					var eventArgs = {};
-					eventArgs.eventAction = 'Click';
-					eventArgs.eventLabel = '<?php echo esc_html($this->gateway_name); ?>';
-					eventArgs.eventCategory = 'Gateway';
-					ga('send', 'event', eventArgs);	
-				}				
+					gtag('event', 'select_gateway', {
+						items : '<?php echo esc_html($this->gateway_name); ?>'
+					});					
+				}			
 				
 			});
 		});

@@ -364,24 +364,21 @@ const dy_request_form = (token) => {
 			}
 			
 			//google analytics
-			if(typeof ga !== typeof undefined)
-			{
-				let eventArgs = {
-					eventAction: 'Submit',
-					eventLabel: args.title
-				};
-				
+			if(typeof gtag !== 'undefined')
+			{				
 				if(jQuery(thisForm).find('input[name="dy_request"]').val() == 'quote')
 				{
-					console.log('Lead');
-					eventArgs.eventCategory = 'Lead';
+					gtag('event', 'generate_lead', {
+						value : args.total
+					});
 				}
 				else
 				{
-					console.log('Purchase');
-					eventArgs.eventCategory = 'Purchase';
-				}
-				ga('send', 'event', eventArgs);	
+					gtag('event', 'purchase', {
+						value : args.total,
+						items: args.title
+					});
+				}	
 			}
 			
 			//console.log(jQuery(thisForm).formToArray());
@@ -602,14 +599,13 @@ const booking_submit = () => {
 	jQuery(this_form).submit(event => {
 		
 		event.preventDefault();
-		
+				
 		if(booking_validate(this_form) === true)
 		{
 			if(jQuery(this_form).find('input[name="quote"]').length == 0)
 			{
 				//google analytics
-				ga_click(this_form, 'Checkout');
-				
+				ga_click(this_form, 'quote');
 
 				if(typeof fbq !== typeof undefined)
 				{
@@ -671,21 +667,20 @@ const booking_validate = (form) => {
 	}
 }
 
-const ga_click = (form, event_category) => {
-	if(typeof ga !== typeof undefined)
+const ga_click = (form, eventName) => {
+	if(typeof gtag !== 'undefined')
 	{
-		var booking_date = jQuery(form).find('input[name="booking_date"]');
-		var pax_regular = jQuery(form).find('select[name="pax_regular"]');
-		var departure = Date.parse(jQuery(booking_date).val());
-		var today = new Date();
+		const booking_date = jQuery(form).find('input[name="booking_date"]');
+		const pax_regular = jQuery(form).find('select[name="pax_regular"]');
+		const departure = Date.parse(jQuery(booking_date).val());
+		let today = new Date();
 		today.setDate(today.getDate() - 2);
 		today = Date.parse(today);
-		var days_between = Math.round((departure-today)/(1000*60*60*24));
-		var eventArgs = {};
-		eventArgs.eventCategory = event_category;
-		eventArgs.eventAction = jQuery('.entry-title').text();
-		eventArgs.eventLabel = days_between+'/'+jQuery(booking_date).val()+'/'+jQuery(pax_regular).val();
-		ga('send', 'event', eventArgs);
+		const days_between = Math.round((departure-today)/(1000*60*60*24));		
+		gtag('event', eventName, {
+			items : jQuery('.entry-title').text(),
+			days: days_between+'/'+jQuery(booking_date).val()+'/'+jQuery(pax_regular).val()
+		});
 	}
 }
 
