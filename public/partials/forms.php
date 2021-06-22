@@ -298,7 +298,7 @@ class dy_Forms
 			$range = $start.' - '.$end;
 			
 			
-			for($f = 1; $f < ($max-$min+1); $f++)
+			for($f = 1; $f < 3; $f++)
 			{
 				$free .= '<option data-price="0" value="'.esc_html($f).'" >'.esc_html($f).'</option>';
 			}
