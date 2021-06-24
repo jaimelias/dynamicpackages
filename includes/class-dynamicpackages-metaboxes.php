@@ -367,7 +367,7 @@ class dy_Metaboxes
 		?>	
 		</fieldset>
 	
-		<?php if(package_field( 'package_package_type' ) == 1): ?>
+		<?php if(package_field( 'package_package_type' ) == 1 || package_field( 'package_package_type' ) == 4): ?>
 		<fieldset>			
 			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit()?> <?php _e( 'Accomodation Prices Per Person', 'dynamicpackages' ); ?></h3>
 			
