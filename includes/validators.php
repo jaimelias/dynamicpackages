@@ -502,7 +502,8 @@ class dy_validators
 					if($get_coupon == $booking_coupon)
 					{
 						$expiration = dy_utilities::get_coupon('expiration');
-						$min_duration = (is_numeric(dy_utilities::get_coupon('min_duration'))) ? dy_utilities::get_coupon('min_duration') : 0;
+						$min_duration = dy_utilities::get_coupon('min_duration');
+						$max_duration = dy_utilities::get_coupon('max_duration');
 						$valid_expiration = false;
 						$valid_duration = false;
 
@@ -542,22 +543,27 @@ class dy_validators
 								}	
 							}							
 						}
-						
-						if($min_duration)
-						{
-							$valid_duration = true;
-						}
-						else
+												
+						if($min_duration > 0)
 						{
 							if($duration >= $min_duration)
 							{
 								$valid_duration = true;
-							}
-							else
+							}							
+						}
+						else
+						{
+							$valid_duration = true;
+						}
+						
+						if($valid_duration && $max_duration > 0)
+						{
+							if($duration > $max_duration)
 							{
 								$valid_duration = false;
 							}
 						}
+						
 						
 						if($valid_expiration && $valid_duration)
 						{

@@ -113,8 +113,8 @@ class dy_Metaboxes
 		$args = array(
 					'container' => 'coupons',
 					'textarea' => 'package_coupons',
-					'headers' => array(__( 'Code', 'dynamicpackages'), __('Discount (%)', 'dynamicpackages'), __( 'Expiration', 'dynamicpackages' ), __( 'Publish', 'dynamicpackages' ), __( 'Minimum Duration', 'dynamicpackages' )),
-					'type' => array('text', 'numeric', 'date', 'checkbox', 'numeric'),
+					'headers' => array(__( 'Code', 'dynamicpackages'), __('Discount (%)', 'dynamicpackages'), __( 'Expiration', 'dynamicpackages' ), __( 'Publish', 'dynamicpackages' ), __( 'Min. Duration', 'dynamicpackages' ), __( 'Max. Duration', 'dynamicpackages' )),
+					'type' => array('text', 'numeric', 'date', 'checkbox', 'numeric', 'numeric'),
 					'min' => 'package_max_coupons',
 					'max' => 'package_max_coupons',
 					'value' => package_field('package_coupons'),

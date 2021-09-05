@@ -164,8 +164,13 @@ class dy_utilities {
 							else if($option == 'min_duration')
 							{
 								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
-								$output = (is_numeric($output)) ? $output : null;
-							}					
+								$output = (is_numeric($output)) ? intval($output) : 0;
+							}
+							else if($option == 'max_duration')
+							{
+								$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
+								$output = (is_numeric($output)) ? intval($output) : 0;
+							}								
 						}
 					}
 				}				
