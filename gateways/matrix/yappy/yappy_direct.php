@@ -34,6 +34,7 @@ class yappy_direct{
 		$this->gateway_name = 'yappy_direct';		
 		$this->gateway_short_name = 'yappy';		
 		$this->number = get_option($this->gateway_name);
+		$this->business = get_option($this->gateway_name . '_business');
 		$this->max = get_option($this->gateway_name . '_max');
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->color = '#fff';
@@ -73,7 +74,7 @@ class yappy_direct{
 		}
 		else
 		{
-			if($this->number != '')
+			if($this->number != '' || $this->business != '')
 			{
 				$GLOBALS[$which_var] = true;
 				$output = true;
@@ -153,19 +154,21 @@ class yappy_direct{
 	}
 	
 	public function message($message)
-	{		
+	{
+		$destination = ($this->business != '') ? $this->business : $this->number;
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
-		$last = __('to the number', 'dynamicpackages');
+		$last = ($this->business != '')? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');
 		$amount = dy_utilities::currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');
 		$label = __('payment', 'dynamicpackages');
+		
 		
 		if(dy_validators::has_deposit())
 		{
 			$label = __('deposit', 'dynamicpackages');
 		}
 		
-		$message .= '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html($this->number).'</strong>.</p>';	
-		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '.$this->number).'</p>';
+		$message .= '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html($destination).'</strong>.</p>';	
+		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '. $destination).'</p>';
 		
 		return $message;
 	}
@@ -232,6 +235,7 @@ class yappy_direct{
 		//Yappy
 		
 		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'intval');
+		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_business', 'esc_html');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'floatval');
 		
@@ -249,6 +253,14 @@ class yappy_direct{
 			$this->gateway_name . '_settings', 
 			$this->gateway_name . '_settings_section', $this->gateway_name
 		);	
+		
+		add_settings_field( 
+			$this->gateway_name . '_business', 
+			esc_html(__( 'Yappy Business Name', 'dynamicpackages' )), 
+			array(&$this, 'input_text'), 
+			$this->gateway_name . '_settings', 
+			$this->gateway_name . '_settings_section', $this->gateway_name . '_business'
+		);			
 		add_settings_field( 
 			$this->gateway_name . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
