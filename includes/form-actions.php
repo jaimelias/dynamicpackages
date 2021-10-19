@@ -180,9 +180,9 @@ class dy_Actions{
 			$args['message'] = $message;
 		}
 	
-		//die($args['message']);
+		die($args['message']);
 		
-		sg_mail($args);
+		//sg_mail($args);
     }
 	
 	public function provider_email_subject()

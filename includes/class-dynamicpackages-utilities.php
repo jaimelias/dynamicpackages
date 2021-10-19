@@ -238,7 +238,7 @@ class dy_utilities {
 				{
 					if(in_array($add_ons[$x]['id'], $add_ons_included))
 					{
-						$add_ons_price = floatval($pax_num) * floatval($add_ons[$x]['price']);
+						$add_ons_price += floatval($pax_num) * floatval($add_ons[$x]['price']);
 					}
 				}
 				
