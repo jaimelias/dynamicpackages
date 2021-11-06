@@ -200,15 +200,13 @@ class dy_utilities {
 		{
 			if(is_booking_page() || is_checkout_page())
 			{	
-				$total = self::subtotal($regular);
+				$total = self::subtotal($regular) + self::get_add_ons_total();
 			}
 			else
 			{
 				$total = self::starting_at();
 			}
-			
-			$total = $total + self::get_add_ons_total();
-			
+						
 			if($total != 0)
 			{
 				$GLOBALS[$which_var] = $total;
@@ -220,12 +218,24 @@ class dy_utilities {
 
 	public static function subtotal($regular = null)
 	{
+		$which_var = 'dy_subtotal_'.$regular;
+		global $$which_var; 
+		$subtotal = 0;
 		
-		$price_chart = self::get_price_chart();	
-		$sum = 0;
-		$sum = floatval(self::get_price_regular($regular, 'total')) + $sum;
-		$sum = floatval(self::get_price_discount($regular, 'total')) + $sum;		
-		return $sum;
+		if(isset($$which_var))
+		{
+			$subtotal = $$which_var;
+		}		
+		else
+		{
+			$price_chart = self::get_price_chart();	
+			$subtotal = 0;
+			$subtotal = floatval(self::get_price_regular($regular, 'total')) + $subtotal;
+			$subtotal = floatval(self::get_price_discount($regular, 'total')) + $subtotal;		
+			$GLOBALS[$which_var] = $subtotal;
+		}
+		
+		return $subtotal;
 	}
 
 	public static function starting_at_archive($id = '')
@@ -989,14 +999,15 @@ class dy_utilities {
 	
 	public static function payment_amount()
 	{
-		$total = floatval(dy_utilities::total());
-		
+		$total = floatval(self::subtotal());
 		
 		if(dy_validators::has_deposit())
 		{
-			$deposit = floatval(dy_utilities::get_deposit());
+			$deposit = floatval(self::get_deposit());
 			$total = $total*($deposit*0.01);			
 		}
+		
+		$total = $total + self::get_add_ons_total();
 				
 		return $total;
 	}	

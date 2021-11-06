@@ -77,7 +77,7 @@ const booking_args = () => {
 		let payment_amount = 0;
 		let add_ons_id = [];
 		let tax_amount = parseFloat(args.tax_amount);
-		let new_args = {};
+		
 		let outstanding = 0;
 		
 		if(args.hasOwnProperty('deposit'))
@@ -130,33 +130,26 @@ const booking_args = () => {
 			add_ons_price = add_ons_price + (add_ons_price * tax);
 		}
 		
+
+		payment_amount = getPaymentAmount({amount, deposit, add_ons_price});
+		outstanding = getOutstandingAmount({amount, deposit});
 		
 		if(add_ons_price > 0)
 		{
 			regular_amount = regular_amount + add_ons_price;
 			amount = amount + add_ons_price;		
-		}
+		}		
 		
-		payment_amount = amount;
 		
-		if(deposit > 0)
-		{
-			payment_amount = (payment_amount * deposit);
-			outstanding = amount - payment_amount;
-		}
+		const new_args = {
+			tax_amount: tax_amount.toFixed(2),
+			outstanding: outstanding.toFixed(2),
+			total: payment_amount.toFixed(2),
+			amount: amount.toFixed(2),
+			regular_amount: regular_amount.toFixed(2)
+		};
 		
-		if(payment_amount == amount)
-		{
-			outstanding = amount;
-		}
-		
-		//console.log({payment_amount, outstanding, add_ons_price, amount});
-		
-		new_args.tax_amount = tax_amount.toFixed(2);
-		new_args.outstanding = outstanding.toFixed(2);
-		new_args.total = payment_amount.toFixed(2);
-		new_args.amount = amount.toFixed(2);
-		new_args.regular_amount = regular_amount.toFixed(2);
+		console.log(new_args);
 		
 		for(k in new_args)
 		{
@@ -176,6 +169,26 @@ const booking_args = () => {
 	return output;
 }
 
+const getPaymentAmount = ({amount, deposit, add_ons_price}) => {
+	
+	let output = amount;
+
+	if(deposit > 0)
+	{
+		output = (output * deposit);
+	}
+	
+	output = output + add_ons_price;
+	
+	return output;
+};
+
+const getOutstandingAmount = ({amount, deposit}) => {
+	
+	let output = (deposit > 0) ? (amount * deposit) : amount;
+
+	return (amount === output) ? amount : amount - output;
+};
 
 const booking_calc = () => {
 	
