@@ -139,9 +139,9 @@ const booking_args = () => {
 		
 		payment_amount = amount;
 		
-		if(deposit != 0)
+		if(deposit > 0)
 		{
-			payment_amount = payment_amount * deposit;
+			payment_amount = (payment_amount * deposit);
 			outstanding = amount - payment_amount;
 		}
 		
@@ -149,6 +149,8 @@ const booking_args = () => {
 		{
 			outstanding = amount;
 		}
+		
+		//console.log({payment_amount, outstanding, add_ons_price, amount});
 		
 		new_args.tax_amount = tax_amount.toFixed(2);
 		new_args.outstanding = outstanding.toFixed(2);

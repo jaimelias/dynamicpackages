@@ -103,8 +103,7 @@ class dy_Tax_Mod
 		{
 			$tax_add_ons_type = intval(sanitize_text_field($_POST['tax_add_ons_type']));
 			update_term_meta($def_term_id, 'tax_add_ons_type', $tax_add_ons_type);
-		}
-		
+		}	
 	}
 	
 	
@@ -112,13 +111,33 @@ class dy_Tax_Mod
 	public static function add_ons_form($term){
 	 
 		global $polylang;
+		$form = '';
 		$term_id = $term->term_id;
 		$args = array();
-		$args['tax_add_ons_type'] = array('tag' => 'select', 'type' => 'number', 'label' => 'Type of Add-on', 'options' => array(__('The price is fixed and does not change', 'dynamicpackages'), __('The price varies depending on the duration', 'dynamicpackages')), 'description' => __('Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.', 'dynamicpackages'));
-		$args['tax_add_ons_max'] = array('tag' => 'select', 'type' => 'number', 'label' => 'Maximum Number of participants');
-		$args['tax_add_ons'] = array('tag' => 'textarea', 'class' => 'hidden', 'label' => 'Prices Per Person', 'handsontable' => true);
-
-		$form = '';
+		
+		$args['tax_add_ons_type'] = array(
+			'tag' => 'select', 
+			'type' => 'number', 
+			'label' => 'Type of Add-on', 
+			'options' => array(
+				__('The price is fixed and does not change', 'dynamicpackages'), 
+				__('The price varies depending on the duration', 'dynamicpackages')
+			), 
+			'description' => __('Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.', 'dynamicpackages')
+		);
+		
+		$args['tax_add_ons_max'] = array(
+			'tag' => 'select',
+			'type' => 'number',
+			'label' => __('Maximum Number of participants', 'dynamicpackages')
+		);
+		
+		$args['tax_add_ons'] = array(
+			'tag' => 'textarea', 
+			'class' => 'hidden', 
+			'label' => __('Prices Per Person', 'dynamicpackages'), 
+			'handsontable' => true
+		);
 
 		if(isset($polylang))
 		{
@@ -365,7 +384,7 @@ class dy_Tax_Mod
 				
 				$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
 				
-				$add_ons_type = get_term_meta($term_id, 'tax_add_ons_type', true);
+				$type = get_term_meta($term_id, 'tax_add_ons_type', true);				
 				
 				if(is_array($add_ons_price))
 				{
@@ -380,7 +399,7 @@ class dy_Tax_Mod
 					}
 				}
 				
-				if(intval($add_ons_type) == 1)
+				if(intval($type) == 1)
 				{
 					if($package_type == 1 || $package_type == 2)
 					{
@@ -401,12 +420,13 @@ class dy_Tax_Mod
 				if($price > 0)
 				{
 					array_push($output, array(
-						'id' => $term_id, 
-						'price' => dy_utilities::currency_format($price), 
-						'name' => $name,
-						'description' => $term->description)
+							'id' => $term_id, 
+							'price' => floatval(dy_utilities::currency_format($price)), 
+							'name' => $name,
+							'description' => $term->description
+						)
 					);					
-				}				
+				}			
 			}			
 		}
 		return $output;	

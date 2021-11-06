@@ -207,6 +207,8 @@ class dy_utilities {
 				$total = self::starting_at();
 			}
 			
+			$total = $total + self::get_add_ons_total();
+			
 			if($total != 0)
 			{
 				$GLOBALS[$which_var] = $total;
@@ -222,30 +224,7 @@ class dy_utilities {
 		$price_chart = self::get_price_chart();	
 		$sum = 0;
 		$sum = floatval(self::get_price_regular($regular, 'total')) + $sum;
-		$sum = floatval(self::get_price_discount($regular, 'total')) + $sum;
-		$pax_num = self::pax_num();
-		
-		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
-		{
-			$add_ons = dy_Tax_Mod::get_add_ons();
-			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
-			$add_ons_price = 0;
-			$add_ons_count = count($add_ons);
-			
-			if(is_array($add_ons) && is_array($add_ons_included))
-			{
-				for($x = 0; $x < $add_ons_count; $x++)
-				{
-					if(in_array($add_ons[$x]['id'], $add_ons_included))
-					{
-						$add_ons_price += floatval($pax_num) * floatval($add_ons[$x]['price']);
-					}
-				}
-				
-				$sum = $sum + $add_ons_price;			
-			}			
-		}
-						
+		$sum = floatval(self::get_price_discount($regular, 'total')) + $sum;		
 		return $sum;
 	}
 
@@ -888,7 +867,7 @@ class dy_utilities {
 	
 	public static function tax()
 	{
-		return floatval(get_option('dy_tax'));
+		return (get_option('dy_tax')) ? floatval(get_option('dy_tax')) : 0;
 	}	
 	
 	public static function hour()
@@ -980,16 +959,45 @@ class dy_utilities {
 		}
 	}
 	
+	public static function get_add_ons_total() {
+		$total = 0;
+		$pax_num = self::pax_num();
+		
+		if(dy_Tax_Mod::has_add_ons() && isset($_POST['add_ons']))
+		{
+			$add_ons = dy_Tax_Mod::get_add_ons();
+			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
+			$add_ons_price = 0;
+			$add_ons_count = count($add_ons);
+			
+			if(is_array($add_ons) && is_array($add_ons_included))
+			{
+				for($x = 0; $x < $add_ons_count; $x++)
+				{					
+					if(in_array($add_ons[$x]['id'], $add_ons_included))
+					{
+						$add_ons_price += floatval($pax_num) * floatval($add_ons[$x]['price']);
+					}
+				}
+				
+				$total = $total + $add_ons_price;			
+			}			
+		}
+		
+		return $total;
+	}
+	
 	public static function payment_amount()
 	{
 		$total = floatval(dy_utilities::total());
+		
 		
 		if(dy_validators::has_deposit())
 		{
 			$deposit = floatval(dy_utilities::get_deposit());
 			$total = $total*($deposit*0.01);			
 		}
-		
+				
 		return $total;
 	}	
 

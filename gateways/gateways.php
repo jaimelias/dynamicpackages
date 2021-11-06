@@ -313,12 +313,14 @@ class dy_Gateways
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$booking_coupon.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
+		$add_ons = dy_Tax_Mod::get_add_ons();
+		
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
 			'description' => esc_html($description),
 			'booking_coupon' => esc_html($booking_coupon),
 			'coupon_discount' => esc_html($coupon_discount),
-			'total' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount())),
+			'total' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount()))),
 			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'booking_hour' => esc_html(dy_utilities::hour()),
@@ -343,28 +345,15 @@ class dy_Gateways
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
 			'currency_name' => dy_utilities::currency_name(),
 			'currency_symbol' => dy_utilities::currency_symbol(),
-			'outstanding' =>dy_utilities::currency_format(dy_sum_tax($this->outstanding())),
-			'amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::total())),
-			'regular_amount' =>dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal())),
+			'outstanding' => floatval(dy_utilities::currency_format(dy_sum_tax($this->outstanding()))),
+			'amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::total()))),
+			'regular_amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal()))),
 			'payment_type' => esc_html($this->payment_type()),
-			'deposit' => floatval(dy_utilities::get_deposit())
+			'deposit' => floatval(dy_utilities::get_deposit()),
+			'tax' => floatval($tax),
+			'tax_amount' => floatval($this->tax_payment_amount()),
+			'add_ons' => $add_ons
 		);
-		
-		if($tax > 0)
-		{
-			$checkout_vars['tax'] = $tax;
-			$checkout_vars['tax_amount'] = $this->tax_payment_amount();
-		}		
-		
-		$add_ons = dy_Tax_Mod::get_add_ons();
-		
-		if(is_array($add_ons))
-		{
-			if(count($add_ons) > 0)
-			{
-				$checkout_vars['add_ons'] = $add_ons;
-			}
-		}
 		
 		$checkout_vars = json_encode($checkout_vars);
 		$script = 'function checkout_vars(){return ';
