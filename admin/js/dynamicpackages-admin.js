@@ -9,11 +9,16 @@ jQuery(() => {
 	
 const loadGrids = () => {
 	jQuery('[data-sensei-container]').each(function(x){
-				
-		const textareas = (jQuery(this).attr('data-sensei-textarea')) ? '#'+jQuery(this).attr('data-sensei-textarea') : null;
-		const container = (jQuery(this).attr('data-sensei-container')) ? '#'+jQuery(this).attr('data-sensei-container') : null;
-		const min = (jQuery(this).attr('data-sensei-min')) ? '#'+jQuery(this).attr('data-sensei-min'): null;
-		const max = (jQuery(this).attr('data-sensei-max')) ? '#'+jQuery(this).attr('data-sensei-max') : null;
+	
+		const thisTextArea = jQuery(this).attr('data-sensei-textarea');
+		const thisMin = jQuery(this).attr('data-sensei-min');
+		const thisMax = jQuery(this).attr('data-sensei-max');
+		const thisContainer = jQuery(this).attr('data-sensei-container');
+	
+		const textareas = (thisTextArea) ? `#${thisTextArea}` : null;
+		const container = (thisContainer) ? `#${thisContainer}` : null;
+		const min = (thisMin) ? `#${thisMin}`: null;
+		const max = (thisMax) ? `#${thisMax}`: null;
 		const index = x+1;
 				
 		setTimeout(() => { 
