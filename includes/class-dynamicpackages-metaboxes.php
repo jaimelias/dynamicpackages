@@ -380,9 +380,9 @@ class dy_Metaboxes
 		</fieldset>
 		
 		<?php
-			if($package_type == 1 && $package_type == 2)
+			if($package_type == 1 || $package_type == 2)
 			{
-				$occupancy_day_surcharge = array('mon', 'tue', 'wed', 'thr', 'fri', 'sat', 'sun');
+				$occupancy_day_surcharge = dy_utilities::get_week_days_abbr();
 
 				echo '<fieldset>';
 				echo '<h3 id="occupancy_day_surcharge">'.esc_html(__('Surcharge per day of the week', 'dynamicpackages')).'</h3>';
