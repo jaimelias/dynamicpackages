@@ -314,7 +314,7 @@ class dy_Metaboxes
 		<?php endif; ?>
 		
 		<?php
-			if(!is_child && ($package_type == 1 || $package_type == 2))
+			if(!$is_child && ($package_type == 1 || $package_type == 2))
 			{
 				$occupancy_day_surcharge = dy_utilities::get_week_days_abbr();
 
