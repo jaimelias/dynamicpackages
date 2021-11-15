@@ -312,29 +312,7 @@ class dy_Metaboxes
 				</p>
 			<?php endif; ?>
 		<?php endif; ?>
-		
-		<?php
-			if(!$is_child && ($package_type == 1 || $package_type == 2))
-			{
-				$occupancy_day_surcharge = dy_utilities::get_week_days_abbr();
-
-				echo '<fieldset>';
-				echo '<h3 id="occupancy_day_surcharge">'.esc_html(__('Surcharge per day of the week', 'dynamicpackages')).'</h3>';
-
-				for($x = 0; $x < 7; $x++)
-				{
-					$day = $occupancy_day_surcharge[$x];
-					$name = 'package_occupancy_day_surcharge_' . $day;
-					$value = intval(package_field($name));
-					
-					echo '<p><label for="'.$name.'">';
-					echo '<input value="'.$value.'" name="'.$name.'" id="'.$name.'" type="number" />% ';
-					echo $day . '</label></p>';
-				}
-
-				echo '</fieldset>';				
-			}		
-		?>		
+			
 		
 		<?php if($package_type == 1 ): ?>
 			<fieldset>		
@@ -401,6 +379,29 @@ class dy_Metaboxes
 			echo dy_utilities::handsontable($args);
 		?>	
 		</fieldset>
+		
+		<?php
+			if($package_type == 1 || $package_type == 2)
+			{
+				$occupancy_day_surcharge = dy_utilities::get_week_days_abbr();
+
+				echo '<fieldset>';
+				echo '<h3 id="occupancy_day_surcharge">'.esc_html(__('Surcharge per day of the week', 'dynamicpackages')).'</h3>';
+
+				for($x = 0; $x < 7; $x++)
+				{
+					$day = $occupancy_day_surcharge[$x];
+					$name = 'package_occupancy_day_surcharge_' . $day;
+					$value = intval(package_field($name));
+					
+					echo '<p><label for="'.$name.'">';
+					echo '<input value="'.$value.'" name="'.$name.'" id="'.$name.'" type="number" />% ';
+					echo $day . '</label></p>';
+				}
+
+				echo '</fieldset>';				
+			}		
+		?>		
 	
 		<?php if($package_type == 1): ?>
 		<fieldset>			
