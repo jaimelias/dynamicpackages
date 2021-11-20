@@ -235,18 +235,14 @@ class dy_Metaboxes
 		
 		<?php 
 			
-			$disable_child = '';
+			
 			$is_child = dy_validators::is_child();
+			$disable_child = ($is_child) ? 'disabled' : '';
 			$package_type = package_field('package_package_type');
 			$show_pricing = package_field('package_show_pricing');
 			$auto_booking = package_field('package_auto_booking');
 			$payment = package_field('package_payment');
 			$deposit = package_field('package_deposit');
-			
-			if($is_child)
-			{
-				$disable_child = 'disabled';
-			}
 		?>
 		
 		

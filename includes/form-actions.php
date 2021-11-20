@@ -133,11 +133,11 @@ class dy_Actions{
     public function send_email()
     {
 		$args = array(
-			'subject' => sanitize_text_field($this->subject()),
+			'subject' => $this->subject(),
 			'to' => sanitize_text_field($_POST['email'])
 		);
 
-		if(dy_utilities::total() > 0)
+		if(dy_validators::validate_quote())
 		{
 			$attachments = array();
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
@@ -165,7 +165,7 @@ class dy_Actions{
 			$args['attachments'] = $attachments;
 		}
 		else
-		{
+		{			
 			$request = (isset($_POST['inquiry'])) ?  sanitize_text_field($_POST['inquiry']) : apply_filters('dy_package_description', null);
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
 			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
@@ -194,7 +194,7 @@ class dy_Actions{
 	
 	public function subject()
 	{
-		if(dy_utilities::total() > 0)
+		if(dy_validators::validate_quote())
 		{
 			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($_POST['title']));			
 		}

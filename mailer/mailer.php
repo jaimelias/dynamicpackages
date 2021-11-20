@@ -198,7 +198,7 @@ if(!class_exists('Sendgrid_Mailer'))
 			{
 				if(count($args) > 0)
 				{
-					$subject = esc_html($args['subject']);
+					$subject = htmlspecialchars_decode($args['subject']);
 					$message = $this->minify_html($args['message']);
 					$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
 					$emails = $this->get_email_arr($args['to']);

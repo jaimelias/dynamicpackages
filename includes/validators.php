@@ -2,6 +2,35 @@
 
 class dy_validators
 {
+	
+	public static function validate_quote()
+	{
+		$output = false;
+		$total = dy_utilities::total();
+		$min_persons = package_field('package_min_persons');
+		$max_persons = package_field('package_max_persons');
+		
+		$pax_regular = intval(sanitize_text_field($_REQUEST['pax_regular']));
+		$sum_people = $pax_regular;	
+		
+		if(isset($_REQUEST['pax_discount']))
+		{
+			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_discount']));
+		}
+		if(isset($_REQUEST['pax_free']))
+		{
+			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_free']));
+		}
+		
+		if($total > 0 && $pax_regular >= $min_persons && $sum_people <= $max_persons)
+		{
+			$output = true;
+		}
+		
+		return $output;
+		
+	}
+	
 	public static function validate_booking_date()
 	{
 		$output = false;
