@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-11-12 00:44+0000\n"
-"PO-Revision-Date: 2021-11-30 16:03+0000\n"
+"PO-Revision-Date: 2021-11-25 20:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "Report-Msgid-Bugs-To: \n"
-"X-Loco-Version: 2.5.5; wp-5.8.2"
+"X-Loco-Version: 2.4.4; wp-5.5.3"
 
 #: public/class-dynamicpackages-public.php:1018
 msgid " / "
@@ -1983,7 +1983,7 @@ msgstr "con"
 
 #: gateways/matrix/yappy/yappy_direct.php:259
 msgid "Yappy Business Name"
-msgstr "Nombre de negocio Yappy"
+msgstr ""
 
 #: gateways/matrix/yappy/yappy_direct.php:251
 msgid "Yappy Cell Phone Number"
