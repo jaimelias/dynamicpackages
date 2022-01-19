@@ -241,7 +241,8 @@ else
 	<?php $term_description = get_term(get_queried_object()->term_id)->description; ?>
 	<?php $term_description = do_shortcode($term_description); ?>
 	<?php $term_description = $Parsedown->text($term_description); ?>
-	<div class="bottom-20"><?php echo $term_description; ?> </div>
+	<hr/>
+	<div class="bottom-20 large"><?php echo $term_description; ?> </div>
 	<?php do_action('dy_package_filter');?>
 <?php endif; ?>
 
