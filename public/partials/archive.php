@@ -291,7 +291,7 @@ else
 							<?php endif; ?>								
 						
 							<div class="dy_package_title_h3">
-								<h3><a title="<?php echo esc_html($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php echo esc_html($post->post_title); ?></span></a></h3>
+								<h3 class="small"><a title="<?php echo esc_html($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php echo esc_html($post->post_title); ?></span></a></h3>
 							</div>
 							
 							
