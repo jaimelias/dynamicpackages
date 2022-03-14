@@ -398,6 +398,8 @@ const dy_request_form = (token) => {
 			
 			//console.log(jQuery(thisForm).formToArray());
 			
+			jQuery('#dy_submit_form').prop('disabled', true);
+			
 			createFormSubmit(thisForm);
 		}
 		else
@@ -765,7 +767,7 @@ const isEmail = (email) => {
     return re.test(String(email).toLowerCase());
 }
 
-const createFormSubmit = (form) => {
+const createFormSubmit = form => {
 	const formFields = jQuery(form).formToArray();
 	const newForm =  document.createElement('form');
 	const action = formFields.find(i => i.name === 'package_url').value;
