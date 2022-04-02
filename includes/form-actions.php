@@ -68,8 +68,17 @@ class dy_Actions{
         {
 			$this->send_provider_email();
             $this->send_email();
+
+
+			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
+			$provider_name = package_field('package_provider_name');
+			$provider_email = package_field('package_provider_email');
+			$new_post = $_POST;
+
+			$new_post['provider_name'] = $provider_name;
+			$new_post['provider_email'] = $provider_email;
 			
-            dy_utilities::webhook('dy_quote_webhook', json_encode($_POST));
+            dy_utilities::webhook($webhook_option, json_encode($new_post));
         }   
     }
     public function the_content($content)

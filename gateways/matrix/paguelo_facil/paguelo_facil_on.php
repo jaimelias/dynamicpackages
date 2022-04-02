@@ -137,11 +137,13 @@ class paguelo_facil_on{
 			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
 			
+			
 			if($this->success == 2)
 			{
 				add_filter('dy_email_provider_email_subject', array(&$this, 'provider_email_subject'));
 				add_filter('dy_provider_email_template', array(&$this, 'provider_email_template'));
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
+				add_filter('dy_webhook_option', array(&$this, 'webhook_option'));
 			}
 			else
 			{
@@ -150,6 +152,11 @@ class paguelo_facil_on{
 		}
 	}
 	
+	public function webhook_option()
+	{
+		return 'dy_webhook';
+	}
+
 	public function provider_email_template()
 	{
 		$provider_name = package_field('package_provider_name');
