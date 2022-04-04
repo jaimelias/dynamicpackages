@@ -120,8 +120,9 @@ class dy_Tax_Mod
 			'type' => 'number', 
 			'label' => 'Type of Add-on', 
 			'options' => array(
-				__('The price is fixed and does not change', 'dynamicpackages'), 
-				__('The price varies depending on the duration', 'dynamicpackages')
+				__('Price is fixed', 'dynamicpackages'), 
+				__('Variable duration price', 'dynamicpackages'),
+				__('Variable duration price + 1', 'dynamicpackages'),
 			), 
 			'description' => __('Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.', 'dynamicpackages')
 		);
@@ -344,8 +345,8 @@ class dy_Tax_Mod
 		global $polylang;
 		global $post;
 		$the_id = $post->ID;
-		$package_type = package_field('package_package_type');
-		$package_unit = package_field('package_length_unit');
+		$package_type = intval(package_field('package_package_type'));
+		$package_unit = intval(package_field('package_length_unit'));
 		
 		if(property_exists($post, 'post_parent') && !has_term('', 'package_add_ons', $the_id))
 		{
@@ -384,7 +385,7 @@ class dy_Tax_Mod
 				
 				$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
 				
-				$type = get_term_meta($term_id, 'tax_add_ons_type', true);				
+				$type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
 				
 				if(is_array($add_ons_price))
 				{
@@ -399,21 +400,18 @@ class dy_Tax_Mod
 					}
 				}
 				
-				if(intval($type) == 1)
+				if($type > 0)
 				{
-					if($package_type == 1 || $package_type == 2)
+					if($package_type !== 0 || $package_type !== 4)
 					{
 						$package_duration = (isset($_REQUEST['booking_extra'])) ? intval(sanitize_text_field($_REQUEST['booking_extra'])) : 1;
 						
-						if($package_unit > 1)
+						if($type === 2)
 						{
-							if($package_unit == 3)
-							{
-								$package_duration = $package_duration + 1;
-							}
-							
-							$price = $price * $package_duration;
+							$package_duration = $package_duration + 1;
 						}
+						
+						$price = $price * $package_duration;
 					}
 				}
 				
