@@ -3,13 +3,13 @@ jQuery(() => {
 });
 
 const set_cookies = () => {
-	set_channel();
-	set_landing_path();
-	set_landing_domain();
-	set_device();
+	setChannel();
+	setLandingPath();
+	setLandingDomain();
+	setDevice();
 }
 
-const set_device = () => {
+const setDevice = () => {
 	if(getCookie('device') == '')
 	{
 		var device = 'Desktop';
@@ -31,7 +31,7 @@ const set_device = () => {
 	});	
 }
 
-const set_landing_domain = () => {
+const setLandingDomain = () => {
 	if(getCookie('landing_domain') == '')
 	{
 		setCookie('landing_domain', window.location.hostname, 30);
@@ -46,7 +46,7 @@ const set_landing_domain = () => {
 	});		
 }
 
-const set_landing_path = () => {
+const setLandingPath = () => {
 	if(getCookie('landing_path') == '')
 	{
 		setCookie('landing_path', window.location.pathname, 30);
@@ -61,7 +61,7 @@ const set_landing_path = () => {
 	});		
 }
 
-const set_channel = () => {
+const setChannel = () => {
 	if(getCookie('channel') == '')
 	{
 		var channel = 'Organic';
@@ -150,17 +150,3 @@ const getCookie = (cname) => {
     }
     return '';
 }
-
-const getUrlParameter = (sParam) => {
-	const sPageURL = decodeURIComponent(window.location.search.substring(1));
-	const sURLVariables = sPageURL.split('&');
-	let sParameterName = null;
-
-	for (let i = 0; i < sURLVariables.length; i++) {
-		sParameterName = sURLVariables[i].split('=');
-
-		if (sParameterName[0] === sParam) {
-			return sParameterName[1] === undefined ? true : sParameterName[1];
-		}
-	}
-}	
