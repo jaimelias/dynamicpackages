@@ -178,18 +178,22 @@ if(!class_exists('Sendgrid_Mailer'))
 		{
 			if(!empty($str))
 			{
-				$emails = array_map('sanitize_email', explode(',', $str));
+				$arr = explode(',', $str);
+				$emails = array_map('sanitize_email', $arr);
+				$is_arr = is_array($emails);
 				
-				if(is_array($emails))
+				if($is_arr)
 				{
-					if(count($emails) > 0)
+					$count_emails = count($emails);
+					
+					if($count_emails > 0)
 					{
 						return $emails;
 					}
 				}
 			}
 			
-			return false;
+			return array();
 		}
 
 		public function send($args = array())
@@ -202,24 +206,33 @@ if(!class_exists('Sendgrid_Mailer'))
 					$message = $this->minify_html($args['message']);
 					$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
 					$emails = $this->get_email_arr($args['to']);
-					
-					if($emails)
+					$count_emails = count($emails);
+										
+					if($count_emails > 0)
 					{					
 						if($this->web_api_key)
 						{
 							$email = new \SendGrid\Mail\Mail(); 
 							$email->setFrom(sanitize_email($this->email), esc_html($this->name));
 							$email->setSubject($subject);
+							
+							
 
-							for($x = 0; $x < count($emails); $x++)
+							for($x = 0; $x < $count_emails; $x++)
 							{
 								//allow only 5 recipients
-								if($x <= 4)
-								{
-									$email->addTo($emails[$x]);
-								}
 								
-								break;
+								if($x <= 10 && is_email($emails[$x]))
+								{
+									if($x < 1)
+									{
+										$email->addTo($emails[$x]);
+									}
+									else
+									{
+										$email->addCc($emails[$x], null, null, ($x-1));
+									}
+								}
 							}
 														
 							if($this->email_bcc)

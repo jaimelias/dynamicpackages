@@ -1901,6 +1901,10 @@ class dy_Public {
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
+		$is_transport = dy_validators::is_package_transport();
+		$is_checkout_page = is_checkout_page();
+		$is_booking_page = is_booking_page();
+		
 		$args = array(
 			'enabled_days' => array('calendar', self::enabled_days()),
 			'schedule' => array('clock', __('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )),
@@ -1930,7 +1934,7 @@ class dy_Public {
 		{
 			unset($args['schedule']);
 		}
-		if(is_checkout_page() || is_booking_page())
+		if($is_checkout_page || $is_booking_page)
 		{
 			unset($args['enabled_days']);
 		}
@@ -1954,7 +1958,7 @@ class dy_Public {
 			//unset($args['check_in_end_hour']);
 			//unset($args['return_address']);
 		}
-		if(dy_validators::is_package_transport())
+		if($is_transport)
 		{
 			unset($args['duration']);
 		}
@@ -1970,9 +1974,9 @@ class dy_Public {
 		{
 			unset($args['return_address']);
 		}
-		if(!dy_validators::is_package_transport() || is_page() || is_tax())
+		if(!$is_transport || is_page() || is_tax())
 		{
-			if(!is_booking_page() && !is_checkout_page())
+			if(!$is_booking_page && !$is_checkout_page)
 			{
 				unset($args['duration']);
 			}
