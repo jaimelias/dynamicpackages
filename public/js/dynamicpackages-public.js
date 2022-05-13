@@ -19,13 +19,16 @@ jQuery(() => {
 	
 });
 
-
 jQuery.fn.formToArray = function () {
    
    var data = jQuery(this).serializeArray();
    
-	jQuery('form input:checkbox').each(function () { 
+	jQuery(this).find('input:checkbox').each(function () { 
 		data.push({ name: this.name, value: this.checked });
+	});
+
+	jQuery(this).find('input:disabled').each(function () { 
+		data.push({ name: this.name, value: this.value });
 	});
 	
 	return data;
@@ -35,7 +38,6 @@ const booking_open_form = () => {
 	
 	const thisForm = jQuery('#dynamic_form');
 	const cc_required = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
-	const formFields = jQuery(thisForm).formToArray();
 		
 	jQuery('#dy_payment_buttons').find('button').click(function(){
 		if(jQuery(this).hasClass('with_cc'))
@@ -68,11 +70,9 @@ const booking_args = () => {
 	if(typeof checkout_vars == 'function')
 	{
 		const args  = checkout_vars();
-		const pax = parseFloat(args.pax_num);
 		const tax = 0;
 		let amount = parseFloat(args.amount);
 		let regular_amount = parseFloat(args.regular_amount);
-		let total = parseFloat(args.total);
 		let deposit = 0;
 		let payment_amount = 0;
 		let add_ons_id = [];
@@ -191,9 +191,7 @@ const getOutstandingAmount = ({amount, deposit}) => {
 };
 
 const booking_calc = () => {
-	
-	jQuery('#dynamic_table select.add_ons').val(0);
-	
+		
 	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
 		
 		var args = booking_args();
@@ -244,7 +242,6 @@ const storePopulate = () => {
 		const field = jQuery(thisForm).find('[name="'+name+'"]');
 		const tag = jQuery(field).prop('tagName');
 		const type = jQuery(field).attr('type');
-		const isRequired = (jQuery(field).hasClass('required')) ? true : false;
 		
 		if(value)
 		{
@@ -610,30 +607,57 @@ const booking_hourpicker = () => {
 	});
 }
 const booking_submit = () => {
-	
-	const this_form = jQuery('.booking_form');
-	
-	jQuery(this_form).submit(event => {
-		
-		event.preventDefault();
-				
-		if(booking_validate(this_form) === true)
-		{
-			if(jQuery(this_form).find('input[name="quote"]').length == 0)
-			{
-				//google analytics
-				ga_click(this_form, 'quote');
 
-				if(typeof fbq !== typeof undefined)
-				{
-					//facebook pixel
-					fbq('track', 'AddToCart');		
-				}
+
+	jQuery('.booking_form').each(function() {
+		let thisForm = $(this);	
+
+		jQuery(thisForm).formToArray().forEach(i => {
+			const {name, value} = i;				
+			const cookieValue = getCookie(`${name}_${dy_getTheId()}`);
+			const field = jQuery(thisForm).find('input[name="'+name+'"]');
+
+			if(value === '' && cookieValue)
+			{
+				jQuery(field).val(cookieValue);
 			}
+		});	
+
+		jQuery(thisForm).submit(event => {
+		
+			event.preventDefault();
+					
+			if(booking_validate(thisForm) === true)
+			{
+				if(jQuery(thisForm).find('input[name="quote"]').length == 0)
+				{
+					//google analytics
+					ga_click(thisForm, 'quote');
+	
+					if(typeof fbq !== typeof undefined)
+					{
+						//facebook pixel
+						fbq('track', 'AddToCart');		
+					}
+				}
+
+
+				jQuery(thisForm).formToArray().forEach(i => {
+					const {name, value} = i;
+					
+					if(name !== 'hash')
+					{
+						setCookie(`${name}_${dy_getTheId()}`, value, 1);
+					}
+					
+				});				
 			
-			jQuery(this_form).unbind('submit').submit();
-		}			
+				
+				jQuery(thisForm).unbind('submit').submit();
+			}			
+		});		
 	});
+
 }
 
 

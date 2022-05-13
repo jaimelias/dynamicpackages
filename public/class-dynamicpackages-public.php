@@ -232,6 +232,8 @@ class dy_Public {
 			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');
 			
  			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html(get_option('ipgeolocation')).'";}', 'before');
+
+			 wp_add_inline_script('dynamicpackages', 'function dy_getTheId(){ return "'.esc_html(get_the_ID()).'";}', 'before');
 		}
 		
 		if($enqueue_archive)

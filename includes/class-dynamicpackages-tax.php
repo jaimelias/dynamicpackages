@@ -314,12 +314,29 @@ class dy_Tax_Mod
 			$output = '';
 			$pax = intval(dy_utilities::pax_num()) - 1;
 			$terms = self::get_add_ons();
+			$add_ons_arr = array();
 			
 			if(is_array($terms))
 			{
+
+				$add_ons_package_id = 'dy_add_ons_' . get_the_ID();
+
+				if(isset($_COOKIE[$add_ons_package_id]))
+				{
+					$add_ons_value = $_COOKIE[$add_ons_package_id];
+
+					if($add_ons_value)
+					{
+						$add_ons_arr = explode(",", $add_ons_value);
+					}
+
+				}
+
 				for($x = 0; $x < count($terms); $x++)
 				{
 					$term_id = $terms[$x]['id'];
+
+					$selected = (in_array($term_id, $add_ons_arr)) ? 'selected' : '';
 					$label = '<span>'.esc_html($terms[$x]['name']).'</span>';
 					$price = $terms[$x]['price'];
 					$description = $terms[$x]['description'];
@@ -333,7 +350,7 @@ class dy_Tax_Mod
 					
 					if(intval($price) > 0)
 					{
-						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.$term_id.'"><option value="0" selected>'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
+						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.$term_id.'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
 					}					
 				}
 			}

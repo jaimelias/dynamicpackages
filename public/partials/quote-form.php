@@ -5,6 +5,14 @@
 	$submit_form = ($has_any_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
 	$header_form = (is_singular('packages')) ? __('Send Your Request', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
 	$request_form = (is_singular('packages')) ? 'request' : 'contact';
+
+	$add_ons_value = '';
+	$add_ons_package_id = 'dy_add_ons_' . get_the_ID();
+	
+	if(isset($_COOKIE[$add_ons_package_id]))
+	{
+		$add_ons_value = $_COOKIE[$add_ons_package_id];
+	}
 ?>
 
 <form id="dynamic_form"  <?php echo $hide_form;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
@@ -20,7 +28,7 @@
 		<!-- Config -->
 		<input type="hidden" name="dy_request" value="<?php esc_html_e($request_form); ?>" />
 		<input type="hidden" name="dy_recaptcha" />
-		<input type="hidden" name="add_ons" />
+		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
 		<input type="hidden" name="lang" value="<?php echo esc_html(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
 		
 		<!-- Cookies -->

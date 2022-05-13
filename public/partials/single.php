@@ -11,7 +11,7 @@
 		<?php dy_Public::children_package(); ?>
 		
 		<?php if(!dy_validators::has_children()):?>
-			<div id="auto_booking"><?php do_action('dy_check_prices_form'); ?></div>
+			<?php do_action('dy_check_prices_form'); ?>
 		<?php endif; ?>
 		
 		<?php dynamicpackages_Tables::package_price_table(); ?>
@@ -90,6 +90,10 @@
 	?>	
 	
 	<?php dynamicpackages_Tables::package_price_table(); ?>
+
+	<?php if(!dy_validators::has_children()):?>
+			<?php do_action('dy_check_prices_form'); ?>
+	<?php endif; ?>
 	
 	<?php comments_template('', true); ?>
 				

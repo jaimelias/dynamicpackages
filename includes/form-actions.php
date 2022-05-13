@@ -66,8 +66,18 @@ class dy_Actions{
 
         if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::is_request_valid())
         {
+
+
+			if(isset($_REQUEST['add_ons']))
+			{
+				$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
+				$add_ons = sanitize_text_field($_REQUEST['add_ons']);
+				setcookie($add_ons_package_id, $add_ons, time() + 3600);
+			}
+
+
 			$this->send_provider_email();
-            $this->send_email();
+			$this->send_email();
 
 
 			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
