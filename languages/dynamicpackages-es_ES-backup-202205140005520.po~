@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-11-12 00:44+0000\n"
-"PO-Revision-Date: 2022-05-14 00:05+0000\n"
+"PO-Revision-Date: 2022-05-13 23:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid " / "
 msgstr ""
 
-#: gateways/matrix/stablepay/usdt.php:282
+#: gateways/matrix/stablepay/usdt.php:290
 #, php-format
 msgid "%s Contract Address"
 msgstr "Dirección del contrato"
@@ -32,12 +32,12 @@ msgstr "Dirección del contrato"
 msgid "%s is having problems processing your payment"
 msgstr "%s está teniendo problemas procesando tu pago"
 
-#: gateways/matrix/bank/international.php:80 gateways/matrix/bank/local.php:67
-#: gateways/matrix/cuanto/cuanto.php:66
-#: gateways/matrix/nequi/nequi_direct.php:65
-#: gateways/matrix/paypal/paypal_me.php:65
-#: gateways/matrix/stablepay/usdt.php:86
-#: gateways/matrix/yappy/yappy_direct.php:67
+#: gateways/matrix/bank/international.php:73 gateways/matrix/bank/local.php:60
+#: gateways/matrix/cuanto/cuanto.php:59
+#: gateways/matrix/nequi/nequi_direct.php:58
+#: gateways/matrix/paypal/paypal_me.php:58
+#: gateways/matrix/stablepay/usdt.php:94
+#: gateways/matrix/yappy/yappy_direct.php:61
 #, php-format
 msgid "%s Payment Instructions"
 msgstr "Instrucciones de pago por %s"
@@ -47,20 +47,15 @@ msgstr "Instrucciones de pago por %s"
 msgid "%s Settings"
 msgstr "Configuración de %s"
 
+#: gateways/matrix/stablepay/usdt.php:43
+#, php-format
+msgid "%s, %s sent you a payment request for %s%s using %s - %s"
+msgstr "%s, %s te ha enviado una solicitud de pagos de %s%s usando %s - %s"
+
 #: includes/form-actions.php:218
 #, php-format
 msgid "%s, %s has sent you an estimate for %s%s - %s"
 msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
-
-#: gateways/matrix/bank/international.php:75 gateways/matrix/bank/local.php:62
-#: gateways/matrix/cuanto/cuanto.php:61
-#: gateways/matrix/nequi/nequi_direct.php:60
-#: gateways/matrix/paypal/paypal_me.php:60
-#: gateways/matrix/stablepay/usdt.php:81
-#: gateways/matrix/yappy/yappy_direct.php:62
-#, php-format
-msgid "%s, %s sent you a payment request for %s%s using %s - %s"
-msgstr "%s, %s te ha enviado una solicitud de pagos de %s%s usando %s - %s"
 
 #: includes/form-actions.php:225
 #, php-format
@@ -83,15 +78,15 @@ msgstr "Acomodaciones"
 msgid "Accomodation Prices Per Person"
 msgstr "Precios por persona de la acomodación"
 
-#: gateways/matrix/bank/local.php:192 gateways/matrix/bank/local.php:294
+#: gateways/matrix/bank/local.php:185 gateways/matrix/bank/local.php:287
 msgid "Account Name"
 msgstr "Nombre de la cuenta"
 
-#: gateways/matrix/bank/local.php:191 gateways/matrix/bank/local.php:302
+#: gateways/matrix/bank/local.php:184 gateways/matrix/bank/local.php:295
 msgid "Account Number"
 msgstr "Número de cuenta"
 
-#: gateways/matrix/bank/local.php:190 gateways/matrix/bank/local.php:287
+#: gateways/matrix/bank/local.php:183 gateways/matrix/bank/local.php:280
 msgid "Account Type"
 msgstr "Tipo de cuenta"
 
@@ -184,15 +179,15 @@ msgstr "Malo"
 msgid "Badge Color"
 msgstr "Color de la cinta"
 
-#: gateways/matrix/bank/local.php:189
+#: gateways/matrix/bank/local.php:182
 msgid "Bank"
 msgstr "Banco"
 
-#: gateways/matrix/bank/local.php:280
+#: gateways/matrix/bank/local.php:273
 msgid "Bank Name"
 msgstr "Nombre del banco"
 
-#: gateways/matrix/bank/local.php:273
+#: gateways/matrix/bank/local.php:266
 msgid "Bank Settings"
 msgstr "Configuración del banco"
 
@@ -208,41 +203,41 @@ msgstr "basado en"
 msgid "Before Booking"
 msgstr "Antes de reservar"
 
-#: gateways/matrix/bank/international.php:223
-#: gateways/matrix/bank/international.php:407
+#: gateways/matrix/bank/international.php:216
+#: gateways/matrix/bank/international.php:400
 msgid "Beneficiary Account IBAN"
 msgstr "IBAN de la cuenta del beneficiario"
 
-#: gateways/matrix/bank/international.php:213
-#: gateways/matrix/bank/international.php:392
+#: gateways/matrix/bank/international.php:206
+#: gateways/matrix/bank/international.php:385
 msgid "Beneficiary Account Name"
 msgstr "Nombre de la cuenta del beneficiario"
 
-#: gateways/matrix/bank/international.php:218
-#: gateways/matrix/bank/international.php:400
+#: gateways/matrix/bank/international.php:211
+#: gateways/matrix/bank/international.php:393
 msgid "Beneficiary Account Number"
 msgstr "Número de la cuenta del beneficiario"
 
-#: gateways/matrix/bank/international.php:194
+#: gateways/matrix/bank/international.php:187
 msgid "Beneficiary Bank"
 msgstr "Banco beneficiario"
 
-#: gateways/matrix/bank/international.php:203
-#: gateways/matrix/bank/international.php:378
+#: gateways/matrix/bank/international.php:196
+#: gateways/matrix/bank/international.php:371
 msgid "Beneficiary Bank Address"
 msgstr "Dirección del banco beneficiario"
 
-#: gateways/matrix/bank/international.php:198
-#: gateways/matrix/bank/international.php:371
+#: gateways/matrix/bank/international.php:191
+#: gateways/matrix/bank/international.php:364
 msgid "Beneficiary Bank Name"
 msgstr "Nombre del banco beneficiario"
 
-#: gateways/matrix/bank/international.php:353
+#: gateways/matrix/bank/international.php:346
 msgid "Beneficiary Bank Settings"
 msgstr "Configuración del banco del beneficiario"
 
-#: gateways/matrix/bank/international.php:208
-#: gateways/matrix/bank/international.php:385
+#: gateways/matrix/bank/international.php:201
+#: gateways/matrix/bank/international.php:378
 msgid "Beneficiary Bank Swift"
 msgstr "Swift del banco beneficiario"
 
@@ -339,7 +334,7 @@ msgstr "Check-in"
 msgid "Check-in Hour"
 msgstr "Hora de check-in"
 
-#: gateways/matrix/bank/local.php:186
+#: gateways/matrix/bank/local.php:179
 msgid "Checking Account"
 msgstr "Cuenta corriente"
 
@@ -507,16 +502,16 @@ msgid "Deposit"
 msgstr "Deposito"
 
 #: gateways/gateways.php:376 public/class-dynamicpackages-public.php:1703
-#: gateways/matrix/bank/international.php:180
-#: gateways/matrix/bank/local.php:167
-#: gateways/matrix/nequi/nequi_direct.php:166
+#: gateways/matrix/bank/international.php:173
+#: gateways/matrix/bank/local.php:160
+#: gateways/matrix/nequi/nequi_direct.php:159
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:341
-#: gateways/matrix/yappy/yappy_direct.php:175
+#: gateways/matrix/yappy/yappy_direct.php:169
 msgid "deposit"
 msgstr "deposito"
 
-#: gateways/matrix/cuanto/cuanto.php:378
-#: gateways/matrix/paypal/paypal_me.php:384
+#: gateways/matrix/cuanto/cuanto.php:371
+#: gateways/matrix/paypal/paypal_me.php:377
 msgid "deposit of"
 msgstr "deposito de"
 
@@ -683,8 +678,8 @@ msgstr "Desde"
 msgid "Full Payment"
 msgstr "Pago completo"
 
-#: gateways/matrix/cuanto/cuanto.php:374
-#: gateways/matrix/paypal/paypal_me.php:380
+#: gateways/matrix/cuanto/cuanto.php:367
+#: gateways/matrix/paypal/paypal_me.php:373
 msgid "full payment of"
 msgstr "pago completo de"
 
@@ -697,13 +692,13 @@ msgid "General Inquiry"
 msgstr "Solicitud general"
 
 #: admin/class-dynamicpackages-admin.php:160
-#: gateways/matrix/bank/international.php:345
-#: gateways/matrix/bank/local.php:266 gateways/matrix/cuanto/cuanto.php:216
-#: gateways/matrix/nequi/nequi_direct.php:242
+#: gateways/matrix/bank/international.php:338
+#: gateways/matrix/bank/local.php:259 gateways/matrix/cuanto/cuanto.php:209
+#: gateways/matrix/nequi/nequi_direct.php:235
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:493
-#: gateways/matrix/paypal/paypal_me.php:223
-#: gateways/matrix/stablepay/usdt.php:258
-#: gateways/matrix/yappy/yappy_direct.php:252
+#: gateways/matrix/paypal/paypal_me.php:216
+#: gateways/matrix/stablepay/usdt.php:266
+#: gateways/matrix/yappy/yappy_direct.php:246
 msgid "General Settings"
 msgstr "Configuración General"
 
@@ -828,41 +823,41 @@ msgstr "Incrementar el número máximo de participantes por"
 msgid "Integrations Settings"
 msgstr "Configuración de integraciones"
 
-#: gateways/matrix/bank/international.php:255
-#: gateways/matrix/bank/international.php:452
+#: gateways/matrix/bank/international.php:248
+#: gateways/matrix/bank/international.php:445
 msgid "Intermediary Account IBAN"
 msgstr "IBAN de la cuenta del intermediario"
 
-#: gateways/matrix/bank/international.php:245
-#: gateways/matrix/bank/international.php:437
+#: gateways/matrix/bank/international.php:238
+#: gateways/matrix/bank/international.php:430
 msgid "Intermediary Account Name"
 msgstr "Nombre de la cuenta del intermediario"
 
-#: gateways/matrix/bank/international.php:250
-#: gateways/matrix/bank/international.php:445
+#: gateways/matrix/bank/international.php:243
+#: gateways/matrix/bank/international.php:438
 msgid "Intermediary Account Number"
 msgstr "Número de cuenta del intermediario"
 
-#: gateways/matrix/bank/international.php:226
+#: gateways/matrix/bank/international.php:219
 msgid "Intermediary Bank"
 msgstr "Banco Intermediario"
 
-#: gateways/matrix/bank/international.php:235
-#: gateways/matrix/bank/international.php:423
+#: gateways/matrix/bank/international.php:228
+#: gateways/matrix/bank/international.php:416
 msgid "Intermediary Bank Address"
 msgstr "Dirección del banco intermediario"
 
-#: gateways/matrix/bank/international.php:230
-#: gateways/matrix/bank/international.php:416
+#: gateways/matrix/bank/international.php:223
+#: gateways/matrix/bank/international.php:409
 msgid "Intermediary Bank Name"
 msgstr "Nombre del banco intermediario"
 
-#: gateways/matrix/bank/international.php:361
+#: gateways/matrix/bank/international.php:354
 msgid "Intermediary Bank Settings"
 msgstr "Configuración del banco del intermediario"
 
-#: gateways/matrix/bank/international.php:240
-#: gateways/matrix/bank/international.php:430
+#: gateways/matrix/bank/international.php:233
+#: gateways/matrix/bank/international.php:423
 msgid "Intermediary Bank Swift"
 msgstr "Swift del banco intermediario"
 
@@ -987,12 +982,12 @@ msgstr "Ubicaciones"
 msgid "low to high"
 msgstr "baratos a caros"
 
-#: gateways/matrix/cuanto/cuanto.php:230
-#: gateways/matrix/nequi/nequi_direct.php:256
+#: gateways/matrix/cuanto/cuanto.php:223
+#: gateways/matrix/nequi/nequi_direct.php:249
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:521
-#: gateways/matrix/paypal/paypal_me.php:237
-#: gateways/matrix/stablepay/usdt.php:265
-#: gateways/matrix/yappy/yappy_direct.php:274
+#: gateways/matrix/paypal/paypal_me.php:230
+#: gateways/matrix/stablepay/usdt.php:273
+#: gateways/matrix/yappy/yappy_direct.php:268
 msgid "Max. Amount"
 msgstr "Cantidad Máxima"
 
@@ -1017,8 +1012,8 @@ msgstr "Número máximo de participantes"
 msgid "Message"
 msgstr "Mensaje"
 
-#: gateways/matrix/bank/international.php:461
-#: gateways/matrix/bank/local.php:309
+#: gateways/matrix/bank/international.php:454
+#: gateways/matrix/bank/local.php:302
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:514
 msgid "Min. Amount"
 msgstr "Cantidad Min."
@@ -1071,7 +1066,7 @@ msgstr "Varios días"
 msgid "Name"
 msgstr "Nombre"
 
-#: gateways/matrix/nequi/nequi_direct.php:249
+#: gateways/matrix/nequi/nequi_direct.php:242
 msgid "Nequi Cell Phone Number"
 msgstr "Número celular Nequi"
 
@@ -1155,7 +1150,7 @@ msgstr "No incluido"
 msgid "Notes"
 msgstr "Notas"
 
-#: gateways/matrix/paypal/paypal_me.php:389
+#: gateways/matrix/paypal/paypal_me.php:382
 msgid "now"
 msgstr "ya"
 
@@ -1296,41 +1291,41 @@ msgstr "Participantes"
 msgid "Pay"
 msgstr "Pagar"
 
-#: gateways/matrix/bank/local.php:155
+#: gateways/matrix/bank/local.php:148
 msgid "Pay From Your Bank"
 msgstr "Paga desde tu banco"
 
-#: gateways/matrix/bank/local.php:424
+#: gateways/matrix/bank/local.php:417
 msgid "Pay to local bank account in"
 msgstr "Paga a nuestra cuenta de banco en"
 
-#: gateways/matrix/cuanto/cuanto.php:383
+#: gateways/matrix/cuanto/cuanto.php:376
 #, php-format
 msgid "Pay with %s"
 msgstr "Paga con %s"
 
-#: gateways/matrix/cuanto/cuanto.php:337
+#: gateways/matrix/cuanto/cuanto.php:330
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:756
 #, php-format
 msgid "Pay with %s thanks to"
 msgstr "Paga con %s gracias a "
 
-#: gateways/matrix/bank/international.php:168
+#: gateways/matrix/bank/international.php:161
 msgid "Pay With an International Wire Transfer"
 msgstr "Paga con una transferencia bancaria internacional"
 
-#: gateways/matrix/nequi/nequi_direct.php:312
-#: gateways/matrix/nequi/nequi_direct.php:395
+#: gateways/matrix/nequi/nequi_direct.php:305
+#: gateways/matrix/nequi/nequi_direct.php:388
 msgid "Pay with Nequi"
 msgstr "Paga con Nequi"
 
-#: gateways/matrix/paypal/paypal_me.php:294
-#: gateways/matrix/paypal/paypal_me.php:389
+#: gateways/matrix/paypal/paypal_me.php:287
+#: gateways/matrix/paypal/paypal_me.php:382
 msgid "Pay with Paypal"
 msgstr "Paga con Paypal"
 
-#: gateways/matrix/yappy/yappy_direct.php:330
-#: gateways/matrix/yappy/yappy_direct.php:414
+#: gateways/matrix/yappy/yappy_direct.php:324
+#: gateways/matrix/yappy/yappy_direct.php:408
 msgid "Pay with Yappy"
 msgstr "Paga con Yappy"
 
@@ -1339,11 +1334,11 @@ msgstr "Paga con Yappy"
 msgid "Payment"
 msgstr "Pago"
 
-#: gateways/matrix/bank/international.php:176
-#: gateways/matrix/bank/local.php:163
-#: gateways/matrix/nequi/nequi_direct.php:162
+#: gateways/matrix/bank/international.php:169
+#: gateways/matrix/bank/local.php:156
+#: gateways/matrix/nequi/nequi_direct.php:155
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:341
-#: gateways/matrix/yappy/yappy_direct.php:170
+#: gateways/matrix/yappy/yappy_direct.php:164
 msgid "payment"
 msgstr "Pago"
 
@@ -1409,8 +1404,8 @@ msgstr ""
 "Encontrarás una detallada %s en este email. Recuerda revisar nuestros "
 "Términos y Condiciones (adjuntos) antes de reservar."
 
-#: gateways/matrix/cuanto/cuanto.php:382
-#: gateways/matrix/paypal/paypal_me.php:388
+#: gateways/matrix/cuanto/cuanto.php:375
+#: gateways/matrix/paypal/paypal_me.php:381
 #, php-format
 msgid "Please send us the %s %s to complete these booking."
 msgstr "Por favor envía el %s %s para completar esta reserva."
@@ -1562,7 +1557,7 @@ msgstr "Sab"
 msgid "Saturday"
 msgstr "Sabado"
 
-#: gateways/matrix/bank/local.php:182
+#: gateways/matrix/bank/local.php:175
 msgid "Saving Account"
 msgstr "Cuenta Corriente"
 
@@ -1586,8 +1581,8 @@ msgstr "Elegir categoría"
 msgid "Select Location"
 msgstr "Elegir ubicación"
 
-#: gateways/matrix/nequi/nequi_direct.php:171
-#: gateways/matrix/yappy/yappy_direct.php:179
+#: gateways/matrix/nequi/nequi_direct.php:164
+#: gateways/matrix/yappy/yappy_direct.php:173
 msgid "Send"
 msgstr "Envía"
 
@@ -1604,13 +1599,13 @@ msgstr "Envíanos tu solicitud"
 msgid "Service"
 msgstr "Servicio"
 
-#: gateways/matrix/bank/international.php:468
-#: gateways/matrix/bank/local.php:316 gateways/matrix/cuanto/cuanto.php:237
-#: gateways/matrix/nequi/nequi_direct.php:263
+#: gateways/matrix/bank/international.php:461
+#: gateways/matrix/bank/local.php:309 gateways/matrix/cuanto/cuanto.php:230
+#: gateways/matrix/nequi/nequi_direct.php:256
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:528
-#: gateways/matrix/paypal/paypal_me.php:244
-#: gateways/matrix/stablepay/usdt.php:272
-#: gateways/matrix/yappy/yappy_direct.php:281
+#: gateways/matrix/paypal/paypal_me.php:237
+#: gateways/matrix/stablepay/usdt.php:280
+#: gateways/matrix/yappy/yappy_direct.php:275
 msgid "Show"
 msgstr "Mostrar"
 
@@ -1698,11 +1693,11 @@ msgstr "Términos y Condiciones"
 msgid "Terms & Conditions:"
 msgstr "Términos y Condiciones:"
 
-#: gateways/matrix/paypal/paypal_me.php:85
+#: gateways/matrix/paypal/paypal_me.php:78
 msgid "Thank you for choosing Paypal"
 msgstr "Gracias por elegir Paypal"
 
-#: gateways/matrix/stablepay/usdt.php:106
+#: gateways/matrix/stablepay/usdt.php:114
 msgid "Thank you for choosing Tether (USDT)"
 msgstr ""
 
@@ -1710,11 +1705,11 @@ msgstr ""
 msgid "Thank you for contacting us. Our staff will be in touch with you soon."
 msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 
-#: gateways/matrix/nequi/nequi_direct.php:152
+#: gateways/matrix/nequi/nequi_direct.php:145
 msgid "Thank you for using Nequi"
 msgstr "Gracias por usar Nequi"
 
-#: gateways/matrix/yappy/yappy_direct.php:157
+#: gateways/matrix/yappy/yappy_direct.php:151
 msgid "Thank you for using Yappy"
 msgstr "Gracias por utilizar Yappy"
 
@@ -1788,7 +1783,7 @@ msgstr "Hasta"
 msgid "to"
 msgstr "a"
 
-#: gateways/matrix/paypal/paypal_me.php:387
+#: gateways/matrix/paypal/paypal_me.php:380
 msgid ""
 "To complete the booking please click on the following link and enter your "
 "Paypal account."
@@ -1796,7 +1791,7 @@ msgstr ""
 "Para completar esta reserva por favor haga click en el siguiente link y "
 "entre a su cuenta Paypal."
 
-#: gateways/matrix/cuanto/cuanto.php:381
+#: gateways/matrix/cuanto/cuanto.php:374
 msgid ""
 "To complete the booking please click on the following link. We are also "
 "going to send you this same information by email."
@@ -1804,16 +1799,16 @@ msgstr ""
 "Para completar la reserva, haga clic en el siguiente enlace. También te "
 "enviaremos esta misma información por email."
 
-#: gateways/matrix/nequi/nequi_direct.php:159
+#: gateways/matrix/nequi/nequi_direct.php:152
 msgid "To complete the booking please enter your Nequi App and send the"
 msgstr "Para completar la reserva por favor ingrese a su App Nequi y envíe el"
 
-#: gateways/matrix/yappy/yappy_direct.php:167
+#: gateways/matrix/yappy/yappy_direct.php:161
 msgid "To complete the booking please enter your Yappy App and send the"
 msgstr "Para completar su reserva por favor entre a su App Yappy y envie su"
 
-#: gateways/matrix/bank/international.php:183
-#: gateways/matrix/bank/local.php:170
+#: gateways/matrix/bank/international.php:176
+#: gateways/matrix/bank/local.php:163
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
 
@@ -1829,17 +1824,17 @@ msgstr ""
 "Los documentos que envíe se compararán con los originales en el punto de "
 "encuentro."
 
-#: gateways/matrix/yappy/yappy_direct.php:168
+#: gateways/matrix/yappy/yappy_direct.php:162
 msgid "to the business"
 msgstr "al negocio"
 
-#: gateways/matrix/bank/international.php:186
-#: gateways/matrix/bank/local.php:173
+#: gateways/matrix/bank/international.php:179
+#: gateways/matrix/bank/local.php:166
 msgid "to the following account"
 msgstr "a la siguiente cuenta"
 
-#: gateways/matrix/nequi/nequi_direct.php:160
-#: gateways/matrix/yappy/yappy_direct.php:168
+#: gateways/matrix/nequi/nequi_direct.php:153
+#: gateways/matrix/yappy/yappy_direct.php:162
 msgid "to the number"
 msgstr "al número"
 
@@ -1908,8 +1903,8 @@ msgstr ""
 "para generar errores y cualquier otro número recuperará la respuesta "
 "original de Paguelo Fácil."
 
-#: gateways/matrix/cuanto/cuanto.php:223
-#: gateways/matrix/paypal/paypal_me.php:230
+#: gateways/matrix/cuanto/cuanto.php:216
+#: gateways/matrix/paypal/paypal_me.php:223
 msgid "Username"
 msgstr "Usuario"
 
@@ -2008,11 +2003,11 @@ msgstr "Transferencia internacional"
 msgid "with"
 msgstr "con"
 
-#: gateways/matrix/yappy/yappy_direct.php:267
+#: gateways/matrix/yappy/yappy_direct.php:261
 msgid "Yappy Business Name"
 msgstr "Nombre de negocio Yappy"
 
-#: gateways/matrix/yappy/yappy_direct.php:259
+#: gateways/matrix/yappy/yappy_direct.php:253
 msgid "Yappy Cell Phone Number"
 msgstr "Número de teléfono Yappy"
 

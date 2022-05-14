@@ -19,6 +19,7 @@ class dy_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
+		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
 	}	
 	
 	public function load_classes()
@@ -32,6 +33,7 @@ class dy_Gateways
 		$this->yappy_direct = new yappy_direct();	
 		$this->bank_transfer = new bank_transfer();
 		$this->wire_transfer = new wire_transfer();
+		$this->usdt = new usdt();
 	}
 	public function init()
 	{

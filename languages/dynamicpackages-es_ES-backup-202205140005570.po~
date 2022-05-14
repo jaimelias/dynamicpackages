@@ -60,7 +60,7 @@ msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 #: gateways/matrix/yappy/yappy_direct.php:62
 #, php-format
 msgid "%s, %s sent you a payment request for %s%s using %s - %s"
-msgstr "%s, %s te ha enviado una solicitud de pagos de %s%s usando %s - %s"
+msgstr ""
 
 #: includes/form-actions.php:225
 #, php-format

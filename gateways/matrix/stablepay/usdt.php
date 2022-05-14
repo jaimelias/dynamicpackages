@@ -1,6 +1,6 @@
 <?php
 
-class cuanto{
+class usdt{
 	
 	function __construct()
 	{
@@ -19,6 +19,7 @@ class cuanto{
 		else
 		{
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
+			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
@@ -26,18 +27,37 @@ class cuanto{
 		}		
 	}
 	
+
 	public function args()
 	{
-		$this->gateway_name = 'cuanto';
-		$this->gateway_title = 'Cuanto.app';
-		$this->gateway_methods_o = __('Visa or Mastercard', 'dynamicpackages');
-		$this->gateway_methods_c = __('Visa, Mastercard', 'dynamicpackages');
-		$this->gateway_domain = 'Cuanto.app';		
-		$this->username = get_option($this->gateway_name);
+		$this->gateway_name = 'usdt';
+		$this->gateway_title = 'Tether (USDT)';
+		$this->allowed_networks = $this->get_allowed_networks();
 		$this->show = get_option($this->gateway_name . '_show');
 		$this->max = get_option($this->gateway_name . '_max');
-		$this->color = '#000';
-		$this->background_color = '#8CD0C5';
+		$this->color = '#fff';
+		$this->background_color = '#50AF95';
+	}
+
+	public function get_allowed_networks()
+	{
+		return array(
+			'eth' => array(
+				'name' => 'Ethereum (ERC-20)'
+			), 
+			'bsc' => array(
+				'name' => 'Binance Smart Chain (BEP-20)'
+			), 
+			'matic' => array(
+				'name' => 'Poligon (MATIC)'
+			), 
+			'sol' => array(
+				'name' => 'Solana'
+			), 
+			'avax' => array(
+				'name' => 'Avalanche'
+			)
+		);
 	}
 
 	public function send_data()
@@ -79,20 +99,39 @@ class cuanto{
 		}
 		return $content;
 	}
+	public function title($title)
+	{
+		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
+		{
+			$title = esc_html(__('Thank you for choosing Tether (USDT)', 'dynamicpackages'));
+		}
+		return $title;
+	}
 	
 	
 	public function is_active()
 	{
 		$output = false;
-		global $cuanto_is_active;
+		global $usdt_is_active;
 		
-		if(isset($cuanto_is_active))
+		if(isset($usdt_is_active))
 		{
 			$output = true;
 		}
 		else
 		{
-			if($this->username != '')
+			$active_networks = false;
+
+			foreach($this->allowed_networks as $key => $value)
+			{
+				if(get_option($this->gateway_name . '_' . $key) !== '')
+				{
+					$active_networks = true;
+					break;
+				}
+			}
+
+			if($active_networks)
 			{
 				$GLOBALS[$this->gateway_name . '_is_active'] = true;
 				$output = true;
@@ -103,9 +142,9 @@ class cuanto{
 	public function show()
 	{
 		$output = false;
-		global $cuanto_show;
+		global $usdt_show;
 		
-		if(isset($cuanto_show))
+		if(isset($usdt_show))
 		{
 			$output = true;
 		}
@@ -151,9 +190,9 @@ class cuanto{
 	public function is_valid()
 	{
 		$output = false;
-		global $cuanto_is_valid;
+		global $usdt_is_valid;
 		
-		if(isset($cuanto_is_valid))
+		if(isset($usdt_is_valid))
 		{
 			return true;
 		}
@@ -204,12 +243,15 @@ class cuanto{
 	}
 
 	public function settings_init()
-	{
-		//cuanto.app
-		
+	{		
 		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_user');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
 		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'floatval');
+
+		foreach($this->allowed_networks as $key => $value)
+		{
+			register_setting($this->gateway_name . '_settings', $this->gateway_name . '_' . $key, 'sanitize_user');
+		}
 		
 		add_settings_section(
 			$this->gateway_name . '_settings_section', 
@@ -217,14 +259,7 @@ class cuanto{
 			'', 
 			$this->gateway_name . '_settings'
 		);
-		
-		add_settings_field( 
-			$this->gateway_name, 
-			esc_html(__( 'Username', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name
-		);	
+	
 		add_settings_field( 
 			$this->gateway_name . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
@@ -235,16 +270,28 @@ class cuanto{
 		add_settings_field( 
 			$this->gateway_name . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_cuanto_show'), 
+			array(&$this, 'display_usdt_show'), 
 			$this->gateway_name . '_settings', 
 			$this->gateway_name . '_settings_section'
-		);		
+		);	
+		
+		foreach($this->allowed_networks as $key => $value)
+		{
+			add_settings_field( 
+				$this->gateway_name . '_' . $key , 
+				esc_html(sprintf(__("%s Contract Address", 'dynamicpackages'), $value['name'])), 
+				array(&$this, 'input_text'), 
+				$this->gateway_name . '_settings', 
+				$this->gateway_name . '_settings_section', $this->gateway_name . '_' . $key
+			);
+		}
+
 	}
 	
 	public function input_text($name){
 		$option = get_option($name);
 		?>
-		<input type="text" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" />
+		<input type="text" style="width: 450px;" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" />
 		<?php
 	}
 	
@@ -254,7 +301,7 @@ class cuanto{
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
 		<?php
 	}
-	public function display_cuanto_show() { ?>
+	public function display_usdt_show() { ?>
 		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
 			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
@@ -263,14 +310,14 @@ class cuanto{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_domain, $this->gateway_domain, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_title, $this->gateway_title, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html_e($this->gateway_domain); ?></h1>	
+			<h1><?php esc_html_e($this->gateway_title); ?></h1>	
 			<?php
 			settings_fields( $this->gateway_name . '_settings' );
 			do_settings_sections( $this->gateway_name . '_settings' );
@@ -282,9 +329,9 @@ class cuanto{
 	}	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->gateway_methods_c, $this->list_gateways_cb()))
+		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
 		{
-			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->gateway_methods_o).'</button>';
+			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"> '.esc_html($this->gateway_title).'</button>';
 		}
 		return $output;
 	}
@@ -313,7 +360,7 @@ class cuanto{
 		
 		if($add)
 		{
-			$array[] = $this->gateway_methods_c;
+			$array[] = $this->gateway_title;
 		}
 		
 		return $array;	
@@ -334,7 +381,8 @@ class cuanto{
 		jQuery(function(){
 			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
 			{
-				let logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_title); ?></strong></p>').addClass('text-muted');
+				let logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/stablepay/assets/usdt.svg'});
+				jQuery(logo).attr({'width': '50', 'height': '50'});
 				jQuery('#dynamic_form').removeClass('hidden');
 				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
@@ -353,7 +401,7 @@ class cuanto{
 					gtag('event', 'select_gateway', {
 						items : '<?php echo esc_html($this->gateway_name); ?>'
 					});					
-				}		
+				}			
 				
 			});
 		});
@@ -365,22 +413,10 @@ class cuanto{
 	
 	public function message($message)
 	{
-		$payment_amount = dy_utilities::payment_amount();
-		$cuanto_amount = intval($payment_amount * 100);
-		$amount = number_format($payment_amount, 2, '.', '');
-		$url = 'https://cuanto.app/'.$this->username.'/c/'.$cuanto_amount;
+		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
 		$amount = dy_utilities::currency_symbol().''.dy_utilities::currency_format($amount);
 		
-		$label = __('full payment of', 'dynamicpackages');
-		
-		if(dy_validators::has_deposit())
-		{
-			$label = __('deposit of', 'dynamicpackages');
-		}	
-		
-		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link. We are also going to send you this same information by email.', 'dynamicpackages')).'</p>';
-		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fas fa-credit-card"></i> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->gateway_methods_o)).'</a></p>';
+		$message = $amount;
 
 		return $message;
 	}	

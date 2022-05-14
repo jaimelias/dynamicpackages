@@ -51,9 +51,15 @@ class yappy_direct{
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
+				add_filter('dy_email_intro', array(&$this, 'subject'));
+				add_filter('dy_email_subject', array(&$this, 'subject'));
 			}
 		}
+	}
 
+	public function subject()
+	{
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->gateway_title), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
