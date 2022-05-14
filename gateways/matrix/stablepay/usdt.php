@@ -384,6 +384,7 @@ class usdt{
 				let logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/stablepay/assets/usdt.svg'});
 				jQuery(logo).attr({'width': '50', 'height': '50'});
 				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('.cc_payment_conditions').addClass('hidden');
 				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');

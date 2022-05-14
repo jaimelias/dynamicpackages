@@ -755,6 +755,7 @@ class paguelo_facil_on{
 			{
 				let logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
 				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('.cc_payment_conditions').removeClass('hidden');
 				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');

@@ -574,9 +574,12 @@ class dy_Gateways
 		{
 			ob_start();
 			?>
-				<hr/>
+				
 
-				<div class="small">
+				<div class="small cc_payment_conditions hidden">
+
+					<hr/>
+					
 					<h3><?php echo esc_html(__('Before Booking', 'dynamicpackages')); ?></h3>
 					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('It is not allowed to book for third parties.', 'dynamicpackages'); ?></p>
 					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'); ?></p>

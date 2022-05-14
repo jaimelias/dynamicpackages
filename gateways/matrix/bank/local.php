@@ -423,6 +423,7 @@ class bank_transfer{
 			{
 				let logo = jQuery('<p class="large"><?php echo esc_html(__('Pay to local bank account in', 'dynamicpackages')); ?> <strong><?php echo esc_html($this->bank); ?></strong></p>').addClass('text-muted');
 				jQuery('#dynamic_form').removeClass('hidden');
+				jQuery('.cc_payment_conditions').addClass('hidden');
 				jQuery('#dy_form_icon').html(logo);
 				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
 				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
