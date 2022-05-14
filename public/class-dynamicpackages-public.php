@@ -234,6 +234,7 @@ class dy_Public {
  			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html(get_option('ipgeolocation')).'";}', 'before');
 
 			 wp_add_inline_script('dynamicpackages', 'function dy_getTheId(){ return "'.esc_html(get_the_ID()).'";}', 'before');
+			 wp_add_inline_script('dynamicpackages', 'function textCopiedToClipBoard(){ return "'.esc_html(__('Copied to Clipboard!', 'dynamicpackages')).'";}', 'before');
 		}
 		
 		if($enqueue_archive)

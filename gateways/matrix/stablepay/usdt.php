@@ -100,11 +100,12 @@ class usdt{
 		}
 		return $content;
 	}
+
 	public function title($title)
 	{
 		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
 		{
-			$title = esc_html(__('Thank you for choosing Tether (USDT)', 'dynamicpackages'));
+			$title = esc_html(sprintf(__('You have chosen %s as your payment method!', 'dynamicpackages'), $this->name));
 		}
 		return $title;
 	}
@@ -175,9 +176,11 @@ class usdt{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
+			if(isset($_POST['dy_request']) && isset($_POST['dy_network']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
+				$network = sanitize_text_field($_POST['dy_network']);
+
+				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->networks))
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -376,9 +379,15 @@ class usdt{
 	{
 		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
 		$amount = dy_utilities::currency_symbol().''.dy_utilities::currency_format($amount);
-		
-		$message = $amount;
+		$network = sanitize_text_field($_POST['dy_network']);
+		$address = get_option($this->id . '_' . $network);
+		$network_name = $this->networks[$network]['name'];
 
+
+		$message = '<p class="large">'.esc_html(sprintf(__('When paying with %s you must make sure that you use the %s network.', 'dynamicpackages'), $this->name, $network_name)).'</p>';
+		$message .= '<p class="large">'.esc_html(__('Our payment address is as follows:')).'</p>';
+		$message .= '<p class="large copyToClipboard pointer" style="padding: 10px; color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';"><strong>'.esc_html($address).'</strong> <i class="fa fa-clipboard" aria-hidden="true"></i></p>';
+		
 		return $message;
 	}	
 }
