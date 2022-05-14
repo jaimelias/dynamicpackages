@@ -4,7 +4,7 @@
 	$hide_form = ($has_any_gateway) ? 'class="hidden"' : null;
 	$submit_form = ($has_any_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
 	$header_form = (is_singular('packages')) ? __('Send Your Request', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
-	$request_form = (is_singular('packages')) ? 'request' : 'contact';
+	$request_form = (is_singular('packages')) ? 'estimate_request' : 'contact';
 
 	$add_ons_value = '';
 	$add_ons_package_id = 'dy_add_ons_' . get_the_ID();
@@ -17,13 +17,21 @@
 
 <form id="dynamic_form"  <?php echo $hide_form;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
 
-	    <div class="text-center bottom-20" id="dy_form_icon">
+	    <div class="text-center bottom-20" id="dy_checkout_branding">
 			<p class="large text-muted">
 				<?php echo esc_html($header_form); ?>
 			</p>
 		</div>
 		
 		<hr />
+
+
+		<?php if($has_any_gateway) : ?>
+			<div id="dy_crypto_form" class="hidden small">
+				<?php do_action('dy_crypto_form'); ?>
+				<hr />
+			</div>
+		<?php endif; ?>
 	
 		<!-- Config -->
 		<input type="hidden" name="dy_request" value="<?php esc_html_e($request_form); ?>" />
@@ -79,7 +87,9 @@
 			
 		</div>
 
-		<?php do_action('dy_cc_warning'); ?>
+		<div id="cc_payment_conditions" class="hidden small">
+			<?php do_action('dy_cc_warning'); ?>
+		</div>
 		
 		<?php if($has_any_gateway) : ?>
 			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>

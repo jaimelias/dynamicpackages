@@ -22,20 +22,20 @@ class cuanto{
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
-			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 102);
 		}		
 	}
 	
 	public function args()
 	{
-		$this->gateway_name = 'cuanto';
-		$this->gateway_title = 'Cuanto.app';
-		$this->gateway_methods_o = __('Visa or Mastercard', 'dynamicpackages');
-		$this->gateway_methods_c = __('Visa, Mastercard', 'dynamicpackages');
-		$this->gateway_domain = 'Cuanto.app';		
-		$this->username = get_option($this->gateway_name);
-		$this->show = get_option($this->gateway_name . '_show');
-		$this->max = get_option($this->gateway_name . '_max');
+		$this->id = 'cuanto';
+		$this->name = 'Cuanto.app';
+		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
+		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
+		$this->type = 'card';
+		$this->domain = 'Cuanto.app';		
+		$this->username = get_option($this->id);
+		$this->show = get_option($this->id . '_show');
+		$this->max = get_option($this->id . '_max');
 		$this->color = '#000';
 		$this->background_color = '#8CD0C5';
 	}
@@ -58,12 +58,12 @@ class cuanto{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->gateway_title), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
 	{
-		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->gateway_title);
+		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
 	
 	public function filter_content($content)
@@ -94,7 +94,7 @@ class cuanto{
 		{
 			if($this->username != '')
 			{
-				$GLOBALS[$this->gateway_name . '_is_active'] = true;
+				$GLOBALS[$this->id . '_is_active'] = true;
 				$output = true;
 			}
 		}
@@ -115,7 +115,7 @@ class cuanto{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->gateway_name . '_show'] = true;
+					$GLOBALS[$this->id . '_show'] = true;
 					$output = true;
 				}
 			}			
@@ -125,7 +125,7 @@ class cuanto{
 	public function is_valid_request()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_is_valid_request';
+		$which_var = $this->id . '_is_valid_request';
 		global $$which_var;
 		global $dy_request_invalids;
 		
@@ -137,7 +137,7 @@ class cuanto{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -197,7 +197,7 @@ class cuanto{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->gateway_name . '_is_valid'] = true;
+				$GLOBALS[$this->id . '_is_valid'] = true;
 			}
 		}
 		return $output;
@@ -207,37 +207,37 @@ class cuanto{
 	{
 		//cuanto.app
 		
-		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_user');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'floatval');
+		register_setting($this->id . '_settings', $this->id, 'sanitize_user');
+		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
+		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
 		
 		add_settings_section(
-			$this->gateway_name . '_settings_section', 
+			$this->id . '_settings_section', 
 			esc_html(__( 'General Settings', 'dynamicpackages' )), 
 			'', 
-			$this->gateway_name . '_settings'
+			$this->id . '_settings'
 		);
 		
 		add_settings_field( 
-			$this->gateway_name, 
+			$this->id, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id
 		);	
 		add_settings_field( 
-			$this->gateway_name . '_max', 
+			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name . '_max'
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id . '_max'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_show', 
+			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
 			array(&$this, 'display_cuanto_show'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section'
+			$this->id . '_settings', 
+			$this->id . '_settings_section'
 		);		
 	}
 	
@@ -255,7 +255,7 @@ class cuanto{
 		<?php
 	}
 	public function display_cuanto_show() { ?>
-		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
+		<select name="<?php esc_html_e($this->id . '_show'); ?>">
 			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
@@ -263,17 +263,17 @@ class cuanto{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_domain, $this->gateway_domain, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->domain, $this->domain, 'manage_options', $this->id, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html_e($this->gateway_domain); ?></h1>	
+			<h1><?php esc_html_e($this->domain); ?></h1>	
 			<?php
-			settings_fields( $this->gateway_name . '_settings' );
-			do_settings_sections( $this->gateway_name . '_settings' );
+			settings_fields( $this->id . '_settings' );
+			do_settings_sections( $this->id . '_settings' );
 			submit_button();
 			?>			
 		</form>
@@ -282,9 +282,9 @@ class cuanto{
 	}	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->gateway_methods_c, $this->list_gateways_cb()))
+		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->gateway_methods_o).'</button>';
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';
 		}
 		return $output;
 	}
@@ -305,7 +305,7 @@ class cuanto{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{
-			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	
@@ -313,55 +313,16 @@ class cuanto{
 		
 		if($add)
 		{
-			$array[] = $this->gateway_methods_c;
+			$array[] = $this->methods_c;
 		}
 		
 		return $array;	
 	}
-	
-	public function scripts()
-	{
-		if($this->show())
-		{
-			wp_add_inline_script('dynamicpackages', $this->js(), 'before');
-		}
-	}
 
-	public function js()
+
+	public function branding()
 	{
-		ob_start();
-		?>
-		jQuery(function(){
-			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
-			{
-				let logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_title); ?></strong></p>').addClass('text-muted');
-				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('.cc_payment_conditions').removeClass('hidden');
-				jQuery('#dy_form_icon').html(logo);
-				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
-				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
-				
-				//facebook pixel
-				if(typeof fbq !== typeof undefined)
-				{
-					console.log('InitiateCheckout');
-					fbq('track', 'InitiateCheckout');
-				}
-				
-				//google analytics
-				if(typeof gtag !== 'undefined')
-				{
-					gtag('event', 'select_gateway', {
-						items : '<?php echo esc_html($this->gateway_name); ?>'
-					});					
-				}		
-				
-			});
-		});
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;	
+		return '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->name).'</p>';
 	}
 	
 	public function message($message)
@@ -381,7 +342,7 @@ class cuanto{
 		
 		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link. We are also going to send you this same information by email.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fas fa-credit-card"></i> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->gateway_methods_o)).'</a></p>';
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fas fa-credit-card"></i> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->methods_o)).'</a></p>';
 
 		return $message;
 	}	

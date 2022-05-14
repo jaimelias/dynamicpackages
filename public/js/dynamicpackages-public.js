@@ -6,6 +6,7 @@ jQuery(() => {
 	storePopulate();
 	booking_coupon();	
 	booking_open_form();
+	select_gateway();
 	
 	if(typeof dy_url !== 'undefined')
 	{
@@ -18,6 +19,86 @@ jQuery(() => {
 	}	
 	
 });
+
+const select_gateway = () => {
+	
+	const thisForm = jQuery('#dynamic_form');
+
+	jQuery('#dy_payment_buttons').find('button').each(function(){
+
+		jQuery(this).click(function(){
+
+			const thisButton = jQuery(this);
+			const id = jQuery(thisButton).attr('data-id');
+			const type = jQuery(thisButton).attr('data-type');
+			const branding = jQuery(thisButton).attr('data-branding');
+			let networks = jQuery(thisButton).attr('data-networks') || '';
+			const cryptoForm = jQuery('#dy_crypto_form');
+			const networkSelect = jQuery(cryptoForm).find('select[name="dy_network"]');
+
+			jQuery(networkSelect).removeClass('required').html('<option value="" selected>--</option>');
+			jQuery('#dy_crypto_alert').addClass('hidden');
+
+			if(type === 'card')
+			{
+				jQuery('#cc_payment_conditions').removeClass('hidden');
+			}
+			else
+			{
+				jQuery('#cc_payment_conditions').addClass('hidden');
+			}
+
+			if(type === 'crypto')
+			{
+				jQuery(networkSelect).addClass('required');
+				jQuery(cryptoForm).removeClass('hidden');
+				networks = JSON.parse(networks);
+
+				for (let k in networks) 
+				{
+					const options = jQuery('<option></option>').attr({'value': k}).html(networks[k].name);
+					jQuery(networkSelect).append(options);
+				}
+
+				jQuery(networkSelect).change(function(){
+					const thisField = jQuery(this);
+					const value = jQuery(thisField).val();
+					const text = jQuery(thisField).find('option:selected').text();
+
+					jQuery('#dy_crypto_network_code').text(value.toUpperCase());
+					jQuery('#dy_crypto_network_name').text(text);
+					jQuery('#dy_crypto_alert').removeClass('hidden');
+				});
+
+			}
+			else
+			{
+				jQuery('#dy_crypto_form').addClass('hidden');
+			}
+
+			jQuery('#dy_checkout_branding').html(branding);
+			jQuery(thisForm).removeClass('hidden');
+			jQuery(thisForm).find('input[name="first_name"]').focus();
+			jQuery(thisForm).find('input[name="dy_request"]').val(id);
+
+			//facebook pixel
+			if(typeof fbq !== typeof undefined)
+			{
+				console.log('InitiateCheckout');
+				fbq('track', 'InitiateCheckout');
+			}
+			
+			//google analytics
+			if(typeof gtag !== 'undefined')
+			{
+				gtag('event', 'select_gateway', {
+					items : id
+				});					
+			}
+		});
+	});
+
+};
 
 jQuery.fn.formToArray = function () {
    

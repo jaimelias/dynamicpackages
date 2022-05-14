@@ -102,7 +102,7 @@ class dy_Actions{
             {
                 if(isset($dy_valid_recaptcha))
                 {
-					if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == 'contact')
+					if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == 'contact')
 					{
 						 $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
 					}  

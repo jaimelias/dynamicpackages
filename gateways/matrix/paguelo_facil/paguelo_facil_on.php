@@ -23,26 +23,26 @@ class paguelo_facil_on{
 			add_filter('dy_request_the_title', array(&$this, 'the_title'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 2);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
-			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 100);
 			add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
 		}
 	}
 	
 	public function args()
 	{
-		$this->gateway_name = 'paguelo_facil_on';
-		$this->gateway_short_title = __('Paguelo Facil', 'dynamicpackages');
-		$this->gateway_title = __('Paguelo Facil On-site', 'dynamicpackages');
-		$this->gateway_methods_o = __('Visa or Mastercard', 'dynamicpackages');
-		$this->gateway_methods_c = __('Visa, Mastercard', 'dynamicpackages');
-		$this->cclw = get_option($this->gateway_name);
-		$this->show = get_option($this->gateway_name . '_show');
-		$this->min = (get_option($this->gateway_name . '_min')) ? get_option($this->gateway_name . '_min') : 5;
-		$this->max = (get_option($this->gateway_name . '_max')) ? get_option($this->gateway_name . '_max') : 500;
+		$this->id = 'paguelo_facil_on';
+		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
+		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
+		$this->type = 'card';
+		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
+		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
+		$this->cclw = get_option($this->id);
+		$this->show = get_option($this->id . '_show');
+		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
+		$this->max = (get_option($this->id . '_max')) ? get_option($this->id . '_max') : 500;
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
-		$this->debug_email = (get_option($this->gateway_name . '_debug_email')) ? get_option($this->gateway_name . '_debug_email') : get_option('admin_email');
+		$this->debug_email = (get_option($this->id . '_debug_email')) ? get_option($this->id . '_debug_email') : get_option('admin_email');
 		$this->debug($this->dummy_cc, $this->debug_email);		
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
@@ -55,7 +55,7 @@ class paguelo_facil_on{
 		
 		if(!isset($this->success))
 		{
-			if(dy_validators::validate_checkout($this->gateway_name))
+			if(dy_validators::validate_checkout($this->id))
 			{
 				if(isset($dy_valid_recaptcha))
 				{
@@ -170,7 +170,7 @@ class paguelo_facil_on{
 	
 	public function gateway_name($output)
 	{
-		return $this->gateway_name;
+		return $this->id;
 	}
 
 	public function label_doc($output)
@@ -260,7 +260,7 @@ class paguelo_facil_on{
 	public function is_active()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_is_active';
+		$which_var = $this->id . '_is_active';
 		
 		global $$which_var;
 		
@@ -281,7 +281,7 @@ class paguelo_facil_on{
 	public function show()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_show';
+		$which_var = $this->id . '_show';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -304,7 +304,7 @@ class paguelo_facil_on{
 	public function is_valid_request()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_is_valid_request';
+		$which_var = $this->id . '_is_valid_request';
 		global $$which_var;
 		global $dy_request_invalids;
 		
@@ -316,7 +316,7 @@ class paguelo_facil_on{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$GLOBALS[$which_var] = true;
 					$output = true;
@@ -428,7 +428,7 @@ class paguelo_facil_on{
 	public function is_valid()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_is_valid';
+		$which_var = $this->id . '_is_valid';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -482,61 +482,61 @@ class paguelo_facil_on{
 
 	public function settings_init()
 	{
-		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_min', 'intval');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'intval');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'sanitize_text_field');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_debug_email', 'sanitize_email');
+		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
+		register_setting($this->id . '_settings', $this->id . '_min', 'intval');
+		register_setting($this->id . '_settings', $this->id . '_max', 'intval');
+		register_setting($this->id . '_settings', $this->id . '_show', 'sanitize_text_field');
+		register_setting($this->id . '_settings', $this->id . '_debug_email', 'sanitize_email');
 		
 		add_settings_section(
-			$this->gateway_name . '_control_section', 
+			$this->id . '_control_section', 
 			esc_html(__( 'General Settings', 'dynamicpackages' )), 
 			'', 
-			$this->gateway_name . '_settings'
+			$this->id . '_settings'
 		);		
 		
 		add_settings_section(
-			$this->gateway_name . '_settings_section', 
-			esc_html(sprintf(__( '%s Settings', 'dynamicpackages' ), $this->gateway_title)), 
+			$this->id . '_settings_section', 
+			esc_html(sprintf(__( '%s Settings', 'dynamicpackages' ), $this->name)), 
 			'', 
-			$this->gateway_name . '_settings'
+			$this->id . '_settings'
 		);
 				
 		add_settings_field( 
-			$this->gateway_name, 
+			$this->id, 
 			esc_html(__( 'CCLW', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id
 		);
 		add_settings_field( 
-			$this->gateway_name . '_min', 
+			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_control_section', $this->gateway_name . '_min'
+			$this->id . '_settings', 
+			$this->id . '_control_section', $this->id . '_min'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_max', 
+			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_control_section', $this->gateway_name . '_max'
+			$this->id . '_settings', 
+			$this->id . '_control_section', $this->id . '_max'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_show', 
+			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
 			array(&$this, 'input_select_on_show'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_control_section'
+			$this->id . '_settings', 
+			$this->id . '_control_section'
 		);
 		
 		add_settings_field( 
-			$this->gateway_name . '_debug_email', 
+			$this->id . '_debug_email', 
 			esc_html(__( 'Debug Email', 'dynamicpackages' )), 
 			array(&$this, 'input_text'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_control_section', $this->gateway_name . '_debug_email'
+			$this->id . '_settings', 
+			$this->id . '_control_section', $this->id . '_debug_email'
 		);
 	}
 	
@@ -555,26 +555,26 @@ class paguelo_facil_on{
 	}	
 		
 	public function input_select_on_show() { ?>
-		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
-			<option value="0" <?php selected(get_option($this->gateway_name . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option($this->gateway_name . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
+		<select name="<?php esc_html_e($this->id . '_show'); ?>">
+			<option value="0" <?php selected(get_option($this->id . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
+			<option value="1" <?php selected(get_option($this->id . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
 	<?php }	
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_title, $this->gateway_title, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->name, $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html_e($this->gateway_title); ?></h1>	
+			<h1><?php esc_html_e($this->name); ?></h1>	
 			<?php echo $this->debug_instructions(); ?>
 			<?php
-			settings_fields( $this->gateway_name . '_settings' );
-			do_settings_sections( $this->gateway_name . '_settings' );
+			settings_fields( $this->id . '_settings' );
+			do_settings_sections( $this->id . '_settings' );
 			submit_button();
 			?>			
 		</form>
@@ -583,9 +583,9 @@ class paguelo_facil_on{
 	}
 	public function button($output)
 	{
-		if($this->show() && in_array($this->gateway_methods_c, $this->list_gateways_cb()))
+		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc with_' . esc_html($this->gateway_name) . ' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->gateway_methods_o).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc with_' . esc_html($this->id) . ' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';			
 		}
 		return $output;
 	}
@@ -605,7 +605,7 @@ class paguelo_facil_on{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{			
-			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	
@@ -613,7 +613,7 @@ class paguelo_facil_on{
 		
 		if($add)
 		{
-			$array[] = $this->gateway_methods_c;
+			$array[] = $this->methods_c;
 		}
 		
 		return $array;	
@@ -632,14 +632,6 @@ class paguelo_facil_on{
 		}
 		
 		return $output;
-	}
-	
-	public function scripts()
-	{
-		if($this->show())
-		{
-			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
-		}
 	}
 	
 	public function build_request()
@@ -744,42 +736,8 @@ class paguelo_facil_on{
 		}
 	}
 
-
-
-	public function js()
+	public function branding()
 	{
-		ob_start();
-		?>
-		jQuery(function(){
-			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
-			{
-				let logo = jQuery('<p class="large"><?php echo esc_html(sprintf(__('Pay with %s thanks to', 'dynamicpackages'), $this->gateway_methods_o)); ?> <strong><?php echo esc_html($this->gateway_short_title); ?></strong></p>').addClass('text-muted');
-				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('.cc_payment_conditions').removeClass('hidden');
-				jQuery('#dy_form_icon').html(logo);
-				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
-				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
-				
-				//facebook pixel
-				if(typeof fbq !== typeof undefined)
-				{
-					console.log('InitiateCheckout');
-					fbq('track', 'InitiateCheckout');
-				}
-
-				//google analytics
-				if(typeof gtag !== 'undefined')
-				{
-					gtag('event', 'select_gateway', {
-						items : '<?php echo esc_html($this->gateway_name); ?>'
-					});					
-				}				
-				
-			});
-		});
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}	
+		return '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
+	}
 }

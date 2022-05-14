@@ -22,21 +22,22 @@ class nequi_direct{
 			add_filter('wp_headers', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 3);
-			add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 101);
 			add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
 		}		
 	}
 	
 	public function args()
 	{
-		$this->gateway_name = 'nequi_direct';
+		$this->id = 'nequi_direct';
 		$this->gateway_short_name = 'nequi';
-		$this->gateway_title = 'Nequi';
-		$this->number = get_option($this->gateway_name);
-		$this->max = get_option($this->gateway_name . '_max');
-		$this->show = get_option($this->gateway_name . '_show');
+		$this->name = 'Nequi';
+		$this->type = 'alt';
+		$this->number = get_option($this->id);
+		$this->max = get_option($this->id . '_max');
+		$this->show = get_option($this->id . '_show');
 		$this->background_color = '#ff2f73';
 		$this->color = '#fff';
+		$this->plugin_dir_url = plugin_dir_url( __FILE__ );
 	}
 
 	public function send_data()
@@ -57,12 +58,12 @@ class nequi_direct{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->gateway_title), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
 	{
-		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->gateway_title);
+		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}	
 
 	public function is_active()
@@ -78,7 +79,7 @@ class nequi_direct{
 		{
 			if($this->number != '')
 			{
-				$GLOBALS[$this->gateway_name . '_is_active'] = true;
+				$GLOBALS[$this->id . '_is_active'] = true;
 				$output = true;
 			}
 		}
@@ -99,7 +100,7 @@ class nequi_direct{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->gateway_name . '_show'] = true;
+					$GLOBALS[$this->id . '_show'] = true;
 					$output = true;
 				}
 			}			
@@ -109,7 +110,7 @@ class nequi_direct{
 	public function is_valid_request()
 	{
 		$output = false;
-		$which_var = $this->gateway_name . '_is_valid_request';
+		$which_var = $this->id . '_is_valid_request';
 		global $$which_var;
 		global $dy_request_invalids;
 		
@@ -121,7 +122,7 @@ class nequi_direct{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->gateway_name && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					$GLOBALS[$which_var] = true;	
@@ -223,7 +224,7 @@ class nequi_direct{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->gateway_name . '_is_valid'] = true;
+				$GLOBALS[$this->id . '_is_valid'] = true;
 			}
 		}
 		return $output;
@@ -233,37 +234,37 @@ class nequi_direct{
 	{
 		//Nequi
 		
-		register_setting($this->gateway_name . '_settings', $this->gateway_name, 'intval');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_show', 'intval');
-		register_setting($this->gateway_name . '_settings', $this->gateway_name . '_max', 'floatval');
+		register_setting($this->id . '_settings', $this->id, 'intval');
+		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
+		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
 		
 		add_settings_section(
-			$this->gateway_name . '_settings_section', 
+			$this->id . '_settings_section', 
 			esc_html(__( 'General Settings', 'dynamicpackages' )), 
 			'', 
-			$this->gateway_name . '_settings'
+			$this->id . '_settings'
 		);
 		
 		add_settings_field( 
-			$this->gateway_name, 
+			$this->id, 
 			esc_html(__( 'Nequi Cell Phone Number', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id
 		);	
 		add_settings_field( 
-			$this->gateway_name . '_max', 
+			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
 			array(&$this, 'input_number'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section', $this->gateway_name . '_max'
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id . '_max'
 		);
 		add_settings_field( 
-			$this->gateway_name . '_show', 
+			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
 			array(&$this, 'display_nequi_direct_show'), 
-			$this->gateway_name . '_settings', 
-			$this->gateway_name . '_settings_section'
+			$this->id . '_settings', 
+			$this->id . '_settings_section'
 		);		
 	}
 	
@@ -280,7 +281,7 @@ class nequi_direct{
 		<?php
 	}
 	public function display_nequi_direct_show() { ?>
-		<select name="<?php esc_html_e($this->gateway_name . '_show'); ?>">
+		<select name="<?php esc_html_e($this->id . '_show'); ?>">
 			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
 			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
 		</select>
@@ -288,17 +289,17 @@ class nequi_direct{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->gateway_title, $this->gateway_title, 'manage_options', $this->gateway_name, array(&$this, 'settings_page'));
+		add_submenu_page( 'edit.php?post_type=packages', $this->name, $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html_e($this->gateway_title); ?></h1>	
+			<h1><?php esc_html_e($this->name); ?></h1>	
 			<?php
-			settings_fields( $this->gateway_name . '_settings' );
-			do_settings_sections( $this->gateway_name . '_settings' );
+			settings_fields( $this->id . '_settings' );
+			do_settings_sections( $this->id . '_settings' );
 			submit_button();
 			?>			
 		</form>
@@ -307,9 +308,9 @@ class nequi_direct{
 	}
 	public function button($output)
 	{
-		if($this->show() && in_array($this->gateway_title, $this->list_gateways_cb()))
+		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->gateway_name).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
@@ -330,7 +331,7 @@ class nequi_direct{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{
-			if($_POST['dy_request'] == 'request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	
@@ -338,62 +339,22 @@ class nequi_direct{
 		
 		if($add)
 		{
-			$array[] = $this->gateway_title;
+			$array[] = $this->name;
 		}
 		
 		return $array;	
 	}
 
-	public function scripts()
+	public function branding()
 	{
-		if($this->show())
-		{
-			wp_add_inline_script('dynamicpackages', $this->js(), 'before');	
-		}
+		return '<img src="'.$this->plugin_dir_url.'/nequi.svg" width="214" height="48" alt="'.$this->name.'" />';
 	}
 
-	public function js()
-	{
-		ob_start();
-		?>
-		jQuery(function(){
-			jQuery('.with_<?php esc_html_e($this->gateway_name); ?>').click(function()
-			{
-				let logo = jQuery('<img>').attr({'src': dy_url()+'gateways/matrix/nequi/nequi.svg'});
-				jQuery(logo).attr({'width': '214', 'height': '48'});
-				jQuery('#dynamic_form').removeClass('hidden');
-				jQuery('.cc_payment_conditions').addClass('hidden');
-				jQuery('#dy_form_icon').html(logo);
-				jQuery('#dynamic_form').find('input[name="first_name"]').focus();
-				jQuery('#dynamic_form').find('input[name="dy_request"]').val('<?php echo esc_html($this->gateway_name); ?>');
-								
-				//facebook pixel
-				if(typeof fbq !== typeof undefined)
-				{
-					console.log('InitiateCheckout');
-					fbq('track', 'InitiateCheckout');
-				}
-
-				//google analytics
-				if(typeof gtag !== 'undefined')
-				{
-					gtag('event', 'select_gateway', {
-						items : '<?php echo esc_html($this->gateway_name); ?>'
-					});					
-				}			
-				
-			});
-		});
-		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;			
-	}
 	public function single_coupon($str, $gateway)
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="nequi" width="40"  height="40" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</aside>';
+			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="nequi" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'nequi-icon.svg').'"/><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</aside>';
 		}
 		
 		return $str;
