@@ -1,6 +1,6 @@
 <?php
 
-class usdt{
+class busd{
 	
 	function __construct()
 	{
@@ -29,15 +29,15 @@ class usdt{
 
 	public function args()
 	{
-		$this->id = 'usdt';
-		$this->name = 'Tether (USDT)';
+		$this->id = 'busd';
+		$this->name = 'Binance USD (BUSD)';
 		$this->type = 'crypto';
 		$this->all_networks = $this->get_all_networks();
 		$this->enabled_networks = $this->get_enabled_networks();
 		$this->show = get_option($this->id . '_show');
 		$this->max = get_option($this->id . '_max');
-		$this->color = '#fff';
-		$this->background_color = '#50AF95';
+		$this->color = '#000';
+		$this->background_color = '#f0b90b';
 		$this->plugin_dir_url = plugin_dir_url(__FILE__);
 	}
 
@@ -49,15 +49,6 @@ class usdt{
 			), 
 			'bsc' => array(
 				'name' => 'Binance Smart Chain (BEP-20)'
-			), 
-			'matic' => array(
-				'name' => 'Poligon (MATIC)'
-			), 
-			'sol' => array(
-				'name' => 'Solana'
-			), 
-			'avax' => array(
-				'name' => 'Avalanche'
 			)
 		);
 	}

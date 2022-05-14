@@ -76,8 +76,8 @@ class dy_Actions{
 			}
 
 
-			//$this->send_provider_email();
-			//$this->send_email();
+			$this->send_provider_email();
+			$this->send_email();
 
 
 			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
@@ -88,7 +88,7 @@ class dy_Actions{
 			$new_post['provider_name'] = $provider_name;
 			$new_post['provider_email'] = $provider_email;
 			
-            //dy_utilities::webhook($webhook_option, json_encode($new_post));
+            dy_utilities::webhook($webhook_option, json_encode($new_post));
         }   
     }
     public function the_content($content)

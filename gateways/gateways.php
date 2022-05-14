@@ -20,6 +20,8 @@ class dy_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
+		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdc.php';
+		require_once plugin_dir_path(__FILE__).'matrix/stablepay/busd.php';
 	}	
 	
 	public function load_classes()
@@ -34,6 +36,8 @@ class dy_Gateways
 		$this->bank_transfer = new bank_transfer();
 		$this->wire_transfer = new wire_transfer();
 		$this->usdt = new usdt();
+		$this->usdc = new usdc();
+		$this->busd = new busd();
 	}
 	public function init()
 	{

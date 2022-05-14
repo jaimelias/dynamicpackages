@@ -1,6 +1,6 @@
 <?php
 
-class usdt{
+class usdc{
 	
 	function __construct()
 	{
@@ -29,15 +29,15 @@ class usdt{
 
 	public function args()
 	{
-		$this->id = 'usdt';
-		$this->name = 'Tether (USDT)';
+		$this->id = 'usdc';
+		$this->name = 'USD Coin (USDC)';
 		$this->type = 'crypto';
 		$this->all_networks = $this->get_all_networks();
 		$this->enabled_networks = $this->get_enabled_networks();
 		$this->show = get_option($this->id . '_show');
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#fff';
-		$this->background_color = '#50AF95';
+		$this->background_color = '#2775CA';
 		$this->plugin_dir_url = plugin_dir_url(__FILE__);
 	}
 
