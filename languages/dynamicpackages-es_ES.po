@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "POT-Creation-Date: 2020-11-12 00:44+0000\n"
-"PO-Revision-Date: 2022-05-14 20:21+0000\n"
+"PO-Revision-Date: 2022-05-14 22:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -22,7 +22,9 @@ msgstr ""
 msgid " / "
 msgstr ""
 
-#: gateways/matrix/stablepay/usdt.php:286
+#: gateways/matrix/stablepay/busd.php:297
+#: gateways/matrix/stablepay/usdc.php:306
+#: gateways/matrix/stablepay/usdt.php:306
 #, php-format
 msgid "%s Contract Address"
 msgstr "Dirección del contrato"
@@ -36,7 +38,8 @@ msgstr "%s está teniendo problemas procesando tu pago"
 #: gateways/matrix/cuanto/cuanto.php:66
 #: gateways/matrix/nequi/nequi_direct.php:66
 #: gateways/matrix/paypal/paypal_me.php:66
-#: gateways/matrix/stablepay/usdt.php:87
+#: gateways/matrix/stablepay/busd.php:94 gateways/matrix/stablepay/usdc.php:103
+#: gateways/matrix/stablepay/usdt.php:103
 #: gateways/matrix/yappy/yappy_direct.php:68
 #, php-format
 msgid "%s Payment Instructions"
@@ -56,7 +59,8 @@ msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 #: gateways/matrix/cuanto/cuanto.php:61
 #: gateways/matrix/nequi/nequi_direct.php:61
 #: gateways/matrix/paypal/paypal_me.php:61
-#: gateways/matrix/stablepay/usdt.php:82
+#: gateways/matrix/stablepay/busd.php:89 gateways/matrix/stablepay/usdc.php:98
+#: gateways/matrix/stablepay/usdt.php:98
 #: gateways/matrix/yappy/yappy_direct.php:63
 #, php-format
 msgid "%s, %s sent you a payment request for %s%s using %s - %s"
@@ -137,7 +141,7 @@ msgstr "adultos"
 msgid "Alias"
 msgstr "Alias"
 
-#: gateways/gateways.php:609
+#: gateways/gateways.php:613
 msgid ""
 "All card payments may be subject to a verification process where we charge a "
 "random amount less than $5. To complete the reservation you must indicate "
@@ -167,6 +171,14 @@ msgstr "Saldo"
 #: public/class-dynamicpackages-public.php:1454
 msgid "and"
 msgstr "y"
+
+#: gateways/gateways.php:593
+msgid ""
+"at the time of sending the funds. If the other network does not support it, "
+"your assets may be lost."
+msgstr ""
+"al momento de enviar los fondos. Si la otra red no lo soporta, tus fondos se "
+"pueden perder."
 
 #: includes/class-dynamicpackages-metaboxes.php:49
 msgid "Availability"
@@ -204,7 +216,7 @@ msgstr "Precios base por persona"
 msgid "Based on"
 msgstr "basado en"
 
-#: gateways/gateways.php:606
+#: gateways/gateways.php:610
 msgid "Before Booking"
 msgstr "Antes de reservar"
 
@@ -323,7 +335,7 @@ msgstr "CCLW"
 #: includes/form-actions.php:209
 #, php-format
 msgid "Check availability for %s %s: %s"
-msgstr ""
+msgstr "Revisar disponibilidad para %s %s: %s"
 
 #: public/partials/forms.php:203
 msgid "Check Pricing"
@@ -372,9 +384,9 @@ msgstr "Niños gratis hasta"
 msgid "children under"
 msgstr "niños menores de"
 
-#: gateways/gateways.php:578
+#: gateways/gateways.php:582
 msgid "Choose Network"
-msgstr ""
+msgstr "Elegir red"
 
 #: gateways/cc-form.php:13
 msgid "City"
@@ -415,7 +427,7 @@ msgstr "Mensaje de confirmación"
 msgid "Contact Details"
 msgstr "Detalles de contacto"
 
-#: gateways/gateways.php:99
+#: gateways/gateways.php:103
 msgid "Contact The Experts"
 msgstr "Contacta a los expertos"
 
@@ -431,11 +443,11 @@ msgstr "¡Copiado al portapapeles!"
 msgid "Country"
 msgstr "País"
 
-#: gateways/gateways.php:316
+#: gateways/gateways.php:320
 msgid "Coupon"
 msgstr "Cupón"
 
-#: gateways/gateways.php:540
+#: gateways/gateways.php:544
 #, php-format
 msgid "Coupon %s activated. %s off applied on the rate."
 msgstr "Cupón %s activado. %s de descuento aplicado a la tarifa."
@@ -514,7 +526,7 @@ msgstr "Hora de partida"
 msgid "Deposit"
 msgstr "Deposito"
 
-#: gateways/gateways.php:377 public/class-dynamicpackages-public.php:1704
+#: gateways/gateways.php:381 public/class-dynamicpackages-public.php:1704
 #: gateways/matrix/bank/international.php:180
 #: gateways/matrix/bank/local.php:167
 #: gateways/matrix/nequi/nequi_direct.php:167
@@ -525,6 +537,9 @@ msgstr "deposito"
 
 #: gateways/matrix/cuanto/cuanto.php:340
 #: gateways/matrix/paypal/paypal_me.php:346
+#: gateways/matrix/stablepay/busd.php:401
+#: gateways/matrix/stablepay/usdc.php:410
+#: gateways/matrix/stablepay/usdt.php:410
 msgid "deposit of"
 msgstr "deposito de"
 
@@ -606,7 +621,7 @@ msgstr "Ingresa el cupón"
 msgid "Error"
 msgstr "Error"
 
-#: gateways/gateways.php:345
+#: gateways/gateways.php:349
 msgid "Error: please correct the invalid fields in color red."
 msgstr "Error: corrige los campos inválidos en color rojo."
 
@@ -693,6 +708,9 @@ msgstr "Pago completo"
 
 #: gateways/matrix/cuanto/cuanto.php:336
 #: gateways/matrix/paypal/paypal_me.php:342
+#: gateways/matrix/stablepay/busd.php:397
+#: gateways/matrix/stablepay/usdc.php:406
+#: gateways/matrix/stablepay/usdt.php:406
 msgid "full payment of"
 msgstr "pago completo de"
 
@@ -710,7 +728,9 @@ msgstr "Solicitud general"
 #: gateways/matrix/nequi/nequi_direct.php:243
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:493
 #: gateways/matrix/paypal/paypal_me.php:224
-#: gateways/matrix/stablepay/usdt.php:262
+#: gateways/matrix/stablepay/busd.php:273
+#: gateways/matrix/stablepay/usdc.php:282
+#: gateways/matrix/stablepay/usdt.php:282
 #: gateways/matrix/yappy/yappy_direct.php:253
 msgid "General Settings"
 msgstr "Configuración General"
@@ -811,10 +831,6 @@ msgstr "https://jaimelias.com"
 #: public/partials/archive.php:290
 msgid "ID"
 msgstr "ID"
-
-#: gateways/gateways.php:589
-msgid "If the other platform does not support it, your assets may be lost."
-msgstr ""
 
 #: gateways/checkout-page.php:135
 msgid "Include?"
@@ -920,7 +936,7 @@ msgstr "Año de espiración invalido."
 msgid "Invalid Hour"
 msgstr "Hora invalida"
 
-#: gateways/gateways.php:551
+#: gateways/gateways.php:555
 msgid "Invalid or expired coupon"
 msgstr "Cupón inválido o expirado"
 
@@ -932,7 +948,7 @@ msgstr "Recaptcha invalido"
 msgid "Invalid repeated email."
 msgstr "Email repetido inválido."
 
-#: gateways/gateways.php:121 gateways/gateways.php:128
+#: gateways/gateways.php:125 gateways/gateways.php:132
 msgid "Invalid Request"
 msgstr "Solicitud invalida"
 
@@ -952,7 +968,7 @@ msgstr "IPGeolocation.io"
 msgid "is rated"
 msgstr "está calificado"
 
-#: gateways/gateways.php:607
+#: gateways/gateways.php:611
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:243
 msgid "It is not allowed to book for third parties."
 msgstr "No está permitido reservar para terceros."
@@ -984,7 +1000,7 @@ msgstr "Unidad de tiempo"
 
 #: gateways/matrix/bank/local.php:32
 msgid "Local Bank Transfer"
-msgstr ""
+msgstr "Transferencia de banco local"
 
 #: includes/class-dynamicpackages-post-type.php:71
 msgid "Location"
@@ -999,11 +1015,17 @@ msgstr "Ubicaciones"
 msgid "low to high"
 msgstr "baratos a caros"
 
+#: gateways/gateways.php:591
+msgid "make sure you use"
+msgstr "asegurate de utilizar"
+
 #: gateways/matrix/cuanto/cuanto.php:230
 #: gateways/matrix/nequi/nequi_direct.php:257
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:521
 #: gateways/matrix/paypal/paypal_me.php:238
-#: gateways/matrix/stablepay/usdt.php:269
+#: gateways/matrix/stablepay/busd.php:280
+#: gateways/matrix/stablepay/usdc.php:289
+#: gateways/matrix/stablepay/usdt.php:289
 #: gateways/matrix/yappy/yappy_direct.php:275
 msgid "Max. Amount"
 msgstr "Cantidad Máxima"
@@ -1179,7 +1201,7 @@ msgstr "Número de cupones"
 msgid "Number of Special Seasons"
 msgstr "Número de temporadas especiales"
 
-#: gateways/gateways.php:316
+#: gateways/gateways.php:320
 msgid "off"
 msgstr "descuento"
 
@@ -1213,13 +1235,19 @@ msgstr "Precios por persona una vía"
 msgid "Online Booking"
 msgstr "Reservar en línea"
 
-#: gateways/gateways.php:152
+#: gateways/gateways.php:156
 msgid "or"
 msgstr "o"
 
 #: includes/class-dynamicpackages-metaboxes.php:658
 msgid "Orange"
 msgstr "Anaranjado"
+
+#: gateways/matrix/stablepay/busd.php:406
+#: gateways/matrix/stablepay/usdc.php:415
+#: gateways/matrix/stablepay/usdt.php:415
+msgid "Our payment address is as follows:"
+msgstr "Nuestra dirección de pago en la siguiente:"
 
 #: includes/form-actions.php:190
 #, php-format
@@ -1234,7 +1262,7 @@ msgstr ""
 msgid "Outstanding Balance"
 msgstr "Saldo"
 
-#: gateways/gateways.php:377
+#: gateways/gateways.php:381
 msgid "outstanding balance"
 msgstr "saldo"
 
@@ -1304,7 +1332,7 @@ msgstr "Paquete principal:"
 msgid "Participants"
 msgstr "Participantes"
 
-#: gateways/gateways.php:178
+#: gateways/gateways.php:182
 msgid "Pay"
 msgstr "Pagar"
 
@@ -1319,10 +1347,10 @@ msgstr "Paga con %s"
 
 #: gateways/matrix/cuanto/cuanto.php:325
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:741
-#, fuzzy, php-format
+#, php-format
 #| msgid "Pay with %s thanks to"
 msgid "Pay with %s thanks to %s"
-msgstr "Paga con %s gracias a "
+msgstr "Paga con %s gracias a %s"
 
 #: gateways/matrix/bank/international.php:168
 msgid "Pay With an International Wire Transfer"
@@ -1404,10 +1432,6 @@ msgstr "Teléfono no es inválido."
 msgid "Places of Interest:"
 msgstr "Lugares de interes"
 
-#: gateways/gateways.php:587
-msgid "please confirm that your withdrawal address supports the"
-msgstr "por favor confirma que tu dirección de retiro soporta"
-
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:247
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:359
 msgid "Please contact your bank to authorize the transaction."
@@ -1424,6 +1448,9 @@ msgstr ""
 
 #: gateways/matrix/cuanto/cuanto.php:344
 #: gateways/matrix/paypal/paypal_me.php:350
+#: gateways/matrix/stablepay/busd.php:404
+#: gateways/matrix/stablepay/usdc.php:413
+#: gateways/matrix/stablepay/usdt.php:413
 #, php-format
 msgid "Please send us the %s %s to complete these booking."
 msgstr "Por favor envía el %s %s para completar esta reserva."
@@ -1535,7 +1562,7 @@ msgstr "Repetir Email"
 msgid "request an estimate"
 msgstr "solicita una cotización"
 
-#: gateways/gateways.php:99
+#: gateways/gateways.php:103
 msgid "Request Quote"
 msgstr "Solicitar cotización"
 
@@ -1622,7 +1649,9 @@ msgstr "Servicio"
 #: gateways/matrix/nequi/nequi_direct.php:264
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:528
 #: gateways/matrix/paypal/paypal_me.php:245
-#: gateways/matrix/stablepay/usdt.php:276
+#: gateways/matrix/stablepay/busd.php:287
+#: gateways/matrix/stablepay/usdc.php:296
+#: gateways/matrix/stablepay/usdt.php:296
 #: gateways/matrix/yappy/yappy_direct.php:282
 msgid "Show"
 msgstr "Mostrar"
@@ -1702,7 +1731,7 @@ msgstr "Código de identificación del contrubuyente"
 msgid "Telephone"
 msgstr "Teléfono"
 
-#: includes/class-dynamicpackages-post-type.php:149
+#: gateways/gateways.php:246 includes/class-dynamicpackages-post-type.php:149
 #: includes/class-dynamicpackages-post-type.php:150
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
@@ -1742,20 +1771,20 @@ msgstr "Gracias por tu %s de %s%s: %s"
 msgid "Thank You for Your Request"
 msgstr "Gracias por tu solicitud"
 
-#: gateways/gateways.php:182
+#: gateways/gateways.php:186
 msgid "the deposit"
 msgstr "el deposito"
 
-#: gateways/gateways.php:585
+#: gateways/gateways.php:589
 msgid "The network you selected is"
-msgstr ""
+msgstr "La red elegida es"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:224
 msgid "The Terms & Conditions you accepted are attached to this email."
 msgstr ""
 "Los Términos y condiciones que aceptó se adjuntan a este correo electrónico."
 
-#: gateways/gateways.php:545
+#: gateways/gateways.php:549
 #, php-format
 msgid "This coupon expires on %s."
 msgstr "Este cupón expira el %s."
@@ -1830,7 +1859,7 @@ msgstr "Para completar su reserva por favor entre a su App Yappy y envie su"
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
 
-#: gateways/gateways.php:608
+#: gateways/gateways.php:612
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:241
 msgid ""
 "To complete this reservation we require images of the passports (foreigners) "
@@ -2009,7 +2038,9 @@ msgstr "Asesoría por Whatsapp"
 msgid "When is a good time to call you at %s? Or do you prefer Whatsapp?"
 msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
 
-#: gateways/matrix/stablepay/usdt.php:387
+#: gateways/matrix/stablepay/busd.php:405
+#: gateways/matrix/stablepay/usdc.php:414
+#: gateways/matrix/stablepay/usdt.php:414
 #, php-format
 msgid "When paying with %s you must make sure that you use the %s network."
 msgstr "Cuando pagues por %s asegurate de utilizar la red %s."
@@ -2022,7 +2053,7 @@ msgstr "Blanco"
 msgid "Wire Transfer"
 msgstr "Transferencia internacional"
 
-#: gateways/gateways.php:187
+#: gateways/gateways.php:191
 msgid "with"
 msgstr "con"
 
@@ -2058,12 +2089,14 @@ msgstr "Amarillo"
 msgid "Yes"
 msgstr "Si"
 
-#: gateways/gateways.php:567
+#: gateways/gateways.php:571
 #, php-format
 msgid "You have chosen %s %s, but the minimum duration is %s %s."
 msgstr "Haz elegido %s %s, pero el mínimo es de %s %s."
 
-#: gateways/matrix/stablepay/usdt.php:108
+#: gateways/matrix/stablepay/busd.php:115
+#: gateways/matrix/stablepay/usdc.php:124
+#: gateways/matrix/stablepay/usdt.php:124
 #, php-format
 msgid "You have chosen %s as your payment method!"
 msgstr "¡Haz elegido %s cómo tu método de pago!"

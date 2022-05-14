@@ -44,7 +44,7 @@ const copyToClipboard = () => {
 
 			setTimeout(()=> {
 				jQuery(thisClickedEl).find('.copy-to-clipboard-notification').addClass('hidden');
-			}, 1000);
+			}, 1500);
 		});
 
 	});
@@ -80,8 +80,12 @@ const select_gateway = () => {
 
 			if(type === 'crypto')
 			{
+				
 				jQuery(networkSelect).addClass('required');
 				jQuery(cryptoForm).removeClass('hidden');
+				
+
+
 				networks = JSON.parse(networks);
 
 				for (let k in networks) 
@@ -89,6 +93,10 @@ const select_gateway = () => {
 					const options = jQuery('<option></option>').attr({'value': k}).html(networks[k].name);
 					jQuery(networkSelect).append(options);
 				}
+
+				setTimeout(()=>{
+					jQuery(networkSelect).focus();
+				}, 200)
 
 				jQuery(networkSelect).change(function(){
 					const thisField = jQuery(this);
@@ -103,12 +111,13 @@ const select_gateway = () => {
 			}
 			else
 			{
+				jQuery(thisForm).find('input[name="first_name"]').focus();
 				jQuery('#dy_crypto_form').addClass('hidden');
 			}
 
 			jQuery('#dy_checkout_branding').html(branding);
 			jQuery(thisForm).removeClass('hidden');
-			jQuery(thisForm).find('input[name="first_name"]').focus();
+			
 			jQuery(thisForm).find('input[name="dy_request"]').val(id);
 
 			//facebook pixel

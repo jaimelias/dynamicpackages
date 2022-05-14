@@ -243,7 +243,7 @@ class dy_Gateways
 		{
 			if(count($terms_conditions) > 0)
 			{
-				$output = '<h3>'.esc_html('Terms & Conditions', 'dynamicpackages').'</h3><p>';
+				$output = '<h3>'.esc_html(__('Terms & Conditions', 'dynamicpackages')).'</h3><p>';
 				
 				for($x = 0; $x < count($terms_conditions); $x++ )
 				{
@@ -579,18 +579,18 @@ class dy_Gateways
 		{
 			ob_start();
 			?>
-				<h3><?php esc_html_e('Choose Network', 'dynamicpackages'); ?></h3>
+				<h3><?php echo esc_html(__('Choose Network', 'dynamicpackages')); ?></h3>
 				<p>
 					<select name="dy_network">
 						<option value="">--</option>
 					</select>
 				</p>
 				<p id="dy_crypto_alert" class="minimal_alert hidden">
-					<?php esc_html_e('The network you selected is', 'dynamicpackages'); ?>&nbsp;
-					<strong id="dy_crypto_network_code"></strong>,&nbsp;
-					<?php esc_html_e('please confirm that your withdrawal address supports the', 'dynamicpackages'); ?>&nbsp;
+					<?php echo esc_html(__('The network you selected is', 'dynamicpackages')); ?>&nbsp;
+					<strong id="dy_crypto_network_code"></strong>.&nbsp;
+					<?php echo esc_html(__('make sure you use', 'dynamicpackages')); ?>&nbsp;
 					<strong id="dy_crypto_network_name"></strong>&nbsp;
-					<?php esc_html_e('If the other platform does not support it, your assets may be lost.', 'dynamicpackages'); ?>
+					<?php echo esc_html( __('at the time of sending the funds. If the other network does not support it, your assets may be lost.', 'dynamicpackages')); ?>
 				</p>
 			<?php
 			$output = ob_get_contents();
