@@ -282,12 +282,28 @@ class busd{
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
+
+		$show_args = array(
+			'name' => $this->id . '_show',
+			'options' => array(
+				array(
+					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
+					'value' => 0
+				),
+				array(
+					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'value' => 1
+				),
+			)
+		);
+
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_show'), 
+			array(&$this, 'select'), 
 			$this->id . '_settings', 
-			$this->id . '_settings_section'
+			$this->id . '_settings_section',
+			$show_args
 		);	
 		
 		foreach($this->all_networks as $key => $value)
@@ -316,12 +332,28 @@ class busd{
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
 		<?php
 	}
-	public function display_show() { ?>
-		<select name="<?php esc_html_e($this->id . '_show'); ?>">
-			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
-		</select>
-	<?php }	
+
+	public function select($args) {
+		
+		$name = $args['name'];
+		$options = $args['options'];
+		$value = intval(get_option($name));
+		$render_options = '';
+		
+		for($x = 0; $x < count($options); $x++)
+		{
+			$this_value = intval($options[$x]['value']);
+			$this_text = $options[$x]['text'];
+			$selected = ($value === $this_value) ? ' selected ' : '';
+			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
+		}
+
+		?>
+			<select name="<?php echo esc_attr($name); ?>">
+				<?php echo $render_options; ?>
+			</select>
+		<?php 
+	}	
 
 	public function add_settings_page()
 	{
@@ -346,7 +378,8 @@ class busd{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" data-networks="'.esc_attr(json_encode($this->enabled_networks)).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"> '.esc_html($this->name).'</button>';
+			$icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/crypto/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" data-networks="'.esc_attr(json_encode($this->enabled_networks)).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button">'.$icon.' '.esc_html($this->name).'</button>';
 		}
 		return $output;
 	}
@@ -383,7 +416,7 @@ class busd{
 	
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'assets/crypto/'.$this->id.'.svg" width="50" height="50" alt="'.$this->name.'" />';
+		return '<img src="'.esc_url($this->plugin_dir_url.'assets/crypto/'.$this->id.'.svg').'" width="50" height="50" alt="'.esc_attr($this->name).'" />';
 	}
 	
 	public function message($message)

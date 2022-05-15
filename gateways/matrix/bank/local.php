@@ -388,7 +388,6 @@ class bank_transfer{
 			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
 		}
 
-
 		?>
 			<select name="<?php echo esc_attr($name); ?>">
 				<?php echo $render_options; ?>

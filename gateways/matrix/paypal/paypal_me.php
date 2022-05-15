@@ -30,7 +30,7 @@ class paypal_me{
 	{
 		$this->id = 'paypal_me';
 		$this->name = 'Paypal';
-		$this->domain = 'Paypal.me';
+		$this->domain = 'paypal.me';
 		$this->type = 'alt';	
 		$this->username = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
@@ -92,9 +92,10 @@ class paypal_me{
 	public function is_active()
 	{
 		$output = false;
-		global $paypal_me_is_active;
+		$which_var = $this->id.'_is_active';
+		global $$which_var; 
 		
-		if(isset($paypal_me_is_active))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -102,18 +103,20 @@ class paypal_me{
 		{
 			if($this->username != '')
 			{
-				$GLOBALS[$this->id . '_is_active'] = true;
+				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
 		}
 		return $output;
 	}
+	
 	public function show()
 	{
 		$output = false;
-		global $paypal_me_show;
+		$which_var = $this->id.'_show';
+		global $$which_var; 
 		
-		if(isset($paypal_me_show))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -123,7 +126,7 @@ class paypal_me{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->id . '_show'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}			
@@ -159,9 +162,10 @@ class paypal_me{
 	public function is_valid()
 	{
 		$output = false;
-		global $paypal_me_is_valid;
+		$which_var = $this->id . '_is_valid';
+		global $$which_var;
 		
-		if(isset($paypal_me_is_valid))
+		if(isset($$which_var))
 		{
 			return true;
 		}
@@ -205,16 +209,14 @@ class paypal_me{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->id . '_is_valid'] = true;
+				$GLOBALS[$$which_var] = true;
 			}
 		}
 		return $output;
 	}
 
 	public function settings_init()
-	{
-		//paypal.me
-		
+	{		
 		register_setting($this->id . '_settings', $this->id, 'sanitize_user');
 		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
@@ -240,12 +242,28 @@ class paypal_me{
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
+
+		$show_args = array(
+			'name' => $this->id . '_show',
+			'options' => array(
+				array(
+					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
+					'value' => 0
+				),
+				array(
+					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'value' => 1
+				),
+			)
+		);
+
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_paypal_me_show'), 
+			array(&$this, 'select'), 
 			$this->id . '_settings', 
-			$this->id . '_settings_section'
+			$this->id . '_settings_section',
+			$show_args
 		);		
 	}
 	
@@ -262,12 +280,28 @@ class paypal_me{
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
 		<?php
 	}
-	public function display_paypal_me_show() { ?>
-		<select name="<?php esc_html_e($this->id . '_show'); ?>">
-			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
-		</select>
-	<?php }	
+
+	public function select($args) {
+		
+		$name = $args['name'];
+		$options = $args['options'];
+		$value = intval(get_option($name));
+		$render_options = '';
+		
+		for($x = 0; $x < count($options); $x++)
+		{
+			$this_value = intval($options[$x]['value']);
+			$this_text = $options[$x]['text'];
+			$selected = ($value === $this_value) ? ' selected ' : '';
+			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
+		}
+
+		?>
+			<select name="<?php echo esc_attr($name); ?>">
+				<?php echo $render_options; ?>
+			</select>
+		<?php 
+	}
 
 	public function add_settings_page()
 	{
@@ -330,13 +364,13 @@ class paypal_me{
 
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'assets/alt/'.$this->id.'.svg" width="205" height="50" alt="'.$this->name.'" />';
+		return '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="205" height="50" alt="'.esc_attr($this->name).'" />';
 	}
 	
 	public function message($message)
 	{
 		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
-		$url = 'https://paypal.me/'.$this->username.'/'.$amount;
+		$url = 'https://'.$this->domain.'/'.$this->username.'/'.$amount;
 		$amount = dy_utilities::currency_symbol().''.dy_utilities::currency_format($amount);
 		
 		$label = __('full payment of', 'dynamicpackages');

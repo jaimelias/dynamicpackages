@@ -262,7 +262,6 @@ class paguelo_facil_on{
 	{
 		$output = false;
 		$which_var = $this->id . '_is_active';
-		
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -524,12 +523,29 @@ class paguelo_facil_on{
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_max'
 		);
+
+
+		$show_args = array(
+			'name' => $this->id . '_show',
+			'options' => array(
+				array(
+					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
+					'value' => 0
+				),
+				array(
+					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'value' => 1
+				),
+			)
+		);
+
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'input_select_on_show'), 
+			array(&$this, 'select'), 
 			$this->id . '_settings', 
-			$this->id . '_control_section'
+			$this->id . '_control_section',
+			$show_args
 		);
 		
 		add_settings_field( 
@@ -555,12 +571,27 @@ class paguelo_facil_on{
 		<?php
 	}	
 		
-	public function input_select_on_show() { ?>
-		<select name="<?php esc_html_e($this->id . '_show'); ?>">
-			<option value="0" <?php selected(get_option($this->id . '_show'), 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected(get_option($this->id . '_show'), 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
-		</select>
-	<?php }	
+	public function select($args) {
+		
+		$name = $args['name'];
+		$options = $args['options'];
+		$value = intval(get_option($name));
+		$render_options = '';
+		
+		for($x = 0; $x < count($options); $x++)
+		{
+			$this_value = intval($options[$x]['value']);
+			$this_text = $options[$x]['text'];
+			$selected = ($value === $this_value) ? ' selected ' : '';
+			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
+		}
+
+		?>
+			<select name="<?php echo esc_attr($name); ?>">
+				<?php echo $render_options; ?>
+			</select>
+		<?php 
+	}
 
 	public function add_settings_page()
 	{
@@ -739,7 +770,7 @@ class paguelo_facil_on{
 
 	public function branding()
 	{
-		$output = '<p><img src="'.$this->plugin_dir_url.'assets/card/visa-mastercard.svg" width="250" height="50" /></p>';
+		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/card/visa-mastercard.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
 		return $output;
 	}

@@ -69,9 +69,10 @@ class nequi_direct{
 	public function is_active()
 	{
 		$output = false;
-		global $nequi_direct_is_active;
+		$which_var = $this->id.'_is_active';
+		global $$which_var; 
 		
-		if(isset($nequi_direct_is_active))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -79,7 +80,7 @@ class nequi_direct{
 		{
 			if($this->number != '')
 			{
-				$GLOBALS[$this->id . '_is_active'] = true;
+				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
 		}
@@ -88,9 +89,10 @@ class nequi_direct{
 	public function show()
 	{
 		$output = false;
-		global $nequi_direct_show;
+		$which_var = $this->id.'_show';
+		global $$which_var; 
 		
-		if(isset($nequi_direct_show))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -100,7 +102,7 @@ class nequi_direct{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->id . '_show'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}			
@@ -177,9 +179,10 @@ class nequi_direct{
 	public function is_valid()
 	{
 		$output = false;
-		global $nequi_direct_is_valid;
+		$which_var = $this->id . '_is_valid';
+		global $$which_var;
 		
-		if(isset($nequi_direct_is_valid))
+		if(isset($$which_var))
 		{
 			return true;
 		}
@@ -224,7 +227,7 @@ class nequi_direct{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->id . '_is_valid'] = true;
+				$GLOBALS[$which_var] = true;
 			}
 		}
 		return $output;
@@ -259,12 +262,28 @@ class nequi_direct{
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
+
+		$show_args = array(
+			'name' => $this->id . '_show',
+			'options' => array(
+				array(
+					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
+					'value' => 0
+				),
+				array(
+					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'value' => 1
+				),
+			)
+		);
+
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_nequi_direct_show'), 
+			array(&$this, 'select'), 
 			$this->id . '_settings', 
-			$this->id . '_settings_section'
+			$this->id . '_settings_section', 
+			$show_args
 		);		
 	}
 	
@@ -280,12 +299,28 @@ class nequi_direct{
 		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
 		<?php
 	}
-	public function display_nequi_direct_show() { ?>
-		<select name="<?php esc_html_e($this->id . '_show'); ?>">
-			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
-		</select>
-	<?php }
+
+	public function select($args) {
+		
+		$name = $args['name'];
+		$options = $args['options'];
+		$value = intval(get_option($name));
+		$render_options = '';
+		
+		for($x = 0; $x < count($options); $x++)
+		{
+			$this_value = intval($options[$x]['value']);
+			$this_text = $options[$x]['text'];
+			$selected = ($value === $this_value) ? ' selected ' : '';
+			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
+		}
+
+		?>
+			<select name="<?php echo esc_attr($name); ?>">
+				<?php echo $render_options; ?>
+			</select>
+		<?php 
+	}
 
 	public function add_settings_page()
 	{
@@ -310,7 +345,7 @@ class nequi_direct{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="'.esc_attr($this->name).'" width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
@@ -347,14 +382,14 @@ class nequi_direct{
 
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'assets/alt/'.$this->id.'.svg" width="214" height="48" alt="'.$this->name.'" />';
+		return '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="214" height="48" alt="'.esc_attr($this->name).'" />';
 	}
 
 	public function single_coupon($str, $gateway)
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="nequi" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'nequi-icon.svg').'"/><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</aside>';
+			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="'.esc_attr($this->name).'" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'/assets/alt/'.$this->id.'_icon.svg').'"/><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</aside>';
 		}
 		
 		return $str;

@@ -37,7 +37,7 @@
 				for($x = 0; $x < 12; $x++ )
 				{
 					$month = sprintf("%02d", $x+1);
-					echo '<option value="'.esc_html($month).'">'.esc_html($month).'</option>';
+					echo '<option value="'.esc_attr($month).'">'.esc_html($month).'</option>';
 				}
 			?>
 			</select>	
@@ -50,7 +50,7 @@
 				for($x = intval(date('y')); $x < intval(date('y'))+10; $x++ )
 				{
 					$year = sprintf("%02d", $x);
-					echo '<option value="'.esc_html($year).'">'.esc_html($year).'</option>';
+					echo '<option value="'.esc_attr($year).'">'.esc_html($year).'</option>';
 				}
 			?>						
 			</select>

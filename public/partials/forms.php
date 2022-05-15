@@ -145,7 +145,7 @@ class dy_Forms
 		}
 		else
 		{
-			$form .= '<input type="hidden" value="'.esc_html(package_field('package_event_date')).'" name="booking_date" class="required" />';	
+			$form .= '<input type="hidden" value="'.esc_attr(package_field('package_event_date')).'" name="booking_date" class="required" />';	
 		}
 		
 		if($by_hour == 1)
@@ -194,7 +194,7 @@ class dy_Forms
 					}
 				}
 				
-				$form .= '<option value="'.esc_html($x).'">'.esc_html($select_label).'</option>';
+				$form .= '<option value="'.esc_attr($x).'">'.esc_html($select_label).'</option>';
 			}
 			
 			$form .= '</select></p>';					
@@ -219,7 +219,7 @@ class dy_Forms
 			}
 			
 			
-			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_html($get_coupon).'" /></div>';
+			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_attr($get_coupon).'" /></div>';
 		}		
 		
 		$form .= '<div><button type="submit" class="width-100 checkPrices block pure-button pure-button-primary rounded">'.esc_html($book_now_text).'</button></div>';	
@@ -241,7 +241,7 @@ class dy_Forms
 		{
 			if(($a+1) <= $max && ($a+1) >= $min)
 			{				
-				$adults_select .= '<option value="'.esc_html(($a+1)).'" >'.esc_html(($a+1)).'</option>';
+				$adults_select .= '<option value="'.esc_attr(($a+1)).'" >'.esc_html(($a+1)).'</option>';
 			}
 		}
 		
@@ -276,7 +276,7 @@ class dy_Forms
 			
 			for($c = 0; $c < (count($price_chart)-$min+1); $c++)
 			{
-				$disc .= '<option value="'.esc_html(($c+1)).'" >'.esc_html(($c+1)).'</option>';
+				$disc .= '<option value="'.esc_attr(($c+1)).'" >'.esc_html(($c+1)).'</option>';
 			}
 			
 			if($disc != null)
@@ -302,7 +302,7 @@ class dy_Forms
 			
 			for($f = 1; $f < 3; $f++)
 			{
-				$free .= '<option data-price="0" value="'.esc_html($f).'" >'.esc_html($f).'</option>';
+				$free .= '<option data-price="0" value="'.esc_attr($f).'" >'.esc_html($f).'</option>';
 			}
 			if($free != null)
 			{
@@ -334,7 +334,7 @@ class dy_Forms
 		
 		//echo var_dump($terms);
 		
-		$output = '<select name="'.esc_html($tax).'" class="width-100 block borderbox">';
+		$output = '<select name="'.esc_attr($tax).'" class="width-100 block borderbox">';
 		
 		
 		$output .= '<option value="any" '.esc_html($any).'>-- '.$taxonomy->labels->singular_name.' --</option>';
@@ -378,7 +378,7 @@ class dy_Forms
 						}
 					}
 					
-					$output .= '<option '.esc_html($selected).' id="'.esc_html($term->slug).'" value="'.esc_html($term->slug).'">'.esc_html($term->name).'</option>';
+					$output .= '<option '.esc_html($selected).' id="'.esc_attr($term->slug).'" value="'.esc_attr($term->slug).'">'.esc_html($term->name).'</option>';
 					
 					$child_terms = get_terms(array(
 						'taxonomy' => $tax,
@@ -420,7 +420,7 @@ class dy_Forms
 								}
 							}
 							
-							$output .= '<option '.esc_html($selected).' id="'.esc_html($child_term->slug).'" value="'.esc_html($child_term->slug).'">'.esc_html('&nbsp;&nbsp;'.$child_term->name).'</option>';
+							$output .= '<option '.esc_html($selected).' id="'.esc_attr($child_term->slug).'" value="'.esc_attr($child_term->slug).'">'.esc_html('&nbsp;&nbsp;'.$child_term->name).'</option>';
 						}
 					}
 					

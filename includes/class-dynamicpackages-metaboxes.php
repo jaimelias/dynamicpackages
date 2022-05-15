@@ -98,10 +98,10 @@ class dy_Metaboxes
 				$selected = 'selected';
 			}
 
-			$options .= '<option '.$selected.'>'.$x.'</option>';
+			$options .= '<option '.esc_attr($selected).'>'.$x.'</option>';
 		}
 		
-		echo '<select id="'.$name.'" name="'.$name.'" '.$attr.'>'.$options.'</select>';
+		echo '<select id="'.esc_attr($name).'" name="'.esc_attr($name).'" '.esc_attr($attr).'>'.$options.'</select>';
 		
 	}
 	
@@ -390,8 +390,8 @@ class dy_Metaboxes
 					$name = 'package_occupancy_day_surcharge_' . $day;
 					$value = intval(package_field($name));
 					
-					echo '<p><label for="'.$name.'">';
-					echo '<input value="'.$value.'" name="'.$name.'" id="'.$name.'" type="number" />% ';
+					echo '<p><label for="'.esc_attr($name).'">';
+					echo '<input value="'.esc_attr($value).'" name="'.esc_attr($name).'" id="'.esc_attr($name).'" type="number" />% ';
 					echo $day . '</label></p>';
 				}
 

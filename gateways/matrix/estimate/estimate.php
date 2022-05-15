@@ -27,15 +27,16 @@ class estimate_request{
 	public function is_active()
 	{
 		$output = false;
-		global $estimate_is_active;
+		$which_var = $this->id.'_is_active';
+		global $$which_var; 
 		
-		if(isset($estimate_is_active))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
 		else
 		{
-			$GLOBALS[$this->id . '_is_active'] = true;
+			$GLOBALS[$which_var] = true;
 			$output = true;
 		}
 		return $output;
@@ -43,9 +44,10 @@ class estimate_request{
 	public function show()
 	{
 		$output = false;
-		global $estimate_show;
+		$which_var = $this->id.'_show';
+		global $$which_var; 
 		
-		if(isset($estimate_show))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -55,7 +57,7 @@ class estimate_request{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->id . '_show'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}			
@@ -91,9 +93,10 @@ class estimate_request{
 	public function is_valid()
 	{
 		$output = false;
-		global $estimate_is_valid;
+		$which_var = $this->id . '_is_valid';
+		global $$which_var;
 		
-		if(isset($estimate_is_valid))
+		if(isset($$which_var))
 		{
 			return true;
 		}
@@ -105,7 +108,7 @@ class estimate_request{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->id . '_is_valid'] = true;
+				$GLOBALS[$which_var] = true;
 			}
 		}
 		return $output;
@@ -136,7 +139,7 @@ class estimate_request{
 		
 		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
 		{
-			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+			if($_POST['dy_request'] == $this->id || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
 				$add = true;
 			}	

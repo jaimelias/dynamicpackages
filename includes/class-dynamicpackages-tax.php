@@ -163,13 +163,13 @@ class dy_Tax_Mod
 				$class = '';
 				$value = get_term_meta($term_id, $k, true);
 				$input = '';
-				$input .= ' name="'.$k.'" ';
-				$input .= ' id="'.$k.'" ';
+				$input .= ' name="'.esc_attr($k).'" ';
+				$input .= ' id="'.esc_attr($k).'" ';
 				$label = $args[$k]['label'];
 				
 				if(array_key_exists('class', $args[$k]))
 				{
-					$input .= ' class="'.$args[$k]['class'].'" ';
+					$input .= ' class="'.esc_attr($args[$k]['class']).'" ';
 				}
 				if(array_key_exists('type', $args[$k]))
 				{
@@ -179,14 +179,14 @@ class dy_Tax_Mod
 						
 						if(array_key_exists('min', $args[$k]))
 						{
-							$input .= ' min="'.$args[$k]['min'].'" ';
+							$input .= ' min="'.esc_attr($args[$k]['min']).'" ';
 						}
 					}
 				}
 				
 				if($args[$k]['tag'] == 'input')
 				{
-					$input .= ' value="'.$value.'" ';
+					$input .= ' value="'.esc_attr($value).'" ';
 					$field = '<input '.$input.'/>';
 				}
 				else if($args[$k]['tag'] == 'select')
@@ -202,7 +202,7 @@ class dy_Tax_Mod
 								for($o = 0; $o < count($args[$k]['options']); $o++)
 								{
 									$is_selected = ($value == $o) ? 'selected="selected"' : '';
-									$options .= '<option value="'.esc_html($o).'" '.$is_selected.'>'.esc_html($args[$k]['options'][$o]).'</option>';
+									$options .= '<option value="'.esc_attr($o).'" '.$is_selected.'>'.esc_html($args[$k]['options'][$o]).'</option>';
 								}
 							}
 						}
@@ -274,7 +274,7 @@ class dy_Tax_Mod
 				$label = 'Invalid Field';
 				$field = '<strong>'.$k.':</strong>'.$err;
 			}
-			$field = '<tr class="form-field"><th scope="row" valign="top"><label for="'.$k.'">'.esc_html($label).'</label></th><td>'.$field.'</td></tr>';
+			$field = '<tr class="form-field"><th scope="row" valign="top"><label for="'.esc_attr($k).'">'.esc_html($label).'</label></th><td>'.$field.'</td></tr>';
 
 			$form .= $field;
 		}
@@ -350,7 +350,7 @@ class dy_Tax_Mod
 					
 					if(intval($price) > 0)
 					{
-						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.$term_id.'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
+						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.esc_attr($term_id).'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
 					}					
 				}
 			}

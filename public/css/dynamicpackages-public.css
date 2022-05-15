@@ -250,3 +250,10 @@ ul.tax_list > li.cat-item  > ul.children
 	transition: background-color 1s ease;
 	background-color: #ccc;
 }
+
+#dy_payment_buttons .pure-button img{
+	display: inline-block;
+	vertical-align: -0.125em;
+	overflow: visible;
+	height: 1em;
+}
