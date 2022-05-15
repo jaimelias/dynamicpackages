@@ -553,6 +553,6 @@ class wire_transfer{
 
 	public function branding()
 	{
-		return '<p class="text-muted large" style="font-size: 3em;"><i class="fas fa-globe"></i> '.$this->name.'</p>';
+		return '<p class="text-muted large"><i class="fas fa-globe"></i> '.$this->name.'</p>';
 	}	
 }

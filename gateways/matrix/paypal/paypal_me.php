@@ -37,7 +37,7 @@ class paypal_me{
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#000';
 		$this->background_color = '#FFD700';
-		$this->plugin_dir_url = plugin_dir_url(__FILE__);
+		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 	}
 
 	public function send_data()
@@ -330,7 +330,7 @@ class paypal_me{
 
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'/paypal.svg" width="205" height="50" alt="'.$this->name.'" />';
+		return '<img src="'.$this->plugin_dir_url.'assets/alt/'.$this->id.'.svg" width="205" height="50" alt="'.$this->name.'" />';
 	}
 	
 	public function message($message)

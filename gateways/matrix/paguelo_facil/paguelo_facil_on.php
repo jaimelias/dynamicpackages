@@ -47,6 +47,7 @@ class paguelo_facil_on{
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
+		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 	}
 	
 	public function checkout()
@@ -738,6 +739,8 @@ class paguelo_facil_on{
 
 	public function branding()
 	{
-		return '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
+		$output = '<p><img src="'.$this->plugin_dir_url.'assets/card/visa-mastercard.svg" width="250" height="50" /></p>';
+		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
+		return $output;
 	}
 }

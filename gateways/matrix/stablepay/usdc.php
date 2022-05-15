@@ -38,7 +38,7 @@ class usdc{
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#fff';
 		$this->background_color = '#2775CA';
-		$this->plugin_dir_url = plugin_dir_url(__FILE__);
+		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 	}
 
 	public function get_all_networks()
@@ -392,7 +392,7 @@ class usdc{
 	
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'assets/'.$this->id.'.svg" width="50" height="50" alt="'.$this->name.'" />';
+		return '<img src="'.$this->plugin_dir_url.'assets/crypto/'.$this->id.'.svg" width="50" height="50" alt="'.$this->name.'" />';
 	}
 	
 	public function message($message)

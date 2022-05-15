@@ -38,6 +38,7 @@ class cuanto{
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#000';
 		$this->background_color = '#8CD0C5';
+		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 	}
 
 	public function send_data()
@@ -322,7 +323,9 @@ class cuanto{
 
 	public function branding()
 	{
-		return '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->name).'</p>';
+		$output = '<p><img src="'.$this->plugin_dir_url.'assets/card/visa-mastercard.svg" width="250" height="50" /></p>';
+		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->name).'</p>';
+		return $output;
 	}
 	
 	public function message($message)

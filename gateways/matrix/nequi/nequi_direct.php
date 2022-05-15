@@ -37,7 +37,7 @@ class nequi_direct{
 		$this->show = get_option($this->id . '_show');
 		$this->background_color = '#ff2f73';
 		$this->color = '#fff';
-		$this->plugin_dir_url = plugin_dir_url( __FILE__ );
+		$this->plugin_dir_url = plugin_dir_url( __DIR__ );
 	}
 
 	public function send_data()
@@ -310,7 +310,7 @@ class nequi_direct{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url(plugin_dir_url( __FILE__ ).'nequi-icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="nequi" width="12" height="12" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
 		}
 		return $output;
 	}
@@ -347,7 +347,7 @@ class nequi_direct{
 
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'/nequi.svg" width="214" height="48" alt="'.$this->name.'" />';
+		return '<img src="'.$this->plugin_dir_url.'assets/alt/'.$this->id.'.svg" width="214" height="48" alt="'.$this->name.'" />';
 	}
 
 	public function single_coupon($str, $gateway)

@@ -38,7 +38,7 @@ class busd{
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#000';
 		$this->background_color = '#f0b90b';
-		$this->plugin_dir_url = plugin_dir_url(__FILE__);
+		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 	}
 
 	public function get_all_networks()
@@ -383,7 +383,7 @@ class busd{
 	
 	public function branding()
 	{
-		return '<img src="'.$this->plugin_dir_url.'assets/'.$this->id.'.svg" width="50" height="50" alt="'.$this->name.'" />';
+		return '<img src="'.$this->plugin_dir_url.'assets/crypto/'.$this->id.'.svg" width="50" height="50" alt="'.$this->name.'" />';
 	}
 	
 	public function message($message)
