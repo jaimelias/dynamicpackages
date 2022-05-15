@@ -45,7 +45,7 @@ class busd{
 	{
 		return array(
 			'eth' => array(
-				'name' => 'Ethereum (ERC-20)'
+				'name' => 'Ethereum (ERC-20) Network'
 			), 
 			'bsc' => array(
 				'name' => 'Binance Smart Chain (BEP-20)'

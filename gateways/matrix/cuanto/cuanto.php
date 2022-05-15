@@ -31,7 +31,7 @@ class cuanto{
 		$this->name = 'Cuanto.app';
 		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
 		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
-		$this->type = 'card';
+		$this->type = 'card-off-site';
 		$this->domain = 'Cuanto.app';		
 		$this->username = get_option($this->id);
 		$this->show = get_option($this->id . '_show');

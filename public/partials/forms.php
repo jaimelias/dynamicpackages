@@ -141,7 +141,7 @@ class dy_Forms
 		if(package_field('package_event_date') == '')
 		{
 			$form .= '<label>'.esc_html($date_label).'</label>';
-			$form .= '<p><input type="text" name="booking_date" class="required booking_datepicker" placeholder="Loading..." disabled/></p>';			
+			$form .= '<p><input type="text" name="booking_date" class="required dy_date_picker" placeholder="Loading..." disabled/></p>';			
 		}
 		else
 		{
@@ -151,13 +151,13 @@ class dy_Forms
 		if($by_hour == 1)
 		{
 			$form .= '<label>'.esc_html(__('Hour', 'dynamicpackages')).'</label>';
-			$form .= '<p><input type="text" name="booking_hour"  class="required booking_hourpicker" /></p>';	
+			$form .= '<p><input type="text" name="booking_hour"  class="required dy_time_picker" /></p>';	
 		}
 		
 		if($is_transport)
 		{
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
-			$form .= '<p><input type="text" name="end_date" class="booking_datepicker" placeholder="Loading..." disabled/></p>';	
+			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';	
 		}
 		
 		
@@ -222,7 +222,7 @@ class dy_Forms
 			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_html($get_coupon).'" /></div>';
 		}		
 		
-		$form .= '<div><button type="submit" class="width-100 booking_submit block pure-button pure-button-primary rounded">'.esc_html($book_now_text).'</button></div>';	
+		$form .= '<div><button type="submit" class="width-100 checkPrices block pure-button pure-button-primary rounded">'.esc_html($book_now_text).'</button></div>';	
 		$form .= '</form></div>';
 		echo $form;			
 

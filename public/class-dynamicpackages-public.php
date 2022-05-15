@@ -169,6 +169,7 @@ class dy_Public {
 		 * class.
 		 */	 
 		global $post;
+		$strings = array();
 		$dep = array( 'jquery', 'landing-cookies');
 		$ipgeolocation = null;
 		$enqueue_public = false;
@@ -225,16 +226,18 @@ class dy_Public {
 		
 		if($enqueue_public)
 		{
-			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );
-			
-			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');
-			
-			wp_add_inline_script('dynamicpackages', dy_Public::recaptcha_sitekey(), 'before');
-			
- 			wp_add_inline_script('dynamicpackages', 'function dy_ipgeolocation(){ return "'.esc_html(get_option('ipgeolocation')).'";}', 'before');
 
-			 wp_add_inline_script('dynamicpackages', 'function dy_getTheId(){ return "'.esc_html(get_the_ID()).'";}', 'before');
-			 wp_add_inline_script('dynamicpackages', 'function textCopiedToClipBoard(){ return "'.esc_html(__('Copied to Clipboard!', 'dynamicpackages')).'";}', 'before');
+			
+			$strings['recaptchaSiteKey'] = get_option('captcha_site_key');
+			$strings['postId'] = get_the_ID();
+			$strings['ipGeolocation'] = get_option('ipgeolocation');
+			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
+			$strings['pluginDirUrl'] = esc_url(plugin_dir_url( dirname(__FILE__) ));
+			$strings['permaLink'] = esc_url(get_the_permalink());
+
+			wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-public.js', $dep, time(), true );
+			wp_add_inline_script('dynamicpackages', self::booking_head(), 'before');
+			wp_add_inline_script('dynamicpackages', 'function dyStrings(){ return '.json_encode($strings).';}', 'before');
 		}
 		
 		if($enqueue_archive)
@@ -614,8 +617,7 @@ class dy_Public {
 				$script .= 'function booking_allowed_hours(){return '.json_encode($allowed_hours).';}';	
 			}			
 			
-			$script .= 'function dy_url() { return "'.esc_url(plugin_dir_url( dirname(__FILE__) )).'";}';
-			$script .= 'function dy_permalink() { return "'.esc_url(get_the_permalink()).'";}';
+
 			
 			return $script;
 		}
@@ -2088,10 +2090,7 @@ class dy_Public {
 		return $output;
 	}
 
-	public static function recaptcha_sitekey()
-	{
-		return 'function dy_recaptcha_sitekey(){ return "'.esc_html(get_option('captcha_site_key')).'"; }';
-	}
+
 	public static function show_event_date()
 	{
 		$output = '';

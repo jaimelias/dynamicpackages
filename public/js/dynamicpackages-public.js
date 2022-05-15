@@ -1,17 +1,18 @@
 
 jQuery(() => {
-	booking_hourpicker();
-	booking_datepicker();
-	booking_submit();
+	timePicker();
+	datePicker();
+	checkPrices();
 	storePopulate();
-	booking_coupon();	
-	booking_open_form();
-	select_gateway();
+	showCouponForm();	
+	selectGateway();
 	copyToClipboard();
 	
-	if(typeof dy_url !== 'undefined')
+	const {pluginDirUrl} = dyStrings();
+
+	if(typeof pluginDirUrl !== 'undefined')
 	{
-		dy_country_dropdown();
+		countryDropdown(pluginDirUrl);
 	}
 	
 	if(typeof checkout_vars !== 'undefined')
@@ -50,9 +51,11 @@ const copyToClipboard = () => {
 	});
 };
 
-const select_gateway = () => {
+const selectGateway = () => {
 	
 	const thisForm = jQuery('#dynamic_form');
+	const cardRequiredFields = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
+
 
 	jQuery('#dy_payment_buttons').find('button').each(function(){
 
@@ -69,13 +72,35 @@ const select_gateway = () => {
 			jQuery(networkSelect).removeClass('required').html('<option value="" selected>--</option>');
 			jQuery('#dy_crypto_alert').addClass('hidden');
 
-			if(type === 'card')
+			if(type === 'card-on-site')
 			{
-				jQuery('#cc_payment_conditions').removeClass('hidden');
+				jQuery('#dy_card_payment_conditions').removeClass('hidden');
+				$('.dy_card_form_fields').removeClass('hidden');
+
+				cardRequiredFields.forEach(name => {
+					jQuery(thisForm).find('[name="'+name+'"]').addClass('required');
+				});
+			}
+			else if(type === 'card-on-site')
+			{
+				
 			}
 			else
 			{
-				jQuery('#cc_payment_conditions').addClass('hidden');
+				if(type === 'card-on-site')
+				{
+					jQuery('#dy_card_payment_conditions').removeClass('hidden');
+				}
+				else 
+				{
+					jQuery('#dy_card_payment_conditions').addClass('hidden');
+				}
+				
+				$('.dy_card_form_fields').addClass('hidden');
+
+				cardRequiredFields.forEach(name => {
+					jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
+				});
 			}
 
 			if(type === 'crypto')
@@ -130,7 +155,7 @@ const select_gateway = () => {
 			//google analytics
 			if(typeof gtag !== 'undefined')
 			{
-				gtag('event', 'select_gateway', {
+				gtag('event', 'selectGateway', {
 					items : id
 				});					
 			}
@@ -154,28 +179,7 @@ jQuery.fn.formToArray = function () {
 	return data;
 };
 
-const booking_open_form = () => {
-	
-	const thisForm = jQuery('#dynamic_form');
-	const cc_required = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
-		
-	jQuery('#dy_payment_buttons').find('button').click(function(){
-		if(jQuery(this).hasClass('with_cc'))
-		{
-			$('.with_cc_show').toggleClass('hidden');
-			cc_required.forEach(name => {
-				jQuery(thisForm).find('[name="'+name+'"]').addClass('required');
-			});
-		}
-		else
-		{
-			$('.with_cc_show').addClass('hidden');
-			cc_required.forEach(name => {
-				jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
-			});			
-		}
-	});
-};
+
 
 const dy_lang = () => {
 	const htmllang = jQuery('html').attr('lang');
@@ -387,7 +391,8 @@ const storePopulate = () => {
 function dy_recaptcha()
 {	
 	var args = {};
-	args.sitekey = dy_recaptcha_sitekey();
+	const {recaptchaSiteKey} = dyStrings();
+	args.sitekey = recaptchaSiteKey;
 	args.isolated = true;
 	args.badge = 'inline';
 	var quote_widget;
@@ -396,7 +401,7 @@ function dy_recaptcha()
 	{
 		args.callback = (token) => {
 			return new Promise((resolve, reject) => { 
-				if(dy_request_form(token) == false)
+				if(checkoutFormSubmit(token) == false)
 				{
 					grecaptcha.reset(quote_widget);
 				}
@@ -407,13 +412,14 @@ function dy_recaptcha()
 	}
 }
 
-const dy_request_form = (token) => {
+const checkoutFormSubmit = token => {
 	const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	const thisForm = jQuery('#dynamic_form');
 	const excludeStore = ['dy_recaptcha', 'dy_request'];
 	const args = booking_args();
+	const {ipGeolocation} = dyStrings();
 	
-	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation(), data => {
+	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+ipGeolocation, data => {
 
 		for(let k in data)
 		{			
@@ -477,7 +483,7 @@ const dy_request_form = (token) => {
 		
 		if(invalids == 0)
 		{
-			dy_populate_form(thisForm);
+			populateCheckoutForm(thisForm);
 			jQuery(thisForm).find('input[name="dy_recaptcha"]').val(token);
 			//console.log(formFields);
 			//console.log(token); 
@@ -527,7 +533,7 @@ const dy_request_form = (token) => {
 	return false;
 }
 
-const dy_populate_form = (form) => {
+const populateCheckoutForm = (form) => {
 	
 	var checkout_obj = booking_args();
 	
@@ -543,29 +549,28 @@ const dy_populate_form = (form) => {
 	}		
 }
 
-const dy_country_dropdown = (pluginurl) => {
+const countryDropdown = pluginDirUrl => {
 	
-	var pluginurl = dy_url();
 	
 	jQuery(window).on('load', e => {
 		
 		if(jQuery('.countrylist').length > 0)
 		{
-			jQuery.getJSON( pluginurl + 'languages/countries/' + dy_lang() + '.json')
+			jQuery.getJSON( pluginDirUrl + 'languages/countries/' + dy_lang() + '.json')
 				.done(data => {
-					dy_country_options(data);
+					countryOptions(data);
 				})
 				.fail(() =>	{
-					jQuery.getJSON(pluginurl + 'languages/countries/en.json', data => {
+					jQuery.getJSON(pluginDirUrl + 'languages/countries/en.json', data => {
 
-						dy_country_options(data);
+						countryOptions(data);
 					});				
 				});				
 		}		
 	});
 }	
 
-const dy_country_options = (data) => {
+const countryOptions = (data) => {
 	jQuery('.countrylist').each(function() {
 		
 		var field = jQuery(this);
@@ -596,9 +601,10 @@ const dy_country_options = (data) => {
 	});		
 }	
 
-const booking_datepicker = async () => {
+const datePicker = async () => {
 
 	const bookingForm = jQuery('.booking_form');
+	const {permaLink} = dyStrings();
 	
 	if(bookingForm.length === 0)
 	{
@@ -606,11 +612,11 @@ const booking_datepicker = async () => {
 	}
 	
 	const d = new Date();
-	let url = dy_permalink()+'?json=disabled_dates&stamp='+d.getTime();	
+	let url = permaLink+'?json=disabled_dates&stamp='+d.getTime();	
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
 	const buildPicker = () => {
-		jQuery('.booking_form').find('input.booking_datepicker').each(async function() {
+		jQuery('.booking_form').find('input.dy_date_picker').each(async function() {
 			
 			const field = jQuery(this);
 			const name = jQuery(field).attr('name');
@@ -696,7 +702,7 @@ const booking_datepicker = async () => {
 	buildPicker();
 	
 	jQuery('.booking_form').find('select.booking_select').change(async function(){
-		jQuery('.booking_form').find('input.booking_datepicker').attr({
+		jQuery('.booking_form').find('input.dy_date_picker').attr({
 			disabled: 'disabled',
 			placeholder: 'Loading...'
 		}).val('');
@@ -705,7 +711,7 @@ const booking_datepicker = async () => {
 
 }
 
-const booking_hourpicker = () => {
+const timePicker = () => {
 	
 	jQuery(window).on('load', e => {
 		if(typeof(booking_allowed_hours) == "function")
@@ -720,21 +726,23 @@ const booking_hourpicker = () => {
 			}
 		}
 		
-		jQuery('.booking_form').find('input.booking_hourpicker').each(function()
+		jQuery('.booking_form').find('input.dy_time_picker').each(function()
 		{
 			jQuery(this).pickatime(args);
 		});			
 	});
 }
-const booking_submit = () => {
+const checkPrices = () => {
 
+	const {postId} = dyStrings();
 
 	jQuery('.booking_form').each(function() {
 		let thisForm = $(this);	
 
 		jQuery(thisForm).formToArray().forEach(i => {
-			const {name, value} = i;				
-			const cookieValue = getCookie(`${name}_${dy_getTheId()}`);
+			const {name, value} = i;
+			const {postId} = dyStrings();		
+			const cookieValue = getCookie(`${name}_${postId}`);
 			const field = jQuery(thisForm).find('input[name="'+name+'"]');
 
 			if(value === '' && cookieValue)
@@ -767,7 +775,7 @@ const booking_submit = () => {
 					
 					if(name !== 'hash')
 					{
-						setCookie(`${name}_${dy_getTheId()}`, value, 1);
+						setCookie(`${name}_${postId}`, value, 1);
 					}
 					
 				});				
@@ -845,7 +853,7 @@ const ga_click = (form, eventName) => {
 	}
 }
 
-const booking_coupon = () => {
+const showCouponForm = () => {
 	var el = jQuery('#booking_coupon');
 	
 	jQuery(el).find('a').click( e => {

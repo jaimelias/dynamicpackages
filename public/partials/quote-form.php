@@ -87,7 +87,7 @@
 			
 		</div>
 
-		<div id="cc_payment_conditions" class="hidden small">
+		<div id="dy_card_payment_conditions" class="hidden small">
 			<?php do_action('dy_cc_warning'); ?>
 		</div>
 		

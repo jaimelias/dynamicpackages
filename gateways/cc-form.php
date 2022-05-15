@@ -1,7 +1,7 @@
 
 <hr/>
 
-<div class="with_cc_show hidden">
+<div class="dy_card_form_fields hidden">
 
 	<h3><?php echo esc_html(__('Billing Address', 'dynamicpackages')); ?></h3>
 	<div class="pure-g gutters">
@@ -21,7 +21,7 @@
 	<hr/>
 </div>
 
-<div class="with_cc_show hidden">
+<div class="dy_card_form_fields hidden">
 	<h3><?php echo esc_html(__('Card Details', 'dynamicpackages')); ?></h3>
 	<?php echo apply_filters('dy_debug_instructions', null); ?>
 	<p><label for="CCNum"><?php echo esc_html(__('Card Numbers', 'dynamicpackages')); ?></label>

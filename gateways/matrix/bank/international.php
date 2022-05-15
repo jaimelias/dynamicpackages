@@ -516,7 +516,7 @@ class wire_transfer{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 pure-button-wire  with_' . esc_html($this->id) . ' rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->name).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->name).'</button>';			
 		}
 		return $output;
 	}

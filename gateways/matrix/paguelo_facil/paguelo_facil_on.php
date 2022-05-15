@@ -32,7 +32,7 @@ class paguelo_facil_on{
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
-		$this->type = 'card';
+		$this->type = 'card-on-site';
 		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
 		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
 		$this->cclw = get_option($this->id);
@@ -585,7 +585,7 @@ class paguelo_facil_on{
 	{
 		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc with_' . esc_html($this->id) . ' rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';			
 		}
 		return $output;
 	}

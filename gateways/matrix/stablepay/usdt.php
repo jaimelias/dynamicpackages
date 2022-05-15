@@ -45,19 +45,19 @@ class usdt{
 	{
 		return array(
 			'eth' => array(
-				'name' => 'Ethereum (ERC-20)'
+				'name' => 'Ethereum (ERC-20) Network'
 			), 
 			'bsc' => array(
 				'name' => 'Binance Smart Chain (BEP-20)'
 			), 
 			'matic' => array(
-				'name' => 'Poligon (MATIC)'
+				'name' => 'Poligon (MATIC) Network'
 			), 
 			'sol' => array(
-				'name' => 'Solana'
+				'name' => 'Solana Network'
 			), 
 			'avax' => array(
-				'name' => 'Avalanche'
+				'name' => 'Avalanche Network'
 			)
 		);
 	}
