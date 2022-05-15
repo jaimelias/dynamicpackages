@@ -25,7 +25,6 @@ class usdt{
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 		}		
 	}
-	
 
 	public function args()
 	{

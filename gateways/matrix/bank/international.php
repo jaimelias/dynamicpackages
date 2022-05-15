@@ -83,9 +83,10 @@ class wire_transfer{
 	public function is_active()
 	{
 		$output = false;
-		global $wire_transfer_is_active;
+		$which_var = $this->id.'_is_active';
+		global $$which_var; 
 		
-		if(isset($wire_transfer_is_active))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -93,7 +94,7 @@ class wire_transfer{
 		{
 			if($this->b_account_number != '')
 			{
-				$GLOBALS[$this->id . '_is_active'] = true;
+				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
 		}
@@ -102,9 +103,10 @@ class wire_transfer{
 	public function show()
 	{
 		$output = false;
-		global $wire_transfer_show;
+		$which_var = $this->id.'_show';
+		global $$which_var; 	
 		
-		if(isset($wire_transfer_show))
+		if(isset($$which_var))
 		{
 			$output = true;
 		}
@@ -114,7 +116,7 @@ class wire_transfer{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$this->id . '_show'] = true;
+					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
 			}			
@@ -191,81 +193,82 @@ class wire_transfer{
 	
 	public function account()
 	{
-		$wire = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
+		$output = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
 		
 		if($this->b_bank != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank).'</strong><br/>';
 		}
 		
 		if($this->b_bank_address != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_address).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_address).'</strong><br/>';
 		}
 
 		if($this->b_bank_swift != '')
 		{
-			$wire .= esc_html(__('Beneficiary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_swift).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_swift).'</strong><br/>';
 		}		
 		
 		if($this->b_account_name != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_name).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_name).'</strong><br/>';
 		}		
 		
 		if($this->b_account_number != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_number).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_number).'</strong><br/>';
 		}
 		
 		if($this->b_bank_iban != '')
 		{
-			$wire .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_iban).'</strong><br/>';
+			$output .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_iban).'</strong><br/>';
 		}		
 		
-		$wire .= '<br/><strong>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</strong><br/>';
+		$output .= '<br/><strong>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</strong><br/>';
 		
 		if($this->i_bank != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank).'</strong><br/>';
 		}
 		
 		if($this->i_bank_address != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_address).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_address).'</strong><br/>';
 		}
 
 		if($this->i_bank_swift != '')
 		{
-			$wire .= esc_html(__('Intermediary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_swift).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_swift).'</strong><br/>';
 		}		
 		
 		if($this->i_account_name != '')
 		{
-			$wire .= esc_html(__('Intermediary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_name).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_name).'</strong><br/>';
 		}		
 		
 		if($this->i_account_number != '')
 		{
-			$wire .= esc_html(__('Intermediary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_number).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_number).'</strong><br/>';
 		}
 		
 		if($this->i_bank_iban != '')
 		{
-			$wire .= esc_html(__('Intermediary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_iban).'</strong><br/>';
+			$output .= esc_html(__('Intermediary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_iban).'</strong><br/>';
 		}
 		
-		$wire .= '</p>';
+		$output .= '</p>';
 		
-		return $wire;
+		return $output;
 	}
 
 	public function is_valid()
 	{
 		$output = false;
-		global $wire_transfer_is_valid;
+		$which_var = $this->id . '_is_valid';
+		global $$which_var;
 		
-		if(isset($wire_transfer_is_valid))
+		if(isset($$which_var))
 		{
 			return true;
 		}
@@ -310,7 +313,7 @@ class wire_transfer{
 			}
 			
 			if($output == true){
-				$GLOBALS[$this->id . '_is_valid'] = true;
+				$GLOBALS[$which_var] = true;
 			}
 		}
 		return $output;
@@ -463,13 +466,29 @@ class wire_transfer{
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
+
+		$show_args = array(
+			'name' => $this->id . '_show',
+			'options' => array(
+				array(
+					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
+					'value' => 0
+				),
+				array(
+					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'value' => 1
+				),
+			)
+		);
+
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'display_wire_transfer_show'), 
+			array(&$this, 'select'), 
 			$this->id . '_settings', 
-			$this->id . '_control_section'
-		);		
+			$this->id . '_control_section', 
+			$show_args
+		);			
 	}
 	
 	public function input_text($name){
@@ -486,12 +505,28 @@ class wire_transfer{
 		<?php
 	}	
 	
-	public function display_wire_transfer_show() { ?>
-		<select name="<?php esc_html_e($this->id . '_show'); ?>">
-			<option value="0" <?php selected($this->show, 0); ?>><?php echo esc_html('Full Payments and Deposits', 'dynamicpackages'); ?></option>
-			<option value="1" <?php selected($this->show, 1); ?>><?php echo esc_html('Only Deposits', 'dynamicpackages'); ?></option>
-		</select>
-	<?php }	
+	public function select($args) {
+		
+		$name = $args['name'];
+		$options = $args['options'];
+		$value = intval(get_option($name));
+		$render_options = '';
+		
+
+		for($x = 0; $x < count($options); $x++)
+		{
+			$this_value = intval($options[$x]['value']);
+			$this_text = $options[$x]['text'];
+			$selected = ($value === $this_value) ? ' selected ' : '';
+			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
+		}
+
+		?>
+			<select name="<?php echo esc_attr($name); ?>">
+				<?php echo $render_options; ?>
+			</select>
+		<?php 
+	}	
 
 	public function add_settings_page()
 	{
