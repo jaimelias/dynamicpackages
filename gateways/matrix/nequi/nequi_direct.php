@@ -345,7 +345,7 @@ class nequi_direct{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="'.esc_attr($this->name).'" width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/> '.esc_html(__('Pay with Nequi', 'dynamicpackages')).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="'.esc_attr($this->name).'" width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/> '.esc_html($this->name).'</button>';			
 		}
 		return $output;
 	}
@@ -389,7 +389,7 @@ class nequi_direct{
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="'.esc_attr($this->name).'" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'/assets/alt/'.$this->id.'_icon.svg').'"/><span class="semibold">'.esc_html(__('Pay with Nequi', 'dynamicpackages')).'.</span> '.$str.'</aside>';
+			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="'.esc_attr($this->name).'" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'/assets/alt/'.$this->id.'_icon.svg').'"/><span class="semibold">'.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->name)).'.</span> '.$str.'</aside>';
 		}
 		
 		return $str;
