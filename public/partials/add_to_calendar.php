@@ -31,22 +31,15 @@ class dy_Add_To_Calendar
 			$hour = '';
 			$output = false;
 			
-			if(isset($_GET['booking_date']))
+			if(isset($_REQUEST['booking_date']))
 			{
-				$date = $_GET['booking_date'];
+				$date = $_REQUEST['booking_date'];
 			}
-			if(isset($_GET['booking_hour']))
+			if(isset($_REQUEST['booking_hour']))
 			{
-				$hour = $_GET['booking_hour'];
+				$hour = $_REQUEST['booking_hour'];
 			}
-			if(isset($_POST['booking_date']))
-			{
-				$date = $_POST['booking_date'];
-			}
-			if(isset($_POST['booking_hour']))
-			{
-				$hour = $_POST['booking_hour'];
-			}			
+
 			if(package_field('package_event_date') != '')
 			{
 				$date = package_field('package_event_date');
@@ -75,13 +68,13 @@ class dy_Add_To_Calendar
 				ob_start();
 				?>
 					<div class="bottom-20 addevent_container">
-						<div title="<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
-							<?php echo esc_html(__('Add to Calendar', 'dynamicpackages')); ?>
-							<span class="start"><?php echo esc_html(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
-							<span class="timezone"><?php echo esc_html(get_option('timezone_string')); ?></span>
-							<span class="title"><?php echo esc_html($post->post_title); ?></span>
-							<span class="description"><?php echo esc_html(apply_filters('dy_package_description', null)); ?></span>
-							<span class="location"><?php echo esc_html(package_field('package_start_address')); ?></span>
+						<div title="<?php echo esc_html_e(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
+							<?php echo esc_html_e(__('Add to Calendar', 'dynamicpackages')); ?>
+							<span class="start"><?php echo esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
+							<span class="timezone"><?php echo esc_html_e(get_option('timezone_string')); ?></span>
+							<span class="title"><?php echo esc_html_e($post->post_title); ?></span>
+							<span class="description"><?php echo esc_html_e(apply_filters('dy_package_description', null)); ?></span>
+							<span class="location"><?php echo esc_html_e(package_field('package_start_address')); ?></span>
 						</div>
 					</div>
 				<?php

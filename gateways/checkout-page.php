@@ -1,7 +1,7 @@
 <?php
 
-	global $dy_add_to_calendar;
 	global $post;
+	$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 	$price_chart = get_price_chart();
 	$discount = 0;
 	$free = 0;
@@ -62,7 +62,7 @@
 <hr/>
 
 	<div class="clearfix relative small text-right">
-		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><i class="fas fa-chevron-left"></i>&nbsp;</a>
+		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><i class="fas fa-chevron-left"></i>&nbsp; <?php esc_html_e(__('Volver', 'dynamicpackages')); ?></a>
 	</div>
 
 <hr/>
@@ -74,8 +74,8 @@
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
 			<?php echo apply_filters('dy_package_details', null); ?>
-			<?php if(isset($dy_add_to_calendar)) : ?>
-				<div class="text-center bottom-10"><?php $dy_add_to_calendar->show(); ?></div>
+			<?php if(isset($add_to_calendar)) : ?>
+				<div class="text-center bottom-10"><?php echo $add_to_calendar; ?></div>
 			<?php endif; ?>
 			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), apply_filters('dy_package_description', null).' '.dy_money()); ?></div>
 		</div>
@@ -85,17 +85,17 @@
 			<table id="dynamic_table" class="text-center pure-table pure-table-bordered">
 				<thead>
 					<tr>
-						<th><?php echo esc_html(__('Description', 'dynamicpackages')); ?></th>
-						<th><?php echo esc_html(__('Unit Price', 'dynamicpackages')); ?></th>
-						<th><?php echo esc_html(__('Subtotal', 'dynamicpackages')); ?></th>
+						<th><?php echo esc_html_e(__('Description', 'dynamicpackages')); ?></th>
+						<th><?php echo esc_html_e(__('Unit Price', 'dynamicpackages')); ?></th>
+						<th><?php echo esc_html_e(__('Subtotal', 'dynamicpackages')); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<?php if($each_child == 0): ?>
-						<td><?php echo esc_html(__('Participants', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
+						<td><?php echo esc_html_e(__('Participants', 'dynamicpackages')); ?>: <strong><?php echo esc_html_e(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php else: ?>
-						<td><?php echo esc_html(__('Adults', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
+						<td><?php echo esc_html_e(__('Adults', 'dynamicpackages')); ?>: <strong><?php echo esc_html_e(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php endif; ?>
 						<td><?php echo dy_money(dy_utilities::get_price_regular()); ?></td>
 						<td><?php echo dy_money(dy_utilities::get_price_regular()*floatval($_GET['pax_regular'])); ?></td>
@@ -104,7 +104,7 @@
 					<?php if(isset($_GET['pax_free'])): ?>
 						<?php if(floatval(sanitize_text_field($_GET['pax_free'])) > 0 && $free != '' && intval($free) != 0): ?>
 						<tr>
-							<td><?php echo esc_html(__('Children', 'dynamicpackages')).' '.esc_html($start_free.' - '.$free).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_free'])); ?></strong></td>
+							<td><?php echo esc_html_e(__('Children', 'dynamicpackages')).' '.esc_html($start_free.' - '.$free).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php echo esc_html_e(sanitize_text_field($_GET['pax_free'])); ?></strong></td>
 							<td>0.00</td>
 							<td>0.00</td>
 						</tr>
@@ -113,17 +113,17 @@
 					
 					<?php if($each_child > 0 && floatval(sanitize_text_field($_GET['pax_discount'])) > 0 &&$discount != '' && intval($discount) != 0): ?>
 					<tr>
-						<td><?php echo esc_html(__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php echo esc_html(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
+						<td><?php echo esc_html_e(__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php echo esc_html_e(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
 						<td><?php echo dy_money(dy_utilities::get_price_discount()); ?></td>
 						<td><?php echo dy_money(dy_utilities::get_price_discount()*floatval($_GET['pax_discount'])); ?></td>
 					</tr>
 					<?php endif; ?>
 					
 				<?php if(dy_Public::get_included_list($post)) : ?>	
-					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Included', 'dynamicpackages'); ?>:</strong> <?php echo esc_html(dy_utilities::implode_taxo_names('package_included')); ?>.</p></td></tr>
+					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Included', 'dynamicpackages'); ?>:</strong> <?php echo esc_html_e(dy_utilities::implode_taxo_names('package_included')); ?>.</p></td></tr>
 				<?php endif; ?>
 				<?php if(dy_Public::get_not_included_list($post)) : ?>	
-					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Not Included', 'dynamicpackages'); ?>:</strong> <?php echo esc_html(dy_utilities::implode_taxo_names('package_not_included')); ?>.</p></td></tr>
+					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Not Included', 'dynamicpackages'); ?>:</strong> <?php echo esc_html_e(dy_utilities::implode_taxo_names('package_not_included')); ?>.</p></td></tr>
 				<?php endif; ?>				
 					
 				</tbody>
@@ -131,8 +131,8 @@
 				<?php if(dy_Tax_Mod::has_add_ons()): ?>
 					<thead>
 						<tr>
-							<th colspan="2"><?php echo esc_html(__('Add-ons', 'dynamicpackages')); ?></th>
-							<th><?php echo esc_html(__('Include?', 'dynamicpackages')); ?></th>
+							<th colspan="2"><?php echo esc_html_e(__('Add-ons', 'dynamicpackages')); ?></th>
+							<th><?php echo esc_html_e(__('Include?', 'dynamicpackages')); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -145,7 +145,7 @@
 						<?php $tax = get_option('dy_tax'); ?>
 						<?php if(floatval($tax) > 0): ?>
 							<tr>
-							<td class="text-right" colspan="2"><?php echo esc_html(__('Tax', 'dynamicpackages')).' '.esc_html($tax); ?>%</td>
+							<td class="text-right" colspan="2"><?php echo esc_html_e(__('Tax', 'dynamicpackages')).' '.esc_html($tax); ?>%</td>
 							<td><?php echo dy_money((dy_utilities::total()*(floatval($tax)/100)), 'dy_calc dy_calc_tax_amount'); ?></td>
 							</tr>
 						<?php endif; ?>
@@ -153,9 +153,9 @@
 					<tr>
 						<td colspan="3">
 							<?php if(dy_validators::valid_coupon()): ?>
-								<s class="small light text-muted"><?php echo esc_html(__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::total('regular'), 'dy_calc dy_calc_regular'); ?></span></s><br/>
+								<s class="small light text-muted"><?php echo esc_html_e(__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::total('regular'), 'dy_calc dy_calc_regular'); ?></span></s><br/>
 							<?php endif; ?>
-							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dy_utilities::total()), 'dy_calc dy_calc_amount'); ?></span>
+							<?php echo esc_html_e(__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dy_utilities::total()), 'dy_calc dy_calc_amount'); ?></span>
 						</td>
 					</tr>
 					
@@ -168,9 +168,9 @@
 				</tfoot>	
 			</table>
 
-			<div class="hidden" data-id="total"><?php echo esc_html(dy_utilities::total()); ?></div>
-			<div class="hidden" data-id="participants"><?php echo esc_html($participants); ?></div>
-			<div class="hidden" data-id="traveling-children"><?php echo esc_html($traveling_children); ?></div>
+			<div class="hidden" data-id="total"><?php echo esc_html_e(dy_utilities::total()); ?></div>
+			<div class="hidden" data-id="participants"><?php echo esc_html_e($participants); ?></div>
+			<div class="hidden" data-id="traveling-children"><?php echo esc_html_e($traveling_children); ?></div>
 
 			<?php if($payment == 1 && intval(package_field('package_auto_booking')) == 1): ?>
 				<div class="text-muted large strong text-center bottom-20"><?php echo ($outstanding_label); ?></div>

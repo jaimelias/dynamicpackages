@@ -268,30 +268,30 @@ else
 				<?php if(dy_validators::is_valid_schema($post->ID)): ?>
 					<link itemprop="url" href="<?php the_permalink(); ?>" />
 					<meta itemprop="brand" content="<?php bloginfo('name'); ?>" />
-					<meta itemprop="sku" content="<?php echo esc_html(md5(package_field( 'package_trip_code' ))); ?>" />
-					<meta itemprop="gtin8" content="<?php echo esc_html(substr(md5(package_field( 'package_trip_code' )), 0, 8)); ?>" />
+					<meta itemprop="sku" content="<?php echo esc_html_e(md5(package_field( 'package_trip_code' ))); ?>" />
+					<meta itemprop="gtin8" content="<?php echo esc_html_e(substr(md5(package_field( 'package_trip_code' )), 0, 8)); ?>" />
 				<?php endif; ?>
 				
 				<div class="padding-10 dy_package">
 					<div class="pure-g gutters">
-						<div class="pure-u-1 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
+						<div class="pure-u-1 pure-u-md-<?php echo esc_html_e($break_md); ?> pure-u-lg-<?php echo esc_html_e($break_lg); ?>">
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
-								<a title="<?php echo esc_html($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
+								<a title="<?php echo esc_html_e($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
 								<?php dy_Public::show_event_date(); ?>
 								<?php dy_Public::show_badge(); ?>
 							</div>
 							<?php endif;?>
 						</div>	
 							
-						<div class="pure-u-1 pure-u-md-<?php echo esc_html($break_md); ?> pure-u-lg-<?php echo esc_html($break_lg); ?>">
+						<div class="pure-u-1 pure-u-md-<?php echo esc_html_e($break_md); ?> pure-u-lg-<?php echo esc_html_e($break_lg); ?>">
 						
 							<?php if($package_code != ''): ?>
-								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html(__('ID', 'dynamicpackages')).esc_html($package_code); ?></div>
+								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html_e(__('ID', 'dynamicpackages')).esc_html($package_code); ?></div>
 							<?php endif; ?>								
 						
 							<div class="dy_package_title_h3">
-								<h3 class="small"><a title="<?php echo esc_html($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php echo esc_html($post->post_title); ?></span></a></h3>
+								<h3 class="small"><a title="<?php echo esc_html_e($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php echo esc_html_e($post->post_title); ?></span></a></h3>
 							</div>
 							
 							
@@ -301,7 +301,7 @@ else
 
 							<?php if(!dy_validators::is_package_transport()) : ?>
 								<div class="dy_pad bottom-10 semibold">
-									<?php echo esc_html(dy_Public::show_duration(true)); ?>
+									<?php echo esc_html_e(dy_Public::show_duration(true)); ?>
 								</div>
 							<?php endif; ?>
 
@@ -317,17 +317,17 @@ else
 									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 									<link itemprop="availability" href="http://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
-									<meta itemprop="priceValidUntil" content="<?php echo esc_html(date('Y-m-d', strtotime('+1 year'))); ?>" />
-									<meta itemprop="priceCurrency" content="<?php echo esc_html(dy_utilities::currency_name()); ?>" />
-									<?php echo esc_html(__('Starting at', 'dynamicpackages')); ?> <?php echo esc_html(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_html(dy_utilities::starting_at_archive());?>"><?php echo esc_html(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
-									</span> <small class="text-muted"> <?php echo esc_html(dy_Public::price_type());?></small>
+									<meta itemprop="priceValidUntil" content="<?php echo esc_html_e(date('Y-m-d', strtotime('+1 year'))); ?>" />
+									<meta itemprop="priceCurrency" content="<?php echo esc_html_e(dy_utilities::currency_name()); ?>" />
+									<?php echo esc_html_e(__('Starting at', 'dynamicpackages')); ?> <?php echo esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_html_e(dy_utilities::starting_at_archive());?>"><?php echo esc_html_e(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
+									</span> <small class="text-muted"> <?php echo esc_html_e(dy_Public::price_type());?></small>
 								</div>
 							<?php endif;?>
 												
 
 							
 							<div class="text-right strong uppercase hide-sm">
-								<a href="<?php the_permalink(); ?>" title="<?php echo esc_html($post->post_title); ?>"><?php echo esc_html(__('More details', 'dynamicpackages')); ?> <span class="large"><span class="large"><i class="fas fa-chevron-circle-right"></i></span></span></a>
+								<a href="<?php the_permalink(); ?>" title="<?php echo esc_html_e($post->post_title); ?>"><?php echo esc_html_e(__('More details', 'dynamicpackages')); ?> <span class="large"><span class="large"><i class="fas fa-chevron-circle-right"></i></span></span></a>
 							</div>					
 							
 							
@@ -348,7 +348,7 @@ else
 			</div><!-- .pure-g -->
 		<?php else: ?>
 		
-		<div class="pure-u-1-1"><p><?php echo esc_html(__('Not found', 'dynamicpackages')); ?>.</p></div></div>
+		<div class="pure-u-1-1"><p><?php echo esc_html_e(__('Not found', 'dynamicpackages')); ?>.</p></div></div>
 		
 	<?php endif; ?>
 	</div><!-- .tp_grid -->

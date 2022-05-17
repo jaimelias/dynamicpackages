@@ -165,8 +165,8 @@ class dy_Metaboxes
 							
 							?>
 								<p>
-									<label for="package_confirmation_message_<?php echo esc_html($value); ?>"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?> - <?php echo esc_html($value);?></label></br>
-									<textarea cols="40" rows="6" type="text" name="package_confirmation_message_<?php echo esc_html($value); ?>" id="package_confirmation_message_<?php echo esc_html($value); ?>"><?php echo package_field( 'package_confirmation_message_'.$value ); ?></textarea>
+									<label for="package_confirmation_message_<?php echo esc_html_e($value); ?>"><?php _e( 'Confirmation Message', 'dynamicpackages' ); ?> - <?php echo esc_html_e($value);?></label></br>
+									<textarea cols="40" rows="6" type="text" name="package_confirmation_message_<?php echo esc_html_e($value); ?>" id="package_confirmation_message_<?php echo esc_html_e($value); ?>"><?php echo package_field( 'package_confirmation_message_'.$value ); ?></textarea>
 								</p>	
 							<?php
 						}
@@ -251,8 +251,8 @@ class dy_Metaboxes
 				<p>
 					<label for="package_show_pricing"><?php _e( 'Show Price Table', 'dynamicpackages' ); ?></label><br />
 					<select name="package_show_pricing" id="package_show_pricing">
-						<option value="0" <?php echo ($show_pricing == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>			
-						<option value="1" <?php echo ($show_pricing == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?></option>			
+						<option value="0" <?php echo ($show_pricing == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html_e(__('Yes', 'dynamicpackages')); ?> (<?php echo esc_html_e(__('default', 'dynamicpackages')); ?>)</option>			
+						<option value="1" <?php echo ($show_pricing == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html_e(__('No', 'dynamicpackages')); ?></option>			
 					</select>
 				</p>
 
@@ -299,8 +299,8 @@ class dy_Metaboxes
 				<p>
 					<label for="package_payment"><?php _e( 'Payment', 'dynamicpackages' ); ?></label><br />
 					<select name="package_payment" id="package_payment">
-						<option value="0" <?php echo ($payment == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Full Payment', 'dynamicpackages')); ?></option>
-						<option value="1" <?php echo ($payment == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html(__('Deposit', 'dynamicpackages')); ?></option>
+						<option value="0" <?php echo ($payment == 0 ) ? 'selected' : ''; ?> ><?php echo esc_html_e(__('Full Payment', 'dynamicpackages')); ?></option>
+						<option value="1" <?php echo ($payment == 1 ) ? 'selected' : ''; ?> ><?php echo esc_html_e(__('Deposit', 'dynamicpackages')); ?></option>
 					</select>
 					<?php if($payment == 1): ?>
 						<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo $deposit; ?>">%</label>
@@ -539,8 +539,8 @@ class dy_Metaboxes
 								
 								?>
 									<p>
-										<label for="package_child_title_<?php echo esc_html($value); ?>"><?php _e( 'Subpackage Short Title', 'dynamicpackages' ); ?> - <?php echo esc_html($value);?></label></br>
-										<input type="text" value="<?php echo package_field( 'package_child_title_'.$value ); ?>" name="package_child_title_<?php echo esc_html($value); ?>" id="package_child_title_<?php echo esc_html($value); ?>">
+										<label for="package_child_title_<?php echo esc_html_e($value); ?>"><?php _e( 'Subpackage Short Title', 'dynamicpackages' ); ?> - <?php echo esc_html_e($value);?></label></br>
+										<input type="text" value="<?php echo package_field( 'package_child_title_'.$value ); ?>" name="package_child_title_<?php echo esc_html_e($value); ?>" id="package_child_title_<?php echo esc_html_e($value); ?>">
 									</p>	
 								<?php
 							}
@@ -563,7 +563,7 @@ class dy_Metaboxes
 			<p>
 				<label for="package_display"><?php _e( 'Hide Package', 'dynamicpackages' ); ?></label><br />
 				<select name="package_display" id="package_display">
-					<option value="0" <?php echo (package_field( 'package_display' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'No', 'dynamicpackages' ); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
+					<option value="0" <?php echo (package_field( 'package_display' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'No', 'dynamicpackages' ); ?> (<?php echo esc_html_e(__('default', 'dynamicpackages')); ?>)</option>
 					<option value="1" <?php echo (package_field( 'package_display' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'Yes', 'dynamicpackages' ); ?></option>
 				</select>
 			</p>			
@@ -618,8 +618,8 @@ class dy_Metaboxes
 			<p>
 				<label for="package_fixed_price"><?php _e( 'Show Prices Per Person', 'dynamicpackages' ); ?></label><br />
 				<select name="package_fixed_price" id="package_fixed_price">
-					<option value="0" <?php echo (package_field( 'package_fixed_price' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Yes', 'dynamicpackages' ); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
-					<option value="1" <?php echo (package_field( 'package_fixed_price' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'No', 'dynamicpackages' ); ?> (<?php echo esc_html(__('fixed prices', 'dynamicpackages')); ?>)</option>				
+					<option value="0" <?php echo (package_field( 'package_fixed_price' ) == 0 ) ? 'selected' : ''; ?> ><?php _e( 'Yes', 'dynamicpackages' ); ?> (<?php echo esc_html_e(__('default', 'dynamicpackages')); ?>)</option>
+					<option value="1" <?php echo (package_field( 'package_fixed_price' ) == 1 ) ? 'selected' : ''; ?> ><?php _e( 'No', 'dynamicpackages' ); ?> (<?php echo esc_html_e(__('fixed prices', 'dynamicpackages')); ?>)</option>				
 				</select>
 			</p>
 			

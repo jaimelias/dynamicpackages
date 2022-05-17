@@ -560,14 +560,14 @@ class paguelo_facil_on{
 	public function input_text($name){
 		$option = get_option($name);
 		?>
-		<input type="text" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" />
+		<input type="text" name="<?php echo esc_html_e($name); ?>" id="<?php echo esc_html_e($name); ?>" value="<?php echo esc_html_e($option); ?>" />
 		<?php
 	}
 	
 	public function input_number($name){
 		$option = get_option($name);
 		?>
-		<input type="number" name="<?php echo esc_html($name); ?>" id="<?php echo esc_html($name); ?>" value="<?php echo esc_html($option); ?>" /> #
+		<input type="number" name="<?php echo esc_html_e($name); ?>" id="<?php echo esc_html_e($name); ?>" value="<?php echo esc_html_e($option); ?>" /> #
 		<?php
 	}	
 		

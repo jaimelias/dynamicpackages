@@ -104,7 +104,7 @@ class dy_Reviews
 				<?php if( array_intersect($allowed_roles, $user->roles ) ): ?> 
 					<div>
 						<div>
-							<label><?php echo esc_html(__('Alias', 'dynamicpackages')); ?></label>
+							<label><?php echo esc_html_e(__('Alias', 'dynamicpackages')); ?></label>
 						</div>
 						<div>
 							<input type="text" name="dy_alias" value="<?php echo self::get_random_name(); ?>" />
@@ -115,15 +115,15 @@ class dy_Reviews
 
 			<div>
 				<div>
-					<label><?php echo esc_html(__('Rating', 'dynamicpackages')); ?></label>
+					<label><?php echo esc_html_e(__('Rating', 'dynamicpackages')); ?></label>
 				</div>
 				<div>
 					<select name="dy_rating" class="bottom-20">
-						<option value="5" <?php selected($selected, 5); ?>><?php echo self::get_stars(5); ?> - <?php echo esc_html(__('Excellent', 'dynamicpackages')); ?></option>
-						<option value="4" <?php selected($selected, 4); ?>><?php echo self::get_stars(4); ?> - <?php echo esc_html(__('Good', 'dynamicpackages')); ?></option>
-						<option value="3" <?php selected($selected, 3); ?>><?php echo self::get_stars(3); ?> - <?php echo esc_html(__('Average', 'dynamicpackages')); ?></option>
-						<option value="2" <?php selected($selected, 2); ?>><?php echo self::get_stars(2); ?> - <?php echo esc_html(__('Bad', 'dynamicpackages')); ?></option>
-						<option value="1" <?php selected($selected, 1); ?>><?php echo self::get_stars(1); ?> - <?php echo esc_html(__('Very Bad', 'dynamicpackages')); ?></option>
+						<option value="5" <?php selected($selected, 5); ?>><?php echo self::get_stars(5); ?> - <?php echo esc_html_e(__('Excellent', 'dynamicpackages')); ?></option>
+						<option value="4" <?php selected($selected, 4); ?>><?php echo self::get_stars(4); ?> - <?php echo esc_html_e(__('Good', 'dynamicpackages')); ?></option>
+						<option value="3" <?php selected($selected, 3); ?>><?php echo self::get_stars(3); ?> - <?php echo esc_html_e(__('Average', 'dynamicpackages')); ?></option>
+						<option value="2" <?php selected($selected, 2); ?>><?php echo self::get_stars(2); ?> - <?php echo esc_html_e(__('Bad', 'dynamicpackages')); ?></option>
+						<option value="1" <?php selected($selected, 1); ?>><?php echo self::get_stars(1); ?> - <?php echo esc_html_e(__('Very Bad', 'dynamicpackages')); ?></option>
 					</select>
 				</div>
 			</div>
@@ -647,7 +647,7 @@ class dy_Reviews
 		?>
 			<div class="dy_total_reviews">
 					<div>
-						<?php bloginfo('name'); ?> <?php echo esc_html(__('is rated', 'dynamicpackages')).' <span class="rating">'.esc_html($reviews['ratingValue']).'</span>'; ?>
+						<?php bloginfo('name'); ?> <?php echo esc_html_e(__('is rated', 'dynamicpackages')).' <span class="rating">'.esc_html($reviews['ratingValue']).'</span>'; ?>
 					</div>
 					<div>
 						<?php echo self::wp_star_rating($reviews['ratingValue']).' <span class="count">'.esc_html($reviews['reviewCount']).'</span> '.esc_html(__('reviews', 'dynamicpackages')); ?>
