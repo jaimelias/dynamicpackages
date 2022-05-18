@@ -222,7 +222,7 @@ class dy_Forms
 			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_attr($get_coupon).'" /></div>';
 		}		
 		
-		$form .= '<div><button type="submit" class="width-100 checkPrices block pure-button pure-button-primary rounded">'.esc_html($book_now_text).'</button></div>';	
+		$form .= '<div><button type="submit" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <i class="fas fa-chevron-right"></i></button></div>';	
 		$form .= '</form></div>';
 		echo $form;			
 

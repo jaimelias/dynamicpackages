@@ -1440,29 +1440,6 @@ class dy_Public {
 		}
 	}
 		
-	public static function people_restriction()
-	{
-		return __('Send us your request and we will send you the quote shortly.', 'dynamicpackages');
-	}
-	public static function hour_restriction()
-	{
-		return __('Invalid Hour', 'dynamicpackages');
-	}	
-	public static function date_restriction()
-	{
-		$min_range = date_i18n(get_option('date_format'), dy_utilities::min_range());
-		$max_range = date_i18n(get_option('date_format'), dy_utilities::max_range());
-
-		return __('Bookings are only available between', 'dynamicpackages').' '.$min_range.' '.__('and', 'dynamicpackages').' '.$max_range;
-	}
-	public static function restrictions()
-	{
-		$output = '<p class="strong">'.esc_html(__('Restrictions', 'dynamicpackages')).':</p>';
-		$output .= '<p class="minimal_success"><i class="fas fa-exclamation-circle" ></i> '.esc_html(self::people_restriction()).'</p>';
-		
-		echo $output;
-	}
-	
 	public static function date()
 	{
 		$date = null;

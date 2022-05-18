@@ -62,7 +62,7 @@
 <hr/>
 
 	<div class="clearfix relative small text-right">
-		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><i class="fas fa-chevron-left"></i>&nbsp; <?php esc_html_e(__('Volver', 'dynamicpackages')); ?></a>
+		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><i class="fas fa-chevron-left"></i>&nbsp; <?php esc_html_e(__('Go back', 'dynamicpackages')); ?></a>
 	</div>
 
 <hr/>
@@ -167,10 +167,6 @@
 					
 				</tfoot>	
 			</table>
-
-			<div class="hidden" data-id="total"><?php echo esc_html_e(dy_utilities::total()); ?></div>
-			<div class="hidden" data-id="participants"><?php echo esc_html_e($participants); ?></div>
-			<div class="hidden" data-id="traveling-children"><?php echo esc_html_e($traveling_children); ?></div>
 
 			<?php if($payment == 1 && intval(package_field('package_auto_booking')) == 1): ?>
 				<div class="text-muted large strong text-center bottom-20"><?php echo ($outstanding_label); ?></div>

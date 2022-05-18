@@ -77,47 +77,24 @@ class dy_Gateways
 			{
 				if(dy_validators::validate_hash())
 				{
+					$package_min_persons = package_field('package_min_persons');
+					$package_max_persons = package_field('package_max_persons');
 					$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
-					$sum_people = $pax_regular;	
+					$sum_people = (isset($_GET['pax_discount'])) ? $pax_regular + intval(sanitize_text_field($_GET['pax_discount'])) : $pax_regular;
+					$sum_people = (isset($_GET['pax_free'])) ? $sum_people + intval(sanitize_text_field($_GET['pax_free'])) : $sum_people;
 
-					if(isset($_GET['pax_discount']))
+					if($pax_regular <  $package_min_persons || $sum_people > $package_max_persons)
 					{
-						$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_discount']));
-					}
-					if(isset($_GET['pax_free']))
-					{
-						$sum_people = $sum_people + intval(sanitize_text_field($_GET['pax_free']));
-					}					
-					
-					if(isset($_GET['booking_date']))
-					{
-						if(sanitize_text_field($_GET['booking_date']) == '')
-						{
-							$content = '<p class="minimal_alert"><strong>'.esc_html(dy_Public::hour_restriction()).'</strong></p>';		
-						}
-						else
-						{
-							if($pax_regular < package_field('package_min_persons') || $sum_people > package_field('package_max_persons'))
-							{
-								$content = '<p class="minimal_success strong">'.esc_html(dy_Public::people_restriction()).'</p>';
-								$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
-								$content .= dy_Public::booking_sidebar();							
-							}
-							else
-							{
-								ob_start();
-								require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
-								$content = ob_get_contents();
-								ob_end_clean();									
-							}	
-						}
+						$content = '<p class="minimal_success strong">'.esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')).'</p>';
+						$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
+						$content .= dy_Public::booking_sidebar();							
 					}
 					else
 					{
 						ob_start();
-						require_once(plugin_dir_path( __DIR__ ) . 'gateways/checkout-page.php');
+						require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
 						$content = ob_get_contents();
-						ob_end_clean();						
+						ob_end_clean();									
 					}					
 				}
 				else
@@ -126,10 +103,8 @@ class dy_Gateways
 				}
 			}
 			else
-			{
-				$content = null;
-				
-				$content .= '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
+			{				
+				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
 			}		
 		}
 

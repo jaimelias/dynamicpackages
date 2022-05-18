@@ -79,15 +79,7 @@
 	<h4><?php echo esc_html_e(__('Booking Details', 'dynamicpackages')); ?>:</h4>
 	<div class="bottom-20"><?php echo apply_filters('dy_package_details', null); ?></div>
 
-
 <hr/>
-
-	<?php
-		if(dy_Public::restrictions())
-		{
-			echo dy_Public::restrictions();
-		}
-	?>	
 	
 	<?php dynamicpackages_Tables::package_price_table(); ?>
 
