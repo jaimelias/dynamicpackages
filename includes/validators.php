@@ -2,7 +2,48 @@
 
 class dy_validators
 {
-	
+	public function cloudflare_ban_ip_address($ip){
+		
+		$cfp_key = get_option('cfp_key');
+		
+		if($cfp_key !== '')
+		{
+			$cfheaders = array(
+				'Content-Type: application/json',
+				'Authorization: Bearer'.sanitize_text_field($cfp_key)
+			);
+
+			$data = array(
+				'mode' => 'block',
+				'configuration' => array('target' => 'ip', 'value' => $ip),
+				'notes' => 'Banned on '.date('Y-m-d H:i:s').' by PHP-script'
+			);
+
+			$json = json_encode($data);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $cfheaders);
+			curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules');
+			$return = curl_exec($ch);
+			curl_close($ch);
+			if ($return === false){
+				return false;
+			}
+			else
+			{
+				$return = json_decode($return,true);
+				if(isset($return['success']) && $return['success'] == true){
+					return $return['result']['id'];
+				}else{
+					return false;
+				}
+			}
+		}
+
+	}
+
+
 	public static function validate_quote()
 	{
 		$output = false;
@@ -266,9 +307,7 @@ class dy_validators
 				if(array_key_exists('error-codes', $verify_response))
 				{
 					$GLOBALS['dy_request_invalids'] = array(__('Invalid Recaptcha', 'dynamicpackages'));
-					$debug_output = array(
-						'error' => $verify_response['error-codes']
-					);
+					$debug_output = array('error' => $verify_response['error-codes']);
 					$post_debug = array_map('sanitize_text_field', $_POST);
 					
 					if(array_key_exists('first_name', $post_debug)){
@@ -288,8 +327,19 @@ class dy_validators
 					}
 					if(array_key_exists('total', $post_debug)){
 						$debug_output['total'] = $post_debug['total'];
-					}					
+					}
+
+					if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+						$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+					}
 					
+					$debug_output['ip'] = $_SERVER['REMOTE_ADDR'];
+
+					if(in_array('invalid-input-response', $verify_response['error-codes']))
+					{
+						self::cloudflare_ban_ip_address($debug_output['ip']);
+					}
+
 					write_log(json_encode($debug_output));
 				}
 			}

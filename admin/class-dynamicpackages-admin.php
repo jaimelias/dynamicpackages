@@ -154,6 +154,9 @@ class dy_Admin {
 		register_setting('dy_settings', 'dy_archive_hide_enabled_days', 'esc_html');
 		register_setting('dy_settings', 'dy_archive_hide_start_address', 'esc_html');
 
+		//cloudflare
+		register_setting('dy_settings', 'cfp_key', 'esc_html');
+
 
 		add_settings_section(
 			'dy_settings_section', 
@@ -282,7 +285,21 @@ class dy_Admin {
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'captcha_secret_key') 
-		);			
+		);
+		
+		//cloudflare
+
+		add_settings_field( 
+			'cfp_key', 
+			esc_html(__( 'Cloudflare Api Token', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_settings_section',
+			array('name' => 'cfp_key') 
+		);
+
+
+
 		add_settings_field( 
 			'ipgeolocation', 
 			esc_html(__( 'IPGeolocation.io', 'dynamicpackages' )), 
