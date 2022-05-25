@@ -2,7 +2,7 @@
 
 class dy_validators
 {
-	public function cloudflare_ban_ip_address($ip){
+	public static function cloudflare_ban_ip_address($ip){
 		
 		$cfp_key = get_option('cfp_key');
 		
