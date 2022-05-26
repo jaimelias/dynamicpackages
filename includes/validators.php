@@ -10,7 +10,7 @@ class dy_validators
 		{
 			$cfheaders = array(
 				'Content-Type: application/json',
-				'Authorization: Bearer'.sanitize_text_field($cfp_key)
+				'Authorization: Bearer '.sanitize_text_field($cfp_key)
 			);
 
 			$data = array(
@@ -29,6 +29,7 @@ class dy_validators
 			curl_close($ch);
 
 			write_log($return);
+			write_log(json_encode($cfheaders));
 
 
 			if ($return === false){
