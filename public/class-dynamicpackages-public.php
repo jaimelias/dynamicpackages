@@ -1,43 +1,10 @@
 <?php
 
-/**
- * The public-facing functionality of the plugin.
- *
- * @link       http://jaimelias.com
- * @since      1.0.0
- *
- * @package    dynamicpackages
- * @subpackage dynamicpackages/public
- */
 
-/**
- * The public-facing functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
- * @package    dynamicpackages
- * @subpackage dynamicpackages/public
- * @author     Jaimelías <jaimelias@about.me>
- */
 class dy_Public {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
+	private $plugin_name;
 	private $version;
 
 	public function __construct() {
@@ -250,24 +217,24 @@ class dy_Public {
 	
 	public static function datepickerCSS()
 	{
-		wp_enqueue_style( 'picker-css', plugin_dir_url( __FILE__ ) . 'css/picker/default.css', array(), 'jetcharters', 'all');
+		wp_enqueue_style( 'picker-css', plugin_dir_url( __FILE__ ) . 'css/picker/default.css', array(), '3.6.2', 'all');
 		wp_add_inline_style('picker-css', self::get_inline_css('picker/default.date'));
-		wp_add_inline_style('picker-css', self::get_inline_css('picker/default.time'));		
+		wp_add_inline_style('picker-css', self::get_inline_css('picker/default.time'));
 	}
 	
 	public static function datepickerJS()
 	{
 		//pikadate
-		wp_enqueue_script( 'picker-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.js', array('jquery'), '3.5.6', true);
-		wp_enqueue_script( 'picker-date-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.5.6', true);
-		wp_enqueue_script( 'picker-time-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.5.6', true);	
-		wp_enqueue_script( 'picker-legacy', plugin_dir_url( __FILE__ ) . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.5.6', true);
+		wp_enqueue_script( 'picker-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
+		wp_enqueue_script( 'picker-date-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
+		wp_enqueue_script( 'picker-time-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
+		wp_enqueue_script( 'picker-legacy', plugin_dir_url( __FILE__ ) . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
 
 		$picker_translation = 'js/picker/translations/'.substr(get_locale(), 0, -3).'.js';
 				
 		if(file_exists(dirname( __FILE__ ).'/'.$picker_translation))
 		{
-			wp_enqueue_script( 'picker-time-translation', plugin_dir_url( __FILE__ ).$picker_translation, array('jquery', 'picker-js'), '3.5.6', true);
+			wp_enqueue_script( 'picker-time-translation', plugin_dir_url( __FILE__ ).$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
 		}		
 	}
 		
