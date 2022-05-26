@@ -27,6 +27,10 @@ class dy_validators
 			curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules');
 			$return = curl_exec($ch);
 			curl_close($ch);
+
+			write_log($return);
+
+
 			if ($return === false){
 				return false;
 			}
