@@ -28,10 +28,6 @@ class dy_validators
 			$return = curl_exec($ch);
 			curl_close($ch);
 
-			write_log($return);
-			write_log(json_encode($cfheaders));
-
-
 			if ($return === false){
 				return false;
 			}
