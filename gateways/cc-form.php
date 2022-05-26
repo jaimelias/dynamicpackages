@@ -3,18 +3,18 @@
 
 <div class="dy_card_form_fields hidden">
 
-	<h3><?php echo esc_html_e(__('Billing Address', 'dynamicpackages')); ?></h3>
+	<h3><?php echo (esc_html__('Billing Address', 'dynamicpackages')); ?></h3>
 	<div class="pure-g gutters">
 		<div class="pure-u-1 pure-u-lg-1-3">
-			<label for="country"><?php echo esc_html_e(__('Country', 'dynamicpackages')); ?></label>
+			<label for="country"><?php echo (esc_html__('Country', 'dynamicpackages')); ?></label>
 			<select name="country" id="country" class="countrylist bottom-20"><option value="">--</option></select>
 		</div>
 		<div class="pure-u-1 pure-u-lg-1-3">
-			<label for="city"><?php echo esc_html_e(__('City', 'dynamicpackages')); ?></label>
+			<label for="city"><?php echo (esc_html__('City', 'dynamicpackages')); ?></label>
 			<input type="text" name="city" id="city" class="bottom-20" />
 		</div>
 		<div class="pure-u-1 pure-u-lg-1-3">
-			<label for="address"><?php echo esc_html_e(__('Address', 'dynamicpackages')); ?></label>
+			<label for="address"><?php echo (esc_html__('Address', 'dynamicpackages')); ?></label>
 			<input type="text" name="address" id="address" class="bottom-20" />
 		</div>					
 	</div>
@@ -22,14 +22,14 @@
 </div>
 
 <div class="dy_card_form_fields hidden">
-	<h3><?php echo esc_html_e(__('Card Details', 'dynamicpackages')); ?></h3>
+	<h3><?php echo (esc_html__('Card Details', 'dynamicpackages')); ?></h3>
 	<?php echo apply_filters('dy_debug_instructions', null); ?>
-	<p><label for="CCNum"><?php echo esc_html_e(__('Card Numbers', 'dynamicpackages')); ?></label>
+	<p><label for="CCNum"><?php echo (esc_html__('Card Numbers', 'dynamicpackages')); ?></label>
 	<input class="large" min="16" type="number" name="CCNum" id="CCNum" /></p>
 
 	<div class="pure-g gutters">
 		<div class="pure-u-1 pure-u-lg-1-3">
-			<label for="ExpMonth"><?php echo esc_html_e(__('Expiration Month', 'dynamicpackages')); ?></label>
+			<label for="ExpMonth"><?php echo (esc_html__('Expiration Month', 'dynamicpackages')); ?></label>
 		
 			<select name="ExpMonth" id="ExpMonth" class="bottom-20">
 			<option value="">--</option>
@@ -43,7 +43,7 @@
 			</select>	
 		</div>
 		<div class="pure-u-1 pure-u-lg-1-3">
-			<label for="ExpYear"><?php echo esc_html_e(__('Expiration Year', 'dynamicpackages')); ?></label>
+			<label for="ExpYear"><?php echo (esc_html__('Expiration Year', 'dynamicpackages')); ?></label>
 			<select name="ExpYear" id="ExpYear" class="bottom-20">
 			<option value="">--</option>
 			<?php 

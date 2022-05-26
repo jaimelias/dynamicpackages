@@ -554,18 +554,18 @@ class dy_Gateways
 		{
 			ob_start();
 			?>
-				<h3><?php echo esc_html_e(__('Choose Network', 'dynamicpackages')); ?></h3>
+				<h3><?php echo (esc_html__('Choose Network', 'dynamicpackages')); ?></h3>
 				<p>
 					<select name="dy_network">
 						<option value="">--</option>
 					</select>
 				</p>
 				<p id="dy_crypto_alert" class="minimal_alert hidden">
-					<?php echo esc_html_e(__('The network you selected is', 'dynamicpackages')); ?>&nbsp;
+					<?php echo (esc_html__('The network you selected is', 'dynamicpackages')); ?>&nbsp;
 					<strong id="dy_crypto_network_code"></strong>.&nbsp;
-					<?php echo esc_html_e(__('make sure you use', 'dynamicpackages')); ?>&nbsp;
+					<?php echo (esc_html__('make sure you use', 'dynamicpackages')); ?>&nbsp;
 					<strong id="dy_crypto_network_name"></strong>&nbsp;
-					<?php echo esc_html_e( __('at the time of sending the funds. If the other network does not support it, your assets may be lost.', 'dynamicpackages')); ?>
+					<?php esc_html_e( __('at the time of sending the funds. If the other network does not support it, your assets may be lost.', 'dynamicpackages')); ?>
 				</p>
 			<?php
 			$output = ob_get_contents();
@@ -582,7 +582,7 @@ class dy_Gateways
 			?>
 					<hr/>
 					
-					<h3><?php echo esc_html_e(__('Before Booking', 'dynamicpackages')); ?></h3>
+					<h3><?php echo (esc_html__('Before Booking', 'dynamicpackages')); ?></h3>
 					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('It is not allowed to book for third parties.', 'dynamicpackages'); ?></p>
 					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'); ?></p>
 					<p class="minimal_warning"><i class="fas fa-exclamation-triangle"></i> <?php esc_html_e('All card payments may be subject to a verification process where we charge a random amount less than $5. To complete the reservation you must indicate the exact amount of this charge. You can call your card support line or online banking for this.', 'dynamicpackages'); ?></p>	

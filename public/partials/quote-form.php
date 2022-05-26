@@ -19,7 +19,7 @@
 
 	    <div class="text-center bottom-20" id="dy_checkout_branding">
 			<p class="large text-muted">
-				<?php echo esc_html_e($header_form); ?>
+				<?php esc_html_e($header_form); ?>
 			</p>
 		</div>
 		
@@ -37,7 +37,7 @@
 		<input type="hidden" name="dy_request" value="<?php esc_html_e($request_form); ?>" />
 		<input type="hidden" name="dy_recaptcha" />
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
-		<input type="hidden" name="lang" value="<?php echo esc_html_e(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
+		<input type="hidden" name="lang" value="<?php esc_html_e(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
 		
 		<!-- Cookies -->
 		<input type="hidden" name="channel" class="channel" value="" />
@@ -55,31 +55,31 @@
 		<input type="hidden" name="geo_isp" value="" />
 
 		<div>
-			<h3><?php echo esc_html_e(__('Contact Details', 'dynamicpackages')); ?></h3>
+			<h3><?php echo (esc_html__('Contact Details', 'dynamicpackages')); ?></h3>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="first_name"><?php echo esc_html_e(__('Name', 'dynamicpackages')); ?></label>
+					<label for="first_name"><?php echo (esc_html__('Name', 'dynamicpackages')); ?></label>
 					<input type="text" name="first_name" class="bottom-20 required" />
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="lastname"><?php echo esc_html_e(__('Last Name', 'dynamicpackages')); ?></label>
+					<label for="lastname"><?php echo (esc_html__('Last Name', 'dynamicpackages')); ?></label>
 					<input type="text" name="lastname" class="bottom-20 required" />
 				</div>
 			</div>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="email"><?php echo esc_html_e(__('Email', 'dynamicpackages')); ?></label>
+					<label for="email"><?php echo (esc_html__('Email', 'dynamicpackages')); ?></label>
 					<input type="email" name="email" class="bottom-20 required" />				
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
-						<label for="repeat_email"><?php echo esc_html_e(__('Repeat Email', 'dynamicpackages')); ?></label>
+						<label for="repeat_email"><?php echo (esc_html__('Repeat Email', 'dynamicpackages')); ?></label>
 						<input type="email" name="repeat_email" class="bottom-20 required" />
 				</div>
 			</div>
 			
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="phone"><?php echo esc_html_e(__('Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
+					<label for="phone"><?php echo (esc_html__('Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
 					<input type="text" name="phone" class="bottom-20 required" />				
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2"></div>
@@ -97,6 +97,6 @@
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
-	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php echo esc_html_e($submit_form); ?></button></p>	
+	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php esc_html_e($submit_form); ?></button></p>	
 
 </form>

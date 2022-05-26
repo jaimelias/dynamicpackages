@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2022-05-26 01:40+0000\n"
+"PO-Revision-Date: 2022-05-26 01:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -122,7 +122,7 @@ msgstr "Extras"
 
 #: gateways/cc-form.php:17
 msgid "Address"
-msgstr "Dirección"
+msgstr ""
 
 #: public/class-dynamicpackages-public.php:1493
 msgid "adult"
@@ -138,7 +138,7 @@ msgstr "adultos"
 
 #: public/partials/reviews.php:107
 msgid "Alias"
-msgstr "Alias"
+msgstr ""
 
 #: gateways/gateways.php:588
 msgid ""
@@ -176,11 +176,11 @@ msgstr "Disponibilidad"
 
 #: public/partials/reviews.php:124
 msgid "Average"
-msgstr "Promedio"
+msgstr ""
 
 #: public/partials/reviews.php:125
 msgid "Bad"
-msgstr "Malo"
+msgstr ""
 
 #: includes/class-dynamicpackages-metaboxes.php:639
 msgid "Badge Color"
@@ -208,7 +208,7 @@ msgstr "basado en"
 
 #: gateways/gateways.php:585
 msgid "Before Booking"
-msgstr "Antes de reservar"
+msgstr ""
 
 #: gateways/matrix/bank/international.php:225
 #: gateways/matrix/bank/international.php:410
@@ -263,7 +263,7 @@ msgstr "entre"
 
 #: gateways/cc-form.php:6
 msgid "Billing Address"
-msgstr "Dirección de facturación"
+msgstr ""
 
 #: includes/class-dynamicpackages-metaboxes.php:644
 msgid "Black"
@@ -288,7 +288,7 @@ msgstr "¡Reserva ahora con un %s%s de deposito!"
 
 #: public/partials/single.php:79
 msgid "Booking Details"
-msgstr "Detalles de reserva"
+msgstr ""
 
 #: public/class-dynamicpackages-public.php:866
 msgid "Booking Page"
@@ -296,11 +296,11 @@ msgstr "Página de reservas"
 
 #: gateways/cc-form.php:25
 msgid "Card Details"
-msgstr "Datos de la tarjeta"
+msgstr ""
 
 #: gateways/cc-form.php:27
 msgid "Card Numbers"
-msgstr "Número de la tarjeta"
+msgstr ""
 
 #: includes/class-dynamicpackages-post-type.php:89
 msgid "Categories"
@@ -372,11 +372,11 @@ msgstr "niños menores de"
 
 #: gateways/gateways.php:557
 msgid "Choose Network"
-msgstr "Elegir red"
+msgstr ""
 
 #: gateways/cc-form.php:13
 msgid "City"
-msgstr "Ciudad"
+msgstr ""
 
 #: public/email-templates/estimates-pdf.php:13
 #: public/email-templates/estimates.php:15
@@ -826,11 +826,11 @@ msgstr "horas"
 
 #. URI of the plugin
 msgid "https://github.com/jaimelias/dynamicpackages"
-msgstr "https://github.com/jaimelias/dynamicpackages"
+msgstr ""
 
 #. Author URI of the plugin
 msgid "https://jaimelias.com"
-msgstr "https://jaimelias.com"
+msgstr ""
 
 #: includes/class-dynamicpackages-metaboxes.php:322
 #: public/partials/archive.php:290
@@ -839,7 +839,7 @@ msgstr "ID"
 
 #: gateways/checkout-page.php:135
 msgid "Include?"
-msgstr "¿Incluir?"
+msgstr ""
 
 #: gateways/checkout-page.php:123
 #: includes/class-dynamicpackages-post-type.php:109

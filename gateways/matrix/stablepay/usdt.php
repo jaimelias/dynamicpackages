@@ -330,14 +330,14 @@ class usdt{
 	public function input_text($name){
 		$option = get_option($name);
 		?>
-		<input type="text" style="width: 450px;" name="<?php echo esc_html_e($name); ?>" id="<?php echo esc_html_e($name); ?>" value="<?php echo esc_html_e($option); ?>" />
+		<input type="text" style="width: 450px;" name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>" value="<?php esc_html_e($option); ?>" />
 		<?php
 	}
 	
 	public function input_number($name){
 		$option = get_option($name);
 		?>
-		<input type="number" name="<?php echo esc_html_e($name); ?>" id="<?php echo esc_html_e($name); ?>" value="<?php echo esc_html_e($option); ?>" /> #
+		<input type="number" name="<?php esc_html_e($name); ?>" id="<?php esc_html_e($name); ?>" value="<?php esc_html_e($option); ?>" /> #
 		<?php
 	}
 	

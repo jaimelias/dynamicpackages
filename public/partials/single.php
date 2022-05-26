@@ -76,7 +76,7 @@
 
 <hr/>
 
-	<h4><?php echo esc_html_e(__('Booking Details', 'dynamicpackages')); ?>:</h4>
+	<h4><?php echo (esc_html__('Booking Details', 'dynamicpackages')); ?>:</h4>
 	<div class="bottom-20"><?php echo apply_filters('dy_package_details', null); ?></div>
 
 <hr/>

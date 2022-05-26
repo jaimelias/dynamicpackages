@@ -387,7 +387,7 @@ class dy_Admin {
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 			$value = ($type == 'checkbox') ? 1 : get_option($name);
 		?>
-		<input type="<?php echo $type; ?>" name="<?php echo esc_html_e($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_html_e($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
+		<input type="<?php echo $type; ?>" name="<?php esc_html_e($name); ?>" id="<?php echo $name; ?>" value="<?php esc_html_e($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
 
 	<?php }	
 	
@@ -411,7 +411,7 @@ class dy_Admin {
 		$wp_query = new WP_Query($args);
 		?>
 		<select name='dy_packages_breadcrump'>
-			<option value="<?php echo esc_html_e(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
+			<option value="<?php esc_html_e(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
 			<?php if($wp_query->have_posts()): ?>
 				<?php while ($wp_query->have_posts()): $wp_query->the_post(); ?>
 					<option value="<?php echo get_the_ID();?>" <?php selected($options, get_the_ID()); ?>><?php echo get_the_title();?></option>

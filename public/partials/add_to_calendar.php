@@ -65,16 +65,19 @@ class dy_Add_To_Calendar
 			
 			if(isset($post))
 			{
+
+				$text = __('Add to calendar', 'dynamicpackages');
+
 				ob_start();
 				?>
 					<div class="bottom-20 addevent_container">
-						<div title="<?php echo esc_html_e(__('Add to Calendar', 'dynamicpackages')); ?>" class="addeventatc">
-							<?php echo esc_html_e(__('Add to Calendar', 'dynamicpackages')); ?>
-							<span class="start"><?php echo esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
-							<span class="timezone"><?php echo esc_html_e(get_option('timezone_string')); ?></span>
-							<span class="title"><?php echo esc_html_e($post->post_title); ?></span>
-							<span class="description"><?php echo esc_html_e(apply_filters('dy_package_description', null)); ?></span>
-							<span class="location"><?php echo esc_html_e(package_field('package_start_address')); ?></span>
+						<div title="<?php esc_html_e($text); ?>" class="addeventatc">
+							<?php esc_html_e($text); ?>
+							<span class="start"><?php esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
+							<span class="timezone"><?php esc_html_e(get_option('timezone_string')); ?></span>
+							<span class="title"><?php esc_html_e($post->post_title); ?></span>
+							<span class="description"><?php esc_html_e(apply_filters('dy_package_description', null)); ?></span>
+							<span class="location"><?php esc_html_e(package_field('package_start_address')); ?></span>
 						</div>
 					</div>
 				<?php
