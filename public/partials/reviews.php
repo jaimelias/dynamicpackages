@@ -26,7 +26,7 @@ class dy_Reviews
 	
 	public static function dashicons()
 	{
-		if(is_has_package())
+		if(has_package())
 		{
 			wp_enqueue_style( 'dashicons' );
 		}
@@ -34,7 +34,7 @@ class dy_Reviews
 	
 	public static function stars($the_id)
 	{
-		if(is_has_package())
+		if(has_package())
 		{
 			if(get_comments_number() > 0)
 			{
@@ -67,7 +67,7 @@ class dy_Reviews
 	
 	public static function template($template)
 	{		
-		if(is_has_package())
+		if(has_package())
 		{
 			$template = dirname(__FILE__) . '/reviews-template.php';
 		}
@@ -232,7 +232,7 @@ class dy_Reviews
 	}
 	public static function add_callback($args)
 	{
-		if(is_has_package())
+		if(has_package())
 		{
 			$args['callback'] = array('dy_Reviews', 'review_callback');
 		}
@@ -311,7 +311,7 @@ class dy_Reviews
 	
 	public static function order_by_date($comments, $post_ID)
 	{
-		if(!is_admin() && is_has_package())
+		if(!is_admin() && has_package())
 		{
 			global $review_order_by_date;
 			
@@ -356,7 +356,7 @@ class dy_Reviews
 	{
 		global $polylang;
 		
-		if(!is_admin() && is_has_package() && isset($polylang))
+		if(!is_admin() && has_package() && isset($polylang))
 		{
 			$translationIds = PLL()->model->post->get_translations($post_ID);
 			
@@ -388,7 +388,7 @@ class dy_Reviews
 	{
 		global $polylang;
 		
-		if(!is_admin() && is_has_package() && isset($polylang))
+		if(!is_admin() && has_package() && isset($polylang))
 		{
 			$translationIds = PLL()->model->post->get_translations($post_ID);
 		
@@ -407,14 +407,14 @@ class dy_Reviews
 	{
 		global $polylang;
 		
-		if(!is_admin() && is_has_package() && isset($polylang))
+		if(!is_admin() && has_package() && isset($polylang))
 		{
 			remove_filter('comments_clauses', array(&$polylang->filters, 'comments_clauses'));			
 		}
 	}
 	public static function comment_defaults($args)
 	{
-		if(!is_admin() && is_has_package())
+		if(!is_admin() && has_package())
 		{
 			$args['title_reply']  = __( 'Leave a Review', 'dynamicpackages');
 			$args['label_submit'] = __( 'Post a Review', 'dynamicpackages');

@@ -64,7 +64,7 @@ class dy_Actions{
     {
         global $dy_valid_recaptcha;
 
-        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::is_request_valid())
+        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::validate_request())
         {
 
 
@@ -95,10 +95,9 @@ class dy_Actions{
     {
         global $dy_valid_recaptcha;
 		
-
         if($this->has_form() && $this->is_request_submitted())
         {               
-            if(dy_validators::is_request_valid())
+            if(dy_validators::validate_request())
             {
                 if(isset($dy_valid_recaptcha))
                 {

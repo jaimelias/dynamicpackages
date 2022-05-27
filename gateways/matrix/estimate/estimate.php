@@ -137,7 +137,7 @@ class estimate_request{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::validate_request())
 		{
 			if($_POST['dy_request'] == $this->id || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

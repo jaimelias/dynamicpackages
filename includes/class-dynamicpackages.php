@@ -177,7 +177,7 @@ class dynamicpackages {
 		$plugins_shortcodes = new dy_Shortcodes();
 		$plugins_forms = new dy_Forms();
 		$plugins_json = new dy_Json();
-		$plugins_ical = new dy_Ical();
+		$plugins_ical = new Dynamic_Packages_Ical();
 		$plugin_form_actions = new dy_Actions();
 	}
 

@@ -139,9 +139,9 @@ function is_checkout_page()
 	
 	return $output;
 }
-function is_has_package()
+function has_package()
 {
-	return dy_validators::is_has_package();
+	return dy_validators::has_package();
 }
 
 if ( ! function_exists('write_log')) {

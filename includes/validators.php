@@ -2,71 +2,40 @@
 
 class dy_validators
 {
-	public static function cloudflare_ban_ip_address($ip){
-		
-		$cfp_key = get_option('cfp_key');
-		
-		if($cfp_key !== '')
-		{
-			$cfheaders = array(
-				'Content-Type: application/json',
-				'Authorization: Bearer '.sanitize_text_field($cfp_key)
-			);
-
-			$data = array(
-				'mode' => 'block',
-				'configuration' => array('target' => 'ip', 'value' => $ip),
-				'notes' => 'Banned on '.date('Y-m-d H:i:s').' by PHP-script'
-			);
-
-			$json = json_encode($data);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $cfheaders);
-			curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules');
-			$return = curl_exec($ch);
-			curl_close($ch);
-
-			if ($return === false){
-				return false;
-			}
-			else
-			{
-				$return = json_decode($return,true);
-				if(isset($return['success']) && $return['success'] == true){
-					return $return['result']['id'];
-				}else{
-					return false;
-				}
-			}
-		}
-
-	}
-
 
 	public static function validate_quote()
 	{
 		$output = false;
-		$total = dy_utilities::total();
-		$min_persons = package_field('package_min_persons');
-		$max_persons = package_field('package_max_persons');
-		
-		$pax_regular = intval(sanitize_text_field($_REQUEST['pax_regular']));
-		$sum_people = $pax_regular;	
-		
-		if(isset($_REQUEST['pax_discount']))
+		$which_var = 'validate_quote';
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_discount']));
+			$output = $$which_var;
 		}
-		if(isset($_REQUEST['pax_free']))
+		else
 		{
-			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_free']));
-		}
-		
-		if($total > 0 && $pax_regular >= $min_persons && $sum_people <= $max_persons)
-		{
-			$output = true;
+			$total = dy_utilities::total();
+			$min_persons = intval(package_field('package_min_persons'));
+			$max_persons = intval(package_field('package_max_persons'));
+			$pax_regular = intval(sanitize_text_field($_REQUEST['pax_regular']));
+			$sum_people = $pax_regular;	
+			
+			if(isset($_REQUEST['pax_discount']))
+			{
+				$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_discount']));
+			}
+			if(isset($_REQUEST['pax_free']))
+			{
+				$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_free']));
+			}
+			
+			if($total > 0 && $pax_regular >= $min_persons && $sum_people <= $max_persons)
+			{
+				$output = true;
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -76,42 +45,56 @@ class dy_validators
 	public static function validate_booking_date()
 	{
 		$output = false;
+		$which_var = 'validate_booking_date';
+		global $$which_var;
 		
-		if(isset($_GET['booking_date']))
+		if(isset($$which_var))
 		{
-			$booking_date = dy_utilities::booking_date();
-			$min_range = dy_utilities::min_range();
-			$max_range = dy_utilities::max_range();
-			$event_date = strtotime(package_field('package_event_date'));
-			
-			if($booking_date)
-			{
-				if($event_date == '')
-				{
-					if($booking_date >= $min_range && $booking_date <= $max_range)
-					{
-						$output = true;
-					}				
-				}
-				else
-				{
-					if($booking_date == $event_date)
-					{
-						$output = true;
-					}				
-				}				
-			}
+			$output = $$which_var;
 		}
+		else
+		{
+			if(isset($_GET['booking_date']))
+			{
+				$booking_date = dy_utilities::booking_date();
+				$min_range = dy_utilities::min_range();
+				$max_range = dy_utilities::max_range();
+				$event_date = strtotime(package_field('package_event_date'));
+				
+				if($booking_date)
+				{
+					if($event_date == '')
+					{
+						if($booking_date >= $min_range && $booking_date <= $max_range)
+						{
+							$output = true;
+						}				
+					}
+					else
+					{
+						if($booking_date == $event_date)
+						{
+							$output = true;
+						}				
+					}
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+
 		return $output;
 	}
-	public static function is_has_package()
+	public static function has_package()
 	{
 		$output = false;
-		global $is_has_package;
+		$which_var = 'has_package';
+		global $$which_var;
 		
-		if(isset($is_has_package))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -137,10 +120,7 @@ class dy_validators
 				}
 			}	
 
-			if($output === true)
-			{
-				$GLOBALS['is_has_package'] = $output;
-			}	
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -148,11 +128,12 @@ class dy_validators
 	public static function is_booking_page()
 	{
 		$output = false;
-		global $is_booking_page;
+		$which_var = 'is_booking_page';
+		global $$which_var;
 		
-		if(isset($is_booking_page))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -163,7 +144,6 @@ class dy_validators
 				if($pax_regular >= package_field('package_min_persons'))
 				{
 					$output = true;
-					$GLOBALS['is_booking_page'] = $output;
 				}
 				else
 				{
@@ -173,29 +153,33 @@ class dy_validators
 			else
 			{
 				$output = false;
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}	
 	
-	public static function is_request_valid()
+	public static function validate_request()
 	{
 		$output = false;
-		global $dy_is_request_valid;
+		$which_var = 'validate_request';
+		global $$which_var;
 		
-		if(isset($dy_is_request_valid))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
-			if(self::contact_details())
+			if(self::validate_contact_details())
 			{
 				if(isset($_POST['booking_date']))
 				{
 					if(self::is_date($_POST['booking_date']))
 					{
-						if(self::booking_details())
+						if(self::validate_booking_details())
 						{
 							$output = true;
 						}
@@ -205,25 +189,23 @@ class dy_validators
 						$output = true;
 					}
 				}
-				
-				if($output)
-				{
-					$GLOBALS['dy_is_request_valid'] = $output;
-				}
-			}		
+			}
+
+			$GLOBALS[$which_var] = $output;	
 		}
 		return $output;
 	}
 	
-	public static function contact_details()
+	public static function validate_contact_details()
 	{
 		$output = false;
 		$invalids = array();
-		global $dy_contact_details;
+		$which_var = 'validate_contact_details';
+		global $$which_var;
 		
-		if(isset($dy_contact_details))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -239,7 +221,7 @@ class dy_validators
 					{
 						$invalids[] = __('Invalid repeated email.', 'dynamicpackages');
 					}
-					if($_POST['email'] != $_POST['repeat_email'])
+					if($_POST['email'] !== $_POST['repeat_email'])
 					{
 						$invalids[] = __('Email and repeated email are not equal.', 'dynamicpackages');
 					}
@@ -261,20 +243,20 @@ class dy_validators
 					$invalids[] = __('Invalid Request.', 'dynamicpackages');
 				}				
 			}
-		}
-		
-		if(is_array($invalids))
-		{
+
 			if(count($invalids) === 0)
 			{
 				$output = true;
-				$GLOBALS['dy_contact_details'] = $output;						
 			}
 			else
 			{
 				$GLOBALS['dy_request_invalids'] = $invalids;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+		
+
 		
 		return $output;
 	}
@@ -338,7 +320,7 @@ class dy_validators
 
 					if(in_array('invalid-input-response', $verify_response['error-codes']))
 					{
-						self::cloudflare_ban_ip_address($debug_output['ip']);
+						dy_utilities::cloudflare_ban_ip_address($debug_output['ip']);
 					}
 
 					write_log(json_encode($debug_output));
@@ -350,78 +332,105 @@ class dy_validators
 	public static function validate_checkout($gateway_name)
 	{
 		$output = false;
+		$which_var = 'validate_checkout';
+		global $$which_var;
 
-		if(isset($_POST['dy_request']) && self::contact_details() && self::booking_details())
+		if($$which_var)
 		{
-			if($gateway_name == $_POST['dy_request'] && self::credit_card() && self::validate_terms_conditions($_POST))
+			$output = $$which_var;
+		}
+		else
+		{
+			if(isset($_POST['dy_request']) && self::validate_contact_details() && self::validate_booking_details())
 			{
-				$output = true;
+				if($gateway_name == $_POST['dy_request'] && self::validate_card() && self::validate_terms_conditions($_POST))
+				{
+					$output = true;
+				}
 			}
-		}	
-		
+
+			$GLOBALS[$which_var] = $output;
+		}
+
 		return $output;
 	}
 	
 	public static function validate_terms_conditions($fields)
 	{
 		$output = true;
-				
-		if(is_array($fields))
+		$which_var = 'validate_terms_conditions';
+		global $$which_var;
+		
+		if(isset($$which_var))
 		{
-			if(count($fields) > 0)
+			$output = $$which_var;
+		}
+		else
+		{
+			if(is_array($fields))
 			{
-				foreach($fields as $k => $v)
+				if(count($fields) > 0)
 				{
-					$string = 'terms_conditions_';
-					$string_length = strlen($string);
-					
-					if(substr($k, 0, $string_length) === $string)
+					foreach($fields as $k => $v)
 					{
-						if($v != 'true')
+						$string = 'terms_conditions_';
+						$string_length = strlen($string);
+						
+						if(substr($k, 0, $string_length) === $string)
 						{
-							$output = false;
+							if($v !== 'true' || $v !== true)
+							{
+								$output = false;
+							}
 						}
 					}
 				}
 			}
-		}
-		
-		if($output === false)
-		{
-			$GLOBALS['dy_request_invalids'] = array(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
+			
+			if($output === false)
+			{
+				$GLOBALS['dy_request_invalids'] = array(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
 	}
 	
-	public static function booking_details()
+	public static function validate_booking_details()
 	{
 		$output = false;
-		global $booking_details;
+		$which_var = 'validate_booking_details';
+		global $$which_var;
 		
-		if(isset($booking_details))
+		
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
 			if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']))
 			{	
 				$output = true;
-				$GLOBALS['booking_details'] = $output;
-			}	
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;		
 	}
-	public static function credit_card()
+	public static function validate_card()
 	{
 		$invalids = array();
 		$output = false;
-		global $credit_card;
+		$which_var = 'validate_card';
+		global $$which_var;
 		
-		if(isset($credit_card))
+		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -462,21 +471,24 @@ class dy_validators
 				{
 					$invalids[] = __('Invalid address.', 'dynamicpackages');
 				}
-			}		
+			}
+			
+			if(is_array($invalids))
+			{
+				if(count($invalids) === 0)
+				{
+					$output = true;			
+				}
+				else
+				{
+					$GLOBALS['dy_request_invalids'] = $invalids;
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
-		if(is_array($invalids))
-		{
-			if(count($invalids) === 0)
-			{
-				$output = true;
-				$GLOBALS['credit_card'] = $output;				
-			}
-			else
-			{
-				$GLOBALS['dy_request_invalids'] = $invalids;
-			}
-		}
+
 		
 		return $output;
 	}
@@ -485,11 +497,12 @@ class dy_validators
 	public static function validate_hash()
 	{
 		$output = false;
-		global $validate_hash;
+		$which_var = 'validate_hash';
+		global $$which_var;
 		
-		if(isset($validate_hash))
+		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -500,21 +513,24 @@ class dy_validators
 				if($hash == $_GET['hash'])
 				{
 					$output = true;
-					$GLOBALS['validate_hash'] = $output;
 				}				
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	
 	public static function has_coupon()
 	{
 		$output = false;
-		global $has_coupon;
+		$which_var = 'has_coupon';
+		global $$which_var;
 		
-		if(isset($has_coupon))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -530,15 +546,16 @@ class dy_validators
 						{
 							$coupons = $coupons['coupons'][0];
 							
-							if($coupons[0] != '' && $coupons[1] != '')
+							if(($coupons[0] !== '' && $coupons[1] !== '') || ($coupons[0] !== true && $coupons[1] !== true))
 							{
 								$output = true;
-								$GLOBALS['has_coupon'] = $output;
 							}						
 						}
 					}					
 				}
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -547,28 +564,40 @@ class dy_validators
 	{
 		$output = false;
 		$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
+		$which_var = strval($str).'_is_date';
+		global $$which_var;
 		
-		if(preg_match($regex, $str))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
+		}
+		else
+		{
+			if(preg_match($regex, $str))
+			{
+				$output = true;
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
 	}
-	public static function valid_coupon()
+	public static function validate_coupon()
 	{
 		$output = false;
-		global $valid_coupon;
+		$which_var = 'validate_coupon';
+		global $$which_var;
 		
-		if(isset($valid_coupon))
+		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
 			if(self::has_coupon() && isset($_REQUEST['booking_coupon']))
 			{
-				if($_REQUEST['booking_coupon'] != '')
+				if($_REQUEST['booking_coupon'] !== '')
 				{
 					$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
 					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
@@ -652,18 +681,20 @@ class dy_validators
 					}				
 				}
 				
-				if($output)
-				{
-					$GLOBALS['valid_coupon'] = $output;
-				}
+				$GLOBALS[$which_var] = $output;
 			}
 		}
+
 		return $output;
 	}
 	
 	
 	public static function validate_category_location()
 	{
+		
+		$which_var = 'validate_category_location';
+		global $$which_var;
+		$output = false;
 		$package_location = '';
 		$package_category = '';
 		$location = '';
@@ -671,71 +702,85 @@ class dy_validators
 		$sort_by = '';
 		$search = '';
 		
-
-		if(isset($_GET['package_location']))
+		if(isset($$which_var))
 		{
-			$package_location = sanitize_text_field($_GET['package_location']);
-			
-			if($package_location != '')
-			{
-				$location = get_term_by('slug', $package_location, 'package_location');
-			}
+			$output = $$which_var;
 		}
-		
-		if(isset($_GET['package_category']))
+		else
 		{
-			$package_category = sanitize_text_field($_GET['package_category']);
-			
-			if($package_category != '')
+			if(isset($_GET['package_location']))
 			{
-				$category = get_term_by('slug', $package_category, 'package_category');
-			}				
-		}
-		if(isset($_GET['package_sort']))
-		{
-			if($_GET['package_sort'] == 'new' || $_GET['package_sort'] == 'low' || $_GET['package_sort'] == 'high' || $_GET['package_sort'] == 'today' || $_GET['package_sort'] == 'tomorrow' || $_GET['package_sort'] == 'week' || $_GET['package_sort'] == 'month')
-			{
-				$sort_by = true;
-			}
-		}	
-
-		if(isset($_GET['package_search']))
-		{
-			if($_GET['package_search'] != '')
-			{
-				$search = true;
-			}
-		}
+				$package_location = sanitize_text_field($_GET['package_location']);
 				
-		
-
-		if($location != '' || $category != '' || $sort_by != '' || $search != '')
-		{
-			remove_action('wp_head', 'rel_canonical');
-			return true;
-		}
+				if($package_location !== '')
+				{
+					$location = get_term_by('slug', $package_location, 'package_location');
+				}
+			}
 			
+			if(isset($_GET['package_category']))
+			{
+				$package_category = sanitize_text_field($_GET['package_category']);
+				
+				if($package_category !== '')
+				{
+					$category = get_term_by('slug', $package_category, 'package_category');
+				}				
+			}
+			if(isset($_GET['package_sort']))
+			{
+				$package_arr = array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
+				$package_sort = sanitize_text_field($_GET['package_sort']);
+
+				if(in_array($package_sort, $package_arr))
+				{
+					$sort_by = true;
+				}
+			}	
+
+			if(isset($_GET['package_search']))
+			{
+				if($_GET['package_search'] !== '')
+				{
+					$search = true;
+				}
+			}
+					
+
+			if($location !== '' || $category !== '' || $sort_by !== '' || $search !== '')
+			{
+				remove_action('wp_head', 'rel_canonical');
+				$output = true;
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+		
+		return $output;
 	}	
 	
 	public static function has_deposit()
 	{
 		$output = false;
-		global $dy_has_deposit;
+		$which_var = 'has_deposit';
+		global $$which_var;
 		
-		if($dy_has_deposit)
+		if($$which_var)
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
 			if(package_field('package_auto_booking'))
 			{
-				if(package_field( 'package_payment' ) == 1 && package_field('package_deposit') > 0 && dy_utilities::total() > 0)
+				if(package_field('package_payment') == 1 && package_field('package_deposit') > 0 && dy_utilities::total() > 0)
 				{
 					$output = true;
-					$GLOBALS['dy_has_deposit'] = $output;
 				}			
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -745,60 +790,68 @@ class dy_validators
 	{
 		$output = false;
 		global $post;
-		global $dy_is_child;
-				
-		if(isset($dy_is_child))
+
+		if(isset($post))
 		{
-			$output = true;
-		}
-		else
-		{
-			if(isset($post))
+			$which_var = $post->ID.'_is_child';
+			global $$which_var;
+
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else
 			{
 				if(property_exists($post, 'post_parent'))
 				{
 					if($post->post_parent > 0)
 					{
 						$output = true;
-						$GLOBALS['dy_is_child'] = $output;
 					}					
 				}
+
+				$GLOBALS[$which_var] = $output;
 			}
 		}
+
 		
 		return $output;
 	}
 	public static function has_children() {
 		
-		
 		$output = false;
-		$name = 'dy_has_children';
-		$the_id = get_the_ID();
-		$which_var = $name.'_'.$the_id;
-		global $$which_var;	
-		
-		if(isset($$which_var))
+		global $post;
+
+		if(isset($post))
 		{
-			$output = $$which_var;
+			$which_var = $post->ID.'_has_children';
+			global $$which_var;	
+			
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else
+			{
+				$args = array(
+					'post_type' => 'packages',
+					'post_parent' => $post->ID
+				);
+				
+				$children = get_posts($args);
+				
+				if(is_array($children))
+				{
+					if(count($children) > 0)
+					{
+						$output = $children;
+					}
+				}
+				
+				$GLOBALS[$which_var] = $output;
+			}
 		}
-		else
-		{
-			$args = array(
-				'post_type'      => 'packages',
-				'post_parent'    => $the_id
-			 );
-			 
-			 $children = get_posts($args);
-			 
-			 if(is_array($children))
-			 {
-				 if(count($children) > 0)
-				 {
-					 $output = $children;
-					 $GLOBALS[$which_var] = $output;
-				 }
-			 }		
-		}
+
 		
 		return $output;
 	}
@@ -806,90 +859,21 @@ class dy_validators
 	public static function is_parent_with_no_child()
 	{
 		$output = false;
-		global $dy_is_parent_with_no_child;
+		$which_var = 'is_parent_with_no_child';
+		global $$which_var;
 		
-		if(isset($dy_is_parent_with_no_child))
+		if(isset($$which_var))
 		{
-			$output = $dy_is_parent_with_no_child;
+			$output = $$which_var;
 		}
 		else
 		{
 			if(!self::has_children() && !self::is_child())
 			{
 				$output = true;
-				$GLOBALS['dy_is_parent_with_no_child'] = $output;
-			}			
-		}
-		
-		return $output;
-	}
-	
-	public static function event()
-	{
-		$output = array();
-		global $dy_event;
-		
-		if(isset($dy_event))
-		{
-			$output = $dy_event;
-		}
-		else
-		{		
-			$package_start_address = package_field('package_start_address');
-			$package_start_hour = package_field('package_start_hour');
-			
-			if($package_start_address != '' && $package_start_hour != '')
-			{
-				$package_event_date = package_field('package_event_date');
-				
-				if($package_event_date != '')
-				{
-					$today = strtotime(dy_date('Y-m-d'));
-					$event_date = strtotime(dy_date($package_event_date));
-					
-					if($event_date > $today)
-					{
-						array_push($output, $event_date);
-					}
-				}
-				else
-				{
-					$from = package_field('package_booking_from');
-					$to = package_field('package_booking_to');
-					
-					if(intval($from) > 0 && intval($to) > 0)
-					{
-						$new_range = array();
-						$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
-						$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
-						$range = dy_utilities::get_date_range($today, $last_day);
-						$disabled_range = dy_utilities::get_disabled_range();
-						$week_days = dy_utilities::get_week_days_list();				
-						
-						for($x = 0; $x < count($range); $x++)
-						{
-							if(!in_array($range[$x], $disabled_range))
-							{
-								$day = dy_date('N', dy_strtotime($range[$x]));
-								
-								if(!in_array($day, $week_days))
-								{
-									array_push($new_range, $range[$x]);
-								}
-							}
-						}
-						
-						if(is_array($new_range))
-						{
-							if(count($new_range) > 0)
-							{
-								$output = $new_range;
-								$GLOBALS['dy_event'] = $output;
-							}
-						}
-					}
-				}
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -905,8 +889,7 @@ class dy_validators
 			$the_id = get_the_ID();
 		}
 
-		$name = 'dy_is_valid_schema';
-		$which_var = $name.'_'.$the_id;
+		$which_var = $the_id.'_is_valid_schema';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -942,7 +925,10 @@ class dy_validators
 	
 	public static function american_express_check($number)
 	{
-		if(substr($number, 0, 2 ) === '34' || substr($number, 0, 2 ) === '37' && strlen($number) === 15)
+
+		$first2Char = substr($number, 0, 2 );
+
+		if($first2Char === '34' || $first2Char === '37' && strlen($number) === 15)
 		{
 			return true;
 		}
@@ -982,22 +968,57 @@ class dy_validators
 	public static function is_package_single_day()
 	{
 		$output = false;
-		
-		if(package_field( 'package_package_type' ) == 0)
+		global $post;
+
+		if(isset($post))
 		{
-			$output = true;
+
+			$which_var = $post->ID.'_is_package_single_day';
+			global $$which_var;
+
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else {
+
+				if(package_field('package_package_type') == 0)
+				{
+					$output = true;
+				}
+				
+				$GLOBALS[$which_var] = $output;
+			}
+
 		}
-		
+
 		return $output;		
 	}
 	
 	public static function is_package_transport()
 	{
 		$output = false;
-		
-		if(package_field( 'package_package_type' ) == 4)
+		global $post;
+
+		if(isset($post))
 		{
-			$output = true;
+			$which_var = $post->ID.'_is_package_transport';
+			global $$which_var;
+
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else {
+				
+				if(package_field('package_package_type') == 4)
+				{
+					$output = true;
+				}
+				
+				$GLOBALS[$which_var] = $output;
+			}
+
 		}
 		
 		return $output;

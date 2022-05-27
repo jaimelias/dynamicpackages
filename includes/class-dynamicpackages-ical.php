@@ -1,28 +1,30 @@
 <?php 
 
 
-class dy_Ical
+class Dynamic_Packages_Ical
 {
 	function __construct()
 	{
-			add_action('wp', array('dy_Ical', 'export'), 2);
+			$this->name = 'dy_ical';
+			add_action('wp', array(&$this, 'export'), 2);
 	}
 	
-	public static function is_valid()
+	public function is_valid()
 	{
-		global $ical_valid;
 		$output = false;
+		$which_var = $this->name.'_is_valid';
+		global $$which_var;
 		
-		if(isset($ical_valid))
+		if(isset($$which_var))
 		{
-			return $ical_valid;
+			return $$which_var;
 		}
 		else
 		{
 			if(isset($_GET['ical']) && is_singular('packages') && package_field('package_start_hour') != '')
 			{
 				$output = true;
-				$GLOBALS['ical_valid'] = $output;
+				$GLOBALS[$which_var] = $output;
 			}
 		}
 		
@@ -30,11 +32,11 @@ class dy_Ical
 	}
 	
 	
-	public static function export()
+	public function export()
 	{
-		if(self::is_valid())
+		if($this->is_valid())
 		{
-			$event = dy_validators::event();
+			$event = apply_filters('dy_event_arr', array());
 			$events = array();
 			$event_max = count($event);
 			
@@ -57,9 +59,9 @@ class dy_Ical
 				}
 				
 				$event_item['UID'] = esc_html(strtoupper(uniqid()));
-				$event_item['DTSTART'] = esc_html(self::start($event[$x]));
-				$event_item['DTEND'] = esc_html(self::end($event[$x]));
-				$event_item['DTSTAMP'] = esc_html(dy_date(self::date_format()), strtotime(get_the_date()));
+				$event_item['DTSTART'] = esc_html($this->start($event[$x]));
+				$event_item['DTEND'] = esc_html($this->end($event[$x]));
+				$event_item['DTSTAMP'] = esc_html(dy_date($this->date_format()), strtotime(get_the_date()));
 				$event_item['TRANSP'] = 'TRANSPARENT';
 				
 				if(package_field('package_start_address'))
@@ -77,11 +79,11 @@ class dy_Ical
 				array_push($events, $event_item);
 			}
 			header('Content-type: text/calendar');
-			die(self::calendar($events));
+			die($this->calendar($events));
 		}
 	}
 	
-	public static function calendar($events)
+	public function calendar($events)
 	{
 		$output = "BEGIN:VCALENDAR\r\n";
 		$output .= "VERSION:2.0\r\n";
@@ -120,13 +122,13 @@ class dy_Ical
 		return $output;
 	}
 	
-	public static function start($date)
+	public function start($date)
 	{
 		$hour = package_field('package_start_hour');
-		return date(self::date_format(), strtotime($date.' '.$hour));
+		return date($this->date_format(), strtotime($date.' '.$hour));
 	}
 	
-	public static function end($date)
+	public function end($date)
 	{		
 		$duration = intval(package_field('package_duration'));
 		$unit = package_field('package_length_unit');
@@ -149,10 +151,10 @@ class dy_Ical
 			$output = strtotime("+ {$duration} days", strtotime($event_date));
 		}		
 		
-		return date(self::date_format(), $output);
+		return date($this->date_format(), $output);
 	}	
 	
-	public static function get_from_to_range()
+	public function get_from_to_range()
 	{
 		if(package_field('package_event_date') != '')
 		{
@@ -164,7 +166,7 @@ class dy_Ical
 			$last_day = strtotime("+365 days", dy_strtotime('today'));
 			$from = package_field('package_booking_from');
 			$to = package_field('package_booking_to');
-			$week_days = self::get_week_days_list();
+			$week_days = $this->get_week_days_list();
 			
 			if(intval($from) > 0)
 			{
@@ -179,9 +181,9 @@ class dy_Ical
 			$last_day = date('Y-m-d', $last_day);
 			
 			$new_range = array();
-			$range = self::get_date_range($today, $last_day);
+			$range = $this->get_date_range($today, $last_day);
 					
-			$disabled_range = self::get_disabled_range();
+			$disabled_range = $this->get_disabled_range();
 			
 			for($x = 0; $x < count($range); $x++)
 			{
@@ -198,7 +200,7 @@ class dy_Ical
 		}
 		return $new_range;
 	}
-	public static function get_disabled_range()
+	public function get_disabled_range()
 	{
 		$output = array();
 		$disabled = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
@@ -211,13 +213,13 @@ class dy_Ical
 			{
 				$from = $disabled_dates[$x][0];
 				$to = $disabled_dates[$x][1];
-				array_push($output, self::get_date_range($from, $to));
+				array_push($output, $this->get_date_range($from, $to));
 			}
 		}
 		
-		return self::arrayFlatten($output);
+		return $this->arrayFlatten($output);
 	}	
-	public static function get_date_range($from, $to)
+	public function get_date_range($from, $to)
 	{
 		$output = array();
 		$from = new DateTime($from);
@@ -233,7 +235,7 @@ class dy_Ical
 		
 		return $output;
 	}	
-	public static function get_week_days_list()
+	public function get_week_days_list()
 	{
 		$output = array();
 		$days = array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
@@ -247,7 +249,7 @@ class dy_Ical
 		}
 		return $output;
 	}
-	public static function arrayFlatten($array) { 
+	public function arrayFlatten($array) { 
 		$output = array();
 		
 		for($x = 0; $x < count($array); $x++)
@@ -260,7 +262,7 @@ class dy_Ical
 		return array_unique($output);
 	}
 
-	public static function date_format()
+	public function date_format()
 	{
 		return 'Ymd\THis';
 	}

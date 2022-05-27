@@ -181,7 +181,7 @@ class dy_Gateways
 	{
 		if(is_singular('packages') && package_field('package_auto_booking') > 0)
 		{	
-			if(is_booking_page() && dy_validators::valid_coupon())
+			if(is_booking_page() && dy_validators::validate_coupon())
 			{
 				$coupon = ucwords(strtolower(sanitize_text_field($_GET['booking_coupon'])));
 				
@@ -288,7 +288,7 @@ class dy_Gateways
 		$booking_coupon = null;
 		$coupon_discount = null;
 		
-		if(dy_validators::valid_coupon())
+		if(dy_validators::validate_coupon())
 		{
 			$booking_coupon = dy_utilities::get_coupon('code');
 			$coupon_discount = dy_utilities::get_coupon('discount');
@@ -512,7 +512,7 @@ class dy_Gateways
 		{
 			if($_GET['booking_coupon'] != '')
 			{
-				if(dy_validators::valid_coupon())
+				if(dy_validators::validate_coupon())
 				{
 					$expiration = dy_utilities::get_coupon('expiration');
 					

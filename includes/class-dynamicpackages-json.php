@@ -78,7 +78,7 @@ class dy_Json
 				if(dy_validators::is_valid_schema())
 				{
 					global $post;
-					$event = dy_validators::event();
+					$event = apply_filters('dy_event_arr', array());
 					
 					//offers
 					$offers = array();

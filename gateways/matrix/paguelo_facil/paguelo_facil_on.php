@@ -129,7 +129,7 @@ class paguelo_facil_on{
 	{
 		global $dy_valid_recaptcha;
 		
-		if(dy_validators::is_request_valid() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($this->success))
+		if(dy_validators::validate_request() && $this->is_valid_request() && isset($dy_valid_recaptcha) && isset($this->success))
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
@@ -332,7 +332,7 @@ class paguelo_facil_on{
 		global $dy_valid_recaptcha;
 		
 		
-		if(isset($this->success) && in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
+		if(isset($this->success) && in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
 		{
 			if(isset($dy_valid_recaptcha))
 			{
@@ -389,7 +389,7 @@ class paguelo_facil_on{
 	{
 		
 		
-		if(isset($this->success) && in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
+		if(isset($this->success) && in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
 		{
 			if($this->success === 2)
 			{
@@ -635,7 +635,7 @@ class paguelo_facil_on{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::validate_request())
 		{			
 			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

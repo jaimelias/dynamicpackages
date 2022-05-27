@@ -13,7 +13,6 @@ class dy_Metaboxes
 	}
 	public function package_add_meta_box() {
 		
-		
 		add_meta_box(
 			'package-a',
 			__( 'Description', 'dynamicpackages' ),

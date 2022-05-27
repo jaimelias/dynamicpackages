@@ -35,6 +35,7 @@ class dy_Public {
 		add_action('dy_package_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
 		add_filter('minimal_description', array(&$this, 'meta_description'));
+		add_filter('dy_event_arr', array(&$this, 'event_arr'));
 	}
 
 	public function create_alert($row) {
@@ -2217,5 +2218,78 @@ class dy_Public {
 		}
 		
 		return $description;
+	}
+
+	public function event_arr()
+	{
+		$output = array();
+		$which_var = 'event_arr';
+		global $$which_var;
+		
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{		
+			$package_start_address = package_field('package_start_address');
+			$package_start_hour = package_field('package_start_hour');
+			
+			if($package_start_address !== '' && $package_start_hour !== '')
+			{
+				$package_event_date = package_field('package_event_date');
+				
+				if($package_event_date !== '')
+				{
+					$today = strtotime(dy_date('Y-m-d'));
+					$event_date = strtotime(dy_date($package_event_date));
+					
+					if($event_date > $today)
+					{
+						array_push($output, $event_date);
+					}
+				}
+				else
+				{
+					$from = package_field('package_booking_from');
+					$to = package_field('package_booking_to');
+					
+					if(intval($from) > 0 && intval($to) > 0)
+					{
+						$new_range = array();
+						$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
+						$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
+						$range = dy_utilities::get_date_range($today, $last_day);
+						$disabled_range = dy_utilities::get_disabled_range();
+						$week_days = dy_utilities::get_week_days_list();				
+						
+						for($x = 0; $x < count($range); $x++)
+						{
+							if(!in_array($range[$x], $disabled_range))
+							{
+								$day = dy_date('N', dy_strtotime($range[$x]));
+								
+								if(!in_array($day, $week_days))
+								{
+									array_push($new_range, $range[$x]);
+								}
+							}
+						}
+						
+						if(is_array($new_range))
+						{
+							if(count($new_range) > 0)
+							{
+								$output = $new_range;
+							}
+						}
+					}
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+		
+		return $output;
 	}
 }

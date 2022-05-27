@@ -42,7 +42,7 @@ class nequi_direct{
 
 	public function send_data()
 	{		
-		if(dy_validators::is_request_valid() && $this->is_valid_request())
+		if(dy_validators::validate_request() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -137,7 +137,7 @@ class nequi_direct{
 
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
 
@@ -150,7 +150,7 @@ class nequi_direct{
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dy_validators::is_request_valid() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
 		{
 			$title = esc_html(__('Thank you for using Nequi', 'dynamicpackages'));
 		}
@@ -364,7 +364,7 @@ class nequi_direct{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::is_request_valid())
+		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::validate_request())
 		{
 			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{
