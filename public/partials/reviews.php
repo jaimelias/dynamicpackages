@@ -1,27 +1,27 @@
 <?php 
 
-class dy_Reviews
+class Dynamic_Packages_Reviews
 {
 	function __construct()
 	{
-		add_shortcode('package_reviews', array('dy_Reviews', 'print_total_reviews'));
-		add_action('comment_form_logged_in_after', array('dy_Reviews', 'field'));
-		add_action('comment_form_after_fields', array('dy_Reviews', 'field'));
-		add_action('comment_post', array('dy_Reviews', 'save_comment'), 10);
-		add_action('edit_comment', array('dy_Reviews', 'edit_comment'), 10);
-		add_filter('preprocess_comment', array('dy_Reviews', 'require_comment'));
-		add_action('admin_init', array('dy_Reviews', 'run'));
-		add_filter('comments_template', array('dy_Reviews', 'template'));
-		add_filter('comment_reply_link', array('dy_Reviews', 'reply_link'));
-		add_filter('wp_list_comments_args', array('dy_Reviews', 'add_callback'));
-		add_filter('comments_array', array('dy_Reviews', 'ppl_merge_comments'), 10, 2);
-		add_filter('comments_array', array('dy_Reviews', 'order_by_date'), 200, 2);
-		add_filter('get_comments_number', array('dy_Reviews', 'ppl_merge_comment_count'), 100, 2);
-		add_action('wp', array('dy_Reviews', 'ppl_remove_comments_filter'));
-		add_filter('comment_form_defaults', array('dy_Reviews', 'comment_defaults'));
-		add_action( 'wp_enqueue_scripts', array('dy_Reviews', 'dashicons'));
-		add_action('wp_head', array('dy_Reviews', 'css'));
-		add_filter('minimal_ld_json', array('dy_Reviews', 'add_reviews'), 10);
+		add_shortcode('package_reviews', array('Dynamic_Packages_Reviews', 'print_total_reviews'));
+		add_action('comment_form_logged_in_after', array('Dynamic_Packages_Reviews', 'field'));
+		add_action('comment_form_after_fields', array('Dynamic_Packages_Reviews', 'field'));
+		add_action('comment_post', array('Dynamic_Packages_Reviews', 'save_comment'), 10);
+		add_action('edit_comment', array('Dynamic_Packages_Reviews', 'edit_comment'), 10);
+		add_filter('preprocess_comment', array('Dynamic_Packages_Reviews', 'require_comment'));
+		add_action('admin_init', array('Dynamic_Packages_Reviews', 'run'));
+		add_filter('comments_template', array('Dynamic_Packages_Reviews', 'template'));
+		add_filter('comment_reply_link', array('Dynamic_Packages_Reviews', 'reply_link'));
+		add_filter('wp_list_comments_args', array('Dynamic_Packages_Reviews', 'add_callback'));
+		add_filter('comments_array', array('Dynamic_Packages_Reviews', 'ppl_merge_comments'), 10, 2);
+		add_filter('comments_array', array('Dynamic_Packages_Reviews', 'order_by_date'), 200, 2);
+		add_filter('get_comments_number', array('Dynamic_Packages_Reviews', 'ppl_merge_comment_count'), 100, 2);
+		add_action('wp', array('Dynamic_Packages_Reviews', 'ppl_remove_comments_filter'));
+		add_filter('comment_form_defaults', array('Dynamic_Packages_Reviews', 'comment_defaults'));
+		add_action( 'wp_enqueue_scripts', array('Dynamic_Packages_Reviews', 'dashicons'));
+		add_action('wp_head', array('Dynamic_Packages_Reviews', 'css'));
+		add_filter('minimal_ld_json', array('Dynamic_Packages_Reviews', 'add_reviews'), 10);
 	}
 	
 	public static function dashicons()
@@ -77,7 +77,7 @@ class dy_Reviews
 	
 	public static function run()
 	{
-		add_meta_box('dy_rating', __('Dynamic Packages'), array('dy_Reviews', 'field'), 'comment', 'normal');
+		add_meta_box('dy_rating', __('Dynamic Packages'), array('Dynamic_Packages_Reviews', 'field'), 'comment', 'normal');
 	}
 	
 	public static function field($field) {
@@ -234,7 +234,7 @@ class dy_Reviews
 	{
 		if(has_package())
 		{
-			$args['callback'] = array('dy_Reviews', 'review_callback');
+			$args['callback'] = array('Dynamic_Packages_Reviews', 'review_callback');
 		}
 		return $args;
 	}
@@ -375,7 +375,7 @@ class dy_Reviews
 			}
 			
 			if ( count($translationIds) >1 ) {
-				usort($comments, array('dy_Reviews', 'ppl_sort_merged_comments'));
+				usort($comments, array('Dynamic_Packages_Reviews', 'ppl_sort_merged_comments'));
 			}
 		}
 		return $comments;

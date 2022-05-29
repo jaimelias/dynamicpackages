@@ -2,7 +2,7 @@
 	<div id="dy_reviews">
 		<h3>
 			<?php
-				echo dy_Reviews::wp_star_rating(dy_Reviews::get_rating(get_the_ID())).' '.__('Rated', 'dynamicpackages').' <span>'.esc_html(dy_Reviews::get_rating(get_the_ID())).'</span>';
+				echo Dynamic_Packages_Reviews::wp_star_rating(Dynamic_Packages_Reviews::get_rating(get_the_ID())).' '.__('Rated', 'dynamicpackages').' <span>'.esc_html(Dynamic_Packages_Reviews::get_rating(get_the_ID())).'</span>';
 				echo ' '.__('Based on', 'dynamicpackages').' <span>'.esc_html(get_comments_number()).'</span> '.esc_html(__('Review(s)', 'dynamicpackages'));
 			?>
 		</h3>

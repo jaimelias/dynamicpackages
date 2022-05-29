@@ -258,7 +258,7 @@ else
 		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>		
 
 		<?php
-			dy_Public::event_date_update($post->ID);
+			Dynamic_Packages_Public::event_date_update($post->ID);
 			$package_code = package_field( 'package_trip_code' );
 		?>
 
@@ -278,8 +278,8 @@ else
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
 								<a title="<?php esc_html_e($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
-								<?php dy_Public::show_event_date(); ?>
-								<?php dy_Public::show_badge(); ?>
+								<?php Dynamic_Packages_Public::show_event_date(); ?>
+								<?php Dynamic_Packages_Public::show_badge(); ?>
 							</div>
 							<?php endif;?>
 						</div>	
@@ -296,12 +296,12 @@ else
 							
 							
 							<div class="dy_reviews small bottom-10">
-							<?php dy_Reviews::stars($post->ID); ?>
+							<?php Dynamic_Packages_Reviews::stars($post->ID); ?>
 							</div>
 
 							<?php if(!dy_validators::is_package_transport()) : ?>
 								<div class="dy_pad bottom-10 semibold">
-									<?php esc_html_e(dy_Public::show_duration(true)); ?>
+									<?php esc_html_e(Dynamic_Packages_Public::show_duration(true)); ?>
 								</div>
 							<?php endif; ?>
 
@@ -320,7 +320,7 @@ else
 									<meta itemprop="priceValidUntil" content="<?php esc_html_e(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php esc_html_e(dy_utilities::currency_name()); ?>" />
 									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php esc_html_e(dy_utilities::starting_at_archive());?>"><?php esc_html_e(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
-									</span> <small class="text-muted"> <?php esc_html_e(dy_Public::price_type());?></small>
+									</span> <small class="text-muted"> <?php esc_html_e(Dynamic_Packages_Public::price_type());?></small>
 								</div>
 							<?php endif;?>
 												

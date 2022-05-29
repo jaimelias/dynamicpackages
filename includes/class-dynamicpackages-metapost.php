@@ -105,7 +105,7 @@ class dy_Metapost{
 			}
 			else
 			{
-				dy_Public::event_date_update($post_id);
+				Dynamic_Packages_Public::event_date_update($post_id);
 			}
 			
 		}

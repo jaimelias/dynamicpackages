@@ -1,7 +1,7 @@
 <?php
 
 
-class dy_Public {
+class Dynamic_Packages_Public {
 
 
 	private $plugin_name;
@@ -15,22 +15,22 @@ class dy_Public {
 	public function init()
 	{
 		add_action('wp_headers', array(&$this, 'request_invalids'));
-		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array('dy_Public', 'enqueue_scripts'), 11);
-		add_action('pre_get_posts', array('dy_Public', 'global_vars'));
-		add_filter('template_include', array('dy_Public', 'package_template'), 99);
-		add_filter('the_content', array('dy_Public', 'the_content'), 100);
-		add_filter('pre_get_document_title', array('dy_Public', 'wp_title'), 100);
-		add_filter('wp_title', array('dy_Public', 'wp_title'), 100);
-		add_filter('the_title', array('dy_Public', 'modify_title'), 100);
-		add_filter('single_term_title', array('dy_Public', 'modify_tax_title'));
-		add_action('pre_get_posts', array('dy_Public', 'fix_multiple_tax'));
-		add_action('wp_head', array('dy_Public', 'booking_head'));
-		add_action('wp_head', array('dy_Public', 'meta_tags'));
-		add_filter('get_the_excerpt', array('dy_Public', 'modify_excerpt'));
-		add_filter('term_description', array('dy_Public', 'modify_term_description'));
-		add_action('wp_head', array('dy_Public', 'location_category_canonical'));
-		add_filter('jetpack_enable_open_graph', array('dy_Public', 'deque_jetpack'));
+		add_action('wp_enqueue_scripts', array('Dynamic_Packages_Public', 'enqueue_styles'));
+		add_action('wp_enqueue_scripts', array('Dynamic_Packages_Public', 'enqueue_scripts'), 11);
+		add_action('pre_get_posts', array('Dynamic_Packages_Public', 'global_vars'));
+		add_filter('template_include', array('Dynamic_Packages_Public', 'package_template'), 99);
+		add_filter('the_content', array('Dynamic_Packages_Public', 'the_content'), 100);
+		add_filter('pre_get_document_title', array('Dynamic_Packages_Public', 'wp_title'), 100);
+		add_filter('wp_title', array('Dynamic_Packages_Public', 'wp_title'), 100);
+		add_filter('the_title', array('Dynamic_Packages_Public', 'modify_title'), 100);
+		add_filter('single_term_title', array('Dynamic_Packages_Public', 'modify_tax_title'));
+		add_action('pre_get_posts', array('Dynamic_Packages_Public', 'fix_multiple_tax'));
+		add_action('wp_head', array('Dynamic_Packages_Public', 'booking_head'));
+		add_action('wp_head', array('Dynamic_Packages_Public', 'meta_tags'));
+		add_filter('get_the_excerpt', array('Dynamic_Packages_Public', 'modify_excerpt'));
+		add_filter('term_description', array('Dynamic_Packages_Public', 'modify_term_description'));
+		add_action('wp_head', array('Dynamic_Packages_Public', 'location_category_canonical'));
+		add_filter('jetpack_enable_open_graph', array('Dynamic_Packages_Public', 'deque_jetpack'));
 		add_filter('dy_package_details', array(&$this, 'details'));
 		add_action('dy_package_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));

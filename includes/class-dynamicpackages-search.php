@@ -1,10 +1,10 @@
 <?php 
 
-class dy_Search {
+class Dynamic_Packages_Search {
 
 	public function __construct()
 	{
-		add_action('pre_get_posts', array('dy_Search', 'pre_get_posts'));
+		add_action('pre_get_posts', array('Dynamic_Packages_Search', 'pre_get_posts'));
 	}
     public static function pre_get_posts( $q ) {
 

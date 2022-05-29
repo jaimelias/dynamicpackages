@@ -119,10 +119,10 @@
 					</tr>
 					<?php endif; ?>
 					
-				<?php if(dy_Public::get_included_list($post)) : ?>	
+				<?php if(Dynamic_Packages_Public::get_included_list($post)) : ?>	
 					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Included', 'dynamicpackages'); ?>:</strong> <?php esc_html_e(dy_utilities::implode_taxo_names('package_included')); ?>.</p></td></tr>
 				<?php endif; ?>
-				<?php if(dy_Public::get_not_included_list($post)) : ?>	
+				<?php if(Dynamic_Packages_Public::get_not_included_list($post)) : ?>	
 					<tr><td colspan="3"><p class="small text-left"><strong><?php echo __('Not Included', 'dynamicpackages'); ?>:</strong> <?php esc_html_e(dy_utilities::implode_taxo_names('package_not_included')); ?>.</p></td></tr>
 				<?php endif; ?>				
 					

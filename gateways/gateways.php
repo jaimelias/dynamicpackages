@@ -1,6 +1,6 @@
 <?php
 
-class dy_Gateways
+class Dynamic_Packages_Gateways
 {
 	function __construct()
 	{
@@ -87,7 +87,7 @@ class dy_Gateways
 					{
 						$content = '<p class="minimal_success strong">'.esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')).'</p>';
 						$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
-						$content .= dy_Public::booking_sidebar();							
+						$content .= Dynamic_Packages_Public::booking_sidebar();							
 					}
 					else
 					{
@@ -205,13 +205,13 @@ class dy_Gateways
 			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
 		
-		$output .= dy_Public::booking_sidebar();	
+		$output .= Dynamic_Packages_Public::booking_sidebar();	
 		echo $output;	
 	}
 	
 	public function terms_conditions()
 	{
-		$terms_conditions = dy_Public::get_terms_conditions();
+		$terms_conditions = Dynamic_Packages_Public::get_terms_conditions();
 		$output = null;
 		
 		if(is_array($terms_conditions))
@@ -308,7 +308,7 @@ class dy_Gateways
 			'booking_hour' => esc_html(dy_utilities::hour()),
 			'end_date' => (isset($_GET['end_date'])) ? $_GET['end_date'] : null,
 			'return_hour' => esc_html(dy_utilities::return_hour()),
-			'duration' => esc_html(dy_Public::show_duration()),
+			'duration' => esc_html(Dynamic_Packages_Public::show_duration()),
 			'pax_num' => intval(dy_utilities::pax_num()),
 			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
 			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
@@ -417,7 +417,7 @@ class dy_Gateways
 	public function accept()
 	{
 		$output = array();
-		$terms = dy_Public::get_terms_conditions();
+		$terms = Dynamic_Packages_Public::get_terms_conditions();
 		
 		if(is_array($terms))
 		{
@@ -543,7 +543,7 @@ class dy_Gateways
 			
 			if($booking_extra < $min_duration)
 			{
-				echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('You have chosen %s %s, but the minimum duration is %s %s.', 'dynamicpackages'), $booking_extra, dy_Public::duration_label($duration_unit, $booking_extra), $min_duration, dy_Public::duration_label($duration_unit, $min_duration))).'</p>';
+				echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('You have chosen %s %s, but the minimum duration is %s %s.', 'dynamicpackages'), $booking_extra, Dynamic_Packages_Public::duration_label($duration_unit, $booking_extra), $min_duration, Dynamic_Packages_Public::duration_label($duration_unit, $min_duration))).'</p>';
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 
-class dy_Shortcodes {
+class Dynamic_Packages_Shortcodes {
 	
 	public function __construct()
 	{
@@ -193,7 +193,7 @@ class dy_Shortcodes {
 				$classes['a'] = $attr['a'];
 			}			
 			
-			$content = dy_Public::get_all_locations($classes);
+			$content = Dynamic_Packages_Public::get_all_locations($classes);
 		}
 		
 		return $content;
@@ -217,7 +217,7 @@ class dy_Shortcodes {
 				$classes['a'] = $attr['a'];
 			}			
 			
-			$content = dy_Public::get_categories($classes);
+			$content = Dynamic_Packages_Public::get_categories($classes);
 		}
 		
 		return $content;

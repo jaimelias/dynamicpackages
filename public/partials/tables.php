@@ -23,7 +23,7 @@ class dynamicpackages_Tables{
 				$max = 1;
 			}				
 		
-			$price_label = __('Prices', 'dynamicpackages').' '.dy_Public::price_type().' (USD)';
+			$price_label = __('Prices', 'dynamicpackages').' '.Dynamic_Packages_Public::price_type().' (USD)';
 			
 			
 			
