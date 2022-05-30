@@ -90,16 +90,18 @@ class cuanto{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
-			if($this->username != '')
+			if($this->username !== '')
 			{
-				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	public function show()
@@ -110,7 +112,7 @@ class cuanto{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -118,11 +120,13 @@ class cuanto{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	public function is_valid_request()
@@ -134,7 +138,7 @@ class cuanto{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -143,9 +147,11 @@ class cuanto{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
-					$GLOBALS[$which_var] = true;	
+	
 				}
-			}		
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -159,7 +165,7 @@ class cuanto{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -200,10 +206,9 @@ class cuanto{
 				}
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 

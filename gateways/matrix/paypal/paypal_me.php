@@ -97,15 +97,16 @@ class paypal_me{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
 			if($this->username != '')
 			{
-				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
@@ -118,7 +119,7 @@ class paypal_me{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -126,10 +127,12 @@ class paypal_me{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
+					
 					$output = true;
 				}
-			}			
+			}		
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
@@ -142,7 +145,7 @@ class paypal_me{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -151,9 +154,11 @@ class paypal_me{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
-					$GLOBALS[$which_var] = true;	
+					
 				}
-			}		
+			}
+			
+			$GLOBALS[$which_var] = $output;	
 		}
 		
 		return $output;
@@ -167,7 +172,7 @@ class paypal_me{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -208,10 +213,10 @@ class paypal_me{
 				}
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
 		}
+
+		
 		return $output;
 	}
 

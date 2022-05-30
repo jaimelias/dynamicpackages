@@ -8,7 +8,6 @@ class usdt{
 	}
 	public function init()
 	{
-		
 		add_action('init', array(&$this, 'args'));
 		
 		if(is_admin())
@@ -134,7 +133,7 @@ class usdt{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -151,10 +150,12 @@ class usdt{
 
 			if($active_networks)
 			{
-				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	public function show()
@@ -166,7 +167,7 @@ class usdt{
 
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -174,11 +175,13 @@ class usdt{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	public function is_valid_request()
@@ -190,7 +193,7 @@ class usdt{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -201,9 +204,10 @@ class usdt{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
 				{
 					$output = true;
-					$GLOBALS[$which_var] = true;	
 				}
-			}		
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -217,7 +221,7 @@ class usdt{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -258,10 +262,10 @@ class usdt{
 				}
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
+
 		}
+		
 		return $output;
 	}
 

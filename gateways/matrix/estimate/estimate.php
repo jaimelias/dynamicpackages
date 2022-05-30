@@ -32,12 +32,12 @@ class estimate_request{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output =  $$which_var;
 		}
 		else
 		{
-			$GLOBALS[$which_var] = true;
 			$output = true;
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
@@ -49,7 +49,7 @@ class estimate_request{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -57,9 +57,10 @@ class estimate_request{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
+
+				$GLOBALS[$which_var] = $output;
 			}			
 		}
 		return $output;
@@ -73,7 +74,7 @@ class estimate_request{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -82,9 +83,11 @@ class estimate_request{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
-					$GLOBALS[$which_var] = true;	
+					
 				}
-			}		
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -98,19 +101,18 @@ class estimate_request{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
-			if($this->is_active() )
+			if($this->is_active())
 			{
 				$output = true;
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	

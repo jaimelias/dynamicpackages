@@ -76,15 +76,16 @@ class bank_transfer{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
-			if($this->number != '')
+			if($this->number !== '')
 			{
-				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
@@ -96,7 +97,7 @@ class bank_transfer{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -104,13 +105,15 @@ class bank_transfer{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
+
 	public function is_valid_request()
 	{
 		$output = false;
@@ -120,7 +123,7 @@ class bank_transfer{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -129,9 +132,11 @@ class bank_transfer{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
-					$GLOBALS[$which_var] = true;	
+					
 				}
-			}		
+			}
+			
+			$GLOBALS[$which_var] = $output;	
 		}
 		
 		return $output;
@@ -205,7 +210,7 @@ class bank_transfer{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -247,10 +252,9 @@ class bank_transfer{
 				}
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 

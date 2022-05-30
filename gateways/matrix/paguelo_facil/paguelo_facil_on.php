@@ -266,16 +266,18 @@ class paguelo_facil_on{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
-			if($this->cclw != '')
+			if($this->cclw !== '')
 			{
-				$GLOBALS[$which_var] = true;
 				$output = true;
 			}
+
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 	public function show()
@@ -286,7 +288,7 @@ class paguelo_facil_on{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -294,10 +296,11 @@ class paguelo_facil_on{
 			{
 				if($this->is_valid())
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
-			}			
+			}
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
 	}
@@ -310,7 +313,7 @@ class paguelo_facil_on{
 		
 		if(isset($$which_var))
 		{
-			$output = true;
+			$output = $$which_var;
 		}
 		else
 		{
@@ -318,10 +321,11 @@ class paguelo_facil_on{
 			{
 				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
 				{
-					$GLOBALS[$which_var] = true;
 					$output = true;
 				}
-			}		
+			}	
+			
+			$GLOBALS[$which_var] = $output;
 		}
 		
 		return $output;
@@ -433,7 +437,7 @@ class paguelo_facil_on{
 		
 		if(isset($$which_var))
 		{
-			return true;
+			return $$which_var;
 		}
 		else
 		{
@@ -473,10 +477,9 @@ class paguelo_facil_on{
 				}
 			}
 			
-			if($output == true){
-				$GLOBALS[$which_var] = true;
-			}
+			$GLOBALS[$which_var] = $output;
 		}
+
 		return $output;
 	}
 
