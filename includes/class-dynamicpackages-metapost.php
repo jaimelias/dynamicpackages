@@ -268,7 +268,7 @@ class dy_Metapost{
 					{
 						if(isset( $_POST['package_confirmation_message_'.$value]))
 						{
-							update_post_meta( $post_id, 'package_confirmation_message_'.$value, esc_attr($_POST['package_confirmation_message_'.$value] ));						
+							update_post_meta( $post_id, 'package_confirmation_message_'.$value, sanitize_textarea_field($_POST['package_confirmation_message_'.$value] ));						
 						}
 						if(isset( $_POST['package_child_title_'.$value]))
 						{
@@ -282,7 +282,7 @@ class dy_Metapost{
 		{
 			if(isset( $_POST['package_confirmation_message']))
 			{
-				update_post_meta( $post_id, 'package_confirmation_message', esc_attr($_POST['package_confirmation_message'] ));					
+				update_post_meta( $post_id, 'package_confirmation_message', sanitize_textarea_field($_POST['package_confirmation_message'] ));					
 			}
 			if(isset( $_POST['package_child_title']))
 			{
