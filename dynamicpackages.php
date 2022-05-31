@@ -81,7 +81,7 @@ function package_field($name, $this_id = null)
 			
 			if(property_exists($post, 'post_parent'))
 			{
-				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_occupancy_day_surcharge_mon', 'package_occupancy_day_surcharge_tue', 'package_occupancy_day_surcharge_wed', 'package_occupancy_day_surcharge_thu', 'package_occupancy_day_surcharge_fri', 'package_occupancy_day_surcharge_sat', 'package_occupancy_day_surcharge_sun');
+				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_week_day_surcharge_mon', 'package_week_day_surcharge_tue', 'package_week_day_surcharge_wed', 'package_week_day_surcharge_thu', 'package_week_day_surcharge_fri', 'package_week_day_surcharge_sat', 'package_week_day_surcharge_sun');
 				
 				if($polylang)
 				{

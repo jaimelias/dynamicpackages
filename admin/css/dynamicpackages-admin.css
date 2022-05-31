@@ -2,17 +2,11 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
-.hot-container
-{
-	width: 100%;
-	overflow: hidden;
-	height: 200px;
-}
 .hot
 {
-	overflow: hidden;
+	overflow-y: scroll;
 	width: 100%;
-	height: 200px;
+	height: 250px;
 	position: relative;
 }
 .width-100

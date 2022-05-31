@@ -43,22 +43,20 @@ class dy_utilities {
 				{
 					$default[] = 'null';
 				}
-
+				
 				$decoded_value = json_decode(html_entity_decode($args['value']), true);
-				
-				
 				$args['value'] = (is_array($decoded_value)) ? $args['value'] : '["'.$args['container'].'":[['.implode(',', $default).']]]';
-				
 				$dropdown = (array_key_exists('dropdown', $args)) ? 'data-sensei-dropdown="'.implode(',', $args['dropdown']).'"' : null;
-				
 				$disabled = (array_key_exists('disabled', $args)) ? $args['disabled'] : null;
 				
 				ob_start();
 				?>
 					<div class="hot-container">
-						<div id="<?php esc_html_e($args['container']); ?>" class="hot" data-sensei-min="<?php esc_html_e($args['min']); ?>" data-sensei-max="<?php esc_html_e($args['max']); ?>" data-sensei-container="<?php esc_html_e($args['container']); ?>" data-sensei-textarea="<?php esc_html_e($args['textarea']); ?>" data-sensei-headers="<?php esc_html_e(implode(',', $args['headers'])); ?>" data-sensei-type="<?php esc_html_e(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php esc_html_e($disabled); ?>"></div>
+						<div id="<?php echo esc_attr($args['container']); ?>" class="hot" data-sensei-min="<?php esc_html_e($args['min']); ?>" data-sensei-max="<?php esc_html_e($args['max']); ?>" data-sensei-container="<?php esc_html_e($args['container']); ?>" data-sensei-textarea="<?php esc_html_e($args['textarea']); ?>" data-sensei-headers="<?php esc_html_e(implode(',', $args['headers'])); ?>" data-sensei-type="<?php esc_html_e(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php esc_html_e($disabled); ?>"></div>
 					</div>
-					<div class="hidden"><textarea name="<?php esc_html_e($args['textarea']); ?>" id="<?php esc_html_e($args['textarea']); ?>"><?php echo esc_attr($args['value']); ?></textarea></div>
+					<div class="hidden">
+						<textarea name="<?php echo esc_attr($args['textarea']); ?>" id="<?php echo esc_attr($args['textarea']); ?>"><?php echo esc_textarea($args['value']); ?></textarea>
+					</div>
 				<?php
 				$output = ob_get_contents();
 				ob_end_clean();
@@ -228,10 +226,9 @@ class dy_utilities {
 		}		
 		else
 		{
-			$price_chart = self::get_price_chart();	
 			$subtotal = 0;
 			$subtotal = floatval(self::get_price_regular($regular, 'total')) + $subtotal;
-			$subtotal = floatval(self::get_price_discount($regular, 'total')) + $subtotal;		
+			$subtotal = floatval(self::get_price_discount($regular, 'total')) + $subtotal;
 			$GLOBALS[$which_var] = $subtotal;
 		}
 		
@@ -658,10 +655,10 @@ class dy_utilities {
 		}
 	}
 	
-	public static function get_range_occupancy_surcharges($days) {
+	public static function get_range_week_day_surcharges($days) {
 		
 		$output = array();
-		$surcharges = self::get_all_occupancy_day_surcharges();
+		$surcharges = self::get_week_day_surcharges();
 		
 		if(is_array($days))
 		{
@@ -688,7 +685,7 @@ class dy_utilities {
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
-			$booking_dates_surcharges = self::get_range_occupancy_surcharges($booking_dates_range);
+			$booking_dates_surcharges = self::get_range_week_day_surcharges($booking_dates_range);
 			$seasons_array = array();
 
 			if(is_array($occupancy_chart) && is_array($seasons) && is_array($occupancy_chart) && is_array($booking_dates_range))
@@ -768,10 +765,11 @@ class dy_utilities {
 		$sum = 0;
 		
 		if(is_booking_page() || is_checkout_page())
-		{			
+		{		
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
 			$pax_regular = (isset($_REQUEST['pax_regular'])) ? floatval(sanitize_text_field($_REQUEST['pax_regular'])) : 0;
+			$package_type = intval(package_field('package_package_type'));
 
 			if(is_array($price_chart))
 			{
@@ -791,7 +789,20 @@ class dy_utilities {
 				if($type == 'total' && $pax_regular > 0)
 				{
 					$sum = $sum * $pax_regular;
-				}				
+				}
+				
+				
+				if(isset($_REQUEST['booking_date']))
+				{
+					if($package_type === 0)
+					{
+						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
+						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
+						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
+						write_log($surcharge_percent);
+						$sum = $sum * $surcharge_percent;
+					}
+				}
 			}
 		}
 		return $sum;
@@ -808,6 +819,7 @@ class dy_utilities {
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
 			$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
+			$package_type = intval(package_field('package_package_type'));
 
 			if(is_array($price_chart))
 			{
@@ -829,7 +841,19 @@ class dy_utilities {
 				if($type == 'total' && $pax_discount > 0)
 				{
 					$sum = $sum * $pax_discount;
-				}				
+				}
+				
+				
+				if(isset($_REQUEST['booking_date']))
+				{
+					if($package_type === 0)
+					{
+						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
+						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
+						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
+						$sum = $sum * $surcharge_percent;
+					}
+				}
 			}
 		}
 		
@@ -838,6 +862,7 @@ class dy_utilities {
 	
 	public static function get_price_calc($sum, $regular, $type)
 	{
+		$package_type = intval(package_field('package_package_type'));
 		$length_unit = package_field('package_length_unit');
 		$occupancy_price = ($length_unit == 2 || $length_unit == 3) ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
@@ -847,13 +872,42 @@ class dy_utilities {
 			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 		}
 
-		if(dy_validators::is_package_transport() && isset($_REQUEST['end_date']))
+		if(dy_validators::is_package_transport() && isset($_REQUEST['booking_date']))
 		{
-			if(strlen($_REQUEST['end_date']) >= 5)
+			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+			$cloneSum = $sum;
+
+			if(dy_validators::is_date($booking_date))
 			{
-				$sum = $sum * 2;
+				$week_days_to_surcharge = array($booking_date);
+
+				if(isset($_REQUEST['end_date']))
+				{
+					$end_date = sanitize_text_field($_REQUEST['end_date']);
+
+					if(dy_validators::is_date($end_date))
+					{
+						$sum = $sum + $cloneSum;
+						$week_days_to_surcharge[] = $end_date;
+					}
+				}
+
+				$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
+
+				if(is_array($surcharges_arr))
+				{
+					if(count($surcharges_arr) > 0)
+					{
+						for($x = 0; $x < count($surcharges_arr); $x++)
+						{
+							$surcharges = (floatval($surcharges_arr[$x]) > 0) ? floatval($surcharges_arr[$x]) : 0;
+							$surcharge_percentage = ($surcharges > 0) ? (($surcharges_arr[$x]/100)*$cloneSum) : 0;
+							$sum += $surcharge_percentage;
+						}
+					}
+				}
 			}
-		}		
+		}
 		
 		if(dy_validators::validate_coupon() && $regular === null)
 		{
@@ -1059,12 +1113,12 @@ class dy_utilities {
 		return array('sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat');
 	}
 	
-	public static function get_all_occupancy_day_surcharges()
+	public static function get_week_day_surcharges()
 	{
 		$days = self::get_week_days_abbr();
 		
 		return array_map(function($day){
-			return intval(package_field('package_occupancy_day_surcharge_' . $day));
+			return intval(package_field('package_week_day_surcharge_' . $day));
 		}, $days);
 	}
 	

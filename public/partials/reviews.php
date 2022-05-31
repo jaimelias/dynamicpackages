@@ -282,7 +282,7 @@ class Dynamic_Packages_Reviews
 			
 		
 			<?php if($comment->comment_approved == '0' ){ ?>
-				<em class="review-awaiting-moderation"><?php _e( 'Your review is awaiting moderation.', 'dynamicpackages' ); ?></em><br/><?php 
+				<em class="review-awaiting-moderation"><?php echo esc_html(__( 'Your review is awaiting moderation.', 'dynamicpackages' )); ?></em><br/><?php 
 			} ?>
 			
 			<p class="semibold large">

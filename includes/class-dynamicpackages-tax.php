@@ -239,12 +239,12 @@ class dy_Tax_Mod
 						}
 						else
 						{
-							$field = '<textarea '.$input.'>'.$value.'</textarea>';
+							$field = '<textarea '.$input.'>'.esc_textarea($value).'</textarea>';
 						}
 					}
 					else
 					{
-						$field = '<textarea '.$input.'>'.$value.'</textarea>';
+						$field = '<textarea '.$input.'>'.esc_textarea($value).'</textarea>';
 					}
 					
 				}
@@ -253,7 +253,7 @@ class dy_Tax_Mod
 				{
 					if($args[$k]['description'] != '')
 					{
-						$field .= '<br/><p class="description">'.$args[$k]['description'].'</p>';
+						$field .= '<br/><p class="description">'.esc_html($args[$k]['description']).'</p>';
 					}
 				}
 				

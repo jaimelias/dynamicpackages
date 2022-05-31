@@ -34,10 +34,10 @@
 		<?php endif; ?>
 	
 		<!-- Config -->
-		<input type="hidden" name="dy_request" value="<?php esc_html_e($request_form); ?>" />
+		<input type="hidden" name="dy_request" value="<?php echo esc_attr($request_form); ?>" />
 		<input type="hidden" name="dy_recaptcha" />
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
-		<input type="hidden" name="lang" value="<?php esc_html_e(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
+		<input type="hidden" name="lang" value="<?php echo esc_attr(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
 		
 		<!-- Cookies -->
 		<input type="hidden" name="channel" class="channel" value="" />

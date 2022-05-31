@@ -31,14 +31,21 @@ const loadGrids = () => {
 	});
 };
 
+
+
 const registerGrid = (textareas, container, min, max, index) => {	
-	let data = jQuery(textareas).text();	
+
+	//unescape textarea
+	let data = jQuery('<textarea />').html(jQuery(textareas).val()).text();
 	let maxNum = parseInt(jQuery(max).val());
 	const gridIdName = jQuery(container).attr('id');
 	const grid = jQuery(container);
 	const headers = getHeaders(jQuery(container));
 	const columns = getColType(jQuery(container));
 	
+
+	console.log({textareas, data});
+
 	try
 	{
 		data = JSON.parse(data);

@@ -51,7 +51,7 @@ class Dynamic_Packages_Shortcodes {
 		if($this->is_contact_form())
 		{
 			?>
-			<p><label for="inquiry"><?php esc_html_e('Message', 'dynamicpackages'); ?></label>
+			<p><label for="inquiry"><?php echo esc_html(__('Message', 'dynamicpackages')); ?></label>
 				<textarea id="inquiry" name="inquiry" required></textarea>
 			</p>
 			<?php

@@ -170,7 +170,7 @@ if(!class_exists('Sendgrid_Mailer'))
 				$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 				$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 			?>
-			<input type="<?php echo $type; ?>" name="<?php esc_html_e($name); ?>" id="<?php echo $name; ?>" value="<?php esc_html_e(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
+			<input type="<?php echo $type; ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_attr(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
 
 		<?php }		
 

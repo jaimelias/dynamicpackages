@@ -387,21 +387,23 @@ class dy_Admin {
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 			$value = ($type == 'checkbox') ? 1 : get_option($name);
 		?>
-		<input type="<?php echo $type; ?>" name="<?php esc_html_e($name); ?>" id="<?php echo $name; ?>" value="<?php esc_html_e($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
+		<input type="<?php echo esc_attr($type); ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
 
 	<?php }	
 	
 	
 	public static function dy_packages_breadcrump_render() { 
 		global $polylang;
-		$options = get_option( 'dy_packages_breadcrump' );
-		$args = array();
-		$args['post_parent'] = 0;
-		$args['post_type'] = 'page';
-		$args['posts_per_page'] = 500;
-		$args['orderby'] = 'title';
-		$args['order'] = 'ASC';
-		$args['post__not_in'] = array('-'.get_option('page_on_front'));
+		$options = get_option('dy_packages_breadcrump');
+
+		$args = array(
+			'post_parent' => 0,
+			'post_type' => 'page',
+			'posts_per_page' => 500,
+			'orderby' => 'title',
+			'order' => 'ASC',
+			'post__not_in' => array('-'.get_option('page_on_front'))
+		);
 		
 		if(isset($polylang))
 		{
@@ -411,7 +413,7 @@ class dy_Admin {
 		$wp_query = new WP_Query($args);
 		?>
 		<select name='dy_packages_breadcrump'>
-			<option value="<?php esc_html_e(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
+			<option value="<?php echo esc_attr(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
 			<?php if($wp_query->have_posts()): ?>
 				<?php while ($wp_query->have_posts()): $wp_query->the_post(); ?>
 					<option value="<?php echo get_the_ID();?>" <?php selected($options, get_the_ID()); ?>><?php echo get_the_title();?></option>
@@ -426,11 +428,11 @@ class dy_Admin {
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html(_e("Dynamicpackages", "dynamicpackages")); ?></h1>	
+			<h1><?php echo esc_html(__('Dynamicpackages', 'dynamicpackages')); ?></h1>	
 			<?php
-			settings_fields( 'dy_settings' );
-			do_settings_sections( 'dy_settings' );
-			submit_button();
+				settings_fields( 'dy_settings' );
+				do_settings_sections( 'dy_settings' );
+				submit_button();
 			?>			
 		</form>
 		

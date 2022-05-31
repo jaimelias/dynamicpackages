@@ -380,33 +380,33 @@ class dy_Metapost{
 		}
 
 		//occupancy_day
-		if(isset( $_POST['package_occupancy_day_surcharge_mon']))
+		if(isset( $_POST['package_week_day_surcharge_mon']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_mon', intval($_POST['package_occupancy_day_surcharge_mon']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_mon', intval($_POST['package_week_day_surcharge_mon']));
 		}
-		if(isset( $_POST['package_occupancy_day_surcharge_tue']))
+		if(isset( $_POST['package_week_day_surcharge_tue']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_tue', intval($_POST['package_occupancy_day_surcharge_tue']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_tue', intval($_POST['package_week_day_surcharge_tue']));
 		}	
-		if(isset( $_POST['package_occupancy_day_surcharge_wed']))
+		if(isset( $_POST['package_week_day_surcharge_wed']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_wed', intval($_POST['package_occupancy_day_surcharge_wed']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_wed', intval($_POST['package_week_day_surcharge_wed']));
 		}	
-		if(isset( $_POST['package_occupancy_day_surcharge_thr']))
+		if(isset( $_POST['package_week_day_surcharge_thr']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_thr', intval($_POST['package_occupancy_day_surcharge_thr']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_thr', intval($_POST['package_week_day_surcharge_thr']));
 		}	
-		if(isset( $_POST['package_occupancy_day_surcharge_fri']))
+		if(isset( $_POST['package_week_day_surcharge_fri']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_fri', intval($_POST['package_occupancy_day_surcharge_fri']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_fri', intval($_POST['package_week_day_surcharge_fri']));
 		}	
-		if(isset( $_POST['package_occupancy_day_surcharge_sat']))
+		if(isset( $_POST['package_week_day_surcharge_sat']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_sat', intval($_POST['package_occupancy_day_surcharge_sat']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_sat', intval($_POST['package_week_day_surcharge_sat']));
 		}	
-		if(isset( $_POST['package_occupancy_day_surcharge_sun']))
+		if(isset( $_POST['package_week_day_surcharge_sun']))
 		{
-			update_post_meta( $post_id, 'package_occupancy_day_surcharge_sun', intval($_POST['package_occupancy_day_surcharge_sun']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_sun', intval($_POST['package_week_day_surcharge_sun']));
 		}			
 		
 		

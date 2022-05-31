@@ -4,7 +4,9 @@
 	$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 	$price_chart = get_price_chart();
 	$discount = 0;
+	$pax_discount = 0;
 	$free = 0;
+	$pax_free = 0;
 	$start_free = 0;
 	$start_discount = 0;
 	$each_adult = dy_utilities::get_price_regular();
@@ -14,38 +16,32 @@
 	$total = dy_utilities::total();
 	$payment_amount = $total;
 	$participants = intval(sanitize_text_field($_GET['pax_regular']));
-	$traveling_children = '';
 	$deposit_label = '';
 	
-	if(package_field('package_free') > 0)
+	if(package_field('package_free') > 0 && isset($_GET['pax_free']))
 	{
+		$pax_free = intval(sanitize_text_field($_GET['pax_free']));
 		$free = package_field('package_free');
 	}	
-	if(package_field('package_discount') > 0)
+	if(package_field('package_discount') > 0 && isset($_GET['pax_discount']))
 	{
+		$pax_discount = intval(sanitize_text_field($_GET['pax_discount']));
+		$discount = package_field('package_discount');
+
 		if(package_field('package_free') > 0)
 		{
 			$start_discount = $free + 1;
 		}
-		$discount = package_field('package_discount');
 	}
 
-	
-	if(isset($_GET['pax_free']))
+	if($pax_free > 0)
 	{
-		if(intval(sanitize_text_field($_GET['pax_free'])) > 0)
-		{
-			$participants = $participants + intval(sanitize_text_field($_GET['pax_free']));
-			$traveling_children = 'yes';
-		}
+		$participants = $participants + intval(sanitize_text_field($_GET['pax_free']));
 	}
-	if(isset($_GET['pax_discount']))
+
+	if($pax_discount > 0)
 	{
-		if(intval(sanitize_text_field($_GET['pax_discount'])) > 0)
-		{
-			$participants = $participants + intval(sanitize_text_field($_GET['pax_discount']));
-			$traveling_children = 'yes';
-		}
+		$participants = $participants + $pax_discount;
 	}
 	
 	if(package_field('package_payment' ) == 1)
@@ -101,17 +97,15 @@
 						<td><?php echo dy_money(dy_utilities::get_price_regular()*floatval($_GET['pax_regular'])); ?></td>
 					</tr>
 					
-					<?php if(isset($_GET['pax_free'])): ?>
-						<?php if(floatval(sanitize_text_field($_GET['pax_free'])) > 0 && $free != '' && intval($free) != 0): ?>
-						<tr>
-							<td><?php echo (esc_html__('Children', 'dynamicpackages')).' '.esc_html($start_free.' - '.$free).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_free'])); ?></strong></td>
-							<td>0.00</td>
-							<td>0.00</td>
-						</tr>
-						<?php endif; ?>
+					<?php if($free > 0 && $pax_free > 0): ?>
+					<tr>
+						<td><?php echo esc_html(__('Children', 'dynamicpackages')).' '.esc_html($start_free.' - '.$free).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_free'])); ?></strong></td>
+						<td>0.00</td>
+						<td>0.00</td>
+					</tr>
 					<?php endif; ?>
 					
-					<?php if($each_child > 0 && floatval(sanitize_text_field($_GET['pax_discount'])) > 0 &&$discount != '' && intval($discount) != 0): ?>
+					<?php if($discount > 0 && $pax_discount > 0): ?>
 					<tr>
 						<td><?php echo (esc_html__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
 						<td><?php echo dy_money(dy_utilities::get_price_discount()); ?></td>
