@@ -2,20 +2,20 @@
 
 	global $post;
 	$add_to_calendar = apply_filters('dy_add_to_calendar', null);
-	$price_chart = get_price_chart();
 	$discount = 0;
 	$pax_discount = 0;
 	$free = 0;
 	$pax_free = 0;
 	$start_free = 0;
 	$start_discount = 0;
-	$each_adult = dy_utilities::get_price_regular();
-	$each_child = dy_utilities::get_price_discount();
+	$price_regular = dy_utilities::get_price_regular();
+	$price_discount = dy_utilities::get_price_discount();
 	$payment = 0;
 	$deposit = 25;
 	$total = dy_utilities::total();
 	$payment_amount = $total;
-	$participants = intval(sanitize_text_field($_GET['pax_regular']));
+	$pax_regular = intval($_GET['pax_regular']);
+	$participants = $pax_regular;
 	$deposit_label = '';
 	
 	if(package_field('package_free') > 0 && isset($_GET['pax_free']))
@@ -88,13 +88,13 @@
 				</thead>
 				<tbody>
 					<tr>
-						<?php if($each_child == 0): ?>
+						<?php if($price_discount == 0): ?>
 						<td><?php echo (esc_html__('Participants', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php else: ?>
 						<td><?php echo (esc_html__('Adults', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php endif; ?>
-						<td><?php echo dy_money(dy_utilities::get_price_regular()); ?></td>
-						<td><?php echo dy_money(dy_utilities::get_price_regular()*floatval($_GET['pax_regular'])); ?></td>
+						<td><?php echo dy_money($price_regular); ?></td>
+						<td><?php echo dy_money($price_regular * $pax_regular); ?></td>
 					</tr>
 					
 					<?php if($free > 0 && $pax_free > 0): ?>
@@ -108,8 +108,8 @@
 					<?php if($discount > 0 && $pax_discount > 0): ?>
 					<tr>
 						<td><?php echo (esc_html__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
-						<td><?php echo dy_money(dy_utilities::get_price_discount()); ?></td>
-						<td><?php echo dy_money(dy_utilities::get_price_discount()*floatval($_GET['pax_discount'])); ?></td>
+						<td><?php echo dy_money($price_discount); ?></td>
+						<td><?php echo dy_money($price_discount * $pax_discount); ?></td>
 					</tr>
 					<?php endif; ?>
 					

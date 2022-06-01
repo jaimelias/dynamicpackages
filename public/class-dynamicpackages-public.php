@@ -2234,7 +2234,7 @@ class Dynamic_Packages_Public {
 		{		
 			$package_start_address = package_field('package_start_address');
 			$package_start_hour = package_field('package_start_hour');
-			
+
 			if($package_start_address !== '' && $package_start_hour !== '')
 			{
 				$package_event_date = package_field('package_event_date');
@@ -2251,19 +2251,20 @@ class Dynamic_Packages_Public {
 				}
 				else
 				{
-					$from = package_field('package_booking_from');
-					$to = package_field('package_booking_to');
-					
-					if(intval($from) > 0 && intval($to) > 0)
+					$from = intval(package_field('package_booking_from'));
+					$to = intval(package_field('package_booking_to'));
+
+					if($from >= 0 && $to > $from)
 					{
 						$new_range = array();
 						$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
 						$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
 						$range = dy_utilities::get_date_range($today, $last_day);
 						$disabled_range = dy_utilities::get_disabled_range();
-						$week_days = dy_utilities::get_week_days_list();				
-						
-						for($x = 0; $x < count($range); $x++)
+						$week_days = dy_utilities::get_week_days_list();
+						$count_range = 	(count($range) <= 30) ? count($range) : 30;
+												
+						for($x = 0; $x < $count_range; $x++)
 						{
 							if(!in_array($range[$x], $disabled_range))
 							{

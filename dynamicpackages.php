@@ -131,14 +131,26 @@ function is_booking_page()
 function is_checkout_page()
 {
 	$output = false;
-	
-	if(isset($_POST['dy_request']) && isset($_POST['post_id']))
+	$which_var = 'is_checkout_page';
+	global $$which_var;
+
+	if(isset($$which_var))
 	{
-		$output = true;
+		$output = $$which_var;
+	}
+	else
+	{
+		if(isset($_POST['dy_request']) && isset($_POST['post_id']))
+		{
+			$output = true;
+		}
+
+		$GLOBALS[$which_var] = $output;
 	}
 	
 	return $output;
 }
+
 function has_package()
 {
 	return dy_validators::has_package();

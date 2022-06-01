@@ -4,32 +4,32 @@ class Dynamic_Packages_JSON
 {
 	function __construct()
 	{
-		add_action('wp', array('Dynamic_Packages_JSON', 'export'));
-		add_filter('minimal_ld_json', array('Dynamic_Packages_JSON', 'ld_json'), 100);
+		add_action('wp', array(&$this, 'export'));
+		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
 	}
 	
-	public static function is_disabled_dates()
+	public function is_json_request()
 	{
-		global $is_disabled_dates;
+		global $is_json_request;
 		$output = false;
 		
-		if(isset($is_disabled_dates))
+		if(isset($is_json_request))
 		{
-			return $is_disabled_dates;
+			return $is_json_request;
 		}
 		else
 		{
 			if(isset($_GET['json']) && !is_admin())
 			{
 				$output = true;
-				$GLOBALS['is_disabled_dates'] = $output;	
+				$GLOBALS['is_json_request'] = $output;	
 			}
 		}
 		
 		return $output;
 	}
 	
-	public static function ld_json($arr = array())
+	public function ld_json($arr = array())
 	{
 		global $dy_ld_json;
 		global $polylang;
@@ -48,7 +48,6 @@ class Dynamic_Packages_JSON
 				if(dy_validators::has_children())
 				{
 					$ids = array();
-					//dy_validators::has_children() returns the children obj
 					$children = dy_validators::has_children();
 					
 					foreach ( $children as $child )
@@ -253,9 +252,9 @@ class Dynamic_Packages_JSON
 		return $arr;
 	}	
 	
-	public static function export()
+	public function export()
 	{
-		if(self::is_disabled_dates())
+		if($this->is_json_request())
 		{
 			if(is_singular('packages'))
 			{

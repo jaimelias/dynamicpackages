@@ -184,9 +184,42 @@ class dy_utilities {
 	}	
 
 
+	public static function checkout_package_ID()
+	{
+		$which_var = 'checkout_package_ID';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$the_id = $$which_var;
+		}
+		else
+		{
+			if(isset($_POST['post_id']))
+			{
+				if(intval($_POST['post_id']) > 0)
+				{
+					$the_id = sanitize_text_field($_POST['post_id']);
+				}
+			}
+
+			if(!isset($the_id))
+			{
+				$the_id = get_the_ID();
+			}
+
+			$GLOBALS[$which_var] = $the_id;
+		}
+
+		
+		return $the_id;
+	}
+
+
 	public static function total($regular = null)
-	{ 
-		$which_var = 'dy_total_'.$regular;
+	{
+		$the_id = self::checkout_package_ID();
+		$which_var = 'dy_total_'.$regular.'_'.$the_id;
 		global $$which_var; 
 		$total = 0;
 		
@@ -198,25 +231,22 @@ class dy_utilities {
 		{
 			if(is_booking_page() || is_checkout_page())
 			{	
-				$total = self::subtotal($regular) + self::get_add_ons_total();
+				$total = self::subtotal($regular, $the_id) + self::get_add_ons_total();
 			}
 			else
 			{
 				$total = self::starting_at();
 			}
 						
-			if($total != 0)
-			{
-				$GLOBALS[$which_var] = $total;
-			}
+			$GLOBALS[$which_var] = $total;
 		}
 		
 		return $total;
 	}
 
-	public static function subtotal($regular = null)
+	public static function subtotal($regular = null, $the_id)
 	{
-		$which_var = 'dy_subtotal_'.$regular;
+		$which_var = 'dy_subtotal_'.$regular.'_'.$the_id;
 		global $$which_var; 
 		$subtotal = 0;
 		
@@ -227,8 +257,14 @@ class dy_utilities {
 		else
 		{
 			$subtotal = 0;
-			$subtotal = floatval(self::get_price_regular($regular, 'total')) + $subtotal;
-			$subtotal = floatval(self::get_price_discount($regular, 'total')) + $subtotal;
+			//sums regular price
+			$regular = self::get_price_regular($regular, 'total');
+			$subtotal = $regular + $subtotal;
+
+			//sums discount price
+			$discount = self::get_price_discount($regular, 'total');
+			$subtotal = $discount + $subtotal;
+			
 			$GLOBALS[$which_var] = $subtotal;
 		}
 		
@@ -799,7 +835,6 @@ class dy_utilities {
 						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
 						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
 						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
-						write_log($surcharge_percent);
 						$sum = $sum * $surcharge_percent;
 					}
 				}
@@ -814,44 +849,50 @@ class dy_utilities {
 	{
 		$sum = 0;
 		
-		if(is_booking_page() || is_checkout_page())
+		if((is_booking_page() || is_checkout_page()) && isset($_REQUEST['pax_discount']))
 		{
-			$base_price = 0;
-			$price_chart = self::get_price_chart();
-			$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
-			$package_type = intval(package_field('package_package_type'));
 
-			if(is_array($price_chart))
+			$pax_discount = intval(sanitize_text_field($_REQUEST['pax_discount']));
+
+			if($pax_discount > 0)
 			{
-				for($x = 0; $x < count($price_chart); $x++)
+				$base_price = 0;
+				$price_chart = self::get_price_chart();
+				$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
+				$package_type = intval(package_field('package_package_type'));
+
+				if(is_array($price_chart))
 				{
-						if($pax_discount == floatval(($x+1)))
-						{
-							$base_price = 0;
-							
-							if($price_chart[$x][1] != '')
-							{
-								$base_price = floatval($price_chart[$x][1]);
-							}
-						}
-				}
-				
-				$sum = self::get_price_calc($base_price, $regular, 'discount');
-				
-				if($type == 'total' && $pax_discount > 0)
-				{
-					$sum = $sum * $pax_discount;
-				}
-				
-				
-				if(isset($_REQUEST['booking_date']))
-				{
-					if($package_type === 0)
+					for($x = 0; $x < count($price_chart); $x++)
 					{
-						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
-						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
-						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
-						$sum = $sum * $surcharge_percent;
+							if($pax_discount == floatval(($x+1)))
+							{
+								$base_price = 0;
+								
+								if($price_chart[$x][1] != '')
+								{
+									$base_price = floatval($price_chart[$x][1]);
+								}
+							}
+					}
+					
+					$sum = self::get_price_calc($base_price, $regular, 'discount');
+					
+					if($type == 'total' && $pax_discount > 0)
+					{
+						$sum = $sum * $pax_discount;
+					}
+					
+					
+					if(isset($_REQUEST['booking_date']))
+					{
+						if($package_type === 0)
+						{
+							$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
+							$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
+							$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
+							$sum = $sum * $surcharge_percent;
+						}
 					}
 				}
 			}
@@ -862,56 +903,69 @@ class dy_utilities {
 	
 	public static function get_price_calc($sum, $regular, $type)
 	{
-		$package_type = intval(package_field('package_package_type'));
-		$length_unit = package_field('package_length_unit');
-		$occupancy_price = ($length_unit == 2 || $length_unit == 3) ? self::get_price_occupancy($type) : 0;
-		$sum = $sum + $occupancy_price;
-		
-		if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
+
+		$which_var ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_the_ID();
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			$sum = $$which_var;
 		}
-
-		if(dy_validators::is_package_transport() && isset($_REQUEST['booking_date']))
+		else
 		{
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-			$cloneSum = $sum;
-
-			if(dy_validators::is_date($booking_date))
+			$package_type = intval(package_field('package_package_type'));
+			$length_unit = package_field('package_length_unit');
+			$occupancy_price = ($length_unit == 2 || $length_unit == 3) ? self::get_price_occupancy($type) : 0;
+			$sum = $sum + $occupancy_price;
+			
+			if((self::increase_by_hour() || self::increase_by_day())  && isset($_REQUEST['booking_extra']))
 			{
-				$week_days_to_surcharge = array($booking_date);
+				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			}
 
-				if(isset($_REQUEST['end_date']))
+			if(dy_validators::is_package_transport() && isset($_REQUEST['booking_date']))
+			{
+				$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+				$cloneSum = $sum;
+
+				if(dy_validators::is_date($booking_date))
 				{
-					$end_date = sanitize_text_field($_REQUEST['end_date']);
+					$week_days_to_surcharge = array($booking_date);
 
-					if(dy_validators::is_date($end_date))
+					if(isset($_REQUEST['end_date']))
 					{
-						$sum = $sum + $cloneSum;
-						$week_days_to_surcharge[] = $end_date;
-					}
-				}
+						$end_date = sanitize_text_field($_REQUEST['end_date']);
 
-				$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
-
-				if(is_array($surcharges_arr))
-				{
-					if(count($surcharges_arr) > 0)
-					{
-						for($x = 0; $x < count($surcharges_arr); $x++)
+						if(dy_validators::is_date($end_date))
 						{
-							$surcharges = (floatval($surcharges_arr[$x]) > 0) ? floatval($surcharges_arr[$x]) : 0;
-							$surcharge_percentage = ($surcharges > 0) ? (($surcharges_arr[$x]/100)*$cloneSum) : 0;
-							$sum += $surcharge_percentage;
+							$sum = $sum + $cloneSum;
+							$week_days_to_surcharge[] = $end_date;
+						}
+					}
+
+					$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
+
+					if(is_array($surcharges_arr))
+					{
+						if(count($surcharges_arr) > 0)
+						{
+							for($x = 0; $x < count($surcharges_arr); $x++)
+							{
+								$surcharges = (floatval($surcharges_arr[$x]) > 0) ? floatval($surcharges_arr[$x]) : 0;
+								$surcharge_percentage = ($surcharges > 0) ? (($surcharges_arr[$x]/100)*$cloneSum) : 0;
+								$sum += $surcharge_percentage;
+							}
 						}
 					}
 				}
 			}
-		}
-		
-		if(dy_validators::validate_coupon() && $regular === null)
-		{
-			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+			
+			if(dy_validators::validate_coupon() && $regular === null)
+			{
+				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+			}
+
+			$GLOBALS[$which_var] = $sum;
 		}
 
 		return $sum;
@@ -1084,7 +1138,8 @@ class dy_utilities {
 	
 	public static function payment_amount()
 	{
-		$total = floatval(self::subtotal());
+		$the_id = self::checkout_package_ID();
+		$total = floatval(self::subtotal(null, $the_id));
 		
 		if(dy_validators::has_deposit())
 		{

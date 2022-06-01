@@ -54,27 +54,27 @@ class dynamicpackages {
 		
 		require_once $dir . 'vendor/autoload.php';
 		require_once $dir . 'includes/class-dynamicpackages-loader.php';
-		require_once $dir . 'includes/Parsedown.php';
+		require_once $dir . 'includes/class-dynamicpackages-parsedown.php';
 		require_once $dir . 'includes/class-dynamicpackages-i18n.php';
-		require_once $dir . 'admin/class-dynamicpackages-admin.php';
-		require_once $dir . 'public/class-dynamicpackages-public.php';
 		require_once $dir . 'includes/class-dynamicpackages-search.php';
-		require_once $dir . 'gateways/gateways.php';	
 		require_once $dir . 'includes/class-dynamicpackages-metaboxes.php';
 		require_once $dir . 'includes/class-dynamicpackages-metapost.php';
 		require_once $dir . 'includes/class-dynamicpackages-tax.php';
 		require_once $dir . 'includes/class-dynamicpackages-post-type.php';
-		require_once $dir . 'public/partials/forms.php';			
-		require_once $dir . 'public/partials/tables.php';			
-		require_once $dir . 'public/partials/add_to_calendar.php';			
-		require_once $dir . 'includes/validators.php';						
-		require_once $dir . 'public/partials/shortcodes.php';		
-		require_once $dir . 'public/partials/reviews.php';		
-		require_once $dir . 'mailer/mailer.php';		
+		require_once $dir . 'includes/class-dynamicpackages-validators.php';
+		require_once $dir . 'includes/class-dynamicpackages-mailer.php';		
 		require_once $dir . 'includes/class-dynamicpackages-ical.php';		
 		require_once $dir . 'includes/class-dynamicpackages-json.php';		
-		require_once $dir . 'includes/class-dynamicpackages-utilities.php';		
-		require_once $dir . 'includes/form-actions.php';	
+		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
+		require_once $dir . 'includes/class-dynamicpackages-shortcodes.php';
+		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
+		require_once $dir . 'admin/class-dynamicpackages-admin.php';
+		require_once $dir . 'public/class-dynamicpackages-public.php';
+		require_once $dir . 'public/partials/forms.php';			
+		require_once $dir . 'public/partials/tables.php';			
+		require_once $dir . 'public/partials/add_to_calendar.php';	
+		require_once $dir . 'public/partials/reviews.php';
+		require_once $dir . 'gateways/gateways.php';	
 
 		$this->loader = new dynamicpackages_Loader();
 

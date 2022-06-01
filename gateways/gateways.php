@@ -329,7 +329,7 @@ class Dynamic_Packages_Gateways
 			'currency_symbol' => dy_utilities::currency_symbol(),
 			'outstanding' => floatval(dy_utilities::currency_format(dy_sum_tax($this->outstanding()))),
 			'amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::total()))),
-			'regular_amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal()))),
+			'regular_amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal(null, $post->ID)))),
 			'payment_type' => esc_html($this->payment_type()),
 			'deposit' => floatval(dy_utilities::get_deposit()),
 			'tax' => floatval($tax),

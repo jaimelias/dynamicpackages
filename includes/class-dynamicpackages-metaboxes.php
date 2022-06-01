@@ -345,105 +345,102 @@ class dy_Metaboxes
 		<?php
     }
 
+
+	public static function build_week_day_surcharge_fields()
+	{
+		$week_days = dy_utilities::get_week_days_abbr();
+		$output = '<fieldset><h3 id="week_day_surcharges">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
+
+		for ($x = 0; $x < 7; $x++)
+		{
+			$name = 'package_week_day_surcharge_' . $week_days[$x];
+			$output .= '<p><label for="' . esc_attr($name) . '">';
+			$output .= '<input value="' . esc_attr(package_field($name)) . '" name="' . esc_attr($name) . '" id="' . esc_attr($name) . '" type="number" />% ';
+			$output .= $week_days[$x] . '</label></p>';
+		}
+
+		return $output;
+	}
+
     public static function package_rates_html($post)
     { ?>
 		
-		
-		<fieldset>	
-		<?php
-
-        $package_type = package_field('package_package_type');
-        $price_chart = package_field('package_price_chart');
-        $occupancy_chart = package_field('package_occupancy_chart');
-
-        if ($package_type > 1): ?>
-			<?php if ($package_type == 2): ?>
-				<h3><?php echo esc_html(__('Daily Rental Per Person', 'dynamicpackages')); ?></h3>
+			
 			<?php
-            elseif ($package_type == 3): ?>
-				<h3><?php echo esc_html(__('Hourly Rental Per Person', 'dynamicpackages')); ?></h3>
-			<?php
-            elseif ($package_type == 4): ?>
-				<h3><?php echo esc_html(__('One-way price per person', 'dynamicpackages')); ?></h3>
-			<?php
-            endif; ?>
-		<?php
-        else: ?>
-			<h3><?php echo esc_html(__('Base Prices Per Person', 'dynamicpackages')); ?></h3>
-		<?php
-        endif; ?>
 
-		<?php
-        $args = array(
-            'container' => 'price_chart',
-            'textarea' => 'package_price_chart',
-            'headers' => array(
-                __('Regular', 'dynamicpackages') ,
-                __('Discount', 'dynamicpackages')
-            ) ,
-            'type' => array(
-                'currency',
-                'currency'
-            ) ,
-            'min' => 'package_min_persons',
-            'max' => 'package_max_persons',
-            'value' => $price_chart
-        );
+				$package_type = intval(package_field('package_package_type'));
+				$price_chart = package_field('package_price_chart');
+				$occupancy_chart = package_field('package_occupancy_chart');
+				$base_price_title = __('Base Prices Per Person', 'dynamicpackages');
+				
+				if($package_type === 1)
+				{
+					$base_price_title = __('Daily Rental Per Person', 'dynamicpackages');
+				}
+				else if($package_type === 2)
+				{
+					$base_price_title = __('Daily Rental Per Person', 'dynamicpackages');
+				}
+				else if($package_type == 3)
+				{
+					$base_price_title = __('Hourly Rental Per Person', 'dynamicpackages');
+				}
+				else if($package_type == 4)
+				{
+					$base_price_title = __('One-way price per person', 'dynamicpackages');
+				}
 
-        echo dy_utilities::handsontable($args);
-?>	
+				$price_chart_args = array(
+					'container' => 'price_chart',
+					'textarea' => 'package_price_chart',
+					'headers' => array(
+						__('Regular', 'dynamicpackages') ,
+						__('Discount', 'dynamicpackages')
+					) ,
+					'type' => array(
+						'currency',
+						'currency'
+					) ,
+					'min' => 'package_min_persons',
+					'max' => 'package_max_persons',
+					'value' => $price_chart
+				);
+
+				$occupancy_chart_args = array(
+					'container' => 'occupancy_chart',
+					'textarea' => 'package_occupancy_chart',
+					'headers' => array(
+						__('Regular', 'dynamicpackages') ,
+						__('Discount', 'dynamicpackages')
+					) ,
+					'type' => array(
+						'currency',
+						'currency'
+					) ,
+					'min' => 'package_min_persons',
+					'max' => 'package_max_persons',
+					'value' => $occupancy_chart
+				);
+			?>	
+
+		<fieldset>
+			<?php echo '<h3>'.esc_html(__('Base Prices Per Person', 'dynamicpackages')).'</h3>'; ?>
+			<?php echo dy_utilities::handsontable($price_chart_args); ?>
 		</fieldset>
 		
-		<?php
-            $occupancy_day_surcharge = dy_utilities::get_week_days_abbr();
-
-            echo '<fieldset>';
-            echo '<h3 id="occupancy_day_surcharge">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
-
-            for ($sc = 0;$sc < 7; $sc++)
-            {
-                $surcharge_name = 'package_week_day_surcharge_' . $occupancy_day_surcharge[$sc];
-                echo '<p><label for="' . esc_attr($surcharge_name) . '">';
-                echo '<input value="' . esc_attr(package_field($surcharge_name)) . '" name="' . esc_attr($surcharge_name) . '" id="' . esc_attr($surcharge_name) . '" type="number" />% ';
-                echo $occupancy_day_surcharge[$sc] . '</label></p>';
-            }
-
-            echo '</fieldset>';
-		?>
+		<fieldset>
+			<?php echo self::build_week_day_surcharge_fields(); ?>
+		</fieldset>
 	
 		<?php if ($package_type == 1): ?>
 		<fieldset>			
 			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit() ?> <?php echo esc_html(__('Accomodation Prices Per Person', 'dynamicpackages')); ?></h3>
-			
-		<?php
-            $args = array(
-                'container' => 'occupancy_chart',
-                'textarea' => 'package_occupancy_chart',
-                'headers' => array(
-                    __('Regular', 'dynamicpackages') ,
-                    __('Discount', 'dynamicpackages')
-                ) ,
-                'type' => array(
-                    'currency',
-                    'currency'
-                ) ,
-                'min' => 'package_min_persons',
-                'max' => 'package_max_persons',
-                'value' => $occupancy_chart
-            );
-
-            echo dy_utilities::handsontable($args);
-?>	
-				
+			<?php echo dy_utilities::handsontable($occupancy_chart_args); ?>
+			<div id="special_seasons"></div>
 		</fieldset>
 		<?php
         endif; ?>
 		
-		
-		<?php if ($package_type == 1): ?>
-			<div id="special_seasons"></div>
-		<?php
-        endif; ?>
 		<?php
     }
 
