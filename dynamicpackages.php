@@ -70,6 +70,15 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 
 function package_field($name, $this_id = null)
 {
+	$week_days = dy_utilities::get_week_days_abbr();
+	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
+	
+	for($x = 0; $x < count($week_days); $x++)
+	{
+		$excludes[] = 'package_week_day_surcharge_'.$week_days[$x];
+		$excludes[] = 'package_day_'.$week_days[$x];
+	}
+
 	if($this_id == null)
 	{		
 		global $polylang;		
@@ -81,8 +90,6 @@ function package_field($name, $this_id = null)
 			
 			if(property_exists($post, 'post_parent'))
 			{
-				$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_week_day_surcharge_mon', 'package_week_day_surcharge_tue', 'package_week_day_surcharge_wed', 'package_week_day_surcharge_thu', 'package_week_day_surcharge_fri', 'package_week_day_surcharge_sat', 'package_week_day_surcharge_sun');
-				
 				if($polylang)
 				{
 					$languages = PLL()->model->get_languages_list();
@@ -105,9 +112,7 @@ function package_field($name, $this_id = null)
 	}
 	
 	$which_var = $name.'_'.$this_id;
-	global $$which_var;  
-	// $$which_var refers to the global variable: $name.'_'.$this_id
-	//use $$ to create dynamic variables
+	global $$which_var;
 	
 	if(isset($$which_var))
 	{
@@ -115,9 +120,9 @@ function package_field($name, $this_id = null)
 	}
 	else
 	{
-		$package_field = get_post_meta($this_id, $name, true);
-		$GLOBALS[$which_var] = $package_field;
-		return $package_field;
+		$this_field = get_post_meta($this_id, $name, true);
+		$GLOBALS[$which_var] = $this_field;
+		return $this_field;
 	}	
 }
 function get_price_chart()

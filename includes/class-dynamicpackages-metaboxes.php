@@ -17,6 +17,8 @@ class dy_Metaboxes
     public function package_add_meta_box()
     {
 
+		$this->set_args();
+
         add_meta_box('package-a', __('Description', 'dynamicpackages') , array(&$this,
             'package_description_html'
         ) , 'packages', 'normal', 'default');
@@ -35,7 +37,7 @@ class dy_Metaboxes
             'package_availability_html'
         ) , 'packages', 'normal', 'default');
 
-        if (!dy_validators::is_child())
+        if (!$this->is_child)
         {
             add_meta_box('package-e', __('Departure', 'dynamicpackages') , array(&$this,
                 'package_departure_html'
@@ -49,7 +51,140 @@ class dy_Metaboxes
         }
     }
 
-    public static function select_number($name, $min = 1, $max = 20, $attr = '')
+	public function set_args()
+	{
+
+		$this->is_child = dy_validators::is_child();
+        $this->package_type = intval(package_field('package_package_type'));
+        $this->show_pricing = intval(package_field('package_show_pricing'));
+        $this->auto_booking = intval(package_field('package_auto_booking'));
+        $this->payment = intval(package_field('package_payment'));
+        $this->deposit = floatval(package_field('package_deposit'));
+
+		$this->coupon_args = array(
+			'container' => 'coupons',
+			'textarea' => 'package_coupons',
+			'headers' => array(
+				__('Code', 'dynamicpackages') ,
+				__('Discount (%)', 'dynamicpackages') ,
+				__('Expiration', 'dynamicpackages') ,
+				__('Publish', 'dynamicpackages') ,
+				__('Min. Duration', 'dynamicpackages') ,
+				__('Max. Duration', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'text',
+				'numeric',
+				'date',
+				'checkbox',
+				'numeric',
+				'numeric'
+			) ,
+			'min' => 'package_max_coupons',
+			'max' => 'package_max_coupons',
+			'value' => package_field('package_coupons') ,
+		);
+
+		$this->price_chart_args = array(
+			'container' => 'price_chart',
+			'textarea' => 'package_price_chart',
+			'headers' => array(
+				__('Regular', 'dynamicpackages') ,
+				__('Discount', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'currency',
+				'currency'
+			) ,
+			'min' => 'package_min_persons',
+			'max' => 'package_max_persons',
+			'value' => package_field('package_price_chart')
+		);
+
+		$this->occupancy_chart_args = array(
+			'container' => 'occupancy_chart',
+			'textarea' => 'package_occupancy_chart',
+			'headers' => array(
+				__('Regular', 'dynamicpackages') ,
+				__('Discount', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'currency',
+				'currency'
+			) ,
+			'min' => 'package_min_persons',
+			'max' => 'package_max_persons',
+			'value' => package_field('package_occupancy_chart')
+		);
+
+		$this->disabled_dates_args = array(
+			'container' => 'disabled_dates',
+			'textarea' => 'package_disabled_dates',
+			'headers' => array(
+				__('From', 'dynamicpackages') ,
+				__('To', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'date',
+				'date'
+			) ,
+			'min' => 'package_disabled_num',
+			'max' => 'package_disabled_num',
+			'value' => package_field('package_disabled_dates')
+		);
+
+		$this->enabled_dates_args = array(
+			'container' => 'enabled_dates',
+			'textarea' => 'package_enabled_dates',
+			'headers' => array(
+				__('From', 'dynamicpackages') ,
+				__('To', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'date',
+				'date'
+			) ,
+			'min' => 'package_enabled_num',
+			'max' => 'package_enabled_num',
+			'value' => package_field('package_enabled_dates')
+		);
+
+
+		$this->seasons_args = array(
+			'container' => 'seasons_chart',
+			'textarea' => 'package_seasons_chart',
+			'headers' => array(
+				__('Name', 'dynamicpackages') ,
+				__('From', 'dynamicpackages') ,
+				__('To', 'dynamicpackages') ,
+				__('Duration', 'dynamicpackages') ,
+				__('ID', 'dynamicpackages')
+			) ,
+			'type' => array(
+				'text',
+				'date',
+				'date',
+				'dropdown',
+				'readonly'
+			) ,
+			'dropdown' => array(
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			) ,
+			'min' => 'package_num_seasons',
+			'max' => 'package_num_seasons',
+			'value' => package_field('package_seasons_chart') ,
+			'disabled' => ($this->is_child) ? 'disabled' : ''
+		);
+
+	}
+
+    public function select_number($name, $min = 1, $max = 20, $attr = '')
     {
         $options = '';
         $value = intval(package_field($name));
@@ -70,42 +205,17 @@ class dy_Metaboxes
 
     }
 
-    public static function package_coupon_html($post)
-    { ?>
-		<p><label><?php echo esc_html(__('Number of coupons', 'dynamicpackages')); ?> <?php self::select_number('package_max_coupons', 1, 10); ?></label></p>
+    public function package_coupon_html($post)
+    { 
+		?>
+		<p><label><?php echo esc_html(__('Number of coupons', 'dynamicpackages')); ?> <?php $this->select_number('package_max_coupons', 1, 10); ?></label></p>
+		
+		<?php echo dy_utilities::handsontable($this->coupon_args); ?>
 		
 		<?php
-
-        $args = array(
-            'container' => 'coupons',
-            'textarea' => 'package_coupons',
-            'headers' => array(
-                __('Code', 'dynamicpackages') ,
-                __('Discount (%)', 'dynamicpackages') ,
-                __('Expiration', 'dynamicpackages') ,
-                __('Publish', 'dynamicpackages') ,
-                __('Min. Duration', 'dynamicpackages') ,
-                __('Max. Duration', 'dynamicpackages')
-            ) ,
-            'type' => array(
-                'text',
-                'numeric',
-                'date',
-                'checkbox',
-                'numeric',
-                'numeric'
-            ) ,
-            'min' => 'package_max_coupons',
-            'max' => 'package_max_coupons',
-            'value' => package_field('package_coupons') ,
-        );
-
-        echo dy_utilities::handsontable($args); ?>
-		
-	<?php
     }
 
-    public static function package_provider_html($post)
+    public function package_provider_html($post)
     { ?>
 
 		<p>
@@ -129,45 +239,43 @@ class dy_Metaboxes
 		</p>	
 
 		<?php
-        global $polylang;
+			global $polylang;
 
-        if (isset($polylang))
-        {
-            $languages = PLL()
-                ->model
-                ->get_languages_list();
+			if (isset($polylang))
+			{
+				$languages = PLL()->model->get_languages_list();
 
-            for ($x = 0;$x < count($languages);$x++)
-            {
-                foreach ($languages[$x] as $key => $value)
-                {
-                    if ($key == 'slug')
-                    {
-?>
+				for ($x = 0;$x < count($languages);$x++)
+				{
+					foreach ($languages[$x] as $key => $value)
+					{
+						if ($key == 'slug')
+						{
+							?>
 								<p>
 									<label for="package_confirmation_message_<?php echo esc_attr($value); ?>"><?php echo esc_html(__('Confirmation Message', 'dynamicpackages')); ?> - <?php esc_html_e($value); ?></label></br>
 									<textarea cols="40" rows="6" type="text" name="package_confirmation_message_<?php echo esc_attr($value); ?>" id="package_confirmation_message_<?php echo esc_attr($value); ?>"><?php echo esc_textarea(package_field('package_confirmation_message_' . $value)); ?></textarea>
 								</p>	
 							<?php
-                    }
-                }
-            }
-        }
-        else
-        {
-?>
+						}
+					}
+				}
+			}
+			else
+			{
+				?>
 					<p>
 						<label for="package_confirmation_message"><?php echo esc_html(__('Confirmation Message', 'dynamicpackages')); ?></label></br>
 						<textarea cols="40" rows="6" type="text" name="package_confirmation_message" id="package_confirmation_message"><?php echo esc_textarea(package_field('package_confirmation_message')); ?></textarea>
 					</p>				
 				<?php
-        }
-?>
+			}
+		?>
 		
 		<?php
     }
 
-    public static function package_departure_html($post)
+    public function package_departure_html($post)
     { ?>
 
 		<?php if (dy_validators::is_package_transport()): ?>
@@ -204,11 +312,8 @@ class dy_Metaboxes
 				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo esc_textarea(package_field('package_return_address')); ?></textarea>
 			</p>			
 			
-		<?php
-        endif; ?>
+		<?php endif; ?>
 
-
-		
 		<?php
     }
 
@@ -217,18 +322,17 @@ class dy_Metaboxes
 		
 		<?php
 
-        $is_child = dy_validators::is_child();
-        $disable_child = ($is_child) ? 'disabled' : '';
-        $package_type = package_field('package_package_type');
+        $disable_child = ($this->is_child) ? 'disabled' : '';
+        $package_type = $this->package_type;
         $show_pricing = package_field('package_show_pricing');
         $auto_booking = package_field('package_auto_booking');
         $payment = package_field('package_payment');
         $deposit = package_field('package_deposit');
-?>
+	?>
 		
 		
 		
-		<?php if (!$is_child): ?>	
+		<?php if (!$this->is_child): ?>	
 				<p>
 					<label for="package_show_pricing"><?php echo esc_html(__('Show Price Table', 'dynamicpackages')); ?></label><br />
 					<select name="package_show_pricing" id="package_show_pricing">
@@ -247,26 +351,26 @@ class dy_Metaboxes
 			<?php
         endif; ?>
 			
-			<?php if ($is_child || dy_validators::is_parent_with_no_child()): ?>
+			<?php if ($this->is_child || dy_validators::is_parent_with_no_child()): ?>
 			
 			<p>
 				<label for="package_min_persons"><?php echo esc_html(__('Minimum Number of participants', 'dynamicpackages')); ?></label><br />
 				
-				<?php self::select_number('package_min_persons', 1, 100); ?>
+				<?php $this->select_number('package_min_persons', 1, 100); ?>
 				
 			</p>
 			<p>
 				<label for="package_max_persons"><?php echo esc_html(__('Maximum Number of participants', 'dynamicpackages')); ?></label><br />
-				<?php self::select_number('package_max_persons', (intval(package_field('package_min_persons')) + 1) , 100); ?>
+				<?php $this->select_number('package_max_persons', (intval(package_field('package_min_persons')) + 1) , 100); ?>
 			</p>
 			<p>
 				<label for="package_free"><span><?php echo esc_html(__('Children free up to', 'dynamicpackages')); ?></span></br>
-				<?php self::select_number('package_free', 0, 17); ?>
+				<?php $this->select_number('package_free', 0, 17); ?>
 				 <?php echo esc_html(__('year old', 'dynamicpackages')); ?></label>
 			</p>
 			<p>
 				<label for="package_discount"><span><?php echo esc_html(__('Children Discount up to', 'dynamicpackages')); ?></span></br>
-				<?php self::select_number('package_discount', 0, 17); ?>
+				<?php $this->select_number('package_discount', 0, 17); ?>
 				 <?php echo esc_html(__('year old', 'dynamicpackages')); ?></label>
 			</p>
 			<p>
@@ -276,7 +380,7 @@ class dy_Metaboxes
 		<?php
         endif; ?>
 			
-		<?php if (!$is_child): ?>
+		<?php if (!$this->is_child): ?>
 
 			<?php if (intval(package_field('package_auto_booking')) > 0): ?>
 				<p>
@@ -297,44 +401,11 @@ class dy_Metaboxes
 			
 		
 		<?php if ($package_type == 1): ?>
-			<fieldset>		
-			<h3><?php echo esc_html(__('Number of Special Seasons', 'dynamicpackages')); ?> <?php self::select_number('package_num_seasons', 1, 10, $disable_child); ?></h3>
+			<fieldset>	
+
+				<h3><?php echo esc_html(__('Number of Special Seasons', 'dynamicpackages')); ?> <?php $this->select_number('package_num_seasons', 1, 10, $disable_child); ?></h3>
 			
-			<?php
-
-            $args = array(
-                'container' => 'seasons_chart',
-                'textarea' => 'package_seasons_chart',
-                'headers' => array(
-                    __('Name', 'dynamicpackages') ,
-                    __('From', 'dynamicpackages') ,
-                    __('To', 'dynamicpackages') ,
-                    __('Duration', 'dynamicpackages') ,
-                    __('ID', 'dynamicpackages')
-                ) ,
-                'type' => array(
-                    'text',
-                    'date',
-                    'date',
-                    'dropdown',
-                    'readonly'
-                ) ,
-                'dropdown' => array(
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7
-                ) ,
-                'min' => 'package_num_seasons',
-                'max' => 'package_num_seasons',
-                'value' => package_field('package_seasons_chart') ,
-                'disabled' => $disable_child
-            );
-
-            echo dy_utilities::handsontable($args); ?>			
+				<?php echo dy_utilities::handsontable($this->seasons_args); ?>			
 		
 			</fieldset>	
 		<?php
@@ -346,7 +417,7 @@ class dy_Metaboxes
     }
 
 
-	public static function build_week_day_surcharge_fields()
+	public function build_week_day_surcharge_fields()
 	{
 		$week_days = dy_utilities::get_week_days_abbr();
 		$output = '<fieldset><h3 id="week_day_surcharges">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
@@ -362,15 +433,14 @@ class dy_Metaboxes
 		return $output;
 	}
 
-    public static function package_rates_html($post)
+    public function package_rates_html($post)
     { ?>
 		
 			
 			<?php
 
 				$package_type = intval(package_field('package_package_type'));
-				$price_chart = package_field('package_price_chart');
-				$occupancy_chart = package_field('package_occupancy_chart');
+
 				$base_price_title = __('Base Prices Per Person', 'dynamicpackages');
 				
 				if($package_type === 1)
@@ -389,53 +459,21 @@ class dy_Metaboxes
 				{
 					$base_price_title = __('One-way price per person', 'dynamicpackages');
 				}
-
-				$price_chart_args = array(
-					'container' => 'price_chart',
-					'textarea' => 'package_price_chart',
-					'headers' => array(
-						__('Regular', 'dynamicpackages') ,
-						__('Discount', 'dynamicpackages')
-					) ,
-					'type' => array(
-						'currency',
-						'currency'
-					) ,
-					'min' => 'package_min_persons',
-					'max' => 'package_max_persons',
-					'value' => $price_chart
-				);
-
-				$occupancy_chart_args = array(
-					'container' => 'occupancy_chart',
-					'textarea' => 'package_occupancy_chart',
-					'headers' => array(
-						__('Regular', 'dynamicpackages') ,
-						__('Discount', 'dynamicpackages')
-					) ,
-					'type' => array(
-						'currency',
-						'currency'
-					) ,
-					'min' => 'package_min_persons',
-					'max' => 'package_max_persons',
-					'value' => $occupancy_chart
-				);
 			?>	
 
 		<fieldset>
 			<?php echo '<h3>'.esc_html(__('Base Prices Per Person', 'dynamicpackages')).'</h3>'; ?>
-			<?php echo dy_utilities::handsontable($price_chart_args); ?>
+			<?php echo dy_utilities::handsontable($this->price_chart_args); ?>
 		</fieldset>
 		
 		<fieldset>
-			<?php echo self::build_week_day_surcharge_fields(); ?>
+			<?php echo $this->build_week_day_surcharge_fields(); ?>
 		</fieldset>
 	
 		<?php if ($package_type == 1): ?>
 		<fieldset>			
 			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit() ?> <?php echo esc_html(__('Accomodation Prices Per Person', 'dynamicpackages')); ?></h3>
-			<?php echo dy_utilities::handsontable($occupancy_chart_args); ?>
+			<?php echo dy_utilities::handsontable($this->occupancy_chart_args); ?>
 			<div id="special_seasons"></div>
 		</fieldset>
 		<?php
@@ -444,10 +482,11 @@ class dy_Metaboxes
 		<?php
     }
 
-    public static function package_availability_html($post)
-    { ?>
+    public function package_availability_html($post)
+    { 
+		?>
 		
-		<?php if (!dy_validators::is_child()): ?>
+		<?php if (!$this->is_child): ?>
 			<h4><?php echo esc_html(__('Event Date', 'dynamicpackages')); ?></h4>
 				<p>
 					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo package_field('package_event_date'); ?>">
@@ -455,23 +494,14 @@ class dy_Metaboxes
 			<h4><?php echo esc_html(__('Accept Bookings', 'dynamicpackages')); ?></h4>
 			<p>
 				<label for="package_booking_from"><?php echo esc_html(__('Between', 'dynamicpackages')); ?> 
-				<?php self::select_number('package_booking_from', 0, 366); ?>
+				<?php $this->select_number('package_booking_from', 0, 366); ?>
 				</label> <?php echo esc_html(__('to', 'dynamicpackages')); ?>
 				<label for="package_booking_to">
-				<?php self::select_number('package_booking_to', 0, 366); ?> 
+				<?php $this->select_number('package_booking_to', 0, 366); ?> 
 				<?php echo esc_html(__('days', 'dynamicpackages')); ?></label>
 			</p>		
 			
-			<h4><?php echo esc_html(__('Disable Days', 'dynamicpackages')); ?></h4>
-			<p>
-				<label for="package_day_mon"><input type="checkbox" name="package_day_mon" id="package_day_mon" value="1" <?php checked(package_field('package_day_mon') , 1); ?> > <?php echo esc_html(__('Monday', 'dynamicpackages')); ?> </label><br />
-				<label for="package_day_tue"><input type="checkbox" name="package_day_tue" id="package_day_tue" value="1" <?php checked(package_field('package_day_tue') , 1); ?> > <?php echo esc_html(__('Thuesday', 'dynamicpackages')); ?></label><br />
-				<label for="package_day_wed"><input type="checkbox" name="package_day_wed" id="package_day_wed" value="1" <?php checked(package_field('package_day_wed') , 1); ?> > <?php echo esc_html(__('Wednesday', 'dynamicpackages')); ?></label><br />
-				<label for="package_day_thu"><input type="checkbox" name="package_day_thu" id="package_day_thu" value="1" <?php checked(package_field('package_day_thu') , 1); ?> > <?php echo esc_html(__('Thursday', 'dynamicpackages')); ?></label><br />
-				<label for="package_day_fri"><input type="checkbox" name="package_day_fri" id="package_day_fri" value="1" <?php checked(package_field('package_day_fri') , 1); ?> > <?php echo esc_html(__('Friday', 'dynamicpackages')); ?></label><br />
-				<label for="package_day_sat"><input type="checkbox" name="package_day_sat" id="package_day_sat" value="1" <?php checked(package_field('package_day_sat') , 1); ?> > <?php echo esc_html(__('Saturday', 'dynamicpackages')); ?></label><br />
-				<label for="package_day_sun"><input type="checkbox" name="package_day_sun" id="package_day_sun" value="1" <?php checked(package_field('package_day_sun') , 1); ?> > <?php echo esc_html(__('Sunday', 'dynamicpackages')); ?></label>
-			</p>
+
 
 			<h4><?php echo esc_html(__('Book by Hour', 'dynamicpackages')); ?></h4>
 			<p>
@@ -484,62 +514,52 @@ class dy_Metaboxes
 				<?php esc_html_e('and', 'dynamicpackages'); ?>
 				<input type="text" class="timepicker" name="package_max_hour" id="package_max_hour" value="<?php echo package_field('package_max_hour'); ?>" > 			
 			</p>	
-		<?php
-        endif; ?>
-		<fieldset>		
-		<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php self::select_number('package_disabled_num', 0, 20); ?></h3>
-		
-		
-		<?php
-        $args = array(
-            'container' => 'disabled_dates',
-            'textarea' => 'package_disabled_dates',
-            'headers' => array(
-                __('From', 'dynamicpackages') ,
-                __('To', 'dynamicpackages')
-            ) ,
-            'type' => array(
-                'date',
-                'date'
-            ) ,
-            'min' => 'package_disabled_num',
-            'max' => 'package_disabled_num',
-            'value' => package_field('package_disabled_dates')
-        );
+		<?php endif; ?>
+		<fieldset>
+			
 
-        echo dy_utilities::handsontable($args);
-?>		
+		<?php if(!dy_validators::has_children()): ?>
+
+			<h4><?php echo esc_html(__('Disable Days', 'dynamicpackages')); ?></h4>
+			<p>
+				<?php echo $this->build_disabled_days(); ?>
+			</p>
+
+			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('package_disabled_num', 0, 20); ?></h3>
+			
+			<?php echo dy_utilities::handsontable($this->disabled_dates_args); ?>
+		<?php endif; ?>
 		
 		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
 		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api')); ?>" > </p>
 		</fieldset>
 		
-		<h3><?php esc_html_e('Force Enabled Dates', 'dynamicpackages'); ?> <?php self::select_number('package_enabled_num', 0, 20); ?></h3>
+		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('package_enabled_num', 0, 20); ?></h3>
 		
-		
-		<?php
-        $args = array(
-            'container' => 'enabled_dates',
-            'textarea' => 'package_enabled_dates',
-            'headers' => array(
-                __('From', 'dynamicpackages') ,
-                __('To', 'dynamicpackages')
-            ) ,
-            'type' => array(
-                'date',
-                'date'
-            ) ,
-            'min' => 'package_enabled_num',
-            'max' => 'package_enabled_num',
-            'value' => package_field('package_enabled_dates')
-        );
-
-        echo dy_utilities::handsontable($args);
-?>		
+		<?php echo dy_utilities::handsontable($this->enabled_dates_args); ?>	
 	
-
 		<?php
     }
+
+	public function build_disabled_days()
+	{
+		$output = '';
+		$week_days = dy_utilities::get_week_days_abbr();
+		$week_day_names = dy_utilities::get_week_day_names();
+
+		for($x = 0; $x < count($week_days); $x++)
+		{
+			$output .= $this->checkbox('package_day_'.$week_days[$x], $week_day_names[$x]).'<br/>';
+		}	
+
+		return $output;
+	}
+
+	public function checkbox($name, $label)
+	{
+		$checked = (intval(package_field($name)) === 1) ? ' checked="checked" ' : '';
+		return '<label for="'.esc_attr($name).'"><input type="checkbox" name="'.esc_attr($name).'" id="'.esc_attr($name).'" value="1"  '.$checked.'/> '.esc_html($label).' </label>';
+	}
 
     public function package_description_html($post)
     { ?>
@@ -548,7 +568,7 @@ class dy_Metaboxes
 
         wp_nonce_field('_package_nonce', 'package_nonce');
 
-        if (dy_validators::is_child())
+        if ($this->is_child)
         {
             global $polylang;
             $language_list = array();
@@ -589,7 +609,7 @@ class dy_Metaboxes
         }
 ?>		
 		
-		<?php if (!dy_validators::is_child()): ?>
+		<?php if (!$this->is_child): ?>
 			<p>
 				<label for="package_display"><?php echo esc_html(__('Hide Package', 'dynamicpackages')); ?></label><br />
 				<select name="package_display" id="package_display">

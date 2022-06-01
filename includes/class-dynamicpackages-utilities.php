@@ -1167,6 +1167,20 @@ class dy_utilities {
 	{
 		return array('sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat');
 	}
+
+	public static function get_week_day_names()
+	{
+		return array(
+			__('Sunday', 'dynamicpackages'), 
+			__('Monday', 'dynamicpackages'), 
+			__('Tuesday', 'dynamicpackages'), 
+			__('Wednesday', 'dynamicpackages'), 
+			__('Thursday', 'dynamicpackages'), 
+			__('Friday', 'dynamicpackages'), 
+			__('Saturday', 'dynamicpackages')
+		);
+	}
+	
 	
 	public static function get_week_day_surcharges()
 	{
