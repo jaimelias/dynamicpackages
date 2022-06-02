@@ -541,7 +541,7 @@ class dy_Metaboxes
 				<?php echo $this->build_disabled_days(); ?>
 			</p>
 
-			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('disabled_num', 0, 20); ?></h3>
+			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('disabled_num', 1, 20); ?></h3>
 			
 			<?php echo dy_utilities::handsontable($this->disabled_dates_args); ?>
 		<?php endif; ?>

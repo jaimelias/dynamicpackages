@@ -80,22 +80,30 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 		colHeaders: headers,
 		contextMenu: menu,
 		minRows: maxNum,
+		height,
 		afterChange: (changes, source) => {
 			if (source !== 'loadData')
 			{
-				const gridData = grid.handsontable('getData');
+				let gridData = grid.handsontable('getData');
+				//gridData = gridData.filter((v, i) => i+1 <= maxNum);
 				updateTextArea({textareaId, changes: gridData, containerId});
 			}
 		}
 	}
 				
-	grid.handsontable(args);
+	jQuery(grid).handsontable(args);
 	
-	jQuery(minId).add(maxId).on('change', () => {
+	jQuery(minId).add(maxId).on('change click', function() {
 		
-		const rowNum = parseInt(grid.handsontable('countRows'));
-		const maxNum = parseInt(jQuery(maxId).val());
-		const instance = grid.handsontable('getInstance');
+		const maxNum = parseInt(jQuery(this).val());
+
+		if(maxNum === 0)
+		{
+			return false;
+		}
+
+		let rowNum = parseInt(jQuery(grid).handsontable('countRows'));
+		const instance = jQuery(grid).handsontable('getInstance');
 		let diff = 1;
 		
 		if(rowNum !== maxNum)
@@ -108,22 +116,19 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 			else
 			{
 				diff = rowNum - maxNum;
+
 				instance.alter('remove_row', (rowNum-diff), diff);				
 			}
 		}
-
-		let gridData = grid.handsontable('getData');
-
-		gridData = gridData.filter((v, i) => i+1 <= maxNum);
-
+		
+		let gridData = jQuery(grid).handsontable('getData');
 		gridData = populateSeasons({gridData, gridId: gridId});
-
 		const height = (cellHeight*maxNum)+headerHeight;
 	
 		jQuery(containerId).height(height);
 		
 		const textAreaData = updateTextArea({textareaId, changes: gridData, containerId});
-		instance.updateSettings({maxRows: maxNum, data: textAreaData[gridId]});
+		instance.updateSettings({maxRows: maxNum, data: textAreaData[gridId], height});
 		instance.render();
 	});		
 }
@@ -280,46 +285,6 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 	return output;
 }
 
-const addRowId = (data, containerId) => {
-	const output = [];
-	const gridId = jQuery(containerId).attr('id');
-	
-	if(data)
-	{
-		for(var x = 0; x < (data).length; x++)
-		{
-			var row = [];
-			
-			for(var y = 0; y < data[x].length; y++)
-			{
-				var item = [];
-				
-				if(gridId == 'seasons_chart')
-				{
-					if((y+1) == data[x].length)
-					{
-						item = gridId+'_'+(x+1);
-					}
-					else
-					{
-						item = data[x][y];
-					}				
-				}
-				else
-				{
-					item = data[x][y];
-				}
-				
-				row.push(item);
-				
-			}
-			output.push(row);
-		}
-		return output;		
-	}
-
-}
-
 const initSeasonGrids = () => {
 
 	let data = jQuery('<textarea />').html(jQuery('#package_seasons_chart').val()).text();
@@ -388,6 +353,20 @@ const initSeasonGrids = () => {
 			jQuery(wrapper).html(occupancyContainer);
 			jQuery(preRender).append(jQuery('<h3></h3>').text(jQuery('#accommodation').text()+': '+season[0]+' ('+season[4]+')'));
 			jQuery(preRender).append(wrapper);
+		}
+
+		for(let k in occupancyChartData)
+		{
+			if(k.startsWith('occupancy_chartseasons_chart_'))
+			{
+				const index = parseInt(k.replace('occupancy_chartseasons_chart_', ''));
+				
+				if(index > numSeasons)
+				{
+					console.log(k);
+					delete occupancyChartData[k];
+				}
+			}
 		}
 
 		jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
