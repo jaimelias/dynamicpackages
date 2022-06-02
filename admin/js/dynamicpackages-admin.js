@@ -19,12 +19,11 @@ const loadGrids = () => {
 		const container = (thisContainer) ? `#${thisContainer}` : null;
 		const min = (thisMin) ? `#${thisMin}`: null;
 		const max = (thisMax) ? `#${thisMax}`: null;
-		const index = x+1;
 				
 		setTimeout(() => { 
 			if(textareas && container && max)
 			{
-				registerGrid(textareas, container, min, max, index);
+				registerGrid(textareas, container, min, max);
 			}
 		}, 1000);
 		
@@ -33,7 +32,7 @@ const loadGrids = () => {
 
 
 
-const registerGrid = (textareas, container, min, max, index) => {	
+const registerGrid = (textareas, container, min, max) => {	
 
 	//unescape textarea
 	let data = jQuery('<textarea />').html(jQuery(textareas).val()).text();
@@ -43,25 +42,25 @@ const registerGrid = (textareas, container, min, max, index) => {
 	const headers = getHeaders(jQuery(container));
 	const columns = getColType(jQuery(container));
 	
-
-	console.log({textareas, data});
-
 	try
 	{
 		data = JSON.parse(data);
 
-		if(data[gridIdName].length === 0)
+		if(data.hasOwnProperty(gridIdName))
 		{
-			data[gridIdName] = [headers.map(i => null)];
+			if(data[gridIdName].length === 0)
+			{
+				data[gridIdName] = [headers.map(i => null)];
+			}
+					
+			data = addRowId(data[gridIdName], container);
 		}
-				
-		data = addRowId(data[gridIdName], container);
 	}
 	catch(e)
 	{
-		data = initialGrid(textareas, max, container, index);
+		data = initialGrid(textareas, max, container);
 		data = data[gridIdName];
-	}	
+	}
 	
 	let colsNum = 2;
 	
@@ -85,11 +84,12 @@ const registerGrid = (textareas, container, min, max, index) => {
 		rowHeaders: true,
 		colHeaders: headers,
 		contextMenu: menu,
-		maxRows: maxNum,
+		minRows: maxNum,
 		afterChange: (changes, source) => {
 			if (source !== 'loadData')
 			{
-				jQuery(textareas).text(JSON.stringify(updateGrid(textareas, grid.handsontable('getData'), container, index)));
+
+				updateGrid(textareas, grid.handsontable('getData'), container);
 			}
 		}
 	}
@@ -116,7 +116,7 @@ const registerGrid = (textareas, container, min, max, index) => {
 				instance.alter('remove_row', (rowNum-diff), diff);				
 			}
 
-			jQuery(textareas).text(JSON.stringify(updateGrid(textareas, grid.handsontable('getData'), container, index)));
+			updateGrid(textareas, grid.handsontable('getData'), container)
 		}
 		
 		instance.updateSettings({maxRows: maxNum, data: addRowId(grid.handsontable('getData'), container)});
@@ -205,7 +205,7 @@ const getColType = (container) => {
 	return output;	
 }
 
-const initialGrid = (textareas, max, container, index) => {
+const initialGrid = (textareas, max, container) => {
 	const headers = getHeaders(jQuery(container));
 	const maxNum = parseInt(jQuery(max).val());  
 	const scale = {};
@@ -236,6 +236,7 @@ const initialGrid = (textareas, max, container, index) => {
 		}
 		newGrid.push(row);
 	}
+
 	scale[gridIdName] = newGrid;
 	
 	jQuery(textareas).text(JSON.stringify(scale));
@@ -243,21 +244,21 @@ const initialGrid = (textareas, max, container, index) => {
 	return scale;
 }
 
-const updateGrid = (textareas, data, container, index) => {
-	const gridIdName = jQuery(container).attr('id');
-	let textAreasData = {};
+const updateGrid = (textareas, changes, container) => {
 	
-	try
-	{
-		textAreasData = JSON.parse(jQuery(textareas).text());
+	const gridIdName = jQuery(container).attr('id');
+	let oldData = jQuery('<textarea />').html(jQuery(textareas).val()).text();
+
+	try{
+		oldData = JSON.parse(oldData);
 	}
 	catch(e)
 	{
-		textAreasData = {};
-	}	
-	
-	textAreasData[gridIdName] = data;
-	return textAreasData;
+		console.log(e.message);
+		console.log(oldData);
+	}
+
+	jQuery(textareas).text(JSON.stringify({...oldData, [gridIdName]: changes}));
 }
 
 const addRowId = (data, container) => {
@@ -301,8 +302,9 @@ const addRowId = (data, container) => {
 }
 
 const buildSeasonsGrid = () => {
-	let data = jQuery('#package_seasons_chart').text();
-	const numSeasons = parseInt(jQuery('[name="package_numSeasons"]').val());
+
+	let data = jQuery('<textarea />').html(jQuery('#package_seasons_chart').val()).text();
+	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
 
 	try

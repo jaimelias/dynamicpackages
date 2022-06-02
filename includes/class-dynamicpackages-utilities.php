@@ -55,7 +55,7 @@ class dy_utilities {
 						<div id="<?php echo esc_attr($args['container']); ?>" class="hot" data-sensei-min="<?php esc_html_e($args['min']); ?>" data-sensei-max="<?php esc_html_e($args['max']); ?>" data-sensei-container="<?php esc_html_e($args['container']); ?>" data-sensei-textarea="<?php esc_html_e($args['textarea']); ?>" data-sensei-headers="<?php esc_html_e(implode(',', $args['headers'])); ?>" data-sensei-type="<?php esc_html_e(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php esc_html_e($disabled); ?>"></div>
 					</div>
 					<div class="hidden">
-						<textarea name="<?php echo esc_attr($args['textarea']); ?>" id="<?php echo esc_attr($args['textarea']); ?>"><?php echo esc_textarea($args['value']); ?></textarea>
+						<textarea cols="50" rows="8" name="<?php echo esc_attr($args['textarea']); ?>" id="<?php echo esc_attr($args['textarea']); ?>"><?php echo esc_textarea($args['value']); ?></textarea>
 					</div>
 				<?php
 				$output = ob_get_contents();
