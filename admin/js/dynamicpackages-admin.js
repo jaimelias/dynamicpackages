@@ -2,28 +2,29 @@ jQuery(() => {
 	'use strict';
 	jQuery('.timepicker').pickatime();
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
-	buildSeasonsGrid();
+
 	submitSavePost();
-	loadGrids();
+	initGridsFromTextArea();
+	initSeasonGrids();
 });
 	
-const loadGrids = () => {
-	jQuery('[data-sensei-container]').each(function(x){
+const initGridsFromTextArea = () => {
+	jQuery('[data-sensei-container]').each(function(){
 	
 		const thisTextArea = jQuery(this).attr('data-sensei-textarea');
 		const thisMin = jQuery(this).attr('data-sensei-min');
 		const thisMax = jQuery(this).attr('data-sensei-max');
 		const thisContainer = jQuery(this).attr('data-sensei-container');
 	
-		const textareas = (thisTextArea) ? `#${thisTextArea}` : null;
-		const container = (thisContainer) ? `#${thisContainer}` : null;
-		const min = (thisMin) ? `#${thisMin}`: null;
-		const max = (thisMax) ? `#${thisMax}`: null;
+		const textareaId = (thisTextArea) ? `#${thisTextArea}` : null;
+		const containerId = (thisContainer) ? `#${thisContainer}` : null;
+		const minId = (thisMin) ? `#${thisMin}`: null;
+		const maxId = (thisMax) ? `#${thisMax}`: null;
 				
 		setTimeout(() => { 
-			if(textareas && container && max)
+			if(textareaId && containerId && maxId)
 			{
-				registerGrid(textareas, container, min, max);
+				registerGrid(textareaId, containerId, minId, maxId);
 			}
 		}, 1000);
 		
@@ -32,15 +33,15 @@ const loadGrids = () => {
 
 
 
-const registerGrid = (textareas, container, min, max) => {	
+const registerGrid = (textareaId, containerId, minId, maxId) => {	
 
 	//unescape textarea
-	let data = jQuery('<textarea />').html(jQuery(textareas).val()).text();
-	let maxNum = parseInt(jQuery(max).val());
-	const gridIdName = jQuery(container).attr('id');
-	const grid = jQuery(container);
-	const headers = getHeaders(jQuery(container));
-	const columns = getColType(jQuery(container));
+	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
+	let maxNum = parseInt(jQuery(maxId).val());
+	const gridIdName = jQuery(containerId).attr('id');
+	const grid = jQuery(containerId);
+	const headers = getHeaders(containerId);
+	const columns = getColType(containerId);
 	
 	try
 	{
@@ -53,12 +54,12 @@ const registerGrid = (textareas, container, min, max) => {
 				data[gridIdName] = [headers.map(i => null)];
 			}
 					
-			data = addRowId(data[gridIdName], container);
+			data = addRowId(data[gridIdName], containerId);
 		}
 	}
 	catch(e)
 	{
-		data = initialGrid(textareas, max, container);
+		data = initialGrid(textareaId, maxId, containerId);
 		data = data[gridIdName];
 	}
 	
@@ -69,10 +70,16 @@ const registerGrid = (textareas, container, min, max) => {
 		colsNum = headers.length;
 	}
 
-	const menu = {};
-	menu.items = {};
-	menu.items.undo = {name: 'undo'};
-	menu.items.redo = {name: 'redo'};
+	const menu = {
+		items: {
+			undo: {
+				name: 'undo'
+			},
+			redo : {
+				name: 'redo'
+			}
+		}
+	};
 		
 	const args = {
 		licenseKey: 'non-commercial-and-evaluation',
@@ -89,17 +96,17 @@ const registerGrid = (textareas, container, min, max) => {
 			if (source !== 'loadData')
 			{
 
-				updateGrid(textareas, grid.handsontable('getData'), container);
+				updateGrid(textareaId, grid.handsontable('getData'), containerId);
 			}
 		}
 	}
 				
 	grid.handsontable(args);
 	
-	jQuery(min).add(max).on('change blur keyup click', () => {
+	jQuery(minId).add(maxId).on('change blur keyup click', () => {
 		
 		const rowNum = parseInt(grid.handsontable('countRows'));
-		const maxNum = parseInt(jQuery(max).val());
+		const maxNum = parseInt(jQuery(maxId).val());
 		const instance = grid.handsontable('getInstance');
 		let diff = 1;
 		
@@ -116,31 +123,28 @@ const registerGrid = (textareas, container, min, max) => {
 				instance.alter('remove_row', (rowNum-diff), diff);				
 			}
 
-			updateGrid(textareas, grid.handsontable('getData'), container)
+			updateGrid(textareaId, grid.handsontable('getData'), containerId)
 		}
 		
-		instance.updateSettings({maxRows: maxNum, data: addRowId(grid.handsontable('getData'), container)});
+		instance.updateSettings({maxRows: maxNum, data: addRowId(grid.handsontable('getData'), containerId)});
 		instance.render();
 	});		
 }
 
 
-const getHeaders = (container) => {
-	let headers = [];
-	headers = jQuery(container).attr('data-sensei-headers');
-	headers = headers.split(',');
-	return headers;
+const getHeaders = containerId => {
+	let headers = jQuery(containerId).attr('data-sensei-headers');
+	return headers.split(',');
 }
 
-const getColType = (container) => {
-	let columns = [];
-	columns = jQuery(container).attr('data-sensei-type');
+const getColType = containerId => {
+	let columns = jQuery(containerId).attr('data-sensei-type');
 	columns = columns.replace(/\s+/g, '');
 	columns = columns.split(',');
 	let selectOption = null;
 	const output = [];
 	let readOnly = false;
-	const isDisabled = jQuery(container).attr('data-sensei-disabled');
+	const isDisabled = jQuery(containerId).attr('data-sensei-disabled');
 	
 	if(typeof isDisabled != 'undefined')
 	{
@@ -148,12 +152,11 @@ const getColType = (container) => {
 		{
 			readOnly = true;
 		}
-		
 	}
 	
-	for(var x = 0; x < columns.length; x++)
+	for(let x = 0; x < columns.length; x++)
 	{
-		var row = {};
+		let row = {};
 		
 		if(columns[x] == 'numeric')
 		{
@@ -173,8 +176,7 @@ const getColType = (container) => {
 		}
 		else if(columns[x] == 'dropdown')
 		{
-			
-			selectOption = jQuery(container).attr('data-sensei-dropdown');
+			selectOption = jQuery(containerId).attr('data-sensei-dropdown');
 			selectOption = selectOption.replace(/\s+/g, '');
 			selectOption = selectOption.split(',');
 			row.type = 'dropdown';
@@ -205,12 +207,12 @@ const getColType = (container) => {
 	return output;	
 }
 
-const initialGrid = (textareas, max, container) => {
-	const headers = getHeaders(jQuery(container));
-	const maxNum = parseInt(jQuery(max).val());  
+const initialGrid = (textareaId, maxId, containerId) => {
+	const headers = getHeaders(containerId);
+	const maxNum = parseInt(jQuery(maxId).val());  
 	const scale = {};
 	const newGrid = [];
-	const gridIdName = jQuery(container).attr('id');
+	const gridIdName = jQuery(containerId).attr('id');
 	
 	for(let x = 0; x < maxNum; x++)
 	{
@@ -239,15 +241,15 @@ const initialGrid = (textareas, max, container) => {
 
 	scale[gridIdName] = newGrid;
 	
-	jQuery(textareas).text(JSON.stringify(scale));
+	jQuery(textareaId).text(JSON.stringify(scale));
 	
 	return scale;
 }
 
-const updateGrid = (textareas, changes, container) => {
+const updateGrid = (textareaId, changes, containerId) => {
 	
-	const gridIdName = jQuery(container).attr('id');
-	let oldData = jQuery('<textarea />').html(jQuery(textareas).val()).text();
+	const gridIdName = jQuery(containerId).attr('id');
+	let oldData = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
 
 	try{
 		oldData = JSON.parse(oldData);
@@ -258,12 +260,12 @@ const updateGrid = (textareas, changes, container) => {
 		console.log(oldData);
 	}
 
-	jQuery(textareas).text(JSON.stringify({...oldData, [gridIdName]: changes}));
+	jQuery(textareaId).text(JSON.stringify({...oldData, [gridIdName]: changes}));
 }
 
-const addRowId = (data, container) => {
+const addRowId = (data, containerId) => {
 	const output = [];
-	const gridIdName = jQuery(container).attr('id');
+	const gridIdName = jQuery(containerId).attr('id');
 	
 	if(data)
 	{
@@ -301,9 +303,10 @@ const addRowId = (data, container) => {
 
 }
 
-const buildSeasonsGrid = () => {
+const initSeasonGrids = () => {
 
-	let data = jQuery('<textarea />').html(jQuery('#package_seasons_chart').val()).text();
+	const textareaId = '#package_seasons_chart';
+	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
 	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
 
@@ -315,23 +318,16 @@ const buildSeasonsGrid = () => {
 	{
 		data = {};
 	}
-	
+
 	if(data.hasOwnProperty('seasons_chart'))
 	{
 		data = data.seasons_chart;
-		
-		var max = data.length;
-				
-		if(max > numSeasons)
+
+		for(let x = 0; x < numSeasons; x++)
 		{
-			max = numSeasons;
-		}
-				
-		for(var x = 0; x < max; x++)
-		{
-			var isRowReady = true;
+			let isRowReady = true;
 			
-			for(var y = 0; y < data[x].length; y++)
+			for(let y = 0; y < data[x].length; y++)
 			{
 				if(data[x][y] === null || data[x][y] == '')
 				{
@@ -343,8 +339,9 @@ const buildSeasonsGrid = () => {
 			{
 				const lastCell = data[x][data[x].length - 1];
 				const occupancyChart = jQuery('#occupancy_chart').clone();
+				const occupancyChartId = jQuery(occupancyChart).attr('id');
 				const occupancyWrap = jQuery('<div>').addClass('hot-container');
-				jQuery(occupancyChart).attr({'id': jQuery(occupancyChart).attr('id')+lastCell, 'data-sensei-container': jQuery(occupancyChart).attr('id')+lastCell});				
+				jQuery(occupancyChart).attr({'id': occupancyChartId+lastCell, 'data-sensei-container': occupancyChartId+lastCell});				
 				jQuery(occupancyWrap).html(occupancyChart);
 				jQuery(preRender).append(jQuery('<h3></h3>').text(jQuery('#accommodation').text()+': '+data[x][0]+' ('+data[x][4]+')'));
 				jQuery(preRender).append(occupancyWrap);	
@@ -354,7 +351,27 @@ const buildSeasonsGrid = () => {
 		
 		jQuery('#special_seasons').html(preRender);
 	}
-}
+
+
+	setTimeout(() => {
+		
+		jQuery(preRender).find('.hot').each(function() {
+			const thisTextArea = jQuery(this).attr('data-sensei-textarea');
+			const thisMin = jQuery(this).attr('data-sensei-min');
+			const thisMax = jQuery(this).attr('data-sensei-max');
+			const thisContainer = jQuery(this).attr('data-sensei-container');
+		
+			const textareaId = (thisTextArea) ? `#${thisTextArea}` : null;
+			const containerId = (thisContainer) ? `#${thisContainer}` : null;
+			const minId = (thisMin) ? `#${thisMin}`: null;
+			const maxId = (thisMax) ? `#${thisMax}`: null;
+
+			registerGrid(textareaId, containerId, minId, maxId);
+		})
+
+	}, 1000);
+};
+
 const submitSavePost = () => {
 
 	jQuery('#package_package_type').add('#package_payment').add('#package_auto_booking').add('#package_num_seasons').change(() => {
