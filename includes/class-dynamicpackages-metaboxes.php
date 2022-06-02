@@ -406,10 +406,7 @@ class dy_Metaboxes
 						<option value="0" <?php echo ($this->payment === 0) ? 'selected' : ''; ?> ><?php echo esc_html__('Full Payment', 'dynamicpackages'); ?></option>
 						<option value="1" <?php echo ($this->payment === 1) ? 'selected' : ''; ?> ><?php echo esc_html__('Deposit', 'dynamicpackages'); ?></option>
 					</select>
-					<?php if ($this->payment === 1): ?>
-						<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo esc_attr($this->deposit); ?>">%</label>
-					<?php
-                endif; ?>			
+					<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo esc_attr($this->deposit); ?>">%</label>
 				</p>
 			<?php
             endif; ?>

@@ -2,11 +2,13 @@ jQuery(() => {
 	'use strict';
 	jQuery('.timepicker').pickatime();
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
-
-	submitSavePost();
+	inputHandlers();
 	initGridsFromTextArea();
 	initSeasonGrids();
 });
+
+const cellHeight = 23+2;
+const headerHeight = 26+2;
 	
 const initGridsFromTextArea = () => {
 	jQuery('[data-sensei-container]').each(function(){
@@ -23,44 +25,34 @@ const initGridsFromTextArea = () => {
 	});
 };
 
-
-
 const registerGrid = (textareaId, containerId, minId, maxId) => {	
 
 	//unescape textarea
 	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
 	let maxNum = parseInt(jQuery(maxId).val());
-	const gridIdName = jQuery(containerId).attr('id');
+	const gridId = jQuery(containerId).attr('id');
 	const grid = jQuery(containerId);
 	const headers = getHeaders(containerId);
 	const columns = getColType(containerId);
+	
+	const colsNum = (headers.length > 2) ? headers.length : 2;
 	
 	try
 	{
 		data = JSON.parse(data);
 
-		if(data.hasOwnProperty(gridIdName))
+		if(data.hasOwnProperty(gridId))
 		{
-			if(data[gridIdName].length === 0)
-			{
-				data[gridIdName] = [headers.map(i => null)];
-			}
-					
-			data = addRowId(data[gridIdName], containerId);
+			data = data[gridId];
 		}
 	}
 	catch(e)
 	{
 		data = initialGrid(textareaId, maxId, containerId);
-		data = data[gridIdName];
+		data = data[gridId];
 	}
-	
-	let colsNum = 2;
-	
-	if(headers.length > colsNum)
-	{
-		colsNum = headers.length;
-	}
+
+	data = populateSeasons({gridData: data, gridId: gridId});
 
 	const menu = {
 		items: {
@@ -72,6 +64,10 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 			}
 		}
 	};
+
+	const height = (maxNum > data.length) ? (cellHeight*maxNum)+headerHeight : (cellHeight*data.length)+headerHeight;
+	
+	jQuery(containerId).height(height);
 		
 	const args = {
 		licenseKey: 'non-commercial-and-evaluation',
@@ -87,22 +83,22 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 		afterChange: (changes, source) => {
 			if (source !== 'loadData')
 			{
-
-				updateGrid(textareaId, grid.handsontable('getData'), containerId);
+				const gridData = grid.handsontable('getData');
+				updateTextArea({textareaId, changes: gridData, containerId});
 			}
 		}
 	}
 				
 	grid.handsontable(args);
 	
-	jQuery(minId).add(maxId).on('change blur keyup click', () => {
+	jQuery(minId).add(maxId).on('change', () => {
 		
 		const rowNum = parseInt(grid.handsontable('countRows'));
 		const maxNum = parseInt(jQuery(maxId).val());
 		const instance = grid.handsontable('getInstance');
 		let diff = 1;
 		
-		if(rowNum != maxNum)
+		if(rowNum !== maxNum)
 		{
 			if(rowNum < maxNum)
 			{
@@ -114,14 +110,37 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 				diff = rowNum - maxNum;
 				instance.alter('remove_row', (rowNum-diff), diff);				
 			}
-
-			updateGrid(textareaId, grid.handsontable('getData'), containerId)
 		}
+
+		let gridData = grid.handsontable('getData');
+
+		gridData = gridData.filter((v, i) => i+1 <= maxNum);
+
+		gridData = populateSeasons({gridData, gridId: gridId});
+
+		const height = (cellHeight*maxNum)+headerHeight;
+	
+		jQuery(containerId).height(height);
 		
-		instance.updateSettings({maxRows: maxNum, data: addRowId(grid.handsontable('getData'), containerId)});
+		const textAreaData = updateTextArea({textareaId, changes: gridData, containerId});
+		instance.updateSettings({maxRows: maxNum, data: textAreaData[gridId]});
 		instance.render();
 	});		
 }
+
+const populateSeasons = ({gridData, gridId}) => {
+
+	if(gridId === 'seasons_chart')
+	{
+		return gridData.map((v, i) => {
+			v[4] = (v[4] === null) ? `seasons_chart_${i+1}` : v[4];
+			return v;
+		});		
+	}
+	else {
+		return gridData;
+	}
+};
 
 
 const getHeaders = containerId => {
@@ -204,7 +223,7 @@ const initialGrid = (textareaId, maxId, containerId) => {
 	const maxNum = parseInt(jQuery(maxId).val());  
 	const scale = {};
 	const newGrid = [];
-	const gridIdName = jQuery(containerId).attr('id');
+	const gridId = jQuery(containerId).attr('id');
 	
 	for(let x = 0; x < maxNum; x++)
 	{
@@ -212,11 +231,11 @@ const initialGrid = (textareaId, maxId, containerId) => {
 		
 		for(let y = 0; y < headers.length; y++)
 		{
-			if(gridIdName == 'seasons_chart')
+			if(gridId == 'seasons_chart')
 			{
 				if((y+1) == headers.length)
 				{
-					row.push(gridIdName+'_'+(x+1));
+					row.push(gridId+'_'+(x+1));
 				}
 				else
 				{
@@ -231,16 +250,17 @@ const initialGrid = (textareaId, maxId, containerId) => {
 		newGrid.push(row);
 	}
 
-	scale[gridIdName] = newGrid;
+	scale[gridId] = newGrid;
 	
 	jQuery(textareaId).text(JSON.stringify(scale));
 	
 	return scale;
 }
 
-const updateGrid = (textareaId, changes, containerId) => {
+const updateTextArea = ({textareaId, changes, containerId}) => {
 	
-	const gridIdName = jQuery(containerId).attr('id');
+	let output = {};
+	const gridId = jQuery(containerId).attr('id');
 	let oldData = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
 
 	try{
@@ -252,12 +272,17 @@ const updateGrid = (textareaId, changes, containerId) => {
 		console.log(oldData);
 	}
 
-	jQuery(textareaId).text(JSON.stringify({...oldData, [gridIdName]: changes}));
+	const height = (cellHeight * changes.length) + headerHeight;
+
+	jQuery(containerId).height(height);
+	output = {...oldData, [gridId]: changes};
+	jQuery(textareaId).text(JSON.stringify(output));
+	return output;
 }
 
 const addRowId = (data, containerId) => {
 	const output = [];
-	const gridIdName = jQuery(containerId).attr('id');
+	const gridId = jQuery(containerId).attr('id');
 	
 	if(data)
 	{
@@ -269,11 +294,11 @@ const addRowId = (data, containerId) => {
 			{
 				var item = [];
 				
-				if(gridIdName == 'seasons_chart')
+				if(gridId == 'seasons_chart')
 				{
 					if((y+1) == data[x].length)
 					{
-						item = gridIdName+'_'+(x+1);
+						item = gridId+'_'+(x+1);
 					}
 					else
 					{
@@ -297,8 +322,7 @@ const addRowId = (data, containerId) => {
 
 const initSeasonGrids = () => {
 
-	const textareaId = '#package_seasons_chart';
-	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
+	let data = jQuery('<textarea />').html(jQuery('#package_seasons_chart').val()).text();
 	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
 
@@ -308,57 +332,83 @@ const initSeasonGrids = () => {
 	}
 	catch(e)
 	{
+		console.log(e.message);
 		data = {};
+	}
+
+	let occupancyChartData = jQuery('<textarea />').html(jQuery('#package_occupancy_chart').val()).text();
+
+	try
+	{
+		occupancyChartData = JSON.parse(occupancyChartData);
+	}
+	catch(e)
+	{
+		console.log(e.message);
+		occupancyChartData = {};
 	}
 
 	if(data.hasOwnProperty('seasons_chart'))
 	{
 		let {seasons_chart} = data;
 		let newRows = [];
+		const diff = numSeasons - seasons_chart.length;
 
 		if(numSeasons > seasons_chart.length)
 		{
-			const diff = numSeasons - seasons_chart.length;
-
 			for(let x = 0; x < diff; x++)
 			{
 				const thisIndex = seasons_chart.length + x + 1;
-				const gridName = `seasons_chart_${thisIndex}`;
-				let lastRow = ['', '', '', '', gridName];
+				const gridId = `seasons_chart_${thisIndex}`;
+				let lastRow = ['', '', '', '', gridId];
 				newRows.push(lastRow);
 			}
 
 			seasons_chart = [...seasons_chart, ...newRows];
 		}
 
-
 		for(let x = 0; x < numSeasons; x++)
 		{
 			const season = seasons_chart[x];
 			const lastCell = season[season.length - 1];
-			const occupancyChart = jQuery('#occupancy_chart').clone();
-			const occupancyChartId = jQuery(occupancyChart).attr('id');
-			const occupancyWrap = jQuery('<div>').addClass('hot-container');
-			jQuery(occupancyChart).attr({'id': occupancyChartId+lastCell, 'data-sensei-container': occupancyChartId+lastCell});				
-			jQuery(occupancyWrap).html(occupancyChart);
+			const occupancyContainer = jQuery('#occupancy_chart').clone();
+			const id = jQuery(occupancyContainer).attr('id');
+			const gridKey = id+lastCell;
+			jQuery(occupancyContainer).attr({'id': gridKey, 'data-sensei-container': gridKey});			
+
+			const {maxId} = getDataSenseiIds(occupancyContainer);
+			const maxRows = parseInt(jQuery(maxId).val());
+
+			if(!occupancyChartData.hasOwnProperty(gridKey))
+			{
+				occupancyChartData[gridKey] = [...Array(maxRows).keys()].map(()=> [null, null]);
+			}
+
+			const wrapper = jQuery('<div>').addClass('hot-container');			
+			jQuery(wrapper).html(occupancyContainer);
 			jQuery(preRender).append(jQuery('<h3></h3>').text(jQuery('#accommodation').text()+': '+season[0]+' ('+season[4]+')'));
-			jQuery(preRender).append(occupancyWrap);
+			jQuery(preRender).append(wrapper);
 		}
-		
+
+		jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
 		jQuery('#special_seasons').html(preRender);
+
+		setTimeout(() => {
+			
+			jQuery(preRender).find('.hot').each(function() {
+
+				const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
+
+				registerGrid(textareaId, containerId, minId, maxId);
+			})
+
+		}, 1000);
+
+
+		jQuery('#package_num_seasons').change(() => {
+			initSeasonGrids();
+		});
 	}
-
-
-	setTimeout(() => {
-		
-		jQuery(preRender).find('.hot').each(function() {
-
-			const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
-
-			registerGrid(textareaId, containerId, minId, maxId);
-		})
-
-	}, 1000);
 };
 
 const getDataSenseiIds = obj => {
@@ -375,13 +425,44 @@ const getDataSenseiIds = obj => {
 	return {textareaId, containerId, minId, maxId};
 }
 
-const submitSavePost = () => {
 
-	jQuery('#package_num_seasons').change(() => {
-		initSeasonGrids();
+const handlePackagePayment = () => {
+
+	if(jQuery('#package_payment').length === 0 && jQuery('#package_deposit').length === 0)
+	{
+		return false;
+	}
+
+	jQuery('#package_payment').each(function(){
+		const value = parseInt(jQuery(this).val());
+		const deposit = jQuery('#package_deposit');
+
+		if(value === 0)
+		{
+			console.log('is full payment');
+			jQuery(deposit).val('').prop('disabled', true);
+		}
+		else
+		{
+			console.log('is deposit');
+			jQuery(deposit).prop('disabled', false);
+		}
 	});
 
-	jQuery('#package_package_type').add('#package_payment').add('#package_auto_booking').change(() => {
+
+	jQuery('#package_payment').change(()=>  {
+		handlePackagePayment();
+	});
+
+};
+
+const inputHandlers = () => {
+
+	handlePackagePayment();
+
+
+
+	jQuery('#package_package_type').add('#package_auto_booking').change(() => {
 		
 		if(parseInt(dy_wp_version()) < 5)
 		{
