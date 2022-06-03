@@ -1,146 +1,179 @@
 <?php
 
-class dynamicpackages_Tables{
+class Dynamic_Packages_Tables{
 
-	public static function package_price_table()
+	function __construct()
 	{
-		$price_chart = dy_utilities::get_price_chart();
-		
-		if(intval(package_field( 'package_show_pricing' )) == 0 && (dy_validators::is_parent_with_no_child() || dy_validators::is_child()))
+		$this->init();
+	}
+
+	public function init()
+	{
+		add_action('wp', array(&$this, 'args'));
+		add_action('dy_package_price_table', array(&$this, 'price_table'), 100);
+	}
+
+	public function args()
+	{
+		$this->price_chart = dy_utilities::get_price_chart();
+		$this->occupancy_chart = dy_utilities::get_occupancy_chart();
+		$this->show_pricing = intval(package_field('package_show_pricing'));
+
+		$this->min = intval(package_field( 'package_min_persons' ));
+		$this->max = intval(package_field('package_max_persons'));
+		$this->duration = intval(package_field('package_duration'));
+		$this->package_type = intval(package_field('package_package_type'));
+		$this->price_type = intval(package_field('package_fixed_price'));		
+
+		//validators
+		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
+		$this->is_child = dy_validators::is_child();
+
+		//utilities
+		$this->currency_symbol = dy_utilities::currency_symbol();
+	}
+
+	public function price_table()
+	{
+		$output = '';
+		$which_var = 'dy_package_price_table';
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$min = package_field( 'package_min_persons' );
-			$max = package_field( 'package_max_persons' );
-			$duration = intval(package_field('package_duration'));
-			$package_type = intval(package_field('package_package_type'));
-			$duration_max = package_field('package_duration_max');
-			$price_type = package_field( 'package_fixed_price' );
-			$package_occupancy_chart = json_decode(html_entity_decode(package_field( 'package_occupancy_chart' )), true);	
-			$package_occupancy_chart = (is_array($package_occupancy_chart)) ? $package_occupancy_chart['occupancy_chart'] : null;	
-			$hide_table = false;
-			
-			if(intval($price_type) == 1)
+			$output = $$which_var;
+		}
+
+		else
+		{
+			if($this->show_pricing === 0 && ($this->is_parent_with_no_child || $this->is_child))
 			{
-				$max = 1;
-			}				
-		
-			$price_label = __('Prices', 'dynamicpackages').' '.Dynamic_Packages_Public::price_type().' (USD)';
-			
-			
-			
-			
-			$table = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
-			
-			if(is_array($price_chart))
-			{
-				for($x = 0; $x < count($price_chart); $x++)
+				$this->max = ($this->price_type === 1) ? 1 : $this->max;
+				$hide_table = false;
+				$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_package_price_type', null).' (USD)';
+				
+				$output .= '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
+				
+				if(is_array($this->price_chart))
 				{
-					if(($x+1) >= $min && ($x+1) <= $max)
+					for($x = 0; $x < count($this->price_chart); $x++)
 					{
-						$person = floatval($min);
-						$price = 0;
-						$base_price = 0;
-						$occupancy_price = 0;
-						
-						if(isset($price_chart[$x][0]))
+						if(($x+1) >= $this->min && ($x+1) <= $this->max)
 						{
-							if($price_chart[$x][0] != '')
+							$person = floatval($this->min);
+							$price = 0;
+							$base_price = 0;
+							$occupancy_price = 0;
+							
+							if(isset($this->price_chart[$x][0]))
 							{
-								$base_price = floatval($price_chart[$x][0]);
-							}						
-						}
-						
-						if(is_array($package_occupancy_chart))
-						{
-							if(count($package_occupancy_chart) > 0)
-							{
-								if(isset($package_occupancy_chart[$x][0]))
+								if($this->price_chart[$x][0] != '')
 								{
-									if($package_occupancy_chart[$x][0] != 0)
+									$base_price = floatval($this->price_chart[$x][0]);
+								}						
+							}
+							
+							if(is_array($this->occupancy_chart))
+							{
+								$occupancy_chart = (array_key_exists('occupancy_chart', $this->occupancy_chart)) 
+									? $this->occupancy_chart['occupancy_chart'] 
+									: array();
+
+								if(count($occupancy_chart) > 0)
+								{
+									if(isset($occupancy_chart[$x][0]))
 									{
-										$occupancy_price = floatval($package_occupancy_chart[$x][0]);
-									}						
+										if($occupancy_chart[$x][0] != 0)
+										{
+											$occupancy_price = floatval($occupancy_chart[$x][0]);
+										}						
+									}							
+								}
+							}
+
+							if($this->price_type == 0)
+							{
+								if($this->package_type == 1)
+								{
+									if(intval($this->max) == 0)
+									{
+										$occupancy_price =  $this->duration * $occupancy_price;
+									}
+									
+									$price =  $base_price + $occupancy_price;
+								}
+								else
+								{
+									$price = $base_price;
+								}
+							}
+							else
+							{						
+								if($this->package_type == 1)
+								{
+									if(intval($this->max) == 0)
+									{
+										$occupancy_price = $this->duration * $occupancy_price;
+									}
+									
+									$price =  ($base_price + $occupancy_price) * $person;
+								}
+								else if($this->package_type == 0)
+								{
+									$price = $base_price * $person;
+								}
+								else if($this->package_type == 2 && $this->package_type == 3)
+								{
+									$price = $base_price * $this->duration * $person;
+								}
+								else
+								{
+									$price = $base_price * $person;
+								}
+							}
+							
+							if($x == 0)
+							{
+								if($this->max == 1 && package_field( 'package_max_persons' ) > $this->max)
+								{
+									$person .= ' - '.package_field( 'package_max_persons' );
 								}							
-							}
-						}
-
-						if($price_type == 0)
-						{
-							if($package_type == 1)
-							{
-								if(intval($max) == 0)
-								{
-									$occupancy_price =  $duration * $occupancy_price;
-								}
 								
-								$price =  $base_price + $occupancy_price;
+								$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
+								$row .= '<td><span>'.esc_html($this->currency_symbol).'</span><span>'.esc_html(number_format($price, 2, '.', ',')).'</span>';
+								
+																
+								$row .= '</td></tr>';
+							}
+							elseif($x == (count($this->price_chart)-1))
+							{				
+								$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
+								$row .= '<td><span>'.esc_html($this->currency_symbol).'</span><span>'.esc_html(number_format($price, 2, '.', ',')).'</span>';
+								$row .= '</td></tr>';
 							}
 							else
 							{
-								$price = $base_price;
+								$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
+								$row .= '<td>'.esc_html($this->currency_symbol.number_format($price, 2, '.', ','));					
+								$row .= '</td></tr>';						
 							}
-						}
-						else
-						{						
-							if($package_type == 1)
-							{
-								if(intval($max) == 0)
-								{
-									$occupancy_price = $duration * $occupancy_price;
-								}
-								
-								$price =  ($base_price + $occupancy_price) * $person;
-							}
-							else if($package_type == 0)
-							{
-								$price = $base_price * $person;
-							}
-							else if($package_type == 2 && $package_type == 3)
-							{
-								$price = $base_price * $duration * $person;
-							}
-							else
-							{
-								$price = $base_price * $person;
-							}
-						}
-						
-						if($x == 0)
-						{
-							if($max == 1 && package_field( 'package_max_persons' ) > $max)
-							{
-								$person .= ' - '.package_field( 'package_max_persons' );
-							}							
-							
-							$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
-							$row .= '<td><span>'.esc_html(dy_utilities::currency_symbol()).'</span><span>'.esc_html(number_format($price, 2, '.', ',')).'</span>';
-							
-															
-							$row .= '</td></tr>';
-						}
-						elseif($x == (count($price_chart)-1))
-						{				
-							$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
-							$row .= '<td><span>'.esc_html(dy_utilities::currency_symbol()).'</span><span>'.esc_html(number_format($price, 2, '.', ',')).'</span>';
-							$row .= '</td></tr>';
-						}
-						else
-						{
-							$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
-							$row .= '<td>'.esc_html(dy_utilities::currency_symbol().number_format($price, 2, '.', ','));					
-							$row .= '</td></tr>';						
-						}
 
-						$table .= $row;	
-						$min++;
+							$output .= $row;	
+							$this->min++;
+						}
 					}
 				}
+					
+				$output .= '</tbody>';
+				$output .= '</table></div>';
 			}
-				
-			$table .= '</tbody>';
-			$table .= '</table></div>';
-			echo $table;
-		}		
+
+			$GLOBALS[$which_var] = $output;
+		}
+
 		
+		
+		echo $output;
 	}
 }
 

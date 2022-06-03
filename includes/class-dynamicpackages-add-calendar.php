@@ -71,7 +71,7 @@ class dy_Add_To_Calendar
 				ob_start();
 				?>
 					<div class="bottom-20 addevent_container">
-						<div title="<?php esc_html_e($text); ?>" class="addeventatc">
+						<div title="<?php echo esc_attr($text); ?>" class="addeventatc">
 							<?php esc_html_e($text); ?>
 							<span class="start"><?php esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
 							<span class="timezone"><?php esc_html_e(get_option('timezone_string')); ?></span>

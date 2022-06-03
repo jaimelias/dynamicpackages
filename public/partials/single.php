@@ -14,7 +14,7 @@
 			<?php do_action('dy_check_prices_form'); ?>
 		<?php endif; ?>
 		
-		<?php dynamicpackages_Tables::package_price_table(); ?>
+		<?php do_action('dy_package_price_table'); ?>
 		
 		<?php Dynamic_Packages_Public::return_parent();?>
 	</div>
@@ -81,7 +81,7 @@
 
 <hr/>
 	
-	<?php dynamicpackages_Tables::package_price_table(); ?>
+	<?php do_action('dy_package_price_table'); ?>
 
 	<?php if(!dy_validators::has_children()):?>
 			<?php do_action('dy_check_prices_form'); ?>

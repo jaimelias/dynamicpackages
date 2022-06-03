@@ -26,7 +26,7 @@ class dy_Metaboxes
             'package_pricing_html'
         ) , 'packages', 'normal', 'default');
 
-        if (!dy_validators::has_children())
+        if (!$this->has_children)
         {
             add_meta_box('package-c', __('Rates', 'dynamicpackages') , array(&$this,
                 'package_rates_html'
@@ -54,8 +54,6 @@ class dy_Metaboxes
 	public function set_args()
 	{
 
-		$this->is_child = dy_validators::is_child();
-
 
 		$this->coupons = package_field('package_coupons');
 		$this->price_chart = package_field('package_price_chart');
@@ -63,8 +61,6 @@ class dy_Metaboxes
 		$this->disabled_dates = package_field('package_disabled_dates');
 		$this->enabled_dates = package_field('package_enabled_dates');
 		$this->seasons_chart = package_field('package_seasons_chart');
-
-
         $this->package_type = intval(package_field('package_package_type'));
         $this->show_pricing = intval(package_field('package_show_pricing'));
         $this->auto_booking = intval(package_field('package_auto_booking'));
@@ -80,6 +76,15 @@ class dy_Metaboxes
 		$this->booking_to = intval(package_field('package_booking_to'));
 		$this->disabled_num = intval(package_field('package_disabled_num'));
 		$this->enabled_num = intval(package_field('package_enabled_num'));
+		$this->package_check_in_end_hour = package_field('package_check_in_end_hour');
+		$this->provider_name = package_field('package_provider_name');
+		$this->provider_email = package_field('package_provider_email');
+		$this->provider_tel = package_field('package_provider_tel');
+
+		$this->is_child = dy_validators::is_child();
+		$this->is_package_transport = dy_validators::is_package_transport();
+		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
+		$this->has_children = dy_validators::has_children();
 
 
 		$this->coupon_args = array(
@@ -242,23 +247,18 @@ class dy_Metaboxes
 
 		<p>
 			<label for="package_provider_name"><?php echo esc_html(__('Name', 'dynamicpackages')); ?></label></br>
-			<input type="text" name="package_provider_name" id="package_provider_name" value="<?php echo package_field('package_provider_name'); ?>">
+			<input type="text" name="package_provider_name" id="package_provider_name" value="<?php echo esc_attr($this->provider_name); ?>">
 		</p>
 		
 		<p>
 			<label for="package_provider_email"><?php echo esc_html(__('Email', 'dynamicpackages')); ?></label></br>
-			<input type="email" name="package_provider_email" id="package_provider_email" value="<?php echo esc_attr(package_field('package_provider_email')); ?>">
+			<input type="email" name="package_provider_email" id="package_provider_email" value="<?php echo sanitize_email($this->provider_email); ?>">
 		</p>
 
 		<p>
 			<label for="package_provider_tel"><?php echo esc_html(__('Telephone', 'dynamicpackages')); ?></label></br>
-			<input type="text" name="package_provider_tel" id="package_provider_tel" value="<?php echo package_field('package_provider_tel'); ?>">
+			<input type="text" name="package_provider_tel" id="package_provider_tel" value="<?php echo esc_attr($this->provider_tel); ?>">
 		</p>
-
-		<p>
-			<label for="package_provider_mobile"><?php echo esc_html(__('Mobile Phone', 'dynamicpackages')); ?></label></br>
-			<input type="text" name="package_provider_mobile" id="package_provider_mobile" value="<?php echo esc_attr(package_field('package_provider_mobile')); ?>">
-		</p>	
 
 		<?php
 			global $polylang;
@@ -300,7 +300,7 @@ class dy_Metaboxes
     public function package_departure_html($post)
     { ?>
 
-		<?php if (dy_validators::is_package_transport()): ?>
+		<?php if ($this->is_package_transport): ?>
 			<h3><?php echo esc_html(__('Departure', 'dynamicpackages')); ?></h3>
 		<?php
         endif; ?>
@@ -318,12 +318,12 @@ class dy_Metaboxes
 			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea(package_field('package_start_address')); ?></textarea>
 		</p>
 
-		<?php if (dy_validators::is_package_transport()): ?>
+		<?php if ($this->is_package_transport): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
 			<p>
 				<label for="package_check_in_end_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr(package_field('package_check_in_end_hour')); ?>">
+				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr($this->package_check_in_end_hour); ?>">
 			</p>
 			<p>
 				<label for="package_return_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
@@ -368,7 +368,7 @@ class dy_Metaboxes
 			<?php
         endif; ?>
 			
-			<?php if ($this->is_child || dy_validators::is_parent_with_no_child()): ?>
+			<?php if ($this->is_child || $this->is_parent_with_no_child): ?>
 			
 			<p>
 				<label for="package_min_persons"><?php echo esc_html(__('Minimum Number of participants', 'dynamicpackages')); ?></label><br />
@@ -534,7 +534,7 @@ class dy_Metaboxes
 		<fieldset>
 			
 
-		<?php if(!dy_validators::has_children()): ?>
+		<?php if(!$this->has_children): ?>
 
 			<h4><?php echo esc_html(__('Disable Days', 'dynamicpackages')); ?></h4>
 			<p>

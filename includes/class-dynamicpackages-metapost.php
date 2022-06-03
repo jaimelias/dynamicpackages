@@ -249,9 +249,7 @@ class dy_Metapost{
 		if(isset( $_POST['package_provider_email']))
 			update_post_meta( $post_id, 'package_provider_email', esc_attr($_POST['package_provider_email'] ));	
 		if(isset( $_POST['package_provider_tel']))
-			update_post_meta( $post_id, 'package_provider_tel', esc_attr($_POST['package_provider_tel']));	
-		if(isset( $_POST['package_provider_mobile']))
-			update_post_meta( $post_id, 'package_provider_mobile', esc_attr($_POST['package_provider_mobile'] ));			
+			update_post_meta( $post_id, 'package_provider_tel', esc_attr($_POST['package_provider_tel']));			
 		
 		global $polylang; 
 		$language_list = array();

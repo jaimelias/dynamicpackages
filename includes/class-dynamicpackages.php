@@ -108,7 +108,7 @@ class dynamicpackages {
 		new Dynamic_Packages_Public();
 		new Dynamic_Packages_Gateways();	
 		new Dynamic_Packages_Search();
-		
+		new Dynamic_Packages_Tables();
 		new Dynamic_Packages_Shortcodes();
 		new Dynamic_Packages_Forms();
 		new Dynamic_Packages_JSON($this->reviews);

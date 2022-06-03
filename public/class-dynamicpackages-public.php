@@ -36,6 +36,7 @@ class Dynamic_Packages_Public {
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
 		add_filter('minimal_description', array(&$this, 'meta_description'));
 		add_filter('dy_event_arr', array(&$this, 'event_arr'));
+		add_filter('dy_package_price_type', array(&$this, 'price_type'));
 	}
 
 	public function create_alert($row) {
@@ -118,24 +119,8 @@ class Dynamic_Packages_Public {
 		return $output;	
 	}	
 
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
 	public static function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in dynamicpackages_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The dynamicpackages_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */	 
+ 
 		global $post;
 		$strings = array();
 		$dep = array( 'jquery', 'landing-cookies');
@@ -1516,7 +1501,7 @@ class Dynamic_Packages_Public {
 			$description .= ' | ' . $post->post_title;
 			$description .= ' ('.$itinerary.'): ';
 			$description .= $people_imp;			
-			$output = dy_utilities::remove_emoji($description);			
+			$output = $description;			
 		}		
 	
 		return $output;
@@ -1644,7 +1629,7 @@ class Dynamic_Packages_Public {
 					
 					if(intval(dy_utilities::starting_at()) > 0)
 					{
-						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.self::price_type().'. ';
+						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.apply_filters('dy_package_price_type', null).'. ';
 						
 						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
 						{
@@ -2213,7 +2198,7 @@ class Dynamic_Packages_Public {
 			if($starting_at > 0)
 			{
 				$description = (empty($description)) ? get_the_title() : $description;
-				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.self::price_type() . '.';
+				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.apply_filters('dy_package_price_type', null) . '.';
 			}			
 		}
 		

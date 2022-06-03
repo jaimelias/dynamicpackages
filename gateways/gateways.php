@@ -314,7 +314,7 @@ class Dynamic_Packages_Gateways
 			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
 			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
 			'package_code' => esc_html(package_field('package_trip_code')),
-			'title' => esc_html(dy_utilities::remove_emoji($post->post_title)),
+			'title' => esc_html($post->post_title),
 			'package_type' => esc_html($this->get_type()),
 			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
 			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
