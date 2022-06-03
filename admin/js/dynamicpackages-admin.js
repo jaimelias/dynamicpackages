@@ -85,7 +85,7 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 			if (source !== 'loadData')
 			{
 				let gridData = grid.handsontable('getData');
-				//gridData = gridData.filter((v, i) => i+1 <= maxNum);
+				gridData = gridData.filter((v, i) => i+1 <= maxNum);
 				updateTextArea({textareaId, changes: gridData, containerId});
 			}
 		}
@@ -123,6 +123,8 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 		
 		let gridData = jQuery(grid).handsontable('getData');
 		gridData = populateSeasons({gridData, gridId: gridId});
+		gridData = gridData.filter((v, i) => i+1 <= maxNum);
+
 		const height = (cellHeight*maxNum)+headerHeight;
 	
 		jQuery(containerId).height(height);
