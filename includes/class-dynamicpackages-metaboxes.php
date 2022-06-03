@@ -62,6 +62,8 @@ class dy_Metaboxes
 		$this->enabled_dates = package_field('package_enabled_dates');
 		$this->seasons_chart = package_field('package_seasons_chart');
         $this->package_type = intval(package_field('package_package_type'));
+		$this->length_unit = intval(package_field('package_length_unit'));
+		$this->fixed_price = intval(package_field('package_fixed_price'));
         $this->show_pricing = intval(package_field('package_show_pricing'));
         $this->auto_booking = intval(package_field('package_auto_booking'));
         $this->payment = intval(package_field('package_payment'));
@@ -409,18 +411,13 @@ class dy_Metaboxes
 		<?php endif; ?>
 
 
-		<?php if ($this->package_type === 1): ?>
-			<fieldset>	
+		<fieldset>	
 
-				<h3><?php echo esc_html(__('Number of Special Seasons', 'dynamicpackages')); ?> <?php $this->select_number('num_seasons', 1, 10, $disable_child); ?></h3>
-			
-				<?php echo dy_utilities::handsontable($this->seasons_args); ?>			
+			<h3><?php echo esc_html(__('Number of Special Seasons', 'dynamicpackages')); ?> <?php $this->select_number('num_seasons', 0, 10, $disable_child); ?></h3>
 		
-			</fieldset>	
-		<?php
-        endif; ?>	
-
-		
+			<?php echo dy_utilities::handsontable($this->seasons_args); ?>			
+	
+		</fieldset>
 		
 		<?php
     }
@@ -445,50 +442,20 @@ class dy_Metaboxes
     public function package_rates_html($post)
     { ?>
 		
-			
-			<?php
-
-				$base_price_title = __('Base Prices Per Person', 'dynamicpackages');
-				
-				if($this->package_type === 1)
-				{
-					$base_price_title = __('Daily Rental Per Person', 'dynamicpackages');
-				}
-				else if($this->package_type === 2)
-				{
-					$base_price_title = __('Daily Rental Per Person', 'dynamicpackages');
-				}
-				else if($this->package_type == 3)
-				{
-					$base_price_title = __('Hourly Rental Per Person', 'dynamicpackages');
-				}
-				else if($this->package_type == 4)
-				{
-					$base_price_title = __('One-way price per person', 'dynamicpackages');
-				}
-			?>	
 
 		<fieldset>
-			<?php echo '<h3>'.esc_html(__('Base Prices Per Person', 'dynamicpackages')).'</h3>'; ?>
+			<?php echo '<h3>'.esc_html(__('Base Prices - Per Person', 'dynamicpackages')).'</h3>'; ?>
 			<?php echo dy_utilities::handsontable($this->price_chart_args); ?>
 		</fieldset>
 		
 
-	
-		<?php if ($this->package_type === 1): ?>
 		<fieldset>			
-			<h3 id="accommodation"><?php echo dy_Admin::get_duration_unit() ?> <?php echo esc_html(__('Accomodation Prices Per Person', 'dynamicpackages')); ?></h3>
+			<h3 id="package_variable_duration_price_title"><?php echo esc_html(__('Variable Duration Prices - Per Person', 'dynamicpackages')); ?></h3>
 			<?php echo dy_utilities::handsontable($this->occupancy_chart_args); ?>
 			<div id="special_seasons"></div>
-		</fieldset>
 
-
-		<fieldset>
 			<?php echo $this->build_week_day_surcharge_fields(); ?>
 		</fieldset>
-	
-		<?php
-        endif; ?>
 		
 		<?php
     }
@@ -644,48 +611,32 @@ class dy_Metaboxes
 					<option value="4" <?php echo ($this->package_type == 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Transport', 'dynamicpackages')); ?></option>	
 				</select>
 			</p>	
-			<?php if ($this->package_type < 2 || $this->package_type == 4): ?>
-				<p>
-					<label for="package_length_unit"><?php echo esc_html(__('Length Unit', 'dynamicpackages')); ?></label><br />
-					<select name="package_length_unit" id="package_length_unit">
-					
-						<?php if ($this->package_type == 0 || $this->package_type == 4): ?>
-							<option value="0" <?php echo (package_field('package_length_unit') == 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('Minutes', 'dynamicpackages')); ?></option>		
-							<option value="1" <?php echo (package_field('package_length_unit') == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Hours', 'dynamicpackages')); ?></option>
-						<?php
-                endif; ?>
-						
-						<?php if (intval($this->package_type) > 0): ?>
-							<option value="2" <?php echo (package_field('package_length_unit') == 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('Days', 'dynamicpackages')); ?></option>
-							<?php if (intval($this->package_type) == 1): ?>
-								<option value="3" <?php echo (package_field('package_length_unit') == 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Nights', 'dynamicpackages')); ?></option>		<option value="4" <?php echo (package_field('package_length_unit') == 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Weeks', 'dynamicpackages')); ?></option>
-							<?php
-                    endif; ?>
-						<?php
-                endif; ?>
-						
-					</select>
-				</p>
+			<p>
+				<label for="package_length_unit"><?php echo esc_html(__('Length Unit', 'dynamicpackages')); ?></label><br />
+				<select name="package_length_unit" id="package_length_unit">
+						<option value="0" <?php echo ($this->length_unit === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('Minutes', 'dynamicpackages')); ?></option>		
+						<option value="1" <?php echo ($this->length_unit === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Hours', 'dynamicpackages')); ?></option>
+						<option value="2" <?php echo ($this->length_unit === 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('Days', 'dynamicpackages')); ?></option>
+						<option value="3" <?php echo ($this->length_unit === 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Nights', 'dynamicpackages')); ?></option>		
+						<option value="4" <?php echo ($this->length_unit === 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Weeks', 'dynamicpackages')); ?></option>
+				</select>
+			</p>
 
-				<p>
-					<label for="package_duration"><?php echo esc_html(__('Duration', 'dynamicpackages')); ?></label><br />
-					<input type="number" name="package_duration" id="package_duration" value="<?php echo esc_attr(intval(package_field('package_duration')) > 0) ? package_field('package_duration') : 1; ?>">
-				</p>
-			<?php
-            endif; ?>
-			
-			<?php if (intval($this->package_type) > 0): ?>
+			<p>
+				<label for="package_duration"><?php echo esc_html(__('Duration', 'dynamicpackages')); ?></label><br />
+				<input type="number" name="package_duration" id="package_duration" value="<?php echo esc_attr(intval(package_field('package_duration')) > 0) ? package_field('package_duration') : 1; ?>">
+			</p>
+
 			<p>
 				<label for="package_duration_max"><?php echo esc_html(__('Maximum Duration', 'dynamicpackages')); ?></label><br />
 				<input type="number" step="0.1" name="package_duration_max" id="package_duration_max" value="<?php echo esc_attr(package_field('package_duration_max')); ?>">
 			</p>
-			<?php
-            endif; ?>
+
 			<p>
 				<label for="package_fixed_price"><?php echo esc_html(__('Show Prices Per Person', 'dynamicpackages')); ?></label><br />
 				<select name="package_fixed_price" id="package_fixed_price">
-					<option value="0" <?php echo (package_field('package_fixed_price') == 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
-					<option value="1" <?php echo (package_field('package_fixed_price') == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?> (<?php echo esc_html(__('fixed prices', 'dynamicpackages')); ?>)</option>				
+					<option value="0" <?php echo ($this->fixed_price === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
+					<option value="1" <?php echo ($this->fixed_price === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?> (<?php echo esc_html(__('fixed prices', 'dynamicpackages')); ?>)</option>				
 				</select>
 			</p>
 			

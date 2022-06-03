@@ -4,7 +4,6 @@ jQuery(() => {
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
 	inputHandlers();
 	initGridsFromTextArea();
-	initSeasonGrids();
 });
 
 const cellHeight = 23+2;
@@ -96,12 +95,6 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 	jQuery(minId).add(maxId).on('change click', function() {
 		
 		const maxNum = parseInt(jQuery(this).val());
-
-		if(maxNum === 0)
-		{
-			return false;
-		}
-
 		let rowNum = parseInt(jQuery(grid).handsontable('countRows'));
 		const instance = jQuery(grid).handsontable('getInstance');
 		let diff = 1;
@@ -289,7 +282,15 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 
 const initSeasonGrids = () => {
 
-	let data = jQuery('<textarea />').html(jQuery('#package_seasons_chart').val()).text();
+	
+	const seasonContainer = jQuery('#package_seasons_chart');
+
+	if(jQuery(seasonContainer).length === 0)
+	{
+		return false;
+	}
+
+	let data = jQuery('<textarea />').html(jQuery(seasonContainer).val()).text();
 	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
 
@@ -351,9 +352,15 @@ const initSeasonGrids = () => {
 				occupancyChartData[gridKey] = [...Array(maxRows).keys()].map(()=> [null, null]);
 			}
 
+
+			let title = jQuery('#package_variable_duration_price_title').text();
+			title = (season[0]) 
+				? `${title} - ${season[4]} [${season[0]}]` 
+				: `${title} - ${season[4]}`;
+
 			const wrapper = jQuery('<div>').addClass('hot-container');			
 			jQuery(wrapper).html(occupancyContainer);
-			jQuery(preRender).append(jQuery('<h3></h3>').text(jQuery('#accommodation').text()+': '+season[0]+' ('+season[4]+')'));
+			jQuery(preRender).append(jQuery('<h3></h3>').text(title));
 			jQuery(preRender).append(wrapper);
 		}
 
@@ -450,13 +457,11 @@ const handlePackageAutoBooking = () => {
 
 		if(value === 0)
 		{
-			console.log('no auto booking');
 			jQuery(deposit).val('').prop('disabled', true);
 			jQuery(payment).prop('disabled', true);
 		}
 		else
 		{
-			console.log('auto booking');
 			jQuery(deposit).prop('disabled', false);
 			jQuery(payment).prop('disabled', false);
 		}
@@ -469,21 +474,86 @@ const handlePackageAutoBooking = () => {
 
 };
 
-const inputHandlers = () => {
+const handlePackageType = () => {
 
-	handlePackagePayment();
+	if(jQuery('#package_package_type').length === 0)
+	{
+		return false;
+	}
 
-	handlePackageAutoBooking();
+	jQuery('#package_package_type').each(function(){
+		const value = parseInt(jQuery(this).val());
+		const duration_max = jQuery('#package_duration_max');
+		const length_unit = jQuery('#package_length_unit');
+		const num_seasons = jQuery('#package_num_seasons');
+		const all_length_units = [4, 3, 2, 1, 0];
+		const disable_length_units = [];
 
-	jQuery('#package_package_type').change(() => {
-		
-		wp.data.dispatch('core/editor').savePost().then(() => {
-				
-			if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+		if(value === 1)
+		{
+			jQuery(duration_max).prop('disabled', false);
+			jQuery(num_seasons).prop('disabled', false);
+			disable_length_units.push(0, 1);
+
+			initSeasonGrids();
+		}
+		else
+		{
+			jQuery(duration_max).val('').prop('disabled', true);
+			jQuery(num_seasons).val('0').trigger('change');
+
+			if(value === 0)
 			{
-				const {location} = window;
-				location.reload(true);					
+				disable_length_units.push(4, 3, 2);
+			}
+			else if(value === 2)
+			{
+				disable_length_units.push(4, 3, 1, 0);
+			}
+			else if(value === 3)
+			{
+				disable_length_units.push(4, 3, 2, 0);
+			}
+			else if(value === 4)
+			{
+				disable_length_units.push(4);
+			}
+		}
+
+		disable_length_units.forEach(v => {
+
+			jQuery(length_unit).find('option[value="'+v+'"]').each(function(){
+				const thisOption = jQuery(this);
+				jQuery(thisOption).prop('selected', false);
+				jQuery(thisOption).prop('disabled', true);
+			});
+
+		});
+
+		all_length_units.forEach(v => {
+			if(!disable_length_units.includes(v))
+			{
+				jQuery(length_unit).find('option[value="'+v+'"]').each(function(){
+					const thisOption = jQuery(this);
+					jQuery(thisOption).prop('selected', true);
+					jQuery(thisOption).prop('disabled', false);
+				});
 			}
 		});
+
 	});
-}
+
+
+
+	jQuery('#package_package_type').change(() => {
+		handlePackageType();
+	});	
+
+};
+
+const inputHandlers = () => {
+
+	handlePackageType();
+	handlePackagePayment();
+	handlePackageAutoBooking();
+};
