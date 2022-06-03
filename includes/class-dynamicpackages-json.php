@@ -2,8 +2,13 @@
 
 class Dynamic_Packages_JSON
 {
-	function __construct()
+	function __construct($reviews)
 	{
+		$this->reviews = $reviews;
+		$this->init();
+	}
+
+	public function init(){
 		add_action('wp', array(&$this, 'export'));
 		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
 	}
@@ -91,7 +96,7 @@ class Dynamic_Packages_JSON
 					//aggregateRating
 					$aggregateRating = array();
 					$aggregateRating['@type'] = 'aggregateRating';
-					$aggregateRating['ratingValue'] = esc_html(Dynamic_Packages_Reviews::get_rating(get_the_ID()));
+					$aggregateRating['ratingValue'] = esc_html($this->reviews->get_rating(get_the_ID()));
 					$aggregateRating['reviewCount'] = esc_html(get_comments_number());
 
 					//reviews
@@ -155,7 +160,7 @@ class Dynamic_Packages_JSON
 						
 						$arr['description'] = $post->post_excerpt;
 						
-						if(Dynamic_Packages_Reviews::get_rating(get_the_ID()) > 0)
+						if($this->reviews->get_rating(get_the_ID()) > 0)
 						{
 							$arr['aggregateRating'] = $aggregateRating;
 						}
@@ -222,7 +227,7 @@ class Dynamic_Packages_JSON
 							$item['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
 							$item['eventStatus'] = 'https://schema.org/EventScheduled';
 							
-							if(Dynamic_Packages_Reviews::get_rating(get_the_ID()) > 0)
+							if($this->reviews->get_rating(get_the_ID()) > 0)
 							{
 								$item['aggregateRating'] = $aggregateRating;
 							}							

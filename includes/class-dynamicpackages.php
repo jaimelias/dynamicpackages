@@ -42,9 +42,15 @@ class dynamicpackages {
 		$this->version = '1.0.0';
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->preload();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->validate_recaptcha = dy_validators::validate_recaptcha();
+	}
+
+	public function preload()
+	{
+		$this->reviews = new Dynamic_Packages_Reviews();
 	}
 
 	private function load_dependencies() {
@@ -68,12 +74,12 @@ class dynamicpackages {
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-shortcodes.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
+		require_once $dir . 'includes/class-dynamicpackages-add-calendar.php';
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
 		require_once $dir . 'public/class-dynamicpackages-public.php';
 		require_once $dir . 'public/partials/forms.php';			
-		require_once $dir . 'public/partials/tables.php';			
-		require_once $dir . 'public/partials/add_to_calendar.php';	
-		require_once $dir . 'public/partials/reviews.php';
+		require_once $dir . 'public/partials/tables.php';
+		require_once $dir . 'includes/class-dynamicpackages-reviews.php';
 		require_once $dir . 'gateways/gateways.php';	
 
 		$this->loader = new dynamicpackages_Loader();
@@ -94,7 +100,6 @@ class dynamicpackages {
 		new dy_Metaboxes();
 		new dy_Metapost();
 		new dy_Post_Type();
-		new Dynamic_Packages_Reviews();
 		new dy_Tax_Mod();
 	}
 
@@ -103,10 +108,10 @@ class dynamicpackages {
 		new Dynamic_Packages_Public();
 		new Dynamic_Packages_Gateways();	
 		new Dynamic_Packages_Search();
-		new Dynamic_Packages_Reviews();
+		
 		new Dynamic_Packages_Shortcodes();
 		new Dynamic_Packages_Forms();
-		new Dynamic_Packages_JSON();
+		new Dynamic_Packages_JSON($this->reviews);
 		new Dynamic_Packages_Ical();
 		new Dynamic_Packages_Actions();
 	}

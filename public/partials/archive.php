@@ -296,7 +296,7 @@ else
 							
 							
 							<div class="dy_reviews small bottom-10">
-							<?php Dynamic_Packages_Reviews::stars($post->ID); ?>
+								<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
 							</div>
 
 							<?php if(!dy_validators::is_package_transport()) : ?>
