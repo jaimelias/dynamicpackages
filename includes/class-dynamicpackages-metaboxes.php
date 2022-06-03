@@ -398,20 +398,15 @@ class dy_Metaboxes
         endif; ?>
 			
 		<?php if (!$this->is_child): ?>
-
-			<?php if ($this->auto_booking > 0): ?>
-				<p>
-					<label for="package_payment"><?php echo esc_html(__('Payment', 'dynamicpackages')); ?></label><br />
-					<select name="package_payment" id="package_payment">
-						<option value="0" <?php echo ($this->payment === 0) ? 'selected' : ''; ?> ><?php echo esc_html__('Full Payment', 'dynamicpackages'); ?></option>
-						<option value="1" <?php echo ($this->payment === 1) ? 'selected' : ''; ?> ><?php echo esc_html__('Deposit', 'dynamicpackages'); ?></option>
-					</select>
-					<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo esc_attr($this->deposit); ?>">%</label>
-				</p>
-			<?php
-            endif; ?>
-		<?php
-        endif; ?>
+			<p>
+				<label for="package_payment"><?php echo esc_html(__('Payment', 'dynamicpackages')); ?></label><br />
+				<select name="package_payment" id="package_payment">
+					<option value="0" <?php echo ($this->payment === 0) ? 'selected' : ''; ?> ><?php echo esc_html__('Full Payment', 'dynamicpackages'); ?></option>
+					<option value="1" <?php echo ($this->payment === 1) ? 'selected' : ''; ?> ><?php echo esc_html__('Deposit', 'dynamicpackages'); ?></option>
+				</select>
+				<label for="package_deposit"><input type="number" step="0.1" name="package_deposit" id="package_deposit" value="<?php echo esc_attr($this->deposit); ?>">%</label>
+			</p>
+		<?php endif; ?>
 
 
 		<?php if ($this->package_type === 1): ?>

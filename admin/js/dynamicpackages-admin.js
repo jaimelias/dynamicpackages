@@ -420,12 +420,10 @@ const handlePackagePayment = () => {
 
 		if(value === 0)
 		{
-			console.log('is full payment');
 			jQuery(deposit).val('').prop('disabled', true);
 		}
 		else
 		{
-			console.log('is deposit');
 			jQuery(deposit).prop('disabled', false);
 		}
 	});
@@ -437,28 +435,55 @@ const handlePackagePayment = () => {
 
 };
 
+const handlePackageAutoBooking = () => {
+
+
+	if(jQuery('#package_auto_booking').length && jQuery('#package_payment').length === 0 && jQuery('#package_deposit').length === 0)
+	{
+		return false;
+	}
+
+	jQuery('#package_auto_booking').each(function(){
+		const value = parseInt(jQuery(this).val());
+		const payment = jQuery('#package_payment');
+		const deposit = jQuery('#package_deposit');
+
+		if(value === 0)
+		{
+			console.log('no auto booking');
+			jQuery(deposit).val('').prop('disabled', true);
+			jQuery(payment).prop('disabled', true);
+		}
+		else
+		{
+			console.log('auto booking');
+			jQuery(deposit).prop('disabled', false);
+			jQuery(payment).prop('disabled', false);
+		}
+	});
+
+
+	jQuery('#package_auto_booking').change(()=>  {
+		handlePackageAutoBooking();
+	});	
+
+};
+
 const inputHandlers = () => {
 
 	handlePackagePayment();
 
+	handlePackageAutoBooking();
 
-
-	jQuery('#package_package_type').add('#package_auto_booking').change(() => {
+	jQuery('#package_package_type').change(() => {
 		
-		if(parseInt(dy_wp_version()) < 5)
-		{
-			jQuery('#post').submit();
-		}
-		else
-		{
-			wp.data.dispatch('core/editor').savePost().then(() => {
+		wp.data.dispatch('core/editor').savePost().then(() => {
 				
-				if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
-				{
-					const {location} = window;
-					location.reload(true);					
-				}
-			});
-		}
+			if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+			{
+				const {location} = window;
+				location.reload(true);					
+			}
+		});
 	});
 }

@@ -31,7 +31,6 @@
 
 class dynamicpackages {
 
-
 	protected $loader;
 	protected $plugin_name;
 	protected $version;
@@ -76,9 +75,9 @@ class dynamicpackages {
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
 		require_once $dir . 'includes/class-dynamicpackages-add-calendar.php';
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
+		require_once $dir . 'includes/class-dynamicpackages-tables.php';
 		require_once $dir . 'public/class-dynamicpackages-public.php';
 		require_once $dir . 'public/partials/forms.php';			
-		require_once $dir . 'public/partials/tables.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php';
 		require_once $dir . 'gateways/gateways.php';	
 
