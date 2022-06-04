@@ -30,7 +30,7 @@ class dy_Admin {
 
 	public function enqueue_styles() {
 
-		self::handsontable();
+		$this->handsontable();
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
 		
@@ -40,7 +40,7 @@ class dy_Admin {
 	
 	}
 	
-	public static function handsontable()
+	public function handsontable()
 	{
 		wp_enqueue_style( 'handsontableCss', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.css', array(), time(), 'all' );
 		wp_enqueue_script( 'handsontableJS', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
@@ -69,7 +69,7 @@ class dy_Admin {
 		{			
 				
 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true );				
-			wp_add_inline_script('dynamicpackages', self::wp_version(), 'before');
+			wp_add_inline_script('dynamicpackages', $this->wp_version(), 'before');
 			
 		//picker
 			wp_enqueue_script( 'picker-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.js', array('jquery'), '', false );
@@ -88,12 +88,12 @@ class dy_Admin {
 		
 	}
 	
-	public static function wp_version()
+	public function wp_version()
 	{
 		return 'function dy_wp_version(){return '.esc_html(intval(get_bloginfo('version'))).';}';
 	}
 	
-	public static function register_polylang_strings()
+	public function register_polylang_strings()
 	{
 		global $polylang;
 		
@@ -104,27 +104,6 @@ class dy_Admin {
 			pll_register_string('page_title_modifier', 'Find Packages');
 			pll_register_string('checkout_page_title', 'Booking Page');
 		}
-	}
-	
-	public static function get_duration_unit()
-	{
-		$output = '';
-		$length_unit = package_field( 'package_length_unit' );
-		
-		if($length_unit == 2)
-		{
-			$output = __('Daily', 'dynamicpackages');
-		}
-		else if($length_unit == 3)
-		{
-			$output = __('Nightly', 'dynamicpackages');
-		}
-		else if($length_unit == 4)
-		{
-			$output = __('Weekly', 'dynamicpackages');
-		}
-		
-		return $output;	
 	}
 	
 	public  function add_settings_page()
@@ -366,7 +345,7 @@ class dy_Admin {
 	}
 
 
-	public static function settings_hot($arr)
+	public function settings_hot($arr)
 	{		
 		$args = array(
 			'container' => $arr['container'],
@@ -381,7 +360,7 @@ class dy_Admin {
 		echo dy_utilities::handsontable($args);
 	}
 
-	public static function settings_input($arr){
+	public function settings_input($arr){
 			$name = $arr['name'];
 			$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
@@ -392,7 +371,7 @@ class dy_Admin {
 	<?php }	
 	
 	
-	public static function dy_packages_breadcrump_render() { 
+	public function dy_packages_breadcrump_render() { 
 		global $polylang;
 		$options = get_option('dy_packages_breadcrump');
 
@@ -423,7 +402,7 @@ class dy_Admin {
 		<?php
 	}
 
-	public static function settings_page()
+	public function settings_page()
 	{ 
 		?><div class="wrap">
 		<form action="options.php" method="post">

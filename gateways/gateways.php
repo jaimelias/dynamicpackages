@@ -41,21 +41,22 @@ class Dynamic_Packages_Gateways
 	}
 	public function init()
 	{
-		add_action('dy_cc_form', array(&$this, 'cc_form'));
+		add_action('dy_package_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);
-		add_action('dy_form_terms_conditions', array(&$this, 'terms_conditions'));
+		
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
-		add_filter('dy_has_any_gateway', array(&$this, 'has_any_gateway'));
-		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
-		add_action('dy_invalid_min_duration', array(&$this, 'invalid_min_duration'));
-		add_action('dy_show_coupon_confirmation', array(&$this, 'show_coupon_confirmation'));
-		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
-		add_action('dy_crypto_form', array(&$this, 'crypto_form'));
+		add_action('dy_package_terms_conditions', array(&$this, 'terms_conditions'));
+		add_filter('dy_package_has_gateway', array(&$this, 'has_gateway'));
+		add_filter('dy_package_join_gateways', array(&$this, 'join_gateways'));
+		add_action('dy_package_invalid_min_duration', array(&$this, 'invalid_min_duration'));
+		add_action('dy_package_coupon_confirmation', array(&$this, 'coupon_confirmation'));
+		add_action('dy_package_cc_warning', array(&$this, 'cc_warning'));
+		add_action('dy_package_crypto_form', array(&$this, 'crypto_form'));
 	}
 	
 	public function set_post_on_checkout_page()
@@ -131,7 +132,7 @@ class Dynamic_Packages_Gateways
 		return join(' '.__('or', 'dynamicpackages').' ', array_filter(array_merge(array(join(', ', array_slice($array, 0, -1))), array_slice($array, -1)), 'strlen'));
 	}
 	
-	public function has_any_gateway()
+	public function has_gateway()
 	{
 		$output = false;
 		$gateways = $this->list_gateways_cb();
@@ -140,7 +141,7 @@ class Dynamic_Packages_Gateways
 		{
 			if(count($gateways) > 1)
 			{
-				$GLOBALS['has_any_gateway'] = true;
+				$GLOBALS['has_gateway'] = true;
 				$output = true;
 			}
 
@@ -200,7 +201,7 @@ class Dynamic_Packages_Gateways
 	{
 		$output = null;
 		
-		if($this->has_any_gateway())
+		if($this->has_gateway())
 		{
 			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
@@ -295,7 +296,7 @@ class Dynamic_Packages_Gateways
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$booking_coupon.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
-		$add_ons = dy_Tax_Mod::get_add_ons();
+		$add_ons = apply_filters('dy_package_get_add_ons', null);
 		
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
@@ -506,7 +507,7 @@ class Dynamic_Packages_Gateways
 		return $output;
 	}
 	
-	public function show_coupon_confirmation()
+	public function coupon_confirmation()
 	{
 		if(isset($_GET['booking_coupon']) && is_booking_page())
 		{

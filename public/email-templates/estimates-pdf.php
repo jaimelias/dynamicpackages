@@ -20,14 +20,14 @@ $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
-$join_gateways = apply_filters('dy_join_gateways', null);
+$join_gateways = apply_filters('dy_package_join_gateways', null);
 $notes_content = ($join_gateways) ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '<br/><br/>' : null;
 $notes = apply_filters('dy_email_notes', $notes_content . apply_filters('dy_package_details', null));
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
 
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
-$add_ons = apply_filters('dy_included_add_ons_list', null);
+$add_ons = apply_filters('dy_package_included_add_ons_list', null);
 
 
 

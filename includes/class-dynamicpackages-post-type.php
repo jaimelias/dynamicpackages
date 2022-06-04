@@ -7,16 +7,16 @@ class dy_Post_Type
 	
 	function __construct()
 	{
-		add_action('init', array('dy_Post_Type', 'package_post_type'));
-		add_action('init', array('dy_Post_Type', 'location_taxonomy'));
-		add_action('init', array('dy_Post_Type', 'category_taxonomy'));
-		add_action('init', array('dy_Post_Type', 'included_taxonomy'));
-		add_action('init', array('dy_Post_Type', 'not_included_taxonomy'));
-		add_action('init', array('dy_Post_Type', 'terms_conditions_taxonomy'));
-		add_action('init', array('dy_Post_Type', 'add_ons'));
+		add_action('init', array(&$this, 'package_post_type'));
+		add_action('init', array(&$this, 'location_taxonomy'));
+		add_action('init', array(&$this, 'category_taxonomy'));
+		add_action('init', array(&$this, 'included_taxonomy'));
+		add_action('init', array(&$this, 'not_included_taxonomy'));
+		add_action('init', array(&$this, 'terms_conditions_taxonomy'));
+		add_action('init', array(&$this, 'add_ons'));
 	}
 	
-	public static function package_post_type() {
+	public function package_post_type() {
 
 		$labels = array(
 			'name' => __( 'Packages', 'dynamicpackages' ),
@@ -64,7 +64,7 @@ class dy_Post_Type
 
 	}
 	
-	public static function location_taxonomy() {
+	public function location_taxonomy() {
 		
 		$labels = array(
 			'name' => __( 'Locations', 'dynamicpackages'),
@@ -83,7 +83,7 @@ class dy_Post_Type
 		);
 		register_taxonomy( 'package_location', array( 'packages' ), $args );
 	}
-	public static function category_taxonomy() {
+	public function category_taxonomy() {
 
 		$labels = array(
 			'name' => __( 'Categories', 'dynamicpackages'),
@@ -103,7 +103,7 @@ class dy_Post_Type
 		register_taxonomy( 'package_category', array( 'packages' ), $args );
 	}
 
-	public static function included_taxonomy() {
+	public function included_taxonomy() {
 
 		$labels = array(
 			'name' => __( 'Included', 'dynamicpackages'),
@@ -123,7 +123,7 @@ class dy_Post_Type
 		register_taxonomy( 'package_included', array( 'packages' ), $args );
 	}	
 
-	public static function not_included_taxonomy() {
+	public function not_included_taxonomy() {
 
 		$labels = array(
 			'name' => __( 'Not Included', 'dynamicpackages'),
@@ -143,7 +143,7 @@ class dy_Post_Type
 		register_taxonomy( 'package_not_included', array( 'packages' ), $args );
 	}
 
-	public static function terms_conditions_taxonomy() {
+	public function terms_conditions_taxonomy() {
 
 		$labels = array(
 			'name' => __( 'Terms & Conditions', 'dynamicpackages'),
@@ -163,7 +163,7 @@ class dy_Post_Type
 		register_taxonomy( 'package_terms_conditions', array( 'packages' ), $args );
 	}
 	
-	public static function add_ons() {
+	public function add_ons() {
 
 		$labels = array(
 			'name' => __( 'Add-ons', 'dynamicpackages'),

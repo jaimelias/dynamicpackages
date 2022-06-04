@@ -63,8 +63,8 @@
 
 <hr/>
 
-<?php do_action('dy_show_coupon_confirmation'); ?>
-<?php do_action('dy_invalid_min_duration'); ?>
+<?php do_action('dy_package_coupon_confirmation'); ?>
+<?php do_action('dy_package_invalid_min_duration'); ?>
 
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">
@@ -122,7 +122,7 @@
 					
 				</tbody>
 
-				<?php if(dy_Tax_Mod::has_add_ons()): ?>
+				<?php if(apply_filters('dy_package_has_add_ons', null)): ?>
 					<thead>
 						<tr>
 							<th colspan="2"><?php echo (esc_html__('Add-ons', 'dynamicpackages')); ?></th>
@@ -130,7 +130,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php do_action('dy_checkout_items'); ?>
+						<?php do_action('dy_package_checkout_items'); ?>
 					</tbody>
 				<?php endif; ?>
 								

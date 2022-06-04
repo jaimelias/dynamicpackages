@@ -1,8 +1,8 @@
 <?php 
 	global $post; 
-	$has_any_gateway = apply_filters('dy_has_any_gateway', false);
-	$hide_form = ($has_any_gateway) ? 'class="hidden"' : null;
-	$submit_form = ($has_any_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
+	$has_gateway = apply_filters('dy_package_has_gateway', false);
+	$hide_form = ($has_gateway) ? 'class="hidden"' : null;
+	$submit_form = ($has_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');
 	$header_form = (is_singular('packages')) ? __('Send Your Request', 'dynamicpackages') : __('Contact Us', 'dynamicpackages');
 	$request_form = (is_singular('packages')) ? 'estimate_request' : 'contact';
 
@@ -26,9 +26,9 @@
 		<hr />
 
 
-		<?php if($has_any_gateway) : ?>
-			<div id="dy_crypto_form" class="hidden small">
-				<?php do_action('dy_crypto_form'); ?>
+		<?php if($has_gateway) : ?>
+			<div id="dy_package_crypto_form" class="hidden small">
+				<?php do_action('dy_package_crypto_form'); ?>
 				<hr />
 			</div>
 		<?php endif; ?>
@@ -87,12 +87,12 @@
 			
 		</div>
 
-		<div id="dy_card_payment_conditions" class="hidden small">
-			<?php do_action('dy_cc_warning'); ?>
+		<div id="dy_package_card_payment_conditions" class="hidden small">
+			<?php do_action('dy_package_cc_warning'); ?>
 		</div>
 		
-		<?php if($has_any_gateway) : ?>
-			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
+		<?php if($has_gateway) : ?>
+			<div id="dy_package_cc_form"><?php do_action('dy_package_cc_form'); ?></div>
 		<?php endif; ?>
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
