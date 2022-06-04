@@ -76,7 +76,7 @@ class dy_Add_To_Calendar
 							<span class="start"><?php esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
 							<span class="timezone"><?php esc_html_e(get_option('timezone_string')); ?></span>
 							<span class="title"><?php esc_html_e($post->post_title); ?></span>
-							<span class="description"><?php esc_html_e(apply_filters('dy_package_description', null)); ?></span>
+							<span class="description"><?php esc_html_e(apply_filters('dy_description', null)); ?></span>
 							<span class="location"><?php esc_html_e(package_field('package_start_address')); ?></span>
 						</div>
 					</div>

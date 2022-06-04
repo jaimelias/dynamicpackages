@@ -243,12 +243,10 @@ else
 	<?php $term_description = $Parsedown->text($term_description); ?>
 	<hr/>
 	<div class="bottom-20 large"><?php echo $term_description; ?> </div>
-	<?php do_action('dy_package_filter');?>
+	<?php do_action('dy_form_filter');?>
 <?php endif; ?>
 
 	<div id="dy_archive" class="dy_archive">
-	
-	
 	
 	<div class="pure-g gutters">
 	<link itemprop="url" href="<?php the_permalink(); ?>" />
@@ -290,7 +288,7 @@ else
 								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo (esc_html__('ID', 'dynamicpackages')).esc_html($package_code); ?></div>
 							<?php endif; ?>								
 						
-							<div class="dy_package_title_h3">
+							<div class="dy_title_h3">
 								<h3 class="small"><a title="<?php echo esc_attr($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php esc_html_e($post->post_title); ?></span></a></h3>
 							</div>
 							
@@ -309,7 +307,7 @@ else
 								<p itemprop="description" class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden': 'hide-sm' ?>"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
-							<div class="small hide-sm"><?php echo apply_filters('dy_package_details', null); ?></div>
+							<div class="small hide-sm"><?php echo apply_filters('dy_details', null); ?></div>
 							
 							
 							<?php if(dy_utilities::starting_at_archive() > 0): ?>
@@ -320,7 +318,7 @@ else
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_attr(dy_utilities::currency_name()); ?>" />
 									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr(dy_utilities::starting_at_archive());?>"><?php esc_html_e(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
-									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_package_price_type', null));?></small>
+									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>
 												

@@ -10,7 +10,7 @@ class Dynamic_Packages_Tables{
 	public function init()
 	{
 		add_action('wp', array(&$this, 'args'));
-		add_action('dy_package_price_table', array(&$this, 'price_table'), 100);
+		add_action('dy_price_table', array(&$this, 'price_table'), 100);
 	}
 
 	public function args()
@@ -36,7 +36,7 @@ class Dynamic_Packages_Tables{
 	public function price_table()
 	{
 		$output = '';
-		$which_var = 'dy_package_price_table';
+		$which_var = 'dy_price_table';
 		global $$which_var;
 
 		if(isset($$which_var))
@@ -50,7 +50,7 @@ class Dynamic_Packages_Tables{
 			{
 				$this->max = ($this->price_type === 1) ? 1 : $this->max;
 				$hide_table = false;
-				$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_package_price_type', null).' (USD)';
+				$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
 				
 				$output .= '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
 				

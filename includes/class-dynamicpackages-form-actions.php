@@ -184,7 +184,7 @@ class Dynamic_Packages_Actions{
 		}
 		else
 		{			
-			$request = (isset($_POST['inquiry'])) ?  sanitize_text_field($_POST['inquiry']) : apply_filters('dy_package_description', null);
+			$request = (isset($_POST['inquiry'])) ?  sanitize_text_field($_POST['inquiry']) : apply_filters('dy_description', null);
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
 			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
 			
@@ -205,7 +205,7 @@ class Dynamic_Packages_Actions{
 	
 	public function provider_email_subject()
 	{
-		$output = sprintf(__('Check availability for %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_package_description', null));
+		$output = sprintf(__('Check availability for %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_description', null));
 		
 		return apply_filters('dy_email_provider_email_subject', $output);
 	}
@@ -242,7 +242,7 @@ class Dynamic_Packages_Actions{
 	{
         if($this->has_form() && $this->is_request_submitted())
         {
-            $excerpt = apply_filters('dy_package_description', null);
+            $excerpt = apply_filters('dy_description', null);
         }
 
         return $excerpt;

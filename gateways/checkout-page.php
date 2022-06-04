@@ -63,17 +63,17 @@
 
 <hr/>
 
-<?php do_action('dy_package_coupon_confirmation'); ?>
-<?php do_action('dy_package_invalid_min_duration'); ?>
+<?php do_action('dy_coupon_confirmation'); ?>
+<?php do_action('dy_invalid_min_duration'); ?>
 
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
-			<?php echo apply_filters('dy_package_details', null); ?>
+			<?php echo apply_filters('dy_details', null); ?>
 			<?php if(isset($add_to_calendar)) : ?>
 				<div class="text-center bottom-10"><?php echo $add_to_calendar; ?></div>
 			<?php endif; ?>
-			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), apply_filters('dy_package_description', null).' '.dy_money()); ?></div>
+			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), apply_filters('dy_description', null).' '.dy_money()); ?></div>
 		</div>
 	</div>
 	<div class="pure-u-1 pure-u-md-2-3">
@@ -122,7 +122,7 @@
 					
 				</tbody>
 
-				<?php if(apply_filters('dy_package_has_add_ons', null)): ?>
+				<?php if(apply_filters('dy_has_add_ons', null)): ?>
 					<thead>
 						<tr>
 							<th colspan="2"><?php echo (esc_html__('Add-ons', 'dynamicpackages')); ?></th>
@@ -130,7 +130,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php do_action('dy_package_checkout_items'); ?>
+						<?php do_action('dy_checkout_items'); ?>
 					</tbody>
 				<?php endif; ?>
 								

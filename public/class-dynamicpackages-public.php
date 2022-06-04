@@ -31,12 +31,12 @@ class Dynamic_Packages_Public {
 		add_filter('term_description', array('Dynamic_Packages_Public', 'modify_term_description'));
 		add_action('wp_head', array('Dynamic_Packages_Public', 'location_category_canonical'));
 		add_filter('jetpack_enable_open_graph', array('Dynamic_Packages_Public', 'deque_jetpack'));
-		add_filter('dy_package_details', array(&$this, 'details'));
-		add_action('dy_package_description', array(&$this, 'description'));
+		add_filter('dy_details', array(&$this, 'details'));
+		add_action('dy_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
 		add_filter('minimal_description', array(&$this, 'meta_description'));
 		add_filter('dy_event_arr', array(&$this, 'event_arr'));
-		add_filter('dy_package_price_type', array(&$this, 'price_type'));
+		add_filter('dy_price_type', array(&$this, 'price_type'));
 	}
 
 	public function create_alert($row) {
@@ -195,7 +195,7 @@ class Dynamic_Packages_Public {
 		
 		if($enqueue_archive)
 		{
-			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), '', true );
+			wp_enqueue_script('dynamicpackages-archive', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
 		}
 		
 		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
@@ -1629,7 +1629,7 @@ class Dynamic_Packages_Public {
 					
 					if(intval(dy_utilities::starting_at()) > 0)
 					{
-						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.apply_filters('dy_package_price_type', null).'. ';
+						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', null).'. ';
 						
 						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
 						{
@@ -2198,7 +2198,7 @@ class Dynamic_Packages_Public {
 			if($starting_at > 0)
 			{
 				$description = (empty($description)) ? get_the_title() : $description;
-				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.apply_filters('dy_package_price_type', null) . '.';
+				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.apply_filters('dy_price_type', null) . '.';
 			}			
 		}
 		

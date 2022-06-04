@@ -1112,9 +1112,9 @@ class dy_utilities {
 		$total = 0;
 		$pax_num = self::pax_num();
 
-		if(apply_filters('dy_package_has_add_ons', null) && isset($_POST['add_ons']))
+		if(apply_filters('dy_has_add_ons', null) && isset($_POST['add_ons']))
 		{
-			$add_ons = apply_filters('dy_package_get_add_ons', null);
+			$add_ons = apply_filters('dy_get_add_ons', null);
 			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
 			$add_ons_price = 0;
 			$add_ons_count = count($add_ons);

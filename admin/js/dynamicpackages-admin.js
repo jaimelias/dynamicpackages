@@ -84,7 +84,14 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 			if (source !== 'loadData')
 			{
 				let gridData = grid.handsontable('getData');
-				gridData = gridData.filter((v, i) => i+1 <= maxNum);
+				
+				const maxNum = parseInt(jQuery(maxId).val());
+
+				if(gridData.length > maxNum)
+				{
+					gridData = gridData.filter((v, i) => i+1 <= maxNum);
+				}
+
 				updateTextArea({textareaId, changes: gridData, containerId});
 			}
 		}
@@ -93,8 +100,8 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 	jQuery(grid).handsontable(args);
 	
 	jQuery(minId).add(maxId).on('change click', function() {
-		
-		const maxNum = parseInt(jQuery(this).val());
+		const thisField = jQuery(this);
+		const maxNum = parseInt(jQuery(thisField).val());
 		let rowNum = parseInt(jQuery(grid).handsontable('countRows'));
 		const instance = jQuery(grid).handsontable('getInstance');
 		let diff = 1;
@@ -116,7 +123,11 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 		
 		let gridData = jQuery(grid).handsontable('getData');
 		gridData = populateSeasons({gridData, gridId: gridId});
-		gridData = gridData.filter((v, i) => i+1 <= maxNum);
+
+		if(gridData.length > maxNum)
+		{
+			gridData = gridData.filter((v, i) => i+1 <= maxNum);
+		}
 
 		const height = (cellHeight*maxNum)+headerHeight;
 	
@@ -489,6 +500,8 @@ const handlePackageType = () => {
 		const all_length_units = [4, 3, 2, 1, 0];
 		const disable_length_units = [];
 
+		console.log(value);
+
 		if(value === 1)
 		{
 			jQuery(duration_max).prop('disabled', false);
@@ -500,7 +513,7 @@ const handlePackageType = () => {
 		else
 		{
 			jQuery(duration_max).val('').prop('disabled', true);
-			jQuery(num_seasons).val('0').trigger('change');
+			jQuery(num_seasons).val('0').prop('disabled', true).trigger('change');
 
 			if(value === 0)
 			{
@@ -543,16 +556,52 @@ const handlePackageType = () => {
 
 	});
 
-
-
 	jQuery('#package_package_type').change(() => {
 		handlePackageType();
 	});	
 
 };
 
+const handleParentAttr = () => {
+
+	const { subscribe } = wp.data;
+	let prevParentId = undefined;
+	let changed = false;
+
+	subscribe(() => {
+
+		const thisParentId = wp.data.select( 'core/editor' ).getEditedPostAttribute( 'parent' );
+		prevParentId = (typeof prevParentId === 'undefined' && thisParentId !== '') 
+			? thisParentId 
+			: prevParentId;
+
+		if(prevParentId !== thisParentId && !changed)
+		{
+			changed = true;
+			console.log({prevParentId, thisParentId});
+
+			setTimeout(() => {
+				wp.data.dispatch('core/editor').savePost().then(() => {
+				
+					if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+					{
+						
+						const {location} = window;
+						const url = new URL(location);
+						url.searchParams.append('dy_parent', thisParentId);
+						window.location.replace(url.href);						
+					}
+				});
+			}, 500);
+		}
+	});
+
+
+};
+
 const inputHandlers = () => {
 
+	handleParentAttr();
 	handlePackageType();
 	handlePackagePayment();
 	handlePackageAutoBooking();

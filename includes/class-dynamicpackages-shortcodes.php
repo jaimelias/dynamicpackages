@@ -61,7 +61,7 @@ class Dynamic_Packages_Shortcodes {
 	
 	public function package_filter($content = null)
 	{
-		return apply_filters('dy_package_filter_form', $content);
+		return apply_filters('dy_form_filter_form', $content);
 	}	
 	
 	public function package_shortcode_full($attr, $content = "")
@@ -120,7 +120,7 @@ class Dynamic_Packages_Shortcodes {
 				}
 				else
 				{
-					$package_main = (get_option('dy_packages_breadcrump')) ? get_option('dy_packages_breadcrump') : get_option('page_on_front');
+					$package_main = (get_option('dy_breadcrump')) ? get_option('dy_breadcrump') : get_option('page_on_front');
 					
 					if(isset($polylang))
 					{	

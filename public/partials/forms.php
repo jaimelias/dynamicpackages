@@ -4,8 +4,8 @@ class Dynamic_Packages_Forms
 {
 	public function __construct()
 	{
-		add_filter('dy_package_filter_form', array(&$this, 'package_filter_form'));
-		add_action('dy_package_filter', array(&$this, 'package_filter_form_cb'));
+		add_filter('dy_form_filter_form', array(&$this, 'package_filter_form'));
+		add_action('dy_form_filter', array(&$this, 'package_filter_form_cb'));
 		add_action('dy_check_prices_form', array(&$this, 'check_prices_form'));
 		add_action('dy_archive_pagination', array(&$this, 'pagination'));
 	}
@@ -18,7 +18,7 @@ class Dynamic_Packages_Forms
 	{
 		global $polylang;
 		
-		$package_main = (get_option('dy_packages_breadcrump')) ? get_option('dy_packages_breadcrump') : get_option('page_on_front');
+		$package_main = (get_option('dy_breadcrump')) ? get_option('dy_breadcrump') : get_option('page_on_front');
 		
 		if(isset($polylang))
 		{	
@@ -31,7 +31,7 @@ class Dynamic_Packages_Forms
 		
 		ob_start();
 		?>
-		<form id="dy_package_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get">
+		<form id="dy_form_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get">
 		
 			<div class="pure-g gutters">
 

@@ -120,7 +120,7 @@ class dy_Admin {
 		register_setting('dy_settings', 'dy_tax_id', 'esc_html');
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
-		register_setting('dy_settings', 'dy_packages_breadcrump', 'intval');
+		register_setting('dy_settings', 'dy_breadcrump', 'intval');
 		register_setting( 'dy_settings', 'dy_tax', 'intval');
 		register_setting('dy_settings', 'dy_webhook', 'esc_url');
 		register_setting('dy_settings', 'dy_quote_webhook', 'esc_url');
@@ -168,9 +168,9 @@ class dy_Admin {
 		);
 
 		add_settings_field( 
-			'dy_packages_breadcrump', 
+			'dy_breadcrump', 
 			esc_html(__( 'Package Archive Page', 'dynamicpackages' )), 
-			array(&$this, 'dy_packages_breadcrump_render'), 
+			array(&$this, 'dy_breadcrump_render'), 
 			'dy_settings', 
 			'dy_settings_section' 
 		);		
@@ -371,9 +371,9 @@ class dy_Admin {
 	<?php }	
 	
 	
-	public function dy_packages_breadcrump_render() { 
+	public function dy_breadcrump_render() { 
 		global $polylang;
-		$options = get_option('dy_packages_breadcrump');
+		$options = get_option('dy_breadcrump');
 
 		$args = array(
 			'post_parent' => 0,
@@ -391,7 +391,7 @@ class dy_Admin {
 		
 		$wp_query = new WP_Query($args);
 		?>
-		<select name='dy_packages_breadcrump'>
+		<select name='dy_breadcrump'>
 			<option value="<?php echo esc_attr(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
 			<?php if($wp_query->have_posts()): ?>
 				<?php while ($wp_query->have_posts()): $wp_query->the_post(); ?>

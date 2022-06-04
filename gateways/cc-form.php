@@ -65,4 +65,4 @@
 
 
 
-<?php echo do_action('dy_package_terms_conditions'); ?>
+<?php echo do_action('dy_terms_conditions'); ?>

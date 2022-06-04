@@ -15,11 +15,11 @@
 	}
 
 }
-form#dy_package_filter
+form#dy_form_filter
 {
 	padding: 20px 20px 0 20px !important; 
 }
-form#dy_package_filter button 
+form#dy_form_filter button 
 {
 	height: 34px !important;
 }

@@ -24,7 +24,7 @@ const more_details_event = () => {
 
 const booking_filter = () => {
 	
-	const this_form = jQuery('#dy_package_filter')[0];
+	const this_form = jQuery('#dy_form_filter')[0];
 	
 	jQuery(this_form).find('select').change(() => {
 		jQuery(this_form).submit();

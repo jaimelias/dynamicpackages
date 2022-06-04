@@ -12,10 +12,10 @@ class dy_Tax_Mod
 		add_action('init', array(&$this, 'add_ons'));
 		add_action('admin_init', array(&$this, 'title_modifier'), 10, 2);
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue'));
-		add_action('dy_package_checkout_items', array(&$this, 'checkout_items'), 10);
-		add_filter('dy_package_included_add_ons_list', array(&$this, 'included_add_ons_list'));
-		add_filter('dy_package_has_add_ons', array(&$this, 'has_add_ons'));
-		add_filter('dy_package_get_add_ons', array(&$this, 'get_add_ons'));
+		add_action('dy_checkout_items', array(&$this, 'checkout_items'), 10);
+		add_filter('dy_included_add_ons_list', array(&$this, 'included_add_ons_list'));
+		add_filter('dy_has_add_ons', array(&$this, 'has_add_ons'));
+		add_filter('dy_get_add_ons', array(&$this, 'get_add_ons'));
 	}
 	
 	public function enqueue()

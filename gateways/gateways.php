@@ -41,7 +41,7 @@ class Dynamic_Packages_Gateways
 	}
 	public function init()
 	{
-		add_action('dy_package_cc_form', array(&$this, 'cc_form'));
+		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
@@ -50,13 +50,13 @@ class Dynamic_Packages_Gateways
 		
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
-		add_action('dy_package_terms_conditions', array(&$this, 'terms_conditions'));
-		add_filter('dy_package_has_gateway', array(&$this, 'has_gateway'));
-		add_filter('dy_package_join_gateways', array(&$this, 'join_gateways'));
-		add_action('dy_package_invalid_min_duration', array(&$this, 'invalid_min_duration'));
-		add_action('dy_package_coupon_confirmation', array(&$this, 'coupon_confirmation'));
-		add_action('dy_package_cc_warning', array(&$this, 'cc_warning'));
-		add_action('dy_package_crypto_form', array(&$this, 'crypto_form'));
+		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
+		add_filter('dy_has_gateway', array(&$this, 'has_gateway'));
+		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
+		add_action('dy_invalid_min_duration', array(&$this, 'invalid_min_duration'));
+		add_action('dy_coupon_confirmation', array(&$this, 'coupon_confirmation'));
+		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
+		add_action('dy_crypto_form', array(&$this, 'crypto_form'));
 	}
 	
 	public function set_post_on_checkout_page()
@@ -296,7 +296,7 @@ class Dynamic_Packages_Gateways
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$booking_coupon.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
-		$add_ons = apply_filters('dy_package_get_add_ons', null);
+		$add_ons = apply_filters('dy_get_add_ons', null);
 		
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
@@ -347,7 +347,7 @@ class Dynamic_Packages_Gateways
 	
 	public function get_description()
 	{
-		$output = apply_filters('dy_package_description', null);
+		$output = apply_filters('dy_description', null);
 		
 		if(dy_validators::has_deposit())
 		{

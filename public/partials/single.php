@@ -14,13 +14,13 @@
 			<?php do_action('dy_check_prices_form'); ?>
 		<?php endif; ?>
 		
-		<?php do_action('dy_package_price_table'); ?>
+		<?php do_action('dy_price_table'); ?>
 		
 		<?php Dynamic_Packages_Public::return_parent();?>
 	</div>
 
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
-		<div class="bottom-20"><?php echo apply_filters('dy_package_details', null); ?></div>
+		<div class="bottom-20"><?php echo apply_filters('dy_details', null); ?></div>
 	
 	<?php  echo  $new_content; ?>
 	
@@ -77,11 +77,11 @@
 <hr/>
 
 	<h4><?php echo (esc_html__('Booking Details', 'dynamicpackages')); ?>:</h4>
-	<div class="bottom-20"><?php echo apply_filters('dy_package_details', null); ?></div>
+	<div class="bottom-20"><?php echo apply_filters('dy_details', null); ?></div>
 
 <hr/>
 	
-	<?php do_action('dy_package_price_table'); ?>
+	<?php do_action('dy_price_table'); ?>
 
 	<?php if(!dy_validators::has_children()):?>
 			<?php do_action('dy_check_prices_form'); ?>

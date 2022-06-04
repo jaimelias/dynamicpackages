@@ -67,7 +67,7 @@ const selectGateway = () => {
 			const type = jQuery(thisButton).attr('data-type');
 			const branding = jQuery(thisButton).attr('data-branding');
 			let networks = jQuery(thisButton).attr('data-networks') || '';
-			const cryptoForm = jQuery('#dy_package_crypto_form');
+			const cryptoForm = jQuery('#dy_crypto_form');
 			const networkSelect = jQuery(cryptoForm).find('select[name="dy_network"]');
 
 			jQuery(networkSelect).removeClass('required').html('<option value="" selected>--</option>');
@@ -75,7 +75,7 @@ const selectGateway = () => {
 
 			if(type === 'card-on-site')
 			{
-				jQuery('#dy_package_card_payment_conditions').removeClass('hidden');
+				jQuery('#dy_card_payment_conditions').removeClass('hidden');
 				$('.dy_card_form_fields').removeClass('hidden');
 
 				cardRequiredFields.forEach(name => {
@@ -86,11 +86,11 @@ const selectGateway = () => {
 			{
 				if(type === 'card-off-site')
 				{
-					jQuery('#dy_package_card_payment_conditions').removeClass('hidden');
+					jQuery('#dy_card_payment_conditions').removeClass('hidden');
 				}
 				else 
 				{
-					jQuery('#dy_package_card_payment_conditions').addClass('hidden');
+					jQuery('#dy_card_payment_conditions').addClass('hidden');
 				}
 				
 				$('.dy_card_form_fields').addClass('hidden');
@@ -134,7 +134,7 @@ const selectGateway = () => {
 			else
 			{
 				jQuery(thisForm).find('input[name="first_name"]').focus();
-				jQuery('#dy_package_crypto_form').addClass('hidden');
+				jQuery('#dy_crypto_form').addClass('hidden');
 			}
 
 			jQuery('#dy_checkout_branding').html(branding);

@@ -166,7 +166,7 @@ class paguelo_facil_on{
 	
 	public function provider_email_subject()
 	{
-		return sprintf(__('New Booking %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_package_description', null));
+		return sprintf(__('New Booking %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_description', null));
 	}
 	
 	public function gateway_name($output)
@@ -346,7 +346,7 @@ class paguelo_facil_on{
 					
 					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
-					$output .= '<div class="bottom-20">' . apply_filters('dy_package_description', null) . '</div>';
+					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
 					$output .= '<p class="minimal_success strong"><i class="fas fa-envelope"></i> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
@@ -419,7 +419,7 @@ class paguelo_facil_on{
 			{
 				$output = null;
 				$message = package_field('package_confirmation_message');
-				$details = apply_filters('dy_package_details', null); 
+				$details = apply_filters('dy_details', null); 
 				$output .= ($details) ? $details : null;
 				$output .= ($message) ? '<br/><br/>' . esc_html($message) : null;				
 			}
@@ -687,7 +687,7 @@ class paguelo_facil_on{
 			'CCLW' => $this->cclw,
 			'txType' => 'SALE',
 			'CMTN' => dy_utilities::payment_amount(),
-			'CDSC' => substr(apply_filters('dy_package_description', null), 0, 150),
+			'CDSC' => substr(apply_filters('dy_description', null), 0, 150),
 			'CCNum' => $CCNum,
 			'ExpMonth' => sanitize_text_field($_POST['ExpMonth']),
 			'ExpYear' => sanitize_text_field($_POST['ExpYear']),
