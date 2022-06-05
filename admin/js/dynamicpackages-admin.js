@@ -500,8 +500,6 @@ const handlePackageType = () => {
 		const all_length_units = [4, 3, 2, 1, 0];
 		const disable_length_units = [];
 
-		console.log(value);
-
 		if(value === 1)
 		{
 			jQuery(duration_max).prop('disabled', false);
@@ -533,26 +531,31 @@ const handlePackageType = () => {
 			}
 		}
 
-		disable_length_units.forEach(v => {
+		jQuery(length_unit).each(function() {
+			const thisField = jQuery(this);
+			const selected = jQuery(thisField).find('option:selected');
 
-			jQuery(length_unit).find('option[value="'+v+'"]').each(function(){
-				const thisOption = jQuery(this);
-				jQuery(thisOption).prop('selected', false);
-				jQuery(thisOption).prop('disabled', true);
+			disable_length_units.forEach(v => {
+
+				jQuery(thisField).find('option[value="'+v+'"]').each(function(){
+					const thisOption = jQuery(this);
+					jQuery(thisOption).prop('selected', false);
+					jQuery(thisOption).prop('disabled', true);
+					
+				});
 			});
 
+			all_length_units.forEach(v => {
+				if(!disable_length_units.includes(v))
+				{
+					jQuery(thisField).find('option[value="'+v+'"]').each(function(){
+						const thisOption = jQuery(this);
+						jQuery(thisOption).prop('disabled', false);
+					});
+				}
+			});
 		});
 
-		all_length_units.forEach(v => {
-			if(!disable_length_units.includes(v))
-			{
-				jQuery(length_unit).find('option[value="'+v+'"]').each(function(){
-					const thisOption = jQuery(this);
-					jQuery(thisOption).prop('selected', true);
-					jQuery(thisOption).prop('disabled', false);
-				});
-			}
-		});
 
 	});
 
