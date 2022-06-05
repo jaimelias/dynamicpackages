@@ -1143,29 +1143,41 @@ class Dynamic_Packages_Public {
 		{
 			$post = get_post($post_id);
 		}
-		
-		if(isset($post))
-		{
-			if(property_exists($post, 'ID'))
-			{
-				$termid = $post->ID;
-				
-				if(property_exists($post, 'post_parent'))
-				{
-					$termid = $post->post_parent;
-				}		
-				
-				$terms = get_the_terms( $termid, 'package_terms_conditions');
 
-				
-				if($terms)
+		$which_var = 'dy_get_terms_conditions';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$terms_conditions = $$which_var;
+		}
+		else
+		{
+			if(isset($post))
+			{
+				if(property_exists($post, 'ID'))
 				{
-					for($x = 0; $x < count($terms); $x++)
+					$termid = $post->ID;
+					
+					if(property_exists($post, 'post_parent'))
 					{
-						array_push($terms_conditions, $terms[$x]);
-					}			
-				}	
-			}			
+						$termid = $post->post_parent;
+					}		
+					
+					$terms = get_the_terms( $termid, 'package_terms_conditions');
+
+					
+					if($terms)
+					{
+						for($x = 0; $x < count($terms); $x++)
+						{
+							array_push($terms_conditions, $terms[$x]);
+						}			
+					}	
+				}			
+			}
+
+			$GLOBALS[$which_var] = $terms_conditions;
 		}
 		
 		return $terms_conditions;

@@ -6,7 +6,7 @@ class dy_validators
 	public static function validate_quote()
 	{
 		$output = false;
-		$which_var = 'validate_quote';
+		$which_var = 'dy_validate_quote';
 		global $$which_var;
 
 		if(isset($$which_var))
@@ -45,7 +45,7 @@ class dy_validators
 	public static function validate_booking_date()
 	{
 		$output = false;
-		$which_var = 'validate_booking_date';
+		$which_var = 'dy_validate_booking_date';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -89,7 +89,7 @@ class dy_validators
 	public static function has_package()
 	{
 		$output = false;
-		$which_var = 'has_package';
+		$which_var = 'dy_has_package';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -128,7 +128,7 @@ class dy_validators
 	public static function is_booking_page()
 	{
 		$output = false;
-		$which_var = 'is_booking_page';
+		$which_var = 'dy_is_booking_page';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -164,7 +164,7 @@ class dy_validators
 	public static function validate_request()
 	{
 		$output = false;
-		$which_var = 'validate_request';
+		$which_var = 'dy_validate_request';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -200,7 +200,7 @@ class dy_validators
 	{
 		$output = false;
 		$invalids = array();
-		$which_var = 'validate_contact_details';
+		$which_var = 'dy_validate_contact_details';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -332,7 +332,7 @@ class dy_validators
 	public static function validate_checkout($gateway_name)
 	{
 		$output = false;
-		$which_var = 'validate_checkout';
+		$which_var = 'dy_validate_checkout';
 		global $$which_var;
 
 		if($$which_var)
@@ -343,7 +343,7 @@ class dy_validators
 		{
 			if(isset($_POST['dy_request']) && self::validate_contact_details() && self::validate_booking_details())
 			{
-				if($gateway_name == $_POST['dy_request'] && self::validate_card() && self::validate_terms_conditions($_POST))
+				if($gateway_name == $_POST['dy_request'] && self::validate_card())
 				{
 					$output = true;
 				}
@@ -358,7 +358,7 @@ class dy_validators
 	public static function validate_terms_conditions($fields)
 	{
 		$output = true;
-		$which_var = 'validate_terms_conditions';
+		$which_var = 'dy_validate_terms_conditions';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -371,14 +371,27 @@ class dy_validators
 			{
 				if(count($fields) > 0)
 				{
-					foreach($fields as $k => $v)
+					$terms = Dynamic_Packages_Public::get_terms_conditions($fields['post_id']);
+					
+					if(is_array($terms))
 					{
-						$string = 'terms_conditions_';
-						$string_length = strlen($string);
-						
-						if(substr($k, 0, $string_length) === $string)
+						$count_terms = count($terms);
+
+						for($x = 0; $x < $count_terms; $x++)
 						{
-							if($v !== 'true' || $v !== true)
+							$term_id = $terms[$x]->term_id;
+							$term_name = 'terms_conditions_'.$term_id;
+
+							if(array_key_exists($term_name, $fields))
+							{
+								$value = $fields[$term_name];
+
+								if(filter_var($value, FILTER_VALIDATE_BOOLEAN) === false)
+								{
+									$output = false;
+								}
+							}
+							else
 							{
 								$output = false;
 							}
@@ -401,7 +414,7 @@ class dy_validators
 	public static function validate_booking_details()
 	{
 		$output = false;
-		$which_var = 'validate_booking_details';
+		$which_var = 'dy_validate_booking_details';
 		global $$which_var;
 		
 		
@@ -411,7 +424,7 @@ class dy_validators
 		}
 		else
 		{
-			if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']))
+			if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']) && self::validate_terms_conditions($_POST))
 			{	
 				$output = true;
 			}
@@ -425,7 +438,7 @@ class dy_validators
 	{
 		$invalids = array();
 		$output = false;
-		$which_var = 'validate_card';
+		$which_var = 'dy_validate_card';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -497,7 +510,7 @@ class dy_validators
 	public static function validate_hash()
 	{
 		$output = false;
-		$which_var = 'validate_hash';
+		$which_var = 'dy_validate_hash';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -525,7 +538,7 @@ class dy_validators
 	public static function has_coupon()
 	{
 		$output = false;
-		$which_var = 'has_coupon';
+		$which_var = 'dy_has_coupon';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -586,7 +599,7 @@ class dy_validators
 	public static function validate_coupon()
 	{
 		$output = false;
-		$which_var = 'validate_coupon';
+		$which_var = 'dy_validate_coupon';
 		global $$which_var;
 		
 		if(isset($$which_var))
@@ -692,7 +705,7 @@ class dy_validators
 	public static function validate_category_location()
 	{
 		
-		$which_var = 'validate_category_location';
+		$which_var = 'dy_validate_category_location';
 		global $$which_var;
 		$output = false;
 		$package_location = '';
@@ -763,7 +776,7 @@ class dy_validators
 	public static function has_deposit()
 	{
 		$output = false;
-		$which_var = 'has_deposit';
+		$which_var = 'dy_has_deposit';
 		global $$which_var;
 		
 		if($$which_var)
@@ -859,7 +872,7 @@ class dy_validators
 	public static function is_parent_with_no_child()
 	{
 		$output = false;
-		$which_var = 'is_parent_with_no_child';
+		$which_var = 'dy_is_parent_with_no_child';
 		global $$which_var;
 		
 		if(isset($$which_var))
