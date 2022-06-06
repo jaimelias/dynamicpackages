@@ -2,14 +2,40 @@ jQuery(() => {
 	'use strict';
 	jQuery('.timepicker').pickatime();
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
-	inputHandlers();
+	handleParentAttr();
+	handlePackageType();
+	handlePackagePayment();
+	handlePackageAutoBooking();
+	initSeasonGrids();
 	initGridsFromTextArea();
+
+
+	jQuery('#package_package_type').change(() => {
+		handlePackageType();
+		initSeasonGrids();
+		initGridsFromTextArea();
+	});	
+
+	jQuery('#package_num_seasons').change(() => {
+		initSeasonGrids();
+		initGridsFromTextArea();
+	});
+	
+	jQuery('#package_payment').change(()=>  {
+		handlePackagePayment();
+	});
+
+	jQuery('#package_auto_booking').change(()=>  {
+		handlePackageAutoBooking();
+	});
 });
 
 const cellHeight = 23+2;
 const headerHeight = 26+2;
 	
 const initGridsFromTextArea = () => {
+
+	
 	jQuery('[data-sensei-container]').each(function(){
 	
 		const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
@@ -20,11 +46,16 @@ const initGridsFromTextArea = () => {
 				registerGrid(textareaId, containerId, minId, maxId);
 			}
 		}, 1000);
-		
 	});
 };
 
 const registerGrid = (textareaId, containerId, minId, maxId) => {	
+
+
+	if(jQuery(textareaId).length === 0 || jQuery(containerId).length === 0)
+	{
+		return false;
+	}
 
 	//unescape textarea
 	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
@@ -100,6 +131,12 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 	jQuery(grid).handsontable(args);
 	
 	jQuery(minId).add(maxId).on('change click', function() {
+
+		if(jQuery(containerId).length === 0)
+		{
+			return false;
+		}
+
 		const thisField = jQuery(this);
 		const maxNum = parseInt(jQuery(thisField).val());
 		let rowNum = parseInt(jQuery(grid).handsontable('countRows'));
@@ -291,19 +328,45 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 	return output;
 }
 
+const buildOccupancyContainer = () => {
+	return jQuery('<div>').attr({
+		id: 'occupancy_chart',
+		class: 'hot',
+		'data-sensei-container': 'occupancy_chart',
+		'data-sensei-min': 'package_min_persons',
+		'data-sensei-max': 'package_max_persons',
+		'data-sensei-textarea': 'package_occupancy_chart',
+		'data-sensei-headers': 'Regular,Discount',
+		'data-sensei-type': 'currency,currency',
+		'data-sensei-disabled': '',
+	});
+}
+
 const initSeasonGrids = () => {
 
-	
+	const packageType = parseInt(jQuery('#package_package_type').val());
 	const seasonContainer = jQuery('#package_seasons_chart');
+	const occupancyContainer = buildOccupancyContainer();
 
 	if(jQuery(seasonContainer).length === 0)
 	{
+		return false;
+	}	
+
+	if(packageType !== 1)
+	{
+		const defaultMaxNum = parseInt(jQuery('#package_max_persons').val());
+		const defaultRows = [...Array(defaultMaxNum).keys()].map(() => ['', '']);
+		jQuery('#package_occupancy_chart').text(JSON.stringify({occupancy_chart: defaultRows})).trigger('change');
+		jQuery('#special_seasons').html('');
 		return false;
 	}
 
 	let data = jQuery('<textarea />').html(jQuery(seasonContainer).val()).text();
 	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
+
+	jQuery(preRender).append(occupancyContainer);
 
 	try
 	{
@@ -349,13 +412,13 @@ const initSeasonGrids = () => {
 		for(let x = 0; x < numSeasons; x++)
 		{
 			const season = seasons_chart[x];
-			const lastCell = season[season.length - 1];
-			const occupancyContainer = jQuery('#occupancy_chart').clone();
-			const id = jQuery(occupancyContainer).attr('id');
-			const gridKey = id+lastCell;
-			jQuery(occupancyContainer).attr({'id': gridKey, 'data-sensei-container': gridKey});			
+			const seasonIndex = season[season.length - 1];
+			const clone = jQuery(occupancyContainer).clone();
+			const containerId = jQuery(occupancyContainer).attr('id');
+			const gridKey = containerId+seasonIndex;
+			jQuery(clone).attr({'id': gridKey, 'data-sensei-container': gridKey});			
 
-			const {maxId} = getDataSenseiIds(occupancyContainer);
+			const {maxId} = getDataSenseiIds(clone);
 			const maxRows = parseInt(jQuery(maxId).val());
 
 			if(!occupancyChartData.hasOwnProperty(gridKey))
@@ -363,16 +426,13 @@ const initSeasonGrids = () => {
 				occupancyChartData[gridKey] = [...Array(maxRows).keys()].map(()=> [null, null]);
 			}
 
-
 			let title = jQuery('#package_variable_duration_price_title').text();
 			title = (season[0]) 
 				? `${title} - ${season[4]} [${season[0]}]` 
 				: `${title} - ${season[4]}`;
 
-			const wrapper = jQuery('<div>').addClass('hot-container');			
-			jQuery(wrapper).html(occupancyContainer);
 			jQuery(preRender).append(jQuery('<h3></h3>').text(title));
-			jQuery(preRender).append(wrapper);
+			jQuery(preRender).append(clone);
 		}
 
 		for(let k in occupancyChartData)
@@ -391,22 +451,6 @@ const initSeasonGrids = () => {
 
 		jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
 		jQuery('#special_seasons').html(preRender);
-
-		setTimeout(() => {
-			
-			jQuery(preRender).find('.hot').each(function() {
-
-				const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
-
-				registerGrid(textareaId, containerId, minId, maxId);
-			})
-
-		}, 1000);
-
-
-		jQuery('#package_num_seasons').change(() => {
-			initSeasonGrids();
-		});
 	}
 };
 
@@ -445,12 +489,6 @@ const handlePackagePayment = () => {
 			jQuery(deposit).prop('disabled', false);
 		}
 	});
-
-
-	jQuery('#package_payment').change(()=>  {
-		handlePackagePayment();
-	});
-
 };
 
 const handlePackageAutoBooking = () => {
@@ -484,9 +522,7 @@ const handlePackageAutoBooking = () => {
 	});
 
 
-	jQuery('#package_auto_booking').change(()=>  {
-		handlePackageAutoBooking();
-	});	
+
 
 };
 
@@ -507,14 +543,14 @@ const handlePackageType = () => {
 
 		if(value === 1)
 		{
+			jQuery('#package_variable_duration_price_title').removeClass('hidden');
 			jQuery(duration_max).prop('disabled', false);
 			jQuery(num_seasons).prop('disabled', false);
 			disable_length_units.push(0, 1);
-
-			initSeasonGrids();
 		}
 		else
 		{
+			jQuery('#package_variable_duration_price_title').addClass('hidden');
 			jQuery(duration_max).val('').prop('disabled', true);
 			jQuery(num_seasons).val('0').prop('disabled', true).trigger('change');
 
@@ -538,8 +574,6 @@ const handlePackageType = () => {
 
 		jQuery(length_unit).each(function() {
 			const thisField = jQuery(this);
-			const selected = jQuery(thisField).find('option:selected');
-
 			disable_length_units.forEach(v => {
 
 				jQuery(thisField).find('option[value="'+v+'"]').each(function(){
@@ -560,14 +594,7 @@ const handlePackageType = () => {
 				}
 			});
 		});
-
-
 	});
-
-	jQuery('#package_package_type').change(() => {
-		handlePackageType();
-	});	
-
 };
 
 const handleParentAttr = () => {
@@ -605,12 +632,4 @@ const handleParentAttr = () => {
 	});
 
 
-};
-
-const inputHandlers = () => {
-
-	handleParentAttr();
-	handlePackageType();
-	handlePackagePayment();
-	handlePackageAutoBooking();
 };

@@ -451,7 +451,8 @@ class dy_Metaboxes
 
 		<fieldset>			
 			<h3 id="package_variable_duration_price_title"><?php echo esc_html(__('Variable Duration Prices - Per Person', 'dynamicpackages')); ?></h3>
-			<?php echo dy_utilities::handsontable($this->occupancy_chart_args); ?>
+			
+			<textarea class="hidden" name="package_occupancy_chart" id="package_occupancy_chart"><?php echo esc_textarea($this->occupancy_chart); ?></textarea>
 			<div id="special_seasons"></div>
 
 			<?php echo $this->build_week_day_surcharge_fields(); ?>
