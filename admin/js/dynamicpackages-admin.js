@@ -464,6 +464,7 @@ const handlePackageAutoBooking = () => {
 	jQuery('#package_auto_booking').each(function(){
 		const value = parseInt(jQuery(this).val());
 		const payment = jQuery('#package_payment');
+		const paymentVal = parseInt(jQuery(payment).val());
 		const deposit = jQuery('#package_deposit');
 
 		if(value === 0)
@@ -473,8 +474,12 @@ const handlePackageAutoBooking = () => {
 		}
 		else
 		{
-			jQuery(deposit).prop('disabled', false);
 			jQuery(payment).prop('disabled', false);
+
+			if(paymentVal === 1)
+			{
+				jQuery(deposit).prop('disabled', false);
+			}
 		}
 	});
 
