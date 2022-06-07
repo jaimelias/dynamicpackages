@@ -17,7 +17,6 @@ class Dynamic_Packages_Public {
 		add_action('wp_headers', array(&$this, 'request_invalids'));
 		add_action('wp_enqueue_scripts', array('Dynamic_Packages_Public', 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array('Dynamic_Packages_Public', 'enqueue_scripts'), 11);
-		add_action('pre_get_posts', array('Dynamic_Packages_Public', 'global_vars'));
 		add_filter('template_include', array('Dynamic_Packages_Public', 'package_template'), 99);
 		add_filter('the_content', array('Dynamic_Packages_Public', 'the_content'), 100);
 		add_filter('pre_get_document_title', array('Dynamic_Packages_Public', 'wp_title'), 100);
@@ -30,7 +29,6 @@ class Dynamic_Packages_Public {
 		add_filter('get_the_excerpt', array('Dynamic_Packages_Public', 'modify_excerpt'));
 		add_filter('term_description', array('Dynamic_Packages_Public', 'modify_term_description'));
 		add_action('wp_head', array('Dynamic_Packages_Public', 'location_category_canonical'));
-		add_filter('jetpack_enable_open_graph', array('Dynamic_Packages_Public', 'deque_jetpack'));
 		add_filter('dy_details', array(&$this, 'details'));
 		add_action('dy_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
@@ -224,28 +222,6 @@ class Dynamic_Packages_Public {
 		}		
 	}
 		
-
-	public static function global_vars()
-	{
-		$date_from = package_field('package_booking_from');
-		$date_to = package_field('package_booking_to');
-		$min = package_field('package_min_persons');
-		$max = package_field('package_max_persons');
-		$auto_booking = package_field('package_auto_booking');
-		$by_hour = package_field('package_by_hour');
-		$min_hour = package_field('package_min_hour');
-		$max_hour = package_field('package_max_hour');
-		
-		$GLOBALS['price_chart'] = dy_utilities::get_price_chart();
-		$GLOBALS['min'] = ($min) ? $min : 1;
-		$GLOBALS['max'] = ($max) ? $max : 1;
-		$GLOBALS['date_from'] = ($date_from) ? $date_from : 0;
-		$GLOBALS['date_to'] = ($date_to) ? $date_to : 365;					
-		$GLOBALS['auto_booking'] = ($auto_booking) ? $auto_booking : 0;
-		$GLOBALS['by_hour'] = ($by_hour) ? $by_hour : 0;		
-		$GLOBALS['min_hour'] = ($min_hour) ? $min_hour : '6:00 AM';	
-		$GLOBALS['max_hour'] = ($max_hour) ? $max_hour : '6:00 PM';
-	}
 	public static function meta_tags()
 	{
 		if(is_singular('packages'))
@@ -1675,25 +1651,7 @@ class Dynamic_Packages_Public {
 		return $excerpt;
 	}
 	
-	public static function deque_jetpack()
-	{	
-		if(is_page() && dy_validators::validate_category_location())
-		{	
-			remove_action( 'wp_head', 'rel_canonical');
-			return false;
-		}
-		
-		if(is_singular('packages'))
-		{
-			global $post;
-						
-			if($post->post_parent > 0)
-			{
-				remove_action( 'wp_head', 'rel_canonical');
-				return false;				
-			}
-		}
-	}
+
 	public static function location_category_canonical()
 	{
 		if(dy_validators::validate_category_location())

@@ -79,7 +79,8 @@ class dy_utilities {
 
 	public static function min_range()
 	{
-		global $date_from;
+		$date_from = package_field('package_booking_from');
+		$date_from = ($date_from) ? $date_from : 0;
 		$min_range = strtotime("+ {$date_from} days", strtotime('today midnight'));
 		//fix first day
 		return strtotime("- 1 days", $min_range);	
@@ -87,7 +88,8 @@ class dy_utilities {
 
 	public static function max_range()
 	{
-		global $date_to;
+		$date_to = package_field('package_booking_to');
+		$date_to  = ($date_to) ? $date_to : 365;;
 		return strtotime("+ {$date_to} days", strtotime('today midnight'));		
 	}
 	
@@ -342,7 +344,11 @@ class dy_utilities {
 			$duration = floatval(package_field('package_duration'));
 			$price_chart = self::get_price_chart($the_id);
 			$occupancy_chart = self::get_occupancy_chart($the_id);	
-			$occupancy_chart = (is_array($occupancy_chart)) ? $occupancy_chart['occupancy_chart'] : null;
+			$occupancy_chart = (is_array($occupancy_chart)) 
+				? (array_key_exists('occupancy_chart', $occupancy_chart)) 
+				? $occupancy_chart['occupancy_chart'] 
+				: null 
+				: null;
 			$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
 			$duration_unit = package_field('package_length_unit');
 			$duration_max = package_field('package_duration_max');
