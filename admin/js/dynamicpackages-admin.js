@@ -1,5 +1,9 @@
 jQuery(() => {
 	'use strict';
+
+
+
+	
 	jQuery('.timepicker').pickatime();
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
 	handleParentAttr();
@@ -359,6 +363,12 @@ const getDataFromTextarea = el => {
 
 const initSeasonGrids = () => {
 
+	if(jQuery('#package_package_type').length === 0)
+	{
+		return false;
+	}
+
+
 	const packageType = parseInt(jQuery('#package_package_type').val());
 	const occupancyDOM = buildOccupancyDOM();
 	const defaultOccupancyData = getDefaultData(occupancyDOM);
@@ -456,7 +466,7 @@ const getDataSenseiIds = obj => {
 
 const handlePackagePayment = () => {
 
-	if(jQuery('#package_payment').length === 0 && jQuery('#package_deposit').length === 0)
+	if(jQuery('#package_auto_booking').length === 0)
 	{
 		return false;
 	}
@@ -478,11 +488,11 @@ const handlePackagePayment = () => {
 
 const handlePackageAutoBooking = () => {
 
-
-	if(jQuery('#package_auto_booking').length && jQuery('#package_payment').length === 0 && jQuery('#package_deposit').length === 0)
+	if(jQuery('#package_auto_booking').length === 0)
 	{
 		return false;
 	}
+
 
 	jQuery('#package_auto_booking').each(function(){
 		const value = parseInt(jQuery(this).val());
@@ -506,9 +516,6 @@ const handlePackageAutoBooking = () => {
 		}
 	});
 
-
-
-
 };
 
 const handlePackageType = () => {
@@ -516,7 +523,7 @@ const handlePackageType = () => {
 	if(jQuery('#package_package_type').length === 0)
 	{
 		return false;
-	}
+	}	
 
 	jQuery('#package_package_type').each(function(){
 		const value = parseInt(jQuery(this).val());
@@ -583,6 +590,11 @@ const handlePackageType = () => {
 };
 
 const handleParentAttr = () => {
+
+	if(jQuery('#package_package_type').length === 0)
+	{
+		return false;
+	}	
 
 	const { subscribe } = wp.data;
 	let prevParentId = undefined;
