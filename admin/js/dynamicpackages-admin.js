@@ -527,42 +527,52 @@ const handlePackageType = () => {
 	}	
 
 	jQuery('#package_package_type').each(function(){
-		const value = parseInt(jQuery(this).val());
+		const packageType = parseInt(jQuery(this).val());
 		const duration_max = jQuery('#package_duration_max');
 		const length_unit = jQuery('#package_length_unit');
 		const num_seasons = jQuery('#package_num_seasons');
 		const all_length_units = [4, 3, 2, 1, 0];
 		const disable_length_units = [];
+		const hasMaxDuration = [1, 2, 3];
 
-		if(value === 1)
+		if(packageType === 1)
 		{
 			jQuery('#package_variable_duration_price_title').removeClass('hidden');
-			jQuery(duration_max).prop('disabled', false);
+			
 			jQuery(num_seasons).prop('disabled', false);
 			disable_length_units.push(0, 1);
 		}
 		else
 		{
 			jQuery('#package_variable_duration_price_title').addClass('hidden');
-			jQuery(duration_max).val('').prop('disabled', true);
+			
 			jQuery(num_seasons).val('0').prop('disabled', true).trigger('change');
 
-			if(value === 0)
+			if(packageType === 0)
 			{
 				disable_length_units.push(4, 3, 2);
 			}
-			else if(value === 2)
+			else if(packageType === 2)
 			{
 				disable_length_units.push(4, 3, 1, 0);
 			}
-			else if(value === 3)
+			else if(packageType === 3)
 			{
 				disable_length_units.push(4, 3, 2, 0);
 			}
-			else if(value === 4)
+			else if(packageType === 4)
 			{
 				disable_length_units.push(4);
 			}
+		}
+
+		if(hasMaxDuration.includes(packageType))
+		{
+			jQuery(duration_max).prop('disabled', false);
+		}
+		else
+		{
+			jQuery(duration_max).val('').prop('disabled', true);
 		}
 
 		jQuery(length_unit).each(function() {
