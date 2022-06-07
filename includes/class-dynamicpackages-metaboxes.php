@@ -375,12 +375,12 @@ class dy_Metaboxes
 			<p>
 				<label for="package_min_persons"><?php echo esc_html(__('Minimum Number of participants', 'dynamicpackages')); ?></label><br />
 				
-				<?php $this->select_number('min_persons', 1, 100); ?>
+				<?php $this->select_number('min_persons', 1, 99); ?>
 				
 			</p>
 			<p>
 				<label for="package_max_persons"><?php echo esc_html(__('Maximum Number of participants', 'dynamicpackages')); ?></label><br />
-				<?php $this->select_number('max_persons', (intval(package_field('package_min_persons')) + 1) , 100); ?>
+				<?php $this->select_number('max_persons', 1, 100); ?>
 			</p>
 			<p>
 				<label for="package_free"><span><?php echo esc_html(__('Children free up to', 'dynamicpackages')); ?></span></br>

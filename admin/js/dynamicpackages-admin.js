@@ -10,6 +10,7 @@ jQuery(() => {
 	handlePackageType();
 	handlePackagePayment();
 	handlePackageAutoBooking();
+	handleMinMaxPax();
 	initSeasonGrids();
 	initGridsFromTextArea();
 
@@ -148,7 +149,7 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 				
 	jQuery(grid).handsontable(args);
 	
-	jQuery(minId).add(maxId).on('change click', function() {
+	jQuery(maxId).on('change click', function() {
 
 		if(jQuery(containerId).length === 0)
 		{
@@ -589,6 +590,58 @@ const handlePackageType = () => {
 	});
 };
 
+const handleMinMaxPax = () => {
+
+
+	const disabledOptions = [];
+
+	jQuery('#package_min_persons').each(function(){
+
+		
+		const minField = jQuery(this);
+		const minFieldValue = parseInt(jQuery(minField).val());
+
+		jQuery(minField).find('option').each(function() {
+			const thisOption = jQuery(this);
+			const optionValue = parseInt(jQuery(thisOption).val());
+
+			if(minFieldValue >= optionValue)
+			{
+				disabledOptions.push(optionValue);
+			}
+		});
+
+		const maxField = jQuery('#package_max_persons');
+		let maxFieldValue = parseInt(jQuery(maxField).val());
+
+		if(minFieldValue >= maxFieldValue)
+		{
+			maxFieldValue = minFieldValue+1;
+		}
+
+		jQuery(maxField).val(maxFieldValue).trigger('change');
+
+		jQuery(maxField).find('option').each(function(){
+			const thisOption = jQuery(this);
+			const optionValue = parseInt(jQuery(thisOption).val());
+
+			if(disabledOptions.includes(optionValue))
+			{
+				jQuery(thisOption).prop('selected', false).prop('disabled', true);
+			}
+			else
+			{
+				jQuery(thisOption).prop('disabled', false);
+			}
+		});
+	});
+
+	jQuery('#package_min_persons').change(function(){
+		handleMinMaxPax();
+	});
+
+};
+
 const handleParentAttr = () => {
 
 	if(jQuery('#package_package_type').length === 0)
@@ -627,6 +680,5 @@ const handleParentAttr = () => {
 			}, 500);
 		}
 	});
-
 
 };
