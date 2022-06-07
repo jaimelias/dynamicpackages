@@ -9,7 +9,6 @@ jQuery(() => {
 	initSeasonGrids();
 	initGridsFromTextArea();
 
-
 	jQuery('#package_package_type').change(() => {
 		handlePackageType();
 		initSeasonGrids();
@@ -32,10 +31,11 @@ jQuery(() => {
 
 const cellHeight = 23+2;
 const headerHeight = 26+2;
+const occupancyChartCols = 2;
+const seasonsChartCols = 5;
 	
 const initGridsFromTextArea = () => {
 
-	
 	jQuery('[data-sensei-container]').each(function(){
 	
 		const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
@@ -49,6 +49,9 @@ const initGridsFromTextArea = () => {
 	});
 };
 
+
+const getInitialGrid = ({rows, cols}) => [...Array(rows).keys()].map(() => [...Array(cols).keys()].map(() => ''));
+
 const registerGrid = (textareaId, containerId, minId, maxId) => {	
 
 
@@ -58,28 +61,41 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 	}
 
 	//unescape textarea
-	let data = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
+	let data = {};
+	let hasError = false;
+	let content = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
 	let maxNum = parseInt(jQuery(maxId).val());
 	const gridId = jQuery(containerId).attr('id');
 	const grid = jQuery(containerId);
 	const headers = getHeaders(containerId);
 	const columns = getColType(containerId);
-	
 	const colsNum = (headers.length > 2) ? headers.length : 2;
+	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum});
 	
 	try
 	{
-		data = JSON.parse(data);
+		const parsedContent = JSON.parse(content);
 
-		if(data.hasOwnProperty(gridId))
+		if(parsedContent.hasOwnProperty(gridId))
 		{
-			data = data[gridId];
+			data = parsedContent[gridId];
+		}
+		else
+		{
+			hasError = true;
+			data = defaultRows;
 		}
 	}
 	catch(e)
 	{
-		data = initialGrid(textareaId, maxId, containerId);
-		data = data[gridId];
+		hasError = true;
+		data = defaultRows;
+	}
+
+	
+	if(hasError)
+	{
+		jQuery(textareaId).text(JSON.stringify({[gridId]: data}));
 	}
 
 	data = populateSeasons({gridData: data, gridId: gridId});
@@ -178,10 +194,13 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 
 const populateSeasons = ({gridData, gridId}) => {
 
+
+
 	if(gridId === 'seasons_chart')
 	{
 		return gridData.map((v, i) => {
-			v[4] = (v[4] === null) ? `seasons_chart_${i+1}` : v[4];
+
+			v[4] = `seasons_chart_${i+1}`;
 			return v;
 		});		
 	}
@@ -266,45 +285,6 @@ const getColType = containerId => {
 	return output;	
 }
 
-const initialGrid = (textareaId, maxId, containerId) => {
-	const headers = getHeaders(containerId);
-	const maxNum = parseInt(jQuery(maxId).val());  
-	const scale = {};
-	const newGrid = [];
-	const gridId = jQuery(containerId).attr('id');
-	
-	for(let x = 0; x < maxNum; x++)
-	{
-		const row = [];
-		
-		for(let y = 0; y < headers.length; y++)
-		{
-			if(gridId == 'seasons_chart')
-			{
-				if((y+1) == headers.length)
-				{
-					row.push(gridId+'_'+(x+1));
-				}
-				else
-				{
-					row.push(null);
-				}				
-			}
-			else
-			{
-				row.push(null);
-			}
-		}
-		newGrid.push(row);
-	}
-
-	scale[gridId] = newGrid;
-	
-	jQuery(textareaId).text(JSON.stringify(scale));
-	
-	return scale;
-}
-
 const updateTextArea = ({textareaId, changes, containerId}) => {
 	
 	let output = {};
@@ -328,7 +308,7 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 	return output;
 }
 
-const buildOccupancyContainer = () => {
+const buildOccupancyDOM = () => {
 	return jQuery('<div>').attr({
 		id: 'occupancy_chart',
 		class: 'hot',
@@ -342,116 +322,123 @@ const buildOccupancyContainer = () => {
 	});
 }
 
+const getDefaultData = el => {
+
+	const gridId = jQuery(el).attr('data-sensei-container');
+	const maxId = jQuery(el).attr('data-sensei-max');
+	const headers = jQuery(el).attr('data-sensei-headers').split(',');
+	const maxNum = parseInt(jQuery(`#${maxId}`).val());
+
+	let gridData = [...Array(maxNum).keys()].map(() => [...Array(headers.length).keys()].map(() => ''));
+	let rows = populateSeasons({gridId, gridData});
+
+	return {[gridId]: rows};
+};
+
+const getDataFromTextarea = el => {
+	const textAreaId = jQuery(el).attr('data-sensei-textarea');
+	const gridId = jQuery(el).attr('data-sensei-container');
+	let output = {[gridId]: getDefaultData(el)};
+	let content = jQuery('<textarea />').html(jQuery(`#${textAreaId}`).val()).text();
+
+	try
+	{
+		content = JSON.parse(content);
+
+		if(content.hasOwnProperty(gridId))
+		{
+			output = content;
+		}
+	}
+	catch(e)
+	{
+		console.log(e.message);
+	}
+
+
+	return output;
+};
+
 const initSeasonGrids = () => {
 
 	const packageType = parseInt(jQuery('#package_package_type').val());
-	const seasonContainer = jQuery('#package_seasons_chart');
-	const occupancyContainer = buildOccupancyContainer();
-
-	if(jQuery(seasonContainer).length === 0)
-	{
-		return false;
-	}	
+	const occupancyDOM = buildOccupancyDOM();
+	const defaultOccupancyData = getDefaultData(occupancyDOM);
 
 	if(packageType !== 1)
 	{
-		const defaultMaxNum = parseInt(jQuery('#package_max_persons').val());
-		const defaultRows = [...Array(defaultMaxNum).keys()].map(() => ['', '']);
-		jQuery('#package_occupancy_chart').text(JSON.stringify({occupancy_chart: defaultRows})).trigger('change');
+		jQuery('#package_occupancy_chart').text(JSON.stringify(defaultOccupancyData));
 		jQuery('#special_seasons').html('');
 		return false;
 	}
 
-	let data = jQuery('<textarea />').html(jQuery(seasonContainer).val()).text();
-	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 	const preRender = jQuery('<div>');
+	jQuery(preRender).append(occupancyDOM);
+	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
 
-	jQuery(preRender).append(occupancyContainer);
 
-	try
+	let seasonConfigData = getDataFromTextarea('#seasons_chart');
+	let occupancyChartData = getDataFromTextarea(occupancyDOM);
+
+	let {seasons_chart} = seasonConfigData;
+	let newRows = [];
+	const diff = numSeasons - seasons_chart.length;
+
+	if(numSeasons > seasons_chart.length)
 	{
-		data = JSON.parse(data);
-	}
-	catch(e)
-	{
-		console.log(e.message);
-		data = {};
-	}
-
-	let occupancyChartData = jQuery('<textarea />').html(jQuery('#package_occupancy_chart').val()).text();
-
-	try
-	{
-		occupancyChartData = JSON.parse(occupancyChartData);
-	}
-	catch(e)
-	{
-		console.log(e.message);
-		occupancyChartData = {};
-	}
-
-	if(data.hasOwnProperty('seasons_chart'))
-	{
-		let {seasons_chart} = data;
-		let newRows = [];
-		const diff = numSeasons - seasons_chart.length;
-
-		if(numSeasons > seasons_chart.length)
+		for(let x = 0; x < diff; x++)
 		{
-			for(let x = 0; x < diff; x++)
-			{
-				const thisIndex = seasons_chart.length + x + 1;
-				const gridId = `seasons_chart_${thisIndex}`;
-				let lastRow = ['', '', '', '', gridId];
-				newRows.push(lastRow);
-			}
-
-			seasons_chart = [...seasons_chart, ...newRows];
+			const thisIndex = seasons_chart.length + x + 1;
+			const gridId = `seasons_chart_${thisIndex}`;
+			let lastRow = ['', '', '', '', gridId];
+			newRows.push(lastRow);
 		}
 
-		for(let x = 0; x < numSeasons; x++)
-		{
-			const season = seasons_chart[x];
-			const seasonIndex = season[season.length - 1];
-			const clone = jQuery(occupancyContainer).clone();
-			const containerId = jQuery(occupancyContainer).attr('id');
-			const gridKey = containerId+seasonIndex;
-			jQuery(clone).attr({'id': gridKey, 'data-sensei-container': gridKey});			
-
-			const {maxId} = getDataSenseiIds(clone);
-			const maxRows = parseInt(jQuery(maxId).val());
-
-			if(!occupancyChartData.hasOwnProperty(gridKey))
-			{
-				occupancyChartData[gridKey] = [...Array(maxRows).keys()].map(()=> [null, null]);
-			}
-
-			let title = jQuery('#package_variable_duration_price_title').text();
-			title = (season[0]) 
-				? `${title} - ${season[4]} [${season[0]}]` 
-				: `${title} - ${season[4]}`;
-
-			jQuery(preRender).append(jQuery('<h3></h3>').text(title));
-			jQuery(preRender).append(clone);
-		}
-
-		for(let k in occupancyChartData)
-		{
-			if(k.startsWith('occupancy_chartseasons_chart_'))
-			{
-				const index = parseInt(k.replace('occupancy_chartseasons_chart_', ''));
-				
-				if(index > numSeasons)
-				{
-					console.log(k);
-					delete occupancyChartData[k];
-				}
-			}
-		}
-
-		jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
-		jQuery('#special_seasons').html(preRender);
+		seasons_chart = [...seasons_chart, ...newRows];
 	}
+
+	for(let x = 0; x < numSeasons; x++)
+	{
+		const season = seasons_chart[x];
+		const seasonIndex = season[season.length - 1];
+		const clone = jQuery(occupancyDOM).clone();
+		const containerId = jQuery(occupancyDOM).attr('id');
+		const gridKey = containerId+seasonIndex;
+		jQuery(clone).attr({'id': gridKey, 'data-sensei-container': gridKey});			
+
+		const {maxId} = getDataSenseiIds(clone);
+		const maxRows = parseInt(jQuery(maxId).val());
+
+		if(!occupancyChartData.hasOwnProperty(gridKey))
+		{
+			occupancyChartData[gridKey] = [...Array(maxRows).keys()].map(()=> [null, null]);
+		}
+
+		let title = jQuery('#package_variable_duration_price_title').text();
+		title = (season[0]) 
+			? `${title} - ${season[4]} [${season[0]}]` 
+			: `${title} - ${season[4]}`;
+
+		jQuery(preRender).append(jQuery('<h3></h3>').text(title));
+		jQuery(preRender).append(clone);
+	}
+
+	for(let k in occupancyChartData)
+	{
+		if(k.startsWith('occupancy_chartseasons_chart_'))
+		{
+			const index = parseInt(k.replace('occupancy_chartseasons_chart_', ''));
+			
+			if(index > numSeasons)
+			{
+				console.log(k);
+				delete occupancyChartData[k];
+			}
+		}
+	}
+
+	jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
+	jQuery('#special_seasons').html(preRender);
 };
 
 const getDataSenseiIds = obj => {
