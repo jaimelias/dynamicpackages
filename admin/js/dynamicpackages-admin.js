@@ -31,8 +31,6 @@ jQuery(() => {
 
 const cellHeight = 23+2;
 const headerHeight = 26+2;
-const occupancyChartCols = 2;
-const seasonsChartCols = 5;
 	
 const initGridsFromTextArea = () => {
 
