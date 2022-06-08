@@ -40,6 +40,16 @@ const booking_filter = () => {
 			jQuery(thisForm).unbind('submit').submit();
 		});
 
+		jQuery(thisForm).find('select').each(function(){
+			const thisField = jQuery(this);
+			const countOptions = jQuery(thisField).find('option').length;
+			
+			if(countOptions <= 1)
+			{
+				jQuery(thisField).prop('disabled', true);
+			}
+		});
+
 		jQuery(thisForm).find('select').change(function () {
 			
 			const formData = jQuery(thisForm).serializeArray();

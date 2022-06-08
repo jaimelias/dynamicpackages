@@ -331,12 +331,10 @@ class Dynamic_Packages_Forms
 		{
 			$any = 'selected';
 		}
-		
-		//echo var_dump($terms);
-		
+				
 		$output = '<select name="'.esc_attr($name).'" class="width-100 block borderbox">';
 		
-		$output .= '<option value="any" '.esc_html($any).'>-- '.$taxonomy->labels->singular_name.' --</option>';
+		$output .= '<option value="any" '.esc_html($any).'>-- '.esc_html($taxonomy->labels->singular_name).' --</option>';
 		
 		
 		if (!empty($terms) && ! is_wp_error($terms))
