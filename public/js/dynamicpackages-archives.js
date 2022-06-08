@@ -26,7 +26,7 @@ const booking_filter = () => {
 
 	jQuery('#dy_form_filter').each(function(){
 		const thisForm = jQuery(this);
-		const homeUrl = new URL(jQuery(thisForm).attr('data-home-url'));
+
 		const nullParams = {
 			location: 'any',
 			category: 'any',
@@ -75,10 +75,12 @@ const booking_filter = () => {
 			else
 			{
 				const {value, name} = taxChanges[0];
+				const homeUrl = new URL(jQuery(thisForm).attr('data-home-url'));
+				let pathname = (homeUrl.pathname) ? `${homeUrl.pathname}/package_${name}/${value}` : `package_${name}/${value}`;				
+				
+				const url = new URL(pathname, homeUrl.href).href;
 
-				console.log(`${homeUrl.href}/package_${name}/${value}`);
-
-				//window.location.replace(`${homeUrl.href}/package_${name}/${value}`);
+				window.location.replace(url);
 			}
 		});
 	});
