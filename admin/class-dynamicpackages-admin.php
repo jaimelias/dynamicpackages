@@ -121,7 +121,6 @@ class dy_Admin {
 		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
 		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
 		register_setting('dy_settings', 'dy_breadcrump', 'intval');
-		register_setting( 'dy_settings', 'dy_tax', 'intval');
 		register_setting('dy_settings', 'dy_webhook', 'esc_url');
 		register_setting('dy_settings', 'dy_quote_webhook', 'esc_url');
 		register_setting('dy_settings', 'ipgeolocation', 'sanitize_user');	
@@ -173,16 +172,7 @@ class dy_Admin {
 			array(&$this, 'dy_breadcrump_render'), 
 			'dy_settings', 
 			'dy_settings_section' 
-		);		
-		add_settings_field( 
-			'dy_tax', 
-			esc_html(__( 'Tax', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_tax', 'type' => 'number')
 		);
-		
 		
 		add_settings_field( 
 			'dy_email', 

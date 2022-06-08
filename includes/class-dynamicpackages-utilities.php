@@ -1018,12 +1018,7 @@ class dy_utilities {
 			}
 		}
 		return $output;
-	}	
-	
-	public static function tax()
-	{
-		return (get_option('dy_tax')) ? floatval(get_option('dy_tax')) : 0;
-	}	
+	}
 	
 	public static function hour()
 	{

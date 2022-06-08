@@ -268,39 +268,6 @@ function dy_money($price = 0, $wrap = '')
 	return $output;
 }
 
-function dy_sum_tax($amount)
-{
-	$tax = floatval(dy_utilities::tax());
-	$amount = floatval($amount);
-	
-	if($tax > 0 && $amount > 0)
-	{
-		$amount = dy_utilities::currency_format($amount * (($tax + 100) / 100));
-	}
-	
-	return $amount;
-}
-
-if(! function_exists('generateCallTrace'))
-{
-	function generateCallTrace()
-	{
-		$e = new Exception();
-		$trace = explode("\n", $e->getTraceAsString());
-		$trace = array_reverse($trace);
-		array_shift($trace);
-		array_pop($trace);
-		$length = count($trace);
-		$result = array();
-	   
-		for ($i = 0; $i < $length; $i++)
-		{
-			$result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
-		}
-	   
-		return "\t" . implode("\n\t", $result);
-	}		
-}
 
 function run_dynamicpackages() {
 

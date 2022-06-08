@@ -47,9 +47,9 @@
 	if(package_field('package_payment' ) == 1)
 	{
 		$payment = 1;
-		$deposit = floatval(dy_utilities::get_deposit());
-		$payment_amount = dy_sum_tax(floatval(dy_utilities::total())*(floatval($deposit)*0.01));
-		$outstanding_amount = dy_sum_tax(floatval($total)-$payment_amount);
+		$deposit = dy_utilities::get_deposit();
+		$payment_amount = dy_utilities::total()*($deposit*0.01);
+		$outstanding_amount = floatval($total)-$payment_amount;
 		$outstanding_label = esc_html(__('Outstanding Balance', 'dynamicpackages')).' '.dy_money($outstanding_amount, 'dy_calc dy_calc_outstanding');
 		$deposit_label = esc_html(__('Deposit', 'dynamicpackages')).' '.dy_money($payment_amount, 'dy_calc dy_calc_total').' ('.esc_html($deposit).'%)';
 	}
@@ -135,21 +135,12 @@
 				<?php endif; ?>
 								
 				<tfoot class="text-center strong">
-					<?php if(get_option('dy_tax' )): ?>
-						<?php $tax = get_option('dy_tax'); ?>
-						<?php if(floatval($tax) > 0): ?>
-							<tr>
-							<td class="text-right" colspan="2"><?php echo (esc_html__('Tax', 'dynamicpackages')).' '.esc_html($tax); ?>%</td>
-							<td><?php echo dy_money((dy_utilities::total()*(floatval($tax)/100)), 'dy_calc dy_calc_tax_amount'); ?></td>
-							</tr>
-						<?php endif; ?>
-					<?php endif; ?>
 					<tr>
 						<td colspan="3">
 							<?php if(dy_validators::validate_coupon()): ?>
 								<s class="small light text-muted"><?php echo (esc_html__('Regular Price', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::total('regular'), 'dy_calc dy_calc_regular'); ?></span></s><br/>
 							<?php endif; ?>
-							<?php echo (esc_html__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_sum_tax(dy_utilities::total()), 'dy_calc dy_calc_amount'); ?></span>
+							<?php echo (esc_html__('Total', 'dynamicpackages')); ?> <?php echo dy_money(dy_utilities::total(), 'dy_calc dy_calc_amount'); ?></span>
 						</td>
 					</tr>
 					

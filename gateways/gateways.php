@@ -283,8 +283,7 @@ class Dynamic_Packages_Gateways
 	public function checkout_vars()
 	{
 		global $post;
-		
-		$tax = floatval(dy_utilities::tax());
+
 		$description = $this->get_description();
 		$booking_coupon = null;
 		$coupon_discount = null;
@@ -303,7 +302,7 @@ class Dynamic_Packages_Gateways
 			'description' => esc_html($description),
 			'booking_coupon' => esc_html($booking_coupon),
 			'coupon_discount' => esc_html($coupon_discount),
-			'total' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::payment_amount()))),
+			'total' => floatval(dy_utilities::currency_format(dy_utilities::payment_amount())),
 			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'booking_hour' => esc_html(dy_utilities::hour()),
@@ -328,13 +327,11 @@ class Dynamic_Packages_Gateways
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
 			'currency_name' => dy_utilities::currency_name(),
 			'currency_symbol' => dy_utilities::currency_symbol(),
-			'outstanding' => floatval(dy_utilities::currency_format(dy_sum_tax($this->outstanding()))),
-			'amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::total()))),
-			'regular_amount' => floatval(dy_utilities::currency_format(dy_sum_tax(dy_utilities::subtotal(null, $post->ID)))),
+			'outstanding' => floatval(dy_utilities::currency_format($this->outstanding())),
+			'amount' => floatval(dy_utilities::currency_format(dy_utilities::total())),
+			'regular_amount' => floatval(dy_utilities::currency_format(dy_utilities::subtotal(null, $post->ID))),
 			'payment_type' => esc_html($this->payment_type()),
 			'deposit' => floatval(dy_utilities::get_deposit()),
-			'tax' => floatval($tax),
-			'tax_amount' => floatval($this->tax_payment_amount()),
 			'add_ons' => $add_ons
 		);
 		
@@ -351,8 +348,8 @@ class Dynamic_Packages_Gateways
 		
 		if(dy_validators::has_deposit())
 		{
-			$deposit = dy_sum_tax(dy_utilities::payment_amount());
-			$total = dy_sum_tax(dy_utilities::total());
+			$deposit = dy_utilities::payment_amount();
+			$total = dy_utilities::total();
 			$outstanding = $total-$deposit;
 			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
 		}
@@ -490,20 +487,6 @@ class Dynamic_Packages_Gateways
 			
 			$GLOBALS['dy_payment_type'] = $dy_payment_type;
 		}
-		return $output;
-	}
-	
-	public function tax_payment_amount()
-	{
-		$output = 0;
-		$tax = floatval(dy_utilities::tax());
-		$total = floatval(dy_utilities::total());
-		
-		if($tax > 0 && $total > 0)
-		{
-			$output = dy_utilities::currency_format($total * ($tax / 100));
-		}
-		
 		return $output;
 	}
 	
