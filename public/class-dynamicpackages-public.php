@@ -1667,37 +1667,26 @@ class Dynamic_Packages_Public {
 		
 			if(isset($_GET['location']))
 			{
-				if($_GET['location'] != 'any'){
-					$url_var['package_location'] = sanitize_text_field($_GET['location']);
-				}
+				$url_var['location'] = sanitize_text_field($_GET['location']);
 			}
 			if(isset($_GET['category']))
 			{
-				if($_GET['category'] != 'any')
-				{
-					$url_var['package_category'] = sanitize_text_field($_GET['category']);
-				}
+				$url_var['category'] = sanitize_text_field($_GET['category']);
 			}
 			if(isset($_GET['sort']))
 			{
-				if($_GET['sort'] != 'any')
+				if($_GET['sort'] == 'new' || $_GET['sort'] == 'low' || $_GET['sort'] == 'high' || $_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
 				{
-					if($_GET['sort'] == 'new' || $_GET['sort'] == 'low' || $_GET['sort'] == 'high' || $_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
-					{
-						$url_var['package_sort'] = sanitize_text_field($_GET['sort']);
-					}					
+					$url_var['sort'] = sanitize_text_field($_GET['sort']);
 				}
 			}
 			if(isset($_GET['keywords']))
 			{
-				if($_GET['keywords'] != '')
-				{
-					$search = strtolower(sanitize_text_field($_GET['keywords']));
-					$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
-					$search =  preg_replace('/\s+/', ' ', $search);				
-					$search =  substr($search, 0, 25);
-					$url_var['package_search'] = $search;					
-				}
+				$search = strtolower(sanitize_text_field($_GET['keywords']));
+				$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
+				$search =  preg_replace('/\s+/', ' ', $search);				
+				$search =  substr($search, 0, 25);
+				$url_var['keywords'] = $search;
 			}			
 
 			$url_var = http_build_query($url_var);
