@@ -43,9 +43,6 @@ const booking_filter = () => {
 
 		jQuery(thisForm).find('select').change(function () {
 			
-			const changedField = jQuery(this);
-			const changedName = jQuery(changedField).attr('name');
-			const changedValue = jQuery(changedField).val();
 			const formData = jQuery(thisForm).serializeArray();
 			let countAllChanges = 0;
 			let taxChanges = [];
@@ -79,7 +76,7 @@ const booking_filter = () => {
 			else
 			{
 				const {value, name} = taxChanges[0];
-				window.location.replace(new URL(`${homePathname}/package_${name}/${value}`, homeUrl).href);
+				window.location.replace(new URL(`${homePathname}/package_${name}/${value}`, homeUrl.href).href);
 			}
 		});
 	});
