@@ -38,13 +38,13 @@ class Dynamic_Packages_Forms
 			
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="bottom-20">
-						<?php echo $this->get_all_terms_select('package_location', __('Select Location', 'dynamicpackages')); ?>
+						<?php echo $this->get_all_terms_select('package_location', 'location'); ?>
 					</div>
 				</div>	
 				
 				<div class="pure-u-1 pure-u-md-1-4">
 					<div class="bottom-20">
-						<?php echo $this->get_all_terms_select('package_category', __('Select Category', 'dynamicpackages')); ?>
+						<?php echo $this->get_all_terms_select('package_category', 'category'); ?>
 					</div>
 				</div>
 				<div class="pure-u-1 pure-u-md-1-4">
@@ -56,7 +56,7 @@ class Dynamic_Packages_Forms
 					<div class="pure-g">
 						<div class="pure-u-1 pure-u-md-4-5">
 							<div class="bottom-20">
-								<input placeholder="<?php echo esc_attr('Search Keyword', 'dynamicpackages'); ?>" type="text" name="package_search" value="<?php if(isset($_GET['package_search'])) {echo sanitize_text_field(strtolower(substr($_GET['package_search'], 0, 25))); } ?>" />	
+								<input placeholder="<?php echo esc_attr('Search Keyword', 'dynamicpackages'); ?>" type="text" name="keywords" value="<?php if(isset($_GET['keywords'])) {echo sanitize_text_field(strtolower(substr($_GET['keywords'], 0, 25))); } ?>" />	
 							</div>
 						</div>
 						<div class="pure-u-1 pure-u-md-1-5 small">
@@ -77,17 +77,17 @@ class Dynamic_Packages_Forms
 	{
 		$sort = 'any';
 		
-		if(isset($_GET['package_sort']))
+		if(isset($_GET['sort']))
 		{
-			if($_GET['package_sort'] != '')
+			if($_GET['sort'] != '')
 			{
-				$sort = sanitize_text_field($_GET['package_sort']);
+				$sort = sanitize_text_field($_GET['sort']);
 			}
 		}
 		
 		ob_start();
 		?>
-			<select name="package_sort">
+			<select name="sort">
 				<option value="any" <?php echo ($sort == 'any') ? 'selected':''; ?>>-- <?php esc_html_e('Sort by', 'dynamicpackages'); ?> --</option>
 				<option value="new" <?php echo ($sort == 'new') ? 'selected':''; ?>><?php esc_html_e('Newest', 'dynamicpackages'); ?></option>
 				<option value="low" <?php echo ($sort == 'low') ? 'selected':''; ?>><?php esc_html_e('Price', 'dynamicpackages'); ?>: <?php esc_html_e('low to high', 'dynamicpackages'); ?></option>
@@ -314,7 +314,7 @@ class Dynamic_Packages_Forms
 		}
 	}
 	
-	public function get_all_terms_select($tax)
+	public function get_all_terms_select($tax, $name)
 	{
 		$taxonomy = get_taxonomy($tax);
 		
@@ -327,15 +327,14 @@ class Dynamic_Packages_Forms
 		
 		$any = null;
 		
-		if(isset($_GET[$tax]))
+		if(isset($_GET[$name]))
 		{
 			$any = 'selected';
 		}
 		
 		//echo var_dump($terms);
 		
-		$output = '<select name="'.esc_attr($tax).'" class="width-100 block borderbox">';
-		
+		$output = '<select name="'.esc_attr($name).'" class="width-100 block borderbox">';
 		
 		$output .= '<option value="any" '.esc_html($any).'>-- '.$taxonomy->labels->singular_name.' --</option>';
 		
@@ -370,9 +369,9 @@ class Dynamic_Packages_Forms
 						}
 					}
 					
-					elseif(isset($_GET[$tax]))
+					elseif(isset($_GET[$name]))
 					{
-						if($term->slug == $_GET[$tax] )
+						if($term->slug == $_GET[$name] )
 						{
 							$selected = 'selected';
 						}

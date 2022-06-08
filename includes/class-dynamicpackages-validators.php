@@ -721,9 +721,9 @@ class dy_validators
 		}
 		else
 		{
-			if(isset($_GET['package_location']))
+			if(isset($_GET['location']))
 			{
-				$package_location = sanitize_text_field($_GET['package_location']);
+				$package_location = sanitize_text_field($_GET['location']);
 				
 				if($package_location !== '')
 				{
@@ -731,19 +731,19 @@ class dy_validators
 				}
 			}
 			
-			if(isset($_GET['package_category']))
+			if(isset($_GET['category']))
 			{
-				$package_category = sanitize_text_field($_GET['package_category']);
+				$package_category = sanitize_text_field($_GET['category']);
 				
 				if($package_category !== '')
 				{
 					$category = get_term_by('slug', $package_category, 'package_category');
 				}				
 			}
-			if(isset($_GET['package_sort']))
+			if(isset($_GET['sort']))
 			{
 				$package_arr = array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
-				$package_sort = sanitize_text_field($_GET['package_sort']);
+				$package_sort = sanitize_text_field($_GET['sort']);
 
 				if(in_array($package_sort, $package_arr))
 				{
@@ -751,9 +751,9 @@ class dy_validators
 				}
 			}	
 
-			if(isset($_GET['package_search']))
+			if(isset($_GET['keywords']))
 			{
-				if($_GET['package_search'] !== '')
+				if($_GET['keywords'] !== '')
 				{
 					$search = true;
 				}

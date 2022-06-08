@@ -57,12 +57,12 @@
 	{
 		$args['tax_query'] = array();
 			
-		if(isset($_GET['package_search']))
+		if(isset($_GET['keywords']))
 		{
-			if($_GET['package_search'] != '')
+			if($_GET['keywords'] != '')
 			{
 				$args['search_tax_query'] =  true;
-				$args['s'] =  sanitize_text_field($_GET['package_search']);
+				$args['s'] =  sanitize_text_field($_GET['keywords']);
 			}
 		}
 		

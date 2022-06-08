@@ -642,11 +642,11 @@ class Dynamic_Packages_Public {
 						$title = pll__('Find Packages').': ';
 					}
 					
-					if(isset($_GET['package_search']))
+					if(isset($_GET['keywords']))
 					{
-						if($_GET['package_search'] != '')
+						if($_GET['keywords'] != '')
 						{
-							$search = strtolower(sanitize_text_field($_GET['package_search']));
+							$search = strtolower(sanitize_text_field($_GET['keywords']));
 							$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
 							$search =  preg_replace('/\s+/', ' ', $search);
 							$search =  substr($search, 0, 25);
@@ -654,11 +654,11 @@ class Dynamic_Packages_Public {
 						}
 					}					
 					
-					if(isset($_GET['package_category']))
+					if(isset($_GET['category']))
 					{
-						if($_GET['package_category'] != 'any' && $_GET['package_category'] != '')
+						if($_GET['category'] != 'any' && $_GET['category'] != '')
 						{
-							$category = get_term_by('slug', sanitize_text_field($_GET['package_category']), 'package_category');
+							$category = get_term_by('slug', sanitize_text_field($_GET['category']), 'package_category');
 							
 							if(is_object($category))
 							{
@@ -667,11 +667,11 @@ class Dynamic_Packages_Public {
 						}
 					}				
 					
-					if(isset($_GET['package_location']))
+					if(isset($_GET['location']))
 					{
-						if($_GET['package_location'] != 'any' && $_GET['package_location'] != '')
+						if($_GET['location'] != 'any' && $_GET['location'] != '')
 						{
-							$location = get_term_by('slug', sanitize_text_field($_GET['package_location']), 'package_location');
+							$location = get_term_by('slug', sanitize_text_field($_GET['location']), 'package_location');
 							
 							if(is_object($location))
 							{
@@ -692,33 +692,33 @@ class Dynamic_Packages_Public {
 						}
 					}
 
-					if(isset($_GET['package_sort']))
+					if(isset($_GET['sort']))
 					{
-						if($_GET['package_sort'] == 'new')
+						if($_GET['sort'] == 'new')
 						{
 							$title .= ' ('.__('Newest', 'dynamicpackages').')';
 						}
-						else if($_GET['package_sort'] == 'low')
+						else if($_GET['sort'] == 'low')
 						{
 							$title .= ' ('.__('low to high', 'dynamicpackages').')';
 						}
-						else if($_GET['package_sort'] == 'high')
+						else if($_GET['sort'] == 'high')
 						{
 							$title .= ' ('.__('high to low', 'dynamicpackages').')';
 						}	
-						else if($_GET['package_sort'] == 'today')
+						else if($_GET['sort'] == 'today')
 						{
 							$title .= ' ('.__('today', 'dynamicpackages').')';
 						}
-						else if($_GET['package_sort'] == 'tomorrow')
+						else if($_GET['sort'] == 'tomorrow')
 						{
 							$title .= ' ('.__('tomorrow', 'dynamicpackages').')';
 						}					
-						else if($_GET['package_sort'] == 'week')
+						else if($_GET['sort'] == 'week')
 						{
 							$title .= ' ('.__('next 7 days', 'dynamicpackages').')';
 						}	
-						else if($_GET['package_sort'] == 'month')
+						else if($_GET['sort'] == 'month')
 						{
 							$title .= ' ('.__('next 30 days', 'dynamicpackages').')';
 						}						
@@ -820,11 +820,11 @@ class Dynamic_Packages_Public {
 							$title = pll__('Find Packages').': ';
 						}
 
-						if(isset($_GET['package_search']))
+						if(isset($_GET['keywords']))
 						{
-							if($_GET['package_search'] != '')
+							if($_GET['keywords'] != '')
 							{
-								$search = strtolower(sanitize_text_field($_GET['package_search']));
+								$search = strtolower(sanitize_text_field($_GET['keywords']));
 								$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
 								$search =  preg_replace('/\s+/', ' ', $search);
 								$search =  substr($search, 0, 25);
@@ -832,11 +832,11 @@ class Dynamic_Packages_Public {
 							}
 						}						
 								
-						if(isset($_GET['package_category']))
+						if(isset($_GET['category']))
 						{
-							if($_GET['package_category'] != 'any' && $_GET['package_category'] != '')
+							if($_GET['category'] != 'any' && $_GET['category'] != '')
 							{
-								$category = get_term_by('slug', sanitize_text_field($_GET['package_category']), 'package_category');
+								$category = get_term_by('slug', sanitize_text_field($_GET['category']), 'package_category');
 								
 								if(is_object($category))
 								{
@@ -845,11 +845,11 @@ class Dynamic_Packages_Public {
 							}
 						}					
 						
-						if(isset($_GET['package_location']))
+						if(isset($_GET['location']))
 						{
-							if($_GET['package_location'] != 'any' && ($_GET['package_location'] != ''))
+							if($_GET['location'] != 'any' && ($_GET['location'] != ''))
 							{
-								$location = get_term_by('slug', sanitize_text_field($_GET['package_location']), 'package_location');
+								$location = get_term_by('slug', sanitize_text_field($_GET['location']), 'package_location');
 								
 								if(is_object($location))
 								{
@@ -868,33 +868,33 @@ class Dynamic_Packages_Public {
 								}
 							}	
 						}
-						if(isset($_GET['package_sort']))
+						if(isset($_GET['sort']))
 						{
-							if($_GET['package_sort'] == 'new')
+							if($_GET['sort'] == 'new')
 							{
 								$title .= esc_html(' ('.__('Newest', 'dynamicpackages').')');
 							}
-							else if($_GET['package_sort'] == 'low')
+							else if($_GET['sort'] == 'low')
 							{
 								$title .= esc_html(' ('.__('low to high', 'dynamicpackages').')');
 							}
-							else if($_GET['package_sort'] == 'high')
+							else if($_GET['sort'] == 'high')
 							{
 								$title .= esc_html(' ('.__('high to low', 'dynamicpackages').')');
 							}		
-							else if($_GET['package_sort'] == 'today')
+							else if($_GET['sort'] == 'today')
 							{
 								$title .= esc_html(' ('.__('today', 'dynamicpackages').')');
 							}
-							else if($_GET['package_sort'] == 'tomorrow')
+							else if($_GET['sort'] == 'tomorrow')
 							{
 								$title .= esc_html(' ('.__('tomorrow', 'dynamicpackages').')');
 							}						
-							else if($_GET['package_sort'] == 'week')
+							else if($_GET['sort'] == 'week')
 							{
 								$title .= esc_html(' ('.__('next 7 days', 'dynamicpackages').')');
 							}	
-							else if($_GET['package_sort'] == 'month')
+							else if($_GET['sort'] == 'month')
 							{
 								$title .= esc_html(' ('.__('next 30 days', 'dynamicpackages').')');
 							}						
@@ -1665,34 +1665,34 @@ class Dynamic_Packages_Public {
 				$url_var['paged'] = sanitize_text_field($paged);
 			}
 		
-			if(isset($_GET['package_location']))
+			if(isset($_GET['location']))
 			{
-				if($_GET['package_location'] != 'any'){
-					$url_var['package_location'] = sanitize_text_field($_GET['package_location']);
+				if($_GET['location'] != 'any'){
+					$url_var['package_location'] = sanitize_text_field($_GET['location']);
 				}
 			}
-			if(isset($_GET['package_category']))
+			if(isset($_GET['category']))
 			{
-				if($_GET['package_category'] != 'any')
+				if($_GET['category'] != 'any')
 				{
-					$url_var['package_category'] = sanitize_text_field($_GET['package_category']);
+					$url_var['package_category'] = sanitize_text_field($_GET['category']);
 				}
 			}
-			if(isset($_GET['package_sort']))
+			if(isset($_GET['sort']))
 			{
-				if($_GET['package_sort'] != 'any')
+				if($_GET['sort'] != 'any')
 				{
-					if($_GET['package_sort'] == 'new' || $_GET['package_sort'] == 'low' || $_GET['package_sort'] == 'high' || $_GET['package_sort'] == 'today' || $_GET['package_sort'] == 'tomorrow' || $_GET['package_sort'] == 'week' || $_GET['package_sort'] == 'month')
+					if($_GET['sort'] == 'new' || $_GET['sort'] == 'low' || $_GET['sort'] == 'high' || $_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
 					{
-						$url_var['package_sort'] = sanitize_text_field($_GET['package_sort']);
+						$url_var['package_sort'] = sanitize_text_field($_GET['sort']);
 					}					
 				}
 			}
-			if(isset($_GET['package_search']))
+			if(isset($_GET['keywords']))
 			{
-				if($_GET['package_search'] != '')
+				if($_GET['keywords'] != '')
 				{
-					$search = strtolower(sanitize_text_field($_GET['package_search']));
+					$search = strtolower(sanitize_text_field($_GET['keywords']));
 					$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
 					$search =  preg_replace('/\s+/', ' ', $search);				
 					$search =  substr($search, 0, 25);
@@ -2023,25 +2023,25 @@ class Dynamic_Packages_Public {
 		}
 		else
 		{
-			if(isset($_GET['package_sort']))
+			if(isset($_GET['sort']))
 			{
-				if($_GET['package_sort'] == 'today' || $_GET['package_sort'] == 'tomorrow' || $_GET['package_sort'] == 'week' || $_GET['package_sort'] == 'month')
+				if($_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
 				{
 					$date = strtotime(package_field('package_date'));
 					
-					if($_GET['package_sort'] == 'today')
+					if($_GET['sort'] == 'today')
 					{
 						$label = __('today', 'dynamicpackages');
 					}
-					elseif($_GET['package_sort'] == 'tomorrow')
+					elseif($_GET['sort'] == 'tomorrow')
 					{
 						$label = __('tomorrow', 'dynamicpackages');
 					}
-					elseif($_GET['package_sort'] == 'week')
+					elseif($_GET['sort'] == 'week')
 					{
 						$label = __('next 7 days', 'dynamicpackages');
 					}
-					elseif($_GET['package_sort'] == 'month')
+					elseif($_GET['sort'] == 'month')
 					{
 						$label = __('next 30 days', 'dynamicpackages');
 					}

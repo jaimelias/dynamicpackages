@@ -145,25 +145,25 @@ class Dynamic_Packages_Shortcodes {
 			}			
 		}
 		
-		if(isset($_GET['package_location']))
+		if(isset($_GET['location']))
 		{
-			if($_GET['package_location'] != null)
+			if($_GET['location'] != null)
 			{
-				$loc_imp = sanitize_text_field($_GET['package_location']);
+				$loc_imp = sanitize_text_field($_GET['location']);
 			}
 		}
-		if(isset($_GET['package_category']))
+		if(isset($_GET['category']))
 		{
-			if($_GET['package_category'] != null)
+			if($_GET['category'] != null)
 			{
-				$cat_imp = sanitize_text_field($_GET['package_category']);
+				$cat_imp = sanitize_text_field($_GET['category']);
 			}
 		}
-		if(isset($_GET['package_sort']))
+		if(isset($_GET['sort']))
 		{
-			if($_GET['package_sort'] != null)
+			if($_GET['sort'] != null)
 			{
-				$sort_imp = sanitize_text_field($_GET['package_sort']);
+				$sort_imp = sanitize_text_field($_GET['sort']);
 			}
 		}	
 		
