@@ -92,7 +92,8 @@
 		</div>
 		
 		<?php if($has_gateway) : ?>
-			<div id="dy_cc_form"><?php do_action('dy_cc_form'); ?></div>
+			<?php do_action('dy_cc_form'); ?>
+			<?php do_action('dy_terms_conditions'); ?>
 		<?php endif; ?>
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>

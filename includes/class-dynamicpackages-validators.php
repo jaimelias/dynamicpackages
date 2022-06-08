@@ -367,7 +367,10 @@ class dy_validators
 		}
 		else
 		{
-			if(is_array($fields))
+
+			$auto_booking = intval(package_field('package_auto_booking'));
+
+			if(is_array($fields) && $auto_booking === 1)
 			{
 				if(count($fields) > 0)
 				{
