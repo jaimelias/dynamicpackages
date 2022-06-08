@@ -6,13 +6,14 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 class dy_Admin {
 
-
 	private $plugin_name;
 	private $version;
 
 
-	public function __construct( $plugin_name, $version ) {
-
+	public function __construct( $plugin_name, $version )
+	{
+		$this->plugin_dir_file = plugin_dir_url( __FILE__ );
+		$this->plugin_dir = plugin_dir_url( __DIR__ );
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->init();
@@ -22,89 +23,49 @@ class dy_Admin {
 	{
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 99);
 		add_action('admin_init', array(&$this, 'settings_init'), 1);
-		add_editor_style(plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css');
+		add_editor_style($this->plugin_dir_file . 'css/dynamicpackages-admin.css');
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));		
-		add_action('admin_init', array(&$this, 'register_polylang_strings'));		
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));				
 	}
 
 	public function enqueue_styles() {
 
 		$this->handsontable();
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
-		
-		wp_enqueue_style( 'picker-css', plugin_dir_url( __FILE__ ) . 'css/picker/default.css', array(), '', 'all' );
-		wp_enqueue_style( 'picker-date-css', plugin_dir_url( __FILE__ ) . 'css/picker/default.date.css', array(), '', 'all' );
-		wp_enqueue_style( 'picker-time-css', plugin_dir_url( __FILE__ ) . 'css/picker/default.time.css', array(), '', 'all' );	
-	
+		wp_enqueue_style( $this->plugin_name, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', array(), time(), 'all' );	
+		wp_enqueue_style( 'picker-css', $this->plugin_dir_file . 'css/picker/default.css', array(), '', 'all' );
+		wp_enqueue_style( 'picker-date-css', $this->plugin_dir_file . 'css/picker/default.date.css', array(), '', 'all' );
+		wp_enqueue_style( 'picker-time-css', $this->plugin_dir_file . 'css/picker/default.time.css', array(), '', 'all' );
 	}
 	
 	public function handsontable()
 	{
-		wp_enqueue_style( 'handsontableCss', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.css', array(), time(), 'all' );
-		wp_enqueue_script( 'handsontableJS', plugin_dir_url( __DIR__ ) . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
+		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), time(), 'all' );
+		wp_enqueue_script( 'handsontableJS', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
 	}
 
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in dynamicpackages_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The dynamicpackages_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */	
 		global $typenow;
+
 		if('packages' == $typenow)
 		{			
-				
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true );				
-			wp_add_inline_script('dynamicpackages', $this->wp_version(), 'before');
+			wp_enqueue_script( $this->plugin_name, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true );
 			
-		//picker
-			wp_enqueue_script( 'picker-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.js', array('jquery'), '', false );
-			wp_enqueue_script( 'picker-date-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.date.js', array(), '', false );
-			wp_enqueue_script( 'picker-time-js', plugin_dir_url( __FILE__ ) . 'js/picker/picker.time.js', array(), '', false );	
-			wp_enqueue_script( 'picker-legacy', plugin_dir_url( __FILE__ ) . 'js/picker/legacy.js', array(), '', false );	
+			//picker
+			wp_enqueue_script( 'picker-js', $this->plugin_dir_file . 'js/picker/picker.js', array('jquery'), '', false );
+			wp_enqueue_script( 'picker-date-js', $this->plugin_dir_file . 'js/picker/picker.date.js', array(), '', false );
+			wp_enqueue_script( 'picker-time-js', $this->plugin_dir_file . 'js/picker/picker.time.js', array(), '', false );	
+			wp_enqueue_script( 'picker-legacy', $this->plugin_dir_file . 'js/picker/legacy.js', array(), '', false );	
 			$picker_translation = 'js/picker/translations/'.substr(get_locale(), 0, -3).'.js';
+
 			if(file_exists(get_template_directory().$picker_translation))
 			{
-				wp_enqueue_script( 'picker-time-translation', plugin_dir_url( __FILE__ ). $picker_translation, array(), '', false );
+				wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_file . $picker_translation, array(), '', false );
 			}
+		}
+		
+	}
 
-			
-			
-		}
-		
-	}
-	
-	public function wp_version()
-	{
-		return 'function dy_wp_version(){return '.esc_html(intval(get_bloginfo('version'))).';}';
-	}
-	
-	public function register_polylang_strings()
-	{
-		global $polylang;
-		
-		if($polylang)
-		{
-			pll_register_string('more_packages', 'More packages');
-			pll_register_string('tax_title_modifier', 'Packages in');
-			pll_register_string('page_title_modifier', 'Find Packages');
-			pll_register_string('checkout_page_title', 'Booking Page');
-		}
-	}
 	
 	public  function add_settings_page()
 	{
