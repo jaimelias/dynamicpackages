@@ -31,7 +31,7 @@ class Dynamic_Packages_Forms
 		
 		ob_start();
 		?>
-		<form id="dy_form_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get" data-home-url="<?php echo esc_url(home_url()); ?>">
+		<form id="dy_form_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
 		
 			<div class="pure-g gutters">
 

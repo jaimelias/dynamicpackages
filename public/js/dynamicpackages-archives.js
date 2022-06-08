@@ -76,11 +76,7 @@ const booking_filter = () => {
 			{
 				const {value, name} = taxChanges[0];
 				const homeUrl = new URL(jQuery(thisForm).attr('data-home-url'));
-				let pathname = (homeUrl.pathname) ? `${homeUrl.pathname}/package_${name}/${value}` : `package_${name}/${value}`;				
-				
-				const url = new URL(pathname, homeUrl.href).href;
-
-				window.location.replace(url);
+				window.location.replace(`${homeUrl}package_${name}/${value}`);
 			}
 		});
 	});
