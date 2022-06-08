@@ -25,7 +25,7 @@ class dy_Admin {
 		add_action('admin_init', array(&$this, 'settings_init'), 1);
 		add_editor_style($this->plugin_dir_file . 'css/dynamicpackages-admin.css');
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));		
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 	}
 
 	public function enqueue_styles() {

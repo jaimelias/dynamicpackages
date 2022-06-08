@@ -23,18 +23,68 @@ const more_details_event = () => {
 }
 
 const booking_filter = () => {
-	
-	const this_form = jQuery('#dy_form_filter')[0];
-	
-	jQuery(this_form).find('select').change(() => {
-		jQuery(this_form).submit();
-	});	
-	
-	jQuery(this_form).submit(e => {
-		e.preventDefault();
-		booking_filter_events(jQuery(this_form));
-		jQuery(this_form).unbind('submit').submit();
+
+	jQuery('#dy_form_filter').each(function(){
+		const thisForm = jQuery(this);
+		const homeUrl = new URL(jQuery(thisForm).attr('data-home-url'));
+		const homePathname = homeUrl.pathname;
+		const nullParams = {
+			location: 'any',
+			category: 'any',
+			sort: 'any',
+			keywords: ''
+		};
+
+		jQuery(thisForm).submit(e => {
+			e.preventDefault();
+			booking_filter_events(jQuery(thisForm));
+			jQuery(thisForm).unbind('submit').submit();
+		});
+
+		jQuery(thisForm).find('select').change(function () {
+			
+			const changedField = jQuery(this);
+			const changedName = jQuery(changedField).attr('name');
+			const changedValue = jQuery(changedField).val();
+			const formData = jQuery(thisForm).serializeArray();
+			let countAllChanges = 0;
+			let taxChanges = [];
+
+			formData.forEach(arr => {
+				const {name, value} = arr;
+
+				if(value !== nullParams[name])
+				{
+					
+					if(['location', 'category'].includes(name))
+					{
+						taxChanges.push({name, value});
+					}
+
+					countAllChanges++;
+				}
+			});
+			
+			const countTaxChanges = taxChanges.length;
+			const isAny = arr => arr.value === 'any';
+
+			const submitForm = (countAllChanges === countTaxChanges) 
+				? (countTaxChanges === 1 && !taxChanges.every(isAny)) 
+				? false : true : true;
+
+			if(submitForm)
+			{
+				jQuery(thisForm).submit();
+			}
+			else
+			{
+				const {value, name} = taxChanges[0];
+				window.location.replace(new URL(`${homePathname}/package_${name}/${value}`, homeUrl).href);
+			}
+		});
 	});
+	
+
 }
 
 const booking_filter_events = form => {
