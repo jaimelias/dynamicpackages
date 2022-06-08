@@ -238,7 +238,7 @@ class Dynamic_Packages_Ical
 	public function get_week_days_list()
 	{
 		$output = array();
-		$days = array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
+		$days = dy_utilities::get_week_days_abbr();
 		
 		for($x = 0; $x < count($days); $x++)
 		{

@@ -317,7 +317,7 @@ class Dynamic_Packages_Public {
 	{
 		$disable = array();
 		$disable['disable'] = array();
-		$days = array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
+		$days = dy_utilities::get_week_days_abbr();
 		
 		if(package_field('package_event_date') == '')
 		{
@@ -1734,15 +1734,15 @@ class Dynamic_Packages_Public {
 	public static function enabled_days()
 	{
 		$output = '';
-		$days = array('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun');
-		$labels = array(__('Mon', 'dynamicpackages'), __('Tue', 'dynamicpackages'), __('Wed', 'dynamicpackages'), __('Thu', 'dynamicpackages'), __('Fri', 'dynamicpackages'), __('Sat', 'dynamicpackages'), __('Sun', 'dynamicpackages'));
-		$labels_lon = array(__('Monday', 'dynamicpackages'), __('Tuesday', 'dynamicpackages'), __('Wednesday', 'dynamicpackages'), __('Thursday', 'dynamicpackages'), __('Friday', 'dynamicpackages'), __('Saturday', 'dynamicpackages'), __('Sunday', 'dynamicpackages'));		
+		$days = dy_utilities::get_week_days_abbr();
+		$labels = array(__('Sun', 'dynamicpackages'), __('Mon', 'dynamicpackages'), __('Tue', 'dynamicpackages'), __('Wed', 'dynamicpackages'), __('Thu', 'dynamicpackages'), __('Fri', 'dynamicpackages'), __('Sat', 'dynamicpackages'));
+		$labels_lon = array(__('Sunday', 'dynamicpackages'), __('Monday', 'dynamicpackages'), __('Tuesday', 'dynamicpackages'), __('Wednesday', 'dynamicpackages'), __('Thursday', 'dynamicpackages'), __('Friday', 'dynamicpackages'), __('Saturday', 'dynamicpackages'));		
 		$enabled_days = array();
 		$enabled_days_lon = array();
 		
 		for($x = 0; $x < count($days); $x++)
 		{
-			$day = strtolower('package_day_'.$days[$x]);
+			$day = 'package_day_'.$days[$x];
 			
 			if(package_field($day) != 1)
 			{

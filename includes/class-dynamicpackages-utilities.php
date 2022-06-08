@@ -1166,7 +1166,7 @@ class dy_utilities {
 	
 	public static function get_week_days_abbr()
 	{
-		return array('sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat');
+		return array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
 	}
 
 	public static function get_week_day_names()
