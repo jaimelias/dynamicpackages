@@ -1735,8 +1735,8 @@ class Dynamic_Packages_Public {
 	{
 		$output = '';
 		$days = dy_utilities::get_week_days_abbr();
-		$labels = array(__('Sun', 'dynamicpackages'), __('Mon', 'dynamicpackages'), __('Tue', 'dynamicpackages'), __('Wed', 'dynamicpackages'), __('Thu', 'dynamicpackages'), __('Fri', 'dynamicpackages'), __('Sat', 'dynamicpackages'));
-		$labels_lon = array(__('Sunday', 'dynamicpackages'), __('Monday', 'dynamicpackages'), __('Tuesday', 'dynamicpackages'), __('Wednesday', 'dynamicpackages'), __('Thursday', 'dynamicpackages'), __('Friday', 'dynamicpackages'), __('Saturday', 'dynamicpackages'));		
+		$labels = dy_utilities::get_week_day_names_short();
+		$labels_lon = dy_utilities::get_week_day_names_long();		
 		$enabled_days = array();
 		$enabled_days_lon = array();
 		

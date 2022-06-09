@@ -1166,19 +1166,33 @@ class dy_utilities {
 	
 	public static function get_week_days_abbr()
 	{
-		return array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
+		return array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
 	}
 
-	public static function get_week_day_names()
+	public static function get_week_day_names_long()
 	{
 		return array(
-			__('Sunday', 'dynamicpackages'), 
+			
 			__('Monday', 'dynamicpackages'), 
 			__('Tuesday', 'dynamicpackages'), 
 			__('Wednesday', 'dynamicpackages'), 
 			__('Thursday', 'dynamicpackages'), 
 			__('Friday', 'dynamicpackages'), 
-			__('Saturday', 'dynamicpackages')
+			__('Saturday', 'dynamicpackages'),
+			__('Sunday', 'dynamicpackages'),
+		);
+	}
+
+	public static function get_week_day_names_short()
+	{
+		return array(
+			__('Mon', 'dynamicpackages'),
+			 __('Tue', 'dynamicpackages'), 
+			 __('Wed', 'dynamicpackages'),
+			 __('Thu', 'dynamicpackages'), 
+			 __('Fri', 'dynamicpackages'), 
+			 __('Sat', 'dynamicpackages'), 
+			 __('Sun', 'dynamicpackages')
 		);
 	}
 	

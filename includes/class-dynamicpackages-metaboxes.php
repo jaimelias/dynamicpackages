@@ -524,7 +524,7 @@ class dy_Metaboxes
 	{
 		$output = '';
 		$week_days = dy_utilities::get_week_days_abbr();
-		$week_day_names = dy_utilities::get_week_day_names();
+		$week_day_names = dy_utilities::get_week_day_names_long();
 
 		for($x = 0; $x < count($week_days); $x++)
 		{
