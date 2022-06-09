@@ -1284,39 +1284,51 @@ class dy_utilities {
 	public static function get_languages()
 	{
 		global $polylang;
-		$language_list = array();
+		$output = array();
+		$which_var = 'dy_get_languages';
+		global $$which_var;
 
-		if(isset($polylang))
+		if(isset($$which_var))
 		{
-			$languages = PLL()->model->get_languages_list();
-
-			for($x = 0; $x < count($languages); $x++)
+			$output = $$which_var;
+		}
+		else
+		{
+			if(isset($polylang))
 			{
-				foreach($languages[$x] as $key => $value)
+				$languages = PLL()->model->get_languages_list();
+
+				for($x = 0; $x < count($languages); $x++)
 				{
-					if($key == 'slug')
+					foreach($languages[$x] as $key => $value)
 					{
-						array_push($language_list, $value);
-					}
-				}	
+						if($key == 'slug')
+						{
+							array_push($output, $value);
+						}
+					}	
+				}
 			}
+
+			if(count($output) === 0)
+			{
+				$locale_str = get_locale();
+
+				if(strlen($locale_str) === 5)
+				{
+					array_push($output, substr($locale_str, 0, -3));
+				}
+				else if(strlen($locale_str) === 2)
+				{
+					array_push($output, $locale_str);
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
 		}
 
-		if(count($language_list) === 0)
-		{
-			$locale_str = get_locale();
 
-			if(strlen($locale_str) === 5)
-			{
-				array_push($language_list, substr($locale_str, 0, -3));
-			}
-			else if(strlen($locale_str) === 2)
-			{
-				array_push($language_list, $locale_str);
-			}
-		}
-
-		return $language_list;
+		return $output;
 	}
 
 }
