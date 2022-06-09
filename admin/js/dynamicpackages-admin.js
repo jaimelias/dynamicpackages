@@ -41,12 +41,12 @@ const initGridsFromTextArea = () => {
 
 	jQuery('[data-sensei-container]').each(function(){
 	
-		const {textareaId, containerId, minId, maxId} = getDataSenseiIds(this);
+		const {textareaId, containerId, maxId, isDisabled} = getDataSenseiIds(this);
 				
 		setTimeout(() => { 
 			if(textareaId && containerId && maxId)
 			{
-				registerGrid(textareaId, containerId, minId, maxId);
+				registerGrid({textareaId, containerId, maxId, isDisabled});
 			}
 		}, 1000);
 	});
@@ -55,7 +55,7 @@ const initGridsFromTextArea = () => {
 
 const getInitialGrid = ({rows, cols}) => [...Array(rows).keys()].map(() => [...Array(cols).keys()].map(() => ''));
 
-const registerGrid = (textareaId, containerId, minId, maxId) => {	
+const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {	
 
 
 	if(jQuery(textareaId).length === 0 || jQuery(containerId).length === 0)
@@ -74,6 +74,8 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 	const columns = getColType(containerId);
 	const colsNum = (headers.length > 2) ? headers.length : 2;
 	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum});
+
+	console.log({isDisabled, gridId});
 	
 	try
 	{
@@ -127,6 +129,7 @@ const registerGrid = (textareaId, containerId, minId, maxId) => {
 		minCols: colsNum,
 		rowHeaders: true,
 		colHeaders: headers,
+		readOnly: isDisabled,
 		contextMenu: menu,
 		minRows: maxNum,
 		height,
@@ -224,16 +227,6 @@ const getColType = containerId => {
 	columns = columns.split(',');
 	let selectOption = null;
 	const output = [];
-	let readOnly = false;
-	const isDisabled = jQuery(containerId).attr('data-sensei-disabled');
-	
-	if(typeof isDisabled != 'undefined')
-	{
-		if(isDisabled == 'disabled')
-		{
-			readOnly = true;
-		}
-	}
 	
 	for(let x = 0; x < columns.length; x++)
 	{
@@ -277,11 +270,6 @@ const getColType = containerId => {
 			row.type = 'text';
 		}
 		
-		if(readOnly === true)
-		{
-			row.readOnly = true;
-		}
-		
 		output.push(row);
 	}
 	
@@ -316,7 +304,6 @@ const buildOccupancyDOM = () => {
 		id: 'occupancy_chart',
 		class: 'hot',
 		'data-sensei-container': 'occupancy_chart',
-		'data-sensei-min': 'package_min_persons',
 		'data-sensei-max': 'package_max_persons',
 		'data-sensei-textarea': 'package_occupancy_chart',
 		'data-sensei-headers': 'Regular,Discount',
@@ -364,7 +351,7 @@ const getDataFromTextarea = el => {
 
 const initSeasonGrids = () => {
 
-	if(jQuery('#package_package_type').length === 0)
+	if(jQuery('#package_occupancy_chart').length === 0)
 	{
 		return false;
 	}
@@ -452,16 +439,16 @@ const initSeasonGrids = () => {
 
 const getDataSenseiIds = obj => {
 	const thisTextArea = jQuery(obj).attr('data-sensei-textarea');
-	const thisMin = jQuery(obj).attr('data-sensei-min');
+	const disabled = jQuery(obj).attr('data-sensei-disabled');
 	const thisMax = jQuery(obj).attr('data-sensei-max');
 	const thisContainer = jQuery(obj).attr('data-sensei-container');
 
 	const textareaId = (thisTextArea) ? `#${thisTextArea}` : null;
 	const containerId = (thisContainer) ? `#${thisContainer}` : null;
-	const minId = (thisMin) ? `#${thisMin}`: null;
+	const isDisabled = (disabled === 'disabled') ? true : false;
 	const maxId = (thisMax) ? `#${thisMax}`: null;
 
-	return {textareaId, containerId, minId, maxId};
+	return {textareaId, containerId, isDisabled, maxId};
 }
 
 

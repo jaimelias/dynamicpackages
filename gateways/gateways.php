@@ -57,6 +57,7 @@ class Dynamic_Packages_Gateways
 		add_action('dy_coupon_confirmation', array(&$this, 'coupon_confirmation'));
 		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
 		add_action('dy_crypto_form', array(&$this, 'crypto_form'));
+		
 	}
 	
 	public function set_post_on_checkout_page()
@@ -320,7 +321,6 @@ class Dynamic_Packages_Gateways
 			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
 			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
 			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
-			'message' => esc_html($this->get_notes()),
 			'TRANSLATIONS' => array('submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
@@ -372,42 +372,6 @@ class Dynamic_Packages_Gateways
 		else if(package_field( 'package_package_type' ) == 3)
 		{
 			$output = 'per hour';
-		}
-		return $output;
-	}	
-	
-	public function get_notes()
-	{
-		global $polylang;
-		global $post;
-		
-		$the_id = $post->ID;
-		
-		if(property_exists($post, 'post_parent'))
-		{
-			$the_id = $post->post_parent;
-		}
-		
-		$language_list = array();
-		$output = '';
-		if(isset($polylang))
-		{
-			$languages = PLL()->model->get_languages_list();
-			
-			for($x = 0; $x < count($languages); $x++)
-			{
-				foreach($languages[$x] as $key => $value)
-				{
-					if($key == 'slug' && $value == substr(get_locale(), 0, -3))
-					{
-						$output = package_field( 'package_confirmation_message_'.$value, $the_id);
-					}
-				}	
-			}
-		}
-		else
-		{
-			$output = package_field( 'package_confirmation_message', $the_id);
 		}
 		return $output;
 	}

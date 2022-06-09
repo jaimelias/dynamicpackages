@@ -5,6 +5,7 @@ class dy_Metapost{
 	public function __construct()
 	{
 		$this->init();
+		
 	}
 	public function init()
 	{
@@ -16,6 +17,8 @@ class dy_Metapost{
 		if(defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 		if(! isset( $_POST['package_nonce'] ) || ! wp_verify_nonce( $_POST['package_nonce'], '_package_nonce' ) ) return;
 		if(! current_user_can( 'edit_post', $post_id ) ) return;
+
+		$languages = dy_utilities::get_languages();
 		
 		if(isset( $_POST['package_fixed_price']))
 			update_post_meta( $post_id, 'package_fixed_price', esc_attr($_POST['package_fixed_price']));
@@ -251,44 +254,21 @@ class dy_Metapost{
 		if(isset( $_POST['package_provider_tel']))
 			update_post_meta( $post_id, 'package_provider_tel', esc_attr($_POST['package_provider_tel']));			
 		
-		global $polylang; 
-		$language_list = array();
-		
-		if(isset($polylang))
-		{
-			$languages = PLL()->model->get_languages_list();
 			
-			for($x = 0; $x < count($languages); $x++)
+		for($x = 0; $x < count($languages); $x++)
+		{
+			$lang = $languages[$x];
+
+			if(isset( $_POST['package_confirmation_message_'.$lang]))
 			{
-				foreach($languages[$x] as $key => $value)
-				{
-					if($key == 'slug')
-					{
-						if(isset( $_POST['package_confirmation_message_'.$value]))
-						{
-							update_post_meta( $post_id, 'package_confirmation_message_'.$value, sanitize_textarea_field($_POST['package_confirmation_message_'.$value] ));						
-						}
-						if(isset( $_POST['package_child_title_'.$value]))
-						{
-							update_post_meta( $post_id, 'package_child_title_'.$value, esc_attr($_POST['package_child_title_'.$value] ));						
-						}						
-					}
-				}
+				update_post_meta( $post_id, 'package_confirmation_message_'.$lang, sanitize_textarea_field($_POST['package_confirmation_message_'.$lang] ));
+			}
+
+			if(isset( $_POST['package_child_title_'.$lang]))
+			{
+				update_post_meta( $post_id, 'package_child_title_'.$lang, esc_attr($_POST['package_child_title_'.$lang] ));
 			}
 		}
-		else
-		{
-			if(isset( $_POST['package_confirmation_message']))
-			{
-				update_post_meta( $post_id, 'package_confirmation_message', sanitize_textarea_field($_POST['package_confirmation_message'] ));					
-			}
-			if(isset( $_POST['package_child_title']))
-			{
-				update_post_meta( $post_id, 'package_child_title', esc_attr($_POST['package_child_title'] ));				
-			}			
-		}		
-
-		
 		
 		// ALL THE CHECKBOXES REQUIRE AN ELSE
 		//monday
@@ -391,9 +371,9 @@ class dy_Metapost{
 		{
 			update_post_meta( $post_id, 'package_week_day_surcharge_wed', intval($_POST['package_week_day_surcharge_wed']));
 		}	
-		if(isset( $_POST['package_week_day_surcharge_thr']))
+		if(isset( $_POST['package_week_day_surcharge_thu']))
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_thr', intval($_POST['package_week_day_surcharge_thr']));
+			update_post_meta( $post_id, 'package_week_day_surcharge_thu', intval($_POST['package_week_day_surcharge_thu']));
 		}	
 		if(isset( $_POST['package_week_day_surcharge_fri']))
 		{

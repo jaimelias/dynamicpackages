@@ -556,7 +556,6 @@ class Dynamic_Packages_Reviews
 	public function total_reviews()
 	{
 		global $dy_total_reviews;
-		global $polylang;
 		$output = array();
 		
 		if(isset($dy_total_reviews))
@@ -565,34 +564,26 @@ class Dynamic_Packages_Reviews
 		}
 		else
 		{
+			$languages = dy_utilities::get_languages();
+			$language_list = array();
 			$merged_comments = array();
 			$rating = array();
 			$count = 0;
-			$args = array();
-			$args['post_parent'] = 0;
-			$args['post_type'] = 'packages';
-			$args['posts_per_page'] = -1;	
-			
-			if(isset($polylang))
-			{
-				$language_list = array();
-				$languages = PLL()->model->get_languages_list();
-				
-				for($x = 0; $x < count($languages); $x++)
-				{
-					foreach($languages[$x] as $key => $value)
-					{
-						if($key == 'slug')
-						{
-							array_push($language_list, $value);
-						}
-					}	
-				}
+			$args = array(
+				'post_parent' => 0,
+				'post_type' => 'packages',
+				'posts_per_page' => -1
+			);
 
-				if(count($language_list) > 0)
-				{
-					$args['lang'] = $language_list;
-				}
+			for($x = 0; $x < count($languages); $x++)
+			{
+				$lang = $languages[$x];
+				array_push($language_list, $lang);
+			}			
+			
+			if(count($language_list) > 0)
+			{
+				$args['lang'] = $language_list;
 			}
 			
 			$total_reviews = new WP_Query($args);	
@@ -625,9 +616,13 @@ class Dynamic_Packages_Reviews
 			if($rating > 0 && $count > 0)
 			{
 				$average = number_format((array_sum($rating)/$count), 2, '.', '');
-				$output['ratingValue'] = $average;
-				$output['reviewCount'] = $count;
-				$output['@type'] = 'AggregateRating';
+
+				$output = array(
+					'ratingValue' => $average,
+					'reviewCount' => $count,
+					'@type' => 'AggregateRating'
+				);
+
 				$GLOBALS['dy_total_reviews'] = $output;
 			}			
 		}

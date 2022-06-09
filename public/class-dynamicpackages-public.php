@@ -1844,13 +1844,13 @@ class Dynamic_Packages_Public {
 		{
 			unset($args['start_address']);
 		}
-		if(!$end_date)
+		if(!$end_date && $is_transport && (is_booking_page() || is_checkout_page()))
 		{
-			//unset($args['label_return']);
 			unset($args['end_date']);
-			//unset($args['return_hour']);
-			//unset($args['check_in_end_hour']);
-			//unset($args['return_address']);
+			unset($args['label_return']);
+			unset($args['return_hour']);
+			unset($args['check_in_end_hour']);
+			unset($args['return_address']);
 		}
 		if($is_transport)
 		{
@@ -1895,6 +1895,11 @@ class Dynamic_Packages_Public {
 			{
 				unset($args['enabled_days']);
 			}
+		}
+
+		if(is_booking_page() || is_checkout_page())
+		{
+			unset($args['schedule']);
 		}
 		
 		foreach($args as $k => $v)

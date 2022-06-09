@@ -145,6 +145,7 @@ class paguelo_facil_on{
 				add_filter('dy_provider_email_template', array(&$this, 'provider_email_template'));
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
 				add_filter('dy_webhook_option', array(&$this, 'webhook_option'));
+				add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
 			}
 			else
 			{
@@ -769,6 +770,40 @@ class paguelo_facil_on{
 		{
 			return '<p style="line-height: 2; color: #696969; background-color: #ADD8E6; padding: 10px;">🤖 '.sprintf(__('Use the card %s together with the email %s to test Paguelo Facil Development Enviroment. Use the CVV code 222 to generate approved transactions, 111 to generate declined transaction and 000 to generate errors and any other number will retreive Paguelo Facil original response.', 'dynamicpackages'), '<strong>'.esc_html($this->dummy_cc).'</strong>', '<strong>'.esc_html($this->debug_email).'</strong>').'</p>';			
 		}
+	}
+
+	public function confirmation_message()
+	{
+		
+		global $post;
+		$output = '';
+
+		if(isset($post))
+		{
+			$the_id = $post->ID;
+			
+			if(property_exists($post, 'post_parent'))
+			{
+				$the_id = $post->post_parent;
+			}
+			
+			$languages = dy_utilities::get_languages();
+
+			for($x = 0; $x < count($languages); $x++)
+			{
+				$lang = $languages[$x];
+				$value = package_field('package_confirmation_message_'.$lang, $the_id);
+
+				if($value)
+				{
+					$Parsedown = new Parsedown();
+					$output = $Parsedown->text($value);
+				}
+			}
+		}
+
+
+		return $output;
 	}
 
 	public function branding()

@@ -52,7 +52,7 @@ class dy_utilities {
 				ob_start();
 				?>
 					<div class="hot-container">
-						<div id="<?php echo esc_attr($args['container']); ?>" class="hot" data-sensei-min="<?php echo esc_attr($args['min']); ?>" data-sensei-max="<?php echo esc_attr($args['max']); ?>" data-sensei-container="<?php echo esc_attr($args['container']); ?>" data-sensei-textarea="<?php echo esc_attr($args['textarea']); ?>" data-sensei-headers="<?php echo esc_attr(implode(',', $args['headers'])); ?>" data-sensei-type="<?php echo esc_attr(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php echo esc_attr($disabled); ?>"></div>
+						<div id="<?php echo esc_attr($args['container']); ?>" class="hot" data-sensei-max="<?php echo esc_attr($args['max']); ?>" data-sensei-container="<?php echo esc_attr($args['container']); ?>" data-sensei-textarea="<?php echo esc_attr($args['textarea']); ?>" data-sensei-headers="<?php echo esc_attr(implode(',', $args['headers'])); ?>" data-sensei-type="<?php echo esc_attr(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php echo esc_attr($disabled); ?>"></div>
 					</div>
 					<div class="hidden">
 						<textarea cols="100" rows="20" name="<?php echo esc_attr($args['textarea']); ?>" id="<?php echo esc_attr($args['textarea']); ?>"><?php echo esc_textarea($args['value']); ?></textarea>
@@ -1026,7 +1026,7 @@ class dy_utilities {
 
 		if(package_field('package_start_hour' ))
 		{
-			if(package_field('package_start_hour' ) != '')
+			if(package_field('package_start_hour' ) !== '')
 			{
 				$hour = package_field('package_start_hour');
 			}
@@ -1254,4 +1254,69 @@ class dy_utilities {
 		}
 
 	}
+
+	public static function current_language()
+	{
+		global $polylang;
+		$lang = '';
+
+		if(isset($polylang))
+		{
+			$lang = pll_current_language();
+		}
+		else
+		{
+			$locale_str = get_locale();
+
+			if(strlen($locale_str) === 5)
+			{
+				$lang = substr($locale_str, 0, -3);
+			}
+			if(strlen($locale_str) === 2)
+			{
+				$lang = $locale_str;
+			}			
+		}
+
+		return $lang;
+	}
+
+	public static function get_languages()
+	{
+		global $polylang;
+		$language_list = array();
+
+		if(isset($polylang))
+		{
+			$languages = PLL()->model->get_languages_list();
+
+			for($x = 0; $x < count($languages); $x++)
+			{
+				foreach($languages[$x] as $key => $value)
+				{
+					if($key == 'slug')
+					{
+						array_push($language_list, $value);
+					}
+				}	
+			}
+		}
+
+		if(count($language_list) === 0)
+		{
+			$locale_str = get_locale();
+
+			if(strlen($locale_str) === 5)
+			{
+				array_push($language_list, substr($locale_str, 0, -3));
+			}
+			else if(strlen($locale_str) === 2)
+			{
+				array_push($language_list, $locale_str);
+			}
+		}
+
+		return $language_list;
+	}
+
 }

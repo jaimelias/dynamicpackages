@@ -4,6 +4,7 @@ $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
+$confirmation_message = apply_filters('dy_confirmation_message', null);
 $currency_symbol = dy_utilities::currency_symbol();
 $total = apply_filters('dy_email_total', dy_utilities::currency_format(dy_utilities::total()));
 $company_name = get_bloginfo('name');
@@ -116,6 +117,7 @@ $email_template = <<<EOT
 				<p>${greeting}</p>
 				<p>${intro}</p>
 				<div>${message}</div>
+				<div>${confirmation_message}</div>
 			</div>
 		
 			<div class="doc_box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">

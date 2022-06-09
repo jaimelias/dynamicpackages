@@ -71,6 +71,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 function package_field($name, $this_id = null)
 {
 	$week_days = dy_utilities::get_week_days_abbr();
+	$languages = dy_utilities::get_languages();
 	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
 	
 	for($x = 0; $x < count($week_days); $x++)
@@ -79,9 +80,8 @@ function package_field($name, $this_id = null)
 		$excludes[] = 'package_day_'.$week_days[$x];
 	}
 
-	if($this_id == null)
-	{		
-		global $polylang;		
+	if($this_id === null)
+	{	
 		global $post;
 		
 		if(isset($post))
@@ -90,17 +90,11 @@ function package_field($name, $this_id = null)
 			
 			if(property_exists($post, 'post_parent'))
 			{
-				if($polylang)
+
+				for($x = 0; $x < count($languages); $x++)
 				{
-					$languages = PLL()->model->get_languages_list();
-					for($x = 0; $x < count($languages); $x++)
-					{
-						foreach($languages[$x] as $key => $value)
-						{
-							array_push($excludes, 'package_child_title_'.$value);
-						}
-					}
-					
+					$lang = $languages[$x];
+					array_push($excludes, 'package_child_title_'.$lang);
 				}
 				
 				if($post->post_parent > 0 && !in_array($name, $excludes))
