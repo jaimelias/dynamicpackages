@@ -74,8 +74,6 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	const columns = getColType(containerId);
 	const colsNum = (headers.length > 2) ? headers.length : 2;
 	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum});
-
-	console.log({isDisabled, gridId});
 	
 	try
 	{
