@@ -273,11 +273,92 @@ class dy_utilities {
 		return $subtotal;
 	}
 
+	public static function duration_label($unit, $value)
+	{
+		//duration_label(unit number, duration value);
+		$singular = array(__('Minute', 'dynamicpackages'), __('Hour', 'dynamicpackages'), __('Day', 'dynamicpackages'), __('Night', 'dynamicpackages'), __('Week', 'dynamicpackages'));
+		$plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));
+		$output = '';
+		
+		$label = $singular;
+		
+		if($value > 1)
+		{
+			$label = $plural;
+		}
+		
+		
+		return $label[$unit];
+	}
+
+	public static function show_duration($max = false)
+	{
+		$the_id = get_the_ID();
+		$which_var = 'dy_show_duration_'.$the_id.'_'.$max;
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$duration_label = $$which_var;
+		}
+		else
+		{
+			$duration = package_field('package_duration');
+			$duration_label = package_field('package_duration');
+			$duration_unit = intval(package_field('package_length_unit'));
+			$duration_max = floatval('package_duration_max');	
+			
+			if($duration !== '' && $duration_unit !== '')
+			{
+				$min_nights = self::get_min_nights();
+
+				if(self::increase_by_hour() ||self::increase_by_day() || $duration_unit === 2 || $duration_unit === 3)
+				{
+					if($min_nights)
+					{
+						$duration = $min_nights;
+					}
+				}
+					
+				if(!is_booking_page())
+				{
+					if($duration_max > $duration)
+					{
+						$duration_label = $duration;
+						
+						if($max === true)
+						{
+							$duration_label .= ' - '.$duration_max;
+						}
+					}			
+				}
+				else
+				{
+					$duration = $min_nights;
+					$duration_label = $duration;
+				}
+				
+				
+				$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
+				$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
+			}
+			else
+			{
+				$duration_label = '';
+			}
+			
+			$GLOBALS[$which_var] = $duration_label;
+		}
+
+		return $duration_label;
+	}
+
+
 	public static function starting_at_archive($id = '')
 	{
 		$the_id = $id;
 		
-		if($the_id == '')
+		if($the_id === '')
 		{
 			$the_id = get_the_ID();
 		}

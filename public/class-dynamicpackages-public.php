@@ -33,15 +33,16 @@ class Dynamic_Packages_Public {
 		add_action('pre_get_posts', array(&$this, 'fix_multiple_tax'));
 		add_action('wp_head', array(&$this, 'booking_head'));
 		add_action('wp_head', array(&$this, 'meta_tags'));
-		add_filter('get_the_excerpt', array('Dynamic_Packages_Public', 'modify_excerpt'));
-		add_filter('term_description', array('Dynamic_Packages_Public', 'modify_term_description'));
-		add_action('wp_head', array('Dynamic_Packages_Public', 'location_category_canonical'));
+		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
+		add_filter('term_description', array(&$this, 'modify_term_description'));
+		add_action('wp_head', array(&$this, 'location_category_canonical'));
 		add_filter('dy_details', array(&$this, 'details'));
 		add_action('dy_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
 		add_filter('minimal_description', array(&$this, 'meta_description'));
 		add_filter('dy_event_arr', array(&$this, 'event_arr'));
 		add_filter('dy_price_type', array(&$this, 'price_type'));
+		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
 	}
 
 	public function create_alert($row) {
@@ -249,7 +250,7 @@ class Dynamic_Packages_Public {
 		}	
 		return $template;
 	}
-	public static function booking_sidebar()
+	public function booking_sidebar()
 	{
 		ob_start();
 		require_once($this->dirname . '/partials/quote-form.php');
@@ -908,7 +909,7 @@ class Dynamic_Packages_Public {
 			}
 			if($package_type == 1)
 			{
-				$output .= __(' / ', 'dynamicpackages').self::duration_label($duration_unit, 1);
+				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 			}
 			if(dy_utilities::increase_by_hour())
 			{
@@ -927,71 +928,6 @@ class Dynamic_Packages_Public {
 		}
 
 		return $output;
-	}
-	
-	public static function duration_label($unit, $value)
-	{
-		//duration_label(unit number, duration value);
-		$singular = array(__('Minute', 'dynamicpackages'), __('Hour', 'dynamicpackages'), __('Day', 'dynamicpackages'), __('Night', 'dynamicpackages'), __('Week', 'dynamicpackages'));
-		$plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));
-		$output = '';
-		
-		$label = $singular;
-		
-		if($value > 1)
-		{
-			$label = $plural;
-		}
-		
-		
-		return $label[$unit];
-	}
-	
-	public static function show_duration($max = false)
-	{
-		
-		$duration = package_field('package_duration');
-		$duration_label = package_field('package_duration');
-		$duration_unit = package_field('package_length_unit');
-		$duration_max = package_field('package_duration_max');	
-		
-		if($duration != '' && $duration_unit != '')
-		{
-			if(dy_utilities::increase_by_hour() ||dy_utilities::increase_by_day() || intval($duration_unit) == 2 || intval($duration_unit) == 3)
-			{
-				if(dy_utilities::get_min_nights() != null)
-				{
-					$duration = dy_utilities::get_min_nights();
-				}
-			}
-				
-			if(!is_booking_page())
-			{
-				if($duration_max > $duration)
-				{
-					$duration_label = $duration;
-					
-					if($max === true)
-					{
-						$duration_label .= ' - '.$duration_max;
-					}
-				}			
-			}
-			else
-			{
-				$duration = dy_utilities::get_min_nights();
-				$duration_label = $duration;
-			}
-			
-			
-			$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
-			$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
-		}
-		else
-		{
-			$duration_label = '';
-		}
-		return $duration_label;
 	}
 	
 	public static function show_min_duration()
@@ -1442,7 +1378,7 @@ class Dynamic_Packages_Public {
 			}
 			else
 			{
-				$description = self::show_duration();
+				$description = dy_utilities::show_duration();
 			}
 					
 			$description .= ' | ' . $post->post_title;
@@ -1555,7 +1491,7 @@ class Dynamic_Packages_Public {
 		}
 	}
 	
-	public static function modify_excerpt($excerpt)
+	public function modify_excerpt($excerpt)
 	{
 		global $post;
 		
@@ -1567,7 +1503,6 @@ class Dynamic_Packages_Public {
 			}
 			else
 			{
-				global $post;
 				$excerpt = null;
 				
 				if(!in_the_loop())
@@ -1587,7 +1522,7 @@ class Dynamic_Packages_Public {
 				}
 				else
 				{
-					$excerpt = self::show_duration(true) . ' - ';
+					$excerpt = dy_utilities::show_duration(true) . ' - ';
 				}		
 								
 				$excerpt .= $post->post_excerpt;
@@ -1596,8 +1531,6 @@ class Dynamic_Packages_Public {
 		}
 		elseif(is_page())
 		{
-			global $post;
-			
 			if(is_object($post))
 			{
 				if(dy_validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
@@ -1611,7 +1544,7 @@ class Dynamic_Packages_Public {
 	}
 	
 
-	public static function location_category_canonical()
+	public function location_category_canonical()
 	{
 		if(dy_validators::validate_category_location())
 		{
@@ -1654,7 +1587,7 @@ class Dynamic_Packages_Public {
 		}
 	}
 	
-	public static function modify_term_description($description)
+	public function modify_term_description($description)
 	{
 		if(is_tax())
 		{
@@ -1763,7 +1696,7 @@ class Dynamic_Packages_Public {
 			'schedule' => array('clock', __('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )),
 			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
 			'booking_date' => array('calendar', $booking_date),
-			'duration' => array('clock', self::show_duration()),
+			'duration' => array('clock', dy_utilities::show_duration()),
 			'check_in' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_hour' )),
 			'start_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
 			'start_address' => array('marker', package_field('package_start_address')),
@@ -2057,7 +1990,7 @@ class Dynamic_Packages_Public {
 								{
 									if(is_numeric($coupons[$x][4]))
 									{
-										$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(self::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
+										$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(dy_utilities::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
 									}
 								}
 								

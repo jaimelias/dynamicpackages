@@ -303,7 +303,7 @@ else
 
 							<?php if(!dy_validators::is_package_transport()) : ?>
 								<div class="dy_pad bottom-10 semibold">
-									<?php esc_html_e(Dynamic_Packages_Public::show_duration(true)); ?>
+									<?php esc_html_e(dy_utilities::show_duration(true)); ?>
 								</div>
 							<?php endif; ?>
 
