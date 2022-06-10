@@ -514,18 +514,19 @@ const handlePackageType = () => {
 	jQuery('#package_package_type').each(function(){
 		const packageType = parseInt(jQuery(this).val());
 		const duration_max = jQuery('#package_duration_max');
-		const length_unit = jQuery('#package_length_unit');
+		const lengthUnitField = jQuery('#package_length_unit');
 		const num_seasons = jQuery('#package_num_seasons');
-		const all_length_units = [4, 3, 2, 1, 0];
-		const disable_length_units = [];
+		const allLengthUnits = [4, 3, 2, 1, 0];
+		const disableLengthUnits = [];
 		const hasMaxDuration = [1, 2, 3];
+		const isLengthUnitSelected = false;
 
 		if(packageType === 1)
 		{
 			jQuery('#package_variable_duration_price_title').removeClass('hidden');
 			
 			jQuery(num_seasons).prop('disabled', false);
-			disable_length_units.push(0, 1);
+			disableLengthUnits.push(0, 1);
 		}
 		else
 		{
@@ -535,19 +536,19 @@ const handlePackageType = () => {
 
 			if(packageType === 0)
 			{
-				disable_length_units.push(4, 3, 2);
+				disableLengthUnits.push(4, 3, 2);
 			}
 			else if(packageType === 2)
 			{
-				disable_length_units.push(4, 3, 1, 0);
+				disableLengthUnits.push(4, 3, 1, 0);
 			}
 			else if(packageType === 3)
 			{
-				disable_length_units.push(4, 3, 2, 0);
+				disableLengthUnits.push(4, 3, 2, 0);
 			}
 			else if(packageType === 4)
 			{
-				disable_length_units.push(4);
+				disableLengthUnits.push(4);
 			}
 		}
 
@@ -560,28 +561,28 @@ const handlePackageType = () => {
 			jQuery(duration_max).val('').prop('disabled', true);
 		}
 
-		jQuery(length_unit).each(function() {
-			const thisField = jQuery(this);
-			disable_length_units.forEach(v => {
+		allLengthUnits.forEach(v => {
 
-				jQuery(thisField).find('option[value="'+v+'"]').each(function(){
-					const thisOption = jQuery(this);
-					jQuery(thisOption).prop('selected', false);
-					jQuery(thisOption).prop('disabled', true);
-					
-				});
-			});
+			let option = jQuery(lengthUnitField).find(`option[value="${v}"]`);
 
-			all_length_units.forEach(v => {
-				if(!disable_length_units.includes(v))
+			if(!disableLengthUnits.includes(v))
+			{
+				jQuery(option).prop('disabled', false);
+
+				if(!isLengthUnitSelected)
 				{
-					jQuery(thisField).find('option[value="'+v+'"]').each(function(){
-						const thisOption = jQuery(this);
-						jQuery(thisOption).prop('disabled', false);
-					});
+					jQuery(option).prop('selected', true);
 				}
-			});
+			}
+			else
+			{
+				jQuery(option).prop({
+					selected: false,
+					disabled: true
+				});
+			}
 		});
+
 	});
 };
 
