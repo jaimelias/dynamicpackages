@@ -16,7 +16,7 @@
 		
 		<?php do_action('dy_price_table'); ?>
 		
-		<?php Dynamic_Packages_Public::return_parent();?>
+		<?php do_action('dy_similar_packages_link'); ?>
 	</div>
 
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
@@ -24,32 +24,18 @@
 	
 	<?php  echo  $new_content; ?>
 	
-	<?php if(dy_validators::is_child()): ?><p><?php Dynamic_Packages_Public::return_parent();?></p><?php endif; ?>
+	<?php do_action('dy_similar_packages_link'); ?>
+
 	<hr />
 
 
 		<div class="pure-g gutters">
 			<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-1-2">		
-				<?php
-					if(Dynamic_Packages_Public::get_included_list($post))
-					{
-						echo Dynamic_Packages_Public::get_included_list($post);
-					}
-				?>					
+				<?php do_action('dy_get_included_list'); ?>				
 			</div>
 			<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-1-2">
-				<?php
-					if(Dynamic_Packages_Public::get_not_included_list($post))
-					{
-						echo Dynamic_Packages_Public::get_not_included_list($post);
-					}
-				?>	
-				<?php
-					if(Dynamic_Packages_Public::get_terms_conditions_list($post))
-					{
-						echo Dynamic_Packages_Public::get_terms_conditions_list($post);
-					}
-				?>			
+				<?php do_action('dy_get_not_included_list'); ?>		
+				<?php do_action('get_terms_conditions_list'); ?>		
 			</div>
 		</div>
 		

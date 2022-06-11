@@ -11,8 +11,6 @@ class Dynamic_Packages_Shortcodes {
 	public function init()
 	{
 		add_shortcode('packages', array(&$this, 'package_shortcode_full'));
-		add_shortcode('package_locations', array(&$this, 'get_locations'));
-		add_shortcode('package_categories', array(&$this, 'get_categories'));
 		add_shortcode('package_filter', array(&$this, 'package_filter'));
 		add_shortcode('package_contact', array(&$this, 'contact'));
 		add_action('dy_contact_inquiry_textarea', array(&$this, 'inquiry_textarea'));
@@ -174,56 +172,5 @@ class Dynamic_Packages_Shortcodes {
 
 		return $content;
 	}
-	
-	public function get_locations($attr, $content = "")
-	{
-		if(is_array($attr))
-		{
-			$classes = array();
-			
-			if(array_key_exists('ul', $attr))
-			{
-				$classes['ul'] = $attr['ul'];
-			}
-			if(array_key_exists('li', $attr))
-			{
-				$classes['li'] = $attr['li'];
-			}
-			if(array_key_exists('a', $attr))
-			{
-				$classes['a'] = $attr['a'];
-			}			
-			
-			$content = Dynamic_Packages_Public::get_all_locations($classes);
-		}
-		
-		return $content;
-	}
-	public function get_categories($attr, $content = "")
-	{
-		if(is_array($attr))
-		{
-			$classes = array();
-			
-			if(array_key_exists('ul', $attr))
-			{
-				$classes['ul'] = $attr['ul'];
-			}
-			if(array_key_exists('li', $attr))
-			{
-				$classes['li'] = $attr['li'];
-			}
-			if(array_key_exists('a', $attr))
-			{
-				$classes['a'] = $attr['a'];
-			}			
-			
-			$content = Dynamic_Packages_Public::get_categories($classes);
-		}
-		
-		return $content;
-	}	
-	
-//class end
 }
 ?>

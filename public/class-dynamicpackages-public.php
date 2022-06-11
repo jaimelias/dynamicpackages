@@ -30,8 +30,7 @@ class Dynamic_Packages_Public {
 		add_filter('wp_title', array(&$this, 'wp_title'), 100);
 		add_filter('the_title', array(&$this, 'modify_title'), 100);
 		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
-		add_action('pre_get_posts', array(&$this, 'fix_multiple_tax'));
-		add_action('wp_head', array(&$this, 'booking_head'));
+		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
 		add_action('wp_head', array(&$this, 'meta_tags'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
@@ -44,6 +43,10 @@ class Dynamic_Packages_Public {
 		add_filter('dy_price_type', array(&$this, 'price_type'));
 		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
 		add_action('dy_children_package', array(&$this, 'children_package'));
+		add_action('dy_similar_packages_link', array(&$this, 'similar_packages_link'));
+		add_action('dy_get_terms_conditions_list', array(&$this, 'get_terms_conditions_list'));
+		add_action('dy_get_included_list', array(&$this, 'get_included_list'));
+		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
 	}
 
 	
@@ -158,9 +161,9 @@ class Dynamic_Packages_Public {
 			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
 			$strings['pluginDirUrl'] = esc_url($this->plugin_dir_url_dir);
 			$strings['permaLink'] = esc_url(get_the_permalink());
+			$strings['booking_allowed_hours'] = $this->booking_allowed_hours();
 
 			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', $dep, time(), true );
-			wp_add_inline_script('dynamicpackages', $this->booking_head(), 'before');
 			wp_add_inline_script('dynamicpackages', 'function dyStrings(){ return '.json_encode($strings).';}', 'before');
 		}
 		
@@ -489,34 +492,32 @@ class Dynamic_Packages_Public {
 	
 	}
 	
-	public function booking_head()
-	{		
+	public function booking_allowed_hours()
+	{	
+
+		$output = array();
+
 		if(is_singular('packages'))
 		{
-			$script = null;
 			$by_hour = intval(package_field('package_by_hour'));		
 			$min_hour = package_field('package_min_hour');		
 			$max_hour = package_field('package_max_hour');
 			
 			if($by_hour === 1)
-			{
-				$allowed_hours = array();
-				
+			{				
 				if($min_hour !== '')
 				{
 					$min_hour = strtotime($min_hour);
-					array_push($allowed_hours, array(intval(date('H', $min_hour)), intval(date('i', $min_hour))));
+					$output[] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
 				}
 				if($max_hour !== '')
 				{
 					$max_hour = strtotime($max_hour);
-					array_push($allowed_hours, array(intval(date('H', $max_hour)), intval(date('i', $max_hour))));					
+					$output[] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
 				}
-				
-				$script .= 'function booking_allowed_hours(){return '.json_encode($allowed_hours).';}';	
 			}
 			
-			return $script;
+			return $output;
 		}
 	}
 	
@@ -1018,27 +1019,41 @@ class Dynamic_Packages_Public {
 		
 		return $terms_conditions;
 	}
-	public static function get_terms_conditions_list($this_post)
+	public function get_terms_conditions_list()
 	{
-		$termid = $this_post->ID;
+		global $post;
+		$output = '';
+		$termid = $post->ID;
 		
-		if(property_exists($this_post, 'post_parent'))
+		if(property_exists($post, 'post_parent'))
 		{
-			$termid = $this_post->post_parent;
-		}		
+			$termid = $post->post_parent;
+		}
+		
+		$included = get_the_terms( $termid, 'package_terms_conditions');	
+		$included_array = array();
+
+		if($included)
+		{
+			for($x = 0; $x < count($included); $x++)
+			{
+				array_push($included_array, $included[$x]->name);
+			}			
+		}
 		
 		$label = '<p class="strong">'.esc_html(__('Terms & Conditions:', 'dynamicpackages')).'</p><ul class="tp_location"><li><i class="fas fa-exclamation-triangle" ></i> ';
-		$terms_conditions = get_the_term_list( $termid, 'package_terms_conditions', $label, '</li><li><i class="fas fa-exclamation-triangle" ></i> ', '</li></ul>');
-		echo $terms_conditions;		
+		$output = get_the_term_list( $termid, 'package_terms_conditions', $label, '</li><li><i class="fas fa-exclamation-triangle" ></i> ', '</li></ul>');
+		echo $output;	
 	}	
-	public static function get_included_list($this_post)
+	public function get_included_list()
 	{
-		$termid = $this_post->ID;
+		global $post;
+		$termid =$post->ID;
 		$output = '';
 		
-		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_included', $termid))
+		if(property_exists($post, 'post_parent') && !has_term('', 'package_included', $termid))
 		{
-			$termid = $this_post->post_parent;
+			$termid = $post->post_parent;
 		}
 		
 		$included = get_the_terms( $termid, 'package_included');
@@ -1060,17 +1075,18 @@ class Dynamic_Packages_Public {
 			$output .= implode('</li><li><i class="fas fa-check linkcolor" ></i> ', $included_array);
 			$output .= '</li></ul>';
 		}
-		return $output;
+		echo $output;
 	}
 	
-	public static function get_not_included_list($this_post)
+	public function get_not_included_list()
 	{
-		$termid = $this_post->ID;
+		global $post;
+		$termid = $post->ID;
 		$output = '';
 		
-		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_not_included', $termid))
+		if(property_exists($post, 'post_parent') && !has_term('', 'package_not_included', $termid))
 		{
-			$termid = $this_post->post_parent;
+			$termid = $post->post_parent;
 		}		
 		
 		$included = get_the_terms( $termid, 'package_not_included');
@@ -1092,148 +1108,10 @@ class Dynamic_Packages_Public {
 			$output .= implode('</li><li><i class="fas fa-times" ></i> ', $included_array);
 			$output .= '</li></ul>';
 		}
-		return $output;
+		echo $output;
 	}
 	
-	public static function get_categories($classes = '')
-	{
-		$terms = get_terms( array(
-			'taxonomy' => 'package_category',
-			'hide_empty' => true
-		));
-		
-		$output = '';
-		$ul_class = '';
-		$li_class = '';
-		$a_class = '';
-		
-		if(is_array($classes))
-		{
-			if(count($classes) > 0)
-			{
-				$output = '';
-				
-				if(array_key_exists('ul', $classes))
-				{
-					if($classes['ul'] != '')
-					{
-						$ul_class = $classes['ul'];
-					}
-				}
-				if(array_key_exists('li', $classes))
-				{
-					if($classes['li'] != '')
-					{
-						$li_class = $classes['li'];
-					}
-				}	
-				if(array_key_exists('a', $classes))
-				{
-					if($classes['a'] != '')
-					{
-						$a_class = $classes['a'];
-					}
-				}				
-			}					
-		}	
-		
-		if (!empty($terms) && ! is_wp_error($terms))
-		{
-			$ul =  '<ul class="'.esc_html($ul_class).'">';
-			
-			$output .= $ul;
-			
-			foreach ( $terms as $term )
-			{
-				$output .= '<li class="'.esc_html($li_class).'"><a class="'.esc_html($a_class).'" href="' . esc_url( get_term_link( $term ) ) . '">'.esc_html($term->name).'</a></li> ';
-			}
-			
-			$output .= '</ul>';
-		}
-		else
-		{
-			$output = null;
-		}
-
-		return $output;
-		
-	}
-	public static function get_all_locations($classes = '', $id = '')
-	{		
-	
-		if($id != '')
-		{
-			$terms = wp_get_post_terms($id, 'package_location');
-		}
-		else
-		{
-			$args = array();
-			$args['taxonomy'] = 'package_location';
-			$args['hide_empty'] = true;
-			$terms = get_terms($args);
-		}
-		
-		
-		
-		$output = '';
-		
-		$ul_class = '';
-		$li_class = '';
-		$a_class = '';
-		
-		if(is_array($classes))
-		{
-			if(count($classes) > 0)
-			{
-				$output = '';
-				
-				if(array_key_exists('ul', $classes))
-				{
-					if($classes['ul'] != '')
-					{
-						$ul_class = $classes['ul'];
-					}
-				}
-				if(array_key_exists('li', $classes))
-				{
-					if($classes['li'] != '')
-					{
-						$li_class = $classes['li'];
-					}
-				}	
-				if(array_key_exists('a', $classes))
-				{
-					if($classes['a'] != '')
-					{
-						$a_class = $classes['a'];
-					}
-				}				
-			}					
-		}
-
-		if (!empty($terms) && ! is_wp_error($terms))
-		{
-			$ul =  '<ul class="'.esc_html($ul_class).'">';
-			
-			$output .= $ul;
-			
-			foreach ( $terms as $term )
-			{
-				$output .= '<li class="'.esc_html($li_class).'"><a class="'.esc_html($a_class).'" href="' . esc_url( get_term_link( $term ) ) . '">'.esc_html($term->name).'</a></li> ';
-			}
-			
-			$output .= '</ul>';
-		}
-		else
-		{
-			$output = null;
-		}
-
-		return $output;		
-
-	}	
-	
-	public function fix_multiple_tax( $query )
+	public function set_one_tax_per_page( $query )
 	{
 		if((is_tax('package_location') || is_tax('package_category') || is_tax('package_terms_conditions')) && $query->is_main_query())
 		{
@@ -1564,7 +1442,7 @@ class Dynamic_Packages_Public {
 	
 
 	
-	public static function get_all_coupons()
+	public function get_all_coupons()
 	{
 		global $get_all_coupons;
 		$output = null;
@@ -1575,7 +1453,7 @@ class Dynamic_Packages_Public {
 		}
 		else
 		{
-			$coupons = json_decode(html_entity_decode(package_field('package_coupons' )), true);
+			$coupons = json_decode(html_entity_decode(package_field('package_coupons')), true);
 			
 			if(array_key_exists('coupons', $coupons))
 			{
@@ -1622,7 +1500,7 @@ class Dynamic_Packages_Public {
 		return $output;
 	}
 	
-	public static function icon($icon)
+	public function icon($icon)
 	{
 		$output = null;
 		
@@ -1760,7 +1638,7 @@ class Dynamic_Packages_Public {
 		foreach($args as $k => $v)
 		{
 			$output .= '<div class="dy_pad bottom-5">';
-			$output .= ($v[0]) ? self::icon($v[0]) .' '. esc_html($v[1]) : '<strong>'.esc_html($v[1]).'</strong>';
+			$output .= ($v[0]) ? $this->icon($v[0]) .' '. esc_html($v[1]) : '<strong>'.esc_html($v[1]).'</strong>';
 			$output .= '</div>';
 		}
 		
@@ -1905,12 +1783,12 @@ class Dynamic_Packages_Public {
 		echo $output;
 	}
 	
-	public static function show_coupons()
+	public function show_coupons()
 	{
 		if(dy_validators::has_coupon())
 		{
 			$duration_unit = package_field('package_length_unit');
-			$coupons = self::get_all_coupons();
+			$coupons = $this->get_all_coupons();
 			$output = null;			
 						
 			if(is_array($coupons))
@@ -1989,23 +1867,29 @@ class Dynamic_Packages_Public {
 			return count($pages);
 		}
 	}
-	public static function return_parent()
+	public function similar_packages_link()
 	{
-		global $post;
-		
-		if(isset($post) && dy_validators::is_child())
+		$output = '';
+		$which_var = 'dy_similar_packages_link';
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$label = __('Similar packages', 'dynamicpackages');
-			
-			if(package_field('package_length_unit') == 3)
-			{
-				$label = __('Similar accommodations', 'dynamicpackages');
-			}
-			
-			
-			echo '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html($label).'</a>';			
-			
+			$output = $$which_var;
 		}
+		else
+		{
+			global $post;
+			
+			if(isset($post) && dy_validators::is_child())
+			{
+				$output = '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a>';			
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+		echo $output;
 	}
 	
 	public static function meta_description($description)

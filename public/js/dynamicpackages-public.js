@@ -709,25 +709,25 @@ const datePicker = async () => {
 }
 
 const timePicker = () => {
+
+	if(jQuery('input.dy_time_picker').length === 0)
+	{
+		return;
+	}
+
+	const {booking_allowed_hours} = dyStrings();
+	let args = {};
 	
-	jQuery(window).on('load', e => {
-		if(typeof(booking_allowed_hours) == "function")
-		{
-			var allowed_hours = booking_allowed_hours();
-			var args = {};
-			
-			if(allowed_hours.length > 1)
-			{
-				args.min = allowed_hours[0];
-				args.max = allowed_hours[1];
-			}
-		}
-		
-		jQuery('.booking_form').find('input.dy_time_picker').each(function()
-		{
-			jQuery(this).pickatime(args);
-		});			
-	});
+	if(booking_allowed_hours.length > 1)
+	{
+		args.min = booking_allowed_hours[0];
+		args.max = booking_allowed_hours[1];
+	}
+	
+	jQuery('.booking_form').find('input.dy_time_picker').each(function()
+	{
+		jQuery(this).pickatime(args);
+	});	
 }
 const checkPrices = () => {
 
