@@ -1,5 +1,4 @@
 <?php 
-	global $post; 
 	$has_gateway = apply_filters('dy_has_gateway', false);
 	$hide_form = ($has_gateway) ? 'class="hidden"' : null;
 	$submit_form = ($has_gateway) ? __('Proceed', 'dynamicpackages') : __('Submit', 'dynamicpackages');

@@ -47,6 +47,8 @@ class Dynamic_Packages_Public {
 		add_action('dy_get_terms_conditions_list', array(&$this, 'get_terms_conditions_list'));
 		add_action('dy_get_included_list', array(&$this, 'get_included_list'));
 		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
+		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
+		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
 	}
 
 	
@@ -940,35 +942,9 @@ class Dynamic_Packages_Public {
 		}
 		return $output;
 	}	
-	
-	
-	public static function get_location_list_ul($this_post)
-	{
-		$termid = $this_post->ID;
-		
-		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_location', $termid))
-		{
-			$termid = $this_post->post_parent;
-		}
-		
-		$label = '<p class="strong">'.esc_html(__('Places of Interest:', 'dynamicpackages')).'</p><ul class="tp_location"><li><i class="fas fa-map-marker" ></i> ';
-		$locations = get_the_term_list( $termid, 'package_location', $label, '</li><li><i class="fas fa-map-marker" ></i> ', '</li></ul>');
-		echo $locations;
-	}
-	public static function get_category_list_ul($this_post)
-	{
-		$termid = $this_post->ID;
 
-		if(property_exists($this_post, 'post_parent') && !has_term('', 'package_category', $termid))
-		{
-			$termid = $this_post->post_parent;
-		}		
-		
-		$label = '<p class="strong">'.esc_html(__('Categories:', 'dynamicpackages')).'</p><ul class="tp_location"><li><i class="fas fa-tags"></i> ';
-		$locations = get_the_term_list( $termid, 'package_category', $label, '</li><li><i class="fas fa-tags"></i> ', '</li></ul>');
-		echo $locations;
-	}	
-	public static function get_terms_conditions($post_id = null)
+
+	public  function get_terms_conditions($post_id = null)
 	{
 		$terms_conditions = array();
 		
@@ -1019,95 +995,171 @@ class Dynamic_Packages_Public {
 		
 		return $terms_conditions;
 	}
+
+
+
+
+
+
+
+
+	public function get_tax_list($term, $label, $is_link, $icon_class)
+	{
+		$output = '';
+		$which_var = 'dy_get_tax_list_'.$term;
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			global $post;
+			$the_id = $post->ID;
+			$header = '<p class="strong">'.esc_html($label).'</p>';
+			$list = '';
+
+			
+			if(property_exists($post, 'post_parent') && !has_term('', $term, $the_id))
+			{
+				$the_id = $post->post_parent;
+			}
+			
+			if($is_link)
+			{
+				$list = get_the_term_list( $the_id, $term, $header . '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li></ul>');
+			}
+			else
+			{
+				$terms = get_the_terms($the_id, 'package_included');	
+				$terms_array = array();
+				
+				if($terms)
+				{
+					for($x = 0; $x < count($terms); $x++)
+					{
+						array_push($terms_array, $terms[$x]->name);
+					}			
+				}
+				
+				if(count($terms_array) > 0)
+				{
+					$list = $header;
+					$list .= '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ';
+					$list .= implode('</li><li><i class="'.esc_attr($icon_class).'" ></i> ', $terms_array);
+					$list .= '</li></ul>';
+				}			
+			}
+			
+			
+			if($list)
+			{
+				$output = $list;
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+		return $output;
+	}
+
+
+
+
+	public function get_location_list()
+	{
+		$output = '';
+		$which_var = 'dy_get_location_list';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			$output = $this->get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'fas fa-map-marker');
+			$GLOBALS[$which_var] = $output;
+		}
+
+		echo $output;
+	}
+	public function get_category_list()
+	{
+		$output = '';
+		$which_var = 'dy_get_category_list';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			$output = $this->get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'fas fa-tags');
+			$GLOBALS[$which_var] = $output;
+		}
+
+		echo $output;
+	}
+
+
 	public function get_terms_conditions_list()
 	{
-		global $post;
 		$output = '';
-		$termid = $post->ID;
-		
-		if(property_exists($post, 'post_parent'))
-		{
-			$termid = $post->post_parent;
-		}
-		
-		$included = get_the_terms( $termid, 'package_terms_conditions');	
-		$included_array = array();
+		$which_var = 'dy_get_terms_conditions_list';
+		global $$which_var;
 
-		if($included)
+		if(isset($$which_var))
 		{
-			for($x = 0; $x < count($included); $x++)
-			{
-				array_push($included_array, $included[$x]->name);
-			}			
+			$output = $$which_var;
 		}
-		
-		$label = '<p class="strong">'.esc_html(__('Terms & Conditions:', 'dynamicpackages')).'</p><ul class="tp_location"><li><i class="fas fa-exclamation-triangle" ></i> ';
-		$output = get_the_term_list( $termid, 'package_terms_conditions', $label, '</li><li><i class="fas fa-exclamation-triangle" ></i> ', '</li></ul>');
+		else
+		{
+			$output = $this->get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'fas fa-exclamation-triangle');
+			$GLOBALS[$which_var] = $output;
+		}
+
 		echo $output;	
 	}	
 	public function get_included_list()
 	{
-		global $post;
-		$termid =$post->ID;
 		$output = '';
-		
-		if(property_exists($post, 'post_parent') && !has_term('', 'package_included', $termid))
+		$which_var = 'dy_get_included_list';
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$termid = $post->post_parent;
+			$output = $$which_var;
 		}
-		
-		$included = get_the_terms( $termid, 'package_included');
-				
-		$included_array = array();
-		
-		if($included)
+		else
 		{
-			for($x = 0; $x < count($included); $x++)
-			{
-				array_push($included_array, $included[$x]->name);
-			}			
+			$output = $this->get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'fas fa-check');
+			$GLOBALS[$which_var] = $output;
 		}
-		
-		if(count($included_array))
-		{
-			$output = '<p class="strong">'.esc_html(__('Included:', 'dynamicpackages')).'</p>';
-			$output .= '<ul class="tp_included"><li><i class="fas fa-check linkcolor" ></i> ';
-			$output .= implode('</li><li><i class="fas fa-check linkcolor" ></i> ', $included_array);
-			$output .= '</li></ul>';
-		}
+
 		echo $output;
 	}
 	
 	public function get_not_included_list()
 	{
-		global $post;
-		$termid = $post->ID;
+
 		$output = '';
-		
-		if(property_exists($post, 'post_parent') && !has_term('', 'package_not_included', $termid))
+		$which_var = 'dy_get_not_included_list';
+		global $$which_var;
+
+
+		if(isset($$which_var))
 		{
-			$termid = $post->post_parent;
-		}		
-		
-		$included = get_the_terms( $termid, 'package_not_included');
-				
-		$included_array = array();
-		
-		if($included)
-		{
-			for($x = 0; $x < count($included); $x++)
-			{
-				array_push($included_array, $included[$x]->name);
-			}			
+			$output = $$which_var;
 		}
-		
-		if(count($included_array))
+		else 
 		{
-			$output = '<p class="strong">'.esc_html(__('Not Included:', 'dynamicpackages')).'</p>';
-			$output .= '<ul class="tp_included"><li><i class="fas fa-times" ></i> ';
-			$output .= implode('</li><li><i class="fas fa-times" ></i> ', $included_array);
-			$output .= '</li></ul>';
+			$output = $this->get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'fas fa-times');
+			$GLOBALS[$which_var] = $output;
 		}
+
 		echo $output;
 	}
 	

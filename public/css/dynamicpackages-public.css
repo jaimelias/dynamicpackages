@@ -35,7 +35,7 @@ ul#booking_sidebar > .widget-title,  ul#booking-sidebar > .widget-title
  {
 	 font-weight: 800;
  }
-ul.tp_included, ul.tp_location, ul.tp_restrictions
+ul.dy-list
  {
 	 padding: 0;
 	 list-style: none;
