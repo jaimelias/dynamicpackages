@@ -8,7 +8,7 @@
 		
 		<div class="small"><?php do_action('dy_show_coupons'); ?></div>
 		
-		<?php Dynamic_Packages_Public::children_package(); ?>
+		<?php do_action('dy_children_package'); ?>
 		
 		<?php if(!dy_validators::has_children()):?>
 			<?php do_action('dy_check_prices_form'); ?>

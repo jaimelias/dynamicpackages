@@ -15,13 +15,13 @@ class Dynamic_Packages_Public {
 
 	public function args()
 	{
-		$this->plugin_dir_url = plugin_dir_url( __FILE__ );
-		$this->dirname = dirname( __FILE__ );
+		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
+		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
+		$this->dirname_file = dirname( __FILE__ );
 	}
 	
 	public function init()
 	{
-		add_action('wp_headers', array(&$this, 'request_invalids'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
 		add_filter('template_include', array(&$this, 'package_template'), 99);
@@ -43,44 +43,9 @@ class Dynamic_Packages_Public {
 		add_filter('dy_event_arr', array(&$this, 'event_arr'));
 		add_filter('dy_price_type', array(&$this, 'price_type'));
 		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
+		add_action('dy_children_package', array(&$this, 'children_package'));
 	}
 
-	public function create_alert($row) {
-		return '<p class="strong minimal_alert">'.esc_html($row).'</p>';
-	}	
-	public function create_alert_cb($output)
-	{
-		global $dy_request_invalids;
-		
-		if(isset($dy_request_invalids))
-		{
-			if(is_array($dy_request_invalids))
-			{
-				if(count($dy_request_invalids) > 0)
-				{
-					$output = implode('', array_map(array(&$this, 'create_alert'), $dy_request_invalids));
-				}
-			}
-		}		
-		
-		return $output;
-	}
-	
-	public function request_invalids()
-	{
-		global $dy_request_invalids;
-		
-		if(isset($dy_request_invalids))
-		{
-			if(is_array($dy_request_invalids))
-			{
-				if(count($dy_request_invalids) > 0)
-				{
-					add_filter('dy_request_invalids', array(&$this, 'create_alert_cb'));					
-				}
-			}
-		}
-	}
 	
 	public function enqueue_styles() {
 		
@@ -88,11 +53,11 @@ class Dynamic_Packages_Public {
 		{
 			if(is_tax('package_category') ||is_tax('package_location') || is_post_type_archive('packages'))
 			{
-				self::css();
+				$this->css();
 			}
 			else if(is_singular('packages'))
 			{
-				self::css();
+				$this->css();
 				$this->datepickerCSS();
 			}
 			else
@@ -103,7 +68,7 @@ class Dynamic_Packages_Public {
 				{
 					if(has_shortcode( $post->post_content, 'packages') || has_shortcode( $post->post_content, 'package_contact'))
 					{
-						self::css();
+						$this->css();
 					}					
 				}			
 			}
@@ -112,14 +77,14 @@ class Dynamic_Packages_Public {
 	
 	public function css()
 	{
-		wp_enqueue_style('minimalLayout', $this->plugin_dir_url . 'css/minimal-layout.css', array(), '', 'all');
+		wp_enqueue_style('minimalLayout', $this->plugin_dir_url_file . 'css/minimal-layout.css', array(), '', 'all');
 		wp_add_inline_style('minimalLayout', $this->get_inline_css('dynamicpackages-public'));
 	}
 	
 	public function get_inline_css($sheet)
 	{
 		ob_start();
-		require_once($this->dirname . '/css/'.$sheet.'.css');
+		require_once($this->dirname_file . '/css/'.$sheet.'.css');
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;	
@@ -137,7 +102,7 @@ class Dynamic_Packages_Public {
 		$enqueue_sha512 = false;
 		$enqueue_datepicker = false;
 		
-		wp_enqueue_script('landing-cookies', $this->plugin_dir_url . 'js/cookies.js', array('jquery'), '', true);
+		wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), '', true);
 		
 		if(isset($post))
 		{
@@ -174,7 +139,7 @@ class Dynamic_Packages_Public {
 		}
 		if($enqueue_sha512)
 		{
-			wp_enqueue_script('sha512', $this->plugin_dir_url . 'js/sha512.js', array(), 'async_defer', true );
+			wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', array(), 'async_defer', true );
 				array_push($dep, 'sha512');
 		}
 		
@@ -191,17 +156,17 @@ class Dynamic_Packages_Public {
 			$strings['postId'] = get_the_ID();
 			$strings['ipGeolocation'] = get_option('ipgeolocation');
 			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
-			$strings['pluginDirUrl'] = esc_url(plugin_dir_url( dirname(__FILE__) ));
+			$strings['pluginDirUrl'] = esc_url($this->plugin_dir_url_dir);
 			$strings['permaLink'] = esc_url(get_the_permalink());
 
-			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url . 'js/dynamicpackages-public.js', $dep, time(), true );
+			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', $dep, time(), true );
 			wp_add_inline_script('dynamicpackages', $this->booking_head(), 'before');
 			wp_add_inline_script('dynamicpackages', 'function dyStrings(){ return '.json_encode($strings).';}', 'before');
 		}
 		
 		if($enqueue_archive)
 		{
-			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
+			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
 		}
 		
 		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
@@ -209,7 +174,7 @@ class Dynamic_Packages_Public {
 	
 	public function datepickerCSS()
 	{
-		wp_enqueue_style( 'picker-css', $this->plugin_dir_url . 'css/picker/default.css', array(), '3.6.2', 'all');
+		wp_enqueue_style( 'picker-css', $this->plugin_dir_url_file . 'css/picker/default.css', array(), '3.6.2', 'all');
 		wp_add_inline_style('picker-css', $this->get_inline_css('picker/default.date'));
 		wp_add_inline_style('picker-css', $this->get_inline_css('picker/default.time'));
 	}
@@ -217,16 +182,16 @@ class Dynamic_Packages_Public {
 	public function datepickerJS()
 	{
 		//pikadate
-		wp_enqueue_script( 'picker-js', $this->plugin_dir_url . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
-		wp_enqueue_script( 'picker-date-js', $this->plugin_dir_url . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
-		wp_enqueue_script( 'picker-time-js', $this->plugin_dir_url . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
-		wp_enqueue_script( 'picker-legacy', $this->plugin_dir_url . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
+		wp_enqueue_script( 'picker-js', $this->plugin_dir_url_file . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
+		wp_enqueue_script( 'picker-date-js', $this->plugin_dir_url_file . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
+		wp_enqueue_script( 'picker-time-js', $this->plugin_dir_url_file . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
+		wp_enqueue_script( 'picker-legacy', $this->plugin_dir_url_file . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
 
 		$picker_translation = 'js/picker/translations/'.get_locale().'.js';
 				
-		if(file_exists($this->dirname.'/'.$picker_translation))
+		if(file_exists($this->dirname_file.'/'.$picker_translation))
 		{
-			wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_url.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
+			wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_url_file.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
 		}		
 	}
 		
@@ -235,7 +200,7 @@ class Dynamic_Packages_Public {
 		if(is_singular('packages'))
 		{
 			ob_start();
-			require_once($this->dirname . '/partials/meta-tags.php');
+			require_once($this->dirname_file . '/partials/meta-tags.php');
 			$content = ob_get_contents();
 			ob_end_clean();	
 			echo $content;
@@ -253,7 +218,7 @@ class Dynamic_Packages_Public {
 	public function booking_sidebar()
 	{
 		ob_start();
-		require_once($this->dirname . '/partials/quote-form.php');
+		require_once($this->dirname_file . '/partials/quote-form.php');
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;
@@ -275,7 +240,7 @@ class Dynamic_Packages_Public {
 			if(is_tax('package_location') || is_tax('package_category'))
 			{
 				ob_start();
-				require_once($this->dirname . '/partials/archive.php');
+				require_once($this->dirname_file . '/partials/archive.php');
 				$content = ob_get_contents();
 				ob_end_clean();
 			}
@@ -312,7 +277,7 @@ class Dynamic_Packages_Public {
 					$GLOBALS['new_content'] = $content;
 					
 					ob_start();
-					require_once($this->dirname . '/partials/single.php');
+					require_once($this->dirname_file . '/partials/single.php');
 					$content = ob_get_contents();
 					ob_end_clean();	
 
@@ -1406,89 +1371,87 @@ class Dynamic_Packages_Public {
 		echo $output;
 	}
 	
-	public static function children_package()
+	public function children_package()
 	{
-		global $post;
-		global $polylang;
-		
-		if(!dy_validators::is_child() && isset($post))
+		$which_var = 'dy_children_package';
+		global $$which_var;
+		$output = '';
+
+		if(isset($$which_var))
 		{
-			$duration = package_field('package_duration');
-			$duration_unit = package_field('package_length_unit');
-			$label = __('Packages', 'dynamicpackages');
-			
-			if($duration_unit == 3)
-			{
-				$label = __('Accommodations', 'dynamicpackages');
-			}
-			
-			$args = array(
-				'post_parent' => $post->ID,
-				'post_type'   => 'packages', 
-				'numberposts' => -1
-			); 
-			
-			$children_array = get_children($args);
-			$output = null;
-			
-			if(is_array($children_array))
-			{
-				if(count($children_array) > 0)
-				{
-					$make_null = false;
-					$output .= '<table class="pure-table pure-table-bordered"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html(self::count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">';
-					
-					foreach($children_array as $item)
-					{
-						if(property_exists($item, 'post_name'))
-						{
-							if($item->post_name != '')
-							{
-								
-								$starting_at = intval(dy_utilities::starting_at($item->ID));
-								$subpackage_name = 'package_child_title';
-								$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
-								
-								if(isset($polylang))
-								{
-									$subpackage_name .= '_'.pll_get_post_language($item->ID);
-								}
-								
-								$subpackage_name = package_field($subpackage_name, $item->ID);
-								
-								if($subpackage_name == '')
-								{
-									$subpackage_name = $item->post_title;
-								}
-								
-								$output .= '<tr>';
-								$output .= '<td>'.esc_html($subpackage_name).'</td>';
-								$output .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
-								$output .= '<td><a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).'</a></td>';
-								$output .= '</tr>';							
-							}
-							else
-							{
-								$make_null = true;
-							}
-						}
-						else
-						{
-							$make_null = true;
-						}
-					}
-					
-					$output .= "</tbody></table>";
-					
-					if($make_null === true)
-					{
-						$output = '';
-					}
-					
-					echo $output;			
-				}
-			}			
+			$output = $$which_var;
 		}
+		else
+		{
+			global $post;
+			global $polylang;		
+			
+			if(!dy_validators::is_child() && isset($post))
+			{
+				$duration = package_field('package_duration');
+				$duration_unit = package_field('package_length_unit');
+				$label = __('Packages', 'dynamicpackages');
+				
+				$args = array(
+					'post_parent' => $post->ID,
+					'post_type'   => 'packages', 
+					'numberposts' => -1
+				); 
+				
+				$children_array = get_children($args);
+				
+				if(is_array($children_array))
+				{
+					if(count($children_array) > 0)
+					{
+						$has_rows = false;
+						$rows = '';
+						
+						foreach($children_array as $item)
+						{
+							if(property_exists($item, 'post_name'))
+							{
+								if($item->post_name != '')
+								{
+									$has_rows = true;
+									$starting_at = intval(dy_utilities::starting_at($item->ID));
+									$subpackage_name = 'package_child_title';
+									$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
+									
+									if(isset($polylang))
+									{
+										$subpackage_name .= '_'.pll_get_post_language($item->ID);
+									}
+									
+									$subpackage_name = package_field($subpackage_name, $item->ID);
+									
+									if($subpackage_name == '')
+									{
+										$subpackage_name = $item->post_title;
+									}
+									
+									$rows .= '<tr>';
+									$rows .= '<td>'.esc_html($subpackage_name).'</td>';
+									$rows .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
+									$rows .= '<td><a class="small pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).'</a></td>';
+									$rows .= '</tr>';							
+								}
+							}
+						}
+						
+						if($has_rows === true)
+						{
+							$output .= '<table class="pure-table pure-table-bordered"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+						}		
+					}
+				}			
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+
+		echo $output;
 	}
 	
 	public function modify_excerpt($excerpt)
@@ -1623,7 +1586,7 @@ class Dynamic_Packages_Public {
 		return $output;
 	}
 
-	public static function enabled_days()
+	public function enabled_days()
 	{
 		$output = '';
 		$days = dy_utilities::get_week_days_abbr();
@@ -1679,7 +1642,7 @@ class Dynamic_Packages_Public {
 		return $output;
 	}
 	
-	public static function details()
+	public function details()
 	{
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
@@ -1692,7 +1655,7 @@ class Dynamic_Packages_Public {
 		$is_booking_page = is_booking_page();
 		
 		$args = array(
-			'enabled_days' => array('calendar', self::enabled_days()),
+			'enabled_days' => array('calendar', $this->enabled_days()),
 			'schedule' => array('clock', __('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )),
 			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
 			'booking_date' => array('calendar', $booking_date),
@@ -1708,7 +1671,7 @@ class Dynamic_Packages_Public {
 			
 		);
 		
-		if(!self::enabled_days())
+		if(!$this->enabled_days())
 		{
 			unset($args['enabled_days']);
 		}
@@ -2011,7 +1974,7 @@ class Dynamic_Packages_Public {
 			echo $output;
 		}
 	}
-	public static function count_child($this_id = null)
+	public function count_child($this_id = null)
 	{
 		if($this_id == null)
 		{
@@ -2040,7 +2003,7 @@ class Dynamic_Packages_Public {
 			}
 			
 			
-			echo '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html(self::count_child($post->post_parent)).'</strong> '.esc_html($label).'</a>';			
+			echo '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html($label).'</a>';			
 			
 		}
 	}

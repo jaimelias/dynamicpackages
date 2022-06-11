@@ -155,24 +155,44 @@ function has_package()
 	return dy_validators::has_package();
 }
 
+
 if ( ! function_exists('write_log')) {
+	
+	
+	if(! function_exists('var_error_log'))
+	{
+		function var_error_log( $object=null ){
+			ob_start();
+			var_dump( $object );
+			$contents = ob_get_contents();
+			ob_end_clean();
+			return $contents;
+		}
+	}
+	
 	function write_log ( $log )  {
 		
-		if ( is_array( $log ) || is_object( $log ) ) 
-		{
-			$log = json_encode($log);
-			$log .= ' '.sanitize_text_field($_SERVER['REQUEST_URI']);  
-			$log .= ' '.sanitize_text_field($_SERVER['HTTP_USER_AGENT']);  
-			error_log( $log );
+		$output = '';
+		$request_uri = sanitize_text_field($_SERVER['REQUEST_URI']);
+		$user_agent = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+		
+		if ( is_array( $log ) || is_object( $log ) ) {
+
+			$output = print_r(var_error_log($log), true);
+			$output .= ' '.$request_uri;  
+			$output .= ' '.$user_agent;  
+			error_log( $output );
 		}
 		else
 		{
-			$log .= ' '.sanitize_text_field($_SERVER['REQUEST_URI']);  
-			$log .= ' '.sanitize_text_field($_SERVER['HTTP_USER_AGENT']);  
+			$output = $log;
+			$output .= ' '.$request_uri;  
+			$output .= ' '.$user_agent;
 			error_log( $log );
 		}
 	}
 }
+
 
 function dy_strtotime($str) {
 	// This function behaves a bit like PHP's StrToTime() function, but taking into account the Wordpress site's timezone
