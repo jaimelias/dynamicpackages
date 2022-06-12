@@ -515,6 +515,7 @@ const handlePackageType = () => {
 		const packageType = parseInt(jQuery(this).val());
 		const duration_max = jQuery('#package_duration_max');
 		const lengthUnitField = jQuery('#package_length_unit');
+		const lengthUnitFieldValue = parseInt(jQuery(lengthUnitField).val());
 		const num_seasons = jQuery('#package_num_seasons');
 		const allLengthUnits = [4, 3, 2, 1, 0];
 		const disableLengthUnits = [];
@@ -561,15 +562,18 @@ const handlePackageType = () => {
 			jQuery(duration_max).val('').prop('disabled', true);
 		}
 
+		const lengthUnitFieldValueValid = !disableLengthUnits.includes(lengthUnitFieldValue);
+
 		allLengthUnits.forEach(v => {
 
 			let option = jQuery(lengthUnitField).find(`option[value="${v}"]`);
+			
 
 			if(!disableLengthUnits.includes(v))
 			{
 				jQuery(option).prop('disabled', false);
 
-				if(!isLengthUnitSelected)
+				if(!isLengthUnitSelected && !lengthUnitFieldValueValid)
 				{
 					jQuery(option).prop('selected', true);
 				}
