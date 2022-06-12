@@ -374,8 +374,6 @@ class dy_validators
 				if(count($fields) > 0)
 				{
 					$terms = dy_utilities::get_terms_conditions();
-
-					write_log($terms);
 					
 					if(is_array($terms))
 					{
