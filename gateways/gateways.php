@@ -213,7 +213,7 @@ class Dynamic_Packages_Gateways
 	
 	public function terms_conditions()
 	{
-		$terms_conditions = Dynamic_Packages_Public::get_terms_conditions();
+		$terms_conditions = dy_utilities::get_terms_conditions();
 		$output = null;
 		
 		if(is_array($terms_conditions))
@@ -379,7 +379,7 @@ class Dynamic_Packages_Gateways
 	public function accept()
 	{
 		$output = array();
-		$terms = Dynamic_Packages_Public::get_terms_conditions();
+		$terms = dy_utilities::get_terms_conditions();
 		
 		if(is_array($terms))
 		{

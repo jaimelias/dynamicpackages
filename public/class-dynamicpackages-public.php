@@ -941,67 +941,7 @@ class Dynamic_Packages_Public {
 			$output = null;
 		}
 		return $output;
-	}	
-
-
-	public  function get_terms_conditions($post_id = null)
-	{
-		$terms_conditions = array();
-		
-		if($post_id == null)
-		{
-			global $post;
-		}
-		else
-		{
-			$post = get_post($post_id);
-		}
-
-		$which_var = 'dy_get_terms_conditions';
-		global $$which_var;
-
-		if(isset($$which_var))
-		{
-			$terms_conditions = $$which_var;
-		}
-		else
-		{
-			if(isset($post))
-			{
-				if(property_exists($post, 'ID'))
-				{
-					$termid = $post->ID;
-					
-					if(property_exists($post, 'post_parent'))
-					{
-						$termid = $post->post_parent;
-					}		
-					
-					$terms = get_the_terms( $termid, 'package_terms_conditions');
-
-					
-					if($terms)
-					{
-						for($x = 0; $x < count($terms); $x++)
-						{
-							array_push($terms_conditions, $terms[$x]);
-						}			
-					}	
-				}			
-			}
-
-			$GLOBALS[$which_var] = $terms_conditions;
-		}
-		
-		return $terms_conditions;
 	}
-
-
-
-
-
-
-
 
 	public function get_tax_list($term, $label, $is_link, $icon_class)
 	{

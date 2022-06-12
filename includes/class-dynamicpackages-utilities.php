@@ -1163,6 +1163,55 @@ class dy_utilities {
 		}
 
 	}
+
+	public static function get_terms_conditions()
+	{
+		global $post;
+		$terms_conditions = array();
+
+		if(!isset($post))
+		{
+			return $terms_conditions;
+		}
+
+		$which_var = 'dy_get_terms_conditions_'.$post->ID;
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$terms_conditions = $$which_var;
+		}
+		else
+		{
+			if(isset($post))
+			{
+				if(property_exists($post, 'ID'))
+				{
+					$termid = $post->ID;
+					
+					if(property_exists($post, 'post_parent'))
+					{
+						$termid = $post->post_parent;
+					}		
+					
+					$terms = get_the_terms( $termid, 'package_terms_conditions');
+
+					
+					if($terms)
+					{
+						for($x = 0; $x < count($terms); $x++)
+						{
+							array_push($terms_conditions, $terms[$x]);
+						}			
+					}	
+				}			
+			}
+
+			$GLOBALS[$which_var] = $terms_conditions;
+		}
+		
+		return $terms_conditions;
+	}
 	
 	public static function implode_taxo_names($tax)
 	{

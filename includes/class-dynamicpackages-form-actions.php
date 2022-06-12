@@ -264,7 +264,7 @@ class Dynamic_Packages_Actions{
 	public function get_terms_conditions_pages()
 	{		
 		$output = array();
-		$terms_conditions = Dynamic_Packages_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
+		$terms_conditions = dy_utilities::get_terms_conditions();
 		$Parsedown = new Parsedown();
 		
 		if(is_array($terms_conditions))

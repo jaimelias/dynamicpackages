@@ -217,7 +217,7 @@ class paguelo_facil_on{
 		{
 			if($this->success === 2)
 			{
-				$terms_conditions = Dynamic_Packages_Public::get_terms_conditions(sanitize_text_field($_POST['post_id']));
+				$terms_conditions = dy_utilities::get_terms_conditions();
 				
 				if(is_array($terms_conditions))
 				{

@@ -367,14 +367,15 @@ class dy_validators
 		}
 		else
 		{
-
 			$auto_booking = intval(package_field('package_auto_booking'));
 
 			if(is_array($fields) && $auto_booking === 1)
 			{
 				if(count($fields) > 0)
 				{
-					$terms = Dynamic_Packages_Public::get_terms_conditions($fields['post_id']);
+					$terms = dy_utilities::get_terms_conditions();
+
+					write_log($terms);
 					
 					if(is_array($terms))
 					{
