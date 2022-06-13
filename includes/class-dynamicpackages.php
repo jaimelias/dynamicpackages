@@ -52,28 +52,27 @@ class dynamicpackages {
 		$dir = plugin_dir_path(dirname( __FILE__ ));
 		
 		require_once $dir . 'vendor/autoload.php';
-		require_once $dir . 'includes/class-dynamicpackages-loader.php';
-		require_once $dir . 'includes/class-dynamicpackages-parsedown.php';
-		require_once $dir . 'includes/class-dynamicpackages-i18n.php';
-		require_once $dir . 'includes/class-dynamicpackages-validators.php';
-		require_once $dir . 'includes/class-dynamicpackages-mailer.php';		
+		require_once $dir . 'includes/class-dynamicpackages-loader.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-parsedown.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-i18n.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-mailer.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
-		require_once $dir . 'includes/class-dynamicpackages-reviews.php';
+		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized
 		
 		//public
 		require_once $dir . 'public/class-dynamicpackages-public.php';
 		require_once $dir . 'public/class-dynamicpackages-forms.php';
-		require_once $dir . 'public/class-dynamicpackages-shortcodes.php';
-		require_once $dir . 'public/class-dynamicpackages-tables.php';
-		require_once $dir . 'public/class-dynamicpackages-search.php';
+		require_once $dir . 'public/class-dynamicpackages-shortcodes.php'; //optimized
+		require_once $dir . 'public/class-dynamicpackages-tables.php'; //optimized
 		require_once $dir . 'public/class-dynamicpackages-ical.php';		
 		require_once $dir . 'public/class-dynamicpackages-json.php';
 		require_once $dir . 'public/class-dynamicpackages-add-calendar.php';
 		
 		//admin
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
-		require_once $dir . 'admin/class-dynamicpackages-providers.php';
+		require_once $dir . 'admin/class-dynamicpackages-providers.php'; //optimized but needs admin-fields-class
 		require_once $dir . 'admin/class-dynamicpackages-add-ons.php';
 		require_once $dir . 'admin/class-dynamicpackages-metaboxes.php';
 		require_once $dir . 'admin/class-dynamicpackages-metapost.php';
@@ -110,7 +109,6 @@ class dynamicpackages {
 	private function define_public_hooks() 
 	{
 		new Dynamic_Packages_Public();
-		new Dynamic_Packages_Search();
 		new Dynamic_Packages_Tables();
 		new Dynamic_Packages_Shortcodes();
 		new Dynamic_Packages_Forms();

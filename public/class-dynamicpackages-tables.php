@@ -18,18 +18,13 @@ class Dynamic_Packages_Tables{
 		$this->price_chart = dy_utilities::get_price_chart();
 		$this->occupancy_chart = dy_utilities::get_occupancy_chart();
 		$this->show_pricing = intval(package_field('package_show_pricing'));
-
-		$this->min = intval(package_field( 'package_min_persons' ));
-		$this->max = intval(package_field('package_max_persons'));
+		$this->min_persons = intval(package_field( 'package_min_persons' ));
+		$this->max_persons = intval(package_field('package_max_persons'));
 		$this->duration = intval(package_field('package_duration'));
 		$this->package_type = intval(package_field('package_package_type'));
-		$this->price_type = intval(package_field('package_fixed_price'));		
-
-		//validators
+		$this->price_type = intval(package_field('package_fixed_price'));
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->is_child = dy_validators::is_child();
-
-		//utilities
 		$this->currency_symbol = dy_utilities::currency_symbol();
 	}
 
@@ -48,7 +43,7 @@ class Dynamic_Packages_Tables{
 		{
 			if($this->show_pricing === 0 && ($this->is_parent_with_no_child || $this->is_child))
 			{
-				$this->max = ($this->price_type === 1) ? 1 : $this->max;
+				$this->max_persons = ($this->price_type === 1) ? 1 : $this->max_persons;
 				$hide_table = false;
 				$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
 				
@@ -58,9 +53,9 @@ class Dynamic_Packages_Tables{
 				{
 					for($x = 0; $x < count($this->price_chart); $x++)
 					{
-						if(($x+1) >= $this->min && ($x+1) <= $this->max)
+						if(($x+1) >= $this->min_persons && ($x+1) <= $this->max_persons)
 						{
-							$person = floatval($this->min);
+							$person = $this->min_persons;
 							$price = 0;
 							$base_price = 0;
 							$occupancy_price = 0;
@@ -95,7 +90,7 @@ class Dynamic_Packages_Tables{
 							{
 								if($this->package_type == 1)
 								{
-									if(intval($this->max) == 0)
+									if(intval($this->max_persons) == 0)
 									{
 										$occupancy_price =  $this->duration * $occupancy_price;
 									}
@@ -111,7 +106,7 @@ class Dynamic_Packages_Tables{
 							{						
 								if($this->package_type == 1)
 								{
-									if(intval($this->max) == 0)
+									if(intval($this->max_persons) == 0)
 									{
 										$occupancy_price = $this->duration * $occupancy_price;
 									}
@@ -134,9 +129,9 @@ class Dynamic_Packages_Tables{
 							
 							if($x == 0)
 							{
-								if($this->max == 1 && package_field( 'package_max_persons' ) > $this->max)
+								if($this->max_persons == 1 && $this->max_persons > $this->max_persons)
 								{
-									$person .= ' - '.package_field( 'package_max_persons' );
+									$person .= ' - '.$this->max_persons;
 								}							
 								
 								$row = '<tr><td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
@@ -159,7 +154,7 @@ class Dynamic_Packages_Tables{
 							}
 
 							$output .= $row;	
-							$this->min++;
+							$this->min_persons++;
 						}
 					}
 				}

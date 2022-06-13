@@ -12,23 +12,10 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 		$this->name = 'package_add_ons';
 		add_action('init', array(&$this, 'add_ons'));
 		add_action('admin_init', array(&$this, 'title_modifier'), 10, 2);
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue'));
 		add_action('dy_checkout_items', array(&$this, 'checkout_items'), 10);
 		add_filter('dy_included_add_ons_list', array(&$this, 'included_add_ons_list'));
 		add_filter('dy_has_add_ons', array(&$this, 'has_add_ons'));
 		add_filter('dy_get_add_ons', array(&$this, 'get_add_ons'));
-	}
-	
-	public function enqueue()
-	{
-		if(isset($_GET['taxonomy']))
-		{
-			if($_GET['taxonomy'] === $this->name)
-			{
-				Dynamic_Packages_Admin::handsontable();
-				wp_enqueue_script('dynamicpackages', plugin_dir_url( __FILE__ ) . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true);
-			}
-		}
 	}
 	
 	public function add_ons()
@@ -50,16 +37,25 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 		}
 	}	
 	public function title_form($term){
-	 
-		$tax_title_modifier = get_term_meta( $term->term_id, 'tax_title_modifier', true);	
-		?>
-		<tr class="form-field">
-		<th scope="row" valign="top"><label for="tax_title_modifier"><?php esc_html_e( 'Title Modifier', 'dynamicpackages' ); ?></label></th>
-			<td>
-				<input type="text" name="tax_title_modifier" id="tax_title_modifier" value="<?php echo $tax_title_modifier; ?>">
-			</td>
-		</tr>
-	<?php
+		$term_id = $term->term_id;
+		$name = 'tax_title_modifier';
+		$field = $this->title_input($term_id, $name);
+		echo $this->admin_taxonomy_form_row($name, __( 'Title Modifier', 'dynamicpackages' ), $field);
+	}
+
+	public function title_input($term_id, $name)
+	{
+		$value = get_term_meta($term_id, $name, true);
+		return '<input type="text" name="tax_title_modifier" id="tax_title_modifier" value="'.esc_attr($value).'">';
+	}
+
+	public function admin_taxonomy_form_row($name, $label, $field, $description = null)
+	{
+		if($description)
+		{
+			$description = '<br/><p class="description">'.esc_html($description).'</p>';
+		}
+		return '<tr class="form-field"><th scope="row" valign="top"><label for="'.esc_attr($name).'">'.esc_html($label).'</label></th><td>'.$field.$description.'</td></tr>';
 	}
 		
 
@@ -69,15 +65,18 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 		
 		global $polylang;
 		
-		$def_term_id = $term_id;
+		$def_lang_term_id = $term_id;
 		
 		if(isset($polylang))
 		{
-			if(pll_current_language() != pll_default_language())
+			$current_language = pll_current_language();
+			$default_language = pll_default_language();
+
+			if($current_language != $default_language)
 			{	
-				if(pll_get_term($def_term_id, pll_default_language()))
+				if(pll_get_term($def_lang_term_id, $default_language))
 				{
-					$def_term_id = pll_get_term($def_term_id, pll_default_language());
+					$def_lang_term_id = pll_get_term($def_lang_term_id, $default_language);
 				}
 			}
 		}		
@@ -89,7 +88,7 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 		
 		if(isset($_POST['tax_add_ons']))
 		{	
-			update_term_meta($def_term_id, 'tax_add_ons', sanitize_text_field($_POST['tax_add_ons']));
+			update_term_meta($def_lang_term_id, 'tax_add_ons', sanitize_text_field($_POST['tax_add_ons']));
 		}	
 		if(isset($_POST['tax_add_ons_max']))
 		{
@@ -99,12 +98,12 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 			{
 				$tax_add_ons_max = 1;
 			}
-			update_term_meta($def_term_id, 'tax_add_ons_max', $tax_add_ons_max);
+			update_term_meta($def_lang_term_id, 'tax_add_ons_max', $tax_add_ons_max);
 		}
 		if(isset($_POST['tax_add_ons_type']))
 		{
 			$tax_add_ons_type = intval(sanitize_text_field($_POST['tax_add_ons_type']));
-			update_term_meta($def_term_id, 'tax_add_ons_type', $tax_add_ons_type);
+			update_term_meta($def_lang_term_id, 'tax_add_ons_type', $tax_add_ons_type);
 		}	
 	}
 	
@@ -144,13 +143,16 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 
 		if(isset($polylang))
 		{
-			if(pll_current_language() != pll_default_language())
+			$current_language = pll_current_language();
+			$default_language = pll_default_language();
+
+			if($current_language !== $default_language)
 			{
-				$def_term_id = pll_get_term($term_id, pll_default_language());
+				$def_lang_term_id = pll_get_term($term_id, $default_language);
 				
-				if($def_term_id)
+				if($def_lang_term_id)
 				{
-					$term_id = $def_term_id;
+					$term_id = $def_lang_term_id;
 				}
 			}
 		}
@@ -160,9 +162,6 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 			if(array_key_exists('tag', $args[$k]) && array_key_exists('label', $args[$k]))
 			{
 				$field = '';
-				$name = $k;
-				$id = $k;
-				$class = '';
 				$value = get_term_meta($term_id, $k, true);
 				$input = '';
 				$input .= ' name="'.esc_attr($k).'" ';
@@ -274,11 +273,10 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 				}				
 				
 				$label = 'Invalid Field';
-				$field = '<strong>'.$k.':</strong>'.$err;
+				$field = '<strong>'.esc_html($k).':</strong>'.$err;
 			}
-			$field = '<tr class="form-field"><th scope="row" valign="top"><label for="'.esc_attr($k).'">'.esc_html($label).'</label></th><td>'.$field.'</td></tr>';
 
-			$form .= $field;
+			$form .= $this->admin_taxonomy_form_row($k, $label, $field);
 		}
 		
 		echo $form;

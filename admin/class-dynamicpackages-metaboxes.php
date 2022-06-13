@@ -9,9 +9,7 @@ class Dynamic_Packages_Metaboxes
 
     public function add_metaboxes()
     {
-        add_action('add_meta_boxes', array(&$this,
-            'package_add_meta_box'
-        ));
+        add_action('add_meta_boxes', array(&$this, 'package_add_meta_box'));
     }
 
     public function package_add_meta_box()
@@ -54,8 +52,6 @@ class Dynamic_Packages_Metaboxes
 
 	public function set_args()
 	{
-
-
 		$this->coupons = package_field('package_coupons');
 		$this->price_chart = package_field('package_price_chart');
 		$this->occupancy_chart = package_field('package_occupancy_chart');
@@ -83,15 +79,69 @@ class Dynamic_Packages_Metaboxes
 		$this->provider_name = package_field('package_provider_name');
 		$this->provider_email = package_field('package_provider_email');
 		$this->provider_tel = package_field('package_provider_tel');
-
+		$this->check_in_hour = package_field('package_check_in_hour');
+		$this->start_hour = package_field('package_start_hour');
+		$this->start_address = package_field('package_start_address');
+		$this->return_hour = package_field('package_return_hour');
+		$this->return_address = package_field('package_return_address');
+		$this->increase_persons = intval(package_field('package_increase_persons'));
+		$this->event_date = package_field('package_event_date');
+		$this->by_hour = intval(package_field('package_by_hour'));
+		$this->min_hour = package_field('package_min_hour');
+		$this->max_hour = package_field('package_max_hour');
+		$this->disabled_dates_api = package_field('package_disabled_dates_api');
+		$this->display = intval(package_field('package_display'));
+		$this->code = package_field('package_trip_code');
+		$this->duration = floatval(package_field('package_duration'));
+		$this->duration_max = floatval(package_field('package_duration_max'));
+		$this->badge = intval(package_field('package_badge'));
+		$this->badge_color = package_field('package_badge_color');
 		$this->is_child = dy_validators::is_child();
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
 		$this->is_package_transport = dy_validators::is_package_transport();
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
 		$this->languages = dy_utilities::get_languages();
+		$this->count_languages = count($this->languages);
+		$this->week_days = dy_utilities::get_week_days_abbr();
+		$this->week_day_names = dy_utilities::get_week_day_names_long();
+		$this->set_lang_fields();
+		$this->set_week_day_fields();
+		$this->set_handsontable_args();
+	}
 
+	public function set_week_day_fields(){
+		$week_day_fields = array('week_day_surcharge', 'day');
 
+		for($x = 0; $x < 7; $x++)
+		{
+			for($w = 0; $w < count($week_day_fields); $w++)
+			{
+				$id =  $week_day_fields[$w].'_'.$this->week_days[$x];
+				$name = 'package_' . $id;
+				$this->$id = package_field($name);
+			}
+		}
+	}
+
+	public function set_lang_fields()
+	{
+		//handles language based fields
+		$lang_fields = array('confirmation_message', 'child_title');
+
+		for($x = 0; $x < count($lang_fields); $x++)
+		{
+			for($l = 0; $l < $this->count_languages; $l++)
+			{
+				$id =  $lang_fields[$x].'_'.$this->languages[$l];
+				$name = 'package_' . $id;
+				$this->$id = package_field($name);
+			}
+		}		
+	}
+
+	public function set_handsontable_args()
+	{
 		$this->coupon_args = array(
 			'container' => 'coupons',
 			'textarea' => 'package_coupons',
@@ -266,14 +316,15 @@ class Dynamic_Packages_Metaboxes
 		</p>
 
 		<?php
-			for($x = 0; $x < count($this->languages); $x++)
+			for($x = 0; $x < $this->count_languages; $x++)
 			{
 				$lang = $this->languages[$x];
-				
+				$id = 'confirmation_message_' . $lang;
+				$name = 'package_' . $id;
 				?>
 					<p>
-						<label for="package_confirmation_message_<?php echo esc_attr($lang); ?>"><?php echo esc_html(__('Confirmation Message', 'dynamicpackages')); ?> - <?php esc_html_e($lang); ?></label></br>
-						<textarea cols="40" rows="6" type="text" name="package_confirmation_message_<?php echo esc_attr($lang); ?>" id="package_confirmation_message_<?php echo esc_attr($lang); ?>"><?php echo esc_textarea(package_field('package_confirmation_message_' . $lang)); ?></textarea>
+						<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html(__('Confirmation Message', 'dynamicpackages')); ?> - <?php esc_html_e($lang); ?></label></br>
+						<textarea cols="40" rows="6" type="text" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>"><?php echo esc_textarea($this->$id); ?></textarea>
 					</p>
 				<?php
 			}
@@ -292,15 +343,15 @@ class Dynamic_Packages_Metaboxes
 
 		<p>
 			<label for="package_check_in_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo package_field('package_check_in_hour'); ?>">
+			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo esc_attr($this->check_in_hour); ?>">
 		</p>
 		<p>
 			<label for="package_start_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo package_field('package_start_hour'); ?>">
+			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo esc_attr($this->start_hour); ?>">
 		</p>				
 		<p>
 			<label for="package_start_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
-			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea(package_field('package_start_address')); ?></textarea>
+			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea($this->start_address); ?></textarea>
 		</p>
 
 		<?php if ($this->is_package_transport): ?>
@@ -312,11 +363,11 @@ class Dynamic_Packages_Metaboxes
 			</p>
 			<p>
 				<label for="package_return_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo esc_attr(package_field('package_return_hour')); ?>">
+				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo esc_attr($this->return_hour); ?>">
 			</p>				
 			<p>
 				<label for="package_return_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
-				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo esc_textarea(package_field('package_return_address')); ?></textarea>
+				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo esc_textarea($this->return_address); ?></textarea>
 			</p>			
 			
 		<?php endif; ?>
@@ -369,7 +420,7 @@ class Dynamic_Packages_Metaboxes
 			</p>
 			<p>
 				<label for="package_increase_persons"><?php echo esc_html(__('Increase maximum number of participants by', 'dynamicpackages')); ?></label><br />
-				<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo esc_attr(package_field('package_increase_persons')); ?>"> <?php echo esc_html(__('get more leads even if the prices are not defined', 'dynamicpackages')); ?>.</span>
+				<span><input type="number" min="0" name="package_increase_persons" id="package_increase_persons" value="<?php echo esc_attr($this->increase_persons); ?>"> <?php echo esc_html(__('get more leads even if the prices are not defined', 'dynamicpackages')); ?>.</span>
 			</p>	
 		<?php
         endif; ?>
@@ -400,15 +451,16 @@ class Dynamic_Packages_Metaboxes
 
 	public function build_week_day_surcharge_fields()
 	{
-		$week_days = dy_utilities::get_week_days_abbr();
 		$output = '<fieldset><h3 id="week_day_surcharges">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
 
 		for ($x = 0; $x < 7; $x++)
 		{
-			$name = 'package_week_day_surcharge_' . $week_days[$x];
+			$day = $this->week_days[$x];
+			$id = 'week_day_surcharge_'.$day;
+			$name = 'package_' . $id;
 			$output .= '<p><label for="' . esc_attr($name) . '">';
-			$output .= '<input value="' . esc_attr(package_field($name)) . '" name="' . esc_attr($name) . '" id="' . esc_attr($name) . '" type="number" />% ';
-			$output .= $week_days[$x] . '</label></p>';
+			$output .= '<input value="' . esc_attr($this->$id) . '" name="' . esc_attr($name) . '" id="' . esc_attr($name) . '" type="number" />% ';
+			$output .= $day . '</label></p>';
 		}
 
 		return $output;
@@ -443,7 +495,7 @@ class Dynamic_Packages_Metaboxes
 		<?php if (!$this->is_child): ?>
 			<h4><?php echo esc_html(__('Event Date', 'dynamicpackages')); ?></h4>
 				<p>
-					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo package_field('package_event_date'); ?>">
+					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo esc_attr($this->event_date); ?>">
 				</p>
 			<h4><?php echo esc_html(__('Accept Bookings', 'dynamicpackages')); ?></h4>
 			<p>
@@ -460,13 +512,13 @@ class Dynamic_Packages_Metaboxes
 			<h4><?php echo esc_html(__('Book by Hour', 'dynamicpackages')); ?></h4>
 			<p>
 				<select name="package_by_hour" id="package_by_hour">
-					<option value="0" <?php echo (package_field('package_by_hour') == 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?></option>			
-					<option value="1" <?php echo (package_field('package_by_hour') == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?></option>			
+					<option value="0" <?php echo ($this->by_hour === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?></option>			
+					<option value="1" <?php echo ($this->by_hour === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?></option>			
 				</select>
 				<?php echo esc_html(__('between', 'dynamicpackages')); ?>
-				<input type="text" class="timepicker" name="package_min_hour" id="package_min_hour" value="<?php echo package_field('package_min_hour'); ?>" > 
+				<input type="text" class="timepicker" name="package_min_hour" id="package_min_hour" value="<?php echo esc_attr($this->min_hour); ?>" > 
 				<?php esc_html_e('and', 'dynamicpackages'); ?>
-				<input type="text" class="timepicker" name="package_max_hour" id="package_max_hour" value="<?php echo package_field('package_max_hour'); ?>" > 			
+				<input type="text" class="timepicker" name="package_max_hour" id="package_max_hour" value="<?php echo esc_attr($this->max_hour); ?>" > 			
 			</p>	
 		<?php endif; ?>
 		<fieldset>
@@ -485,7 +537,7 @@ class Dynamic_Packages_Metaboxes
 		<?php endif; ?>
 		
 		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
-		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url(package_field('package_disabled_dates_api')); ?>" > </p>
+		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url($this->disabled_dates_api); ?>" > </p>
 		</fieldset>
 		
 		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 0, 20); ?></h3>
@@ -498,21 +550,19 @@ class Dynamic_Packages_Metaboxes
 	public function build_disabled_days()
 	{
 		$output = '';
-		$week_days = dy_utilities::get_week_days_abbr();
-		$week_day_names = dy_utilities::get_week_day_names_long();
 
-		for($x = 0; $x < count($week_days); $x++)
+		for($x = 0; $x < 7; $x++)
 		{
-			$output .= $this->checkbox('package_day_'.$week_days[$x], $week_day_names[$x]).'<br/>';
+			$day = $this->week_days[$x];
+			$label = $this->week_day_names[$x];
+			$id = 'day_' . $day;
+			$name = 'package_'.$id;
+			$checked = ($this->$id === 1) ? ' checked="checked" ' : '';
+			$output .= '<label for="'.esc_attr($name).'"><input type="checkbox" name="'.esc_attr($name).'" id="'.esc_attr($name).'" value="1"  '.$checked.'/> '.esc_html($label).' </label>';
+			$output .= '<br/>';
 		}	
 
 		return $output;
-	}
-
-	public function checkbox($name, $label)
-	{
-		$checked = (intval(package_field($name)) === 1) ? ' checked="checked" ' : '';
-		return '<label for="'.esc_attr($name).'"><input type="checkbox" name="'.esc_attr($name).'" id="'.esc_attr($name).'" value="1"  '.$checked.'/> '.esc_html($label).' </label>';
 	}
 
     public function package_description_html($post)
@@ -525,14 +575,15 @@ class Dynamic_Packages_Metaboxes
 			if ($this->is_child)
 			{
 
-				for($x = 0; $x < count($this->languages); $x++)
+				for($x = 0; $x < $this->count_languages; $x++)
 				{
 					$lang = $this->languages[$x];
-		
+					$id = 'child_title_'.$lang;
+					$name = 'package_'.$id;
 					?>
 						<p>
-							<label for="package_child_title_<?php esc_html_e($lang); ?>"><?php echo esc_html(__('Subpackage Short Title', 'dynamicpackages')); ?> - <?php esc_html_e($lang); ?></label></br>
-							<input type="text" value="<?php echo package_field('package_child_title_' . $lang); ?>" name="package_child_title_<?php esc_html_e($lang); ?>" id="package_child_title_<?php esc_html_e($lang); ?>">
+							<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html(__('Subpackage Short Title', 'dynamicpackages')); ?> - <?php echo esc_html($lang); ?></label></br>
+							<input type="text" value="<?php echo esc_attr($this->$id); ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>">
 						</p>			
 					<?php
 				}
@@ -543,25 +594,25 @@ class Dynamic_Packages_Metaboxes
 			<p>
 				<label for="package_display"><?php echo esc_html(__('Hide Package', 'dynamicpackages')); ?></label><br />
 				<select name="package_display" id="package_display">
-					<option value="0" <?php echo (package_field('package_display') == 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
-					<option value="1" <?php echo (package_field('package_display') == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?></option>
+					<option value="0" <?php echo ($this->display === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
+					<option value="1" <?php echo ($this->display === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?></option>
 				</select>
 			</p>			
 			
 			<p>
 				<label for="package_trip_code"><?php echo esc_html(__('Code', 'dynamicpackages')); ?></label><br />
-				<input type="text" name="package_trip_code" id="package_trip_code" value="<?php echo esc_attr(package_field('package_trip_code')); ?>">
+				<input type="text" name="package_trip_code" id="package_trip_code" value="<?php echo esc_attr($this->code); ?>">
 			</p>
 		<?php endif; ?>
 
 		<p>
 			<label for="package_package_type"><?php echo esc_html(__('Package Type', 'dynamicpackages')); ?></label><br />
 			<select name="package_package_type" id="package_package_type" <?php echo esc_attr($this->disable_child); ?>>
-				<option value="0" <?php echo ($this->package_type == 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('One day', 'dynamicpackages')); ?></option>
-				<option value="1" <?php echo ($this->package_type == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Multi-day', 'dynamicpackages')); ?></option>
-				<option value="2" <?php echo ($this->package_type == 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('Rental (per day)', 'dynamicpackages')); ?></option>
-				<option value="3" <?php echo ($this->package_type == 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Rental (per hour)', 'dynamicpackages')); ?></option>
-				<option value="4" <?php echo ($this->package_type == 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Transport', 'dynamicpackages')); ?></option>	
+				<option value="0" <?php echo ($this->package_type === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('One day', 'dynamicpackages')); ?></option>
+				<option value="1" <?php echo ($this->package_type === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Multi-day', 'dynamicpackages')); ?></option>
+				<option value="2" <?php echo ($this->package_type === 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('Rental (per day)', 'dynamicpackages')); ?></option>
+				<option value="3" <?php echo ($this->package_type === 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Rental (per hour)', 'dynamicpackages')); ?></option>
+				<option value="4" <?php echo ($this->package_type === 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Transport', 'dynamicpackages')); ?></option>	
 			</select>
 		</p>	
 		<p>
@@ -577,12 +628,12 @@ class Dynamic_Packages_Metaboxes
 
 		<p>
 			<label for="package_duration"><?php echo esc_html(__('Duration', 'dynamicpackages')); ?></label><br />
-			<input type="number" name="package_duration" id="package_duration" <?php echo esc_attr($this->disable_child); ?> value="<?php echo esc_attr(intval(package_field('package_duration')) > 0) ? package_field('package_duration') : 1; ?>">
+			<input type="number" name="package_duration" id="package_duration" <?php echo esc_attr($this->disable_child); ?> value="<?php echo esc_attr($this->duration > 0) ? $this->duration : 1; ?>">
 		</p>
 
 		<p>
 			<label for="package_duration_max"><?php echo esc_html(__('Maximum Duration', 'dynamicpackages')); ?></label><br />
-			<input type="number" step="0.1" name="package_duration_max" <?php echo esc_attr($this->disable_child); ?> id="package_duration_max" value="<?php echo esc_attr(package_field('package_duration_max')); ?>">
+			<input type="number" step="0.1" name="package_duration_max" <?php echo esc_attr($this->disable_child); ?> id="package_duration_max" value="<?php echo esc_attr($this->duration_max); ?>">
 		</p>
 
 		<?php if (!$this->is_child): ?>
@@ -598,12 +649,12 @@ class Dynamic_Packages_Metaboxes
 			<p>
 				<label for="package_badge"><?php echo esc_html(__('Show Badge', 'dynamicpackages')); ?></label><br />
 				<select name="package_badge" id="package_badge">
-					<option value="0" <?php echo (package_field('package_badge') == 0) ? 'selected' : ''; ?> >None</option>			
-					<option value="1" <?php echo (package_field('package_badge') == 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Best Seller', 'dynamicpackages')); ?></option>
-					<option value="2" <?php echo (package_field('package_badge') == 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('New', 'dynamicpackages')); ?></option>
-					<option value="3" <?php echo (package_field('package_badge') == 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Offer', 'dynamicpackages')); ?></option>
-					<option value="4" <?php echo (package_field('package_badge') == 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Featured', 'dynamicpackages')); ?></option>
-					<option value="5" <?php echo (package_field('package_badge') == 5) ? 'selected' : ''; ?> ><?php echo esc_html(__('Last Minute Deal', 'dynamicpackages')); ?></option>					
+					<option value="0" <?php echo ($this->badge === 0) ? 'selected' : ''; ?> >None</option>			
+					<option value="1" <?php echo ($this->badge === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Best Seller', 'dynamicpackages')); ?></option>
+					<option value="2" <?php echo ($this->badge === 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('New', 'dynamicpackages')); ?></option>
+					<option value="3" <?php echo ($this->badge === 3) ? 'selected' : ''; ?> ><?php echo esc_html(__('Offer', 'dynamicpackages')); ?></option>
+					<option value="4" <?php echo ($this->badge === 4) ? 'selected' : ''; ?> ><?php echo esc_html(__('Featured', 'dynamicpackages')); ?></option>
+					<option value="5" <?php echo ($this->badge === 5) ? 'selected' : ''; ?> ><?php echo esc_html(__('Last Minute Deal', 'dynamicpackages')); ?></option>					
 				</select>
 			</p>
 			
@@ -611,25 +662,25 @@ class Dynamic_Packages_Metaboxes
 				<label for="package_badge_color"><?php echo esc_html(__('Badge Color', 'dynamicpackages')); ?></label><br />
 				<select  name="package_badge_color" id="package_badge_color">
 
-				<option value="white" <?php echo (package_field('package_badge_color') == 'white') ? 'selected' : ''; ?> ><?php echo esc_html(__('White', 'dynamicpackages')); ?></option>
+				<option value="white" <?php echo ($this->badge_color === 'white') ? 'selected' : ''; ?> ><?php echo esc_html(__('White', 'dynamicpackages')); ?></option>
 				
-				<option value="black" <?php echo (package_field('package_badge_color') == 'black') ? 'selected' : ''; ?> ><?php echo esc_html(__('Black', 'dynamicpackages')); ?></option>
+				<option value="black" <?php echo ($this->badge_color === 'black') ? 'selected' : ''; ?> ><?php echo esc_html(__('Black', 'dynamicpackages')); ?></option>
 				
-				<option value="grey" <?php echo (package_field('package_badge_color') == 'grey') ? 'selected' : ''; ?> ><?php echo esc_html(__('Grey', 'dynamicpackages')); ?></option>
+				<option value="grey" <?php echo ($this->badge_color === 'grey') ? 'selected' : ''; ?> ><?php echo esc_html(__('Grey', 'dynamicpackages')); ?></option>
 				
-				<option value="blue" <?php echo (package_field('package_badge_color') == 'blue') ? 'selected' : ''; ?> ><?php echo esc_html(__('Blue', 'dynamicpackages')); ?></option>	
+				<option value="blue" <?php echo ($this->badge_color === 'blue') ? 'selected' : ''; ?> ><?php echo esc_html(__('Blue', 'dynamicpackages')); ?></option>	
 				
-				<option value="green" <?php echo (package_field('package_badge_color') == 'green') ? 'selected' : ''; ?> ><?php echo esc_html(__('Green', 'dynamicpackages')); ?></option>	
+				<option value="green" <?php echo ($this->badge_color === 'green') ? 'selected' : ''; ?> ><?php echo esc_html(__('Green', 'dynamicpackages')); ?></option>	
 				
-				<option value="turquoise" <?php echo (package_field('package_badge_color') == 'turquoise') ? 'selected' : ''; ?> ><?php echo esc_html(__('Turquoise', 'dynamicpackages')); ?></option>	
+				<option value="turquoise" <?php echo ($this->badge_color === 'turquoise') ? 'selected' : ''; ?> ><?php echo esc_html(__('Turquoise', 'dynamicpackages')); ?></option>	
 				
-				<option value="purple" <?php echo (package_field('package_badge_color') == 'purple') ? 'selected' : ''; ?> ><?php echo esc_html(__('Purple', 'dynamicpackages')); ?></option>	
+				<option value="purple" <?php echo ($this->badge_color === 'purple') ? 'selected' : ''; ?> ><?php echo esc_html(__('Purple', 'dynamicpackages')); ?></option>	
 				
-				<option value="red" <?php echo (package_field('package_badge_color') == 'red') ? 'selected' : ''; ?> ><?php echo esc_html(__('Red', 'dynamicpackages')); ?></option>
+				<option value="red" <?php echo ($this->badge_color === 'red') ? 'selected' : ''; ?> ><?php echo esc_html(__('Red', 'dynamicpackages')); ?></option>
 				
-				<option value="orange" <?php echo (package_field('package_badge_color') == 'orange') ? 'selected' : ''; ?> ><?php echo esc_html(__('Orange', 'dynamicpackages')); ?></option>	
+				<option value="orange" <?php echo ($this->badge_color === 'orange') ? 'selected' : ''; ?> ><?php echo esc_html(__('Orange', 'dynamicpackages')); ?></option>	
 				
-				<option value="yellow" <?php echo (package_field('package_badge_color') == 'yellow') ? 'selected' : ''; ?> ><?php echo esc_html(__('Yellow', 'dynamicpackages')); ?></option>				
+				<option value="yellow" <?php echo ($this->badge_color === 'yellow') ? 'selected' : ''; ?> ><?php echo esc_html(__('Yellow', 'dynamicpackages')); ?></option>				
 				</select>
 			</p>		
 		<?php

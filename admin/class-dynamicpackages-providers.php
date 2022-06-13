@@ -84,7 +84,7 @@ class Dynamic_Packages_Taxonomy_Providers {
 		return $output;
 	}
 
-	public function row($name, $label, $field, $description = null)
+	public function admin_taxonomy_form_row($name, $label, $field, $description = null)
 	{
 		if($description)
 		{
@@ -98,12 +98,12 @@ class Dynamic_Packages_Taxonomy_Providers {
 		$rows = '';
         $term_id = $term->term_id;
         $language_select = $this->language_select($term_id);
-		$rows .= $this->row(
+		$rows .= $this->admin_taxonomy_form_row(
 			$this->name.'_language', 
 			__('Provider Language', 'dynamicpackages'), 
 			$this->language_select($term_id)
 		);
-		$rows .= $this->row(
+		$rows .= $this->admin_taxonomy_form_row(
 			$this->name.'_emails', 
 			__('Provider Emails', 'dynamicpackages'), 
 			$this->textarea_items_per_line($term_id, 'sanitize_email'),

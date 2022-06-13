@@ -282,7 +282,7 @@ class Dynamic_Packages_JSON
 		$disable['disable'] = array();
 		$days = dy_utilities::get_week_days_abbr();
 		
-		if(package_field('package_event_date') == '')
+		if(package_field('package_event_date') === '')
 		{
 			for($x = 0; $x < count($days); $x++)
 			{
@@ -305,7 +305,7 @@ class Dynamic_Packages_JSON
 			$disable['min'] = $from;
 			$disable['max'] = $to;	
 			$disabled_dates = array();
-			$get_disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
+			$get_disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates')), true);
 			$global_disabled_dates = json_decode(html_entity_decode(get_option('dy_disabled_dates' )), true);
 			$get_enabled_dates = json_decode(html_entity_decode(package_field('package_enabled_dates' )), true);
 			
