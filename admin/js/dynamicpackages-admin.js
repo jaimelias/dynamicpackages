@@ -1,8 +1,5 @@
 jQuery(() => {
 	'use strict';
-
-
-
 	
 	jQuery('.timepicker').pickatime();
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
@@ -11,6 +8,7 @@ jQuery(() => {
 	handlePackagePayment();
 	handlePackageAutoBooking();
 	handleMinMaxPax();
+	handleProviderTaxonomyPage();
 	initSeasonGrids();
 	initGridsFromTextArea();
 
@@ -681,4 +679,24 @@ const handleParentAttr = () => {
 		}
 	});
 
+};
+
+const handleProviderTaxonomyPage = () => {
+
+	const url = new URL(window.location.href);
+	const {searchParams} = url;
+
+	if(!searchParams.has('taxonomy'))
+	{
+		return;
+	}
+
+	if(searchParams.get('taxonomy') !== 'package_provider')
+	{
+		return;
+	}
+
+	const hideRows = ['term-slug-wrap', 'term-parent-wrap', 'term-description-wrap'];
+
+	hideRows.forEach(v => jQuery('.' + v).addClass('hidden'));
 };

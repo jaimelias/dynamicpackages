@@ -221,9 +221,9 @@ if(!class_exists('Sendgrid_Mailer'))
 							{	
 								if(is_email($emails[$x]))
 								{
-									//allow only 5 recipients
+									//allow only 10 recipients
 
-									if($x <= 5)
+									if($x <= 10)
 									{
 										if($x === 0)
 										{

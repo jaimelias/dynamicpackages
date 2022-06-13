@@ -21,7 +21,8 @@ class Dynamic_Packages_Actions{
 
 	public function args()
 	{
-		$this->lang = substr(get_locale(), 0, -3);
+		$this->current_language = dy_utilities::current_language();
+		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
 	}
 
 	public function is_request_submitted()
@@ -66,8 +67,6 @@ class Dynamic_Packages_Actions{
 
         if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::validate_request())
         {
-
-
 			if(isset($_REQUEST['add_ons']))
 			{
 				$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
@@ -75,10 +74,8 @@ class Dynamic_Packages_Actions{
 				setcookie($add_ons_package_id, $add_ons, time() + 3600);
 			}
 
-
 			$this->send_provider_email();
 			$this->send_email();
-
 
 			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 			$provider_name = package_field('package_provider_name');
@@ -114,9 +111,9 @@ class Dynamic_Packages_Actions{
 
 	public function doc_pdf()
 	{
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates-pdf.php';
+		require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
 		
-		$doc_pdf = new Html2Pdf('P', 'A4', $this->lang);
+		$doc_pdf = new Html2Pdf('P', 'A4', $this->current_language);
 		$doc_pdf->pdf->SetDisplayMode('fullpage');
 		$doc_pdf->writeHTML($email_pdf);
 		$doc_pdf_content = $doc_pdf->output('doc.pdf', 'S');
@@ -126,8 +123,7 @@ class Dynamic_Packages_Actions{
 	public function provider_email_template()
 	{
 		$provider_name = package_field('package_provider_name');
-		$template = '<p>' . $provider_name . '</p><p>' . $this->provider_email_subject() . '</p>';
-		
+		$template = '<p>' . esc_html($provider_name) . '</p><p>' . esc_html($this->provider_email_subject()) . '</p>';
 		return apply_filters('dy_provider_email_template', $template);
 	}
 	
@@ -158,7 +154,7 @@ class Dynamic_Packages_Actions{
 		if(dy_validators::validate_quote())
 		{
 			$attachments = array();
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/email-templates/estimates.php';
+			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates.php';
 			$filename = __('Estimate', 'dynamicpackages') . '.pdf';
 			
 			$attachments[] = array(
@@ -284,7 +280,7 @@ class Dynamic_Packages_Actions{
 					$page .= '</page>';		
 					
 					//PDF
-					$pdf = new Html2Pdf('P', 'A4', $this->lang);
+					$pdf = new Html2Pdf('P', 'A4', $this->current_language);
 					$pdf->pdf->SetDisplayMode('fullpage');
 					$pdf->writeHTML($page);
 		
