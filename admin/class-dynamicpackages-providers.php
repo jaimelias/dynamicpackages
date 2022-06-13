@@ -1,15 +1,18 @@
 <?php
 
-class Dynamic_Packages_Providers {
+class Dynamic_Packages_Taxonomy_Providers {
 
     function __construct()
     {
+        $this->args();
         $this->init();
     }
-
+	public function args()
+	{
+		$this->name = 'package_provider';
+	}
     public function init()
     {
-        $this->name = 'package_provider';
         add_action('init', array(&$this, 'register_taxonomy'));
         add_action('init', array(&$this, 'handle_create_edit'));
     }
@@ -17,7 +20,7 @@ class Dynamic_Packages_Providers {
     public function handle_create_edit()
     {
         //handles edit and save
-		add_action($this->name.'_edit_form_fields', array(&$this, 'form'), 10, 2);	
+		add_action($this->name.'_edit_form_fields', array(&$this, 'form'), 10, 2);
 		add_action( 'create_'.$this->name, array(&$this, 'handle_save'), 10, 2);
 		add_action( 'edited_'.$this->name, array(&$this, 'handle_save'), 10, 2);
     }

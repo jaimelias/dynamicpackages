@@ -55,38 +55,43 @@ fieldset.package_terms_conditions > label > span
 	margin: 0 0 20px 0;
 }
 
-/**
- * RIBBON
- */
- 
- /* The ribbons */
-
-.corner-ribbon{
-  width: 120px;
-  background: #e43;
-  position: absolute;
-  text-align: center;
-  line-height: 25px;
-  letter-spacing: 1px;
-  color: #f0f0f0;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
-  text-shadow: 1px 1px 1px rgba(0,0,0,.3);
-  font-weight: 400;
-  text-transform: uppercase;
+.dy_event_date_class
+{
+	position: absolute;
+	top: 20px;
+	left: -10px;
+	background-color: rgba(0,0,0,0.6);
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
+	height: 30px;
+	padding: 5px;
+	text-transform: uppercase;
+	font-weight: 900;
 }
 
-.corner-ribbon.white{background: #f0f0f0; color: #555;}
-.corner-ribbon.black{background: #333;}
-.corner-ribbon.grey{background: #999;}
-.corner-ribbon.blue{background: #39d;}
-.corner-ribbon.green{background: #2c7;}
-.corner-ribbon.turquoise{background: #1b9;}
-.corner-ribbon.purple{background: #95b;}
-.corner-ribbon.red{background: #e43;}
-.corner-ribbon.orange{background: #e82;}
-.corner-ribbon.yellow{background: #ec0;}
+.dy_badge_class{
+	position: absolute;
+	text-align: center;
+	color: #f0f0f0;
+	top: -10px;
+	right: -10px;
+	text-shadow: 1px 1px 1px rgba(0,0,0,.3);
+	font-weight: 900;
+	text-transform: uppercase;
+	padding: 5px;
+	height: 30px;
+}
+
+.dy_badge_class.white{background: rgba(255,255,255,.8); color: #000; text-shadow: 1px 1px 1px rgb(255, 255, 255, 0.5)}
+.dy_badge_class.yellow{background: rgba(238, 204, 0, .8); color: #000; text-shadow: 1px 1px 1px rgb(255, 255, 255, 0.5)}
+.dy_badge_class.black{background: rgba(0, 0, 0, 0.6);}
+.dy_badge_class.grey{background: rgba(100, 100, 100, .8);}
+.dy_badge_class.blue{background: rgba(51, 153, 221, .8);}
+.dy_badge_class.green{background: rgba(34, 204, 119, .8);}
+.dy_badge_class.turquoise{background: rgba(17, 187, 153,.8);}
+.dy_badge_class.purple{background: rgba(153, 85, 187, .8);}
+.dy_badge_class.red{background: rgba(238, 68, 51, .8);}
+.dy_badge_class.orange{background: rgba(238, 136, 34, .8);}
 
 ul.tax_list > li.cat-item  > ul.children
 {
@@ -118,15 +123,7 @@ ul.tax_list > li.cat-item  > ul.children
 {
 	margin: 0 0 20px 0;
 }
-.dy_event_date
-{
-	position: absolute;
-	top: 5px;
-	left: 5px;
-	background-color: rgba(0,0,0,0.6);
-	color: #fff;
-	text-shadow: 1px 1px 1px rgba(0,0,0,0.6);
-}
+
 .dy_archive
 {
 	max-width: 1600px;

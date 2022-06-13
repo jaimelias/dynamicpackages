@@ -49,6 +49,8 @@ class Dynamic_Packages_Public {
 		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
 		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
 		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
+		add_action('dy_show_badge', array(&$this, 'show_badge'));
+		add_action('dy_show_event_date', array(&$this, 'show_event_date'));
 	}
 
 	
@@ -202,15 +204,23 @@ class Dynamic_Packages_Public {
 		
 	public function meta_tags()
 	{
+		global $post;
+		global $dy_request_invalids;
+
 		if(is_singular('packages'))
 		{
-			ob_start();
-			require_once($this->dirname_file . '/partials/meta-tags.php');
-			$content = ob_get_contents();
-			ob_end_clean();	
-			echo $content;
+			if($post->post_parent > 0)
+			{
+				echo '<link rel="canonical" href="'.esc_url(get_permalink($post->post_parent)).'"/>';			
+			}
+		
+			if(is_booking_page() || isset($dy_request_invalids) || is_checkout_page())
+			{	
+				echo '<meta name="robots" content="noindex, nofollow" />';
+			}
 		}
 	}
+	
 	public function package_template($template)
 	{
 		if(is_tax('package_terms_conditions') || is_tax('package_location') || is_tax('package_category') || 'packages' == get_post_type())
@@ -293,207 +303,6 @@ class Dynamic_Packages_Public {
 		return $content;
 	}
 
-	public static function disabled_dates()
-	{
-		$disable = array();
-		$disable['disable'] = array();
-		$days = dy_utilities::get_week_days_abbr();
-		
-		if(package_field('package_event_date') == '')
-		{
-			for($x = 0; $x < count($days); $x++)
-			{
-				if(intval(package_field('package_day_'.$days[$x] )) == 1)
-				{
-					array_push($disable['disable'], $x+1);
-				}
-			}
-
-			$time = date('Y-m-d');
-			$from = intval(package_field('package_booking_from'));
-			
-			if($from == 0)
-			{
-				$from = true;
-			}
-			
-			$to = intval(package_field('package_booking_to'));
-			
-			$disable['min'] = $from;
-			$disable['max'] = $to;	
-			$disabled_dates = array();
-			$get_disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
-			$global_disabled_dates = json_decode(html_entity_decode(get_option('dy_disabled_dates' )), true);
-			$get_enabled_dates = json_decode(html_entity_decode(package_field('package_enabled_dates' )), true);
-			
-			if(is_array($global_disabled_dates))
-			{
-				if(array_key_exists('disabled_dates', $global_disabled_dates))
-				{
-					$global_disabled_dates = $global_disabled_dates['disabled_dates'];
-										
-					for($x = 0; $x < count($global_disabled_dates); $x++)
-					{
-						$disabled_dates[] = $global_disabled_dates[$x];
-					}
-				}
-			}
-			
-			if(is_array($get_disabled_dates))
-			{
-				if(array_key_exists('disabled_dates', $get_disabled_dates))
-				{		
-					$get_disabled_dates = $get_disabled_dates['disabled_dates'];
-											
-					for($x = 0; $x < count($get_disabled_dates); $x++){
-						$disabled_dates[] = $get_disabled_dates[$x];
-					}
-				}
-			}				
-			
-			if(is_array($disabled_dates))
-			{
-				for($x = 0; $x < count($disabled_dates); $x++)
-				{
-					if($disabled_dates[$x][0] && $disabled_dates[$x][1])
-					{
-						$period = new DatePeriod(
-							 new DateTime($disabled_dates[$x][0]),
-							 new DateInterval('P1D'),
-							 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
-						);
-						
-						$range = array();
-						$range_fix = array();
-						
-						foreach ($period as $key => $value)
-						{
-							$this_date = $value->format('Y-m-d');
-							$this_date = explode("-", $this_date);
-							$this_date = array_map('intval', $this_date);
-							$this_date = array_map(function($arr, $keys){
-								if($keys == 1)
-								{
-									$arr = $arr - 1;
-								}
-								return $arr;
-							}, $this_date, array_keys($this_date));
-							$disable['disable'][] = $this_date;
-						}						
-					}
-				}			
-			}
-		
-			$api_disabled_endpoint = package_field('package_disabled_dates_api');
-			
-			if (filter_var($api_disabled_endpoint, FILTER_VALIDATE_URL) !== false)
-			{
-				$api_disabled_dates = wp_remote_get($api_disabled_endpoint);
-				
-				if(is_array($api_disabled_dates))
-				{	
-					if(array_key_exists('body', $api_disabled_dates))
-					{
-						$api_disabled_dates = json_decode($api_disabled_dates['body']);
-						
-						if(is_array($api_disabled_dates))
-						{	
-							for($x = 0; $x < count($api_disabled_dates); $x++)
-							{
-								if(dy_validators::is_date($api_disabled_dates[$x]))
-								{
-									$api_date = $api_disabled_dates[$x];
-									$api_date = explode("-", $api_date);
-									$api_date = array_map('intval', $api_date);
-									$api_date = array_map(function($arr, $keys){
-										if($keys == 1)
-										{
-											$arr = $arr - 1;
-										}
-										return $arr;
-									}, $api_date, array_keys($api_date));
-									$disable['disable'][] = $api_date;									
-								}
-							}
-						}
-					}					
-				}
-			}
-			
-			$enabled_dates = array();
-			
-			if(is_array($get_enabled_dates))
-			{
-				if(array_key_exists('enabled_dates', $get_enabled_dates))
-				{		
-					$get_enabled_dates = $get_enabled_dates['enabled_dates'];
-										
-					for($x = 0; $x < count($get_enabled_dates); $x++){
-						$enabled_dates[] = $get_enabled_dates[$x];
-					}
-				}				
-			}
-			
-			if(is_array($enabled_dates))
-			{
-				for($x = 0; $x < count($enabled_dates); $x++)
-				{
-					if($enabled_dates[$x][0] && $enabled_dates[$x][1])
-					{
-						$period = new DatePeriod(
-							 new DateTime($enabled_dates[$x][0]),
-							 new DateInterval('P1D'),
-							 new DateTime(date('Y-m-d', strtotime($enabled_dates[$x][1] . ' +1 day')))
-						);
-						
-						$range = array();
-						$range_fix = array();
-						
-						foreach ($period as $key => $value)
-						{
-							$this_date = $value->format('Y-m-d');
-							$valid_date = true;
-							
-							if(isset($api_disabled_dates))
-							{
-								if(is_array($api_disabled_dates))
-								{
-									if(in_array($this_date, $api_disabled_dates))
-									{
-										$valid_date = false;
-									}
-								}								
-							}
-							
-							if($valid_date)
-							{
-								$this_date = explode("-", $this_date);
-								$this_date = array_map('intval', $this_date);
-								$this_date = array_map(function($arr, $keys){
-									if($keys == 1)
-									{
-										$arr = $arr - 1;
-									}							
-									return $arr;
-								}, $this_date, array_keys($this_date));
-								
-								$this_date[] = 'inverted';
-								
-								$disable['disable'][] = $this_date;								
-							}
-						}						
-					}					
-				}			
-			}
-			
-			if(count($disable) > 0)
-			{
-				return $disable;
-			}				
-		}
-	
-	}
-	
 	public function booking_allowed_hours()
 	{	
 
@@ -1225,7 +1034,7 @@ class Dynamic_Packages_Public {
 		return $output;
 	}
 	
-	public static function show_badge()
+	public function show_badge()
 	{
 		$output = null;
 		$code = package_field('package_badge');
@@ -1235,7 +1044,7 @@ class Dynamic_Packages_Public {
 			$color = package_field('package_badge_color');
 			$messages = array(null, __('Best Seller', 'dynamicpackages'), __('New', 'dynamicpackages'), __('Offer', 'dynamicpackages'), __('Featured', 'dynamicpackages'), __('Last Minute Deal', 'dynamicpackages') );
 			
-			$output = '<span class="small semibold corner-ribbon '.esc_html($color).'">'.esc_html($messages[$code]).'</span>';
+			$output = '<small class="dy_badge_class '.esc_html($color).'">'.esc_html($messages[$code]).'</small>';
 		}
 		
 		echo $output;
@@ -1637,80 +1446,8 @@ class Dynamic_Packages_Public {
 		return $output;
 	}
 	
-	public static function event_date_update($the_id)
-	{
-		$output = null;
-		global $polylang;
-		global $post;
-		
-		if(isset($polylang))
-		{
-			if(pll_current_language($post->post_name) != pll_default_language())
-			{
-				$the_id = pll_get_post(get_the_ID(), pll_default_language());
-			}
-		}
-		
-		if(package_field('package_event_date') != '')
-		{
-			$output = package_field('package_event_date');
-		}
-		else
-		{
-			$today = strtotime('today');
-			$last_day = strtotime("+365 days", $today);
-			$from = package_field('package_booking_from');
-			$to = package_field('package_booking_to');
-			$week_days = dy_utilities::get_week_days_list();
-			
-			if(intval($from) > 0)
-			{
-				$today = strtotime("+ {$from} days", $today);
-			}
-			if(intval($to) > 0)
-			{
-				$last_day = strtotime("+ {$to} days", $today);
-			}
-			
-			$today = date('Y-m-d', $today);
-			$last_day = date('Y-m-d', $last_day);
-			
-			$new_range = array();
-			$range = dy_utilities::get_date_range($today, $last_day);
-			$disabled_range = dy_utilities::get_disabled_range();
-			
-			for($x = 0; $x < count($range); $x++)
-			{
-				if(!in_array($range[$x], $disabled_range))
-				{
-					$day = date('N', strtotime($range[$x]));
-					
-					if(!in_array($day, $week_days))
-					{
-						array_push($new_range, $range[$x]);
-					}
-				}
-			}
-			
-			if(is_array($new_range))
-			{
-				if(count($new_range) > 0)
-				{
-					$output = $new_range[0];
-				}
-			}
-			
-			if($output != '')
-			{
-				update_post_meta($the_id, 'package_date', $output);
-			}	
-		}
-		
-		return $output;
-	}
 
-
-	public static function show_event_date()
+	public function show_event_date()
 	{
 		$output = '';
 		
@@ -1722,22 +1459,22 @@ class Dynamic_Packages_Public {
 			
 			if($date == $today)
 			{
-				$output = '<span class="dy_event_date strong uppercase small block padding-5">';	
+				$output = '<small class="dy_event_date_class">';	
 				$output .= __('today', 'dynamicpackages');
-				$output .= '</span>';
+				$output .= '</small>';
 			}
 			elseif($date == $tomorrow)
 			{
-				$output = '<span class="dy_event_date strong uppercase small block padding-5">';	
+				$output = '<small class="dy_event_date_class">';	
 				$output .= __('tomorrow', 'dynamicpackages');
-				$output .= '</span>';
+				$output .= '</small>';
 			}
 			else
 			{
 				$date = date_i18n('M d', $date);
-				$output = '<span class="dy_event_date strong uppercase small block padding-5">';	
+				$output = '<small class="dy_event_date_class">';	
 				$output .= esc_html($date);	
-				$output .= '</span>';				
+				$output .= '</small>';				
 			}
 		}
 		else
@@ -1766,9 +1503,9 @@ class Dynamic_Packages_Public {
 					}
 					
 					
-					$output = '<span class="dy_event_date strong uppercase small block padding-5">';	
+					$output = '<small class="dy_event_date_class">';	
 					$output .= esc_html($label);
-					$output .= '</span>';	
+					$output .= '</small>';	
 				}
 			}
 		}

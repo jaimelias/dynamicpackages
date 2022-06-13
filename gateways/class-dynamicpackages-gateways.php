@@ -94,7 +94,7 @@ class Dynamic_Packages_Gateways
 					else
 					{
 						ob_start();
-						require_once(plugin_dir_path( __DIR__  ) . 'gateways/checkout-page.php');
+						require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/checkout-page.php');
 						$content = ob_get_contents();
 						ob_end_clean();									
 					}					
@@ -243,7 +243,7 @@ class Dynamic_Packages_Gateways
 	public function cc_form($output)
 	{
 		ob_start();
-		require_once(plugin_dir_path( __DIR__  ) . 'gateways/cc-form.php');
+		require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/cc-form.php');
 		$content = ob_get_contents();
 		ob_end_clean();
 		echo $content;

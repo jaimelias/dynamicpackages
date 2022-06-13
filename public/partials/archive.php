@@ -259,7 +259,7 @@ else
 		<?php
 			//DO NOT DELETE
 			// IT UPDATES THE EVENT DATE FOR QUERY PURPOSES
-			Dynamic_Packages_Public::event_date_update($post->ID);
+			dy_utilities::event_date_update($post->ID);
 			$package_code = package_field('package_trip_code');
 			$package_code = ($package_code !== '') ? $package_code : 'ID'.$post->ID;
 		?>
@@ -280,8 +280,8 @@ else
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
 								<a title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
-								<?php Dynamic_Packages_Public::show_event_date(); ?>
-								<?php Dynamic_Packages_Public::show_badge(); ?>
+								<?php do_action('dy_show_event_date'); ?>
+								<?php do_action('dy_show_badge'); ?>
 							</div>
 							<?php endif;?>
 						</div>	

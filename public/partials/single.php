@@ -1,4 +1,4 @@
-<?php global $post; global $new_content; Dynamic_Packages_Public::event_date_update($post->ID); ?>
+<?php global $post; global $new_content; dy_utilities::event_date_update($post->ID); ?>
 
 <div class="pure-g gutters">
 

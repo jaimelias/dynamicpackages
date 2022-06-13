@@ -1461,4 +1461,77 @@ class dy_utilities {
 		return $output;
 	}
 
+
+	public static function event_date_update($the_id)
+	{
+		$output = null;
+		global $polylang;
+		global $post;
+		
+		if(isset($polylang))
+		{
+			if(pll_current_language($post->post_name) != pll_default_language())
+			{
+				$the_id = pll_get_post(get_the_ID(), pll_default_language());
+			}
+		}
+		
+		if(package_field('package_event_date') != '')
+		{
+			$output = package_field('package_event_date');
+		}
+		else
+		{
+			$today = strtotime('today');
+			$last_day = strtotime("+365 days", $today);
+			$from = package_field('package_booking_from');
+			$to = package_field('package_booking_to');
+			$week_days = self::get_week_days_list();
+			
+			if(intval($from) > 0)
+			{
+				$today = strtotime("+ {$from} days", $today);
+			}
+			if(intval($to) > 0)
+			{
+				$last_day = strtotime("+ {$to} days", $today);
+			}
+			
+			$today = date('Y-m-d', $today);
+			$last_day = date('Y-m-d', $last_day);
+			
+			$new_range = array();
+			$range = self::get_date_range($today, $last_day);
+			$disabled_range = self::get_disabled_range();
+			
+			for($x = 0; $x < count($range); $x++)
+			{
+				if(!in_array($range[$x], $disabled_range))
+				{
+					$day = date('N', strtotime($range[$x]));
+					
+					if(!in_array($day, $week_days))
+					{
+						array_push($new_range, $range[$x]);
+					}
+				}
+			}
+			
+			if(is_array($new_range))
+			{
+				if(count($new_range) > 0)
+				{
+					$output = $new_range[0];
+				}
+			}
+			
+			if($output != '')
+			{
+				update_post_meta($the_id, 'package_date', $output);
+			}	
+		}
+		
+		return $output;
+	}
+
 }

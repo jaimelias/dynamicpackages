@@ -4,7 +4,7 @@
 if ( !defined( 'ABSPATH' ) ) exit;
 
 
-class dy_Admin {
+class Dynamic_Packages_Admin {
 
 	private $plugin_name;
 	private $version;
