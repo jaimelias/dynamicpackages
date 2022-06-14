@@ -1,5 +1,5 @@
 <?php
-class Dynamic_Packages_Metaboxes
+class Dynamicpackages_Metaboxes
 {
 
     public function __construct()

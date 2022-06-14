@@ -2,8 +2,9 @@
 
 class cuanto{
 	
-	function __construct()
+	function __construct($plugin_id)
 	{
+		$this->plugin_id = $plugin_id;
 		$this->init();
 	}
 	public function init()
@@ -302,14 +303,14 @@ class cuanto{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->domain, $this->domain, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '.$this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
 		?><div class="wrap">
 		<form action="options.php" method="post">
 			
-			<h1><?php esc_html_e($this->domain); ?></h1>	
+			<h1><?php esc_html_e($this->name); ?></h1>	
 			<?php
 			settings_fields( $this->id . '_settings' );
 			do_settings_sections( $this->id . '_settings' );

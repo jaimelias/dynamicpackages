@@ -1,19 +1,10 @@
 <?php
 
-class Dynamic_Packages_Taxonomy_Providers {
+class Dynamicpackages_Taxonomy_Providers {
 
     function __construct()
     {
-        $this->args();
-        $this->init();
-    }
-	public function args()
-	{
 		$this->name = 'package_provider';
-	}
-    public function init()
-    {
-        add_action('init', array(&$this, 'register_taxonomy'));
         add_action('init', array(&$this, 'handle_create_edit'));
     }
 
@@ -98,40 +89,10 @@ class Dynamic_Packages_Taxonomy_Providers {
 		$rows = '';
         $term_id = $term->term_id;
         $language_select = $this->language_select($term_id);
-		$rows .= $this->admin_taxonomy_form_row(
-			$this->name.'_language', 
-			__('Provider Language', 'dynamicpackages'), 
-			$this->language_select($term_id)
-		);
-		$rows .= $this->admin_taxonomy_form_row(
-			$this->name.'_emails', 
-			__('Provider Emails', 'dynamicpackages'), 
-			$this->textarea_items_per_line($term_id, 'sanitize_email'),
-			__('1 email per line. Up to 10 emails maximum.', 'dynamicpackages')
-		);
+		$rows .= $this->admin_taxonomy_form_row($this->name.'_language', __('Provider Language', 'dynamicpackages'), $this->language_select($term_id));
+		$rows .= $this->admin_taxonomy_form_row($this->name.'_emails', __('Provider Emails', 'dynamicpackages'), $this->textarea_items_per_line($term_id, 'sanitize_email'), __('1 email per line. Up to 10 emails maximum.', 'dynamicpackages'));
 		echo $rows;
     }
-
-	public function register_taxonomy() {
-		
-		$labels = array(
-			'name' => __( 'Providers', 'dynamicpackages'),
-			'singular_name' => __( 'Provider', 'dynamicpackages')
-		);		
-
-		$args = array(
-			'labels' => $labels,
-			'hierarchical' => true,
-			'public' => true,
-			'show_in_rest' => true,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => false
-		);
-
-		register_taxonomy( $this->name, array( 'packages' ), $args );
-	}
 }
 
 ?>

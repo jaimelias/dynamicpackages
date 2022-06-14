@@ -13,7 +13,7 @@
  * @package           dynamicpackages
  *
  * @wordpress-plugin
- * Plugin Name:       Dynamic Packages
+ * Plugin Name:       Dynamicpackages
  * Plugin URI:        https://github.com/jaimelias/dynamicpackages
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
  * Version:           1.0.0

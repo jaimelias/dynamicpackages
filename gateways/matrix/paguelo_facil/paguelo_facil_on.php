@@ -2,8 +2,9 @@
 
 class paguelo_facil_on{
 	
-	function __construct()
+	function __construct($plugin_id)
 	{
+		$this->plugin_id = $plugin_id;
 		$this->init();
 	}
 	
@@ -599,7 +600,7 @@ class paguelo_facil_on{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( 'edit.php?post_type=packages', $this->name, $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->short_name, 'manage_options', $this->id, array(&$this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 

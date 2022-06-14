@@ -1,6 +1,6 @@
 <?php 
 
-class Dynamic_Packages_Metapost{
+class Dynamicpackages_Metapost{
 	
 	public function __construct()
 	{

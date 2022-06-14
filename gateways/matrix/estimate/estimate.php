@@ -2,8 +2,9 @@
 
 class estimate_request{
 	
-	function __construct()
+	function __construct($plugin_id)
 	{
+		$this->plugin_id = $plugin_id;
 		$this->init();
 	}
 	public function init()

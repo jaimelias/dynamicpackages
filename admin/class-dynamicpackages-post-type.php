@@ -1,19 +1,14 @@
 <?php
 
 
-class Dynamic_Packages_Post_Types
+class Dynamicpackages_Post_Types
 {
 	// Register Custom Post Type
 	
 	function __construct()
 	{
 		add_action('init', array(&$this, 'package_post_type'));
-		add_action('init', array(&$this, 'location_taxonomy'));
-		add_action('init', array(&$this, 'category_taxonomy'));
-		add_action('init', array(&$this, 'included_taxonomy'));
-		add_action('init', array(&$this, 'not_included_taxonomy'));
-		add_action('init', array(&$this, 'terms_conditions_taxonomy'));
-		add_action('init', array(&$this, 'add_ons'));
+		add_action('init', array(&$this, 'register_taxonomies'), 10);
 	}
 	
 	public function package_post_type() {
@@ -63,124 +58,72 @@ class Dynamic_Packages_Post_Types
 		register_post_type( 'packages', $args );
 
 	}
-	
-	public function location_taxonomy() {
-		
-		$labels = array(
-			'name' => __( 'Locations', 'dynamicpackages'),
-			'singular_name' => __( 'Location', 'dynamicpackages')
-			);		
 
-		$args = array(
-			'labels' => $labels,
-			'hierarchical' => true,
-			'public' => true,
-			'show_in_rest'				=> true,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
-		);
-		register_taxonomy( 'package_location', array( 'packages' ), $args );
-	}
-	public function category_taxonomy() {
-
-		$labels = array(
-			'name' => __( 'Categories', 'dynamicpackages'),
-			'singular_name' => __( 'Category', 'dynamicpackages')
-			);
-		
-		$args = array(
-			'labels' => $labels,		
-			'hierarchical' => true,
-			'public' => true,
-			'show_ui' => true,
-			'show_in_rest'				=> true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
-		);
-		register_taxonomy( 'package_category', array( 'packages' ), $args );
-	}
-
-	public function included_taxonomy() {
-
-		$labels = array(
-			'name' => __( 'Included', 'dynamicpackages'),
-			'singular_name' => __( 'Included', 'dynamicpackages')
-			);
-		
-		$args = array(
-			'labels' => $labels,		
-			'hierarchical' => true,
-			'public' => true,
-			'show_in_rest'				=> true,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
-		);
-		register_taxonomy( 'package_included', array( 'packages' ), $args );
-	}	
-
-	public function not_included_taxonomy() {
-
-		$labels = array(
-			'name' => __( 'Not Included', 'dynamicpackages'),
-			'singular_name' => __( 'Not Included', 'dynamicpackages')
-			);
-		
-		$args = array(
-			'labels' => $labels,		
-			'hierarchical' => true,
-			'public' => true,
-			'show_ui' => true,
-			'show_in_rest'				=> true,
-			'show_admin_column' => true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
-		);
-		register_taxonomy( 'package_not_included', array( 'packages' ), $args );
-	}
-
-	public function terms_conditions_taxonomy() {
-
-		$labels = array(
-			'name' => __( 'Terms & Conditions', 'dynamicpackages'),
-			'singular_name' => __( 'Terms & Conditions', 'dynamicpackages')
-			);
-		
-		$args = array(
-			'labels' => $labels,		
-			'hierarchical' => true,
-			'public' => true,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'show_in_rest'				=> true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
-		);
-		register_taxonomy( 'package_terms_conditions', array( 'packages' ), $args );
+	public function __echo_null()
+	{
+		echo '';
 	}
 	
-	public function add_ons() {
-
-		$labels = array(
-			'name' => __( 'Add-ons', 'dynamicpackages'),
-			'singular_name' => __( 'Add-on', 'dynamicpackages')
-			);
-		
-		$args = array(
-			'labels' => $labels,		
-			'hierarchical' => true,
-			'public' => true,
-			'show_ui' => true,
-			'show_admin_column' => true,
-			'show_in_rest'				=> true,
-			'show_in_nav_menus' => true,
-			'show_tagcloud' => true
+	public function register_taxonomies(){
+		$taxonomies = array(
+			'package_location' => array(
+				'name' => __( 'Locations', 'dynamicpackages'),
+				'singular_name' => __( 'Location', 'dynamicpackages')
+			),
+			'package_category' => array(
+				'name' => __( 'Categories', 'dynamicpackages'),
+				'singular_name' => __( 'Category', 'dynamicpackages')
+			),
+			'package_included' => array(
+				'name' => __( 'Included', 'dynamicpackages'),
+				'singular_name' => __( 'Included', 'dynamicpackages')
+			),
+			'package_not_included' => array(
+				'name' => __( 'Not Included', 'dynamicpackages'),
+				'singular_name' => __( 'Not Included', 'dynamicpackages')
+			),
+			'package_terms_conditions' => array(
+				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
+				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages')
+			),
+			'package_add_ons' => array(
+				'name' => __( 'Add-ons', 'dynamicpackages'),
+				'singular_name' => __( 'Add-on', 'dynamicpackages')
+			),
+			'package_provider' => array(
+				'name' => __( 'Providers', 'dynamicpackages'),
+				'singular_name' => __( 'Provider', 'dynamicpackages')
+			)
 		);
-		register_taxonomy('package_add_ons', array( 'packages' ), $args );		
+
+		foreach($taxonomies as $key => $value)
+		{
+			$singular = $value['singular_name'];
+			$plural = $value['name'];
+			$labels = $value;
+			$labels['search_items'] = sprintf(__('Search %s', 'dynamicpackages'), $plural);
+			$labels['all_items'] = sprintf(__('All %s', 'dynamicpackages'), $plural);
+			$labels['parent_item'] = sprintf(__('Parent %s', 'dynamicpackages'), $singular);
+			$labels['parent_item_colon'] = sprintf(__('Parent %s', 'dynamicpackages'), $singular);
+			$labels['edit_item'] = sprintf(__('Edit %s', 'dynamicpackages'), $singular);
+			$labels['update_item'] = sprintf(__('Update %s', 'dynamicpackages'), $singular);
+			$labels['add_new_item'] = sprintf(__('Add New %s', 'dynamicpackages'), $singular);
+			$labels['new_item_name'] = sprintf(__('New %s Name', 'dynamicpackages'), $singular);
+			$labels['menu_name'] = '📋 '.$plural;
+
+			$args = array(
+				'labels' => $labels,
+				'hierarchical' => true,
+				'public' => true,
+				'show_in_rest'				=> true,
+				'show_ui' => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
+				'show_tagcloud' => true
+			);
+
+			register_taxonomy($key, array( 'packages' ), $args );
+		}
 	}
 }
 

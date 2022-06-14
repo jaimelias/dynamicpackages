@@ -1,6 +1,6 @@
 <?php
 
-class Dynamic_Packages_Shortcodes {
+class Dynamicpackages_Shortcodes {
 	
 	public function __construct()
 	{

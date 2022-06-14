@@ -2,7 +2,6 @@
 
 class dy_validators
 {
-
 	public static function validate_quote()
 	{
 		$output = false;
@@ -801,69 +800,90 @@ class dy_validators
 		return $output;
 	}
 	
-	public static function is_child()
+	public static function is_child($post_id = null)
 	{
 		$output = false;
-		global $post;
+
+		if($post_id)
+		{
+			$post = get_post($post_id);
+		}
+		else
+		{
+			global $post;
+		}
 
 		if(isset($post))
 		{
-			$which_var = $post->ID.'_is_child';
-			global $$which_var;
+			if(property_exists($post, 'ID'))
+			{
+				$which_var = $post->ID.'_is_child';
+				global $$which_var;
 
-			if(isset($$which_var))
-			{
-				$output = $$which_var;
-			}
-			else
-			{
-				if(property_exists($post, 'post_parent'))
+				if(isset($$which_var))
 				{
-					if($post->post_parent > 0)
-					{
-						$output = true;
-					}					
+					$output = $$which_var;
 				}
+				else
+				{
+					if(property_exists($post, 'post_parent'))
+					{
+						if($post->post_parent > 0)
+						{
+							$output = true;
+						}					
+					}
 
-				$GLOBALS[$which_var] = $output;
+					$GLOBALS[$which_var] = $output;
+				}
 			}
 		}
-
 		
 		return $output;
 	}
-	public static function has_children() {
+	public static function has_children($post_id = null) {
 		
 		$output = false;
-		global $post;
+
+		if($post_id)
+		{
+			$post = get_post($post_id);
+		}
+		else
+		{
+			global $post;
+		}
 
 		if(isset($post))
 		{
-			$which_var = $post->ID.'_has_children';
-			global $$which_var;	
-			
-			if(isset($$which_var))
+			if(property_exists($post, 'ID'))
 			{
-				$output = $$which_var;
-			}
-			else
-			{
-				$args = array(
-					'post_type' => 'packages',
-					'post_parent' => $post->ID
-				);
+				$which_var = $post->ID.'_has_children';
+				global $$which_var;
 				
-				$children = get_posts($args);
-				
-				if(is_array($children))
+				if(isset($$which_var))
 				{
-					if(count($children) > 0)
-					{
-						$output = $children;
-					}
+					$output = $$which_var;
 				}
-				
-				$GLOBALS[$which_var] = $output;
+				else
+				{
+					$args = array(
+						'post_type' => 'packages',
+						'post_parent' => $post->ID
+					);
+					
+					$children = get_posts($args);
+					
+					if(is_array($children))
+					{
+						if(count($children) > 0)
+						{
+							$output = $children;
+						}
+					}
+					
+					$GLOBALS[$which_var] = $output;
+				}
 			}
 		}
 
@@ -871,7 +891,7 @@ class dy_validators
 		return $output;
 	}
 
-	public static function is_parent_with_no_child()
+	public static function is_parent_with_no_child($post_id = null)
 	{
 		$output = false;
 		$which_var = 'dy_is_parent_with_no_child';
@@ -883,7 +903,10 @@ class dy_validators
 		}
 		else
 		{
-			if(!self::has_children() && !self::is_child())
+			$has_children = ($post_id) ? self::has_children($post_id) : self::has_children();
+			$is_child = ($post_id) ? self::is_child($post_id) : self::is_child();
+
+			if(!$has_children && !$is_child)
 			{
 				$output = true;
 			}

@@ -1,6 +1,6 @@
 <?php
 
-class Dynamic_Packages_Tables{
+class Dynamicpackages_Tables{
 
 	function __construct()
 	{

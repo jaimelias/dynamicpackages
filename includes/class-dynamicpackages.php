@@ -34,7 +34,8 @@ class dynamicpackages {
 
 	public function __construct() {
 
-		$this->plugin_name = 'dynamicpackages';
+		$this->plugin_name = 'Dynamicpackages';
+		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.0';
 		$this->load_dependencies();
 		$this->set_locale();
@@ -87,39 +88,39 @@ class dynamicpackages {
 	private function set_locale() {
 
 		$plugin_i18n = new dynamicpackages_i18n();
-		$plugin_i18n->set_domain($this->plugin_name);
+		$plugin_i18n->set_domain($this->plugin_id);
 		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	public function define_utility_hooks()
 	{
-		$this->reviews = new Dynamic_Packages_Reviews();
+		$this->reviews = new Dynamicpackages_Reviews();
 	}
 
 	private function define_admin_hooks() 
 	{
-		new Dynamic_Packages_Admin($this->plugin_name, $this->version);
-		new Dynamic_Packages_Metaboxes();
-		new Dynamic_Packages_Metapost();
-		new Dynamic_Packages_Taxonomy_Providers();
-		new Dynamic_Packages_Taxonomy_Add_Ons();
-		new Dynamic_Packages_Post_Types();
+		new Dynamicpackages_Admin($this->plugin_id, $this->plugin_name, $this->version);
+		new Dynamicpackages_Metaboxes();
+		new Dynamicpackages_Metapost();
+		new Dynamicpackages_Taxonomy_Providers();
+		new Dynamicpackages_Taxonomy_Add_Ons();
+		new Dynamicpackages_Post_Types();
 	}
 
 	private function define_public_hooks() 
 	{
-		new Dynamic_Packages_Public();
-		new Dynamic_Packages_Tables();
-		new Dynamic_Packages_Shortcodes();
-		new Dynamic_Packages_Forms();
-		new Dynamic_Packages_JSON($this->reviews);
-		new Dynamic_Packages_Ical();
-		new Dynamic_Packages_Actions();
+		new Dynamicpackages_Public();
+		new Dynamicpackages_Tables();
+		new Dynamicpackages_Shortcodes();
+		new Dynamicpackages_Forms();
+		new Dynamicpackages_JSON($this->reviews);
+		new Dynamicpackages_Ical();
+		new Dynamicpackages_Actions();
 	}
 
 	private function define_gateteways_hooks()
 	{
-		new Dynamic_Packages_Gateways();
+		new Dynamicpackages_Gateways($this->plugin_id);
 	}
 
 	public function run() {

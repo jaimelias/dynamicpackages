@@ -1,7 +1,7 @@
 <?php 
 
 
-class Dynamic_Packages_Ical
+class Dynamicpackages_Ical
 {
 	function __construct()
 	{

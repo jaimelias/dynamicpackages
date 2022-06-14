@@ -1,6 +1,6 @@
 <?php 
 
-class Dynamic_Packages_Reviews
+class Dynamicpackages_Reviews
 {
 
 	function __construct()

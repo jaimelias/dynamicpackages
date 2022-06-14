@@ -1,9 +1,10 @@
 <?php
 
-class Dynamic_Packages_Gateways
+class Dynamicpackages_Gateways
 {
-	function __construct()
+	function __construct($plugin_id)
 	{
+		$this->plugin_id = $plugin_id;
 		$this->load_gateways();
 		$this->load_classes();
 		$this->init();
@@ -27,17 +28,17 @@ class Dynamic_Packages_Gateways
 	public function load_classes()
 	{
 		$this->add_to_calendar = new dy_Add_To_Calendar();
-		$this->estimate = new estimate_request();
-		$this->paguelo_facil_on = new paguelo_facil_on();
-		$this->cuanto = new cuanto();
-		$this->paypal_me = new paypal_me();
-		$this->nequi_direct = new nequi_direct();
-		$this->yappy_direct = new yappy_direct();	
-		$this->bank_transfer = new bank_transfer();
-		$this->wire_transfer = new wire_transfer();
-		$this->usdt = new usdt();
-		$this->usdc = new usdc();
-		$this->busd = new busd();
+		$this->estimate = new estimate_request($this->plugin_id);
+		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
+		$this->cuanto = new cuanto($this->plugin_id);
+		$this->paypal_me = new paypal_me($this->plugin_id);
+		$this->nequi_direct = new nequi_direct($this->plugin_id);
+		$this->yappy_direct = new yappy_direct($this->plugin_id);	
+		$this->bank_transfer = new bank_transfer($this->plugin_id);
+		$this->wire_transfer = new wire_transfer($this->plugin_id);
+		$this->usdt = new usdt($this->plugin_id);
+		$this->usdc = new usdc($this->plugin_id);
+		$this->busd = new busd($this->plugin_id);
 	}
 	public function init()
 	{

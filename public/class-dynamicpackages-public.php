@@ -1,7 +1,7 @@
 <?php
 
 
-class Dynamic_Packages_Public {
+class Dynamicpackages_Public {
 
 
 	private $plugin_name;

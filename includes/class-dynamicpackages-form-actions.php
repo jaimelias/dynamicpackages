@@ -3,7 +3,7 @@
 
 use Spipu\Html2Pdf\Html2Pdf;
 
-class Dynamic_Packages_Actions{
+class Dynamicpackages_Actions{
 
     public function __construct()
     {

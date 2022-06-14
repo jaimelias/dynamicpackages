@@ -1,6 +1,6 @@
 <?php
 
-class Dynamic_Packages_JSON
+class Dynamicpackages_JSON
 {
 	function __construct($reviews)
 	{

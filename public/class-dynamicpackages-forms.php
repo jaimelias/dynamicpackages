@@ -1,6 +1,6 @@
 <?php
 
-class Dynamic_Packages_Forms
+class Dynamicpackages_Forms
 {
 	public function __construct()
 	{

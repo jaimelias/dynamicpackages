@@ -1,6 +1,6 @@
 <?php
 
-class Dynamic_Packages_Taxonomy_Add_Ons
+class Dynamicpackages_Taxonomy_Add_Ons
 {
 	function __construct()
 	{
