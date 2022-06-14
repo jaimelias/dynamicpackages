@@ -35,7 +35,7 @@
 			</div>
 			<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-1-2">
 				<?php do_action('dy_get_not_included_list'); ?>		
-				<?php do_action('dy_get_terms_conditions_list'); ?>		
+				<?php do_action('dy_get_taxonomies_list'); ?>		
 			</div>
 		</div>
 		

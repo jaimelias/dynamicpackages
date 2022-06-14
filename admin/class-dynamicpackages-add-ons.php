@@ -383,7 +383,6 @@ class Dynamic_Packages_Taxonomy_Add_Ons
 				}
 			}
 			
-			
 			$def_lang = true;
 			$pax = intval(dy_utilities::pax_num()) - 1;
 			

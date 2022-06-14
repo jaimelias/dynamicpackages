@@ -162,7 +162,7 @@ class Dynamic_Packages_Actions{
 				'data' => $this->doc_pdf()
 			);
 			
-			$terms_pdf = $this->get_terms_conditions_pages();
+			$terms_pdf = $this->get_term_condition_attachment();
 
 			if(is_array($terms_pdf))
 			{
@@ -257,10 +257,10 @@ class Dynamic_Packages_Actions{
         return apply_filters('dy_request_the_title', $title);
     }
 	
-	public function get_terms_conditions_pages()
+	public function get_term_condition_attachment()
 	{		
 		$output = array();
-		$terms_conditions = dy_utilities::get_terms_conditions();
+		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
 		$Parsedown = new Parsedown();
 		
 		if(is_array($terms_conditions))

@@ -1164,7 +1164,7 @@ class dy_utilities {
 
 	}
 
-	public static function get_terms_conditions()
+	public static function get_taxonomies($term_name)
 	{
 		global $post;
 		$terms_conditions = array();
@@ -1174,7 +1174,7 @@ class dy_utilities {
 			return $terms_conditions;
 		}
 
-		$which_var = 'dy_get_terms_conditions_'.$post->ID;
+		$which_var = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
 		global $$which_var;
 
 		if(isset($$which_var))
@@ -1185,26 +1185,23 @@ class dy_utilities {
 		{
 			if(isset($post))
 			{
-				if(property_exists($post, 'ID'))
+				$the_id = $post->ID;
+				
+				if(property_exists($post, 'post_parent'))
 				{
-					$termid = $post->ID;
-					
-					if(property_exists($post, 'post_parent'))
-					{
-						$termid = $post->post_parent;
-					}		
-					
-					$terms = get_the_terms( $termid, 'package_terms_conditions');
+					$the_id = $post->post_parent;
+				}		
+				
+				$terms = get_the_terms($the_id, $term_name);
 
-					
-					if($terms)
+				
+				if($terms)
+				{
+					for($x = 0; $x < count($terms); $x++)
 					{
-						for($x = 0; $x < count($terms); $x++)
-						{
-							array_push($terms_conditions, $terms[$x]);
-						}			
-					}	
-				}			
+						array_push($terms_conditions, $terms[$x]);
+					}			
+				}		
 			}
 
 			$GLOBALS[$which_var] = $terms_conditions;

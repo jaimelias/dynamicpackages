@@ -44,7 +44,7 @@ class Dynamic_Packages_Public {
 		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
 		add_action('dy_children_package', array(&$this, 'children_package'));
 		add_action('dy_similar_packages_link', array(&$this, 'similar_packages_link'));
-		add_action('dy_get_terms_conditions_list', array(&$this, 'get_terms_conditions_list'));
+		add_action('dy_get_taxonomies_list', array(&$this, 'get_taxonomies_list'));
 		add_action('dy_get_included_list', array(&$this, 'get_included_list'));
 		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
 		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
@@ -777,11 +777,11 @@ class Dynamic_Packages_Public {
 			
 			if($is_link)
 			{
-				$list = get_the_term_list( $the_id, $term, $header . '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li></ul>');
+				$list = get_the_term_list($the_id, $term, $header . '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li></ul>');
 			}
 			else
 			{
-				$terms = get_the_terms($the_id, 'package_included');	
+				$terms = get_the_terms($the_id, $term);
 				$terms_array = array();
 				
 				if($terms)
@@ -854,10 +854,10 @@ class Dynamic_Packages_Public {
 	}
 
 
-	public function get_terms_conditions_list()
+	public function get_taxonomies_list()
 	{
 		$output = '';
-		$which_var = 'dy_get_terms_conditions_list';
+		$which_var = 'dy_get_taxonomies_list';
 		global $$which_var;
 
 		if(isset($$which_var))

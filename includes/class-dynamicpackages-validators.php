@@ -373,7 +373,7 @@ class dy_validators
 			{
 				if(count($fields) > 0)
 				{
-					$terms = dy_utilities::get_terms_conditions();
+					$terms = dy_utilities::get_taxonomies('package_terms_conditions');
 					
 					if(is_array($terms))
 					{

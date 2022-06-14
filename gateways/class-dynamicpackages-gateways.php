@@ -213,7 +213,7 @@ class Dynamic_Packages_Gateways
 	
 	public function terms_conditions()
 	{
-		$terms_conditions = dy_utilities::get_terms_conditions();
+		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
 		$output = null;
 		
 		if(is_array($terms_conditions))
@@ -379,7 +379,7 @@ class Dynamic_Packages_Gateways
 	public function accept()
 	{
 		$output = array();
-		$terms = dy_utilities::get_terms_conditions();
+		$terms = dy_utilities::get_taxonomies('package_terms_conditions');
 		
 		if(is_array($terms))
 		{
@@ -387,6 +387,7 @@ class Dynamic_Packages_Gateways
 			{
 				$terms_conditions = $terms;
 				$terms_conditions_clean = array();
+
 				for($x = 0; $x < count($terms_conditions); $x++ )
 				{
 					$terms_conditions_item = array();
@@ -398,6 +399,7 @@ class Dynamic_Packages_Gateways
 				$output = $terms_conditions_clean;
 			}			
 		}
+
 		return $output;
 	}
 	
