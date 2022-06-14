@@ -7,12 +7,14 @@ class Dynamicpackages_Post_Types
 	
 	function __construct()
 	{
+		$this->plugin_dir_file = plugin_dir_url( __FILE__ );
 		add_action('init', array(&$this, 'package_post_type'));
 		add_action('init', array(&$this, 'register_taxonomies'), 10);
 	}
 	
 	public function package_post_type() {
 
+	
 		$labels = array(
 			'name' => __( 'Packages', 'dynamicpackages' ),
 			'singular_name' => __( 'Package', 'dynamicpackages' ),
@@ -33,6 +35,8 @@ class Dynamicpackages_Post_Types
 			'locations_list_navigation' => __( 'Packages list navigation', 'dynamicpackages' ),
 			'filter_items_list' => __( 'Filter locations list', 'dynamicpackages' ),
 		);
+
+		$icon_url = $this->plugin_dir_file . 'assets/rocket.svg';
 		
 		$args = array(
 			'label' => __( 'Package', 'dynamicpackages' ),
@@ -52,7 +56,7 @@ class Dynamicpackages_Post_Types
 			'exclude_from_search' => false,
 			'publicly_queryable' => true,
 			'capability_type' => 'page',
-			'menu_icon' => 'dashicons-tickets-alt',
+			'menu_icon' => $icon_url
 		);
 		
 		register_post_type( 'packages', $args );
@@ -68,31 +72,38 @@ class Dynamicpackages_Post_Types
 		$taxonomies = array(
 			'package_location' => array(
 				'name' => __( 'Locations', 'dynamicpackages'),
-				'singular_name' => __( 'Location', 'dynamicpackages')
+				'singular_name' => __( 'Location', 'dynamicpackages'),
+				'emoji' => '🌎'
 			),
 			'package_category' => array(
 				'name' => __( 'Categories', 'dynamicpackages'),
-				'singular_name' => __( 'Category', 'dynamicpackages')
+				'singular_name' => __( 'Category', 'dynamicpackages'),
+				'emoji' => '🏷️'
 			),
 			'package_included' => array(
 				'name' => __( 'Included', 'dynamicpackages'),
-				'singular_name' => __( 'Included', 'dynamicpackages')
+				'singular_name' => __( 'Included', 'dynamicpackages'),
+				'emoji' => '🍹'				
 			),
 			'package_not_included' => array(
 				'name' => __( 'Not Included', 'dynamicpackages'),
-				'singular_name' => __( 'Not Included', 'dynamicpackages')
+				'singular_name' => __( 'Not Included', 'dynamicpackages'),
+				'emoji' => '❌'
 			),
 			'package_terms_conditions' => array(
 				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
-				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages')
+				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages'),
+				'emoji' => '📄'
 			),
 			'package_add_ons' => array(
 				'name' => __( 'Add-ons', 'dynamicpackages'),
-				'singular_name' => __( 'Add-on', 'dynamicpackages')
+				'singular_name' => __( 'Add-on', 'dynamicpackages'),
+				'emoji' => '🤑'
 			),
 			'package_provider' => array(
 				'name' => __( 'Providers', 'dynamicpackages'),
-				'singular_name' => __( 'Provider', 'dynamicpackages')
+				'singular_name' => __( 'Provider', 'dynamicpackages'),
+				'emoji' => '🤖'
 			)
 		);
 
@@ -100,6 +111,7 @@ class Dynamicpackages_Post_Types
 		{
 			$singular = $value['singular_name'];
 			$plural = $value['name'];
+			$emoji = $value['emoji'];
 			$labels = $value;
 			$labels['search_items'] = sprintf(__('Search %s', 'dynamicpackages'), $plural);
 			$labels['all_items'] = sprintf(__('All %s', 'dynamicpackages'), $plural);
@@ -109,7 +121,7 @@ class Dynamicpackages_Post_Types
 			$labels['update_item'] = sprintf(__('Update %s', 'dynamicpackages'), $singular);
 			$labels['add_new_item'] = sprintf(__('Add New %s', 'dynamicpackages'), $singular);
 			$labels['new_item_name'] = sprintf(__('New %s Name', 'dynamicpackages'), $singular);
-			$labels['menu_name'] = '📋 '.$plural;
+			$labels['menu_name'] = $emoji.' '.$plural;
 
 			$args = array(
 				'labels' => $labels,
