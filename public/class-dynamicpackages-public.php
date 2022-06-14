@@ -1438,7 +1438,7 @@ class Dynamicpackages_Public {
 		
 		foreach($args as $k => $v)
 		{
-			if($v)
+			if($v[1])
 			{
 				$output .= '<div class="dy_pad bottom-5">';
 				$output .= ($v[0]) ? $this->icon($v[0]) .' '. esc_html($v[1]) : '<strong>'.esc_html($v[1]).'</strong>';
