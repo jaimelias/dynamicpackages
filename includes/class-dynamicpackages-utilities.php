@@ -1528,4 +1528,66 @@ class dy_utilities {
 		return $output;
 	}
 
+
+	public static function get_tax_list($term_name = '', $label = '', $is_link = true, $icon_class = null)
+	{
+		$output = '';
+		$which_var = 'dy_get_tax_list_'.$term_name;
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+
+			$terms_array = array();
+
+			if(in_the_loop())
+			{
+				global $post;
+				$the_id = $post->ID;
+				
+				if(property_exists($post, 'post_parent') && !has_term('', $term_name, $the_id))
+				{
+					$the_id = $post->post_parent;
+				}
+
+				$terms = get_the_terms($the_id, $term_name);
+			}
+			else
+			{
+				$terms = get_terms(array('taxonomy' => $term_name));
+			}
+
+			if ( ! empty( $terms ) && ! is_wp_error( $terms ) )
+			{
+				foreach ( $terms as $t )
+				{
+					$item = ($is_link) ? '<a href="'.esc_url(get_term_link($t)).'">'.esc_html($t->name).'</a>' : esc_html($t->name);
+					array_push($terms_array, $item);
+				}
+			}
+			
+			
+			if(count($terms_array) > 0)
+			{
+				if($label)
+				{
+					$output .= '<p class="strong">'.esc_html($label).'</p>';
+				}
+				
+				$icon = ($icon_class) ? '<i class="'.esc_attr($icon_class).'" ></i>' : '';
+				$output .= '<ul class="dy-list-'.esc_attr($term_name).' bottom-20 dy-list"><li>'.$icon.' ';
+				$output .= implode('</li><li>'.$icon.' ', $terms_array);
+				$output .= '</li></ul>';
+			}	
+			
+			$GLOBALS[$which_var] = $output;
+		}
+
+		return $output;
+	}
+
 }

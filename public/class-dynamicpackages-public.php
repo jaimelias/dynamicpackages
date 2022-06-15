@@ -752,70 +752,6 @@ class Dynamicpackages_Public {
 		return $output;
 	}
 
-	public function get_tax_list($term, $label, $is_link, $icon_class)
-	{
-		$output = '';
-		$which_var = 'dy_get_tax_list_'.$term;
-		global $$which_var;
-
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			global $post;
-			$the_id = $post->ID;
-			$header = '<p class="strong">'.esc_html($label).'</p>';
-			$list = '';
-
-			
-			if(property_exists($post, 'post_parent') && !has_term('', $term, $the_id))
-			{
-				$the_id = $post->post_parent;
-			}
-			
-			if($is_link)
-			{
-				$list = get_the_term_list($the_id, $term, $header . '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li><li><i class="'.esc_attr($icon_class).'" ></i> ', '</li></ul>');
-			}
-			else
-			{
-				$terms = get_the_terms($the_id, $term);
-				$terms_array = array();
-				
-				if($terms)
-				{
-					for($x = 0; $x < count($terms); $x++)
-					{
-						array_push($terms_array, $terms[$x]->name);
-					}			
-				}
-				
-				if(count($terms_array) > 0)
-				{
-					$list = $header;
-					$list .= '<ul class="dy-list-'.esc_attr($term).' bottom-20 dy-list"><li><i class="'.esc_attr($icon_class).'" ></i> ';
-					$list .= implode('</li><li><i class="'.esc_attr($icon_class).'" ></i> ', $terms_array);
-					$list .= '</li></ul>';
-				}			
-			}
-			
-			
-			if($list)
-			{
-				$output = $list;
-			}
-
-			$GLOBALS[$which_var] = $output;
-		}
-
-		return $output;
-	}
-
-
-
-
 	public function get_location_list()
 	{
 		$output = '';
@@ -828,7 +764,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = $this->get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'fas fa-map-marker');
+			$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'fas fa-map-marker');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -846,7 +782,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = $this->get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'fas fa-tags');
+			$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'fas fa-tags');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -866,7 +802,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = $this->get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'fas fa-exclamation-triangle');
+			$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'fas fa-exclamation-triangle');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -884,7 +820,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = $this->get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'fas fa-check');
+			$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'fas fa-check');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -905,7 +841,7 @@ class Dynamicpackages_Public {
 		}
 		else 
 		{
-			$output = $this->get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'fas fa-times');
+			$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'fas fa-times');
 			$GLOBALS[$which_var] = $output;
 		}
 
