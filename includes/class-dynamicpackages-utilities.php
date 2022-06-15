@@ -246,7 +246,7 @@ class dy_utilities {
 		return $total;
 	}
 
-	public static function subtotal($regular = null, $the_id)
+	public static function subtotal($regular = null, $the_id = 0)
 	{
 		$which_var = 'dy_subtotal_'.$regular.'_'.$the_id;
 		global $$which_var; 
@@ -293,6 +293,7 @@ class dy_utilities {
 
 	public static function show_duration($max = false)
 	{
+		$duration_label = '';
 		$the_id = get_the_ID();
 		$which_var = 'dy_show_duration_'.$the_id.'_'.$max;
 		global $$which_var;
@@ -341,10 +342,6 @@ class dy_utilities {
 				
 				$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
 				$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
-			}
-			else
-			{
-				$duration_label = '';
 			}
 			
 			$GLOBALS[$which_var] = $duration_label;
