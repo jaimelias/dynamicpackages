@@ -37,7 +37,6 @@ class Dynamicpackages_Tables{
 		{
 			$output = $$which_var;
 		}
-
 		else
 		{
 			if($this->has_children || $this->show_pricing === 1)
@@ -45,7 +44,7 @@ class Dynamicpackages_Tables{
 				return '';
 			}
 
-			$valid_table = true;
+			$valid_table = false;
 			$price_table = array();
 			$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
 			$rows = '';			
@@ -111,14 +110,20 @@ class Dynamicpackages_Tables{
 						$price = $price * $person;
 					}
 
+
 					array_push($price_table, $price);
+
+					if($price)
+					{
+						$valid_table = true;
+					}
 				}
 
 				$count_price_table = count($price_table);
 
-				if($count_price_table > 0)
+				if($count_price_table > 0 && $valid_table)
 				{
-					$min_price = min($price_table);
+					$min_price = min(array_filter($price_table));
 					$max_price = max($price_table);
 					$diff_percentage = ((($min_price - $max_price) / $max_price) * 100) * -1;
 
@@ -157,16 +162,23 @@ class Dynamicpackages_Tables{
 
 							if($person >= $this->min_persons && $person <= $this->max_persons)
 							{
+								$price = $price_table[$x];
+
 								if($count_price_table > 1)
 								{
 									$row .= '<td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
 								}
 								else
 								{
+									if($price === 0)
+									{
+										$price = $min_price;
+									}	
+									
 									$td = '<td colspan="2">';
 								}
 								
-								$row .= $td.esc_html($this->currency_symbol.number_format($price_table[$x], 2, '.', ',')).'</td>';
+								$row .= $td.esc_html($this->currency_symbol.number_format($price, 2, '.', ',')).'</td>';
 								$row .= '</tr>';
 								$rows .= $row;					
 							}
