@@ -40,14 +40,15 @@ class Dynamicpackages_Tables{
 
 		else
 		{
-			if($this->has_children || $this->show_pricing === 1 || ($this->package_type === 1 && $this->duration > 1))
+			if($this->has_children || $this->show_pricing === 1)
 			{
 				return '';
 			}
 
+			$valid_table = true;
 			$price_table = array();
 			$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
-			$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';			
+			$rows = '';			
 			$occupancy_chart = (is_array($this->occupancy_chart)) ? (array_key_exists('occupancy_chart', $this->occupancy_chart)) 
 			? $this->occupancy_chart['occupancy_chart'] 
 			: array() : array();	
@@ -66,6 +67,14 @@ class Dynamicpackages_Tables{
 						if($this->price_chart[$x][0] !== '')
 						{
 							$base_price = floatval($this->price_chart[$x][0]);
+
+							//this fix hides the table to avoid showing incorrect prices
+							// if the package is multi-day the table will attempt to calculate the price of one unit
+							// if there base price is > 0 then the system will calculate incorrectly adding up the base + occupancy
+							if($this->package_type === 1 && $base_price > 0)
+							{
+								break;
+							}
 						}						
 					}
 					
@@ -82,7 +91,6 @@ class Dynamicpackages_Tables{
 
 					if($this->package_type === 1)
 					{
-						//$occupancy_price = $this->duration * $occupancy_price;
 						$price =  $base_price + $occupancy_price;
 					}
 					else if($this->package_type === 0)
@@ -105,7 +113,6 @@ class Dynamicpackages_Tables{
 
 					array_push($price_table, $price);
 				}
-
 
 				$count_price_table = count($price_table);
 
@@ -132,7 +139,7 @@ class Dynamicpackages_Tables{
 						}
 
 						$row .= '<td>'.esc_html($price_label).'</td></tr>';
-						$output .= $row;
+						$rows .= $row;
 					}
 					else
 					{
@@ -161,15 +168,21 @@ class Dynamicpackages_Tables{
 								
 								$row .= $td.esc_html($this->currency_symbol.number_format($price_table[$x], 2, '.', ',')).'</td>';
 								$row .= '</tr>';
-								$output .= $row;					
+								$rows .= $row;					
 							}
 						}
 					}
+
+					if($rows)
+					{
+						$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';
+						$output .= $rows;
+						$output .= '</tbody>';
+						$output .= '</table></div>';
+					}
+
 				}
 			}
-				
-			$output .= '</tbody>';
-			$output .= '</table></div>';
 
 			$GLOBALS[$which_var] = $output;
 		}
