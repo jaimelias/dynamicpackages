@@ -46,7 +46,7 @@ class Dynamicpackages_Tables{
 
 			$valid_table = false;
 			$price_table = array();
-			$price_label = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
+			$price_title = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
 			$rows = '';			
 			$occupancy_chart = (is_array($this->occupancy_chart)) ? (array_key_exists('occupancy_chart', $this->occupancy_chart)) 
 			? $this->occupancy_chart['occupancy_chart'] 
@@ -187,7 +187,7 @@ class Dynamicpackages_Tables{
 
 					if($rows)
 					{
-						$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_label).'</th></tr></thead><tbody class="small">';
+						$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_title).'</th></tr></thead><tbody class="small">';
 						$output .= $rows;
 						$output .= '</tbody>';
 						$output .= '</table></div>';
