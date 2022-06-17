@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2022-06-17 15:25+0000\n"
+"PO-Revision-Date: 2022-06-17 15:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -508,7 +508,7 @@ msgstr "Dirección de partida"
 
 #: public/class-dynamicpackages-forms.php:121
 msgid "Departure Date"
-msgstr "Fecha de partida"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:349
 #: admin/class-dynamicpackages-metaboxes.php:365
@@ -517,7 +517,7 @@ msgstr "Hora de partida"
 
 #: public/class-dynamicpackages-forms.php:153
 msgid "Departure Time"
-msgstr "Hora de partida"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:433
 #: gateways/partials/checkout-page.php:54
@@ -1584,7 +1584,7 @@ msgstr "Regreso"
 
 #: public/class-dynamicpackages-forms.php:162
 msgid "Return Time"
-msgstr "Hora de regreso"
+msgstr ""
 
 #: public/partials/reviews-template.php:7
 msgid "Review(s)"

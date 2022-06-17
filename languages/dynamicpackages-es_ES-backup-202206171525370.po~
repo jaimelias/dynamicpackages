@@ -508,7 +508,7 @@ msgstr "Dirección de partida"
 
 #: public/class-dynamicpackages-forms.php:121
 msgid "Departure Date"
-msgstr "Fecha de partida"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:349
 #: admin/class-dynamicpackages-metaboxes.php:365
@@ -517,7 +517,7 @@ msgstr "Hora de partida"
 
 #: public/class-dynamicpackages-forms.php:153
 msgid "Departure Time"
-msgstr "Hora de partida"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:433
 #: gateways/partials/checkout-page.php:54
