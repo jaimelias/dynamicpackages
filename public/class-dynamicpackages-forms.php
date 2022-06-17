@@ -118,7 +118,7 @@ class Dynamicpackages_Forms
 		$length_unit = package_field('package_length_unit');
 		$is_transport = dy_validators::is_package_transport();
 		$date_label = ($is_transport) 
-			? __('Date of Departure', 'dynamicpackages') . ' &raquo; ' 
+			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 		
 		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
@@ -150,14 +150,17 @@ class Dynamicpackages_Forms
 		
 		if($by_hour == 1)
 		{
-			$form .= '<label>'.esc_html(__('Hour', 'dynamicpackages')).'</label>';
+			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' »</label>';
 			$form .= '<p><input type="text" name="booking_hour"  class="required dy_time_picker" /></p>';	
 		}
 		
 		if($is_transport)
 		{
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
-			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';	
+			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
+			
+			$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo; </label>';
+			$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';		
 		}
 		
 		

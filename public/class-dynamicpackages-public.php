@@ -1281,7 +1281,7 @@ class Dynamicpackages_Public {
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_end_hour')),
-			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. package_field('package_return_hour')),
+			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. dy_utilities::return_hour()),
 			'return_address' => array('clock', package_field('package_return_address'))
 			
 		);
