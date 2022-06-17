@@ -674,17 +674,17 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$price_type = package_field('package_fixed_price');
-			$package_type = package_field('package_package_type');
-			$duration = package_field('package_duration');
-			$duration_unit = package_field('package_length_unit');
+			$price_type = intval(package_field('package_fixed_price'));
+			$package_type = intval(package_field('package_package_type'));
+			$duration = intval(package_field('package_duration'));
+			$duration_unit = intval(package_field('package_length_unit'));
 			$output = '';
 			
-			if(intval($price_type) == 0)
+			if($price_type === 0)
 			{
 				$output = __('Per Person', 'dynamicpackages').' ';
 			}
-			if($package_type == 1)
+			if($package_type === 1)
 			{
 				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 			}
