@@ -159,8 +159,11 @@ class Dynamicpackages_Forms
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
 			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
 			
-			$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo; </label>';
-			$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';		
+			if($by_hour == 1)
+			{
+				$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo; </label>';
+				$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';
+			}		
 		}
 		
 		
