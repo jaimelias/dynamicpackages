@@ -161,7 +161,7 @@
 				$filter_week = array(
 					'key' => 'package_date',
 					'type' => 'DATE',
-					'value' => '$week',
+					'value' => $week,
 					'compare' => '<='
 				);
 
