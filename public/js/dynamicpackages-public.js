@@ -105,8 +105,6 @@ const selectGateway = () => {
 				
 				jQuery(networkSelect).addClass('required');
 				jQuery(cryptoForm).removeClass('hidden');
-				
-
 
 				networks = JSON.parse(networks);
 
@@ -660,13 +658,13 @@ const datePicker = async () => {
 				//stop tomorrow bookings
 				if(args.min === 1)
 				{
-					if(hour >= 15)
+					if(hour >= 17)
 					{
 						args.min = 2;
 					}
 					if(weekDay === 0 || weekDay === 6)
 					{
-						if(hour >= 13)
+						if(hour >= 16)
 						{
 							args.min = 2;
 						}
