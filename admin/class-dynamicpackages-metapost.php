@@ -102,7 +102,7 @@ class Dynamicpackages_Metapost{
 		{
 			update_post_meta( $post_id, 'package_event_date', esc_attr($_POST['package_event_date']));
 			
-			if($_POST['package_event_date'] != '')
+			if(!empty($_POST['package_event_date']))
 			{
 				update_post_meta($post_id, 'package_date', esc_attr($_POST['package_event_date']));
 			}

@@ -81,7 +81,7 @@ class bank_transfer{
 		}
 		else
 		{
-			if($this->number !== '')
+			if(!empty($this->number))
 			{
 				$output = true;
 			}

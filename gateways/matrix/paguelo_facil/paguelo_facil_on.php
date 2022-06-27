@@ -272,7 +272,7 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if($this->cclw !== '')
+			if(!empty($this->cclw))
 			{
 				$output = true;
 			}

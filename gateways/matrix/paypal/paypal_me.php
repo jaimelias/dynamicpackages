@@ -102,7 +102,7 @@ class paypal_me{
 		}
 		else
 		{
-			if($this->username != '')
+			if(!empty($this->username))
 			{
 				$output = true;
 			}

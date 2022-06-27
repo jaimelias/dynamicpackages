@@ -468,7 +468,7 @@ class Parsedown
             'text' => '',
         );
 
-        if ($infostring !== '')
+        if (!empty($infostring))
         {
             /**
              * https://www.w3.org/TR/2011/WD-html5-20110525/elements.html#classes

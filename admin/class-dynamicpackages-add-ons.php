@@ -252,7 +252,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 				
 				if(array_key_exists('description', $args[$k]))
 				{
-					if($args[$k]['description'] != '')
+					if(!empty($args[$k]['description']))
 					{
 						$field .= '<br/><p class="description">'.esc_html($args[$k]['description']).'</p>';
 					}
@@ -344,7 +344,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					
 					$label .= ' <br/><small class="semibold">'.esc_html(dy_utilities::currency_symbol().number_format($price, 2, '.', ',').' '.__('per person', 'dynamicpackages')).'</small>';
 
-					if($description != '')
+					if(!empty($description))
 					{
 						$label .= '<br/><small>'.esc_html($description).'</small>';
 					}

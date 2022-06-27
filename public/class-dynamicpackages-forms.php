@@ -79,7 +79,7 @@ class Dynamicpackages_Forms
 		
 		if(isset($_GET['sort']))
 		{
-			if($_GET['sort'] != '')
+			if(!empty($_GET['sort']))
 			{
 				$sort = sanitize_text_field($_GET['sort']);
 			}
@@ -138,7 +138,7 @@ class Dynamicpackages_Forms
 		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
 		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);			
 
-		if(package_field('package_event_date') == '')
+		if(empty(package_field('package_event_date')))
 		{
 			$form .= '<label>'.esc_html($date_label).'</label>';
 			$form .= '<p><input type="text" name="booking_date" class="required dy_date_picker" placeholder="Loading..." disabled/></p>';			
@@ -217,7 +217,7 @@ class Dynamicpackages_Forms
 			
 			if(isset($_GET['coupon']))
 			{
-				if($_GET['coupon'] != '')
+				if(!empty($_GET['coupon']))
 				{
 					$get_coupon = sanitize_text_field($_GET['coupon']);
 					$coupon_hidden = '';

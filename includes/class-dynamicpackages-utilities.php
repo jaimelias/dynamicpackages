@@ -304,12 +304,12 @@ class dy_utilities {
 		}
 		else
 		{
-			$duration = package_field('package_duration');
-			$duration_label = package_field('package_duration');
+			$duration = intval(package_field('package_duration'));
+			$duration_label = floatval(package_field('package_duration'));
 			$duration_unit = intval(package_field('package_length_unit'));
-			$duration_max = floatval('package_duration_max');	
+			$duration_max = floatval(package_field('package_duration_max'));	
 			
-			if($duration !== '' && $duration_unit !== '')
+			if(!empty($duration) && !empty($duration_unit))
 			{
 				$min_nights = self::get_min_nights();
 
@@ -428,11 +428,11 @@ class dy_utilities {
 				: null 
 				: null;
 			$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
-			$duration_unit = package_field('package_length_unit');
-			$duration_max = package_field('package_duration_max');
-			$package_type = package_field('package_package_type');
+			$duration_unit = intval(package_field('package_length_unit'));
+			$duration_max = intval(package_field('package_duration_max'));
+			$package_type = intval(package_field('package_package_type'));
 					
-			for($t = 0; $t < intval($max); $t++)
+			for($t = 0; $t < $max; $t++)
 			{
 				if($t >= ($min-1))
 				{
@@ -443,7 +443,7 @@ class dy_utilities {
 					{
 						if(isset($price_chart[$t][0]))
 						{
-							if($price_chart[$t][0] != '')
+							if(!empty($price_chart[$t][0]))
 							{
 								$base_price = floatval($price_chart[$t][0]);
 							}
@@ -453,12 +453,12 @@ class dy_utilities {
 					{
 						if(isset($occupancy_chart[$t][0]))
 						{
-							if($occupancy_chart[$t][0] != '')
+							if(!empty($occupancy_chart[$t][0]))
 							{
 								
 								$occupancy_price = floatval($occupancy_chart[$t][0]);
 								
-								if(intval($duration_max) == 0 && $package_type != 1)
+								if($duration_max === 0 && $package_type !== 1)
 								{
 									$occupancy_price = $occupancy_price * $duration;
 								}
@@ -466,7 +466,7 @@ class dy_utilities {
 						}
 					}
 					
-					if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type == 1)
+					if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 1)
 					{
 						$price = ($base_price + ($occupancy_price * $duration)) / $duration;
 					}
@@ -575,7 +575,7 @@ class dy_utilities {
 	
 	public static function get_occupancy_chart($the_id = '')
 	{
-		if($the_id == '')
+		if($the_id === '')
 		{
 			$the_id = get_the_ID();
 		}		
@@ -830,7 +830,7 @@ class dy_utilities {
 					
 					for($s = 0; $s < count($seasons_array); $s++)
 					{
-						if(array_key_exists($s, $seasons_array) && $occupancy_chart != '')
+						if(array_key_exists($s, $seasons_array) && !empty($occupancy_chart))
 						{
 							if(array_key_exists($seasons_array[$s], $occupancy_chart))
 							{
@@ -846,7 +846,7 @@ class dy_utilities {
 									{
 										if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
 										{	
-											if($price_row[$a][0] != '')
+											if(!empty($price_row[$a][0]))
 											{
 												$price_col = 0;
 												
@@ -860,7 +860,7 @@ class dy_utilities {
 												//total children discounts
 												if(isset($_REQUEST['pax_discount']) && $type == 'discount')
 												{
-													if($_REQUEST['pax_discount'] > 0 && $price_row[$a][1] != '')
+													if($_REQUEST['pax_discount'] > 0 && !empty($price_row[$a][1]))
 													{
 														$price_col = floatval($price_row[$a][1]) * $occupancy_surcharge_percent;
 														$sum = $sum + $price_col;
@@ -897,7 +897,7 @@ class dy_utilities {
 				{
 					if($pax_regular == ($x+1))
 					{
-						if($price_chart[$x][0] != '')
+						if(!empty($price_chart[$x][0]))
 						{
 							$base_price = floatval($price_chart[$x][0]);
 						}
@@ -953,7 +953,7 @@ class dy_utilities {
 							{
 								$base_price = 0;
 								
-								if($price_chart[$x][1] != '')
+								if(!empty($price_chart[$x][1]))
 								{
 									$base_price = floatval($price_chart[$x][1]);
 								}
@@ -1100,42 +1100,41 @@ class dy_utilities {
 	
 	public static function hour()
 	{
-		$hour = null;
+		$output = null;
+		$field = package_field('package_start_hour' );
 
-		if(package_field('package_start_hour' ))
+		if($field)
 		{
-			if(package_field('package_start_hour' ) !== '')
+			if(!empty($field))
 			{
-				$hour = package_field('package_start_hour');
+				$output = $field;
 			}
 		}
 		
 		if(isset($_REQUEST['booking_hour']))
 		{
-			$hour = sanitize_text_field($_REQUEST['booking_hour']);
+			$output = sanitize_text_field($_REQUEST['booking_hour']);
 		}
 		
-		return $hour;
+		return $output;
 	}	
 	
 	public static function return_hour()
 	{
-		$hour = null;
+		$output = null;
+		$field = package_field('package_return_hour' );
 
-		if(package_field('package_return_hour' ))
+		if(!empty($field))
 		{
-			if(package_field('package_return_hour' ) != '')
-			{
-				$hour = package_field('package_return_hour');
-			}
+			$output = $field;
 		}
 		
 		if(isset($_REQUEST['return_hour']))
 		{
-			$hour = sanitize_text_field($_REQUEST['return_hour']);
+			$output = sanitize_text_field($_REQUEST['return_hour']);
 		}
 		
-		return $hour;
+		return $output;
 	}
 
 
@@ -1334,7 +1333,7 @@ class dy_utilities {
 
 		$cfp_key = get_option('cfp_key');
 		
-		if($cfp_key !== '')
+		if(!empty($cfp_key))
 		{
 
 			if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
@@ -1470,7 +1469,7 @@ class dy_utilities {
 			}
 		}
 		
-		if(package_field('package_event_date') != '')
+		if(!empty(package_field('package_event_date')))
 		{
 			$output = package_field('package_event_date');
 		}
@@ -1519,7 +1518,7 @@ class dy_utilities {
 				}
 			}
 			
-			if($output != '')
+			if(!empty($output))
 			{
 				update_post_meta($the_id, 'package_date', $output);
 			}	

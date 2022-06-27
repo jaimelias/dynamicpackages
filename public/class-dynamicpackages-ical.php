@@ -21,7 +21,7 @@ class Dynamicpackages_Ical
 		}
 		else
 		{
-			if(isset($_GET['ical']) && is_singular('packages') && package_field('package_start_hour') != '')
+			if(isset($_GET['ical']) && is_singular('packages') && !empty(package_field('package_start_hour')))
 			{
 				$output = true;
 				$GLOBALS[$which_var] = $output;
@@ -71,7 +71,7 @@ class Dynamicpackages_Ical
 				
 				$categories = dy_utilities::implode_taxo_names('package_category');
 				
-				if($categories != '')
+				if(!empty($categories))
 				{
 					$event_item['CATEGORIES'] = esc_html($categories);
 				}
@@ -102,7 +102,7 @@ class Dynamicpackages_Ical
 			{
 				$label = $k;
 				
-				if($timezone != '')
+				if(!empty($timezone))
 				{
 					if($k == 'DTSTART' || $k == 'DTEND' || $k == 'DTSTAMP')
 					{
@@ -156,7 +156,7 @@ class Dynamicpackages_Ical
 	
 	public function get_from_to_range()
 	{
-		if(package_field('package_event_date') != '')
+		if(!empty(package_field('package_event_date')))
 		{
 			$new_range = array(package_field('package_event_date'));
 		}

@@ -81,7 +81,7 @@ class yappy_direct{
 		}
 		else
 		{
-			if($this->number != '' || $this->business != '')
+			if(!empty($this->number) || !empty($this->business))
 			{
 				$output = true;
 			}
@@ -170,9 +170,9 @@ class yappy_direct{
 	{
 		$payment_amount = dy_utilities::payment_amount();
 		$currency_symbol = dy_utilities::currency_symbol();
-		$destination = ($this->business != '') ? strtoupper($this->business) : $this->number;
+		$destination = (!empty($this->business)) ? strtoupper($this->business) : $this->number;
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
-		$last = ($this->business != '')? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');
+		$last = (!empty($this->business)) ? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');
 		$amount = $currency_symbol.number_format($payment_amount, 2, '.', ',');
 		$label = __('payment', 'dynamicpackages');
 		

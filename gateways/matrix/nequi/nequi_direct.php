@@ -79,7 +79,7 @@ class nequi_direct{
 		}
 		else
 		{
-			if($this->number !== '')
+			if(!empty($this->number))
 			{
 				$output = true;
 			}

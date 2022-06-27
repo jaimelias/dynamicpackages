@@ -40,15 +40,15 @@ class dy_Add_To_Calendar
 				$hour = $_REQUEST['booking_hour'];
 			}
 
-			if(package_field('package_event_date') != '')
+			if(!empty(package_field('package_event_date')))
 			{
 				$date = package_field('package_event_date');
 			}
-			if(package_field('package_start_hour') != '')
+			if(!empty(package_field('package_start_hour')))
 			{
 				$hour = package_field('package_start_hour');
 			}	
-			if($hour != '' && $date != '')
+			if(!empty($hour) && !empty($date))
 			{
 				$output = true;
 			}			

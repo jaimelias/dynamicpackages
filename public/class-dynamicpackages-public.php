@@ -279,9 +279,11 @@ class Dynamicpackages_Public {
 							$subpackage_name .= '_'.pll_get_post_language($post->ID);
 						}
 						
-						if(package_field($subpackage_name) != '')
+						$subpackage = package_field($subpackage_name);
+
+						if(!empty($subpackage))
 						{
-							$content = '<h2>'.esc_html(package_field($subpackage_name)).'</h2>' . $content;
+							$content = '<h2>'.esc_html($subpackage).'</h2>' . $content;
 						}
 						
 						$parent_content = do_blocks(get_post($post->post_parent)->post_content);
@@ -316,12 +318,12 @@ class Dynamicpackages_Public {
 			
 			if($by_hour === 1)
 			{				
-				if($min_hour !== '')
+				if(!empty($min_hour))
 				{
 					$min_hour = strtotime($min_hour);
 					$output[] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
 				}
-				if($max_hour !== '')
+				if(!empty($max_hour))
 				{
 					$max_hour = strtotime($max_hour);
 					$output[] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
@@ -418,7 +420,7 @@ class Dynamicpackages_Public {
 					{
 						$keywords_param = sanitize_text_field($_GET['keywords']);
 
-						if($keywords_param !== '')
+						if(!empty($keywords_param))
 						{
 							$keywords = strtolower($keywords_param);
 							$keywords = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $keywords);
@@ -432,7 +434,7 @@ class Dynamicpackages_Public {
 					{
 						$category_param = sanitize_text_field($_GET['category']);
 
-						if($category_param !== 'any' && $category_param !== '')
+						if($category_param !== 'any' && !empty($category_param))
 						{
 							$category = get_term_by('slug', $category_param, 'package_category');
 							
@@ -447,7 +449,7 @@ class Dynamicpackages_Public {
 					{
 						$location_param = sanitize_text_field($_GET['location']);
 
-						if($location_param !== 'any' && $location_param !== '')
+						if($location_param !== 'any' && !empty($location_param))
 						{
 							$location = get_term_by('slug', $location_param, 'package_location');
 							
@@ -563,7 +565,7 @@ class Dynamicpackages_Public {
 						{
 							$keywords_param = sanitize_text_field($_GET['keywords']);
 
-							if($keywords_param != '')
+							if(!empty($keywords_param))
 							{
 								$keywords = strtolower($keywords_param);
 								$keywords = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $keywords);
@@ -577,7 +579,7 @@ class Dynamicpackages_Public {
 						{
 							$category_param = sanitize_text_field($_GET['category']);
 
-							if($category_param !== 'any' && $category_param !== '')
+							if($category_param !== 'any' && !empty($category_param))
 							{
 								$category = get_term_by('slug', $category_param, 'package_category');
 								
@@ -592,7 +594,7 @@ class Dynamicpackages_Public {
 						{
 							$location_param = sanitize_text_field($_GET['location']);
 
-							if($location_param !== 'any' && $location_param !== '')
+							if($location_param !== 'any' && !empty($location_param))
 							{
 								$location = get_term_by('slug', $location_param, 'package_location');
 								
@@ -710,15 +712,15 @@ class Dynamicpackages_Public {
 	public static function show_min_duration()
 	{
 		
-		$tp_duration = package_field('package_duration');
-		$tp_duration_unit = package_field('package_length_unit');
-		$tp_duration_max = package_field('package_duration_max');		
+		$duration = package_field('package_duration');
+		$duration_unit = package_field('package_length_unit');
+		$duration_max = package_field('package_duration_max');		
 		
-		if(dy_utilities::increase_by_hour() ||dy_utilities::increase_by_day() || intval($tp_duration_unit) == 2 || intval($tp_duration_unit) == 3)
+		if(dy_utilities::increase_by_hour() ||dy_utilities::increase_by_day() || intval($duration_unit) == 2 || intval($duration_unit) == 3)
 		{
 			if(dy_utilities::get_min_nights() != null)
 			{
-				$tp_duration = dy_utilities::get_min_nights();
+				$duration = dy_utilities::get_min_nights();
 			}
 		}
 		
@@ -726,23 +728,22 @@ class Dynamicpackages_Public {
 		
 		$labels_plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));		
 		
-		if($tp_duration != '' && $tp_duration_unit != '')
+		if(!empty($duration) && !empty($duration_unit))
 		{
-			
-			if($tp_duration == 1)
+			if($duration == 1)
 			{
-				if($tp_duration_max > $tp_duration)
+				if($duration_max > $duration)
 				{
-					$output = $tp_duration.' '.$labels_plural[$tp_duration_unit];
+					$output = $duration.' '.$labels_plural[$duration_unit];
 				}
 				else
 				{
-					$output = $tp_duration.' '.$labels_singular[$tp_duration_unit];
+					$output = $duration.' '.$labels_singular[$duration_unit];
 				}
 			}
 			else
 			{
-				$output = $tp_duration.' '.$labels_plural[$tp_duration_unit];
+				$output = $duration.' '.$labels_plural[$duration_unit];
 			}			
 		}
 		else
@@ -855,22 +856,6 @@ class Dynamicpackages_Public {
 			$query->set( 'posts_per_page', 1 );
 		}
 	}
-		
-	public static function date()
-	{
-		$date = null;
-		
-		if(isset($_REQUEST['booking_date']))
-		{
-			$date = sanitize_text_field($_REQUEST['booking_date']);
-		}
-		if(package_field('package_event_date') != '')
-		{
-			$date = package_field('package_event_date');
-		}
-		
-		return $date;
-	}	
 	
 	public static function description()
 	{	
@@ -1026,7 +1011,7 @@ class Dynamicpackages_Public {
 						{
 							if(property_exists($item, 'post_name'))
 							{
-								if($item->post_name != '')
+								if(!empty($item->post_name))
 								{
 									$has_rows = true;
 									$starting_at = intval(dy_utilities::starting_at($item->ID));
@@ -1040,7 +1025,7 @@ class Dynamicpackages_Public {
 									
 									$subpackage_name = package_field($subpackage_name, $item->ID);
 									
-									if($subpackage_name == '')
+									if($subpackage_name === '')
 									{
 										$subpackage_name = $item->post_title;
 									}
@@ -1390,7 +1375,7 @@ class Dynamicpackages_Public {
 	{
 		$output = '';
 		
-		if(package_field('package_event_date') != '')
+		if(!empty(package_field('package_event_date')))
 		{
 			$date = strtotime(package_field('package_date'));
 			$today = strtotime('today');
@@ -1474,7 +1459,7 @@ class Dynamicpackages_Public {
 							$expiration = '';
 							$valid = true;
 							
-							if($coupons[$x][2] != '')
+							if(!empty($coupons[$x][2]))
 							{
 								$expiration = new DateTime($coupons[$x][2]);
 								$expiration->setTime(0,0,0);
@@ -1503,7 +1488,7 @@ class Dynamicpackages_Public {
 									}
 								}
 								
-								if($expiration != '')
+								if(!empty($expiration))
 								{
 									$label .= '<br/><small>'.esc_html(__('Offer valid until', 'dynamicpackages'));
 									$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.</small>';
@@ -1591,11 +1576,11 @@ class Dynamicpackages_Public {
 			$package_start_address = package_field('package_start_address');
 			$package_start_hour = package_field('package_start_hour');
 
-			if($package_start_address !== '' && $package_start_hour !== '')
+			if(!empty($package_start_address) && !empty($package_start_hour))
 			{
 				$package_event_date = package_field('package_event_date');
 				
-				if($package_event_date !== '')
+				if(!empty($package_event_date))
 				{
 					$today = strtotime(dy_date('Y-m-d'));
 					$event_date = strtotime(dy_date($package_event_date));

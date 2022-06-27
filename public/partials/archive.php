@@ -60,7 +60,7 @@
 			
 		if(isset($_GET['keywords']))
 		{
-			if($_GET['keywords'] != '')
+			if(!empty($_GET['keywords']))
 			{
 				$args['search_tax_query'] =  true;
 				$args['s'] =  sanitize_text_field($_GET['keywords']);
@@ -261,7 +261,7 @@ else
 			// IT UPDATES THE EVENT DATE FOR QUERY PURPOSES
 			dy_utilities::event_date_update($post->ID);
 			$package_code = package_field('package_trip_code');
-			$package_code = ($package_code !== '') ? $package_code : 'ID'.$post->ID;
+			$package_code = (!empty($package_code)) ? $package_code : 'ID'.$post->ID;
 		?>
 
 			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
@@ -288,7 +288,7 @@ else
 							
 						<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
 						
-							<?php if($package_code != ''): ?>
+							<?php if(!empty($package_code)): ?>
 								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html($package_code); ?></div>
 							<?php endif; ?>								
 						

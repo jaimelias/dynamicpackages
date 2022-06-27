@@ -95,7 +95,7 @@ class cuanto{
 		}
 		else
 		{
-			if($this->username !== '')
+			if(!empty($this->username))
 			{
 				$output = true;
 			}

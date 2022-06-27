@@ -62,7 +62,7 @@ class dy_validators
 				
 				if($booking_date)
 				{
-					if($event_date == '')
+					if(empty($event_date))
 					{
 						if($booking_date >= $min_range && $booking_date <= $max_range)
 						{
@@ -560,7 +560,7 @@ class dy_validators
 						{
 							$coupons = $coupons['coupons'][0];
 							
-							if(($coupons[0] !== '' && $coupons[1] !== '') || ($coupons[0] !== true && $coupons[1] !== true))
+							if(!empty($coupons[0]) && !empty($coupons[1]))
 							{
 								$output = true;
 							}						
@@ -611,7 +611,7 @@ class dy_validators
 		{
 			if(self::has_coupon() && isset($_REQUEST['booking_coupon']))
 			{
-				if($_REQUEST['booking_coupon'] !== '')
+				if(!empty($_REQUEST['booking_coupon']))
 				{
 					$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
 					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
@@ -630,7 +630,7 @@ class dy_validators
 						$valid_expiration = false;
 						$valid_duration = false;
 
-						if($expiration == '')
+						if(empty($expiration))
 						{
 							$valid_expiration = true;
 						}
@@ -726,7 +726,7 @@ class dy_validators
 			{
 				$package_location = sanitize_text_field($_GET['location']);
 				
-				if($package_location !== '')
+				if(!empty($package_location))
 				{
 					$location = get_term_by('slug', $package_location, 'package_location');
 				}
@@ -736,7 +736,7 @@ class dy_validators
 			{
 				$package_category = sanitize_text_field($_GET['category']);
 				
-				if($package_category !== '')
+				if(!empty($package_category))
 				{
 					$category = get_term_by('slug', $package_category, 'package_category');
 				}				
@@ -754,14 +754,14 @@ class dy_validators
 
 			if(isset($_GET['keywords']))
 			{
-				if($_GET['keywords'] !== '')
+				if(!empty($_GET['keywords']))
 				{
 					$search = true;
 				}
 			}
 					
 
-			if($location !== '' || $category !== '' || $sort_by !== '' || $search !== '')
+			if(!empty($location) || !empty($category) || !empty($sort_by) || !empty($search))
 			{
 				remove_action('wp_head', 'rel_canonical');
 				$output = true;
@@ -922,7 +922,7 @@ class dy_validators
 		$output = false;
 		$the_id = $id;
 		
-		if($the_id == '')
+		if($the_id === '')
 		{
 			$the_id = get_the_ID();
 		}

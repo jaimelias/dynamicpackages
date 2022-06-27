@@ -93,7 +93,7 @@ class wire_transfer{
 		}
 		else
 		{
-			if($this->b_account_number !== '')
+			if(!empty($this->b_account_number))
 			{
 				$output = true;
 			}
@@ -203,64 +203,64 @@ class wire_transfer{
 	{
 		$output = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
 		
-		if($this->b_bank != '')
+		if(!empty($this->b_bank))
 		{
 			$output .= esc_html(__('Beneficiary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank).'</strong><br/>';
 		}
 		
-		if($this->b_bank_address != '')
+		if(!empty($this->b_bank_address))
 		{
 			$output .= esc_html(__('Beneficiary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_address).'</strong><br/>';
 		}
 
-		if($this->b_bank_swift != '')
+		if(!empty($this->b_bank_swift))
 		{
 			$output .= esc_html(__('Beneficiary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_swift).'</strong><br/>';
 		}		
 		
-		if($this->b_account_name != '')
+		if(!empty($this->b_account_name))
 		{
 			$output .= esc_html(__('Beneficiary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_name).'</strong><br/>';
 		}		
 		
-		if($this->b_account_number != '')
+		if(!empty($this->b_account_number))
 		{
 			$output .= esc_html(__('Beneficiary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->b_account_number).'</strong><br/>';
 		}
 		
-		if($this->b_bank_iban != '')
+		if(!empty($this->b_bank_iban))
 		{
 			$output .= esc_html(__('Beneficiary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->b_bank_iban).'</strong><br/>';
 		}		
 		
 		$output .= '<br/><strong>'.esc_html(__('Intermediary Bank', 'dynamicpackages')).'</strong><br/>';
 		
-		if($this->i_bank != '')
+		if(!empty($this->i_bank))
 		{
 			$output .= esc_html(__('Intermediary Bank Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank).'</strong><br/>';
 		}
 		
-		if($this->i_bank_address != '')
+		if(!empty($this->i_bank_address))
 		{
 			$output .= esc_html(__('Intermediary Bank Address', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_address).'</strong><br/>';
 		}
 
-		if($this->i_bank_swift != '')
+		if(!empty($this->i_bank_swift))
 		{
 			$output .= esc_html(__('Intermediary Bank Swift', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_swift).'</strong><br/>';
 		}		
 		
-		if($this->i_account_name != '')
+		if(!empty($this->i_account_name))
 		{
 			$output .= esc_html(__('Intermediary Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_name).'</strong><br/>';
 		}		
 		
-		if($this->i_account_number != '')
+		if(!empty($this->i_account_number))
 		{
 			$output .= esc_html(__('Intermediary Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->i_account_number).'</strong><br/>';
 		}
 		
-		if($this->i_bank_iban != '')
+		if(!empty($this->i_bank_iban))
 		{
 			$output .= esc_html(__('Intermediary Account IBAN', 'dynamicpackages')).': <strong>'.esc_html($this->i_bank_iban).'</strong><br/>';
 		}

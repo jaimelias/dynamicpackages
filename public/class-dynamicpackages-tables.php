@@ -63,7 +63,7 @@ class Dynamicpackages_Tables{
 					
 					if(isset($this->price_chart[$x][0]))
 					{
-						if($this->price_chart[$x][0] !== '')
+						if(!empty($this->price_chart[$x][0]))
 						{
 							$base_price = floatval($this->price_chart[$x][0]);
 

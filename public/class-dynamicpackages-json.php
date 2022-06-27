@@ -282,7 +282,7 @@ class Dynamicpackages_JSON
 		$disable['disable'] = array();
 		$days = dy_utilities::get_week_days_abbr();
 		
-		if(package_field('package_event_date') === '')
+		if(empty(package_field('package_event_date')))
 		{
 			for($x = 0; $x < count($days); $x++)
 			{

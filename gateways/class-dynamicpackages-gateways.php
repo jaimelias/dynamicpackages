@@ -461,7 +461,7 @@ class Dynamicpackages_Gateways
 	{
 		if(isset($_GET['booking_coupon']) && is_booking_page())
 		{
-			if($_GET['booking_coupon'] != '')
+			if(!empty($_GET['booking_coupon']))
 			{
 				if(dy_validators::validate_coupon())
 				{

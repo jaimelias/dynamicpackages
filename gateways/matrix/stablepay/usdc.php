@@ -69,7 +69,7 @@ class usdc{
 
 		foreach($this->all_networks as $key => $value)
 		{
-			if(get_option($this->id . '_' . $key) !== '')
+			if(!empty(get_option($this->id . '_' . $key)))
 			{
 				$output[$key] = $value;
 			}
@@ -144,7 +144,7 @@ class usdc{
 
 			foreach($this->all_networks as $key => $value)
 			{
-				if(get_option($this->id . '_' . $key) !== '')
+				if(!empty(get_option($this->id . '_' . $key)))
 				{
 					$active_networks = true;
 					break;
