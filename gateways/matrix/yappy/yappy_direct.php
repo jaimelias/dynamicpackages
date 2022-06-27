@@ -21,7 +21,7 @@ class yappy_direct{
 			
 			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-			add_filter('wp_headers', array(&$this, 'send_data'));
+			add_filter('wp', array(&$this, 'send_data'));
 			add_filter('gateway_buttons', array(&$this, 'button'), 3);
 			add_filter('list_gateways', array(&$this, 'add_gateway'), 3);
 			add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
@@ -44,7 +44,7 @@ class yappy_direct{
 	}
 	
 	public function send_data()
-	{		
+	{
 		if(dy_validators::validate_request() && $this->is_valid_request())
 		{
 			global $dy_valid_recaptcha;
@@ -131,7 +131,7 @@ class yappy_direct{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					

@@ -202,7 +202,7 @@ class usdt{
 			{
 				$network = sanitize_text_field($_POST['dy_network']);
 
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
+				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
 				{
 					$output = true;
 				}

@@ -12,7 +12,7 @@ class Dynamicpackages_Actions{
     public function init()
     {
 		add_action('init', array(&$this, 'args'));
-        add_filter('wp_headers', array(&$this, 'send_data'));
+        add_filter('wp', array(&$this, 'send_data'), 100);
         add_filter('the_content', array(&$this, 'the_content'), 101);
         add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 101);
         add_filter( 'the_title', array(&$this, 'the_title'), 101);
@@ -74,8 +74,9 @@ class Dynamicpackages_Actions{
 				setcookie($add_ons_package_id, $add_ons, time() + 3600);
 			}
 
-			$this->send_provider_email();
+			
 			$this->send_email();
+			$this->send_provider_email();
 
 			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 			$provider_name = package_field('package_provider_name');

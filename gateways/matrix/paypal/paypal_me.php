@@ -152,7 +152,7 @@ class paypal_me{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 					

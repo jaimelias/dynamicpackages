@@ -49,6 +49,8 @@ class paguelo_facil_on{
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
+		$this->currency_symbol = dy_utilities::currency_symbol();
+		$this->website_name = get_bloginfo('name');
 	}
 	
 	public function checkout()
@@ -134,8 +136,8 @@ class paguelo_facil_on{
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
-			add_filter('dy_email_intro', array(&$this, 'subject'));
 			add_filter('dy_email_subject', array(&$this, 'subject'));
+			add_filter('dy_email_intro', array(&$this, 'intro'));
 			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
 			
@@ -194,18 +196,47 @@ class paguelo_facil_on{
 	{		
 		if(isset($this->success))
 		{
+			$first_name = sanitize_text_field($_POST['first_name']);
+			$title = sanitize_text_field($_POST['title']);
+			$payment_amount = dy_utilities::payment_amount();
+			
 			if($this->success === 2)
 			{
 				$payment = (dy_validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount(), $_POST['title']);
+				$output = '✔️ ' . sprintf(__('%s, Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $first_name, $payment, $this->currency_symbol, $payment_amount, $title);
 			}
 			else if($this->success === 1)
 			{
-				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('%s, Your Payment to %s for %s%s was Declined', 'dynamicpackages'), $first_name, $this->website_name, $this->currency_symbol, $payment_amount) . ' ⚠️';
 			}
 			else if($this->success === 0)
 			{
-				$output = '⚠️ ' . sprintf(__('%s is having problems processing your payment', 'dynamicpackages'), get_bloginfo('name')) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('%s, %s is having problems processing your payment', 'dynamicpackages'), $first_name, $this->website_name) . ' ⚠️';
+			}
+		}
+		
+		return $output;
+	}
+
+	public function intro($output)
+	{		
+		if(isset($this->success))
+		{
+			$title = sanitize_text_field($_POST['title']);
+			$payment_amount = dy_utilities::payment_amount();
+			
+			if($this->success === 2)
+			{
+				$payment = (dy_validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, $this->currency_symbol, $payment_amount, $title);
+			}
+			else if($this->success === 1)
+			{
+				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), $this->website_name, $this->currency_symbol, $payment_amount) . ' ⚠️';
+			}
+			else if($this->success === 0)
+			{
+				$output = '⚠️ ' . sprintf(__('%s is having problems processing your payment', 'dynamicpackages'), $this->website_name) . ' ⚠️';
 			}
 		}
 		
@@ -321,7 +352,7 @@ class paguelo_facil_on{
 		{
 			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
 			{
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
+				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 				{
 					$output = true;
 				}

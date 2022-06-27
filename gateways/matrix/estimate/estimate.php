@@ -66,33 +66,6 @@ class estimate_request{
 		}
 		return $output;
 	}
-	public function is_valid_request()
-	{
-		$output = false;
-		$which_var = $this->id . '_is_valid_request';
-		global $$which_var;
-		global $dy_request_invalids;
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
-			{
-				if($_POST['dy_request'] == $this->id && dy_utilities::payment_amount() > 1)
-				{
-					$output = true;
-					
-				}
-			}
-			
-			$GLOBALS[$which_var] = $output;
-		}
-		
-		return $output;
-	}
 	
 	public function is_valid()
 	{
