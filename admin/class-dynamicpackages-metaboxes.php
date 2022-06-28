@@ -119,7 +119,7 @@ class Dynamicpackages_Metaboxes
 			{
 				$id =  $week_day_fields[$w].'_'.$this->week_days[$x];
 				$name = 'package_' . $id;
-				$this->$id = package_field($name);
+				$this->$id = intval(package_field($name));
 			}
 		}
 	}
