@@ -728,9 +728,9 @@ class Dynamicpackages_Public {
 		
 		$labels_plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));		
 		
-		if(!empty($duration) && !empty($duration_unit))
+		if(!empty($duration))
 		{
-			if($duration == 1)
+			if($duration === 1)
 			{
 				if($duration_max > $duration)
 				{

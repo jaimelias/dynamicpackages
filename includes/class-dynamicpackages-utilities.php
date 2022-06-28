@@ -309,7 +309,7 @@ class dy_utilities {
 			$duration_unit = intval(package_field('package_length_unit'));
 			$duration_max = floatval(package_field('package_duration_max'));	
 			
-			if(!empty($duration) && !empty($duration_unit))
+			if(!empty($duration))
 			{
 				$min_nights = self::get_min_nights();
 
