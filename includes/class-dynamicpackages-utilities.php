@@ -1564,7 +1564,15 @@ class dy_utilities {
 			{
 				foreach ( $terms as $t )
 				{
-					$item = ($is_link) ? '<a href="'.esc_url(get_term_link($t)).'">'.esc_html($t->name).'</a>' : esc_html($t->name);
+					$url = get_term_link($t);
+					$title_modifier = get_term_meta($t->term_id, 'tax_title_modifier', true);
+
+					$title = (strlen($title_modifier) > strlen($t->name)) ? $title_modifier : $t->name;
+
+					$item = ($is_link) 
+						? '<a href="'.esc_url($url).'" title="'.esc_attr($title).'" >'.esc_html($t->name).'</a>' 
+						: esc_html($t->name);
+						
 					array_push($terms_array, $item);
 				}
 			}
