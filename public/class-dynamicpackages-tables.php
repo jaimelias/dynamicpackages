@@ -124,6 +124,15 @@ class Dynamicpackages_Tables{
 				if($count_price_table > 0 && $valid_table)
 				{
 					$min_price = min(array_filter($price_table));
+
+					if(isset($price_table[$this->min_persons - 1]))
+					{
+						if($price_table[$this->min_persons - 1] > 0)
+						{
+							$min_price = $price_table[$this->min_persons - 1];
+						}
+					}
+
 					$max_price = max($price_table);
 					$diff_percentage = ((($min_price - $max_price) / $max_price) * 100) * -1;
 
