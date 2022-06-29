@@ -18,6 +18,7 @@ class Dynamicpackages_Public {
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
+		$this->current_language = dy_utilities::current_language();
 	}
 	
 	public function init()
@@ -984,7 +985,6 @@ class Dynamicpackages_Public {
 		else
 		{
 			global $post;
-			global $polylang;		
 			
 			if(!dy_validators::is_child() && isset($post))
 			{
@@ -1015,17 +1015,12 @@ class Dynamicpackages_Public {
 								{
 									$has_rows = true;
 									$starting_at = intval(dy_utilities::starting_at($item->ID));
-									$subpackage_name = 'package_child_title';
+									$subpackage_name = 'package_child_title_'.$this->current_language;
 									$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
-									
-									if(isset($polylang))
-									{
-										$subpackage_name .= '_'.pll_get_post_language($item->ID);
-									}
 									
 									$subpackage_name = package_field($subpackage_name, $item->ID);
 									
-									if($subpackage_name === '')
+									if(empty($subpackage_name))
 									{
 										$subpackage_name = $item->post_title;
 									}
