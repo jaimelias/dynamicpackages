@@ -157,11 +157,8 @@ class Dynamicpackages_Tables{
 					}
 					else
 					{
-						
-						if($diff_percentage < 5)
-						{
-							$count_price_table = 1;
-						}
+						$show_rows = true;			
+						$show_one = ($diff_percentage < 5) ? true : false;
 
 						for($x = 0; $x < $count_price_table; $x++)
 						{
@@ -187,9 +184,17 @@ class Dynamicpackages_Tables{
 									$td = '<td colspan="2">';
 								}
 								
-								$row .= $td.esc_html($this->currency_symbol.number_format($price, 2, '.', ',')).'</td>';
-								$row .= '</tr>';
-								$rows .= $row;					
+								if($show_rows)
+								{
+									$row .= $td.esc_html($this->currency_symbol.number_format($price, 2, '.', ',')).'</td>';
+									$row .= '</tr>';
+									$rows .= $row;	
+								}
+
+								if($show_one)
+								{
+									$show_rows = false;
+								}
 							}
 						}
 					}
