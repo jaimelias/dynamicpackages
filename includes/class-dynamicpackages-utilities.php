@@ -779,14 +779,15 @@ class dy_utilities {
 		
 		$output = array();
 		$surcharges = self::get_week_day_surcharges();
-		
+
 		if(is_array($days))
 		{
 			$count_days = count($days);
 			
 			for($x = 0; $x < $count_days; $x++)
 			{
-				$week_day = date('w', strtotime($days[$x]));
+				$week_day = intval(date('w', strtotime($days[$x])));
+				$week_day = ($week_day === 0) ?  6 : $week_day - 1;
 				array_push($output, $surcharges[$week_day]);
 			}
 		}
@@ -1086,11 +1087,11 @@ class dy_utilities {
 	public static function get_week_days_list()
 	{
 		$output = array();
-		$days = array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
+		$days = self::get_week_days_abbr();
 		
 		for($x = 0; $x < count($days); $x++)
 		{
-			if(intval(package_field('package_day_'.$days[$x] )) == 1)
+			if(intval(package_field('package_day_'.$days[$x] )) === 1)
 			{
 				array_push($output, $x+1);
 			}
