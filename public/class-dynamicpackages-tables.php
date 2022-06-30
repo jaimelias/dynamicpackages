@@ -158,7 +158,7 @@ class Dynamicpackages_Tables{
 					else
 					{
 						$show_rows = true;			
-						$show_one = ($diff_percentage < 5) ? true : false;
+						$show_one = ($diff_percentage < 5 || $count_price_table <=1) ? true : false;
 
 						for($x = 0; $x < $count_price_table; $x++)
 						{
@@ -170,7 +170,7 @@ class Dynamicpackages_Tables{
 							{
 								$price = $price_table[$x];
 
-								if($count_price_table > 1)
+								if($show_one === false)
 								{
 									$row .= '<td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
 								}
