@@ -1531,7 +1531,9 @@ class dy_utilities {
 	public static function get_tax_list($term_name = '', $label = '', $is_link = true, $icon_class = null)
 	{
 		$output = '';
-		$which_var = 'dy_get_tax_list_'.$term_name;
+		$is_link_str = ($is_link) ? 1 : 0;
+		$icon_class_str = (!empty($icon_class)) ? 1 : 0;
+		$which_var = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
 		global $$which_var;
 
 		if(isset($$which_var))
