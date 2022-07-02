@@ -44,9 +44,9 @@ class Dynamicpackages_Tables{
 				return '';
 			}
 
+			$show_rows = ($this->price_type === 0) ? true : false;
 			$valid_table = false;
 			$price_table = array();
-			$price_title = __('Prices', 'dynamicpackages').' '.apply_filters('dy_price_type', null).' (USD)';
 			$rows = '';			
 			$occupancy_chart = (is_array($this->occupancy_chart)) ? (array_key_exists('occupancy_chart', $this->occupancy_chart)) 
 			? $this->occupancy_chart['occupancy_chart'] 
@@ -105,11 +105,12 @@ class Dynamicpackages_Tables{
 						$price = $base_price;
 					}
 
+					$sum_price = $price * $person;
+
 					if($this->price_type === 1)
 					{
-						$price = $price * $person;
+						$price = $sum_price;
 					}
-
 
 					array_push($price_table, $price);
 
@@ -123,9 +124,10 @@ class Dynamicpackages_Tables{
 
 				if($count_price_table > 0 && $valid_table)
 				{
+					$max_price = max(array_filter($price_table));
 					$min_price = min(array_filter($price_table));
-
-					if(isset($price_table[$this->min_persons - 1]))
+					
+					if($this->price_type === 1 && isset($price_table[$this->min_persons - 1]))
 					{
 						if($price_table[$this->min_persons - 1] > 0)
 						{
@@ -133,8 +135,7 @@ class Dynamicpackages_Tables{
 						}
 					}
 
-					$max_price = max($price_table);
-					$diff_percentage = ((($min_price - $max_price) / $max_price) * 100) * -1;
+					$diff_percentage = ((($max_price - $min_price) / $min_price) * 100);
 
 					if($this->price_type === 1)
 					{
@@ -157,8 +158,7 @@ class Dynamicpackages_Tables{
 					}
 					else
 					{
-						$show_rows = true;			
-						$show_one = ($diff_percentage < 5 || $count_price_table <=1) ? true : false;
+						$show_one = ($diff_percentage < 5 || $count_price_table <= 1) ? true : false;
 
 						for($x = 0; $x < $count_price_table; $x++)
 						{
@@ -201,7 +201,8 @@ class Dynamicpackages_Tables{
 
 					if($rows)
 					{
-						$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_title).'</th></tr></thead><tbody class="small">';
+						$price_title = __('Price', 'dynamicpackages').' '.apply_filters('dy_price_type', null);
+						$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_title).' (USD)</th></tr></thead><tbody class="small">';
 						$output .= $rows;
 						$output .= '</tbody>';
 						$output .= '</table></div>';
