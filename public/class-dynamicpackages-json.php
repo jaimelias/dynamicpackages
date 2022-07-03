@@ -10,7 +10,8 @@ class Dynamicpackages_JSON
 
 	public function init(){
 		add_action('wp', array(&$this, 'export'));
-		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
+		add_action('get_header', array(&$this, 'get_header'));
+		
 	}
 	
 	public function is_json_request()
@@ -34,6 +35,11 @@ class Dynamicpackages_JSON
 		return $output;
 	}
 	
+	public function get_header()
+	{
+		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
+	}
+
 	public function ld_json($arr = array())
 	{
 		global $dy_ld_json;
@@ -48,41 +54,12 @@ class Dynamicpackages_JSON
 			if(is_singular('packages'))
 			{
 				global $post;
-				$event_id = $post->ID;
-				
-				if(dy_validators::has_children())
-				{
-					$ids = array();
-					$children = dy_validators::has_children();
-					
-					foreach ( $children as $child )
-					{
-						$ids[$child->ID] = dy_utilities::starting_at($child->ID);
-					}
-
-					if(is_array($ids))
-					{
-						if(count($ids))
-						{
-							$id_keys = array_keys($ids, min($ids));
-							
-							if(is_array($id_keys))
-							{
-								if(count($id_keys) > 0)
-								{
-									$event_id = $id_keys[0];
-								}
-							}
-						}
-					}
-				}			
-				
-				$starting_at = floatval(number_format(dy_utilities::starting_at($event_id), 2, '.', ''));
+				$starting_at = floatval(number_format(dy_utilities::starting_at($post->ID), 2, '.', ''));
 				
 				if(dy_validators::is_valid_schema())
 				{
 					global $post;
-					$event = apply_filters('dy_event_arr', array());
+					$schema = intval(package_field('package_schema'));
 					
 					//offers
 					$offers = array();
@@ -101,8 +78,9 @@ class Dynamicpackages_JSON
 
 					//reviews
 					$review = array();
-					
-					foreach(get_comments(array('post_id' => $event_id)) as $comment)
+					$comments = $this->reviews->get_comments($post->ID);
+
+					foreach($comments as $comment)
 					{
 						$item = array();
 						$item['@type'] = 'Review';
@@ -115,39 +93,18 @@ class Dynamicpackages_JSON
 						$reviewRating['bestRating'] = '5';
 						$reviewRating['ratingValue'] = get_comment_meta($comment->comment_ID, 'dy_rating', true);
 						$reviewRating['worstRating'] = '1';
-						$item['reviewRating'] = $reviewRating;
+						$item['reviewRating'] = $reviewRating;						
 						
 						array_push($review, $item);
-					}
-					
-					if(isset($polylang))
+					}				
+
+					if($schema === 1)
 					{
-						foreach(get_comments(array('post_id' => pll_get_post($event_id, pll_default_language()))) as $comment)
-						{
-							$item = array();
-							$item['@type'] = 'Review';
-							$item['author'] = esc_html($comment->comment_author);
-							$item['datePublished'] = esc_html(date('Y-m-d', strtotime($comment->comment_date)));
-							$item['description'] = esc_html($comment->comment_content);
-							
-							$reviewRating = array();
-							$reviewRating['@type'] = 'Rating';
-							$reviewRating['bestRating'] = '5';
-							$reviewRating['ratingValue'] = get_comment_meta($comment->comment_ID, 'dy_rating', true);
-							$reviewRating['worstRating'] = '1';
-							$item['reviewRating'] = $reviewRating;						
-							
-							array_push($review, $item);
-						}					
-					}
-					
-					if(count($event) == 0)
-					{
-						//is not event
+						//is product
 						$arr['@context'] = 'https://www.schema.org';
 						$arr['@type'] = 'Product';
 						$arr['brand'] = array();
-						$arr['brand']['@type'] = 'Thing';
+						$arr['brand']['@type'] = 'Brand';
 						$arr['brand']['name'] = esc_html(get_bloginfo('name'));
 						$arr['name'] = esc_html(get_the_title());
 						$arr['sku'] = md5(package_field('package_trip_code'));
@@ -179,6 +136,7 @@ class Dynamicpackages_JSON
 					else
 					{
 						// is event
+						$event = apply_filters('dy_event_arr', array());
 						$event_arr = array();
 						$event_max = count($event);
 						
@@ -247,11 +205,13 @@ class Dynamicpackages_JSON
 							
 							array_push($event_arr, $item);
 						}
+
 						$arr = $event_arr;
-						$GLOBALS['dy_ld_json'] = $arr;
 					}					
 				}
-			}			
+			}
+			
+			$GLOBALS['dy_ld_json'] = $arr;
 		}
 		
 		return $arr;

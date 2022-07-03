@@ -29,7 +29,7 @@ class Dynamicpackages_Reviews
 		add_filter('minimal_ld_json', array(&$this, 'add_reviews'), 10);
 		add_filter('dy_reviews_stars', array(&$this, 'stars'), 10);
 		add_filter('dy_reviews_get_rating', array(&$this, 'get_rating'), 10);
-		add_filter('dy_reviews_wp_star_rating', array(&$this, 'get_rating'), 10);
+		add_filter('dy_reviews_wp_star_rating', array(&$this, 'get_stars'), 10);
 
 	}
 	
@@ -187,51 +187,91 @@ class Dynamicpackages_Reviews
 		return $commentdata;
 	}
 
-	public function get_rating($id)
+	public function get_comments($id)
 	{
-		$output = false;
-		$comments = get_approved_comments($id);
-		
-		global $polylang;
-		
-		if(isset($polylang))
+		$comments = array();
+		$which_var = 'dy_get_comments_' . $id;
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$translationIds = PLL()->model->post->get_translations($id);
-			foreach ( $translationIds as $key=>$translationID ){
-				if( $translationID != $id ) {
-					$translatedPostComments = get_approved_comments($translationID);
-					if ( $translatedPostComments ) {
-						$comments = array_merge($comments, $translatedPostComments);
+			$comments = $$which_var;
+		}
+		else
+		{
+			$comments = get_approved_comments($id);		
+			global $polylang;
+			
+			if(isset($polylang))
+			{
+				$translationIds = PLL()->model->post->get_translations($id);
+				
+				foreach ( $translationIds as $key => $translationID )
+				{
+					if( $translationID !== $id ) 
+					{
+						$translatedPostComments = get_approved_comments($translationID);
+
+						if($translatedPostComments)
+						{
+							array_merge($comments, $translatedPostComments);
+						}
 					}
-				}
-			}			
+
+				}			
+			}
+
+			$GLOBALS[$which_var] = $comments;
 		}
 
-		if ( $comments )
+		
+		return $comments;
+	}
+
+	public function get_rating($id)
+	{
+
+		$output = false;
+		$which_var = 'dy_get_rating_' . $id;
+		global $$which_var;
+
+		if(isset($$which_var))
 		{
-			$i = 0;
-			$total = 0;
-			
-			foreach( $comments as $comment )
+			$output = $$which_var;
+		}
+		else
+		{
+			$comments = $this->get_comments($id);
+
+			if ( $comments )
 			{
-				$rate = get_comment_meta( $comment->comment_ID, 'dy_rating', true );
+				$i = 0;
+				$total = 0;
 				
-				if( isset( $rate ) && '' !== $rate )
+				foreach( $comments as $comment )
 				{
-					$i++;
-					$total += $rate;
+					$rate = get_comment_meta( $comment->comment_ID, 'dy_rating', true );
+					
+					if( isset( $rate ) && '' !== $rate )
+					{
+						$i++;
+						$total += $rate;
+					}
+				}
+
+				if ( $i !== 0  )
+				{
+					$output = number_format($total / $i, 2, '.', '');
 				}
 			}
 
-			if ( $i !== 0  )
-			{
-				return number_format($total / $i, 2, '.', '');
-			}
+			$GLOBALS[$which_var] = $output;
 		}
 
 		return $output;
 		
 	}
+
 	public function reply_link($args)
 	{
 		return null;
@@ -246,25 +286,27 @@ class Dynamicpackages_Reviews
 	}
 	public function get_stars($number)
 	{
+		$number = intval($number);
+
 		if($number > 0)
 		{
-			if($number == 1)
+			if($number === 1)
 			{
 				return '&#9733;';
 			}
-			else if($number == 2)
+			else if($number === 2)
 			{
 				return '&#9733;&#9733;';
 			}
-			else if($number == 3)
+			else if($number === 3)
 			{
 				return '&#9733;&#9733;&#9733;';
 			}
-			else if($number == 4)
+			else if($number === 4)
 			{
 				return '&#9733;&#9733;&#9733;&#9733;';
 			}
-			else if($number == 5)
+			else if($number === 5)
 			{
 				return '&#9733;&#9733;&#9733;&#9733;&#9733;';
 			}			

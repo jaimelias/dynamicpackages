@@ -1567,7 +1567,7 @@ class Dynamicpackages_Public {
 			$output = $$which_var;
 		}
 		else
-		{		
+		{
 			$package_start_address = package_field('package_start_address');
 			$package_start_hour = package_field('package_start_hour');
 

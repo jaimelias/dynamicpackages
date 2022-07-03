@@ -96,6 +96,7 @@ class Dynamicpackages_Metaboxes
 		$this->duration_max = floatval(package_field('package_duration_max'));
 		$this->badge = intval(package_field('package_badge'));
 		$this->badge_color = package_field('package_badge_color');
+		$this->schema = intval(package_field('package_schema'));
 		$this->is_child = dy_validators::is_child();
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
 		$this->is_package_transport = dy_validators::is_package_transport();
@@ -596,6 +597,14 @@ class Dynamicpackages_Metaboxes
 				<select name="package_display" id="package_display">
 					<option value="0" <?php echo ($this->display === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('No', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
 					<option value="1" <?php echo ($this->display === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Yes', 'dynamicpackages')); ?></option>
+				</select>
+			</p>
+			
+			<p>
+				<label for="package_schema"><?php echo esc_html(__('Schema Type', 'dynamicpackages')); ?></label><br />
+				<select name="package_schema" id="package_schema">
+					<option value="0" <?php echo ($this->schema === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('Event', 'dynamicpackages')); ?> (<?php echo esc_html(__('default', 'dynamicpackages')); ?>)</option>
+					<option value="1" <?php echo ($this->schema === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Product', 'dynamicpackages')); ?></option>
 				</select>
 			</p>			
 			

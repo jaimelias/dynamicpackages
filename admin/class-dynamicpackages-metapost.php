@@ -81,6 +81,8 @@ class Dynamicpackages_Metapost{
 		
 		if(isset( $_POST['package_display']))
 			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
+		if(isset( $_POST['package_schema']))
+			update_post_meta( $post_id, 'package_schema', intval($_POST['package_schema']));		
 		if(isset( $_POST['package_trip_code']))
 			update_post_meta( $post_id, 'package_trip_code', esc_attr($_POST['package_trip_code']));
 		if(isset( $_POST['package_auto_booking']))
