@@ -214,7 +214,7 @@ class Dynamicpackages_Reviews
 
 						if($translatedPostComments)
 						{
-							array_merge($comments, $translatedPostComments);
+							$comments = array_merge($comments, $translatedPostComments);
 						}
 					}
 
