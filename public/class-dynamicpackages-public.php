@@ -9,8 +9,8 @@ class Dynamicpackages_Public {
 
 	public function __construct() {
 		
-		$this->args();
-		$this->init();
+		add_action('init', array(&$this, 'args'));
+		add_action('wp', array(&$this, 'init'));
 	}
 
 	public function args()

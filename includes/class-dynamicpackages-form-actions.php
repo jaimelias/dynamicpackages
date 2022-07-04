@@ -11,7 +11,7 @@ class Dynamicpackages_Actions{
     }
     public function init()
     {
-		add_action('init', array(&$this, 'args'));
+		add_action('wp', array(&$this, 'args'));
         add_filter('wp', array(&$this, 'send_data'), 100);
         add_filter('the_content', array(&$this, 'the_content'), 101);
         add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 101);
