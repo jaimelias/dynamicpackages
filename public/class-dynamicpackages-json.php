@@ -77,25 +77,33 @@ class Dynamicpackages_JSON
 					$aggregateRating['reviewCount'] = esc_html(get_comments_number());
 
 					//reviews
-					$review = array();
+					$reviews = array();
 					$comments = $this->reviews->get_comments($post->ID);
 
 					foreach($comments as $comment)
 					{
-						$item = array();
-						$item['@type'] = 'Review';
-						$item['author'] = esc_html($comment->comment_author);
-						$item['datePublished'] = esc_html(date('Y-m-d', strtotime($comment->comment_date)));
-						$item['description'] = esc_html($comment->comment_content);
+						$review = array(
+							'@type' => 'Review',
+							'datePublished' => esc_html(date('Y-m-d', strtotime($comment->comment_date))),
+							'description' => esc_html($comment->comment_content)
+						);
+
+						$author = array(
+							'@type' => 'Person',
+							'name' => esc_html($comment->comment_author)
+						);
+
+						$review['author'] = $author;		
 						
-						$reviewRating = array();
-						$reviewRating['@type'] = 'Rating';
-						$reviewRating['bestRating'] = '5';
-						$reviewRating['ratingValue'] = get_comment_meta($comment->comment_ID, 'dy_rating', true);
-						$reviewRating['worstRating'] = '1';
-						$item['reviewRating'] = $reviewRating;						
+						$reviewRating = array(
+							'@type' => 'Rating',
+							'bestRating' => '5',
+							'ratingValue' => get_comment_meta($comment->comment_ID, 'dy_rating', true)
+						);
+
+						$review['reviewRating'] = $reviewRating;						
 						
-						array_push($review, $item);
+						array_push($reviews, $review);
 					}				
 
 					if($schema === 1)
@@ -125,20 +133,20 @@ class Dynamicpackages_JSON
 						$offers['priceValidUntil'] = esc_html(date('Y-m-d', strtotime('+1 year')));	
 						$arr['offers'] = $offers;
 						
-						if(is_array($review))
+						if(is_array($reviews))
 						{
-							if(count($review) > 0)
+							if(count($reviews) > 0)
 							{
-								$arr['review'] = $review;
+								$arr['review'] = $reviews;
 							}
 						}
 					}
 					else
 					{
 						// is event
-						$event = apply_filters('dy_event_arr', array());
+						$events = apply_filters('dy_event_arr', array());
 						$event_arr = array();
-						$event_max = count($event);
+						$event_max = count($events);
 						
 						if($event_max > 30)
 						{
@@ -149,7 +157,7 @@ class Dynamicpackages_JSON
 						{
 							$duration = intval(package_field('package_duration'));
 							$unit = package_field('package_length_unit');
-							$event_date = $event[$x].' '.package_field('package_start_hour');
+							$event_date = $events[$x].' '.package_field('package_start_hour');
 							$event_date_name = date_i18n('M d', strtotime($event_date));
 							$event_date_format = date_i18n('Y-m-d\TH:i', strtotime($event_date));						
 							
@@ -170,40 +178,40 @@ class Dynamicpackages_JSON
 								$event_date_end = date('Y-m-d\TH:i', strtotime("+ {$duration} days", strtotime($event_date)));
 							}
 							
-							$item = array();
-							$item['@context'] = 'https://www.schema.org';
-							$item['@type'] = 'Event';
-							$item['name'] = esc_html(get_the_title().' - '.$event_date_name);				
-							$item['startDate'] = esc_html($event_date_format);
-							$item['endDate'] = esc_html($event_date_end);
-							$item['description'] = $post->post_excerpt;
-							$item['organizer'] = array(
+							$event = array();
+							$event['@context'] = 'https://www.schema.org';
+							$event['@type'] = 'Event';
+							$event['name'] = esc_html(get_the_title().' - '.$event_date_name);				
+							$event['startDate'] = esc_html($event_date_format);
+							$event['endDate'] = esc_html($event_date_end);
+							$event['description'] = $post->post_excerpt;
+							$event['organizer'] = array(
 								'name' => esc_html(get_bloginfo('name')),
 								'url' => esc_url(get_bloginfo('url'))
 							);
-							$item['performer'] = esc_html(get_bloginfo('name'));
-							$item['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
-							$item['eventStatus'] = 'https://schema.org/EventScheduled';
+							$event['performer'] = esc_html(get_bloginfo('name'));
+							$event['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
+							$event['eventStatus'] = 'https://schema.org/EventScheduled';
 							
 							if($this->reviews->get_rating(get_the_ID()) > 0)
 							{
-								$item['aggregateRating'] = $aggregateRating;
+								$event['aggregateRating'] = $aggregateRating;
 							}							
 							if(has_post_thumbnail())
 							{
-								$item['image'] = get_the_post_thumbnail_url();
+								$event['image'] = get_the_post_thumbnail_url();
 							}						
 							
-							$offers['priceValidUntil'] = esc_html($event[$x]);
-							$item['offers'] = $offers;
+							$offers['priceValidUntil'] = esc_html($events[$x]);
+							$event['offers'] = $offers;
 
-							$item['location'] = array(
+							$event['location'] = array(
 								'@type' => 'Place',
 								'name' => esc_html(get_bloginfo('name')),
 								'address' => esc_html(package_field('package_start_address'))
 							);
 							
-							array_push($event_arr, $item);
+							array_push($event_arr, $event);
 						}
 
 						$arr = $event_arr;
