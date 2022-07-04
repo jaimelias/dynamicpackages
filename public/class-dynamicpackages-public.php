@@ -9,16 +9,17 @@ class Dynamicpackages_Public {
 
 	public function __construct() {
 		
-		add_action('init', array(&$this, 'args'));
+		add_action('init', array(&$this, 'set_defaults'));
 		add_action('wp', array(&$this, 'init'));
 	}
 
-	public function args()
+	public function set_defaults()
 	{
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
 		$this->current_language = dy_utilities::current_language();
+		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
 	}
 	
 	public function init()
@@ -31,7 +32,6 @@ class Dynamicpackages_Public {
 		add_filter('wp_title', array(&$this, 'wp_title'), 100);
 		add_filter('the_title', array(&$this, 'modify_title'), 100);
 		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
-		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
 		add_action('wp_head', array(&$this, 'meta_tags'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
