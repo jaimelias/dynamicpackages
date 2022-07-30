@@ -121,7 +121,7 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 		
-		$form = '<div class="booking_form_container"><form id="dy_booking_form" class="booking_form" method="get">';
+		$form = '<div class="booking_form_container"><form class="booking_form" method="get">';
 		
 		if($auto_booking == 1)
 		{
@@ -228,7 +228,7 @@ class Dynamicpackages_Forms
 			$form .= '<div class="bottom-20" id="booking_coupon"><a href="#booking_coupon" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="booking_coupon"  value="'.esc_attr($get_coupon).'" /></div>';
 		}		
 		
-		$form .= '<div><button type="submit" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <i class="fas fa-chevron-right"></i></button></div>';	
+		$form .= '<div><button type="button" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <i class="fas fa-chevron-right"></i></button></div>';	
 		$form .= '</form></div>';
 		echo $form;			
 

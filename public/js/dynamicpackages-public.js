@@ -2,11 +2,12 @@
 jQuery(() => {
 	timePicker();
 	datePicker();
-	checkPrices();
+	//checkPrices();
 	storePopulate();
 	showCouponForm();	
 	selectGateway();
 	copyToClipboard();
+	validateCheckPricesForm();
 	
 	const {pluginDirUrl} = dyStrings();
 
@@ -21,6 +22,102 @@ jQuery(() => {
 	}	
 	
 });
+
+const validateCheckPricesForm = () => {
+
+	const formContainer = jQuery('.booking_form_container');
+	const {postId} = dyStrings();
+
+	if(formContainer.length === 0)
+	{
+		return false;
+	}
+
+	jQuery(formContainer).each(function () {
+
+		const thisForm = jQuery(this).find('.booking_form');
+		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
+
+		jQuery(thisForm).formToArray().forEach(i => {
+			const {name, value} = i;
+			const cookieValue = getCookie(`${name}_${postId}`);
+			const field = jQuery(thisForm).find('[name="'+name+'"]');
+
+			if(value === '' && cookieValue)
+			{
+				jQuery(field).val(cookieValue);
+			}
+		});	
+
+		jQuery(submitButton).click(() => {
+			let invalids = [];
+			let required = ['booking_date', 'booking_hour'];
+			const data = jQuery(thisForm).serializeArray();
+			//jQuery(thisForm).find('input[name="hash"]').remove();
+
+			data.forEach(v => {
+				const {name, value} = v;
+
+				if(name === 'end_date' && value !== '')
+				{
+					required = [...required, 'end_date', 'return_hour'];
+				}
+
+			});
+
+			data.forEach(v => {
+				const {name, value} = v;
+
+				if(required.includes(name) && value === '')
+				{
+					invalids.push(name);
+					jQuery(thisForm).find('[name="'+name+'"]').addClass('invalid_field');
+				}
+			});
+
+
+
+			if(invalids.length === 0)
+			{
+				
+				const bookingDate = data.find(v => v.name === 'booking_date');
+
+				let paxNum = 0;
+				
+				jQuery(thisForm).formToArray().forEach(i => {
+					const {name, value} = i;
+
+					if(['pax_regular', 'pax_discount', 'pax_free'].includes(name))
+					{
+						paxNum += parseInt(value);
+					}
+				});
+
+				jQuery(thisForm).append(jQuery('<input />').attr({
+					name: 'hash',
+					type: 'hidden',
+					value: sha512(paxNum + bookingDate.value)
+				}));
+
+				jQuery(thisForm).formToArray().forEach(i => {
+					const {name, value} = i;
+					
+					if(name !== 'hash')
+					{
+						setCookie(`${name}_${postId}`, value, 1);
+					}
+				});
+
+
+
+				//jQuery(thisForm).submit();
+			}
+
+		});
+	});
+
+};
+
 
 const copyToClipboard = () => {
 
@@ -161,7 +258,7 @@ const selectGateway = () => {
 
 jQuery.fn.formToArray = function () {
    
-   var data = jQuery(this).serializeArray();
+   let data = jQuery(this).serializeArray();
    
 	jQuery(this).find('input:checkbox').each(function () { 
 		data.push({ name: this.name, value: this.checked });
@@ -598,10 +695,10 @@ const countryOptions = (data) => {
 
 const datePicker = async () => {
 
-	const bookingForm = jQuery('.booking_form');
+	const formContainer = jQuery('.booking_form_container');
 	const {permaLink} = dyStrings();
 	
-	if(bookingForm.length === 0)
+	if(formContainer.length === 0)
 	{
 		return false;
 	}
@@ -611,18 +708,17 @@ const datePicker = async () => {
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
 	const buildPicker = () => {
-		jQuery('.booking_form').find('input.dy_date_picker').each(async function() {
-			
-			const field = jQuery(this);
+
+		jQuery(formContainer).each(function () {
+			const thisForm = jQuery(this).find('.booking_form');
+			const field = jQuery(thisForm).find('input.dy_date_picker');
 			const name = jQuery(field).attr('name');
 			let fetchUrl = (name === 'end_date') ? url + '&return=true' : url;
 			
-			jQuery('.booking_form').find('select.booking_select').each(function(){
-				fetchUrl += '&' + jQuery(this).attr('name') + '=' + jQuery(this).val()
-			})
-			
-			console.log(fetchUrl);
-							
+			jQuery(thisForm).find('select.booking_select').each(function(){
+				fetchUrl += '&' + jQuery(this).attr('name') + '=' + jQuery(this).val();
+			});
+										
 			fetch(fetchUrl)
 			.then(response => {
 				if(response.ok)
@@ -636,8 +732,7 @@ const datePicker = async () => {
 				  throw error;			
 				}
 			}, error => {
-				var errmess = new Error(error.message);
-				throw errmess;
+				throw new Error(error.message);
 			})
 			.then(response => response.json())
 			.then(data => {
@@ -690,21 +785,27 @@ const datePicker = async () => {
 			})
 			.catch(error => {
 				throw error;
-			});
+			});			
+
 		});
 	};
 
 	buildPicker();
 	
-	jQuery('.booking_form').find('select.booking_select').change(async function(){
-		jQuery('.booking_form').find('input.dy_date_picker').attr({
-			disabled: 'disabled',
-			placeholder: 'Loading...'
-		}).val('');
-		buildPicker();
-	});
 
-}
+	jQuery(formContainer).each(function(){
+		const thisForm = jQuery(this).find('.booking_form');
+		
+		jQuery(thisForm).find('select.booking_select').change(function(){
+
+			jQuery(thisForm).find('input.dy_date_picker').attr({
+				disabled: 'disabled',
+				placeholder: 'Loading...'
+			}).val('');
+			buildPicker();
+		});
+	});
+};
 
 const timePicker = () => {
 
@@ -732,7 +833,7 @@ const checkPrices = () => {
 	const {postId} = dyStrings();
 
 	jQuery('.booking_form').each(function() {
-		let thisForm = $(this);	
+		let thisForm = jQuery(this);	
 
 		jQuery(thisForm).formToArray().forEach(i => {
 			const {name, value} = i;
@@ -814,7 +915,6 @@ const booking_validate = (form) => {
 			pax_num = pax_num + parseInt(jQuery(form).find('select[name="pax_discount"]').val());
 		}
 
-		console.log();
 		var hash = (pax_num+booking_date);
 		
 		jQuery(form).find('input[name="hash"]').remove();
