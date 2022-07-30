@@ -2,12 +2,11 @@
 jQuery(() => {
 	timePicker();
 	datePicker();
-	//checkPrices();
 	storePopulate();
-	showCouponForm();	
 	selectGateway();
 	copyToClipboard();
 	validateCheckPricesForm();
+	showCouponForm();
 	
 	const {pluginDirUrl} = dyStrings();
 
@@ -38,9 +37,10 @@ const validateCheckPricesForm = () => {
 		const thisForm = jQuery(this).find('.booking_form');
 		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
 
-		jQuery(thisForm).formToArray().forEach(i => {
-			const {name, value} = i;
-			const cookieValue = getCookie(`${name}_${postId}`);
+		jQuery(thisForm).formToArray().forEach(v => {
+			const {name, value} = v;
+			const cookieName = `${name}_${postId}`;
+			const cookieValue = getCookie(cookieName);
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
 
 			if(value === '' && cookieValue)
@@ -52,8 +52,9 @@ const validateCheckPricesForm = () => {
 		jQuery(submitButton).click(() => {
 			let invalids = [];
 			let required = ['booking_date', 'booking_hour'];
-			const data = jQuery(thisForm).serializeArray();
-			//jQuery(thisForm).find('input[name="hash"]').remove();
+			const data = jQuery(thisForm).formToArray();
+			const bookingDate = data.find(v => v.name === 'booking_date');
+			let paxNum = 0;
 
 			data.forEach(v => {
 				const {name, value} = v;
@@ -62,7 +63,6 @@ const validateCheckPricesForm = () => {
 				{
 					required = [...required, 'end_date', 'return_hour'];
 				}
-
 			});
 
 			data.forEach(v => {
@@ -75,17 +75,12 @@ const validateCheckPricesForm = () => {
 				}
 			});
 
-
-
 			if(invalids.length === 0)
 			{
-				
-				const bookingDate = data.find(v => v.name === 'booking_date');
+				gaClick(thisForm, 'checkPrices');
 
-				let paxNum = 0;
-				
-				jQuery(thisForm).formToArray().forEach(i => {
-					const {name, value} = i;
+				data.forEach(v => {
+					const {name, value} = v;
 
 					if(['pax_regular', 'pax_discount', 'pax_free'].includes(name))
 					{
@@ -99,18 +94,19 @@ const validateCheckPricesForm = () => {
 					value: sha512(paxNum + bookingDate.value)
 				}));
 
-				jQuery(thisForm).formToArray().forEach(i => {
-					const {name, value} = i;
+				jQuery(thisForm).formToArray().forEach(v => {
+					const {name, value} = v;
 					
-					if(name !== 'hash')
+					if(name)
 					{
-						setCookie(`${name}_${postId}`, value, 1);
+						if(name !== 'hash')
+						{
+							setCookie(`${name}_${postId}`, value, 1);
+						}
 					}
 				});
 
-
-
-				//jQuery(thisForm).submit();
+				jQuery(thisForm).submit();
 			}
 
 		});
@@ -791,18 +787,14 @@ const datePicker = async () => {
 	};
 
 	buildPicker();
-	
 
 	jQuery(formContainer).each(function(){
 		const thisForm = jQuery(this).find('.booking_form');
 		
 		jQuery(thisForm).find('select.booking_select').change(function(){
 
-			jQuery(thisForm).find('input.dy_date_picker').attr({
-				disabled: 'disabled',
-				placeholder: 'Loading...'
-			}).val('');
-			buildPicker();
+			jQuery(thisForm).find('input.dy_date_picker').val('');
+			jQuery(thisForm).find('input.dy_time_picker').val('');
 		});
 	});
 };
@@ -828,110 +820,10 @@ const timePicker = () => {
 		jQuery(this).pickatime(args);
 	});	
 }
-const checkPrices = () => {
-
-	const {postId} = dyStrings();
-
-	jQuery('.booking_form').each(function() {
-		let thisForm = jQuery(this);	
-
-		jQuery(thisForm).formToArray().forEach(i => {
-			const {name, value} = i;
-			const {postId} = dyStrings();		
-			const cookieValue = getCookie(`${name}_${postId}`);
-			const field = jQuery(thisForm).find('input[name="'+name+'"]');
-
-			if(value === '' && cookieValue)
-			{
-				jQuery(field).val(cookieValue);
-			}
-		});	
-
-		jQuery(thisForm).submit(event => {
-		
-			event.preventDefault();
-					
-			if(booking_validate(thisForm) === true)
-			{
-				if(jQuery(thisForm).find('input[name="quote"]').length == 0)
-				{
-					//google analytics
-					ga_click(thisForm, 'quote');
-	
-					if(typeof fbq !== typeof undefined)
-					{
-						//facebook pixel
-						fbq('track', 'AddToCart');		
-					}
-				}
 
 
-				jQuery(thisForm).formToArray().forEach(i => {
-					const {name, value} = i;
-					
-					if(name !== 'hash')
-					{
-						setCookie(`${name}_${postId}`, value, 1);
-					}
-					
-				});				
-			
-				
-				jQuery(thisForm).unbind('submit').submit();
-			}			
-		});		
-	});
 
-}
-
-
-const booking_validate = (form) => {
-	var invalids = 0;
-				
-	jQuery(form).find('input[type="text"]').each(function(){
-		if(jQuery(this).val() == null && jQuery(this).hasClass('required'))
-		{
-			jQuery(this).addClass('invalid_field');
-			invalids++;
-		}
-		else
-		{
-			jQuery(this).removeClass('invalid_field');
-		}
-	});
-		
-	if(invalids == 0)
-	{	
-
-		var booking_date = jQuery(form).find('input[name="booking_date"]').val();
-		var pax_num = parseInt(jQuery(form).find('select[name="pax_regular"]').val());
-				
-		if(jQuery(form).find('select[name="pax_free"]').length > 0)
-		{
-			pax_num = pax_num + parseInt(jQuery(form).find('select[name="pax_free"]').val());
-		}
-		if(jQuery(form).find('select[name="pax_discount"]').length > 0)
-		{
-			pax_num = pax_num + parseInt(jQuery(form).find('select[name="pax_discount"]').val());
-		}
-
-		var hash = (pax_num+booking_date);
-		
-		jQuery(form).find('input[name="hash"]').remove();
-		var args = {};
-		args.name = 'hash';
-		args.type = 'hidden';
-		args.value = sha512(hash);
-		jQuery(form).append(jQuery('<input />').attr(args));
-		return true;
-	}	
-	else
-	{
-		return false;
-	}
-}
-
-const ga_click = (form, eventName) => {
+const gaClick = (form, eventName) => {
 	if(typeof gtag !== 'undefined')
 	{
 		const booking_date = jQuery(form).find('input[name="booking_date"]');
@@ -949,13 +841,18 @@ const ga_click = (form, eventName) => {
 }
 
 const showCouponForm = () => {
-	var el = jQuery('#booking_coupon');
+	const container = jQuery('#booking_coupon');
+	const  link = jQuery(container).find('a');
+	const field = jQuery(container).find('input[name="booking_coupon"]');
+
+	if(field.val() !== '')
+	{
+		jQuery(field).removeClass('hidden');
+	}
 	
-	jQuery(el).find('a').click( e => {
+	jQuery(link).click(e => {
 		e.preventDefault();
-		var input = jQuery(el).find('input[name="booking_coupon"]');
-		jQuery(input).toggleClass('hidden');
-		jQuery(input).focus();
+		jQuery(field).removeClass('hidden').focus();
 	});	
 }
 
