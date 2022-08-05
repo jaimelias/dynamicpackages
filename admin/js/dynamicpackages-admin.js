@@ -7,6 +7,7 @@ jQuery(() => {
 	handlePackageType();
 	handlePackagePayment();
 	handlePackageAutoBooking();
+	handlePackageSchema();
 	handleMinMaxPax();
 	handleProviderTaxonomyPage();
 	initSeasonGrids();
@@ -14,6 +15,7 @@ jQuery(() => {
 
 	jQuery('#package_package_type').change(() => {
 		handlePackageType();
+		handlePackageSchema();
 		initSeasonGrids();
 		initGridsFromTextArea();
 	});	
@@ -638,6 +640,31 @@ const handleMinMaxPax = () => {
 		handleMinMaxPax();
 	});
 
+};
+
+const handlePackageSchema  = () => {
+
+	if(jQuery('#package_schema').length === 0 || jQuery('#package_package_type').length === 0)
+	{
+		return false;
+	}
+
+	const eventPackageTypes = [0, 1];
+	const schemaField = jQuery('#package_schema');
+	const packageTypeValue = parseInt(jQuery('#package_package_type').val());
+	const eventOption = jQuery(schemaField).find(`option[value="0"]`);
+	const productOption = jQuery(schemaField).find(`option[value="1"]`);
+
+	if(!eventPackageTypes.includes(packageTypeValue))
+	{
+		jQuery(productOption).prop('selected', true).prop('disabled', false);
+		jQuery(eventOption).prop('selected', false).prop('disabled', true);
+	}
+	else
+	{
+		jQuery(eventOption).prop('disabled', false);
+		jQuery(productOption).prop('disabled', false);
+	}
 };
 
 const handleParentAttr = () => {
