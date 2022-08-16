@@ -74,7 +74,6 @@ class Dynamicpackages_Actions{
 				setcookie($add_ons_package_id, $add_ons, time() + 3600);
 			}
 
-			
 			$this->send_email();
 			$this->send_provider_email();
 

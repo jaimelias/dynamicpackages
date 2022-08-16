@@ -17,6 +17,9 @@
 		<?php do_action('dy_price_table'); ?>
 		
 		<?php do_action('dy_similar_packages_link'); ?>
+
+		<?php echo json_encode(apply_filters('dy_list_providers', array())); ?>
+
 	</div>
 
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">

@@ -14,6 +14,7 @@ class Dynamicpackages_Taxonomy_Providers {
 		add_action($this->name.'_edit_form_fields', array(&$this, 'form'), 10, 2);
 		add_action( 'create_'.$this->name, array(&$this, 'handle_save'), 10, 2);
 		add_action( 'edited_'.$this->name, array(&$this, 'handle_save'), 10, 2);
+		add_filter('dy_list_providers', array(&$this, 'get_providers'));
     }
 
 	public function handle_save($term_id) {
@@ -88,11 +89,69 @@ class Dynamicpackages_Taxonomy_Providers {
     {
 		$rows = '';
         $term_id = $term->term_id;
-        $language_select = $this->language_select($term_id);
 		$rows .= $this->admin_taxonomy_form_row($this->name.'_language', __('Provider Language', 'dynamicpackages'), $this->language_select($term_id));
 		$rows .= $this->admin_taxonomy_form_row($this->name.'_emails', __('Provider Emails', 'dynamicpackages'), $this->textarea_items_per_line($term_id, 'sanitize_email'), __('1 email per line. Up to 10 emails maximum.', 'dynamicpackages'));
 		echo $rows;
     }
+
+	public function email_str_row_to_array($str)
+	{
+		$output = array();
+
+		if($str)
+		{
+			$emails = explode("\r\n", html_entity_decode($str));		
+			$output = array_slice(array_unique(array_filter(array_map('sanitize_email', $emails))), 0, 10);
+		}
+
+
+		return $output;
+	}
+
+	public function get_providers($output = array())
+	{
+		$which_var = $this->name.'_get_emails';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			global $post;
+
+			if(isset($post))
+			{
+				$terms = get_the_terms($post->ID, $this->name);
+
+				if ( ! empty( $terms ) && ! is_wp_error( $terms ) )
+				{
+					foreach ( $terms as $t )
+					{
+						$emails_str = get_term_meta($t->term_id, 'package_provider_emails', true);
+						$emails = $this->email_str_row_to_array($emails_str);
+
+						if(!array_key_exists($t->name, $output))
+						{
+							$output[$t->name] = array(
+								'emails' => array()
+							);
+						}
+
+						for($x = 0; $x < count($emails); $x++)
+						{
+							array_push($output[$t->name]['emails'], $emails[$x]);
+						}
+					}
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+		return $output;
+	}
 }
 
 ?>
