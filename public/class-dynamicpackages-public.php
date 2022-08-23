@@ -1248,22 +1248,29 @@ class Dynamicpackages_Public {
 		$is_transport = dy_validators::is_package_transport();
 		$is_checkout_page = is_checkout_page();
 		$is_booking_page = is_booking_page();
+
+		$min_hour = package_field('package_min_hour');
+		$max_hour = package_field('package_max_hour');
+		$check_in_hour = package_field('package_check_in_hour');
+		$start_address = package_field('package_start_address');
+		$check_in_end_hour = package_field('package_check_in_end_hour');
+		$return_address = package_field('package_return_address');
+		$return_hour = package_field('package_return_hour');
 		
 		$args = array(
 			'enabled_days' => array('calendar', $this->enabled_days()),
-			'schedule' => array('clock', __('Schedule', 'dynamicpackages').' '.package_field('package_min_hour' ).' - '.package_field('package_max_hour' )),
+			'schedule' => array('clock', __('Schedule', 'dynamicpackages') .' '. $min_hour . ' - '. $max_hour),
 			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
 			'booking_date' => array('calendar', $booking_date),
 			'duration' => array('clock', dy_utilities::show_duration()),
-			'check_in' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_hour' )),
+			'check_in' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_hour),
 			'start_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
-			'start_address' => array('marker', package_field('package_start_address')),
+			'start_address' => array('marker', $start_address),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
 			'end_date' => array('calendar', $end_date),
-			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages').' '.package_field('package_check_in_end_hour')),
+			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
 			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. dy_utilities::return_hour()),
-			'return_address' => array('clock', package_field('package_return_address'))
-			
+			'return_address' => array('marker', $return_address)
 		);
 		
 		if(!$this->enabled_days())
@@ -1274,7 +1281,7 @@ class Dynamicpackages_Public {
 		{
 			unset($args['booking_date']);
 		}
-		if(!package_field('package_min_hour' ) && !package_field('package_max_hour'))
+		if(!$min_hour && !$max_hour)
 		{
 			unset($args['schedule']);
 		}
@@ -1282,7 +1289,7 @@ class Dynamicpackages_Public {
 		{
 			unset($args['enabled_days']);
 		}
-		if(!package_field('package_check_in_hour'))
+		if(!$check_in_hour)
 		{
 			unset($args['check_in']);
 		}
@@ -1290,7 +1297,7 @@ class Dynamicpackages_Public {
 		{
 			unset($args['start_hour']);
 		}
-		if(!package_field('package_start_address'))
+		if(!$start_address)
 		{
 			unset($args['start_address']);
 		}
@@ -1306,15 +1313,15 @@ class Dynamicpackages_Public {
 		{
 			unset($args['duration']);
 		}
-		if(!package_field('package_check_in_end_hour'))
+		if(!$check_in_end_hour)
 		{
 			unset($args['check_in_end_hour']);
 		}
-		if(!package_field('package_return_hour'))
+		if(!$return_hour)
 		{
 			unset($args['return_hour']);
 		}
-		if(!package_field('package_return_address'))
+		if(!$return_address)
 		{
 			unset($args['return_address']);
 		}
