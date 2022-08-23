@@ -1028,7 +1028,7 @@ class Dynamicpackages_Public {
 									$rows .= '<tr>';
 									$rows .= '<td>'.esc_html($subpackage_name).'</td>';
 									$rows .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
-									$rows .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).'</a></td>';
+									$rows .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <i class="fas fa-chevron-right"></i></a></td>';
 									$rows .= '</tr>';							
 								}
 							}

@@ -129,20 +129,18 @@ class Dynamicpackages_Taxonomy_Providers {
 				{
 					foreach ( $terms as $t )
 					{
+						$language = get_term_meta($t->term_id, 'package_provider_language', true);
 						$emails_str = get_term_meta($t->term_id, 'package_provider_emails', true);
 						$emails = $this->email_str_row_to_array($emails_str);
+						
+						$row = array(
+							'id' => $t->term_id,
+							'name' => $t->name,
+							'language' => $language,
+							'emails' => $emails,
+						);
 
-						if(!array_key_exists($t->name, $output))
-						{
-							$output[$t->name] = array(
-								'emails' => array()
-							);
-						}
-
-						for($x = 0; $x < count($emails); $x++)
-						{
-							array_push($output[$t->name]['emails'], $emails[$x]);
-						}
+						array_push($output, $row);
 					}
 				}
 			}

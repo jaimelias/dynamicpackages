@@ -130,7 +130,8 @@ class Dynamicpackages_Gateways
 	
 	public function join_gateways()
 	{
-		$array = $this->list_gateways_cb();
+		$array = array_unique($this->list_gateways_cb());
+		
 		return join(' '.__('or', 'dynamicpackages').' ', array_filter(array_merge(array(join(', ', array_slice($array, 0, -1))), array_slice($array, -1)), 'strlen'));
 	}
 	
