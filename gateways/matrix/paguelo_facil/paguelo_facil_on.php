@@ -144,8 +144,6 @@ class paguelo_facil_on{
 			
 			if($this->success == 2)
 			{
-				add_filter('dy_email_provider_email_subject', array(&$this, 'provider_email_subject'));
-				add_filter('dy_provider_email_template', array(&$this, 'provider_email_template'));
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
 				add_filter('dy_webhook_option', array(&$this, 'webhook_option'));
 				add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
@@ -162,17 +160,6 @@ class paguelo_facil_on{
 		return 'dy_webhook';
 	}
 
-	public function provider_email_template()
-	{
-		$provider_name = package_field('package_provider_name');
-		return '<p>' . $provider_name . '</p><p>' . $this->provider_email_subject() . '</p>';
-	}
-	
-	public function provider_email_subject()
-	{
-		return sprintf(__('New Booking %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_description', null));
-	}
-	
 	public function gateway_name($output)
 	{
 		return $this->id;
@@ -424,8 +411,6 @@ class paguelo_facil_on{
 		
 	public function the_title($output)
 	{
-		
-		
 		if(isset($this->success) && in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
 		{
 			if($this->success === 2)

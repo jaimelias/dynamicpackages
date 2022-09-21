@@ -246,15 +246,7 @@ class Dynamicpackages_Metapost{
 		if(isset( $_POST['package_return_hour']))
 			update_post_meta( $post_id, 'package_return_hour', esc_attr($_POST['package_return_hour']));
 		if(isset( $_POST['package_return_address']))
-			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));		
-		
-		//provider
-		if(isset( $_POST['package_provider_name']))
-			update_post_meta( $post_id, 'package_provider_name', esc_attr($_POST['package_provider_name']));	
-		if(isset( $_POST['package_provider_email']))
-			update_post_meta( $post_id, 'package_provider_email', esc_attr($_POST['package_provider_email'] ));	
-		if(isset( $_POST['package_provider_tel']))
-			update_post_meta( $post_id, 'package_provider_tel', esc_attr($_POST['package_provider_tel']));			
+			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));				
 		
 			
 		for($x = 0; $x < count($languages); $x++)

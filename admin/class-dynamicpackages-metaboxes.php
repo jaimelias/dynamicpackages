@@ -40,8 +40,8 @@ class Dynamicpackages_Metaboxes
             add_meta_box('package-e', __('Departure', 'dynamicpackages') , array(&$this,
                 'package_departure_html'
             ) , 'packages', 'normal', 'default');
-            add_meta_box('package-f', __('Provider', 'dynamicpackages') , array(&$this,
-                'package_provider_html'
+            add_meta_box('package-f', __('Messages', 'dynamicpackages') , array(&$this,
+                'package_messages_html'
             ) , 'packages', 'normal', 'default');
         }
 
@@ -76,9 +76,6 @@ class Dynamicpackages_Metaboxes
 		$this->disabled_num = intval(package_field('package_disabled_num'));
 		$this->enabled_num = intval(package_field('package_enabled_num'));
 		$this->package_check_in_end_hour = package_field('package_check_in_end_hour');
-		$this->provider_name = package_field('package_provider_name');
-		$this->provider_email = package_field('package_provider_email');
-		$this->provider_tel = package_field('package_provider_tel');
 		$this->check_in_hour = package_field('package_check_in_hour');
 		$this->start_hour = package_field('package_start_hour');
 		$this->start_address = package_field('package_start_address');
@@ -298,23 +295,8 @@ class Dynamicpackages_Metaboxes
 		<?php
     }
 
-    public function package_provider_html($post)
+    public function package_messages_html($post)
     { ?>
-
-		<p>
-			<label for="package_provider_name"><?php echo esc_html(__('Name', 'dynamicpackages')); ?></label></br>
-			<input type="text" name="package_provider_name" id="package_provider_name" value="<?php echo esc_attr($this->provider_name); ?>">
-		</p>
-		
-		<p>
-			<label for="package_provider_email"><?php echo esc_html(__('Email', 'dynamicpackages')); ?></label></br>
-			<input type="email" name="package_provider_email" id="package_provider_email" value="<?php echo esc_attr($this->provider_email); ?>">
-		</p>
-
-		<p>
-			<label for="package_provider_tel"><?php echo esc_html(__('Telephone', 'dynamicpackages')); ?></label></br>
-			<input type="text" name="package_provider_tel" id="package_provider_tel" value="<?php echo esc_attr($this->provider_tel); ?>">
-		</p>
 
 		<?php
 			for($x = 0; $x < $this->count_languages; $x++)
