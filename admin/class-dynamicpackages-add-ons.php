@@ -475,7 +475,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					if(in_array($add_ons[$x]['id'], $add_ons_included))
 					{
 						$separator = ($add_ons[$x]['description']) ? ': ' : null;
-						$output .= '<br/><strong style="color:#666666;">'.$add_ons[$x]['name'].$separator.'</strong>' . $add_ons[$x]['description'];
+						$output .= '<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">'.$add_ons[$x]['name'].$separator.'</strong>' . $add_ons[$x]['description'];
 					}
 				}					
 			}			

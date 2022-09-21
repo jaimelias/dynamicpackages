@@ -444,12 +444,14 @@ class usdc{
 		if(dy_validators::has_deposit())
 		{
 			$label = __('deposit of', 'dynamicpackages');
-		}			
+		}
+		
+		$styleAttr = ' style="padding: 10px 0; color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" ';
 
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('When paying with %s you must make sure that you use the %s network.', 'dynamicpackages'), $this->name, $network_name)).'</p>';
 		$message .= '<p class="large">'.esc_html(__('Our payment address is as follows:', 'dynamicpackages')).'</p>';
-		$message .= '<p class="large copyToClipboard pointer" style="padding: 10px; color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';"><strong>'.esc_html($address).'</strong> <i class="fa fa-clipboard" aria-hidden="true"></i></p>';
+		$message .= '<p class="large copyToClipboard pointer" '.$styleAttr.'><strong '.$styleAttr.'>'.esc_html($address).'</strong> <i class="fa fa-clipboard" aria-hidden="true"></i></p>';
 		
 		return $message;
 	}	

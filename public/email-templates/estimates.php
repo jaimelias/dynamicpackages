@@ -1,4 +1,5 @@
 <?php
+
 $today = dy_utilities::format_date(strtotime(null));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
@@ -26,8 +27,9 @@ $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
-$notes_content = ($join_gateways) ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '<br/><br/>' : null;
-$notes = apply_filters('dy_email_notes', $notes_content . apply_filters('dy_details', null));
+$details = '<strong style="color: #666666">'.esc_html(__('Itinerary')).':</strong><br/>' . apply_filters('dy_details', null);
+$notes_content = ($join_gateways && $_POST['dy_request'] === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '<br/><br/>' : null;
+$notes = apply_filters('dy_email_notes', $notes_content);
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
@@ -160,26 +162,18 @@ $email_template = <<<EOT
 					<tr>
 						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
 							${description}
+							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
+							${details}
+							${add_ons}
+							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
+							<strong style="color:#666666;">${label_included}:</strong> ${included}
+							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
+							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
 						</td>
 						<td style="width: 100px; padding: 5px;vertical-align: top; text-align: right; ">
 							${currency_symbol}${total}
 						</td>
-					</tr>
-					
-					<tr>
-						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
-							<strong style="color:#666666;">${label_included}:</strong> ${included}
-							${add_ons}
-						</td>
-						<td style="width: 100px;"></td>
-					</tr>
-					
-					<tr>
-						<td style="padding: 5px;vertical-align: top; line-height: 2;">
-							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
-						</td>
-						<td style="width: 100px;"></td>
-					</tr>				
+					</tr>			
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
@@ -189,7 +183,8 @@ $email_template = <<<EOT
 					</tr>
 					
 					<tr>
-						<td colspan="2" style="padding: 5px; vertical-align: top; border-bottom: solid 1px #eeeeee;">
+						<td colspan="2" style="padding: 5px; vertical-align: top;">
+							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
 							<strong style="color: #666666;">${label_notes}</strong>
 							<br/>
 							${notes}

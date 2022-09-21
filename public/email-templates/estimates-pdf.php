@@ -16,13 +16,14 @@ $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = apply_filters('dy_description', null);
+$details = '<strong style="color: #666666">'.esc_html(__('Itinerary')).':</strong><br/>' . apply_filters('dy_details', null);
 $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
-$notes_content = ($join_gateways) ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '<br/><br/>' : null;
-$notes = apply_filters('dy_email_notes', $notes_content . apply_filters('dy_details', null));
+$notes_content = ($join_gateways && $_POST['dy_request'] === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '<br/><br/>' : null;
+$notes = apply_filters('dy_email_notes', $notes_content);
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
 
@@ -84,26 +85,19 @@ $email_pdf = <<<EOT
 			<tr>
 				<td style="width: 70%; border-bottom: 1pt solid #cccccc;">
 					${description}
+					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+					${details}
+					${add_ons}
+					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+					<strong style="color: #666666;">${label_included}:</strong> ${included}
+					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+					<strong style="color: #666666;">${label_not_included}:</strong> ${not_included}
 				</td>
 				<td style="width: 30%;">
 					<div style="text-align: right;">${currency_symbol}${total}</div>
 				</td>
 			</tr>
-			<tr>
-				<td style="width: 70%; border-bottom: 1pt solid #cccccc;">
-					<strong style="color: #666666;">${label_included}:</strong> ${included}
-					${add_ons}
-				</td>
-				<td style="width: 30%;">
-					<div style="text-align: right;"></div>
-				</td>
-			</tr>
-			<tr>
-				<td style="width: 70%;">
-					<strong style="color: #666666;">${label_not_included}:</strong> ${not_included}
-				</td>
-				<td style="width: 30%;"></td>
-			</tr>
+			
 			<tr>
 				<td style="width: 70%; border-top: 1pt solid #cccccc;"></td>
 				<td style="width: 30%; border-top: 1pt solid #cccccc;">
@@ -115,6 +109,7 @@ $email_pdf = <<<EOT
 
 			<tr>
 				<td style="width: 70%;">
+					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
 					<strong style="color: #666666;">${label_notes}</strong>
 					<br>
 					${notes}			
