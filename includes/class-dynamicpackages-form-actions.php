@@ -23,6 +23,7 @@ class Dynamicpackages_Actions{
 	{
 		$this->current_language = dy_utilities::current_language();
 		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
+		$this->providers = apply_filters('dy_list_providers', array());
 	}
 
 	public function is_request_submitted()
@@ -75,17 +76,12 @@ class Dynamicpackages_Actions{
 			}
 
 			$this->send_email();
-			$this->send_provider_email();
 
 			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
-			$provider_name = package_field('package_provider_name');
-			$provider_email = package_field('package_provider_email');
-			$new_post = $_POST;
+			$webhook_args = $_POST;
+			$webhook_args['providers'] = $this->providers;
 
-			$new_post['provider_name'] = $provider_name;
-			$new_post['provider_email'] = $provider_email;
-			
-            dy_utilities::webhook($webhook_option, json_encode($new_post));
+            dy_utilities::webhook($webhook_option, json_encode($webhook_args));
         }   
     }
     public function the_content($content)
@@ -118,30 +114,6 @@ class Dynamicpackages_Actions{
 		$doc_pdf->writeHTML($email_pdf);
 		$doc_pdf_content = $doc_pdf->output('doc.pdf', 'S');
 		return $doc_pdf_content;
-	}
-	
-	public function provider_email_template()
-	{
-		$provider_name = package_field('package_provider_name');
-		$template = '<p>' . esc_html($provider_name) . '</p><p>' . esc_html($this->provider_email_subject()) . '</p>';
-		return apply_filters('dy_provider_email_template', $template);
-	}
-	
-	public function send_provider_email()
-	{
-		$provider_name = package_field('package_provider_name');
-		$provider_email = package_field('package_provider_email');
-		
-		if(!empty($provider_name) && !empty($provider_email))
-		{			
-			$args = array(
-				'subject' => sanitize_text_field($this->provider_email_subject()),
-				'to' => $provider_email,
-				'message' => $this->provider_email_template()
-			);
-
-			sg_mail($args);
-		}
 	}
 
     public function send_email()
@@ -198,13 +170,6 @@ class Dynamicpackages_Actions{
 		
 		sg_mail($args);
     }
-	
-	public function provider_email_subject()
-	{
-		$output = sprintf(__('Check availability for %s %s: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']), apply_filters('dy_description', null));
-		
-		return apply_filters('dy_email_provider_email_subject', $output);
-	}
 	
 	public function subject()
 	{
