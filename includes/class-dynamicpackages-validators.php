@@ -642,7 +642,7 @@ class dy_validators
 							
 							if($expiration_stamp >= dy_strtotime('today midnight'))
 							{
-								if(!self::is_package_transport() && !self::is_package_single_day())
+								if(!self::package_type_transport() && !self::is_package_single_day())
 								{
 									for($x = 0; $x < count($booking_dates_range); $x++)
 									{
@@ -1033,14 +1033,14 @@ class dy_validators
 		return $output;		
 	}
 	
-	public static function is_package_transport()
+	public static function package_type_transport()
 	{
 		$output = false;
 		global $post;
 
 		if(isset($post))
 		{
-			$which_var = $post->ID.'_is_package_transport';
+			$which_var = $post->ID.'_package_type_transport';
 			global $$which_var;
 
 			if(isset($$which_var))
@@ -1062,6 +1062,63 @@ class dy_validators
 		return $output;
 	}
 
+	public static function package_type_multi_day()
+	{
+		$output = false;
+		global $post;
+
+		if(isset($post))
+		{
+			$which_var = $post->ID.'_package_type_multi_day';
+			global $$which_var;
+
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else {
+				
+				if(package_field('package_package_type') == 1)
+				{
+					$output = true;
+				}
+				
+				$GLOBALS[$which_var] = $output;
+			}
+
+		}
+		
+		return $output;
+	}
+
+	public static function package_type_one_day()
+	{
+		$output = false;
+		global $post;
+
+		if(isset($post))
+		{
+			$which_var = $post->ID.'_package_type_one_day';
+			global $$which_var;
+
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else {
+				
+				if(package_field('package_package_type') == 0)
+				{
+					$output = true;
+				}
+				
+				$GLOBALS[$which_var] = $output;
+			}
+
+		}
+		
+		return $output;
+	}
 	
 }
 

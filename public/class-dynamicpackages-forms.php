@@ -116,7 +116,7 @@ class Dynamicpackages_Forms
 		$min_duration = package_field('package_duration');
 		$max_duration = package_field('package_duration_max');
 		$length_unit = package_field('package_length_unit');
-		$is_transport = dy_validators::is_package_transport();
+		$is_transport = dy_validators::package_type_transport();
 		$date_label = ($is_transport) 
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
@@ -167,7 +167,7 @@ class Dynamicpackages_Forms
 		}
 		
 		
-		if(($package_type == 1 || dy_utilities::increase_by_hour() || dy_utilities::increase_by_day()) && $max_duration > $min_duration)
+		if(($package_type == 1 || dy_utilities::package_type_by_hour() || dy_utilities::package_type_by_day()) && $max_duration > $min_duration)
 		{
 			
 			$time_label = __('Nights', 'dynamicpackages');

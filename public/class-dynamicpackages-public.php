@@ -691,15 +691,15 @@ class Dynamicpackages_Public {
 			{
 				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 			}
-			if(dy_utilities::increase_by_hour())
+			if(dy_utilities::package_type_by_hour())
 			{
 				$output .= __('Per Hour', 'dynamicpackages');
 			}
-			if(dy_utilities::increase_by_day())
+			if(dy_utilities::package_type_by_day())
 			{
 				$output .=__('Per Day', 'dynamicpackages');
 			}
-			if(dy_validators::is_package_transport())
+			if(dy_validators::package_type_transport())
 			{
 				$output .=__('One-way', 'dynamicpackages');
 			}
@@ -717,7 +717,7 @@ class Dynamicpackages_Public {
 		$duration_unit = package_field('package_length_unit');
 		$duration_max = package_field('package_duration_max');		
 		
-		if(dy_utilities::increase_by_hour() ||dy_utilities::increase_by_day() || intval($duration_unit) == 2 || intval($duration_unit) == 3)
+		if(dy_utilities::package_type_by_hour() ||dy_utilities::package_type_by_day() || intval($duration_unit) == 2 || intval($duration_unit) == 3)
 		{
 			if(dy_utilities::get_min_nights() != null)
 			{
@@ -928,7 +928,7 @@ class Dynamicpackages_Public {
 			
 			$people_imp = implode(', ', $people_imp);
 			
-			if(dy_validators::is_package_transport() && isset($_REQUEST['end_date']))
+			if(dy_validators::package_type_transport() && isset($_REQUEST['end_date']))
 			{
 				$itinerary = __('Departure', 'dynamicpackages') .' '. $departure_date;
 				
@@ -1245,7 +1245,7 @@ class Dynamicpackages_Public {
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
-		$is_transport = dy_validators::is_package_transport();
+		$is_transport = dy_validators::package_type_transport();
 		$is_checkout_page = is_checkout_page();
 		$is_booking_page = is_booking_page();
 
@@ -1482,7 +1482,7 @@ class Dynamicpackages_Public {
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));
 								$label .= ' <strong>'.strtoupper(esc_html($coupons[$x][0])).'</strong>.';
 								
-								if(isset($coupons[$x][4]) && !dy_validators::is_package_transport() && !dy_validators::is_package_single_day())
+								if(isset($coupons[$x][4]) && !dy_validators::package_type_transport() && !dy_validators::is_package_single_day())
 								{
 									if(is_numeric($coupons[$x][4]))
 									{

@@ -301,7 +301,7 @@ else
 								<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
 							</div>
 
-							<?php if(!dy_validators::is_package_transport()) : ?>
+							<?php if(!dy_validators::package_type_transport()) : ?>
 								<div class="dy_pad bottom-10 semibold">
 									<?php esc_html_e(dy_utilities::show_duration(true)); ?>
 								</div>

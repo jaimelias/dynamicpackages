@@ -96,7 +96,7 @@ class Dynamicpackages_Metaboxes
 		$this->schema = intval(package_field('package_schema'));
 		$this->is_child = dy_validators::is_child();
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
-		$this->is_package_transport = dy_validators::is_package_transport();
+		$this->package_type_transport = dy_validators::package_type_transport();
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
 		$this->languages = dy_utilities::get_languages();
@@ -319,7 +319,7 @@ class Dynamicpackages_Metaboxes
     public function package_departure_html($post)
     { ?>
 
-		<?php if ($this->is_package_transport): ?>
+		<?php if ($this->package_type_transport): ?>
 			<h3><?php echo esc_html(__('Departure', 'dynamicpackages')); ?></h3>
 		<?php
         endif; ?>
@@ -337,7 +337,7 @@ class Dynamicpackages_Metaboxes
 			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea($this->start_address); ?></textarea>
 		</p>
 
-		<?php if ($this->is_package_transport): ?>
+		<?php if ($this->package_type_transport): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
 			<p>
