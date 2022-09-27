@@ -709,50 +709,6 @@ class Dynamicpackages_Public {
 
 		return $output;
 	}
-	
-	public static function show_min_duration()
-	{
-		
-		$duration = package_field('package_duration');
-		$duration_unit = package_field('package_length_unit');
-		$duration_max = package_field('package_duration_max');		
-		
-		if(dy_utilities::package_type_by_hour() ||dy_utilities::package_type_by_day() || intval($duration_unit) == 2 || intval($duration_unit) == 3)
-		{
-			if(dy_utilities::get_min_nights() != null)
-			{
-				$duration = dy_utilities::get_min_nights();
-			}
-		}
-		
-		$labels_singular = array(__('Minute', 'dynamicpackages'), __('Hour', 'dynamicpackages'), __('Day', 'dynamicpackages'), __('Night', 'dynamicpackages'), __('Week', 'dynamicpackages'));
-		
-		$labels_plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));		
-		
-		if(!empty($duration))
-		{
-			if($duration === 1)
-			{
-				if($duration_max > $duration)
-				{
-					$output = $duration.' '.$labels_plural[$duration_unit];
-				}
-				else
-				{
-					$output = $duration.' '.$labels_singular[$duration_unit];
-				}
-			}
-			else
-			{
-				$output = $duration.' '.$labels_plural[$duration_unit];
-			}			
-		}
-		else
-		{
-			$output = null;
-		}
-		return $output;
-	}
 
 	public function get_location_list()
 	{

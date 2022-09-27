@@ -313,7 +313,7 @@ class dy_utilities {
 			{
 				$min_nights = self::get_min_nights();
 
-				if(self::package_type_by_hour() ||self::package_type_by_day() || $duration_unit === 2 || $duration_unit === 3)
+				if(self::package_type_by_hour() || self::package_type_by_day() || $duration_unit === 2 || $duration_unit === 3)
 				{
 					if($min_nights)
 					{
