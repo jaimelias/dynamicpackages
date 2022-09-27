@@ -12,6 +12,8 @@ $company_tax_id = get_option('dy_tax_id');
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
+$client_email = sanitize_email($_POST['email']);
+$client_phone = sanitize_text_field($_POST['phone']);
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
@@ -37,7 +39,7 @@ $email_pdf = <<<EOT
 	<!--
 	table { vertical-align: top; }
 	tr { vertical-align: top; }
-	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.5;}
+	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.25;}
 	-->
 	</style>
 	<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
@@ -59,8 +61,12 @@ $email_pdf = <<<EOT
 						<br>
 						<br>
 						<strong style="color: #666666;">${label_client}</strong>
+						<br> 
+						${client_name}
 						<br>
-						${client_name}						
+						${client_phone}
+						<br>
+						${client_email}				
 					</div>
 				</td>
 			</tr>			
@@ -68,22 +74,20 @@ $email_pdf = <<<EOT
 		
 		<br>
 		<br>
-		<br>
-		<br>
 		
 		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
 			<tr>
-				<td style="width: 70%; border-bottom: 1pt solid #cccccc;">
+				<td style="width: 70%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
 					<strong style="color: #666666;">${label_item}</strong>
 				</td>
-				<td style="width: 30%; border-bottom: 1pt solid #cccccc;">
+				<td style="width: 30%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
 					<div style="text-align: right;">
 						<strong style="color: #666666;">${label_subtotal}</strong>
 					</div>
 				</td>
 			</tr>
 			<tr>
-				<td style="width: 70%; border-bottom: 1pt solid #cccccc;">
+				<td style="width: 70%;">
 					${description}
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
 					${details}

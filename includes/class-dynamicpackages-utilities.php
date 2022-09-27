@@ -915,13 +915,10 @@ class dy_utilities {
 				
 				if(isset($_REQUEST['booking_date']))
 				{
-					if($package_type === 0)
-					{
-						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
-						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
-						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
-						$sum = $sum * $surcharge_percent;
-					}
+					$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
+					$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
+					$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
+					$sum = $sum * $surcharge_percent;
 				}
 			}
 		}
@@ -971,13 +968,10 @@ class dy_utilities {
 					
 					if(isset($_REQUEST['booking_date']))
 					{
-						if($package_type === 0)
-						{
-							$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
-							$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
-							$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
-							$sum = $sum * $surcharge_percent;
-						}
+						$surcharges_arr = self::get_range_week_day_surcharges(array(sanitize_text_field($_REQUEST['booking_date'])));
+						$surcharges = (is_array($surcharges_arr)) ? (count($surcharges_arr) === 1) ? floatval($surcharges_arr[0]) : 0 : 0;
+						$surcharge_percent = ($surcharges > 0) ? ($surcharges + 100) / 100 : 1;
+						$sum = $sum * $surcharge_percent;
 					}
 				}
 			}
@@ -1029,6 +1023,8 @@ class dy_utilities {
 					}
 
 					$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
+
+					write_log($surcharges_arr);
 
 					if(is_array($surcharges_arr))
 					{

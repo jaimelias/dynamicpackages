@@ -160,7 +160,7 @@ $email_template = <<<EOT
 					</tr>
 					
 					<tr>
-						<td style="padding: 5px;vertical-align: top; border-bottom: solid 1px #eeeeee;">
+						<td style="padding: 5px; vertical-align: top;">
 							${description}
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
 							${details}

@@ -119,14 +119,12 @@ function package_field($name, $this_id = null)
 		return $this_field;
 	}	
 }
-function get_price_chart()
-{
-	return dy_utilities::get_price_chart();
-}
+
 function is_booking_page()
 {
 	return dy_validators::is_booking_page();
 }
+
 function is_checkout_page()
 {
 	$output = false;
@@ -198,8 +196,10 @@ function dy_strtotime($str) {
 	// This function behaves a bit like PHP's StrToTime() function, but taking into account the Wordpress site's timezone
 	// CAUTION: It will throw an exception when it receives invalid input - please catch it accordingly
 	// From https://mediarealm.com.au/
+
 	$tz_string = get_option('timezone_string');
 	$tz_offset = get_option('gmt_offset', 0);
+
 	if (!empty($tz_string))
 	{
 		// If site timezone option string exists, use it
@@ -209,9 +209,11 @@ function dy_strtotime($str) {
 	{
 		// get UTC offset, if it isn’t set then return UTC
 		$timezone = 'UTC';
-	} else
+	}
+	else
 	{
 		$timezone = $tz_offset;
+
 		if(substr($tz_offset, 0, 1) != "-" && substr($tz_offset, 0, 1) != "+" && substr($tz_offset, 0, 1) != "U")
 		{
 			$timezone = "+" . $tz_offset;
@@ -219,6 +221,7 @@ function dy_strtotime($str) {
 	}
 	
 	$datetime = new DateTime($str, new DateTimeZone($timezone));
+
 	return $datetime->format('U');
 }
 
@@ -226,23 +229,31 @@ function dy_date($format, $timestamp = null) {
 	// This function behaves a bit like PHP's Date() function, but taking into account the Wordpress site's timezone
 	// CAUTION: It will throw an exception when it receives invalid input - please catch it accordingly
 	// From https://mediarealm.com.au/
+
 	$tz_string = get_option('timezone_string');
 	$tz_offset = get_option('gmt_offset', 0);
-	if (!empty($tz_string)) {
-	// If site timezone option string exists, use it
-	$timezone = $tz_string;
-	} elseif ($tz_offset == 0) {
-	// get UTC offset, if it isn’t set then return UTC
-	$timezone = 'UTC';
+
+	if (!empty($tz_string)) 
+	{
+		// If site timezone option string exists, use it
+		$timezone = $tz_string;
+	} 
+	elseif ($tz_offset == 0) 
+	{
+			// get UTC offset, if it isn’t set then return UTC
+			$timezone = 'UTC';
 	} else {
-	$timezone = $tz_offset;
-	if(substr($tz_offset, 0, 1) != "-" && substr($tz_offset, 0, 1) != "+" && substr($tz_offset, 0, 1) != "U") {
-	$timezone = "+" . $tz_offset;
+		$timezone = $tz_offset;
+
+		if(substr($tz_offset, 0, 1) != "-" && substr($tz_offset, 0, 1) != "+" && substr($tz_offset, 0, 1) != "U") {
+			$timezone = "+" . $tz_offset;
+		}
 	}
-	}
+
 	if($timestamp === null) {
-	$timestamp = time();
+		$timestamp = time();
 	}
+
 	$datetime = new DateTime();
 	$datetime->setTimestamp($timestamp);
 	$datetime->setTimezone(new DateTimeZone($timezone));
