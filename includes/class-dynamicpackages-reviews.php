@@ -9,7 +9,7 @@ class Dynamicpackages_Reviews
 	}
 	public function init()
 	{
-		add_shortcode('package_reviews', array(&$this, 'print_total_reviews'));
+		add_shortcode('package_reviews', array(&$this, 'get_total_reviews'));
 		add_action('comment_form_logged_in_after', array(&$this, 'field'));
 		add_action('comment_form_after_fields', array(&$this, 'field'));
 		add_action('comment_post', array(&$this, 'save_comment'), 10);
@@ -685,9 +685,25 @@ class Dynamicpackages_Reviews
 		return $json;
 	}
 	
-	public function print_total_reviews()
+
+	public function get_total_reviews()
 	{
+		$output = '';
 		$reviews = $this->total_reviews();
+
+		if(is_array($reviews))
+		{
+			if(array_key_exists('ratingValue', $reviews) && array_key_exists('reviewCount', $reviews))
+			{
+				$output = $this->print_total_reviews($reviews);
+			}
+		}
+
+		return $output;
+	}
+
+	public function print_total_reviews($reviews)
+	{
 		ob_start();
 		
 		?>
