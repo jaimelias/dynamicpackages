@@ -18,7 +18,7 @@ class Dynamicpackages_Public {
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
-		$this->current_language = dy_utilities::current_language();
+		$this->current_language = current_language();
 		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
 	}
 	

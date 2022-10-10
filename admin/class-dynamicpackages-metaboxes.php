@@ -99,7 +99,7 @@ class Dynamicpackages_Metaboxes
 		$this->package_type_transport = dy_validators::package_type_transport();
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
-		$this->languages = dy_utilities::get_languages();
+		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_utilities::get_week_days_abbr();
 		$this->week_day_names = dy_utilities::get_week_day_names_long();

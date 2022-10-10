@@ -606,7 +606,7 @@ class Dynamicpackages_Reviews
 		}
 		else
 		{
-			$languages = dy_utilities::get_languages();
+			$languages = get_languages();
 			$language_list = array();
 			$merged_comments = array();
 			$rating = array();

@@ -16,6 +16,7 @@ class Dynamicpackages_Shortcodes {
 		add_shortcode('package_categories', array(&$this, 'categories'));
 		add_shortcode('package_locations', array(&$this, 'locations'));
 		add_action('dy_contact_inquiry_textarea', array(&$this, 'inquiry_textarea'));
+		
 	}
 	
 	public function contact($content = null)

@@ -18,7 +18,7 @@ class Dynamicpackages_Metapost{
 		if(! isset( $_POST['package_nonce'] ) || ! wp_verify_nonce( $_POST['package_nonce'], '_package_nonce' ) ) return;
 		if(! current_user_can( 'edit_post', $post_id ) ) return;
 
-		$languages = dy_utilities::get_languages();
+		$languages = get_languages();
 		
 		if(isset( $_POST['package_fixed_price']))
 			update_post_meta( $post_id, 'package_fixed_price', esc_attr($_POST['package_fixed_price']));

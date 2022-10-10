@@ -804,7 +804,7 @@ class paguelo_facil_on{
 				$the_id = $post->post_parent;
 			}
 			
-			$languages = dy_utilities::get_languages();
+			$languages = get_languages();
 
 			for($x = 0; $x < count($languages); $x++)
 			{

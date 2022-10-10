@@ -71,7 +71,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 function package_field($name, $this_id = null)
 {
 	$week_days = dy_utilities::get_week_days_abbr();
-	$languages = dy_utilities::get_languages();
+	$languages = get_languages();
 	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
 	
 	for($x = 0; $x < count($week_days); $x++)
@@ -291,6 +291,102 @@ function dy_money($price = 0, $wrap = '')
 	}
 	
 	return $output;
+}
+
+
+if(!function_exists('get_languages'))
+{
+	function get_languages()
+	{
+		global $polylang;
+		$output = array();
+		$which_var = 'wp_core_get_languages';
+		global $$which_var;
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			if(isset($polylang))
+			{
+				$languages = PLL()->model->get_languages_list();
+
+				for($x = 0; $x < count($languages); $x++)
+				{
+					foreach($languages[$x] as $key => $value)
+					{
+						if($key == 'slug')
+						{
+							array_push($output, $value);
+						}
+					}	
+				}
+			}
+
+			if(count($output) === 0)
+			{
+				$locale_str = get_locale();
+
+				if(strlen($locale_str) === 5)
+				{
+					array_push($output, substr($locale_str, 0, -3));
+				}
+				else if(strlen($locale_str) === 2)
+				{
+					array_push($output, $locale_str);
+				}
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+
+		return $output;
+	}	
+}
+
+if(!function_exists('current_language'))
+{
+	function current_language()
+	{
+		global $polylang;
+		$output = '';
+		$which_var = 'wp_core_current_language';
+		global $$which_var;
+
+		if($$which_var)
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			if(isset($polylang))
+			{
+				$output = pll_current_language();
+			}
+			else
+			{
+				$locale = get_locale();
+				$locale_strlen = strlen($locale);
+
+				if($locale_strlen === 5)
+				{
+					$output = substr($locale, 0, -3);
+				}
+				if($locale_strlen === 2)
+				{
+					$output = $locale;
+				}			
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+
+		return $output;
+	}
 }
 
 

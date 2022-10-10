@@ -21,7 +21,7 @@ class Dynamicpackages_Actions{
 
 	public function args()
 	{
-		$this->current_language = dy_utilities::current_language();
+		$this->current_language = current_language();
 		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
 		$this->providers = apply_filters('dy_list_providers', array());
 	}

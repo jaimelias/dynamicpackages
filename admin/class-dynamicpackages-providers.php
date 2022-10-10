@@ -49,10 +49,10 @@ class Dynamicpackages_Taxonomy_Providers {
 	public function language_select($term_id)
 	{
 		$output = '';
-		$languages = dy_utilities::get_languages();
+		$languages = get_languages();
 		$count_languages = count($languages);
 		$language = get_term_meta($term_id, $this->name.'_language', true);
-		$language = ($language) ? $language : dy_utilities::current_language();
+		$language = ($language) ? $language : current_language();
 
 		if($count_languages > 1)
 		{

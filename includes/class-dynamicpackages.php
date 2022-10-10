@@ -66,8 +66,7 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-public.php';
 		require_once $dir . 'public/class-dynamicpackages-forms.php';
 		require_once $dir . 'public/class-dynamicpackages-shortcodes.php'; //optimized
-		require_once $dir . 'public/class-dynamicpackages-tables.php'; //optimized
-		require_once $dir . 'public/class-dynamicpackages-ical.php';		
+		require_once $dir . 'public/class-dynamicpackages-tables.php'; //optimized	
 		require_once $dir . 'public/class-dynamicpackages-json.php';
 		require_once $dir . 'public/class-dynamicpackages-add-calendar.php';
 		
@@ -114,7 +113,6 @@ class dynamicpackages {
 		new Dynamicpackages_Shortcodes();
 		new Dynamicpackages_Forms();
 		new Dynamicpackages_JSON($this->reviews);
-		new Dynamicpackages_Ical();
 		new Dynamicpackages_Actions();
 	}
 
