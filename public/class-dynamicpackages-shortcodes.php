@@ -178,11 +178,11 @@ class Dynamicpackages_Shortcodes {
 
 	public function categories()
 	{
-		echo dy_utilities::get_tax_list('package_category');
+		return dy_utilities::get_tax_list('package_category');
 	}
 	public function locations()
 	{
-		echo dy_utilities::get_tax_list('package_location');
+		return dy_utilities::get_tax_list('package_location');
 	}
 }
 ?>
