@@ -393,7 +393,7 @@ class nequi_direct{
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="'.esc_attr($this->name).'" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'/assets/alt/'.$this->id.'_icon.svg').'"/><span class="semibold">'.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->name)).'.</span> '.$str.'</aside>';
+			$str = '<aside class="clearfix"><img class="inline-block img-responsive pull-left" style="vertical-align: middle; margin-right: 10px;" alt="'.esc_attr($this->name).'" width="40"  height="40" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'"/><span class="semibold">'.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->name)).'.</span> '.$str.'</aside>';
 		}
 		
 		return $str;
