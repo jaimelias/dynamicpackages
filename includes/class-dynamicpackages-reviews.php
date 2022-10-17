@@ -35,10 +35,7 @@ class Dynamicpackages_Reviews
 	
 	public function dashicons()
 	{
-		if(has_package())
-		{
-			wp_enqueue_style( 'dashicons' );
-		}
+		wp_enqueue_style( 'dashicons' );
 	}
 	
 	public function stars($the_id)
