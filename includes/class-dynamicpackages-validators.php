@@ -1119,6 +1119,46 @@ class dy_validators
 		
 		return $output;
 	}
+
+	public static function has_form()
+	{
+		$output = false;
+		$which_var = 'dy_has_form';
+		global $$which_var;
+		
+		if(isset($$which_var))
+		{
+			return $$which_var;
+		}
+		else
+		{
+			global $post;
+
+			if(isset($post))
+			{
+				if(is_singular('packages'))
+				{
+					$output = true;
+				}
+
+				if(!$output)
+				{
+					if(is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'package_contact'))
+					{
+						$output = true;
+					}
+				}
+			}
+
+			if($output)
+			{
+				$GLOBALS[$which_var] = $output;
+			}
+		}
+
+		
+		return $output;
+	}
 	
 }
 

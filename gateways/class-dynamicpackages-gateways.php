@@ -253,33 +253,12 @@ class Dynamicpackages_Gateways
 	
 	public function enqueue_scripts()
 	{
-		global $post;
 		$show_checkout_vars = false;
 		
-		
-		if(isset($post))
-		{
-			if(is_singular('packages'))
-			{
-				if(is_booking_page() )
-				{
-					$show_checkout_vars = true;	
-				}
-			}
-			else if(is_page())
-			{
-				if(has_shortcode( $post->post_content, 'package_contact'))
-				{
-					$show_checkout_vars = true;	
-				}
-			}
-		}
-		
-		if($show_checkout_vars)
+		if(dy_validators::has_form())
 		{
 			wp_add_inline_script('dynamicpackages', $this->checkout_vars(), 'before');	
 		}
-		
 	}
 
 

@@ -74,7 +74,7 @@ class Dynamicpackages_Public {
 				
 				if(isset($post))
 				{
-					if(has_shortcode( $post->post_content, 'packages') || has_shortcode( $post->post_content, 'package_contact'))
+					if(has_shortcode( $post->post_content, 'packages') || dy_validators::has_form())
 					{
 						$this->css();
 					}					
@@ -109,6 +109,7 @@ class Dynamicpackages_Public {
 		$enqueue_recaptcha = false;
 		$enqueue_sha512 = false;
 		$enqueue_datepicker = false;
+		$is_booking_page = is_booking_page();
 		
 		wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), '', true);
 		
@@ -118,21 +119,23 @@ class Dynamicpackages_Public {
 			{
 				$enqueue_public = true;
 				
-				if(is_booking_page() || has_shortcode( $post->post_content, 'package_contact'))
+				if($is_booking_page)
 				{
 					$enqueue_recaptcha = true;
 				}
 
-				if(!is_booking_page())
-				{
-					$enqueue_sha512 = true;
-				}				
-				
-				if(!is_booking_page())
+				if(!$is_booking_page)
 				{
 					$enqueue_datepicker = true;
+					$enqueue_sha512 = true;
 				}
 			}			
+		}
+
+		if(dy_validators::has_form())
+		{
+			$enqueue_public = true;
+			$enqueue_recaptcha = true;
 		}
 
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))

@@ -39,28 +39,6 @@ class Dynamicpackages_Actions{
         return $output;
 	}    
 	
-	public function has_form()
-	{
-		global $post;
-		$output = false;
-		
-		if(isset($post))
-		{
-			if(is_singular('packages'))
-			{
-				$output = true;
-			}
-			if(is_page())
-			{
-				if(has_shortcode( $post->post_content, 'package_contact'))
-				{
-					$output = true;
-				}
-			}
-		}
-		
-		return $output;
-	}
 
     public function send_data()
     {
@@ -88,7 +66,7 @@ class Dynamicpackages_Actions{
     {
         global $dy_valid_recaptcha;
 		
-        if($this->has_form() && $this->is_request_submitted())
+        if(dy_validators::has_form() && $this->is_request_submitted())
         {               
             if(dy_validators::validate_request())
             {
@@ -191,7 +169,7 @@ class Dynamicpackages_Actions{
 
     public function wp_title($title)
     {
-        if($this->has_form() && $this->is_request_submitted())
+        if(dy_validators::has_form() && $this->is_request_submitted())
         {
             $title = esc_html(__('Thank You for Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
@@ -201,7 +179,7 @@ class Dynamicpackages_Actions{
 	
 	public function modify_excerpt($excerpt)
 	{
-        if($this->has_form() && $this->is_request_submitted())
+        if(dy_validators::has_form() && $this->is_request_submitted())
         {
             $excerpt = apply_filters('dy_description', null);
         }
@@ -213,7 +191,7 @@ class Dynamicpackages_Actions{
     {	
 		if(in_the_loop())
 		{
-			if($this->has_form() && $this->is_request_submitted())
+			if(dy_validators::has_form() && $this->is_request_submitted())
 			{
 				$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
 			}			

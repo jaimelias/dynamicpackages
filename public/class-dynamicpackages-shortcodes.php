@@ -16,44 +16,28 @@ class Dynamicpackages_Shortcodes {
 		add_shortcode('package_categories', array(&$this, 'categories'));
 		add_shortcode('package_locations', array(&$this, 'locations'));
 		add_action('dy_contact_inquiry_textarea', array(&$this, 'inquiry_textarea'));
-		
 	}
 	
 	public function contact($content = null)
 	{
-		$output = null;
-		
-		if($this->is_contact_form())
-		{
-			ob_start();
-			require_once $this->plugin_dir_path.'public/partials/quote-form.php';
-			$output = ob_get_contents();
-			ob_end_clean();			
-		}
+
+		$GLOBALS['dy_has_form'] = true;
+
+		ob_start();
+		require_once $this->plugin_dir_path.'public/partials/quote-form.php';
+		$output = ob_get_contents();
+		ob_end_clean();	
 		
 		return $output;		
 	}
-	public function is_contact_form()
-	{
-		global $post;
-		$output = false;
-		
-		if(isset($post))
-		{
-			if(has_shortcode($post->post_content, 'package_contact'))
-			{
-				$output = true;
-			}
-		}
-		
-		return $output;
-	}
+
 	public function inquiry_textarea()
 	{
-		if($this->is_contact_form())
+		if(!is_singular('packages'))
 		{
 			?>
-			<p><label for="inquiry"><?php echo esc_html(__('Message', 'dynamicpackages')); ?></label>
+			<p>
+				<label for="inquiry"><?php echo esc_html(__('Message', 'dynamicpackages')); ?></label>
 				<textarea id="inquiry" name="inquiry" required></textarea>
 			</p>
 			<?php
