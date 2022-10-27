@@ -63,47 +63,53 @@ class Dynamicpackages_Post_Types
 
 	}
 
-	public function __echo_null()
-	{
-		echo '';
-	}
-	
 	public function register_taxonomies(){
+
+
+
+
 		$taxonomies = array(
 			'package_location' => array(
 				'name' => __( 'Locations', 'dynamicpackages'),
 				'singular_name' => __( 'Location', 'dynamicpackages'),
-				'emoji' => '🌎'
+				'emoji' => '🌎',
+				'public' => true
 			),
 			'package_category' => array(
 				'name' => __( 'Categories', 'dynamicpackages'),
 				'singular_name' => __( 'Category', 'dynamicpackages'),
-				'emoji' => '🏷️'
+				'emoji' => '🏷️',
+				'public' => true
 			),
 			'package_included' => array(
 				'name' => __( 'Included', 'dynamicpackages'),
 				'singular_name' => __( 'Included', 'dynamicpackages'),
-				'emoji' => '🍹'				
+				'emoji' => '🍹',
+				'public' => false		
 			),
 			'package_not_included' => array(
 				'name' => __( 'Not Included', 'dynamicpackages'),
 				'singular_name' => __( 'Not Included', 'dynamicpackages'),
-				'emoji' => '❌'
+				'emoji' => '❌',
+				'public' => false
 			),
 			'package_terms_conditions' => array(
 				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
 				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages'),
-				'emoji' => '📄'
+				'emoji' => '📄',
+				'public' => true
 			),
 			'package_add_ons' => array(
 				'name' => __( 'Add-ons', 'dynamicpackages'),
 				'singular_name' => __( 'Add-on', 'dynamicpackages'),
-				'emoji' => '🤑'
+				'emoji' => '🤑',
+				'public' => false
 			),
 			'package_provider' => array(
 				'name' => __( 'Providers', 'dynamicpackages'),
 				'singular_name' => __( 'Provider', 'dynamicpackages'),
-				'emoji' => '🤖'
+				'emoji' => '🤖',
+				'public' => false
 			)
 		);
 
@@ -112,6 +118,7 @@ class Dynamicpackages_Post_Types
 			$singular = $value['singular_name'];
 			$plural = $value['name'];
 			$emoji = $value['emoji'];
+			$public = $value['public'];
 			$labels = $value;
 			$labels['search_items'] = sprintf(__('Search %s', 'dynamicpackages'), $plural);
 			$labels['all_items'] = sprintf(__('All %s', 'dynamicpackages'), $plural);
@@ -126,7 +133,7 @@ class Dynamicpackages_Post_Types
 			$args = array(
 				'labels' => $labels,
 				'hierarchical' => true,
-				'public' => true,
+				'public' => $public,
 				'show_in_rest'				=> true,
 				'show_ui' => true,
 				'show_admin_column' => true,
