@@ -658,7 +658,12 @@ const countryDropdown = pluginDirUrl => {
 	});
 }	
 
-const countryOptions = (data) => {
+const countryOptions = data => {
+
+	data = data
+		.filter(i => i[0] && i[1])
+		.sort((a, b) => a[1].localeCompare(b[1]));
+
 	jQuery('.countrylist').each(function() {
 		
 		var field = jQuery(this);
