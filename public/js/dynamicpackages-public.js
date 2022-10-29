@@ -476,31 +476,8 @@ const storePopulate = () => {
 	});
 }
 
-function dy_recaptcha()
-{	
-	var args = {};
-	const {recaptchaSiteKey} = dyStrings();
-	args.sitekey = recaptchaSiteKey;
-	args.isolated = true;
-	args.badge = 'inline';
-	var quote_widget;
-	
-	if(jQuery('#dynamic_form').length)
-	{
-		args.callback = (token) => {
-			return new Promise((resolve, reject) => { 
-				if(checkoutFormSubmit(token) == false)
-				{
-					grecaptcha.reset(quote_widget);
-				}
-				resolve();
-			});			
-		};
-		quote_widget = grecaptcha.render('dy_submit_form', args);
-	}
-}
 
-const checkoutFormSubmit = token => {
+async function checkoutFormSubmit(token){
 	const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	const thisForm = jQuery('#dynamic_form');
 	const excludeStore = ['dy_recaptcha', 'dy_request'];
@@ -529,7 +506,6 @@ const checkoutFormSubmit = token => {
 			const value = i.value;
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
 			const label = jQuery(thisForm).find('label[for="'+name+'"]');
-			const tag = jQuery(field).prop('tagName');
 			const isRequired = (jQuery(field).hasClass('required')) ? true : false;
 			const isNull = (value) ? false : true;
 			

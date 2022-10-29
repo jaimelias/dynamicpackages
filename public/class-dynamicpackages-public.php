@@ -145,8 +145,9 @@ class Dynamicpackages_Public {
 		
 		if($enqueue_recaptcha)
 		{
-			wp_enqueue_script('invisible-recaptcha', 'https://www.google.com/recaptcha/api.js?onload=dy_recaptcha&render=explicit', array(), 'async_defer', true );
-			array_push($dep, 'invisible-recaptcha');
+			$recaptcha = 'recaptcha-v3';
+			wp_enqueue_script($recaptcha, 'https://www.google.com/recaptcha/api.js', '', 'async_defer', true );
+			array_push($dep, $recaptcha);
 		}
 		if($enqueue_sha512)
 		{

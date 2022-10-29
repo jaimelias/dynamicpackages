@@ -97,6 +97,16 @@
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
-	<p><button type="button" id="dy_submit_form" class="pure-button pure-button-primary rounded strong large"><?php esc_html_e($submit_form); ?></button></p>	
-
+		<?php if(get_option('captcha_site_key')): ?>
+			<p>
+				<button 
+					type="button" 
+					id="dy_submit_form"
+					data-badge="bottomleft" 
+					data-callback="checkoutFormSubmit"
+					data-sitekey="<?php echo esc_attr(get_option('captcha_site_key')); ?>"
+					data-action='checkout'
+					class="g-recaptcha pure-button pure-button-primary strong large"><?php esc_html_e($submit_form); ?></button>
+			</p>	
+		<?php endif; ?>
 </form>
