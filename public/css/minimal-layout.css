@@ -345,29 +345,34 @@ strong, .strong
 }
 .minimal_alert
 {
-	background-color: #ff8080;
+	background-color: #fe3f3f;
 	color: #000;
 	padding: 10px;
 }
 .minimal_success
 {
-	background-color: #7ecd7e;
+	background-color: #4bbe4b;
 	color: #000;
 	padding: 10px;	
 }
 .minimal_warning
 {
-	background-color:  #ffff4d;
+	background-color:  #faf43b;
 	color: #000;
 	padding: 10px;	
 }
 input[type=text].invalid_field::placeholder, input[type=number].invalid_field::placeholder, input[type=email].invalid_field::placeholder{
-    color: #eee;
+    color: #444;
 }
 input[type=text].invalid_field, input[type=number].invalid_field, input[type=email].invalid_field, select.invalid_field{
-    background-color: #d43f3f;
-    border-color: #881f1f;
-    color: #fff;
+    outline: 0;
+    border-color: #ff6767;
+    box-shadow: 0 0 5px #fe3f3f;
+    background-color: #ffb5b5;
+}
+input[type=text].invalid_field:focus, input[type=number].invalid_field:focus, input[type=email].invalid_field:focus, select.invalid_field:focus
+{
+    background-color: #ffdddd;
 }
 /*--------------------------------------------------------------
 >>> GRIDS RESPONSIVE CSS:
