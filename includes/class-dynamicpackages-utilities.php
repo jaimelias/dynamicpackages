@@ -1323,55 +1323,6 @@ class dy_utilities {
 		}, $days);
 	}
 
-	public static function cloudflare_ban_ip_address(){
-
-		$cfp_key = get_option('cfp_key');
-		
-		if(!empty($cfp_key))
-		{
-
-			if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-				$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
-			}
-
-			$cfheaders = array(
-				'Content-Type: application/json',
-				'Authorization: Bearer '.sanitize_text_field($cfp_key)
-			);
-
-			$data = array(
-				'mode' => 'block',
-				'configuration' => array('target' => 'ip', 'value' => $_SERVER['REMOTE_ADDR']),
-				'notes' => 'Banned on '.date('Y-m-d H:i:s').' by PHP-script'
-			);
-
-			$json = json_encode($data);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $cfheaders);
-			curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules');
-			$response = curl_exec($ch);
-			curl_close($ch);
-
-			if ($response === false){
-				return false;
-			}
-			else
-			{
-				$data = json_decode($response, true);
-				
-				if(isset($data['success']) && $data['success'] == true){
-					return $data['result']['id'];
-				}else{
-					write_log($response);
-					return false;
-				}
-			}
-		}
-
-	}
-
 	public static function event_date_update($the_id)
 	{
 		$output = null;

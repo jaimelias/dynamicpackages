@@ -319,7 +319,7 @@ class dy_validators
 
 					if(in_array('invalid-input-response', $verify_response['error-codes']))
 					{
-						dy_utilities::cloudflare_ban_ip_address();
+						cloudflare_ban_ip_address();
 					}
 
 					write_log(json_encode($debug_output));

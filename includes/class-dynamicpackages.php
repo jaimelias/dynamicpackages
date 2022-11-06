@@ -57,7 +57,6 @@ class dynamicpackages {
 		require_once $dir . 'includes/class-dynamicpackages-parsedown.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-i18n.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
-		require_once $dir . 'includes/class-dynamicpackages-mailer.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized

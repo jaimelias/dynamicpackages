@@ -51,7 +51,7 @@ class Dynamicpackages_Public {
 		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
 		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
 		add_action('dy_show_badge', array(&$this, 'show_badge'));
-		add_action('dy_show_event_date', array(&$this, 'show_event_date'));
+		add_action('dy_show_event_date', array(&$this, 'show_event_date'));		
 	}
 
 	
