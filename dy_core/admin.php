@@ -160,7 +160,7 @@ class Dynamic_Core_Admin {
 
 		add_settings_field( 
 			'dy_ipgeolocation_api_token', 
-			__( 'ipgeolocation.io API Token', 'dynamicpackages' ), 
+			__( 'IpGeolocation.io API Token', 'dynamicpackages' ), 
 			array(&$this, 'settings_input'), 
 			$this->setting_id, 
 			$this->section_analytics,

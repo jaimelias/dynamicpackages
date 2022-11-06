@@ -479,51 +479,46 @@ class Dynamicpackages_Reviews
 	
 	public function css()
 	{
-		ob_start();
-		?>
-		<style type="text/css">
+		?><style type="text/css">
 			@font-face {
-			font-family: "dashicons";
-			src: url("<?php echo includes_url(); ?>fonts/dashicons.eot");
+				font-family: "dashicons";
+				src: url("<?php echo includes_url(); ?>fonts/dashicons.eot");
 			}
 
 			@font-face {
-			font-family: "dashicons";
-			src: url(data:application/x-font-woff;charset=utf-8;base64, format("woff"),
-			url("<?php echo includes_url(); ?>fonts/dashicons.ttf") format("truetype"),
-			url("<?php echo includes_url(); ?>fonts/dashicons.svg#dashicons") format("svg");
-			font-weight: normal;
-			font-style: normal;
+				font-family: "dashicons";
+				src: url(data:application/x-font-woff;charset=utf-8;base64, format("woff"),
+				url("<?php echo includes_url(); ?>fonts/dashicons.ttf") format("truetype"),
+				url("<?php echo includes_url(); ?>fonts/dashicons.svg#dashicons") format("svg");
+				font-weight: normal;
+				font-style: normal;
 			}
 
 			.star-rating .star-full:before {
-			content: "\f155";
+				content: "\f155";
 			}
 
 			.star-rating .star-half:before {
-			content: "\f459";
+				content: "\f459";
 			}
 
 			.star-rating .star-empty:before {
-			content: "\f154";
+				content: "\f154";
 			}
 
 			.star-rating .star{
-			color: orange;
-			display: inline-block;
-			font-family: dashicons;
-			font-style: normal;
-			line-height: 1;
-			text-align: center;
-			text-decoration: inherit;
-			width: 20px;
-			text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+				color: orange;
+				display: inline-block;
+				font-family: dashicons;
+				font-style: normal;
+				line-height: 1;
+				text-align: center;
+				text-decoration: inherit;
+				width: 20px;
+				text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 			}
-		</style>
+		</style>		
 		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		echo $output;	
 	}
 	
 	public function wp_star_rating($rating) {
