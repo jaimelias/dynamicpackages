@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 /**
  * Define the internationalization functionality
  *

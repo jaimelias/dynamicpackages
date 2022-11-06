@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class usdt{
 	
 	function __construct($plugin_id)

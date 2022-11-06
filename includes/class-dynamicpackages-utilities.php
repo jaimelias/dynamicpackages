@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class dy_utilities {
 	
 	public static function currency_format($amount)
@@ -1466,5 +1468,4 @@ class dy_utilities {
 
 		return $output;
 	}
-
 }

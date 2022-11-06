@@ -97,14 +97,14 @@
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
-		<?php if(get_option('captcha_site_key')): ?>
+		<?php if(get_option('dy_recaptcha_site_key')): ?>
 			<p>
 				<button 
 					type="button" 
 					id="dy_submit_form"
 					data-badge="bottomleft" 
 					data-callback="checkoutFormSubmit"
-					data-sitekey="<?php echo esc_attr(get_option('captcha_site_key')); ?>"
+					data-sitekey="<?php echo esc_attr(get_option('dy_recaptcha_site_key')); ?>"
 					data-action='checkout'
 					class="g-recaptcha pure-button pure-button-primary strong large"><?php esc_html_e($submit_form); ?></button>
 			</p>	

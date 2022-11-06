@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class cuanto{
 	
 	function __construct($plugin_id)

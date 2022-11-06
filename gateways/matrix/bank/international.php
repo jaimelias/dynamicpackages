@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class wire_transfer{
 	
 	function __construct($plugin_id)

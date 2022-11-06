@@ -1,6 +1,9 @@
 <?php
 
 
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class Dynamicpackages_Post_Types
 {
 	// Register Custom Post Type

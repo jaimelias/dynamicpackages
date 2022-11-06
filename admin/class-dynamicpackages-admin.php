@@ -1,7 +1,7 @@
 <?php
 
 
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( !defined( 'WPINC' ) ) exit;
 
 
 class Dynamicpackages_Admin {
@@ -64,17 +64,10 @@ class Dynamicpackages_Admin {
 
 	public function settings_init(  ) { 
 
-		register_setting('dy_settings', 'dy_email', 'sanitize_email');
-		register_setting('dy_settings', 'dy_phone', 'esc_html');
-		register_setting('dy_settings', 'dy_whatsapp', 'intval');
-		register_setting('dy_settings', 'dy_address', 'esc_html');
-		register_setting('dy_settings', 'dy_tax_id', 'esc_html');
-		register_setting('dy_settings', 'captcha_site_key', 'sanitize_user');
-		register_setting('dy_settings', 'captcha_secret_key', 'sanitize_user');
+		//package
 		register_setting('dy_settings', 'dy_breadcrump', 'intval');
 		register_setting('dy_settings', 'dy_webhook', 'esc_url');
 		register_setting('dy_settings', 'dy_quote_webhook', 'esc_url');
-		register_setting('dy_settings', 'ipgeolocation', 'sanitize_user');	
 		register_setting('dy_settings', 'dy_disabled_dates', 'esc_html');	
 		register_setting('dy_settings', 'dy_max_disabled_dates', 'intval');	
 
@@ -84,7 +77,7 @@ class Dynamicpackages_Admin {
 		register_setting('dy_settings', 'dy_archive_hide_start_address', 'esc_html');
 
 		//cloudflare
-		register_setting('dy_settings', 'cfp_key', 'esc_html');
+		register_setting('dy_settings', 'dy_cloudflare_api_token', 'esc_html');
 
 
 		add_settings_section(
@@ -124,52 +117,6 @@ class Dynamicpackages_Admin {
 			'dy_settings', 
 			'dy_settings_section' 
 		);
-		
-		add_settings_field( 
-			'dy_email', 
-			esc_html(__( 'Company Email', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_email', 'type' => 'email')
-		);
-
-		add_settings_field( 
-			'dy_phone', 
-			esc_html(__( 'Company Phone', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_phone', 'type' => 'text')
-		);
-		
-		add_settings_field( 
-			'dy_whatsapp', 
-			esc_html(__( 'Company Whatsapp', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_whatsapp', 'type' => 'number')
-		);		
-
-		add_settings_field( 
-			'dy_address', 
-			esc_html(__( 'Company Address', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_address', 'type' => 'text')
-		);
-
-		add_settings_field( 
-			'dy_tax_id', 
-			esc_html(__( 'Tax Identification Number', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'dy_tax_id', 'type' => 'text')
-		);		
-		
 
 		add_settings_field( 
 			'dy_webhook', 
@@ -189,45 +136,7 @@ class Dynamicpackages_Admin {
 			array('name' => 'dy_quote_webhook')
 		);		
 
-		add_settings_field( 
-			'captcha_site_key', 
-			esc_html(__( 'Recaptcha Site Key', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'captcha_site_key') 
-		);	
-
-		add_settings_field( 
-			'captcha_secret_key', 
-			esc_html(__( 'Recaptcha Secret Key', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'captcha_secret_key') 
-		);
-		
-		//cloudflare
-
-		add_settings_field( 
-			'cfp_key', 
-			esc_html(__( 'Cloudflare Api Token', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'cfp_key') 
-		);
-
-
-
-		add_settings_field( 
-			'ipgeolocation', 
-			esc_html(__( 'IPGeolocation.io', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
-			'dy_settings', 
-			'dy_settings_section',
-			array('name' => 'ipgeolocation', 'url' => 'http://ipgeolocation.io/') 
-		);	
+	
 
 		add_settings_field( 
 			'dy_max_disabled_dates', 
@@ -303,7 +212,7 @@ class Dynamicpackages_Admin {
 
 	public function settings_input($arr){
 			$name = $arr['name'];
-			$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
+			$url = (array_key_exists('url', $arr)) ? '<a target="_blank" rel="noopener noreferrer" href="'.esc_url($arr['url']).'">?</a>' : null;
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 			$value = ($type == 'checkbox') ? 1 : get_option($name);
 		?>

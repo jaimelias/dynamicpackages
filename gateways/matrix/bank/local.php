@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class bank_transfer{
 	
 	function __construct($plugin_id)

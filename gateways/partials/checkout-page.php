@@ -72,7 +72,7 @@
 			<?php if(isset($add_to_calendar)) : ?>
 				<div class="text-center bottom-10"><?php echo $add_to_calendar; ?></div>
 			<?php endif; ?>
-			<div class="text-center"><?php echo whatsapp_button(__('Support via Whatsapp', 'dynamicpackages'), apply_filters('dy_description', null).' '.dy_money()); ?></div>
+			<div class="text-center"><?php do_action('dy_whatsapp_button'); ?></div>
 		</div>
 	</div>
 	<div class="pure-u-1 pure-u-md-2-3">

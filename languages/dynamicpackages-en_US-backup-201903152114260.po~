@@ -311,7 +311,7 @@ msgid "Sendgrid Username"
 msgstr ""
 
 #: gateways/gateways.php:327
-msgid "IPGeolocation API Key"
+msgid "dy_ipgeolocation_api_token API Key"
 msgstr ""
 
 #: gateways/gateways.php:362

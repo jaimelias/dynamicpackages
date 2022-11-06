@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class nequi_direct{
 	
 	function __construct($plugin_id)

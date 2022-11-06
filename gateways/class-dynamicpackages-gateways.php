@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class Dynamicpackages_Gateways
 {
 	function __construct($plugin_id)
@@ -47,8 +50,7 @@ class Dynamicpackages_Gateways
 		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('list_gateways', array(&$this, 'coupon'), 9);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
-		add_filter('the_content', array(&$this, 'the_content'), 102);
-		
+		add_filter('the_content', array(&$this, 'the_content'), 102);	
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 100);
 		add_action('init', array(&$this, 'set_post_on_checkout_page'));
 		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
@@ -57,8 +59,8 @@ class Dynamicpackages_Gateways
 		add_action('dy_invalid_min_duration', array(&$this, 'invalid_min_duration'));
 		add_action('dy_coupon_confirmation', array(&$this, 'coupon_confirmation'));
 		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
-		add_action('dy_crypto_form', array(&$this, 'crypto_form'));
-		
+		add_action('dy_crypto_form', array(&$this, 'crypto_form'));		
+		add_action('dy_whatsapp_button', array(&$this, 'whatsapp_button'));
 	}
 	
 	public function set_post_on_checkout_page()
@@ -524,6 +526,40 @@ class Dynamicpackages_Gateways
 		}
 	}
 	
+
+	public function whatsapp_label($label)
+	{
+		if(is_singular('packages') && isset($_GET['booking_date']))
+		{
+			if(is_booking_page())
+			{
+				
+			}
+		}
+
+		return $label;
+	}
+
+	public function whatsapp_text($text)
+	{
+		if(is_singular('packages') && isset($_GET['booking_date']))
+		{
+			if(is_booking_page())
+			{
+				
+			}
+		}
+
+		return $text;
+	}
+
+	public function whatsapp_button()
+	{
+		$label = __('Support via Whatsapp', 'dynamicpackages');
+		$text = apply_filters('dy_description', null).' '.dy_money();
+
+		echo whatsapp_button($label, $text);
+	}
 }
 
 ?>

@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 /**
  * The file that defines the core plugin class
  *
@@ -34,7 +36,7 @@ class dynamicpackages {
 
 	public function __construct() {
 
-		$this->plugin_name = 'Dynamicpackages';
+		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.0';
 		$this->load_dependencies();

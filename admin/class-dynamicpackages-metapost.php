@@ -1,5 +1,9 @@
 <?php 
 
+
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class Dynamicpackages_Metapost{
 	
 	public function __construct()

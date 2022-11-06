@@ -1,6 +1,8 @@
 <?php
 
 
+if ( !defined( 'WPINC' ) ) exit;
+
 use Spipu\Html2Pdf\Html2Pdf;
 
 class Dynamicpackages_Actions{

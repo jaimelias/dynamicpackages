@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class yappy_direct{
 	
 	function __construct($plugin_id)

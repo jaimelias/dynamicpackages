@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class Dynamicpackages_Tables{
 
 	function __construct()

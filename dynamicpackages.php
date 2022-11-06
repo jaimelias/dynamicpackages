@@ -13,7 +13,7 @@
  * @package           dynamicpackages
  *
  * @wordpress-plugin
- * Plugin Name:       Dynamicpackages
+ * Plugin Name:       Dynamic Packages
  * Plugin URI:        https://github.com/jaimelias/dynamicpackages
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
  * Version:           1.0.0
@@ -27,10 +27,8 @@
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
 
+if ( !defined( 'WPINC' ) ) exit;
 
 function activate_dynamicpackages() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages-activator.php';

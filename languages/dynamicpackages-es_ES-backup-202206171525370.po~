@@ -970,8 +970,8 @@ msgid "Invoice"
 msgstr "Factura"
 
 #: admin/class-dynamicpackages-admin.php:225
-msgid "IPGeolocation.io"
-msgstr "IPGeolocation.io"
+msgid "ipgeolocation.io"
+msgstr "ipgeolocation.io"
 
 #: includes/class-dynamicpackages-reviews.php:654
 msgid "is rated"

@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class Dynamicpackages_Shortcodes {
 	
 	public function __construct()
@@ -17,7 +19,7 @@ class Dynamicpackages_Shortcodes {
 		add_shortcode('package_locations', array(&$this, 'locations'));
 		add_action('dy_contact_inquiry_textarea', array(&$this, 'inquiry_textarea'));
 	}
-	
+
 	public function contact($content = null)
 	{
 
@@ -44,12 +46,12 @@ class Dynamicpackages_Shortcodes {
 		}
 	}
 	
-	public function package_filter($content = null)
+	public function package_filter($content = '')
 	{
 		return apply_filters('dy_form_filter_form', $content);
 	}	
 	
-	public function package_shortcode_full($attr, $content = "")
+	public function package_shortcode_full($attr, $content = '')
 	{
 		global $polylang;
 		

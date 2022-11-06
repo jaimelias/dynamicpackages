@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class paypal_me{
 	
 	function __construct($plugin_id)

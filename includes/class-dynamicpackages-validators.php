@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class dy_validators
 {
 	public static function validate_quote()
@@ -267,10 +269,10 @@ class dy_validators
 		
 		if(!isset($dy_valid_recaptcha))
 		{
-			if(isset($_POST['dy_recaptcha']) && get_option('captcha_secret_key'))
+			if(isset($_POST['dy_recaptcha']) && get_option('dy_recaptcha_secret_key'))
 			{
 				$data = array();
-				$data['secret'] = get_option('captcha_secret_key');
+				$data['secret'] = get_option('dy_recaptcha_secret_key');
 				$data['remoteip'] = $_SERVER['REMOTE_ADDR'];
 				$data['response'] = sanitize_text_field($_POST['dy_recaptcha']);
 				$url = 'https://www.google.com/recaptcha/api/siteverify';			

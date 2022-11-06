@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class paguelo_facil_on{
 	
 	function __construct($plugin_id)

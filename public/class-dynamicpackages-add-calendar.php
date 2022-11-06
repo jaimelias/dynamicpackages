@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class dy_Add_To_Calendar
 {
 	function __construct()

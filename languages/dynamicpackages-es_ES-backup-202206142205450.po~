@@ -962,8 +962,8 @@ msgid "Invoice"
 msgstr "Factura"
 
 #: admin/class-dynamicpackages-admin.php:305
-msgid "IPGeolocation.io"
-msgstr "IPGeolocation.io"
+msgid "ipgeolocation.io"
+msgstr "ipgeolocation.io"
 
 #: public/partials/reviews.php:650
 msgid "is rated"

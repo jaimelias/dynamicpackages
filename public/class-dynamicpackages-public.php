@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 
 class Dynamicpackages_Public {
 
@@ -8,34 +10,35 @@ class Dynamicpackages_Public {
 	private $version;
 
 	public function __construct() {
-		
-		add_action('init', array(&$this, 'set_defaults'));
-		add_action('wp', array(&$this, 'init'));
-	}
-
-	public function set_defaults()
-	{
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
-		$this->current_language = current_language();
-		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
-	}
-	
-	public function init()
-	{
+
+		add_action('init', array(&$this, 'init'));
+
+		//scripts
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
+
+		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
 		add_filter('the_content', array(&$this, 'the_content'), 100);
 		add_filter('pre_get_document_title', array(&$this, 'wp_title'), 100);
 		add_filter('wp_title', array(&$this, 'wp_title'), 100);
 		add_filter('the_title', array(&$this, 'modify_title'), 100);
 		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
-		add_action('wp_head', array(&$this, 'meta_tags'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
+		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
+
+		//meta tags
+		add_action('wp_head', array(&$this, 'meta_tags'));
 		add_action('wp_head', array(&$this, 'location_category_canonical'));
+		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
+		add_filter('term_description', array(&$this, 'modify_term_description'));
+
+
+		//packages
 		add_filter('dy_details', array(&$this, 'details'));
 		add_action('dy_description', array(&$this, 'description'));
 		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
@@ -51,9 +54,13 @@ class Dynamicpackages_Public {
 		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
 		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
 		add_action('dy_show_badge', array(&$this, 'show_badge'));
-		add_action('dy_show_event_date', array(&$this, 'show_event_date'));		
+		add_action('dy_show_event_date', array(&$this, 'show_event_date'));
 	}
 
+	public function init()
+	{
+		$this->current_language = current_language();
+	}
 	
 	public function enqueue_styles() {
 		
@@ -103,7 +110,7 @@ class Dynamicpackages_Public {
 		global $post;
 		$strings = array();
 		$dep = array( 'jquery', 'landing-cookies');
-		$ipgeolocation = null;
+		$dy_ipgeolocation_api_token = null;
 		$enqueue_public = false;
 		$enqueue_archive = false;
 		$enqueue_recaptcha = false;
@@ -164,9 +171,9 @@ class Dynamicpackages_Public {
 		{
 
 			
-			$strings['recaptchaSiteKey'] = get_option('captcha_site_key');
+			$strings['recaptchaSiteKey'] = get_option('dy_recaptcha_site_key');
 			$strings['postId'] = get_the_ID();
-			$strings['ipGeolocation'] = get_option('ipgeolocation');
+			$strings['dy_ipgeolocation_api_token'] = get_option('dy_ipgeolocation_api_token');
 			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
 			$strings['pluginDirUrl'] = esc_url($this->plugin_dir_url_dir);
 			$strings['permaLink'] = esc_url(get_the_permalink());

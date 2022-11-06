@@ -1,4 +1,8 @@
 <?php
+
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class Dynamicpackages_Metaboxes
 {
 

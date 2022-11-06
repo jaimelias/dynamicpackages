@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
+
 class Dynamicpackages_Taxonomy_Providers {
 
     function __construct()

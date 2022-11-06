@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
+define('DY_CORE_FUNCTIONS', true);
 
 if ( ! function_exists('write_log')) {
 	
@@ -138,9 +141,9 @@ if(!function_exists('cloudflare_ban_ip_address'))
 	function cloudflare_ban_ip_address(){
 
 		$output = false;
-		$cfp_key = get_option('cfp_key');
+		$dy_cloudflare_api_token = get_option('dy_cloudflare_api_token');
 		
-		if(!empty($cfp_key))
+		if(!empty($dy_cloudflare_api_token))
 		{
 
 			$url = 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules';
@@ -150,7 +153,7 @@ if(!function_exists('cloudflare_ban_ip_address'))
 				: $_SERVER['REMOTE_ADDR'];
 
 			$headers = array(
-				'Authorization' => 'Bearer ' . sanitize_text_field($cfp_key),
+				'Authorization' => 'Bearer ' . sanitize_text_field($dy_cloudflare_api_token),
 				'Content-Type' => 'application/json'
 			);
 
@@ -202,6 +205,101 @@ if(!function_exists('cloudflare_ban_ip_address'))
 
 		return $output;
 	}	
+}
+
+
+
+if(!function_exists('home_lang'))
+{
+	function home_lang()
+	{
+		$which_var = 'minimal_home_lang';
+		global $$which_var;
+		$output = '';
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			global $polylang;
+
+			if($polylang)
+			{
+				$pll_url = pll_home_url();
+				$current_language = pll_current_language();
+				$parsed_url = parse_url($pll_url);
+				$scheme = $parsed_url['scheme'];
+				$host = $parsed_url['host'];
+				$path = $parsed_url['path'];
+				$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+				$langPath = '';
+				$path_arr = array_values(array_filter(explode('/', $path)));
+
+				if(in_array($current_language, $path_arr))
+				{
+					$path = $current_language;
+				}
+				else
+				{
+					$path = '';
+				}
+
+				$output =  home_url($path.'/');
+			}
+			else
+			{
+				$output =  home_url('/');
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+
+		return $output;
+	}
+}
+
+if(!function_exists('whatsapp_button'))
+{
+	function whatsapp_button($label = '', $text = '')
+	{
+		$output = '';
+		$number = preg_replace('/[^0-9.]+/', '', get_option('dy_whatsapp'));
+
+		if(intval($number) > 0)
+		{
+			if($label === '')
+			{
+				$label = 'Whatsapp';
+			}
+			
+			if($text === '')
+			{
+				if(is_singular())
+				{
+					global $post;
+					$text = $post->post_title;
+				}
+				else if(is_tax())
+				{
+					$text = single_term_title( '', false);
+				}
+				else
+				{
+					$text = get_bloginfo('name');
+				}
+			}
+			
+			
+			$text =  '?text='.urlencode($text);
+			
+			$url = 'https://wa.me/'.$number.$text;
+			$output = '<a class="pure-button button-whatsapp" target="_blank" href="'.esc_url($url).'"><i class="fab fa-whatsapp"></i> '.esc_html($label).'</a>';
+		}
+
+		return $output;
+	}
 }
 
 

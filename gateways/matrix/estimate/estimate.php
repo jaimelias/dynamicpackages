@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 class estimate_request{
 	
 	function __construct($plugin_id)
