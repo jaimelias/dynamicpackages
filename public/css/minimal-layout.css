@@ -132,7 +132,7 @@
 }
 .pure-button:active{
     box-shadow:0 0 0 1px rgba(0,0,0,.15) inset,0 0 6px rgba(0,0,0,.2) inset;
-    border-color:#000\9
+    border-color:#000;
 }
 .pure-button[disabled], .pure-button.disabled{
     border:none;
@@ -360,6 +360,14 @@ strong, .strong
 	background-color:  #ffff4d;
 	color: #000;
 	padding: 10px;	
+}
+input[type=text].invalid_field::placeholder, input[type=number].invalid_field::placeholder, input[type=email].invalid_field::placeholder{
+    color: #eee;
+}
+input[type=text].invalid_field, input[type=number].invalid_field, input[type=email].invalid_field, select.invalid_field{
+    background-color: #d43f3f;
+    border-color: #881f1f;
+    color: #fff;
 }
 /*--------------------------------------------------------------
 >>> GRIDS RESPONSIVE CSS:
