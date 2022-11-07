@@ -91,6 +91,7 @@ class Dynamic_Core_Admin {
 		//settings - analytics
 		register_setting($this->setting_id, 'dy_ipgeolocation_api_token', 'sanitize_user');
 		register_setting($this->setting_id, 'dy_gtag_tracking_id', 'sanitize_user');
+		register_setting($this->setting_id, 'dy_gtm_tracking_id', 'sanitize_user');
 		register_setting($this->setting_id, 'dy_facebook_pixel_id', 'sanitize_user');
 
         //section
