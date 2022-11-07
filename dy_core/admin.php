@@ -38,12 +38,20 @@ class Dynamic_Core_Admin {
 				update_option($new, get_option($old));
 				delete_option($old);
 			}
+			else
+			{
+				delete_option($old);
+			}
 		}
 
 		$theme_to_option = array(
 			array('old' => 'gtag_tracking_id', 'new' => 'dy_gtag_tracking_id'),
 			array('old' => 'gtm_tracking_id', 'new' => 'dy_gtm_tracking_id'),
-			array('old' => 'facebook_pixel_id', 'new' => 'dy_facebook_pixel_id')
+			array('old' => 'facebook_pixel_id', 'new' => 'dy_facebook_pixel_id'),
+			array('old' => 'min_tel', 'new' => 'dy_phone'),
+			array('old' => 'sales_phone', 'new' => 'dy_phone'),
+			array('old' => 'min_address', 'new' => 'dy_address'),
+			array('old' => 'whatsapp', 'new' => 'dy_whatsapp'),
 		);
 
 		for($t = 0; $t < count($theme_to_option); $t++)
@@ -56,7 +64,13 @@ class Dynamic_Core_Admin {
 				update_option($new, get_theme_mod($old));
 				remove_theme_mod($old);
 			}
+			else
+			{
+				remove_theme_mod($old);
+			}
 		}
+
+		remove_theme_mod('messenger', 'skype');
 
 	}
 

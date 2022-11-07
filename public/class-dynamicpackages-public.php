@@ -19,6 +19,7 @@ class Dynamicpackages_Public {
 		//scripts
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
+		add_action( 'parse_query', array( &$this, 'load_recaptcha_scripts' ), 100);
 
 		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
@@ -103,7 +104,7 @@ class Dynamicpackages_Public {
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;	
-	}	
+	}
 
 	public function enqueue_scripts() {
  
@@ -113,7 +114,6 @@ class Dynamicpackages_Public {
 		$dy_ipgeolocation_api_token = null;
 		$enqueue_public = false;
 		$enqueue_archive = false;
-		$enqueue_recaptcha = false;
 		$enqueue_sha512 = false;
 		$enqueue_datepicker = false;
 		$is_booking_page = is_booking_page();
@@ -125,12 +125,7 @@ class Dynamicpackages_Public {
 			if(is_singular('packages') || is_page())
 			{
 				$enqueue_public = true;
-				
-				if($is_booking_page)
-				{
-					$enqueue_recaptcha = true;
-				}
-
+			
 				if(!$is_booking_page)
 				{
 					$enqueue_datepicker = true;
@@ -142,7 +137,6 @@ class Dynamicpackages_Public {
 		if(dy_validators::has_form())
 		{
 			$enqueue_public = true;
-			$enqueue_recaptcha = true;
 		}
 
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
@@ -150,16 +144,10 @@ class Dynamicpackages_Public {
 			$enqueue_archive = true;
 		}		
 		
-		if($enqueue_recaptcha)
-		{
-			$recaptcha = 'recaptcha-v3';
-			wp_enqueue_script($recaptcha, 'https://www.google.com/recaptcha/api.js', '', 'async_defer', true );
-			array_push($dep, $recaptcha);
-		}
 		if($enqueue_sha512)
 		{
 			wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', array(), 'async_defer', true );
-				array_push($dep, 'sha512');
+			array_push($dep, 'sha512');
 		}
 		
 		if($enqueue_datepicker)
@@ -169,9 +157,6 @@ class Dynamicpackages_Public {
 		
 		if($enqueue_public)
 		{
-
-			
-			$strings['recaptchaSiteKey'] = get_option('dy_recaptcha_site_key');
 			$strings['postId'] = get_the_ID();
 			$strings['dy_ipgeolocation_api_token'] = get_option('dy_ipgeolocation_api_token');
 			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
@@ -1602,5 +1587,38 @@ class Dynamicpackages_Public {
 		}
 		
 		return $output;
+	}
+
+
+	public function load_recaptcha_scripts($query)
+	{
+		global $dy_load_recaptcha_scripts;
+		global $post;
+		$load_recaptcha = false;
+
+		if(!isset($dy_load_recaptcha_scripts))
+		{
+			if(isset($post))
+			{
+				if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
+				{
+					$load_recaptcha = true;
+				}
+			}
+			if(isset($query->query_vars['packages']))
+			{
+				if($query->query_vars['packages'] && is_booking_page())
+				{
+					$load_recaptcha = true;
+				}
+			}
+
+			if($load_recaptcha)
+			{
+				$GLOBALS['dy_load_recaptcha_scripts'] = true;
+			}
+
+		}
+
 	}
 }

@@ -10,6 +10,17 @@ class Dynamic_Core_Public {
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
         add_action( 'wp_head', array(&$this, 'gtag_tracking_script'));
         add_action( 'wp_head', array(&$this, 'facebook_pixel_tracking_script'));
+        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+    }
+
+    public function enqueue_scripts()
+    {
+        global $dy_load_recaptcha_scripts;
+
+        if(isset($dy_load_recaptcha_scripts))
+        {
+            wp_enqueue_script('recaptcha-v3', 'https://www.google.com/recaptcha/api.js', '', 'async_defer', true);
+        }
     }
 
     public function gtm_tracking_script()
