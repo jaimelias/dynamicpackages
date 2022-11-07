@@ -19,7 +19,7 @@ class Dynamicpackages_Public {
 		//scripts
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
-		add_action( 'parse_query', array( &$this, 'load_recaptcha_scripts' ), 100);
+		add_action( 'parse_query', array( &$this, 'load_recaptcha_scripts'));
 
 		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
