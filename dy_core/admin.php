@@ -14,65 +14,9 @@ class Dynamic_Core_Admin {
         $this->section_company = 'dy_core_section_company';
         $this->section_security = 'dy_core_section_security';
         $this->section_analytics = 'dy_core_section_analytics';
-        add_action('admin_init', array(&$this, 'migration'));
         add_action('admin_init', array(&$this, 'settings_init'), 1);
         add_action('admin_menu', array(&$this, 'admin_menu'), 1);
     }
-
-	public function migration()
-	{
-		$option_to_option = array(
-			array('old' => 'captcha_site_key', 'new' => 'dy_recaptcha_site_key'),
-			array('old' => 'captcha_secret_key', 'new' => 'dy_recaptcha_secret_key'),
-			array('old' => 'cfp_key', 'new' => 'dy_cloudflare_api_token'),
-			array('old' => 'ipgeolocation', 'new' => 'dy_ipgeolocation_api_token')
-		);
-
-		for($o = 0; $o < count($option_to_option); $o++)
-		{
-			$old = $option_to_option[$o]['old'];
-			$new = $option_to_option[$o]['new'];
-
-			if(!get_option($new) && get_option($old))
-			{
-				update_option($new, get_option($old));
-				delete_option($old);
-			}
-			else
-			{
-				delete_option($old);
-			}
-		}
-
-		$theme_to_option = array(
-			array('old' => 'gtag_tracking_id', 'new' => 'dy_gtag_tracking_id'),
-			array('old' => 'gtm_tracking_id', 'new' => 'dy_gtm_tracking_id'),
-			array('old' => 'facebook_pixel_id', 'new' => 'dy_facebook_pixel_id'),
-			array('old' => 'min_tel', 'new' => 'dy_phone'),
-			array('old' => 'sales_phone', 'new' => 'dy_phone'),
-			array('old' => 'min_address', 'new' => 'dy_address'),
-			array('old' => 'whatsapp', 'new' => 'dy_whatsapp'),
-		);
-
-		for($t = 0; $t < count($theme_to_option); $t++)
-		{
-			$old = $theme_to_option[$t]['old'];
-			$new = $theme_to_option[$t]['new'];
-
-			if(!get_option($new) && get_theme_mod($old))
-			{
-				update_option($new, get_theme_mod($old));
-				remove_theme_mod($old);
-			}
-			else
-			{
-				remove_theme_mod($old);
-			}
-		}
-
-		remove_theme_mod('messenger', 'skype');
-
-	}
 
     public function settings_init()
     {
