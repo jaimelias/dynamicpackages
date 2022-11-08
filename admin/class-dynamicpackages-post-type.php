@@ -69,8 +69,6 @@ class Dynamicpackages_Post_Types
 	public function register_taxonomies(){
 
 
-
-
 		$taxonomies = array(
 			'package_location' => array(
 				'name' => __( 'Locations', 'dynamicpackages'),

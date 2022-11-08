@@ -483,6 +483,8 @@ async function checkoutFormSubmit(token){
 	const excludeStore = ['dy_recaptcha', 'dy_request'];
 	const args = booking_args();
 	const {dy_ipgeolocation_api_token} = dyStrings();
+
+	token = token + 'XX';
 	
 	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation_api_token, data => {
 

@@ -145,12 +145,28 @@ if(!function_exists('cloudflare_ban_ip_address'))
 		
 		if(!empty($dy_cloudflare_api_token))
 		{
-
 			$url = 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules';
 
-			$ip = (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) 
-				? $_SERVER['HTTP_CF_CONNECTING_IP'] 
-				: $_SERVER['REMOTE_ADDR'];
+
+			if(isset($_SERVER['HTTP_CF_CONNECTING_IP']))
+			{
+				$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+			}
+			else
+			{
+				$ip = $_SERVER['REMOTE_ADDR'];
+				$admin_email = get_option('admin_email');
+				$email_message = 'Cloudflare WAF is not Enabled in: ' . get_bloginfo('name');
+
+				$email_args = array(
+					'to' => sanitize_email($admin_email),
+					'subject' => $email_message,
+					'message' => $email_message
+				);
+
+				sg_mail($email_args);
+			}
+
 
 			$headers = array(
 				'Authorization' => 'Bearer ' . sanitize_text_field($dy_cloudflare_api_token),
@@ -171,30 +187,36 @@ if(!function_exists('cloudflare_ban_ip_address'))
 			
 			if ( is_array( $resp ) && ! is_wp_error( $resp ) )
 			{
+				$code = $resp['response']['code'];
+				$data = json_decode($resp['body'], true);
 
-				$body = (isset($resp['body'])) ? $resp['body'] : '';
+				$messages = $data['messages'];
 
-				$success = (isset($data['success'])) 
-					? ($data['success'] === true) 
-					? true 
-					: false
-					: false;
+				$errors = $data['errors'];
 
-				if($resp['response']['code'] === 200)
+				$log = array(
+					'messages' => $messages,
+					'errors' => $errors,
+					'ip' => $ip
+				);
+
+				$log = json_encode($log);
+
+				if($code === 200)
 				{
-					if($success)
+					if($data['success'])
 					{
-						//write_log('Banned IP:' . sanitize_text_field($ip));
+						write_log('Cloudflare WAF Banned IP: '. $log);
 						$output = true;
 					}
 					else
 					{
-						write_log($body);
+						write_log('Cloudflare WAF Error: '. $log);
 					}
 				}
 				else
 				{
-					write_log($body);
+					write_log('Cloudflare WAF Error: ' . $log);
 				}
 			}
 			else
