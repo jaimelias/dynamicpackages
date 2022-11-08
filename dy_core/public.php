@@ -8,6 +8,7 @@ class Dynamic_Core_Public {
     {
         add_shortcode('whatsapp', array(&$this, 'whatsapp_button'));
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
+        add_action( 'minimal_pre_body', array(&$this, 'gtm_tracking_iframe'));
         add_action( 'wp_head', array(&$this, 'gtag_tracking_script'));
         add_action( 'wp_head', array(&$this, 'facebook_pixel_tracking_script'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
@@ -38,6 +39,19 @@ class Dynamic_Core_Public {
             })(window,document,'script','dataLayer','<?php echo esc_html($value); ?>');
         </script>
         <!-- End Google - Global Tag Manager (GMT) -->
+
+        <?php endif;
+    }
+
+    public function gtm_tracking_iframe()
+    {
+        $value = get_option('dy_gtm_tracking_id');
+
+        if($value): ?>
+
+        <!-- Start Google - Global Tag Manager (GMT) noscript-->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo esc_html($value); ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google - Global Tag Manager (GMT) noscript -->
 
         <?php endif;
     }

@@ -13,7 +13,6 @@ class Dynamicpackages_JSON
 	public function init(){
 		add_action('wp', array(&$this, 'export'));
 		add_action('get_header', array(&$this, 'get_header'));
-		
 	}
 	
 	public function is_json_request()
