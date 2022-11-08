@@ -155,16 +155,21 @@ if(!function_exists('cloudflare_ban_ip_address'))
 			else
 			{
 				$ip = $_SERVER['REMOTE_ADDR'];
-				$admin_email = get_option('admin_email');
-				$email_message = 'Cloudflare WAF is not Enabled in: ' . get_bloginfo('name');
 
-				$email_args = array(
-					'to' => sanitize_email($admin_email),
-					'subject' => $email_message,
-					'message' => $email_message
-				);
+				if($_SERVER['SERVER_NAME'] !== 'localhost')
+				{
+					$admin_email = get_option('admin_email');
+					$email_message = 'Cloudflare WAF is not Enabled in: ' . get_bloginfo('name');
 
-				sg_mail($email_args);
+					$email_args = array(
+						'to' => sanitize_email($admin_email),
+						'subject' => $email_message,
+						'message' => $email_message
+					);
+
+
+					sg_mail($email_args);
+				}
 			}
 
 
