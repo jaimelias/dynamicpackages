@@ -82,7 +82,7 @@ class Dynamicpackages_Public {
 				
 				if(isset($post))
 				{
-					if(has_shortcode( $post->post_content, 'packages') || dy_validators::has_form())
+					if(has_shortcode( $post->post_content, 'packages') || dy_validators::validate_origin())
 					{
 						$this->css();
 					}					
@@ -134,7 +134,7 @@ class Dynamicpackages_Public {
 			}			
 		}
 
-		if(dy_validators::has_form())
+		if(dy_validators::validate_origin())
 		{
 			$enqueue_public = true;
 		}

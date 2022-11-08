@@ -257,7 +257,7 @@ class Dynamicpackages_Gateways
 	{
 		$show_checkout_vars = false;
 		
-		if(dy_validators::has_form())
+		if(dy_validators::validate_origin())
 		{
 			wp_add_inline_script('dynamicpackages', $this->checkout_vars(), 'before');	
 		}

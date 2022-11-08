@@ -7,6 +7,7 @@ class estimate_request{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
+		$this->valid_recaptcha = validate_recaptcha();
 		$this->init();
 	}
 	public function init()
@@ -107,7 +108,7 @@ class estimate_request{
 	
 	public function add_gateway($array)
 	{
-		global $dy_valid_recaptcha;
+		
 		$add = false;
 		
 		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
@@ -115,7 +116,7 @@ class estimate_request{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::validate_request())
+		if($this->valid_recaptcha && isset($_POST['dy_request']) && dy_validators::validate_request())
 		{
 			if($_POST['dy_request'] == $this->id || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

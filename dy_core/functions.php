@@ -330,4 +330,77 @@ if(!function_exists('whatsapp_button'))
 }
 
 
+if(!function_exists('validate_recaptcha'))
+{
+	function validate_recaptcha()
+	{
+		global $dy_valid_recaptcha;
+		$invalids = array();
+		$output = false;
+
+		if(isset($dy_valid_recaptcha))
+		{
+			$output = $dy_valid_recaptcha;
+		}
+		else
+		{
+			if(isset($_POST['dy_recaptcha']))
+			{
+				$secret_key = get_option('dy_recaptcha_secret_key');
+
+				if($secret_key)
+				{
+					$url = 'https://www.google.com/recaptcha/api/siteverify';
+
+					$ip = (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) 
+						? $_SERVER['HTTP_CF_CONNECTING_IP'] : 
+						$_SERVER['REMOTE_ADDR'];
+
+					$params = array(
+						'secret' => $secret_key,
+						'remoteip' => $ip,
+						'response' => sanitize_text_field($_POST['dy_recaptcha']),
+					);
+
+					$resp = wp_remote_post($url, array(
+						'body' => $params
+					));
+
+					if ( is_array( $resp ) && ! is_wp_error( $resp ) )
+					{
+						if($resp['response']['code'] === 200)
+						{
+							$data = json_decode($resp['body'], true);
+
+							if($data['success'] === true)
+							{
+								$output = true;
+							}
+							else
+							{
+								$GLOBALS['dy_request_invalids'] = array(__('Invalid Recaptcha', 'dynamicpackages'));
+								$debug_output = array('recaptcha-error' => $data['error-codes']);
+
+								if(array_key_exists('error-codes', $data))
+								{
+									if(in_array('invalid-input-response' , $data['error-codes']))
+									{
+										cloudflare_ban_ip_address();
+									}
+								}
+								
+								write_log(json_encode($debug_output));
+							}
+						}
+					}
+				}
+			}
+
+			$GLOBALS['dy_valid_recaptcha'] = $output;
+		}
+
+		return $output;
+	}
+}
+
 ?>

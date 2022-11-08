@@ -7,6 +7,7 @@ class nequi_direct{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
+		$this->valid_recaptcha = validate_recaptcha();
 		$this->init();
 	}
 	public function init()
@@ -45,11 +46,11 @@ class nequi_direct{
 
 	public function send_data()
 	{		
-		if(dy_validators::validate_request() && $this->is_valid_request())
+		if(dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			global $dy_valid_recaptcha;
+			
 
-			if(isset($dy_valid_recaptcha))
+			if($this->valid_recaptcha)
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
@@ -115,7 +116,7 @@ class nequi_direct{
 
 		return $output;
 	}
-	public function is_valid_request()
+	public function is_request_submitted()
 	{
 		$output = false;
 		$which_var = $this->id . '_is_valid_request';
@@ -145,11 +146,11 @@ class nequi_direct{
 
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			global $dy_valid_recaptcha;
+			
 
-			if(isset($dy_valid_recaptcha))
+			if($this->valid_recaptcha)
 			{
 				$content = $this->message(null);
 			}				
@@ -158,7 +159,7 @@ class nequi_direct{
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dy_validators::validate_request() && $this->is_valid_request())
+		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
 			$title = esc_html(__('Thank you for using Nequi', 'dynamicpackages'));
 		}
@@ -362,7 +363,7 @@ class nequi_direct{
 
 	public function add_gateway($array)
 	{
-		global $dy_valid_recaptcha;
+		
 		$add = false;
 		
 		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
@@ -370,7 +371,7 @@ class nequi_direct{
 			$add = true;
 		}
 		
-		if(isset($dy_valid_recaptcha) && isset($_POST['dy_request']) && dy_validators::validate_request())
+		if($this->valid_recaptcha && isset($_POST['dy_request']) && dy_validators::validate_request())
 		{
 			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

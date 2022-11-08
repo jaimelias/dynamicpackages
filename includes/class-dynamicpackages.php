@@ -45,7 +45,6 @@ class dynamicpackages {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_gateteways_hooks();
-		$this->validate_recaptcha = dy_validators::validate_recaptcha();
 	}
 
 

@@ -262,74 +262,6 @@ class dy_validators
 		return $output;
 	}
 	
-	public static function validate_recaptcha()
-	{
-		global $dy_valid_recaptcha;
-		$invalids = array();
-		
-		if(!isset($dy_valid_recaptcha))
-		{
-			if(isset($_POST['dy_recaptcha']) && get_option('dy_recaptcha_secret_key'))
-			{
-				$data = array();
-				$data['secret'] = get_option('dy_recaptcha_secret_key');
-				$data['remoteip'] = $_SERVER['REMOTE_ADDR'];
-				$data['response'] = sanitize_text_field($_POST['dy_recaptcha']);
-				$url = 'https://www.google.com/recaptcha/api/siteverify';			
-				$verify = curl_init();
-				curl_setopt($verify, CURLOPT_URL, $url);
-				curl_setopt($verify, CURLOPT_POST, true);
-				curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query($data));
-				curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
-				curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
-				$verify_response = json_decode(curl_exec($verify), true);
-
-				if($verify_response['success'] === true)
-				{
-					$GLOBALS['dy_valid_recaptcha'] = true;
-				}
-				if(array_key_exists('error-codes', $verify_response))
-				{
-					$GLOBALS['dy_request_invalids'] = array(__('Invalid Recaptcha', 'dynamicpackages'));
-					$debug_output = array('error' => $verify_response['error-codes']);
-					$post_debug = array_map('sanitize_text_field', $_POST);
-					
-					if(array_key_exists('first_name', $post_debug)){
-						$debug_output['name'] = $post_debug['first_name'];
-					}
-					if(array_key_exists('email', $post_debug)){
-						$debug_output['email'] = $post_debug['email'];
-					}
-					if(array_key_exists('phone', $post_debug)){
-						$debug_output['phone'] = $post_debug['phone'];
-					}
-					if(array_key_exists('description', $post_debug)){
-						$debug_output['description'] = $post_debug['description'];
-					}
-					if(array_key_exists('add_ons', $post_debug)){
-						$debug_output['add_ons'] = $post_debug['add_ons'];
-					}
-					if(array_key_exists('total', $post_debug)){
-						$debug_output['total'] = $post_debug['total'];
-					}
-
-					if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-						$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
-					}
-					
-					$debug_output['ip'] = $_SERVER['REMOTE_ADDR'];
-
-					if(in_array('invalid-input-response', $verify_response['error-codes']))
-					{
-						cloudflare_ban_ip_address();
-					}
-
-					write_log(json_encode($debug_output));
-				}
-			}
-		}
-	}
-	
 	public static function validate_checkout($gateway_name)
 	{
 		$output = false;
@@ -1122,7 +1054,7 @@ class dy_validators
 		return $output;
 	}
 
-	public static function has_form()
+	public static function validate_origin()
 	{
 		$output = false;
 		$which_var = 'dy_has_form';

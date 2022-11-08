@@ -9,10 +9,7 @@ class Dynamicpackages_Actions{
 
     public function __construct()
     {
-        $this->init();
-    }
-    public function init()
-    {
+		$this->valid_recaptcha = validate_recaptcha();
 		add_action('wp', array(&$this, 'args'));
         add_filter('wp', array(&$this, 'send_data'), 100);
         add_filter('the_content', array(&$this, 'the_content'), 101);
@@ -30,55 +27,52 @@ class Dynamicpackages_Actions{
 
 	public function is_request_submitted()
 	{
-		global $dy_request_invalids;
 		$output = false;
 		
-        if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
+        if(isset($_POST['dy_request']))
         {
-			$output = true;
+			if($this->valid_recaptcha && dy_validators::validate_origin())
+			{
+				$output = true;
+			}
         }
 
         return $output;
-	}    
-	
+	}
 
     public function send_data()
     {
-        global $dy_valid_recaptcha;
-
-        if(isset($dy_valid_recaptcha) && $this->is_request_submitted() && dy_validators::validate_request())
-        {
-			if(isset($_REQUEST['add_ons']))
+		if($this->is_request_submitted())
+		{
+			if(dy_validators::validate_request())
 			{
-				$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
-				$add_ons = sanitize_text_field($_REQUEST['add_ons']);
-				setcookie($add_ons_package_id, $add_ons, time() + 3600);
-			}
+				if(isset($_REQUEST['add_ons']))
+				{
+					$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
+					$add_ons = sanitize_text_field($_REQUEST['add_ons']);
+					setcookie($add_ons_package_id, $add_ons, time() + 3600);
+				}
 
-			$this->send_email();
+				$this->send_email();
 
-			$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
-			$webhook_args = $_POST;
-			$webhook_args['providers'] = $this->providers;
+				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
+				$webhook_args = $_POST;
+				$webhook_args['providers'] = $this->providers;
 
-            dy_utilities::webhook($webhook_option, json_encode($webhook_args));
-        }   
+				dy_utilities::webhook($webhook_option, json_encode($webhook_args));
+			} 
+		}
     }
     public function the_content($content)
     {
-        global $dy_valid_recaptcha;
-		
-        if(dy_validators::has_form() && $this->is_request_submitted())
+        if($this->is_request_submitted())
         {               
             if(dy_validators::validate_request())
             {
-                if(isset($dy_valid_recaptcha))
-                {
-					if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == 'contact')
-					{
-						 $content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
-					}  
-                }                 
+				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == 'contact')
+				{
+					$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
+				}              
             }
         }
 
@@ -171,9 +165,9 @@ class Dynamicpackages_Actions{
 
     public function wp_title($title)
     {
-        if(dy_validators::has_form() && $this->is_request_submitted())
+        if($this->is_request_submitted())
         {
-            $title = esc_html(__('Thank You for Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
+			$title = esc_html(__('Thank You for Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
         }
 
         return $title;
@@ -181,9 +175,9 @@ class Dynamicpackages_Actions{
 	
 	public function modify_excerpt($excerpt)
 	{
-        if(dy_validators::has_form() && $this->is_request_submitted())
+        if($this->is_request_submitted())
         {
-            $excerpt = apply_filters('dy_description', null);
+			$excerpt = apply_filters('dy_description', null);
         }
 
         return $excerpt;
@@ -191,12 +185,9 @@ class Dynamicpackages_Actions{
 
     public function the_title($title)
     {	
-		if(in_the_loop())
+		if(in_the_loop() && $this->is_request_submitted())
 		{
-			if(dy_validators::has_form() && $this->is_request_submitted())
-			{
-				$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
-			}			
+			$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
 		}
 
         return apply_filters('dy_request_the_title', $title);
