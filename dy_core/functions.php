@@ -344,7 +344,7 @@ if(!function_exists('validate_recaptcha'))
 		}
 		else
 		{
-			if(isset($_POST['dy_recaptcha']))
+			if(isset($_POST['g-recaptcha-response']))
 			{
 				$secret_key = get_option('dy_recaptcha_secret_key');
 
@@ -359,7 +359,7 @@ if(!function_exists('validate_recaptcha'))
 					$params = array(
 						'secret' => $secret_key,
 						'remoteip' => $ip,
-						'response' => sanitize_text_field($_POST['dy_recaptcha']),
+						'response' => sanitize_text_field($_POST['g-recaptcha-response']),
 					);
 
 					$resp = wp_remote_post($url, array(

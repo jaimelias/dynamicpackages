@@ -480,7 +480,7 @@ const storePopulate = () => {
 async function checkoutFormSubmit(token){
 	const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst'];
 	const thisForm = jQuery('#dynamic_form');
-	const excludeStore = ['dy_recaptcha', 'dy_request'];
+	const excludeStore = ['g-recaptcha-response', 'dy_request'];
 	const args = booking_args();
 	const {dy_ipgeolocation_api_token} = dyStrings();
 	
@@ -548,7 +548,6 @@ async function checkoutFormSubmit(token){
 		if(invalids == 0)
 		{
 			populateCheckoutForm(thisForm);
-			jQuery(thisForm).find('input[name="dy_recaptcha"]').val(token);
 			//console.log(formFields);
 			//console.log(token); 
 
