@@ -545,7 +545,7 @@ async function checkoutFormSubmit(token){
 			}
 		});
 		
-		if(invalids == 0)
+		if(invalids === 0)
 		{
 			populateCheckoutForm(thisForm);
 			//console.log(formFields);
@@ -590,6 +590,7 @@ async function checkoutFormSubmit(token){
 		}
 		else
 		{
+			grecaptcha.reset();
 			alert(booking_args().TRANSLATIONS.submit_error);
 		}
 	});
