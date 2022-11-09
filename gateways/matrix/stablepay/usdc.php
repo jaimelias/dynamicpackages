@@ -7,32 +7,21 @@ class usdc{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		$this->valid_recaptcha = validate_recaptcha();
-		$this->init();
+		
+		add_action('init', array(&$this, 'init'));
+		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
+		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
+		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
+		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
+		add_filter('wp_headers', array(&$this, 'send_data'));
+		add_filter('gateway_buttons', array(&$this, 'button'), 3);
+		add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
 	}
+
+
 	public function init()
 	{
-		
-		add_action('init', array(&$this, 'args'));
-		
-		if(is_admin())
-		{
-			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-			add_action('admin_menu', array(&$this, 'add_settings_page'), 100);			
-		}
-		else
-		{
-			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
-			add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 3);
-			add_filter('list_gateways', array(&$this, 'add_gateway'), 2);
-		}		
-	}
-	
-
-	public function args()
-	{
+		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'usdc';
 		$this->name = 'USD Coin (USDC)';
 		$this->type = 'crypto';

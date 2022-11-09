@@ -8,34 +8,24 @@ class wire_transfer{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		$this->valid_recaptcha = validate_recaptcha();
-		$this->init();
-	}
-	public function init()
-	{
-		add_action('init', array(&$this, 'args'));
-		
-		if(is_admin())
-		{
-			add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-			add_action('admin_menu', array(&$this, 'add_settings_page'), 102);			
-		}
-		else
-		{
-			add_filter('dy_request_the_content', array(&$this, 'filter_content'), 103);
-			add_filter('dy_request_the_title', array(&$this, 'title'), 103);
-			add_filter('wp_headers', array(&$this, 'send_data'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 5);
-			add_filter('list_gateways', array(&$this, 'add_gateway'), 5);
-		}		
+		$this->id = 'wire_transfer';
+		add_action('init', array(&$this, 'init'));
+		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
+		add_action('admin_menu', array(&$this, 'add_settings_page'), 102);	
+		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 103);
+		add_filter('dy_request_the_title', array(&$this, 'title'), 103);
+		add_filter('wp_headers', array(&$this, 'send_data'));
+		add_filter('gateway_buttons', array(&$this, 'button'), 5);
+		add_filter('list_gateways', array(&$this, 'add_gateway'), 5);
 	}
 	
-	public function args()
+	public function init()
 	{
-		$this->id = 'wire_transfer';
+		$this->valid_recaptcha = validate_recaptcha();
+
 		$this->name = __('Wire Transfer', 'dynamicpackages');
 		$this->type = 'bank';
-		
+
 		//Beneficiary
 		$this->b_account_number = get_option($this->id);	
 		$this->b_account_name = get_option($this->id . '_b_account_name');
@@ -56,7 +46,7 @@ class wire_transfer{
 		$this->show = get_option($this->id . '_show');
 		$this->min = get_option($this->id . '_min');
 		$this->color = '#fff';
-		$this->background_color = '#262626';		
+		$this->background_color = '#262626';
 	}
 
 	public function send_data()

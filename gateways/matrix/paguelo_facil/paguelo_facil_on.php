@@ -7,32 +7,20 @@ class paguelo_facil_on{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		$this->valid_recaptcha = validate_recaptcha();
-		$this->init();
+		add_action('init', array(&$this, 'init'));
+		add_action('admin_init', array(&$this, 'settings_init'), 1);
+		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);
+		add_action('init', array(&$this, 'checkout'), 50);
+		add_filter('dy_request_the_content', array(&$this, 'the_content'));
+		add_filter('dy_request_the_title', array(&$this, 'the_title'));
+		add_filter('gateway_buttons', array(&$this, 'button'), 2);
+		add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
+		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));	
 	}
 	
 	public function init()
 	{
-		add_action('init', array(&$this, 'args'));
-		
-		if(is_admin())
-		{
-			add_action('admin_init', array(&$this, 'settings_init'), 1);
-			add_action('admin_menu', array(&$this, 'add_settings_page'), 100);			
-		}
-		else
-		{
-			add_action('init', array(&$this, 'checkout'), 50);
-			add_filter('dy_request_the_content', array(&$this, 'the_content'));
-			add_filter('dy_request_the_title', array(&$this, 'the_title'));
-			add_filter('gateway_buttons', array(&$this, 'button'), 2);
-			add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
-			add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
-		}
-	}
-	
-	public function args()
-	{
+		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');

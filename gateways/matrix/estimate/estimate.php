@@ -7,18 +7,15 @@ class estimate_request{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		$this->valid_recaptcha = validate_recaptcha();
-		$this->init();
-	}
-	public function init()
-	{
-		add_action('init', array(&$this, 'args'));
+		
+		add_action('init', array(&$this, 'init'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 1);
 		add_filter('list_gateways', array(&$this, 'add_gateway'), 10);
 	}
-	
-	public function args()
+
+	public function init()
 	{
+		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'estimate_request';
 		$this->name = __('request an estimate', 'dynamicpackages');
 		$this->type = 'alt';
