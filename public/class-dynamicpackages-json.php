@@ -117,7 +117,6 @@ class Dynamicpackages_JSON
 						$arr['brand']['name'] = esc_html(get_bloginfo('name'));
 						$arr['name'] = esc_html(get_the_title());
 						$arr['sku'] = md5(package_field('package_trip_code'));
-						$arr['gtin8'] = substr(md5(package_field( 'package_trip_code' )), 0, 8);
 						
 						if(has_post_thumbnail())
 						{

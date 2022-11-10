@@ -269,9 +269,7 @@ else
 				
 				<?php if(dy_validators::is_valid_schema($post->ID)): ?>
 					<link itemprop="url" href="<?php the_permalink(); ?>" />
-					<meta itemprop="brand" content="<?php bloginfo('name'); ?>" />
 					<meta itemprop="sku" content="<?php echo esc_attr(md5(package_field( 'package_trip_code' ))); ?>" />
-					<meta itemprop="gtin8" content="<?php echo esc_attr(substr(md5(package_field( 'package_trip_code' )), 0, 8)); ?>" />
 				<?php endif; ?>
 				
 				<div class="padding-10 dy_package">
