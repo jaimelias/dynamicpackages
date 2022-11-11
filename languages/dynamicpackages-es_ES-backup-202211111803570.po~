@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2022-11-11 18:30+0000\n"
+"PO-Revision-Date: 2022-11-11 17:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -22,10 +22,6 @@ msgstr ""
 msgid " / "
 msgstr " x "
 
-#: gateways/matrix/pay-later/pay-later.php:70
-msgid " in "
-msgstr " en "
-
 #: gateways/matrix/stablepay/busd.php:308
 #: gateways/matrix/stablepay/usdc.php:316
 #: gateways/matrix/stablepay/usdt.php:318
@@ -41,7 +37,7 @@ msgstr "%s está teniendo problemas procesando tu pago"
 #: gateways/matrix/bank/international.php:74 gateways/matrix/bank/local.php:59
 #: gateways/matrix/cuanto/cuanto.php:59
 #: gateways/matrix/nequi/nequi_direct.php:59
-#: gateways/matrix/pay-later/pay-later.php:99
+#: gateways/matrix/pay-later/pay-later.php:75
 #: gateways/matrix/paypal/paypal_me.php:59
 #: gateways/matrix/stablepay/busd.php:84 gateways/matrix/stablepay/usdc.php:96
 #: gateways/matrix/stablepay/usdt.php:94
@@ -68,7 +64,7 @@ msgstr "%s, %s está teniendo problemas procesando tu pago."
 #: gateways/matrix/bank/international.php:69 gateways/matrix/bank/local.php:54
 #: gateways/matrix/cuanto/cuanto.php:54
 #: gateways/matrix/nequi/nequi_direct.php:54
-#: gateways/matrix/pay-later/pay-later.php:94
+#: gateways/matrix/pay-later/pay-later.php:70
 #: gateways/matrix/paypal/paypal_me.php:54
 #: gateways/matrix/stablepay/busd.php:79 gateways/matrix/stablepay/usdc.php:91
 #: gateways/matrix/stablepay/usdt.php:89
@@ -159,9 +155,9 @@ msgstr "Adultos"
 msgid "adults"
 msgstr "adultos"
 
-#: gateways/matrix/pay-later/pay-later.php:249
+#: gateways/matrix/pay-later/pay-later.php:225
 msgid "Agent Email"
-msgstr "Email del agente"
+msgstr ""
 
 #: includes/class-dynamicpackages-reviews.php:117
 msgid "Alias"
@@ -332,7 +328,7 @@ msgstr "Detalles de reserva"
 msgid "Booking Page"
 msgstr "Página de reservas"
 
-#: gateways/matrix/pay-later/pay-later.php:24
+#: gateways/matrix/pay-later/pay-later.php:23
 msgid "Buy Now & Pay Later"
 msgstr "Compra y paga despues"
 
@@ -630,11 +626,6 @@ msgstr "Email"
 msgid "Email and repeated email are not equal."
 msgstr "Email y el email repetido no son iguales."
 
-#: gateways/matrix/pay-later/pay-later.php:78
-#, php-format
-msgid "Email: %s"
-msgstr "Email: %s"
-
 #: admin/class-dynamicpackages-metaboxes.php:377
 msgid "Enable Automatic Booking"
 msgstr "Permitir reservas automaticas"
@@ -753,7 +744,7 @@ msgstr "pago completo de"
 #: gateways/matrix/bank/local.php:335 gateways/matrix/cuanto/cuanto.php:238
 #: gateways/matrix/nequi/nequi_direct.php:266
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:544
-#: gateways/matrix/pay-later/pay-later.php:267
+#: gateways/matrix/pay-later/pay-later.php:243
 #: gateways/matrix/paypal/paypal_me.php:248
 #: gateways/matrix/stablepay/busd.php:285
 #: gateways/matrix/stablepay/usdc.php:293
@@ -775,7 +766,7 @@ msgstr "Solicitud general"
 #: gateways/matrix/bank/local.php:264 gateways/matrix/cuanto/cuanto.php:214
 #: gateways/matrix/nequi/nequi_direct.php:242
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:505
-#: gateways/matrix/pay-later/pay-later.php:242
+#: gateways/matrix/pay-later/pay-later.php:218
 #: gateways/matrix/paypal/paypal_me.php:224
 #: gateways/matrix/stablepay/busd.php:268
 #: gateways/matrix/stablepay/usdc.php:276
@@ -826,21 +817,9 @@ msgstr "Gris"
 
 #: includes/class-dynamicpackages-form-actions.php:130
 #: public/email-templates/estimates.php:5
-#: gateways/matrix/pay-later/pay-later.php:71
 #, php-format
 msgid "Hello %s,"
 msgstr "Hola %s,"
-
-#: gateways/matrix/pay-later/pay-later.php:427
-#, php-format
-msgid ""
-"Hello %s, we have sent your request to the financial institution in charge "
-"of our program %s. You will be receiving an email from %s with futher "
-"instrucctions to complete this aplication."
-msgstr ""
-"Hola %s, hemos enviado tu solicitud a la entidad financiera a cargo de "
-"nuestro programa %s. Recibirá un correo electrónico de %s con más "
-"instrucciones para completar esta solicitud."
 
 #: admin/class-dynamicpackages-admin.php:179
 msgid "Hide Enabled Days"
@@ -1079,7 +1058,7 @@ msgstr "baratos a caros"
 
 #: gateways/class-dynamicpackages-gateways.php:501
 msgid "make sure you use"
-msgstr "asegurate de utilizar"
+msgstr ""
 
 #: gateways/matrix/cuanto/cuanto.php:228
 #: gateways/matrix/nequi/nequi_direct.php:256
@@ -1113,19 +1092,19 @@ msgstr "Número máximo de participantes"
 msgid "Message"
 msgstr "Mensaje"
 
-#: gateways/matrix/pay-later/pay-later.php:297
+#: gateways/matrix/pay-later/pay-later.php:273
 #, php-format
 msgid "Message [%s]"
-msgstr "Mensaje [%s]"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:47
 msgid "Messages"
-msgstr "Mensajes"
+msgstr ""
 
 #: gateways/matrix/bank/international.php:462
 #: gateways/matrix/bank/local.php:324
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:526
-#: gateways/matrix/pay-later/pay-later.php:257
+#: gateways/matrix/pay-later/pay-later.php:233
 msgid "Min. Amount"
 msgstr "Cantidad Min."
 
@@ -1166,11 +1145,6 @@ msgstr "Varios días"
 #: public/partials/quote-form.php:59
 msgid "Name"
 msgstr "Nombre"
-
-#: gateways/matrix/pay-later/pay-later.php:76
-#, php-format
-msgid "Name: %s %s"
-msgstr "Nombre: %s %s"
 
 #: gateways/matrix/nequi/nequi_direct.php:249
 msgid "Nequi Cell Phone Number"
@@ -1393,7 +1367,7 @@ msgstr "Paquete superior:"
 
 #: gateways/partials/checkout-page.php:91
 msgid "Participants"
-msgstr "Participantes"
+msgstr ""
 
 #: gateways/class-dynamicpackages-gateways.php:165
 msgid "Pay"
@@ -1476,16 +1450,11 @@ msgstr "personas"
 
 #: dy_core/admin.php:59 public/partials/quote-form.php:80
 msgid "Phone"
-msgstr "Teléfono"
+msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:239
 msgid "Phone is empty."
 msgstr "Teléfono no es inválido."
-
-#: gateways/matrix/pay-later/pay-later.php:77
-#, php-format
-msgid "Phone: %s"
-msgstr "Teléfono: %s"
 
 #: public/class-dynamicpackages-public.php:714
 msgid "Places of Interest:"
@@ -1559,7 +1528,7 @@ msgstr "Proceder"
 
 #: admin/class-dynamicpackages-metaboxes.php:593
 msgid "Product"
-msgstr "Producto"
+msgstr ""
 
 #: admin/class-dynamicpackages-post-type.php:111
 msgid "Provider"
@@ -1730,7 +1699,7 @@ msgstr "Servicio"
 #: gateways/matrix/bank/local.php:347 gateways/matrix/cuanto/cuanto.php:250
 #: gateways/matrix/nequi/nequi_direct.php:278
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:556
-#: gateways/matrix/pay-later/pay-later.php:279
+#: gateways/matrix/pay-later/pay-later.php:255
 #: gateways/matrix/paypal/paypal_me.php:260
 #: gateways/matrix/stablepay/busd.php:297
 #: gateways/matrix/stablepay/usdc.php:305
@@ -1851,22 +1820,12 @@ msgstr "el deposito"
 
 #: gateways/class-dynamicpackages-gateways.php:499
 msgid "The network you selected is"
-msgstr "La red que haz elegido es"
-
-#: gateways/matrix/pay-later/pay-later.php:73
-#, php-format
-msgid "The requested package is %s for a total amount of %s (USD)."
-msgstr "El paquete solicitado es %s por un monto total de %s (USD)."
+msgstr ""
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:236
 msgid "The Terms & Conditions you accepted are attached to this email."
 msgstr ""
 "Los Términos y condiciones que aceptó se adjuntan a este correo electrónico."
-
-#: gateways/matrix/pay-later/pay-later.php:72
-#, php-format
-msgid "There is a new request for the program %s in %s."
-msgstr "Hay una nueva solicitud para el programa %s en %s."
 
 #: gateways/class-dynamicpackages-gateways.php:459
 #, php-format

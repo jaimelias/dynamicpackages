@@ -26,6 +26,7 @@ class Dynamicpackages_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdc.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/busd.php';
+		require_once plugin_dir_path(__FILE__).'matrix/pay-later/pay-later.php';
 	}	
 	
 	public function load_classes()
@@ -36,7 +37,8 @@ class Dynamicpackages_Gateways
 		$this->cuanto = new cuanto($this->plugin_id);
 		$this->paypal_me = new paypal_me($this->plugin_id);
 		$this->nequi_direct = new nequi_direct($this->plugin_id);
-		$this->yappy_direct = new yappy_direct($this->plugin_id);	
+		$this->yappy_direct = new yappy_direct($this->plugin_id);
+		$this->pay_later = new pay_later($this->plugin_id);
 		$this->bank_transfer = new bank_transfer($this->plugin_id);
 		$this->wire_transfer = new wire_transfer($this->plugin_id);
 		$this->usdt = new usdt($this->plugin_id);

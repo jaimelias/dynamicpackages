@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2022-11-11 18:30+0000\n"
+"PO-Revision-Date: 2022-11-11 18:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -1079,7 +1079,7 @@ msgstr "baratos a caros"
 
 #: gateways/class-dynamicpackages-gateways.php:501
 msgid "make sure you use"
-msgstr "asegurate de utilizar"
+msgstr ""
 
 #: gateways/matrix/cuanto/cuanto.php:228
 #: gateways/matrix/nequi/nequi_direct.php:256
@@ -1116,11 +1116,11 @@ msgstr "Mensaje"
 #: gateways/matrix/pay-later/pay-later.php:297
 #, php-format
 msgid "Message [%s]"
-msgstr "Mensaje [%s]"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:47
 msgid "Messages"
-msgstr "Mensajes"
+msgstr ""
 
 #: gateways/matrix/bank/international.php:462
 #: gateways/matrix/bank/local.php:324
@@ -1393,7 +1393,7 @@ msgstr "Paquete superior:"
 
 #: gateways/partials/checkout-page.php:91
 msgid "Participants"
-msgstr "Participantes"
+msgstr ""
 
 #: gateways/class-dynamicpackages-gateways.php:165
 msgid "Pay"
@@ -1559,7 +1559,7 @@ msgstr "Proceder"
 
 #: admin/class-dynamicpackages-metaboxes.php:593
 msgid "Product"
-msgstr "Producto"
+msgstr ""
 
 #: admin/class-dynamicpackages-post-type.php:111
 msgid "Provider"
@@ -1851,12 +1851,12 @@ msgstr "el deposito"
 
 #: gateways/class-dynamicpackages-gateways.php:499
 msgid "The network you selected is"
-msgstr "La red que haz elegido es"
+msgstr ""
 
 #: gateways/matrix/pay-later/pay-later.php:73
 #, php-format
 msgid "The requested package is %s for a total amount of %s (USD)."
-msgstr "El paquete solicitado es %s por un monto total de %s (USD)."
+msgstr ""
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:236
 msgid "The Terms & Conditions you accepted are attached to this email."
@@ -1866,7 +1866,7 @@ msgstr ""
 #: gateways/matrix/pay-later/pay-later.php:72
 #, php-format
 msgid "There is a new request for the program %s in %s."
-msgstr "Hay una nueva solicitud para el programa %s en %s."
+msgstr ""
 
 #: gateways/class-dynamicpackages-gateways.php:459
 #, php-format
