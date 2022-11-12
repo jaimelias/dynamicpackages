@@ -24,5 +24,9 @@ if(!class_exists('Dynamic_Core_Public'))
     require_once $plugin_dir_path . 'public.php';
 }
 
+if(!class_exists('Dynamic_Core_WP_JSON'))
+{
+    require_once $plugin_dir_path . 'wp-json.php';
+}
 
 ?>
