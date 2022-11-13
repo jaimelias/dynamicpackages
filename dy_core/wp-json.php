@@ -24,8 +24,7 @@ class Dynamic_Core_WP_JSON {
     public function core_args_callback($req)
     {
         $utc_time = date('Y-m-d H:i:s', time());
-        $dy_nonce = wp_create_nonce('dy_nonce');
-        
+        $dy_nonce = wp_create_nonce('dy_nonce');        
         return array('dy_nonce' => $dy_nonce, 'utc_date_time' => $utc_time);
     }
 }

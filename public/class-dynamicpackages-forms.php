@@ -7,8 +7,8 @@ class Dynamicpackages_Forms
 {
 	public function __construct()
 	{
-		add_filter('dy_form_filter_form', array(&$this, 'package_filter_form'));
-		add_action('dy_form_filter', array(&$this, 'package_filter_form_cb'));
+		add_filter('dy_package_filter_form_cb', array(&$this, 'package_filter_form'));
+		add_action('dy_package_filter_form', array(&$this, 'package_filter_form_cb'));
 		add_action('dy_check_prices_form', array(&$this, 'check_prices_form'));
 		add_action('dy_archive_pagination', array(&$this, 'pagination'));
 	}
@@ -34,7 +34,7 @@ class Dynamicpackages_Forms
 		
 		ob_start();
 		?>
-		<form id="dy_form_filter" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
+		<form id="dy_package_filter_form" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
 		
 			<div class="pure-g gutters">
 

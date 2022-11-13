@@ -244,7 +244,7 @@ else
 	<?php $term_description = $Parsedown->text($term_description); ?>
 	<hr/>
 	<div class="bottom-20 large"><?php echo $term_description; ?> </div>
-	<?php do_action('dy_form_filter');?>
+	<?php do_action('dy_package_filter_form');?>
 <?php endif; ?>
 
 	<div id="dy_archive" class="dy_archive">

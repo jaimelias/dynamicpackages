@@ -1,5 +1,8 @@
 
+const {pluginDirUrl, postId, textCopiedToClipBoard, dy_ipgeolocation_api_token} = dyPackageArgs;
+
 jQuery(() => {
+
 	timePicker();
 	datePicker();
 	storePopulate();
@@ -7,13 +10,7 @@ jQuery(() => {
 	copyToClipboard();
 	validateCheckPricesForm();
 	showCouponForm();
-	
-	const {pluginDirUrl} = dyStrings();
-
-	if(typeof pluginDirUrl !== 'undefined')
-	{
-		countryDropdown(pluginDirUrl);
-	}
+	countryDropdown();
 	
 	if(typeof checkout_vars !== 'undefined')
 	{
@@ -25,7 +22,6 @@ jQuery(() => {
 const validateCheckPricesForm = () => {
 
 	const formContainer = jQuery('.booking_form_container');
-	const {postId} = dyStrings();
 
 	if(formContainer.length === 0)
 	{
@@ -118,7 +114,6 @@ const validateCheckPricesForm = () => {
 const copyToClipboard = () => {
 
 	const el = jQuery('.copyToClipboard');
-	const {textCopiedToClipBoard} = dyStrings();
 
 	jQuery(el).each(function(){
 		const thisEl = jQuery(this);
@@ -482,7 +477,6 @@ async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dynamic_form');
 	const excludeStore = ['g-recaptcha-response', 'dy_request'];
 	const args = booking_args();
-	const {dy_ipgeolocation_api_token} = dyStrings();
 	
 	jQuery.getJSON('https://api.ipgeolocation.io/ipgeo?apiKey='+dy_ipgeolocation_api_token, data => {
 
@@ -613,7 +607,7 @@ const populateCheckoutForm = (form) => {
 	}		
 }
 
-const countryDropdown = pluginDirUrl => {
+const countryDropdown = () => {
 	
 	
 	jQuery(window).on('load', e => {
@@ -673,7 +667,7 @@ const countryOptions = data => {
 const datePicker = async () => {
 
 	const formContainer = jQuery('.booking_form_container');
-	const {permaLink} = dyStrings();
+	const {permalink} = dyCoreArgs;
 	
 	if(formContainer.length === 0)
 	{
@@ -681,7 +675,7 @@ const datePicker = async () => {
 	}
 	
 	const d = new Date();
-	let url = permaLink+'?json=disabled_dates&stamp='+d.getTime();	
+	let url = permalink+'?json=disabled_dates&stamp='+d.getTime();	
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
 	const buildPicker = () => {
@@ -787,7 +781,7 @@ const timePicker = () => {
 		return;
 	}
 
-	const {booking_allowed_hours} = dyStrings();
+	const {booking_allowed_hours} = dyPackageArgs;
 	let args = {};
 	
 	if(booking_allowed_hours.length > 1)

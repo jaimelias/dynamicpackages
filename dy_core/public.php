@@ -28,7 +28,8 @@ class Dynamic_Core_Public {
     public function args()
     {
         $args = array(
-            'homeUrl' => home_url()
+            'homeUrl' => home_url(),
+            'permalink' => get_the_permalink()
         );
 
         echo '<script>const dyCoreArgs = '.json_encode($args).';</script>';

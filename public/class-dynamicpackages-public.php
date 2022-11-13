@@ -109,7 +109,7 @@ class Dynamicpackages_Public {
 	public function enqueue_scripts() {
  
 		global $post;
-		$strings = array();
+		
 		$dep = array( 'jquery', 'landing-cookies');
 		$dy_ipgeolocation_api_token = null;
 		$enqueue_public = false;
@@ -157,15 +157,17 @@ class Dynamicpackages_Public {
 		
 		if($enqueue_public)
 		{
-			$strings['postId'] = get_the_ID();
-			$strings['dy_ipgeolocation_api_token'] = get_option('dy_ipgeolocation_api_token');
-			$strings['textCopiedToClipBoard'] = __('Copied to Clipboard!', 'dynamicpackages');
-			$strings['pluginDirUrl'] = esc_url($this->plugin_dir_url_dir);
-			$strings['permaLink'] = esc_url(get_the_permalink());
-			$strings['booking_allowed_hours'] = $this->booking_allowed_hours();
+			$strings = array(
+				'postId' => get_the_ID(),
+				'dy_ipgeolocation_api_token' => get_option('dy_ipgeolocation_api_token'),
+				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
+				'pluginDirUrl' => $this->plugin_dir_url_dir,
+				'permaLink' => get_the_permalink(),
+				'booking_allowed_hours' => $this->booking_allowed_hours()
+			);
 
 			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', $dep, time(), true );
-			wp_add_inline_script('dynamicpackages', 'function dyStrings(){ return '.json_encode($strings).';}', 'before');
+			wp_localize_script('dynamicpackages', 'dyPackageArgs', $strings);		
 		}
 		
 		if($enqueue_archive)

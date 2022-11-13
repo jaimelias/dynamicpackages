@@ -48,7 +48,7 @@ class Dynamicpackages_Shortcodes {
 	
 	public function package_filter($content = '')
 	{
-		return apply_filters('dy_form_filter_form', $content);
+		return apply_filters('dy_package_filter_form_cb', $content);
 	}	
 	
 	public function package_shortcode_full($attr, $content = '')

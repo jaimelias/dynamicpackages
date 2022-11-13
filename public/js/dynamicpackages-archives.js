@@ -24,7 +24,7 @@ const more_details_event = () => {
 
 const booking_filter = () => {
 
-	jQuery('#dy_form_filter').each(function(){
+	jQuery('#dy_package_filter_form').each(function(){
 		const thisForm = jQuery(this);
 
 		const nullParams = {
