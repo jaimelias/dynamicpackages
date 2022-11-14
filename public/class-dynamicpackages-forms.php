@@ -34,7 +34,7 @@ class Dynamicpackages_Forms
 		
 		ob_start();
 		?>
-		<form id="dy_package_filter_form" action="<?php echo esc_url(get_permalink($package_main)); ?>" method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
+		<form id="dy_package_filter_form" data-action="<?php echo esc_url(get_permalink($package_main)); ?>" data-method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
 		
 			<div class="pure-g gutters">
 
@@ -124,7 +124,7 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 		
-		$form = '<div class="booking_form_container"><form class="booking_form" method="get">';
+		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-method="get" data-action="'.esc_url(get_permalink()).'">';
 		
 		if($auto_booking == 1)
 		{

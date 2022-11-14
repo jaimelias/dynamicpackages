@@ -23,11 +23,11 @@ form#dy_package_filter_form button
 {
 	height: 34px !important;
 }
-.booking_form_container
+.dy_package_booking_form_container
 {
 	margin-bottom: 20px;
 }
-.booking_form_container>form.booking_form
+.dy_package_booking_form_container>form.dy_package_booking_form
 {
 	margin-bottom: 0 !important;
 }

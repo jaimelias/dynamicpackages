@@ -10,7 +10,7 @@ jQuery(() => {
 
 const datePicker = async () => {
 
-	const formContainer = jQuery('.booking_form_container');
+	const formContainer = jQuery('.dy_package_booking_form_container');
 	const {permalink} = dyCoreArgs;
 	
 	if(formContainer.length === 0)
@@ -25,7 +25,7 @@ const datePicker = async () => {
 	const buildPicker = () => {
 
 		jQuery(formContainer).each(function () {
-			const thisForm = jQuery(this).find('.booking_form');
+			const thisForm = jQuery(this).find('.dy_package_booking_form');
 			const field = jQuery(thisForm).find('input.dy_date_picker');
 			const name = jQuery(field).attr('name');
 			let fetchUrl = (name === 'end_date') ? url + '&return=true' : url;
@@ -108,7 +108,7 @@ const datePicker = async () => {
 	buildPicker();
 
 	jQuery(formContainer).each(function(){
-		const thisForm = jQuery(this).find('.booking_form');
+		const thisForm = jQuery(this).find('.dy_package_booking_form');
 		
 		jQuery(thisForm).find('select.booking_select').change(function(){
 
@@ -135,7 +135,7 @@ const timePicker = () => {
 		args.max = booking_allowed_hours[1];
 	}
 	
-	jQuery('.booking_form').find('input.dy_time_picker').each(function()
+	jQuery('.dy_package_booking_form').find('input.dy_time_picker').each(function()
 	{
 		jQuery(this).pickatime(args);
 	});	
@@ -178,7 +178,7 @@ const gaClick = (form, eventName) => {
 
 const validateCheckPricesForm = () => {
 
-	const formContainer = jQuery('.booking_form_container');
+	const formContainer = jQuery('.dy_package_booking_form_container');
 
 	if(formContainer.length === 0)
 	{
@@ -187,7 +187,7 @@ const validateCheckPricesForm = () => {
 
 	jQuery(formContainer).each(function () {
 
-		const thisForm = jQuery(this).find('.booking_form');
+		const thisForm = jQuery(this).find('.dy_package_booking_form');
 		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
 
 		formToArray(thisForm).forEach(v => {
@@ -259,7 +259,7 @@ const validateCheckPricesForm = () => {
 					}
 				});
 
-				jQuery(thisForm).submit();
+				createFormSubmit(thisForm);
 			}
 
 		});

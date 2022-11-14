@@ -80,7 +80,7 @@ const booking_filter = () => {
 
 			if(submitForm)
 			{
-				jQuery(thisForm).submit();
+				createFormSubmit(thisForm);
 			}
 			else
 			{

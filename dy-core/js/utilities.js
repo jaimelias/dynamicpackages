@@ -16,26 +16,7 @@ const formToArray = form => {
      return data;
  };
 
- const formSubmit = ({method, action, formFields}) => {
 
-	const newForm =  document.createElement('form');
-	newForm.method = method;
-	newForm.action = action;    
-
-
-    formFields.forEach(i => {
-        let input = document.createElement('input');
-        input.name = i.name;
-        input.value = i.value;
-        newForm.appendChild(input);
-    });
-
-    //console.log({formFields});
-
-    document.body.appendChild(newForm);
-
-    newForm.submit();
-};
 
 
 const getGeoLocation = async () => {
@@ -85,15 +66,13 @@ const getNonce = async () => {
 
 const createFormSubmit = async (form) => {
     const {ipGeoLocation, lang} = dyCoreArgs;
-	let formFields = [...formToArray(form), {name: 'lang', value: lang}];
+	let formFields = formToArray(form);
 	const method = String(jQuery(form).attr('data-method')).toLocaleLowerCase();
 	let action = jQuery(form).attr('data-action');  
 	const nonce = jQuery(form).attr('data-nonce') || '';  
     const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
 
-    ['device', 'landing_domain', 'landing_path', 'channel'].forEach(x => {
-        formFields.push({name: x, value: getCookie(x)});
-    });
+
 
     if(nonce)
     {
@@ -112,16 +91,46 @@ const createFormSubmit = async (form) => {
         }
     }
 
-    if(method.toLowerCase() === 'post' && hasEmail && ipGeoLocation)
+    if(method.toLowerCase() === 'post' && hasEmail)
     {
-        const geoLocation = await getGeoLocation();
+        formFields.push({name: 'lang', value: lang});
 
-        if(geoLocation)
+        ['device', 'landing_domain', 'landing_path', 'channel'].forEach(x => {
+            formFields.push({name: x, value: getCookie(x)});
+        });
+
+        if(ipGeoLocation)
         {
-            formFields = [...formFields, ...geoLocation];
+            const geoLocation = await getGeoLocation();
+
+            if(geoLocation)
+            {
+                formFields = [...formFields, ...geoLocation];
+            }
         }
     }
 
     formSubmit({method, action, formFields});
 	
+};
+
+const formSubmit = ({method, action, formFields}) => {
+
+	const newForm =  document.createElement('form');
+	newForm.method = method;
+	newForm.action = action;    
+
+
+    formFields.forEach(i => {
+        let input = document.createElement('input');
+        input.name = i.name;
+        input.value = i.value;
+        newForm.appendChild(input);
+    });
+
+    //console.log({formFields});
+
+    document.body.appendChild(newForm);
+
+    newForm.submit();
 };
