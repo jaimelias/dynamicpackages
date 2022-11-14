@@ -71,7 +71,7 @@ const createFormSubmit = async (form) => {
 	let action = jQuery(form).attr('data-action');  
 	const nonce = jQuery(form).attr('data-nonce') || '';  
     const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
-
+    let hashParams = jQuery(form).attr('data-hash-params') || '';  
 
 
     if(nonce)
@@ -107,6 +107,24 @@ const createFormSubmit = async (form) => {
             {
                 formFields = [...formFields, ...geoLocation];
             }
+        }
+    }
+
+    if(hashParams)
+    {
+        let hash = '';
+        hashParams = hashParams.split(',');
+
+        if(Array.isArray(hashParams))
+        {
+            hashParams.forEach(v => {
+                hash += jQuery(form).find(`[name="${v}"]`).val();
+            });
+        }
+
+        if(hash)
+        {
+            formFields.push({name: 'hash', value: sha512(hash)});
         }
     }
 
