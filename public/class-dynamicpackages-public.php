@@ -5,10 +5,6 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Public {
 
-
-	private $plugin_name;
-	private $version;
-
 	public function __construct() {
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
@@ -65,61 +61,19 @@ class Dynamicpackages_Public {
 	
 	public function enqueue_styles() {
 		
-		if(!is_404())
-		{
-			if(is_tax('package_category') ||is_tax('package_location') || is_post_type_archive('packages'))
-			{
-				$this->css();
-			}
-			else if(is_singular('packages'))
-			{
-				$this->css();
-				$this->datepickerCSS();
-			}
-			else
-			{
-				global $post;
-				
-				if(isset($post))
-				{
-					if(has_shortcode( $post->post_content, 'packages') || dy_validators::validate_origin())
-					{
-						$this->css();
-					}					
-				}			
-			}
-		}
+		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css');
 	}
 	
-	public function css()
-	{
-		wp_enqueue_style('minimalLayout', $this->plugin_dir_url_file . 'css/minimal-layout.css', array(), '', 'all');
-		wp_add_inline_style('minimalLayout', $this->get_inline_css('dynamicpackages-public'));
-	}
-	
-	public function get_inline_css($sheet)
-	{
-		ob_start();
-		require_once($this->dirname_file . '/css/'.$sheet.'.css');
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;	
-	}
-
 	public function enqueue_scripts() {
  
 		global $post;
 		
-		$dep = array( 'jquery', 'landing-cookies');
-		$dy_ipgeolocation_api_token = null;
+		$dep = array( 'jquery');
 		$enqueue_public = false;
 		$enqueue_archive = false;
 		$enqueue_sha512 = false;
-		$enqueue_datepicker = false;
 		$is_booking_page = is_booking_page();
-		
-		wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), '', true);
-		
+				
 		if(isset($post))
 		{
 			if(is_singular('packages') || is_page())
@@ -128,7 +82,6 @@ class Dynamicpackages_Public {
 			
 				if(!$is_booking_page)
 				{
-					$enqueue_datepicker = true;
 					$enqueue_sha512 = true;
 				}
 			}			
@@ -150,10 +103,6 @@ class Dynamicpackages_Public {
 			array_push($dep, 'sha512');
 		}
 		
-		if($enqueue_datepicker)
-		{
-			$this->datepickerJS();
-		}		
 		
 		if($enqueue_public)
 		{
@@ -161,7 +110,6 @@ class Dynamicpackages_Public {
 				'postId' => get_the_ID(),
 				'dy_ipgeolocation_api_token' => get_option('dy_ipgeolocation_api_token'),
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
-				'pluginDirUrl' => $this->plugin_dir_url_dir,
 				'permaLink' => get_the_permalink(),
 				'booking_allowed_hours' => $this->booking_allowed_hours()
 			);
@@ -176,29 +124,6 @@ class Dynamicpackages_Public {
 		}
 		
 		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
-	}
-	
-	public function datepickerCSS()
-	{
-		wp_enqueue_style( 'picker-css', $this->plugin_dir_url_file . 'css/picker/default.css', array(), '3.6.2', 'all');
-		wp_add_inline_style('picker-css', $this->get_inline_css('picker/default.date'));
-		wp_add_inline_style('picker-css', $this->get_inline_css('picker/default.time'));
-	}
-	
-	public function datepickerJS()
-	{
-		//pikadate
-		wp_enqueue_script( 'picker-js', $this->plugin_dir_url_file . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
-		wp_enqueue_script( 'picker-date-js', $this->plugin_dir_url_file . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
-		wp_enqueue_script( 'picker-time-js', $this->plugin_dir_url_file . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
-		wp_enqueue_script( 'picker-legacy', $this->plugin_dir_url_file . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
-
-		$picker_translation = 'js/picker/translations/'.get_locale().'.js';
-				
-		if(file_exists($this->dirname_file.'/'.$picker_translation))
-		{
-			wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_url_file.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
-		}		
 	}
 		
 	public function meta_tags()
@@ -1587,33 +1512,45 @@ class Dynamicpackages_Public {
 
 	public function load_recaptcha_scripts($query)
 	{
-		global $dy_load_recaptcha_scripts;
 		global $post;
 		$load_recaptcha = false;
+		$load_picker = false;
+		$load_request_form_utilities = false;
 
-		if(!isset($dy_load_recaptcha_scripts))
+		if(isset($post))
 		{
-			if(isset($post))
+			if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
 			{
-				if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
+				$load_recaptcha = true;
+			}
+		}
+		if(isset($query->query_vars['packages']))
+		{
+			if($query->query_vars['packages'])
+			{
+				if(is_booking_page())
 				{
 					$load_recaptcha = true;
+					$load_request_form_utilities = true;
 				}
-			}
-			if(isset($query->query_vars['packages']))
-			{
-				if($query->query_vars['packages'] && is_booking_page())
+				else if(!is_booking_page() && !is_checkout_page())
 				{
-					$load_recaptcha = true;
+					$load_picker = true;
 				}
 			}
-
-			if($load_recaptcha)
-			{
-				$GLOBALS['dy_load_recaptcha_scripts'] = true;
-			}
-
 		}
 
+		if($load_recaptcha)
+		{
+			$GLOBALS['dy_load_recaptcha_scripts'] = true;
+		}
+		if($load_picker)
+		{
+			$GLOBALS['dy_load_picker_scripts'] = true;
+		}
+		if($load_request_form_utilities)
+		{
+			$GLOBALS['dy_load_request_form_utilities_scripts'] = true;
+		}
 	}
 }

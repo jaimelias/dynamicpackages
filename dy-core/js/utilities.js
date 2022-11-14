@@ -1,0 +1,127 @@
+
+const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst', 'zipcode', 'continent_code', 'continent_name'];
+
+const formToArray = form => {
+   
+    let data = jQuery(form).serializeArray();
+    
+     jQuery(form).find('input:checkbox').each(function () { 
+         data.push({ name: this.name, value: this.checked });
+     });
+ 
+     jQuery(form).find('input:disabled').each(function () { 
+         data.push({ name: this.name, value: this.value });
+     });
+     
+     return data;
+ };
+
+ const formSubmit = ({method, action, formFields}) => {
+
+	const newForm =  document.createElement('form');
+	newForm.method = method;
+	newForm.action = action;    
+
+
+    formFields.forEach(i => {
+        let input = document.createElement('input');
+        input.name = i.name;
+        input.value = i.value;
+        newForm.appendChild(input);
+    });
+
+    //console.log({formFields});
+
+    document.body.appendChild(newForm);
+
+    newForm.submit();
+};
+
+
+const getGeoLocation = async () => {
+    const {ipGeoLocation} = dyCoreArgs;
+    let output = [];
+
+    return fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${ipGeoLocation.token}`).then(resp => {
+        if(resp.ok)
+        {
+            return resp.json();
+        }
+        else
+        {
+            throw Error(resp.statusText);
+        }
+    }).then(data => {
+
+        for(let k in data)
+        {
+            if(typeof data[k] !== 'object')
+            {
+                if(!excludeGeolocation.includes(k))
+                {
+                    output.push({name: k, value: data[k]});
+                }
+            }
+        }
+
+        return output;
+    })
+};
+
+const getNonce = async () => {
+    const {homeUrl} = dyCoreArgs;
+
+    return fetch(`${homeUrl}/wp-json/dy-core/args`).then(resp => {
+        if(resp.ok)
+        {
+            return resp.json();
+        }
+        else
+        {
+            throw Error('Unable to get nonce');
+        }
+    }).then(data => data.dy_nonce);
+};
+
+const createFormSubmit = async (form) => {
+    const {ipGeoLocation, lang} = dyCoreArgs;
+	let formFields = [...formToArray(form), {name: 'lang', value: lang}];
+	const method = String(jQuery(form).attr('data-method')).toLocaleLowerCase();
+	let action = jQuery(form).attr('data-action');  
+	const nonce = jQuery(form).attr('data-nonce') || '';  
+    const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
+
+    ['device', 'landing_domain', 'landing_path', 'channel'].forEach(x => {
+        formFields.push({name: x, value: getCookie(x)});
+    });
+
+    if(nonce)
+    {
+        const nonceData = await getNonce();
+
+        if(nonceData)
+        {
+            if(nonce === 'slug')
+            {
+                action += `/${nonceData}`;
+            }
+            else if(nonce === 'param')
+            {
+                formFields.push({name: 'dy_nonce', value: nonceData});
+            }
+        }
+    }
+
+    if(method.toLowerCase() === 'post' && hasEmail && ipGeoLocation)
+    {
+        const geoLocation = await getGeoLocation();
+
+        if(geoLocation)
+        {
+            formFields = [...formFields, ...geoLocation];
+        }
+    }
+
+    formSubmit({method, action, formFields});
+	
+};

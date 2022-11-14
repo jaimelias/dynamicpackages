@@ -14,7 +14,7 @@
 	}
 ?>
 
-<form id="dynamic_form"  <?php echo $hide_form;?> method="post" action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dy_package_request_form" <?php echo $hide_form;?> data-nonce="param" data-method="POST" data-action="<?php echo esc_url(get_permalink()); ?>">
 
 	    <div class="text-center bottom-20" id="dy_checkout_branding">
 			<p class="large text-muted">
@@ -34,23 +34,7 @@
 	
 		<!-- Config -->
 		<input type="hidden" name="dy_request" value="<?php echo esc_attr($request_form); ?>" />
-		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
-		<input type="hidden" name="lang" value="<?php echo esc_attr(substr(get_bloginfo ( 'language' ), 0, 2 ));?>" />
-		
-		<!-- Cookies -->
-		<input type="hidden" name="channel" class="channel" value="" />
-		<input type="hidden" name="device" class="device" value="" />
-		<input type="hidden" name="landing_domain" class="landing_domain" value="" />
-		<input type="hidden" name="landing_path" class="landing_path" value="" />
-		
-		<!-- Geolocation -->
-		<input type="hidden" name="geo_city" value="" />
-		<input type="hidden" name="geo_state_prov" value="" />
-		<input type="hidden" name="geo_countrycode2"  value="" />
-		<input type="hidden" name="geo_latitude"  value="" />
-		<input type="hidden" name="geo_longitude" value="" />
-		<input type="hidden" name="geo_ip"  value="" />
-		<input type="hidden" name="geo_isp" value="" />
+		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>		
 
 		<div>
 			<h3><?php echo (esc_html__('Contact Details', 'dynamicpackages')); ?></h3>

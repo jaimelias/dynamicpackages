@@ -44,7 +44,7 @@ register_activation_hook( __FILE__, 'activate_dynamicpackages' );
 register_deactivation_hook( __FILE__, 'deactivate_dynamicpackages' );
 
 //dynamic core scripts
-require_once plugin_dir_path( __FILE__ ) . 'dy_core/loader.php';
+require_once plugin_dir_path( __FILE__ ) . 'dy-core/loader.php';
 
 //init plugin
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
