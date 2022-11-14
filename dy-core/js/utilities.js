@@ -13,11 +13,15 @@ const formToArray = form => {
     let data = jQuery(form).serializeArray();
     
      jQuery(form).find('input:checkbox').each(function () { 
-         data.push({ name: this.name, value: this.checked });
+        const {name, checked: value} = this;
+
+         data.push({ name, value });
      });
  
-     jQuery(form).find('input:disabled').each(function () { 
-         data.push({ name: this.name, value: this.value });
+     jQuery(form).find(':disabled').each(function () { 
+        const {name, value} = this;
+
+         data.push({ name, value });
      });
      
      return data;
@@ -165,11 +169,11 @@ const formSubmit = ({method, action, formFields}) => {
         newForm.appendChild(input);
     });
 
-    console.log({formFields});
+    //console.log({formFields});
 
     document.body.appendChild(newForm);
 
-    //newForm.submit();
+    newForm.submit();
 };
 
 const storePopulate = () => {
