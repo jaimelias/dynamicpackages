@@ -65,9 +65,6 @@ class Dynamic_Core_Public {
     {
         global $dy_load_picker_scripts;
 
-        wp_enqueue_style('minimalLayout', $this->plugin_dir_url_file . 'css/minimal-layout.css', array(), '', 'all');
-
-
         if(isset($dy_load_picker_scripts))
         {
             wp_enqueue_style( 'picker-css', $this->plugin_dir_url_file . 'css/picker/default.css', array(), '3.6.2', 'all');
