@@ -23,9 +23,18 @@ class Dynamic_Core_WP_JSON {
 
     public function core_args_callback($req)
     {
-        $utc_time = date('Y-m-d H:i:s', time());
-        $dy_nonce = wp_create_nonce('dy_nonce');        
-        return array('dy_nonce' => $dy_nonce, 'utc_date_time' => $utc_time);
+        $result = new WP_REST_Response(array(
+            'dy_nonce' => wp_create_nonce('dy_nonce'),
+            'utc_date_time' => date('Y-m-d H:i:s', time())
+        ), 200);
+
+
+        $result->set_headers(array(
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+        ));
+    
+        return $result;
     }
 }
 

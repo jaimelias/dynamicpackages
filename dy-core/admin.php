@@ -6,7 +6,7 @@ class Dynamic_Core_Admin {
     
     public function __construct()
     {
-		$this->plugin_dir_file = plugin_dir_url( __FILE__ );
+		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir = plugin_dir_url( __DIR__ );
         $this->plugin_name = 'Dynamic Core';
         $this->slug = 'dy-core';
@@ -16,7 +16,18 @@ class Dynamic_Core_Admin {
         $this->section_analytics = 'dy_core_section_analytics';
         add_action('admin_init', array(&$this, 'settings_init'), 1);
         add_action('admin_menu', array(&$this, 'admin_menu'), 1);
+		add_action('admin_head', array(&$this, 'args'));
     }
+
+    public function args()
+    {
+        $args = array(
+            'pluginUrl' => $this->plugin_dir_url_file,
+            'lang' => current_language()
+        );
+
+        echo '<script>const dyCoreArgs = '.json_encode($args).';</script>';
+    }	
 
     public function settings_init()
     {

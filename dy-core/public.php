@@ -10,7 +10,6 @@ class Dynamic_Core_Public {
         $this->dirname_file = dirname( __FILE__ );
 
         add_shortcode('whatsapp', array(&$this, 'whatsapp_button'));
-        add_action( 'wp_head', array(&$this, 'args'));
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
         add_action( 'minimal_pre_body', array(&$this, 'gtm_tracking_iframe'));
         add_action( 'wp_head', array(&$this, 'gtag_tracking_script'));

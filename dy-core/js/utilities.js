@@ -62,8 +62,9 @@ const getGeoLocation = async () => {
 
 const getNonce = async () => {
     const {homeUrl} = dyCoreArgs;
+    const now = Date.now();
 
-    return fetch(`${homeUrl}/wp-json/dy-core/args`).then(resp => {
+    return fetch(`${homeUrl}/wp-json/dy-core/args?timestamp=${now}`).then(resp => {
         if(resp.ok)
         {
             return resp.json();
