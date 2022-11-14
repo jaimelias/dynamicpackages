@@ -63,8 +63,19 @@ const getGeoLocation = async () => {
 const getNonce = async () => {
     const {homeUrl} = dyCoreArgs;
     const now = Date.now();
+    const url = `${homeUrl}/wp-json/dy-core/args?timestamp=${now}`;
+    const headers = new Headers();
+    headers.append('pragma', 'no-cache');
+    headers.append('cache-control', 'no-cache'); 
+    
+    const init = {
+        method: 'GET',
+        headers,
+    };
 
-    return fetch(`${homeUrl}/wp-json/dy-core/args?timestamp=${now}`).then(resp => {
+    var req = new Request(url);
+
+    return fetch(req, init).then(resp => {
         if(resp.ok)
         {
             return resp.json();
