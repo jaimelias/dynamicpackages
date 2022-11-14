@@ -1,5 +1,12 @@
 
 const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst', 'zipcode', 'continent_code', 'continent_name'];
+const storeFieldNames = ['first_name', 'lastname', 'phone', 'email', 'repeat_email', 'country', 'city', 'address'];
+
+jQuery(() => {
+
+    storePopulate();
+	
+});
 
 const formToArray = form => {
    
@@ -40,7 +47,7 @@ const getGeoLocation = async () => {
             {
                 if(!excludeGeolocation.includes(k))
                 {
-                    output.push({name: k, value: data[k]});
+                    output.push({name: `geo_loc_${k}`, value: data[k]});
                 }
             }
         }
@@ -65,14 +72,26 @@ const getNonce = async () => {
 };
 
 const createFormSubmit = async (form) => {
+
+    //disable button to prevent double-click
+    jQuery(form).find('button').prop('disabled', true);
+
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
 	const method = String(jQuery(form).attr('data-method')).toLocaleLowerCase();
 	let action = jQuery(form).attr('data-action');  
 	const nonce = jQuery(form).attr('data-nonce') || '';  
     const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
-    let hashParams = jQuery(form).attr('data-hash-params') || '';  
+    let hashParams = jQuery(form).attr('data-hash-params') || ''; 
 
+    formFields.forEach(o => {
+        const {name, value} = o;
+
+        if(storeFieldNames.includes(name))
+        {
+            sessionStorage.setItem(name, value);
+        }
+    });
 
     if(nonce)
     {
@@ -146,9 +165,51 @@ const formSubmit = ({method, action, formFields}) => {
         newForm.appendChild(input);
     });
 
-    //console.log({formFields});
+    console.log({formFields});
 
     document.body.appendChild(newForm);
 
-    newForm.submit();
+    //newForm.submit();
 };
+
+const storePopulate = () => {
+	
+	
+    jQuery('form').each(function(){
+        const thisForm = jQuery(this);
+
+        if(jQuery(thisForm).attr('data-action') &&  jQuery(thisForm).attr('data-method'))
+        {
+            const formFields = formToArray(thisForm);
+
+            formFields.forEach(i => {
+                const name = i.name;
+                const value = sessionStorage.getItem(name);
+                const field = jQuery(thisForm).find('[name="'+name+'"]');
+                const tag = jQuery(field).prop('tagName');
+                const type = jQuery(field).attr('type');
+                
+                if(value && storeFieldNames.includes(name))
+                {
+                    if(tag == 'INPUT')
+                    {
+                        if(type == 'checkbox' || type == 'radio')
+                        {
+                            jQuery(field).prop('checked', true);
+                        }
+                        else
+                        {
+                            jQuery(field).val(value);
+                        }
+                    }
+                    else if(tag == 'TEXTAREA' || tag == 'SELECT')
+                    {
+                        jQuery(field).val(value);
+                    }			
+                }
+            });
+        }
+    });
+
+
+}

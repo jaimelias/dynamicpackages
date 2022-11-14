@@ -3,7 +3,6 @@ const {textCopiedToClipBoard, dy_ipgeolocation_api_token} = dyPackageArgs;
 
 jQuery(() => {
 
-	storePopulate();
 	selectGateway();
 	copyToClipboard();
 	
@@ -318,43 +317,9 @@ const booking_calc = () => {
 	});
 }
 
-const storePopulate = () => {
-	
-	const thisForm = jQuery('#dy_package_request_form');
-	const formFields = formToArray(thisForm);
-
-	formFields.forEach(i => {
-		const name = i.name;
-		const value = sessionStorage.getItem(name);
-		const field = jQuery(thisForm).find('[name="'+name+'"]');
-		const tag = jQuery(field).prop('tagName');
-		const type = jQuery(field).attr('type');
-		
-		if(value)
-		{
-			if(tag == 'INPUT')
-			{
-				if(type == 'checkbox' || type == 'radio')
-				{
-					jQuery(field).prop('checked', true);
-				}
-				else
-				{
-					jQuery(field).val(value);
-				}
-			}
-			else if(tag == 'TEXTAREA' || tag == 'SELECT')
-			{
-				jQuery(field).val(value);
-			}			
-		}
-	});
-}
-
 
 async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dy_package_request_form');
-	const excludeStore = ['g-recaptcha-response', 'dy_request'];
 	const args = booking_args();
 	let invalids = [];
 	const formFields = formToArray(thisForm);
@@ -393,11 +358,6 @@ async function checkoutFormSubmit(token){
 				else
 				{
 					jQuery(this).removeClass('invalid_field');
-				}
-				
-				if(!excludeStore.includes(name))
-				{
-					sessionStorage.setItem(name, value);
 				}
 			}
 		}
@@ -441,9 +401,7 @@ async function checkoutFormSubmit(token){
 		}
 		
 		//console.log(formToArray(thisForm));
-		
-		jQuery('#dy_submit_form').prop('disabled', true);
-		
+				
 		createFormSubmit(thisForm);
 	}
 	else

@@ -84,7 +84,6 @@
 			<p>
 				<button 
 					type="button" 
-					id="dy_submit_form"
 					data-badge="bottomleft" 
 					data-callback="checkoutFormSubmit"
 					data-sitekey="<?php echo esc_attr(get_option('dy_recaptcha_site_key')); ?>"
