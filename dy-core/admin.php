@@ -46,6 +46,7 @@ class Dynamic_Core_Admin {
 		//settings - analytics
 		register_setting($this->setting_id, 'dy_ipgeolocation_api_token', 'sanitize_user');
 		register_setting($this->setting_id, 'dy_gtag_tracking_id', 'sanitize_user');
+		register_setting($this->setting_id, 'dy_gtag_conversion_id', 'sanitize_user');
 		register_setting($this->setting_id, 'dy_gtm_tracking_id', 'sanitize_user');
 		register_setting($this->setting_id, 'dy_facebook_pixel_id', 'sanitize_user');
 
@@ -139,11 +140,20 @@ class Dynamic_Core_Admin {
 
 		add_settings_field( 
 			'dy_gtag_tracking_id', 
-			__( 'Google - Global Site Tag (GTAG)', 'dynamicpackages' ), 
+			__( 'Google - Analytics GA4 (GTAG)', 'dynamicpackages' ), 
 			array(&$this, 'settings_input'), 
 			$this->setting_id, 
 			$this->section_analytics,
-			array('name' => 'dy_gtag_tracking_id', 'url' => 'https://tagmanager.google.com/') 
+			array('name' => 'dy_gtag_tracking_id', 'url' => 'https://analytics.google.com/') 
+		);
+
+		add_settings_field( 
+			'dy_gtag_conversion_id', 
+			__( 'Google - Ads Convertion (GTAG)', 'dynamicpackages' ), 
+			array(&$this, 'settings_input'), 
+			$this->setting_id, 
+			$this->section_analytics,
+			array('name' => 'dy_gtag_conversion_id', 'url' => 'https://ads.google.com/aw/tagsettings') 
 		);
 
 		add_settings_field( 

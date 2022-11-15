@@ -13,6 +13,7 @@ class Dynamic_Core_Public {
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
         add_action( 'minimal_pre_body', array(&$this, 'gtm_tracking_iframe'));
         add_action( 'wp_head', array(&$this, 'gtag_tracking_script'));
+        add_action( 'wp_head', array(&$this, 'gtag_conversion_script'));
         add_action( 'wp_head', array(&$this, 'facebook_pixel_tracking_script'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
@@ -134,7 +135,7 @@ class Dynamic_Core_Public {
 
         if($value): ?>
 
-        <!-- Start Google - Global Site Tag (GTAG) -->
+        <!-- Start Google - Analytics GA4 (GTAG) -->
 
         <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($value); ?>"></script>
         <script>
@@ -144,7 +145,28 @@ class Dynamic_Core_Public {
             gtag('config', '<?php echo esc_html($value); ?>');
         </script>
         
-        <!-- End Google - Global Site Tag (GTAG) -->
+        <!-- End Google - Analytics GA4 (GTAG) -->
+
+        <?php endif;       
+    }
+
+    public function gtag_conversion_script()
+    {
+        $value = get_option('dy_gtag_conversion_id');
+
+        if($value): ?>
+
+        <!-- Start Google - Ads Conversion (GTAG) -->
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($value); ?>"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '<?php echo esc_html($value); ?>');
+        </script>
+        
+        <!-- End Google - Ads Conversion (GTAG) -->
 
         <?php endif;       
     }
