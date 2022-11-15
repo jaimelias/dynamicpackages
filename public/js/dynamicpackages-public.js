@@ -407,6 +407,11 @@ async function checkoutFormSubmit(token){
 		if(typeof fbq !== typeof undefined)
 		{
 			fbq('track', 'Lead');
+
+			if(!excludedPurchase.includes(dyRequestVal))
+			{
+				fbq('track', 'Purchase', {value: parseFloat(amount), currency: 'USD'});
+			}
 		}
 		
 		//google analytics
