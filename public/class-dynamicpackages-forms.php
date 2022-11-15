@@ -110,6 +110,8 @@ class Dynamicpackages_Forms
 	{
 		$auto_booking = package_field('package_auto_booking');
 		$price_chart = dy_utilities::get_price_chart();
+		$starting_at = dy_utilities::starting_at();
+		$title = get_the_title();
 		$min = package_field('package_min_persons');
 		$max = package_field('package_max_persons');
 		$option_disc = package_field('package_discount');
@@ -124,7 +126,7 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 		
-		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-method="get" data-action="'.esc_url(get_permalink()).'">';
+		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_url(get_permalink()).'">';
 		
 		if($auto_booking == 1)
 		{

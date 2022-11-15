@@ -463,13 +463,8 @@ class Dynamicpackages_Public {
 		{				
 			if(is_booking_page())
 			{
-				$title = '<span class="linkcolor">'. esc_html(__('Booking Page', 'dynamicpackages')) .'</span>: <span data-id="package-title">'. $title .'</span>';
+				$title = sprintf(__('Booking Page: %s', 'dynamicpackages'), $title);
 			}			
-			else
-			{
-				$title = '<span itemprop="name">'. $title.'</span>';
-			}
-			
 		}
 		elseif(is_page())
 		{

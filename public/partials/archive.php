@@ -256,12 +256,15 @@ else
 		<?php $count=0; ?>
 		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>		
 
+
+
 		<?php
 			//DO NOT DELETE
 			// IT UPDATES THE EVENT DATE FOR QUERY PURPOSES
 			dy_utilities::event_date_update($post->ID);
 			$package_code = package_field('package_trip_code');
 			$package_code = (!empty($package_code)) ? $package_code : 'ID'.$post->ID;
+			$starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;
 		?>
 
 			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
@@ -277,7 +280,7 @@ else
 						<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
 							<?php if(has_post_thumbnail()): ?>
 							<div class="dy_thumbnail relative text-center">
-								<a title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
+								<a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
 								<?php do_action('dy_show_event_date'); ?>
 								<?php do_action('dy_show_badge'); ?>
 							</div>
@@ -291,7 +294,7 @@ else
 							<?php endif; ?>								
 						
 							<div class="dy_title_h3">
-								<h3 class="small"><a title="<?php echo esc_attr($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php esc_html_e($post->post_title); ?></span></a></h3>
+								<h3 class="small"><a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php esc_html_e($post->post_title); ?></span></a></h3>
 							</div>
 							
 							
@@ -312,14 +315,14 @@ else
 							<div class="small hide-sm"><?php echo apply_filters('dy_details', null); ?></div>
 							
 							
-							<?php if(dy_utilities::starting_at_archive() > 0): ?>
+							<?php if($starting_at): ?>
 								<div class="dy_pad bottom-10">
 									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 									<link itemprop="availability" href="http://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_attr(dy_utilities::currency_name()); ?>" />
-									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr(dy_utilities::starting_at_archive());?>"><?php esc_html_e(number_format(dy_utilities::starting_at_archive(), 0, '.', ','));?></span>
+									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(number_format($starting_at, 0, '.', ','));?></span>
 									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>
@@ -327,7 +330,7 @@ else
 
 							
 							<div class="text-right strong uppercase hide-sm">
-								<a href="<?php the_permalink(); ?>" title="<?php echo esc_attr($post->post_title); ?>"><?php echo (esc_html__('More details', 'dynamicpackages')); ?> <span class="large"><span class="large"><i class="fas fa-chevron-circle-right"></i></span></span></a>
+								<a data-starting-at="<?php echo esc_attr($starting_at); ?>" href="<?php the_permalink(); ?>" title="<?php echo esc_attr($post->post_title); ?>"><?php echo (esc_html__('More details', 'dynamicpackages')); ?> <span class="large"><span class="large"><i class="fas fa-chevron-circle-right"></i></span></span></a>
 							</div>					
 							
 							

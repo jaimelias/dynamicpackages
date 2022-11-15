@@ -157,24 +157,6 @@ const showCouponForm = () => {
 	});	
 }
 
-const gaClick = (form, eventName) => {
-	if(typeof gtag !== 'undefined')
-	{
-		const booking_date = jQuery(form).find('input[name="booking_date"]');
-		const pax_regular = jQuery(form).find('select[name="pax_regular"]');
-		const departure = Date.parse(jQuery(booking_date).val());
-		let today = new Date();
-		today.setDate(today.getDate() - 2);
-		today = Date.parse(today);
-		const days_between = Math.round((departure-today)/(1000*60*60*24));		
-		gtag('event', eventName, {
-			items : jQuery('.entry-title').text(),
-			days: days_between+'/'+jQuery(booking_date).val()+'/'+jQuery(pax_regular).val()
-		});
-	}
-}
-
-
 
 const validateCheckPricesForm = () => {
 
@@ -189,12 +171,15 @@ const validateCheckPricesForm = () => {
 
 		const thisForm = jQuery(this).find('.dy_package_booking_form');
 		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
+		const startingAt = parseInt(jQuery(thisForm).attr('data-starting-at'));
+		const title = jQuery(thisForm).attr('data-title');
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
 			const cookieName = `${name}_${postId}`;
 			const cookieValue = getCookie(cookieName);
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
+
 
 			if(value === '' && cookieValue)
 			{
@@ -230,7 +215,19 @@ const validateCheckPricesForm = () => {
 
 			if(invalids.length === 0)
 			{
-				gaClick(thisForm, 'checkPrices');
+				if(typeof gtag !== 'undefined' && startingAt)
+				{
+					gtag('event', 'add_to_cart', {
+						currency: 'USD',
+						value: startingAt,
+						items : [title]
+					});
+				}
+
+				if(typeof fbq !== 'undefined')
+				{
+					fbq('track', 'AddToCart');
+				}
 
 				data.forEach(v => {
 					const {name, value} = v;

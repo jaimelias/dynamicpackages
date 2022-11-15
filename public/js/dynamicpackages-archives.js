@@ -7,11 +7,16 @@ jQuery(() => {
 const more_details_event = () => {
 	
 	jQuery('.dy_archive').find('a').click(function(e) {
-		
-		if(typeof gtag !== 'undefined')
+
+		const title = jQuery(this).attr('title');
+		const startingAt = parseInt(jQuery(this).attr('data-starting-at'));
+
+		if(typeof gtag !== 'undefined' && startingAt)
 		{
 			gtag('event', 'view_item', {
-				items : jQuery(this).attr('title')
+				currency: 'USD',
+				value: startingAt,
+				items : [title]
 			});
 		}
 		

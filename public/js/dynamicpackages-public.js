@@ -47,10 +47,21 @@ const selectGateway = () => {
 	const thisForm = jQuery('#dy_package_request_form');
 	const cardRequiredFields = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
 
-
 	jQuery('#dy_payment_buttons').find('button').each(function(){
 
 		jQuery(this).click(function(){
+			const {title} = checkout_vars();
+			const url = new URL(window.location);
+			const {searchParams} = url;
+			let coupon = '';
+
+			if(searchParams.has('booking_coupon'))
+			{
+				if(searchParams.get('booking_coupon'))
+				{
+					coupon = searchParams.get('booking_coupon');
+				}
+			}
 
 			const thisButton = jQuery(this);
 			const id = jQuery(thisButton).attr('data-id');
@@ -59,6 +70,7 @@ const selectGateway = () => {
 			let networks = jQuery(thisButton).attr('data-networks') || '';
 			const cryptoForm = jQuery('#dy_crypto_form');
 			const networkSelect = jQuery(cryptoForm).find('select[name="dy_network"]');
+			const total = parseInt(jQuery('.dy_calc_amount').text());
 
 			jQuery(networkSelect).removeClass('required').html('<option value="" selected>--</option>');
 			jQuery('#dy_crypto_alert').addClass('hidden');
@@ -127,22 +139,29 @@ const selectGateway = () => {
 
 			jQuery('#dy_checkout_branding').html(branding);
 			jQuery(thisForm).removeClass('hidden');
-			
 			jQuery(thisForm).find('input[name="dy_request"]').val(id);
 
 			//facebook pixel
 			if(typeof fbq !== typeof undefined)
 			{
-				console.log('InitiateCheckout');
 				fbq('track', 'InitiateCheckout');
 			}
 			
 			//google analytics
-			if(typeof gtag !== 'undefined')
+			if(typeof gtag !== 'undefined' && total)
 			{
-				gtag('event', 'selectGateway', {
-					items : id
-				});					
+				let checkoutArgs = {
+					'currency': 'USD',
+					'value': total,
+					items : [title]
+				};
+
+				if(coupon)
+				{
+					checkoutArgs.coupon = coupon;
+				}
+
+				gtag('event', 'begin_checkout', checkoutArgs);					
 			}
 		});
 	});
@@ -321,8 +340,23 @@ const booking_calc = () => {
 async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dy_package_request_form');
 	const args = booking_args();
+	const {amount, title} = args;
 	let invalids = [];
 	const formFields = formToArray(thisForm);
+	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
+	const excludedPurchase = ['contact', 'estimate_request'];
+	const url = new URL(window.location);
+	const {searchParams} = url;
+	let coupon = '';
+
+	if(searchParams.has('booking_coupon'))
+	{
+		if(searchParams.get('booking_coupon'))
+		{
+			coupon = searchParams.get('booking_coupon');
+		}
+	}
+
 	
 	formFields.forEach(i => {
 
@@ -372,34 +406,37 @@ async function checkoutFormSubmit(token){
 		//facebook pixel
 		if(typeof fbq !== typeof undefined)
 		{
-			if(jQuery(thisForm).find('input[name="dy_request"]').val() == 'quote')
-			{
-				fbq('track', 'Lead');
-			}
-			else
-			{
-				fbq('track', 'Purchase', {value: parseFloat(args.total), currency: args.currency_name});
-			}
+			fbq('track', 'Lead');
 		}
 		
 		//google analytics
 		if(typeof gtag !== 'undefined')
 		{				
-			if(jQuery(thisForm).find('input[name="dy_request"]').val() == 'quote')
+			gtag('event', 'generate_lead', {
+				value: parseFloat(amount),
+				currency: 'USD'
+			});
+
+			if(!excludedPurchase.includes(dyRequestVal))
 			{
-				gtag('event', 'generate_lead', {
-					value : args.total
-				});
+
+				let purchaseArgs = {
+					value : parseFloat(amount),
+					currency: 'USD',
+					transaction_id: Date.now().toString(),
+					items: [title]
+				};
+
+				if(coupon)
+				{
+					purchaseArgs.coupon = coupon;
+				}
+
+				gtag('event', 'currency', purchaseArgs);
 			}
-			else
-			{
-				gtag('event', 'purchase', {
-					value : args.total,
-					items: args.title
-				});
-			}	
 		}
 		
+
 		//console.log(formToArray(thisForm));
 				
 		createFormSubmit(thisForm);
