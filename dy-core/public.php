@@ -24,6 +24,11 @@ class Dynamic_Core_Public {
         global $dy_load_picker_scripts;
         global $dy_load_request_form_utilities_scripts;
 
+
+        wp_enqueue_script('sentry-cdn', 'https://browser.sentry-cdn.com/7.19.0/bundle.min.js', array(), '7.19.0', false);
+        wp_add_inline_script('sentry-cdn', $this->sentry(), 'after');
+
+
         wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), 'async_defer', true);
         wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
         wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), time(), true);
@@ -80,6 +85,12 @@ class Dynamic_Core_Public {
 		ob_end_clean();
 		return $output;	
 	}
+    
+
+    public function sentry()
+    {
+        return 'Sentry.init({dsn:"https://822912272dd54f53974343547ae543f3@o387185.ingest.sentry.io/4504131255205888",integrations:[new Sentry.BrowserTracing()],tracesSampleRate:1.0});';
+    }
     
     public function args()
     {
