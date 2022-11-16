@@ -16,7 +16,7 @@ class Dynamicpackages_Package_Page {
     {
         if(is_singular('packages') && !is_booking_page() && !is_checkout_page())
         {
-            wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array('landing-cookies'), time(), true );
+            wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'dy-core-utilities'), time(), true );
         }
     }
 }

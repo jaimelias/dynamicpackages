@@ -68,10 +68,8 @@ class Dynamicpackages_Public {
  
 		global $post;
 		
-		$dep = array( 'jquery');
 		$enqueue_public = false;
 		$enqueue_archive = false;
-		$enqueue_sha512 = false;
 		$is_booking_page = is_booking_page();
 				
 		if(isset($post))
@@ -79,11 +77,6 @@ class Dynamicpackages_Public {
 			if(is_singular('packages') || is_page())
 			{
 				$enqueue_public = true;
-			
-				if(!$is_booking_page)
-				{
-					$enqueue_sha512 = true;
-				}
 			}			
 		}
 
@@ -95,14 +88,7 @@ class Dynamicpackages_Public {
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
 		{
 			$enqueue_archive = true;
-		}		
-		
-		if($enqueue_sha512)
-		{
-			wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', array(), 'async_defer', true );
-			array_push($dep, 'sha512');
 		}
-		
 		
 		if($enqueue_public)
 		{
@@ -114,13 +100,13 @@ class Dynamicpackages_Public {
 				'booking_allowed_hours' => $this->booking_allowed_hours()
 			);
 
-			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', $dep, time(), true );
-			wp_localize_script('dynamicpackages', 'dyPackageArgs', $strings);		
+			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), time(), true );
+			wp_localize_script('dynamicpackages', 'dyPackageArgs', $strings);	
 		}
 		
 		if($enqueue_archive)
 		{
-			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery'), time(), true );
+			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery', 'dy-core-utilities'), time(), true );
 		}
 		
 		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);

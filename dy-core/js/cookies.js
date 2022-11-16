@@ -1,3 +1,7 @@
+const cookieExpirationInDays = 90;
+const visitCookies = ['device', 'landing_domain', 'landing_path', 'channel'];
+const googleAdsCookies = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid'];
+
 jQuery(() => {
 	set_cookies();
 });
@@ -7,7 +11,27 @@ const set_cookies = () => {
 	setLandingPath();
 	setLandingDomain();
 	setDevice();
+	setGoogleAds();
 }
+
+const setGoogleAds = () => {
+
+	const url = new URL(window.location);
+	const {searchParams} = url;
+
+	googleAdsCookies.forEach(v => {
+		if(searchParams.has(v))
+		{
+			const param = searchParams.get(v);
+
+			if(param)
+			{
+				setCookie(v, param, cookieExpirationInDays);
+			}
+		}
+	});
+
+};
 
 const setDevice = () => {
 	if(getCookie('device') == '')
@@ -19,11 +43,11 @@ const setDevice = () => {
 			device = 'Mobile';
 		}
 		
-		setCookie('device', device, 30);
+		setCookie('device', device, cookieExpirationInDays);
 		
 		if(getCookie('device') == '')
 		{
-			setCookie('device', 'undefined', 30);
+			setCookie('device', 'undefined', cookieExpirationInDays);
 		}				
 	}
 }
@@ -31,11 +55,11 @@ const setDevice = () => {
 const setLandingDomain = () => {
 	if(getCookie('landing_domain') == '')
 	{
-		setCookie('landing_domain', window.location.hostname, 30);
+		setCookie('landing_domain', window.location.hostname, cookieExpirationInDays);
 		
 		if(getCookie('landing_domain') == '')
 		{
-			setCookie('landing_domain', 'undefined', 30);
+			setCookie('landing_domain', 'undefined', cookieExpirationInDays);
 		}		
 	}	
 }
@@ -43,11 +67,11 @@ const setLandingDomain = () => {
 const setLandingPath = () => {
 	if(getCookie('landing_path') == '')
 	{
-		setCookie('landing_path', window.location.pathname, 30);
+		setCookie('landing_path', window.location.pathname, cookieExpirationInDays);
 		
 		if(getCookie('landing_path') == '')
 		{
-			setCookie('landing_path', 'undefined', 30);
+			setCookie('landing_path', 'undefined', cookieExpirationInDays);
 		}	
 	}	
 }
@@ -111,7 +135,7 @@ const setChannel = () => {
 		{
 			channel = 'Facebook';
 		}
-		setCookie('channel', channel, 30);
+		setCookie('channel', channel, cookieExpirationInDays);
 	}
 }
 

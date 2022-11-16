@@ -27,7 +27,7 @@ class Dynamic_Core_Public {
 
         wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), 'async_defer', true);
         wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
-        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array(), time(), false);
+        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), time(), true);
         wp_add_inline_script('dy-core-utilities', $this->args(), 'before');
 
         if(isset($dy_load_recaptcha_scripts))

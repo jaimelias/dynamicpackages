@@ -130,8 +130,14 @@ const createFormSubmit = async (form) => {
     {
         formFields.push({name: 'lang', value: lang});
 
-        ['device', 'landing_domain', 'landing_path', 'channel'].forEach(x => {
-            formFields.push({name: x, value: getCookie(x)});
+        [...visitCookies, ...googleAdsCookies].forEach(x => {
+
+            const value = getCookie(x);
+
+            if(value)
+            {
+                formFields.push({name: x, value: getCookie(x)});
+            }
         });
 
         if(ipGeoLocation)
