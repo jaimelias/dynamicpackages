@@ -246,7 +246,6 @@ const validateCheckPricesForm = () => {
 
 				if(typeof gtag !== 'undefined' && startingAt)
 				{
-					const {gtag_tracking_id} = dyCoreArgs;
 
 					//send to all
 					gtag('event', 'add_to_cart', {
@@ -258,7 +257,7 @@ const validateCheckPricesForm = () => {
 					//send to analytics only
 					gtag('event', 'package_pax_num', {
 						value: paxNum
-					}, {send_to: gtag_tracking_id});
+					});
 				}
 
 				if(typeof fbq !== 'undefined')

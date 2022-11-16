@@ -92,20 +92,7 @@ class Dynamic_Core_Public {
                 'token' => get_option('dy_ipgeolocation_api_token')
             )
         );
-
-        $analytics = get_option('dy_gtag_tracking_id');
-        $adwords = get_option('dy_gtag_conversion_id');
-
-        if($analytics)
-        {
-            $args['gtag_tracking_id'] = get_option('dy_gtag_tracking_id');
-        }
-
-        if($adwords)
-        {
-            $args['gtag_conversion_id'] = get_option('dy_gtag_conversion_id');
-        }
-
+        
         return 'const dyCoreArgs = '.json_encode($args).';';
     }
 
@@ -144,7 +131,6 @@ class Dynamic_Core_Public {
     public function gtag_tracking_script()
     {
         $analytics = get_option('dy_gtag_tracking_id');
-        $adwords = get_option('dy_gtag_conversion_id');
 
         if($analytics): ?>
 
@@ -155,12 +141,7 @@ class Dynamic_Core_Public {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            //analytics
             gtag('config', '<?php echo esc_html($analytics); ?>');
-            <?php if($adwords) : ?>
-            //adwords
-            gtag('config', '<?php echo esc_html($adwords); ?>');
-            <?php endif; ?>
         </script>
         
         <!-- End Google - Analytics GA4 (GTAG) -->

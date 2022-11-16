@@ -10,7 +10,6 @@ const more_details_event = () => {
 
 		const title = jQuery(this).attr('title');
 		const startingAt = parseInt(jQuery(this).attr('data-starting-at'));
-		const {gtag_tracking_id} = dyCoreArgs;
 
 		if(typeof gtag !== 'undefined' && startingAt)
 		{
@@ -19,7 +18,7 @@ const more_details_event = () => {
 				currency: 'USD',
 				value: startingAt,
 				items : [title]
-			}, {send_to: gtag_tracking_id});
+			});
 		}
 		
 		if(typeof fbq !== 'undefined')
@@ -112,7 +111,6 @@ const booking_filter_events = form => {
 		
 	if(typeof gtag !== 'undefined')
 	{
-		const {gtag_tracking_id} = dyCoreArgs;
 
 		['package_location', 'package_category', 'package_sort'].forEach(r => {
 			if(selectField(r).length > 0)
@@ -122,7 +120,7 @@ const booking_filter_events = form => {
 					gtag('event', 'select_item', {
 						items : `filter_${r}`,
 						item_list_name: selectField(r).val()
-					}, {send_to: gtag_tracking_id});
+					});
 				}
 			}			
 		});			
