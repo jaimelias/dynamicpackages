@@ -161,6 +161,7 @@ const selectGateway = () => {
 					checkoutArgs.coupon = coupon;
 				}
 
+				//send to call
 				gtag('event', 'begin_checkout', checkoutArgs);					
 			}
 		});
@@ -416,7 +417,8 @@ async function checkoutFormSubmit(token){
 		
 		//google analytics
 		if(typeof gtag !== 'undefined')
-		{				
+		{	
+			//send to call	
 			gtag('event', 'generate_lead', {
 				value: parseFloat(amount),
 				currency: 'USD'
@@ -437,7 +439,8 @@ async function checkoutFormSubmit(token){
 					purchaseArgs.coupon = coupon;
 				}
 
-				gtag('event', 'currency', purchaseArgs);
+				//send to call
+				gtag('event', 'purchase', purchaseArgs);
 			}
 		}
 		

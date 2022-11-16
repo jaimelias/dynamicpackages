@@ -93,6 +93,19 @@ class Dynamic_Core_Public {
             )
         );
 
+        $analytics = get_option('dy_gtag_tracking_id');
+        $adwords = get_option('dy_gtag_conversion_id');
+
+        if($analytics)
+        {
+            $args['gtag_tracking_id'] = get_option('dy_gtag_tracking_id');
+        }
+
+        if($adwords)
+        {
+            $args['gtag_conversion_id'] = get_option('dy_gtag_conversion_id');
+        }
+
         return 'const dyCoreArgs = '.json_encode($args).';';
     }
 
