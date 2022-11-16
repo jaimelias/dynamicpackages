@@ -102,14 +102,6 @@ const createFormSubmit = async (form) => {
     const gclid = (jQuery(form).attr('data-gclid')) ? true : false;
 
 
-    formFields.forEach(o => {
-        const {name, value} = o;
-
-        if(storeFieldNames.includes(name))
-        {
-            sessionStorage.setItem(name, value);
-        }
-    });
 
     if(nonce)
     {
@@ -130,8 +122,21 @@ const createFormSubmit = async (form) => {
 
     if(method === 'post' && hasEmail)
     {
+
+        //lang param
         formFields.push({name: 'lang', value: lang});
 
+        //store contact fields in sesstionStorage
+        formFields.forEach(o => {
+            const {name, value} = o;
+    
+            if(storeFieldNames.includes(name))
+            {
+                sessionStorage.setItem(name, value);
+            }
+        });
+
+        //tracking cookie params
         [...visitCookies, ...googleAdsCookies].forEach(x => {
 
             const value = getCookie(x);
@@ -142,6 +147,7 @@ const createFormSubmit = async (form) => {
             }
         });
 
+        //geolocation
         if(ipGeoLocation)
         {
             const geoLocation = await getGeoLocation();
@@ -170,7 +176,6 @@ const createFormSubmit = async (form) => {
             formFields.push({name: 'hash', value: sha512(hash)});
         }
     }
-
 
     if(gclid)
     {
