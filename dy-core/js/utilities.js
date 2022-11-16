@@ -94,11 +94,13 @@ const createFormSubmit = async (form) => {
 
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
-	const method = String(jQuery(form).attr('data-method')).toLocaleLowerCase();
+	const method = String(jQuery(form).attr('data-method')).toLowerCase();
 	let action = jQuery(form).attr('data-action');  
 	const nonce = jQuery(form).attr('data-nonce') || '';  
     const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
-    let hashParams = jQuery(form).attr('data-hash-params') || ''; 
+    let hashParams = jQuery(form).attr('data-hash-params') || '';
+    const gclid = (jQuery(form).attr('data-gclid')) ? true : false;
+
 
     formFields.forEach(o => {
         const {name, value} = o;
@@ -126,7 +128,7 @@ const createFormSubmit = async (form) => {
         }
     }
 
-    if(method.toLowerCase() === 'post' && hasEmail)
+    if(method === 'post' && hasEmail)
     {
         formFields.push({name: 'lang', value: lang});
 
@@ -166,6 +168,27 @@ const createFormSubmit = async (form) => {
         if(hash)
         {
             formFields.push({name: 'hash', value: sha512(hash)});
+        }
+    }
+
+
+    if(gclid)
+    {
+        const gclidValue = getCookie('gclid');
+
+        if(gclidValue)
+        {
+            if(method === 'post')
+            {
+                const actionUrl = new URL(action);
+                const {searchParams} = actionUrl;
+                searchParams.set('gclid', gclidValue);
+                action = actionUrl.toString();
+            }
+            else if(method === 'get')
+            {
+                formFields.push({name: 'gclid', value: gclidValue});
+            }
         }
     }
 

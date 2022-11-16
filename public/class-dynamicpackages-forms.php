@@ -126,7 +126,7 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 		
-		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_url(get_permalink()).'">';
+		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_url(get_permalink()).'" data-gclid="true">';
 		
 		if($auto_booking == 1)
 		{
