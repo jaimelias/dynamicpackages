@@ -12,9 +12,6 @@ const more_details_event = () => {
 		const startingAt = parseInt(jQuery(this).attr('data-starting-at'));
 		const {gtag_tracking_id} = dyCoreArgs;
 
-		e.preventDefault();
-
-
 		if(typeof gtag !== 'undefined' && startingAt)
 		{
 			//send to analytics only
