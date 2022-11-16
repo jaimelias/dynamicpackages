@@ -40,12 +40,6 @@ const booking_filter = () => {
 			keywords: ''
 		};
 
-		jQuery(thisForm).submit(e => {
-			e.preventDefault();
-			booking_filter_events(jQuery(thisForm));
-			jQuery(thisForm).unbind('submit').submit();
-		});
-
 		jQuery(thisForm).find('select').each(function(){
 			const thisField = jQuery(this);
 			const countOptions = jQuery(thisField).find('option').length;
@@ -61,6 +55,21 @@ const booking_filter = () => {
 			const formData = jQuery(thisForm).serializeArray();
 			let countAllChanges = 0;
 			let taxChanges = [];
+			const thisValue = jQuery(this).val();
+			const thisName = jQuery(this).attr('name');
+
+			if(['package_location', 'package_category', 'package_sort'].includes(`package_${thisName}`))
+			{
+				if(typeof gtag !== 'undefined')
+				{
+					gtag('event', 'search', {search_term: `${thisName}-${thisValue}`});
+				}
+
+				if(typeof fbq !== 'undefined')
+				{
+					fbq('track', 'Search');
+				}
+			}
 
 			formData.forEach(arr => {
 				const {name, value} = arr;
@@ -103,32 +112,4 @@ const booking_filter = () => {
 	});
 	
 
-}
-
-const booking_filter_events = form => {
-	
-	const selectField = name => jQuery(form).find(`select[name="${name}"]`);
-		
-	if(typeof gtag !== 'undefined')
-	{
-
-		['package_location', 'package_category', 'package_sort'].forEach(r => {
-			if(selectField(r).length > 0)
-			{
-				if(selectField(r).val() != 'any')
-				{
-					gtag('event', 'select_item', {
-						items : `filter_${r}`,
-						item_list_name: selectField(r).val()
-					});
-				}
-			}			
-		});			
-	}
-	
-	//facebook pixel
-	if(typeof fbq !== 'undefined')
-	{
-		fbq('track', 'Search');
-	}	
 }

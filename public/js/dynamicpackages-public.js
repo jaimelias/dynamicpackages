@@ -438,13 +438,12 @@ async function checkoutFormSubmit(token){
 				{
 					purchaseArgs.coupon = coupon;
 				}
-
+				
 				//send to call
 				gtag('event', 'purchase', purchaseArgs);
 			}
 		}
 		
-
 		//console.log(formToArray(thisForm));
 				
 		createFormSubmit(thisForm);
