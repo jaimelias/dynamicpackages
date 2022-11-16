@@ -215,19 +215,7 @@ const validateCheckPricesForm = () => {
 
 			if(invalids.length === 0)
 			{
-				if(typeof gtag !== 'undefined' && startingAt)
-				{
-					gtag('event', 'add_to_cart', {
-						currency: 'USD',
-						value: startingAt,
-						items : [title]
-					});
-				}
 
-				if(typeof fbq !== 'undefined')
-				{
-					fbq('track', 'AddToCart');
-				}
 
 				data.forEach(v => {
 					const {name, value} = v;
@@ -255,6 +243,24 @@ const validateCheckPricesForm = () => {
 						}
 					}
 				});
+
+				if(typeof gtag !== 'undefined' && startingAt)
+				{
+					gtag('event', 'add_to_cart', {
+						currency: 'USD',
+						value: startingAt,
+						items : [title]
+					});
+
+					gtag('event', 'package_pax_num', {
+						value: paxNum
+					});
+				}
+
+				if(typeof fbq !== 'undefined')
+				{
+					fbq('track', 'AddToCart');
+				}
 
 				createFormSubmit(thisForm);
 			}
