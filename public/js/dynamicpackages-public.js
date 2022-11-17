@@ -50,19 +50,6 @@ const selectGateway = () => {
 	jQuery('#dy_payment_buttons').find('button').each(function(){
 
 		jQuery(this).click(function(){
-			const {title} = booking_args();
-			const url = new URL(window.location);
-			const {searchParams} = url;
-			let coupon = '';
-
-			if(searchParams.has('booking_coupon'))
-			{
-				if(searchParams.get('booking_coupon'))
-				{
-					coupon = searchParams.get('booking_coupon');
-				}
-			}
-
 			const thisButton = jQuery(this);
 			const id = jQuery(thisButton).attr('data-id');
 			const type = jQuery(thisButton).attr('data-type');
@@ -150,19 +137,9 @@ const selectGateway = () => {
 			//google analytics
 			if(typeof gtag !== 'undefined' && total)
 			{
-				let checkoutArgs = {
-					'currency': 'USD',
-					'value': total,
-					items : [title]
-				};
+				console.log(getCheckoutEventArgs());
 
-				if(coupon)
-				{
-					checkoutArgs.coupon = coupon;
-				}
-
-				//send to call
-				gtag('event', 'begin_checkout', checkoutArgs);					
+				gtag('event', 'begin_checkout', getCheckoutEventArgs());					
 			}
 		});
 	});
@@ -330,8 +307,7 @@ const booking_calc = () => {
 
 async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dy_package_request_form');
-	const args = booking_args();
-	let {title, pax_num, amount, regular_amount, booking_coupon, coupon_discount, coupon_discount_amount, package_type} = args;
+	const {amount} = booking_args();
 	let invalids = [];
 	const formFields = formToArray(thisForm);
 	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
@@ -379,8 +355,6 @@ async function checkoutFormSubmit(token){
 	if(invalids.length === 0)
 	{
 		populateCheckoutForm(thisForm);
-		//console.log(formFields);
-		//console.log(token); 
 
 		//facebook pixel
 		if(typeof fbq !== typeof undefined)
@@ -404,34 +378,7 @@ async function checkoutFormSubmit(token){
 
 			if(!excludedPurchase.includes(dyRequestVal))
 			{
-
-				let item1 = {
-					item_name: title,
-					affiliation: 'Dynamic Packages',
-					price: (regular_amount / pax_num),
-					quantity: pax_num,
-					item_category: 'package',
-					item_variant: package_type
-				};
-
-				let purchaseArgs = {
-					value : amount,
-					currency: 'USD',
-					transaction_id: Date.now().toString(),
-					items: [item1],
-				};
-
-				if(coupon_discount > 0)
-				{
-					purchaseArgs.coupon = booking_coupon;
-					purchaseArgs.items[0].coupon = booking_coupon;
-					purchaseArgs.items[0].discount = (coupon_discount_amount / pax_num);
-				}
-
-				console.log(purchaseArgs);
-
-				//send to call
-				gtag('event', 'purchase', purchaseArgs);
+				gtag('event', 'purchase', getCheckoutEventArgs());
 			}
 		}
 		
@@ -447,6 +394,36 @@ async function checkoutFormSubmit(token){
 
 	return false;
 }
+
+const getCheckoutEventArgs = () => {
+	
+	let {title, pax_num, amount, regular_amount, booking_coupon, coupon_discount, coupon_discount_amount, package_type} = booking_args();
+
+	let item1 = {
+		item_name: title,
+		affiliation: 'Dynamic Packages',
+		price: (regular_amount / pax_num),
+		quantity: pax_num,
+		item_category: 'package',
+		item_variant: package_type
+	};
+
+	let output = {
+		value : amount,
+		currency: 'USD',
+		transaction_id: Date.now().toString(),
+		items: [item1],
+	};
+
+	if(coupon_discount > 0)
+	{
+		output.coupon = booking_coupon;
+		output.items[0].coupon = booking_coupon;
+		output.items[0].discount = (coupon_discount_amount / pax_num);
+	}
+
+	return output;
+};
 
 const populateCheckoutForm = (form) => {
 	
