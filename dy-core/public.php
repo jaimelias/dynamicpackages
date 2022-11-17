@@ -69,19 +69,10 @@ class Dynamic_Core_Public {
         if(isset($dy_load_picker_scripts))
         {
             wp_enqueue_style( 'picker-css', $this->plugin_dir_url_file . 'css/picker/default.css', array(), '3.6.2', 'all');
-            wp_add_inline_style('picker-css', $this->get_inline_file('css/picker/default.date.css'));
-            wp_add_inline_style('picker-css', $this->get_inline_file('css/picker/default.time.css'));
+            wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.date.css'));
+            wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.time.css'));
         }
     }
-	
-	public function get_inline_file($sheet_dir)
-	{
-		ob_start();
-		require_once($this->dirname_file . '/'. $sheet_dir);
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;	
-	}
 
     public function sentry()
     {
