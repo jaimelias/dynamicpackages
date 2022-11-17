@@ -283,11 +283,15 @@ class Dynamicpackages_Gateways
 		
 		$add_ons = apply_filters('dy_get_add_ons', null);
 		
+		$regular_amount = floatval(dy_utilities::total('regular'));
+		$amount = floatval(dy_utilities::total());
+
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
 			'description' => esc_html($description),
 			'booking_coupon' => esc_html($booking_coupon),
-			'coupon_discount' => esc_html($coupon_discount),
+			'coupon_discount' => floatval($coupon_discount),
+			'coupon_discount_amount' => (floatval($coupon_discount) > 0 ) ? ($regular_amount - $amount) : 0,
 			'total' => floatval(dy_utilities::currency_format(dy_utilities::payment_amount())),
 			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
@@ -296,8 +300,8 @@ class Dynamicpackages_Gateways
 			'return_hour' => esc_html(dy_utilities::return_hour()),
 			'duration' => esc_html(dy_utilities::show_duration()),
 			'pax_num' => intval(dy_utilities::pax_num()),
-			'pax_regular' => (isset($_GET['pax_regular']) ? intval($_GET['pax_regular']) : 0),
-			'pax_discount' => (isset($_GET['pax_discount']) ? intval($_GET['pax_discount']) : 0),
+			'pax_regular' => (isset($_GET['pax_regular'])) ? intval($_GET['pax_regular']) : 0,
+			'pax_discount' => (isset($_GET['pax_discount'])) ? intval($_GET['pax_discount']) : 0,
 			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
 			'package_code' => esc_html(package_field('package_trip_code')),
 			'title' => esc_html($post->post_title),
@@ -312,9 +316,9 @@ class Dynamicpackages_Gateways
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
 			'currency_name' => dy_utilities::currency_name(),
 			'currency_symbol' => dy_utilities::currency_symbol(),
-			'outstanding' => floatval(dy_utilities::currency_format($this->outstanding())),
-			'amount' => floatval(dy_utilities::currency_format(dy_utilities::total())),
-			'regular_amount' => floatval(dy_utilities::currency_format(dy_utilities::subtotal(null, $post->ID))),
+			'outstanding' => floatval($this->outstanding()),
+			'amount' => $amount,
+			'regular_amount' => $regular_amount,
 			'payment_type' => esc_html($this->payment_type()),
 			'deposit' => floatval(dy_utilities::get_deposit()),
 			'add_ons' => $add_ons

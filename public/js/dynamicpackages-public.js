@@ -50,7 +50,7 @@ const selectGateway = () => {
 	jQuery('#dy_payment_buttons').find('button').each(function(){
 
 		jQuery(this).click(function(){
-			const {title} = checkout_vars();
+			const {title} = booking_args();
 			const url = new URL(window.location);
 			const {searchParams} = url;
 			let coupon = '';
@@ -182,7 +182,6 @@ const booking_args = () => {
 		let deposit = 0;
 		let payment_amount = 0;
 		let add_ons_id = [];
-		let tax_amount = parseFloat(args.tax_amount);
 		
 		let outstanding = 0;
 		
@@ -232,7 +231,6 @@ const booking_args = () => {
 		
 		if(tax > 0)
 		{
-			tax_amount = tax_amount + (add_ons_price * tax);
 			add_ons_price = add_ons_price + (add_ons_price * tax);
 		}
 		
@@ -246,17 +244,13 @@ const booking_args = () => {
 			amount = amount + add_ons_price;		
 		}		
 		
-		
 		const new_args = {
-			tax_amount: tax_amount.toFixed(2),
-			outstanding: outstanding.toFixed(2),
-			total: payment_amount.toFixed(2),
-			amount: amount.toFixed(2),
-			regular_amount: regular_amount.toFixed(2)
+			outstanding: parseFloat(outstanding.toFixed(2)),
+			total: parseFloat(payment_amount.toFixed(2)),
+			amount: parseFloat(amount.toFixed(2)),
+			regular_amount: parseFloat(regular_amount.toFixed(2))
 		};
-		
-		console.log(new_args);
-		
+				
 		for(k in new_args)
 		{
 			for(k2 in args)
@@ -325,10 +319,6 @@ const booking_calc = () => {
 				{
 					jQuery(this).text(args.outstanding);
 				}
-				if(jQuery(this).hasClass('dy_calc_tax_amount'))
-				{
-					jQuery(this).text(args.tax_amount);
-				}
 
 				jQuery(this).removeClass('animate');
 			}, 1000);
@@ -341,23 +331,11 @@ const booking_calc = () => {
 async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dy_package_request_form');
 	const args = booking_args();
-	const {amount, title} = args;
+	let {title, pax_num, amount, regular_amount, booking_coupon, coupon_discount, coupon_discount_amount, package_type} = args;
 	let invalids = [];
 	const formFields = formToArray(thisForm);
 	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
 	const excludedPurchase = ['contact', 'estimate_request'];
-	const url = new URL(window.location);
-	const {searchParams} = url;
-	let coupon = '';
-
-	if(searchParams.has('booking_coupon'))
-	{
-		if(searchParams.get('booking_coupon'))
-		{
-			coupon = searchParams.get('booking_coupon');
-		}
-	}
-
 	
 	formFields.forEach(i => {
 
@@ -411,7 +389,7 @@ async function checkoutFormSubmit(token){
 
 			if(!excludedPurchase.includes(dyRequestVal))
 			{
-				fbq('track', 'Purchase', {value: parseFloat(amount), currency: 'USD'});
+				fbq('track', 'Purchase', {value: amount, currency: 'USD'});
 			}
 		}
 		
@@ -420,32 +398,45 @@ async function checkoutFormSubmit(token){
 		{	
 			//send to call	
 			gtag('event', 'generate_lead', {
-				value: parseFloat(amount),
+				value: amount,
 				currency: 'USD'
 			});
 
 			if(!excludedPurchase.includes(dyRequestVal))
 			{
 
-				let purchaseArgs = {
-					value : parseFloat(amount),
-					currency: 'USD',
-					transaction_id: Date.now().toString(),
-					items: [title]
+				let item1 = {
+					item_name: title,
+					affiliation: 'Dynamic Packages',
+					price: (regular_amount / pax_num),
+					quantity: pax_num,
+					item_category: 'package',
+					item_variant: package_type
 				};
 
-				if(coupon)
+				let purchaseArgs = {
+					value : amount,
+					currency: 'USD',
+					transaction_id: Date.now().toString(),
+					items: [item1],
+				};
+
+				if(coupon_discount > 0)
 				{
-					purchaseArgs.coupon = coupon;
+					purchaseArgs.coupon = booking_coupon;
+					purchaseArgs.items[0].coupon = booking_coupon;
+					purchaseArgs.items[0].discount = (coupon_discount_amount / pax_num);
 				}
-				
+
+				console.log(purchaseArgs);
+
 				//send to call
 				gtag('event', 'purchase', purchaseArgs);
 			}
 		}
 		
 		//console.log(formToArray(thisForm));
-				
+		
 		createFormSubmit(thisForm);
 	}
 	else
