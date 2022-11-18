@@ -1,4 +1,4 @@
-const {postId} = dyPackageArgs;
+const {post_id} = dyPackageArgs;
 
 jQuery(() => {
 
@@ -142,9 +142,9 @@ const timePicker = () => {
 }
 
 const showCouponForm = () => {
-	const container = jQuery('#booking_coupon');
+	const container = jQuery('#coupon_code');
 	const  link = jQuery(container).find('a');
-	const field = jQuery(container).find('input[name="booking_coupon"]');
+	const field = jQuery(container).find('input[name="coupon_code"]');
 
 	if(field.val() !== '')
 	{
@@ -176,7 +176,7 @@ const validateCheckPricesForm = () => {
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
-			const cookieName = `${name}_${postId}`;
+			const cookieName = `${name}_${post_id}`;
 			const cookieValue = getCookie(cookieName);
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
 
@@ -239,7 +239,7 @@ const validateCheckPricesForm = () => {
 					{
 						if(name !== 'hash')
 						{
-							setCookie(`${name}_${postId}`, value, 1);
+							setCookie(`${name}_${post_id}`, value, 1);
 						}
 					}
 				});

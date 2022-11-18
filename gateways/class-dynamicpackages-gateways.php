@@ -191,7 +191,7 @@ class Dynamicpackages_Gateways
 		{	
 			if(is_booking_page() && dy_validators::validate_coupon())
 			{
-				$coupon = ucwords(strtolower(sanitize_text_field($_GET['booking_coupon'])));
+				$coupon = ucwords(strtolower(sanitize_text_field($_GET['coupon_code'])));
 				
 				if(in_array($coupon, $array))
 				{
@@ -271,14 +271,14 @@ class Dynamicpackages_Gateways
 		global $post;
 
 		$description = $this->get_description();
-		$booking_coupon = null;
+		$coupon_code = null;
 		$coupon_discount = null;
 		
 		if(dy_validators::validate_coupon())
 		{
-			$booking_coupon = dy_utilities::get_coupon('code');
+			$coupon_code = dy_utilities::get_coupon('code');
 			$coupon_discount = dy_utilities::get_coupon('discount');
-			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$booking_coupon.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
+			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
 		$add_ons = apply_filters('dy_get_add_ons', null);
@@ -289,7 +289,7 @@ class Dynamicpackages_Gateways
 		$checkout_vars = array(
 			'post_id' => intval($post->ID),
 			'description' => esc_html($description),
-			'booking_coupon' => esc_html($booking_coupon),
+			'coupon_code' => esc_html($coupon_code),
 			'coupon_discount' => floatval($coupon_discount),
 			'coupon_discount_amount' => (floatval($coupon_discount) > 0 ) ? ($regular_amount - $amount) : 0,
 			'total' => floatval(dy_utilities::currency_format(dy_utilities::payment_amount())),
@@ -306,8 +306,8 @@ class Dynamicpackages_Gateways
 			'package_code' => esc_html(package_field('package_trip_code')),
 			'title' => esc_html($post->post_title),
 			'package_type' => esc_html($this->get_type()),
-			'package_categories' => esc_html(dy_utilities::implode_taxo_names('package_category')),
-			'package_locations' => esc_html(dy_utilities::implode_taxo_names('package_location')),
+			'categories' => dy_utilities::get_taxo_names('package_category'),
+			'locations' => dy_utilities::get_taxo_names('package_location'),
 			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
 			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
 			'TRANSLATIONS' => array('submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')),
@@ -447,9 +447,9 @@ class Dynamicpackages_Gateways
 	
 	public function coupon_confirmation()
 	{
-		if(isset($_GET['booking_coupon']) && is_booking_page())
+		if(isset($_GET['coupon_code']) && is_booking_page())
 		{
-			if(!empty($_GET['booking_coupon']))
+			if(!empty($_GET['coupon_code']))
 			{
 				if(dy_validators::validate_coupon())
 				{

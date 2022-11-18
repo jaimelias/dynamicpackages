@@ -543,12 +543,12 @@ class dy_validators
 		}
 		else
 		{
-			if(self::has_coupon() && isset($_REQUEST['booking_coupon']))
+			if(self::has_coupon() && isset($_REQUEST['coupon_code']))
 			{
-				if(!empty($_REQUEST['booking_coupon']))
+				if(!empty($_REQUEST['coupon_code']))
 				{
-					$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
-					$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
+					$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
+					$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
 					$get_coupon = strtolower(dy_utilities::get_coupon('code'));
 					$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
 					$duration = dy_utilities::get_min_nights();
@@ -556,7 +556,7 @@ class dy_validators
 					$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 					$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
 					
-					if($get_coupon == $booking_coupon)
+					if($get_coupon == $coupon_code)
 					{
 						$expiration = dy_utilities::get_coupon('expiration');
 						$min_duration = dy_utilities::get_coupon('min_duration');

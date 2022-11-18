@@ -93,7 +93,7 @@ class Dynamicpackages_Public {
 		if($enqueue_public)
 		{
 			$strings = array(
-				'postId' => get_the_ID(),
+				'post_id' => intval(get_the_ID()),
 				'dy_ipgeolocation_api_token' => get_option('dy_ipgeolocation_api_token'),
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
 				'permaLink' => get_the_permalink(),

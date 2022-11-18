@@ -57,7 +57,6 @@ const selectGateway = () => {
 			let networks = jQuery(thisButton).attr('data-networks') || '';
 			const cryptoForm = jQuery('#dy_crypto_form');
 			const networkSelect = jQuery(cryptoForm).find('select[name="dy_network"]');
-			const total = parseInt(jQuery('.dy_calc_amount').text());
 
 			jQuery(networkSelect).removeClass('required').html('<option value="" selected>--</option>');
 			jQuery('#dy_crypto_alert').addClass('hidden');
@@ -127,26 +126,12 @@ const selectGateway = () => {
 			jQuery('#dy_checkout_branding').html(branding);
 			jQuery(thisForm).removeClass('hidden');
 			jQuery(thisForm).find('input[name="dy_request"]').val(id);
-
-			//facebook pixel
-			if(typeof fbq !== typeof undefined)
-			{
-				fbq('track', 'InitiateCheckout');
-			}
-			
-			//google analytics
-			if(typeof gtag !== 'undefined' && total)
-			{
-				console.log(getCheckoutEventArgs());
-
-				gtag('event', 'begin_checkout', getCheckoutEventArgs());					
-			}
 		});
 	});
 
 };
 
-const booking_args = () => {
+const checkoutArgsWithAddOns = () => {
 	
 	let output = {};
 	
@@ -271,7 +256,7 @@ const booking_calc = () => {
 		
 	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
 		
-		var args = booking_args();
+		var args = checkoutArgsWithAddOns();
 				
 		jQuery('.dy_calc').each(function(){
 			
@@ -307,7 +292,8 @@ const booking_calc = () => {
 
 async function checkoutFormSubmit(token){
 	const thisForm = jQuery('#dy_package_request_form');
-	const {amount} = booking_args();
+	const checkoutArgs = checkoutArgsWithAddOns();
+	const {amount} = checkoutArgs;
 	let invalids = [];
 	const formFields = formToArray(thisForm);
 	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
@@ -360,11 +346,6 @@ async function checkoutFormSubmit(token){
 		if(typeof fbq !== typeof undefined)
 		{
 			fbq('track', 'Lead');
-
-			if(!excludedPurchase.includes(dyRequestVal))
-			{
-				fbq('track', 'Purchase', {value: amount, currency: 'USD'});
-			}
 		}
 		
 		//google analytics
@@ -378,7 +359,12 @@ async function checkoutFormSubmit(token){
 
 			if(!excludedPurchase.includes(dyRequestVal))
 			{
-				gtag('event', 'purchase', getCheckoutEventArgs());
+				let checkoutEventArgs = getCheckoutEventArgs({...checkoutArgs});
+
+				//console.log(checkoutEventArgs);
+
+				gtag('event', 'begin_checkout', checkoutEventArgs);
+				gtag('event', 'add_payment_info', {...checkoutEventArgs, payment_type: dyRequestVal});
 			}
 		}
 		
@@ -389,24 +375,41 @@ async function checkoutFormSubmit(token){
 	else
 	{
 		grecaptcha.reset();
-		alert(booking_args().TRANSLATIONS.submit_error);
+		alert(checkoutArgsWithAddOns().TRANSLATIONS.submit_error);
 	}
 
 	return false;
 }
 
-const getCheckoutEventArgs = () => {
+const getCheckoutEventArgs = checkoutArgs => {
 	
-	let {title, pax_num, amount, regular_amount, booking_coupon, coupon_discount, coupon_discount_amount, package_type} = booking_args();
+	let {post_id, title, pax_num, amount, regular_amount, coupon_code, coupon_discount, coupon_discount_amount, categories} = checkoutArgs;
+
+	if(!regular_amount)
+	{
+		regular_amount = amount;
+	}
 
 	let item1 = {
 		item_name: title,
-		affiliation: 'Dynamic Packages',
+		item_id: `post_${post_id}`,
 		price: (regular_amount / pax_num),
-		quantity: pax_num,
-		item_category: 'package',
-		item_variant: package_type
+		quantity: pax_num
 	};
+
+	if(Array.isArray(categories))
+	{
+		if(categories.length > 0)
+		{
+			categories.forEach((c, i) => {
+				var txt = document.createElement('textarea');
+				txt.innerHTML = c;
+				const category = txt.value;
+				const key = (!i) ? 'item_category' : `item_category${i+2}`;
+				item1[key] = category;
+			});
+		}
+	}
 
 	let output = {
 		value : amount,
@@ -415,10 +418,10 @@ const getCheckoutEventArgs = () => {
 		items: [item1],
 	};
 
-	if(coupon_discount > 0)
+	if(coupon_code && coupon_discount > 0 && coupon_discount_amount > 0)
 	{
-		output.coupon = booking_coupon;
-		output.items[0].coupon = booking_coupon;
+		output.coupon = coupon_code;
+		output.items[0].coupon = coupon_code;
 		output.items[0].discount = (coupon_discount_amount / pax_num);
 	}
 
@@ -427,7 +430,7 @@ const getCheckoutEventArgs = () => {
 
 const populateCheckoutForm = (form) => {
 	
-	var checkout_obj = booking_args();
+	var checkout_obj = checkoutArgsWithAddOns();
 	
 	for(var key in checkout_obj)
 	{

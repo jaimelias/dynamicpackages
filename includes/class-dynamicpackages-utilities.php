@@ -132,8 +132,8 @@ class dy_utilities {
 			$option = strtolower($option);
 			$coupons = json_decode(html_entity_decode(package_field('package_coupons' )), true);
 			$output = 'option not selected';
-			$booking_coupon = strtolower(sanitize_text_field($_REQUEST['booking_coupon']));
-			$booking_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $booking_coupon);
+			$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
+			$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
 			
 			if(is_array($coupons))
 			{
@@ -143,7 +143,7 @@ class dy_utilities {
 					
 					for($x = 0; $x < count($coupons); $x++)
 					{
-						if($booking_coupon == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
+						if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
 						{
 							if($option == 'code')
 							{
@@ -1201,31 +1201,47 @@ class dy_utilities {
 		
 		return $terms_conditions;
 	}
+
+	public static function get_taxo_names($tax)
+	{
+		global $post;
+
+		if(isset($post))
+		{
+			$termid = $post->ID;
+			$output = array();
+			
+			if(property_exists($post, 'post_parent') && !has_term('', $tax, $termid))
+			{
+				$termid = $post->post_parent;
+			}
+			
+			$terms = get_the_terms($termid, $tax);	
+
+			if($terms)
+			{					
+				for($x = 0; $x < count($terms); $x++)
+				{
+					array_push($output, $terms[$x]->name);
+				}
+			}	
+		}
+	
+
+		return $output;
+	}
 	
 	public static function implode_taxo_names($tax)
 	{
-		global $post;
-		$termid = $post->ID;
-		
-		if(property_exists($post, 'post_parent') && !has_term('', $tax, $termid))
-		{
-			$termid = $post->post_parent;
-		}
-		
-		$terms = get_the_terms($termid, $tax);		
-		
-		if($terms)
-		{
+		$output = '';
+		$names = self::get_taxo_names($tax);
 
-			$terms_array = array();
-					
-			for($x = 0; $x < count($terms); $x++)
-			{
-				array_push($terms_array, $terms[$x]->name);
-			}
-			
-			return implode(', ', $terms_array);
+		if(count($names) > 0)
+		{
+			$output = implode(', ', $names);
 		}
+
+		return $output;
 	}
 	
 	public static function get_add_ons_total() {

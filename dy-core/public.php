@@ -81,6 +81,8 @@ class Dynamic_Core_Public {
     
     public function args()
     {
+        global $post;
+
         $args = array(
             'homeUrl' => home_url(),
             'permalink' => get_the_permalink(),
@@ -90,6 +92,12 @@ class Dynamic_Core_Public {
                 'token' => get_option('dy_ipgeolocation_api_token')
             )
         );
+
+        if(isset($post))
+        {
+            $args['post_id'] = $post->ID;
+            $args['post_title'] = $post->post_title;
+        }
         
         return 'const dyCoreArgs = '.json_encode($args).';';
     }
