@@ -60,7 +60,7 @@ class Dynamicpackages_Public {
 	
 	public function enqueue_styles() {
 		
-		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css');
+		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css', array(), time());
 	}
 	
 	public function enqueue_scripts() {
@@ -1007,7 +1007,6 @@ class Dynamicpackages_Public {
 	{
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
-		$output = '';
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
@@ -1125,11 +1124,20 @@ class Dynamicpackages_Public {
 			unset($args['schedule']);
 		}
 		
+		$output = '';
+
 		foreach($args as $k => $v)
 		{
 			if($v[1])
 			{
-				$output .= '<div class="dy_pad bottom-5 dashicons-before dashicons-'.esc_attr($v[0]).'">'.esc_html($v[1]).'</div>';
+				if($v[0])
+				{
+					$output .= '<div class="dy_pad bottom-5 dashicons-before dashicons-'.esc_attr($v[0]).'"> '.esc_html($v[1]).'</div>';
+				}
+				else
+				{
+					$output .= '<div class="dy_pad bottom-5 strong">'.esc_html($v[1]).'</div>';
+				}
 			}
 		}
 		

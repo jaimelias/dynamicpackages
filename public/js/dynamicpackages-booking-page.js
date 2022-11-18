@@ -226,8 +226,8 @@ const booking_calc = () => {
 		jQuery('.dy_calc').each(function(){
 			
 			jQuery(this).addClass('animate');
-			jQuery(this).html('<span class="padding-10"><i class="fas fa-sync fa-spin"></i></span>');
-			
+			jQuery(this).html('<span class="padding-10"><span class="dashicons dashicons-admin-generic animate-spin"></span></span>');
+
 			setTimeout(()=>{
 				
 				if(jQuery(this).hasClass('dy_calc_amount'))

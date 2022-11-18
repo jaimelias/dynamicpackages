@@ -326,13 +326,6 @@ else
 									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>
-												
-
-							
-							<div class="text-right strong uppercase hide-sm">
-								<a data-starting-at="<?php echo esc_attr($starting_at); ?>" href="<?php the_permalink(); ?>" title="<?php echo esc_attr($post->post_title); ?>"><?php echo (esc_html__('More details', 'dynamicpackages')); ?> <span class="large"><span class="large"><i class="fas fa-chevron-circle-right"></i></span></span></a>
-							</div>					
-							
 							
 						</div>	
 					</div>	
