@@ -66,22 +66,12 @@ class Dynamicpackages_Public {
 	public function enqueue_scripts() {
  
 		global $post;
-	
-		$enqueue_archive = false;
-		$is_booking_page = is_booking_page();
-
 
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
-		{
-			$enqueue_archive = true;
-		}
-		
-		if($enqueue_archive)
 		{
 			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery', 'dy-core-utilities'), time(), true );
 		}
 		
-		wp_enqueue_script('minimal-fontawesome', 'https://use.fontawesome.com/releases/v5.3.1/js/all.js?async=async', '', '', true);
 	}
 		
 	public function meta_tags()
