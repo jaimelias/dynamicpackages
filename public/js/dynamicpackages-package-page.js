@@ -125,13 +125,12 @@ const timePicker = () => {
 		return;
 	}
 
-	const {booking_allowed_hours} = dyPackageArgs;
 	let args = {};
 	
-	if(booking_allowed_hours.length > 1)
+	if(dyPackageEnabledTimes.length > 1)
 	{
-		args.min = booking_allowed_hours[0];
-		args.max = booking_allowed_hours[1];
+		args.min = dyPackageEnabledTimes[0];
+		args.max = dyPackageEnabledTimes[1];
 	}
 	
 	jQuery('.dy_package_booking_form').find('input.dy_time_picker').each(function()

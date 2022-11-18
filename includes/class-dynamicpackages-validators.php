@@ -174,21 +174,15 @@ class dy_validators
 		}
 		else
 		{
-			if(self::validate_contact_details())
+			if(is_checkout_page())
 			{
-				if(isset($_POST['booking_date']))
+				if(self::validate_contact_details() && self::validate_booking_details())
 				{
-					if(self::is_date($_POST['booking_date']))
-					{
-						if(self::validate_booking_details())
-						{
-							$output = true;
-						}
-					}
-					else
-					{
-						$output = true;
-					}
+					$output = true;
+				}
+				else
+				{
+					$GLOBALS['dy_request_invalids'] = array('invalid_request');
 				}
 			}
 
@@ -210,7 +204,7 @@ class dy_validators
 		}
 		else
 		{
-			if(isset($_POST['dy_request']))
+			if(is_checkout_page())
 			{
 				if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']) && isset($_POST['repeat_email']))
 				{
@@ -274,7 +268,7 @@ class dy_validators
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && self::validate_contact_details() && self::validate_booking_details())
+			if(is_checkout_page() && self::validate_contact_details() && self::validate_booking_details())
 			{
 				if($gateway_name == $_POST['dy_request'] && self::validate_card())
 				{
@@ -1053,47 +1047,6 @@ class dy_validators
 		
 		return $output;
 	}
-
-	public static function validate_origin()
-	{
-		$output = false;
-		$which_var = 'dy_has_form';
-		global $$which_var;
-		
-		if(isset($$which_var))
-		{
-			return $$which_var;
-		}
-		else
-		{
-			global $post;
-
-			if(isset($post))
-			{
-				if(is_singular('packages'))
-				{
-					$output = true;
-				}
-
-				if(!$output)
-				{
-					if(is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'package_contact'))
-					{
-						$output = true;
-					}
-				}
-			}
-
-			if($output)
-			{
-				$GLOBALS[$which_var] = $output;
-			}
-		}
-
-		
-		return $output;
-	}
-	
 }
 
 

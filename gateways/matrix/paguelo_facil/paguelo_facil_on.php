@@ -328,7 +328,7 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && !isset($dy_request_invalids))
+			if(is_checkout_page() && !isset($dy_request_invalids))
 			{
 				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 				{
@@ -647,7 +647,7 @@ class paguelo_facil_on{
 			$add = true;
 		}
 		
-		if($this->valid_recaptcha && isset($_POST['dy_request']) && dy_validators::validate_request())
+		if($this->valid_recaptcha && is_checkout_page() && dy_validators::validate_request())
 		{			
 			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

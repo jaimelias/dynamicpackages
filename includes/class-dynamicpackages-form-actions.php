@@ -27,13 +27,24 @@ class Dynamicpackages_Actions{
 
 	public function is_request_submitted()
 	{
+		global $post;
 		$output = false;
 		
-        if(isset($_POST['dy_request']))
+        if(is_checkout_page())
         {
-			if($this->valid_recaptcha && dy_validators::validate_origin())
+			if($this->valid_recaptcha)
 			{
-				$output = true;
+				if(is_singular('packages'))
+				{
+					$output = true;
+				}
+				else
+				{
+					if(is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'package_contact'))
+					{
+						$output = true;
+					}
+				}
 			}
         }
 
@@ -68,7 +79,7 @@ class Dynamicpackages_Actions{
         if($this->is_request_submitted())
         {               
             if(dy_validators::validate_request())
-            {
+            {				
 				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == 'contact')
 				{
 					$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';

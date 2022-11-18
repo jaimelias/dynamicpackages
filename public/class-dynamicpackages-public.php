@@ -67,41 +67,14 @@ class Dynamicpackages_Public {
 	public function enqueue_scripts() {
  
 		global $post;
-		
-		$enqueue_public = false;
+	
 		$enqueue_archive = false;
 		$is_booking_page = is_booking_page();
-				
-		if(isset($post))
-		{
-			if(is_singular('packages') || is_page())
-			{
-				$enqueue_public = true;
-			}			
-		}
 
-		if(dy_validators::validate_origin())
-		{
-			$enqueue_public = true;
-		}
 
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
 		{
 			$enqueue_archive = true;
-		}
-		
-		if($enqueue_public)
-		{
-			$strings = array(
-				'dy_ipgeolocation_api_token' => get_option('dy_ipgeolocation_api_token'),
-				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
-				'permaLink' => get_the_permalink(),
-				'booking_allowed_hours' => $this->booking_allowed_hours(),
-				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')
-			);
-
-			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), time(), true );
-			wp_localize_script('dynamicpackages', 'dyPackageArgs', $strings);	
 		}
 		
 		if($enqueue_archive)
@@ -210,35 +183,6 @@ class Dynamicpackages_Public {
 		}
 		
 		return $content;
-	}
-
-	public function booking_allowed_hours()
-	{	
-
-		$output = array();
-
-		if(is_singular('packages'))
-		{
-			$by_hour = intval(package_field('package_by_hour'));		
-			$min_hour = package_field('package_min_hour');		
-			$max_hour = package_field('package_max_hour');
-			
-			if($by_hour === 1)
-			{				
-				if(!empty($min_hour))
-				{
-					$min_hour = strtotime($min_hour);
-					$output[] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
-				}
-				if(!empty($max_hour))
-				{
-					$max_hour = strtotime($max_hour);
-					$output[] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
-				}
-			}
-			
-			return $output;
-		}
 	}
 	
 	public function wp_title($title)

@@ -1,47 +1,9 @@
 
 
 jQuery(() => {
-
 	selectGateway();
-	copyToClipboard();
-	
-	if(typeof checkout_vars !== 'undefined')
-	{
-		booking_calc();
-	}	
-	
+	booking_calc();
 });
-
-const copyToClipboard = () => {
-
-	const {textCopiedToClipBoard} = dyPackageArgs;
-
-	const el = jQuery('.copyToClipboard');
-
-	jQuery(el).each(function(){
-		const thisEl = jQuery(this);
-
-		jQuery(thisEl).addClass('relative');
-
-		jQuery(thisEl).wrapInner( "<div class='copy-to-clipboard-target'></div>");		
-
-		jQuery(thisEl)
-			.append('<span class="hidden absolute copy-to-clipboard-notification" style="padding: 10px; background-color: #000; color: #fff; left: 0; top: 0; right: 0; bottom: 0;">'+textCopiedToClipBoard+'</span>');
-
-		jQuery(thisEl).click(function(){
-			const thisClickedEl = jQuery(this);
-
-			jQuery(thisClickedEl).find('.copy-to-clipboard-notification').removeClass('hidden');
-
-			navigator.clipboard.writeText(jQuery(thisClickedEl).find('.copy-to-clipboard-target').text());
-
-			setTimeout(()=> {
-				jQuery(thisClickedEl).find('.copy-to-clipboard-notification').addClass('hidden');
-			}, 1500);
-		});
-
-	});
-};
 
 const selectGateway = () => {
 	
@@ -51,6 +13,7 @@ const selectGateway = () => {
 	jQuery('#dy_payment_buttons').find('button').each(function(){
 
 		jQuery(this).click(function(){
+
 			const thisButton = jQuery(this);
 			const id = jQuery(thisButton).attr('data-id');
 			const type = jQuery(thisButton).attr('data-type');
@@ -132,13 +95,13 @@ const selectGateway = () => {
 
 };
 
-const checkoutArgsWithAddOns = () => {
+const getUpdatedCheckoutArgs = () => {
 	
 	let output = {};
 	
-	if(typeof checkout_vars == 'function')
+	if(defaultCheckoutArgs)
 	{
-		const args  = checkout_vars();
+		const args  = defaultCheckoutArgs;
 		const tax = 0;
 		let amount = parseFloat(args.amount);
 		let regular_amount = parseFloat(args.regular_amount);
@@ -167,9 +130,9 @@ const checkoutArgsWithAddOns = () => {
 		jQuery(thisForm).find('[name="add_ons"]').val();
 		
 		jQuery('#dynamic_table').find('select.add_ons').each(function(){
-			var field = jQuery(this);
+			const field = jQuery(this);
 			
-			if(jQuery(field).val() == 1)
+			if(parseInt(jQuery(field).val()) === 1)
 			{
 				add_ons_id.push(parseFloat(jQuery(field).attr('data-id')));
 			}
@@ -257,7 +220,8 @@ const booking_calc = () => {
 		
 	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
 		
-		var args = checkoutArgsWithAddOns();
+		const checkoutArgs = getUpdatedCheckoutArgs();
+		const {amount, regular_amount, total, outstanding} = checkoutArgs;
 				
 		jQuery('.dy_calc').each(function(){
 			
@@ -268,19 +232,19 @@ const booking_calc = () => {
 				
 				if(jQuery(this).hasClass('dy_calc_amount'))
 				{
-					jQuery(this).text(args.amount);
+					jQuery(this).text(amount);
 				}
 				if(jQuery(this).hasClass('dy_calc_regular'))
 				{
-					jQuery(this).text(args.regular_amount);
+					jQuery(this).text(regular_amount);
 				}			
 				if(jQuery(this).hasClass('dy_calc_total'))
 				{
-					jQuery(this).text(args.total);
+					jQuery(this).text(total);
 				}
 				if(jQuery(this).hasClass('dy_calc_outstanding'))
 				{
-					jQuery(this).text(args.outstanding);
+					jQuery(this).text(outstanding);
 				}
 
 				jQuery(this).removeClass('animate');
@@ -291,10 +255,13 @@ const booking_calc = () => {
 }
 
 
+
 async function checkoutFormSubmit(token){
-	const {submit_error} = dyPackageArgs;
+
+
+	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
-	const checkoutArgs = checkoutArgsWithAddOns();
+	const checkoutArgs = getUpdatedCheckoutArgs();
 	const {amount} = checkoutArgs;
 	let invalids = [];
 	const formFields = formToArray(thisForm);
@@ -311,7 +278,7 @@ async function checkoutFormSubmit(token){
 		
 		if(isRequired)
 		{
-			if(isNull || isInvalid(name, value))
+			if(isNull || isInvalid({name, value}))
 			{
 				if(name.startsWith('terms_conditions_'))
 				{
@@ -404,7 +371,7 @@ const getCheckoutEventArgs = checkoutArgs => {
 		if(categories.length > 0)
 		{
 			categories.forEach((c, i) => {
-				var txt = document.createElement('textarea');
+				let txt = document.createElement('textarea');
 				txt.innerHTML = c;
 				const category = txt.value;
 				const key = (!i) ? 'item_category' : `item_category${i+2}`;
@@ -430,24 +397,27 @@ const getCheckoutEventArgs = checkoutArgs => {
 	return output;
 };
 
-const populateCheckoutForm = (form) => {
+const populateCheckoutForm = form => {
 	
-	var checkout_obj = checkoutArgsWithAddOns();
-	
-	for(var key in checkout_obj)
+	const checkoutArgs = getUpdatedCheckoutArgs();
+
+	for(let key in checkoutArgs)
 	{
-		if(checkout_obj.hasOwnProperty(key))
+		if(checkoutArgs.hasOwnProperty(key))
 		{
-			if(typeof checkout_obj[key] == 'string' || Number.isInteger(checkout_obj[key]) || checkout_obj[key] === null)
+			const value = checkoutArgs[key];
+
+			if(typeof value === 'string' || typeof value === 'number' || value === null)
 			{
-				form.append(jQuery('<input>').attr({'type': 'hidden', 'name': key, 'value': checkout_obj[key]}));						
+				jQuery(form).append(jQuery('<input>').attr({'type': 'hidden', 'name': key, 'value': value}));						
 			}
 		}
 	}		
 }
 
 
-const isInvalid = (name, value) => {
+const isInvalid = ({name, value}) => {
+
 	let output = false;
 
 	if(name === 'CVV2' && value.length !== 3)
@@ -470,7 +440,7 @@ const isInvalid = (name, value) => {
 	return output;
 };
 
-const isValidCard = (value) => {
+const isValidCard = value => {
   
 	if (/[^0-9-\s]+/.test(value))
 	{
@@ -497,7 +467,7 @@ const isValidCard = (value) => {
 	return (nCheck % 10) == 0;
 }
 
-const isEmail = (email) => {
+const isEmail = email => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }

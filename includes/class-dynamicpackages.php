@@ -70,6 +70,8 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-json.php';
 		require_once $dir . 'public/class-dynamicpackages-add-calendar.php';
 		require_once $dir . 'public/class-dynamicpackages-package-page.php';
+		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
+		require_once $dir . 'public/class-dynamicpackages-confirmation-page.php';
 		
 		//admin
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
@@ -116,6 +118,8 @@ class dynamicpackages {
 		new Dynamicpackages_JSON($this->reviews);
 		new Dynamicpackages_Actions();
 		new Dynamicpackages_Package_Page();
+		new Dynamicpackages_Booking_Page();
+		new Dynamicpackages_Confirmation_Page();
 	}
 
 	private function define_gateteways_hooks()

@@ -190,7 +190,7 @@ class usdt{
 		}
 		else
 		{
-			if(isset($_POST['dy_request']) && isset($_POST['dy_network']) && !isset($dy_request_invalids))
+			if(is_checkout_page() && isset($_POST['dy_network']) && !isset($dy_request_invalids))
 			{
 				$network = sanitize_text_field($_POST['dy_network']);
 
@@ -404,7 +404,7 @@ class usdt{
 			$add = true;
 		}
 		
-		if($this->valid_recaptcha && isset($_POST['dy_request']) && dy_validators::validate_request())
+		if($this->valid_recaptcha && is_checkout_page() && dy_validators::validate_request())
 		{
 			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 			{

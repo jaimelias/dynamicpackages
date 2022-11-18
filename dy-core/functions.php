@@ -240,7 +240,7 @@ if(!function_exists('home_lang'))
 {
 	function home_lang()
 	{
-		$which_var = 'minimal_home_lang';
+		$which_var = 'wp_core_home_lang';
 		global $$which_var;
 		$output = '';
 
