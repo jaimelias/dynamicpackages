@@ -213,36 +213,6 @@ ul.tax_list > li.cat-item  > ul.children
 	margin: 0 auto;
 }
 
-.picker__day.picker__day--infocus:hover
-{
-	background-color: #1b9891;
-	color: #90EE90;
-	border-color: #1b9891;
-}
-.picker__day.picker__day--infocus
-{
-	background-color: #90EE90;
-	border-color:  #90EE90;
-}
-.picker__day.picker__day--outfocus, .picker__day.picker__day--disabled
-{
-	background-color: #f7f7f7;
-	border-color:  #f7f7f7;
-}
-
-.picker__day.picker__day--outfocus:hover, .picker__day.picker__day--disabled:hover
-{
-	background-color: #eeeeee;
-	border-color:  #eeeeee;
-	color: #bbbbbb;
-}
-
-.picker__day.picker__day--today
-{
-	font-weight: bold;
-	border-color: rgba(0,0,0,0.2);
-}
-
 .dy_calc:not(.animate)
 {
 	background-color: transparent;
