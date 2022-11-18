@@ -1,5 +1,4 @@
 
-const {textCopiedToClipBoard, dy_ipgeolocation_api_token} = dyPackageArgs;
 
 jQuery(() => {
 
@@ -14,6 +13,8 @@ jQuery(() => {
 });
 
 const copyToClipboard = () => {
+
+	const {textCopiedToClipBoard} = dyPackageArgs;
 
 	const el = jQuery('.copyToClipboard');
 
@@ -291,6 +292,7 @@ const booking_calc = () => {
 
 
 async function checkoutFormSubmit(token){
+	const {submit_error} = dyPackageArgs;
 	const thisForm = jQuery('#dy_package_request_form');
 	const checkoutArgs = checkoutArgsWithAddOns();
 	const {amount} = checkoutArgs;
@@ -375,7 +377,7 @@ async function checkoutFormSubmit(token){
 	else
 	{
 		grecaptcha.reset();
-		alert(checkoutArgsWithAddOns().TRANSLATIONS.submit_error);
+		alert(`${submit_error}: ${invalids.join(', ')}`);
 	}
 
 	return false;

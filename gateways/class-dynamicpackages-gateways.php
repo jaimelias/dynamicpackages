@@ -310,7 +310,6 @@ class Dynamicpackages_Gateways
 			'locations' => dy_utilities::get_taxo_names('package_location'),
 			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
 			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included')),
-			'TRANSLATIONS' => array('submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,

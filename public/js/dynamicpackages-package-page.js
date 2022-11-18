@@ -1,4 +1,3 @@
-const {post_id} = dyPackageArgs;
 
 jQuery(() => {
 
@@ -159,6 +158,8 @@ const showCouponForm = () => {
 
 
 const validateCheckPricesForm = () => {
+
+	const {post_id} = dyCoreArgs;
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
 

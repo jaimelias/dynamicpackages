@@ -93,11 +93,11 @@ class Dynamicpackages_Public {
 		if($enqueue_public)
 		{
 			$strings = array(
-				'post_id' => intval(get_the_ID()),
 				'dy_ipgeolocation_api_token' => get_option('dy_ipgeolocation_api_token'),
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
 				'permaLink' => get_the_permalink(),
-				'booking_allowed_hours' => $this->booking_allowed_hours()
+				'booking_allowed_hours' => $this->booking_allowed_hours(),
+				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')
 			);
 
 			wp_enqueue_script('dynamicpackages', $this->plugin_dir_url_file . 'js/dynamicpackages-public.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), time(), true );
