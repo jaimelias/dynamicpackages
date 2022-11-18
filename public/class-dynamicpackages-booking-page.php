@@ -8,6 +8,7 @@ class Dynamicpackages_Booking_Page {
     public function __construct()
     {
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
+		add_action('parse_query', array(&$this, 'load_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
     }
 
@@ -222,6 +223,42 @@ class Dynamicpackages_Booking_Page {
 			$GLOBALS['dy_payment_type'] = $dy_payment_type;
 		}
 		return $output;
+	}
+
+	public function load_scripts($query)
+	{
+		global $post;
+		$load_recaptcha = false;
+		$load_request_form_utilities = false;
+
+		if(isset($post))
+		{
+			if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
+			{
+				$load_recaptcha = true;
+				$load_request_form_utilities = true;
+			}
+		}
+		if(isset($query->query_vars['packages']))
+		{
+			if($query->query_vars['packages'])
+			{
+				if(is_booking_page())
+				{
+					$load_recaptcha = true;
+					$load_request_form_utilities = true;
+				}
+			}
+		}
+
+		if($load_recaptcha)
+		{
+			$GLOBALS['dy_load_recaptcha_scripts'] = true;
+		}
+		if($load_request_form_utilities)
+		{
+			$GLOBALS['dy_load_request_form_utilities_scripts'] = true;
+		}
 	}
 
 }

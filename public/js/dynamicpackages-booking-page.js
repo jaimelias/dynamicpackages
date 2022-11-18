@@ -278,7 +278,7 @@ async function checkoutFormSubmit(token){
 		
 		if(isRequired)
 		{
-			if(isNull || isInvalid({name, value}))
+			if(isNull || isValidInput({name, value}))
 			{
 				if(name.startsWith('terms_conditions_'))
 				{
@@ -415,59 +415,3 @@ const populateCheckoutForm = form => {
 	}		
 }
 
-
-const isInvalid = ({name, value}) => {
-
-	let output = false;
-
-	if(name === 'CVV2' && value.length !== 3)
-	{
-		output =  true;
-	}
-	else if(name === 'CCNum' && !isValidCard(value))
-	{
-		output =  true;
-	}
-	else if(name === 'email' && !isEmail(value))
-	{
-		output =  true;
-	}
-	else if(name === 'repeat_email' && !isEmail(value))
-	{
-		output =  true;
-	}
-	
-	return output;
-};
-
-const isValidCard = value => {
-  
-	if (/[^0-9-\s]+/.test(value))
-	{
-		return false;
-	}
-
-	let nCheck = 0;
-	let bEven = false;
-	value = value.replace(/\D/g, null);
-
-	for (let n = value.length - 1; n >= 0; n--)
-	{
-		let cDigit = value.charAt(n);
-		let nDigit = parseInt(cDigit, 10);
-
-		if (bEven && (nDigit *= 2) > 9){
-			nDigit -= 9;
-		};
-
-		nCheck += nDigit;
-		bEven = !bEven;
-	}
-
-	return (nCheck % 10) == 0;
-}
-
-const isEmail = email => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-}

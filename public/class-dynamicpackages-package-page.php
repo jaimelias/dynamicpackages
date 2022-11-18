@@ -9,14 +9,27 @@ class Dynamicpackages_Package_Page {
     {
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
+        add_action('parse_query', array(&$this, 'load_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
     }
 
+	public function is_valid()
+	{
+		if(is_singular('packages') && !is_booking_page() && !is_checkout_page())
+		{
+			return true;
+		}
+		
+		return false;
+	}
+
     public function enqueue_scripts()
     {
-        if(is_singular('packages') && !is_booking_page() && !is_checkout_page())
+        if($this->is_valid())
         {
-            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'landing-cookies', 'dy-core-utilities'), time(), true );
+			global $dy_load_picker_scripts;
+
+            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'landing-cookies', 'dy-core-utilities', 'picker-js'), time(), true );
             wp_add_inline_script('dynamicpackages-page', $this->enabled_times(), 'before');
         }
     }
@@ -49,6 +62,26 @@ class Dynamicpackages_Package_Page {
 			return 'const dyPackageEnabledTimes = '.json_encode($output).';';
 		}
 	}
+
+	public function load_scripts($query)
+	{
+		global $post;
+		$load_recaptcha = false;
+		$load_picker = false;
+		$load_request_form_utilities = false;
+
+		if(isset($query->query_vars['packages']))
+		{
+			if($query->query_vars['packages'])
+			{
+				if(!is_booking_page() && !is_checkout_page())
+				{
+					$GLOBALS['dy_load_picker_scripts'] = true;
+				}
+			}
+		}
+	}
+
 }
 
 ?>
