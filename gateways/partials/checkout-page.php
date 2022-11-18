@@ -81,7 +81,7 @@
 				<thead>
 					<tr>
 						<th><?php echo (esc_html__('Description', 'dynamicpackages')); ?></th>
-						<th><?php echo (esc_html__('Unit Price', 'dynamicpackages')); ?></th>
+						<th><?php echo (esc_html__('Prices Per Person', 'dynamicpackages')); ?></th>
 						<th><?php echo (esc_html__('Subtotal', 'dynamicpackages')); ?></th>
 					</tr>
 				</thead>

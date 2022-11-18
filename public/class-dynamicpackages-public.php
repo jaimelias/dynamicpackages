@@ -822,7 +822,7 @@ class Dynamicpackages_Public {
 						
 						if($has_rows === true)
 						{
-							$output .= '<table class="pure-table pure-table-bordered"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+							$output .= '<table class="pure-table pure-table-bordered bottom-20"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
 						}		
 					}
 				}			
@@ -1310,7 +1310,7 @@ class Dynamicpackages_Public {
 			
 			if(isset($post) && dy_validators::is_child())
 			{
-				$output = '<a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a>';			
+				$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a></div>';			
 			}
 
 			$GLOBALS[$which_var] = $output;
