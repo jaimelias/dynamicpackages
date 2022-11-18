@@ -324,7 +324,7 @@ class paypal_me{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><i class="fab fa-paypal"></i> '.esc_html($this->name).'</button>';
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button">'.esc_html($this->name).'</button>';
 		}
 		return $output;
 	}
@@ -380,7 +380,7 @@ class paypal_me{
 		
 		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fab fa-paypal"></i> '.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'">'.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		
 
 		return $message;
 	}	

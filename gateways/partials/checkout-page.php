@@ -57,7 +57,7 @@
 <hr/>
 
 	<div class="clearfix relative small text-right">
-		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><i class="fas fa-chevron-left"></i>&nbsp; <?php echo (esc_html__('Go back', 'dynamicpackages')); ?></a>
+		<a class="pure-button rounded pure-button-bordered bottom-20" href="<?php the_permalink(); ?>"><span class="dashicons dashicons-arrow-left"></span> <?php echo (esc_html__('Go back', 'dynamicpackages')); ?></a>
 	</div>
 
 <hr/>

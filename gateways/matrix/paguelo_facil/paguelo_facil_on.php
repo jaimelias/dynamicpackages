@@ -355,12 +355,12 @@ class paguelo_facil_on{
 				{
 					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><i class="fas fa-check"></i> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
+					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
-					$output .= '<p class="minimal_success strong"><i class="fas fa-envelope"></i> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
+					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
 					
 					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 					
@@ -629,7 +629,7 @@ class paguelo_facil_on{
 	{
 		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';			
 		}
 		return $output;
 	}

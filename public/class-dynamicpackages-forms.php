@@ -63,7 +63,7 @@ class Dynamicpackages_Forms
 							</div>
 						</div>
 						<div class="pure-u-1 pure-u-md-1-5 small">
-							<button class="block borderbox width-100 pure-button pure-button-primary" type="submit"><i class="fas fa-search"></i></button>
+							<button class="block borderbox width-100 pure-button pure-button-primary" type="submit"><span class="dashicons dashicons-search"></span></button>
 						</div>
 					</div>
 				</div>				
@@ -230,10 +230,10 @@ class Dynamicpackages_Forms
 			}
 			
 			
-			$form .= '<div class="bottom-20" id="coupon_code"><a href="#coupon_code" class="semibold bottom-5 block"><i class="fas fa-tags"></i> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="coupon_code"  value="'.esc_attr($get_coupon).'" /></div>';
+			$form .= '<div class="bottom-20" id="coupon_code"><a href="#coupon_code" class="semibold bottom-5 block"><span class="dashicons dashicons-awards"></span> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="coupon_code"  value="'.esc_attr($get_coupon).'" /></div>';
 		}		
 		
-		$form .= '<div><button type="button" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <i class="fas fa-chevron-right"></i></button></div>';	
+		$form .= '<div><button type="button" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <span class="dashicons dashicons-arrow-right"></span></button></div>';	
 		$form .= '</form></div>';
 		echo $form;			
 

@@ -314,7 +314,7 @@ class cuanto{
 	{
 		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><i class="fas fa-credit-card"></i> '.esc_html($this->methods_o).'</button>';
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';
 		}
 		return $output;
 	}
@@ -374,7 +374,7 @@ class cuanto{
 		
 		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link. We are also going to send you this same information by email.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><i class="fas fa-credit-card"></i> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->methods_o)).'</a></p>';
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><span class="dashicons dashicons-cart"></span> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->methods_o)).'</a></p>';
 
 		return $message;
 	}	

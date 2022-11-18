@@ -552,7 +552,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'fas fa-map-marker');
+			$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'dashicons dashicons-location');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -570,7 +570,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'fas fa-tags');
+			$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'dashicons dashicons-tag');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -590,7 +590,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'fas fa-exclamation-triangle');
+			$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'dashicons dashicons-warning');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -608,7 +608,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'fas fa-check');
+			$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'dashicons dashicons-yes');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -629,7 +629,7 @@ class Dynamicpackages_Public {
 		}
 		else 
 		{
-			$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'fas fa-times');
+			$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'dashicons dashicons-no');
 			$GLOBALS[$which_var] = $output;
 		}
 
@@ -813,8 +813,8 @@ class Dynamicpackages_Public {
 									
 									$rows .= '<tr>';
 									$rows .= '<td>'.esc_html($subpackage_name).'</td>';
-									$rows .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <i class="fas fa-male"></i></td>';
-									$rows .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <i class="fas fa-chevron-right"></i></a></td>';
+									$rows .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
+									$rows .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
 									$rows .= '</tr>';							
 								}
 							}
@@ -1003,31 +1003,11 @@ class Dynamicpackages_Public {
 		return $output;
 	}
 	
-	public function icon($icon)
-	{
-		$output = null;
-		
-		if($icon == 'calendar')
-		{
-			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-calendar"></i>';
-		}
-		else if($icon == 'clock')
-		{
-			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-clock"></i>';
-		}
-		else if($icon == 'marker')
-		{
-			$output .= (is_checkout_page()) ? '*' : '<i class="fas fa-map-marker"></i>';
-		}
-		
-		return $output;
-	}
-	
 	public function details()
 	{
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
-		$output = null;
+		$output = '';
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
@@ -1051,12 +1031,12 @@ class Dynamicpackages_Public {
 			'duration' => array('clock', dy_utilities::show_duration()),
 			'check_in' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_hour),
 			'start_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
-			'start_address' => array('marker', $start_address),
+			'start_address' => array('location', $start_address),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
 			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. dy_utilities::return_hour()),
-			'return_address' => array('marker', $return_address)
+			'return_address' => array('location', $return_address)
 		);
 		
 		if(!$this->enabled_days())
@@ -1149,9 +1129,7 @@ class Dynamicpackages_Public {
 		{
 			if($v[1])
 			{
-				$output .= '<div class="dy_pad bottom-5">';
-				$output .= ($v[0]) ? $this->icon($v[0]) .' '. esc_html($v[1]) : '<strong>'.esc_html($v[1]).'</strong>';
-				$output .= '</div>';
+				$output .= '<div class="dy_pad bottom-5 dashicons-before dashicons-'.esc_attr($v[0]).'">'.esc_html($v[1]).'</div>';
 			}
 		}
 		

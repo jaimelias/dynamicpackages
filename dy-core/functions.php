@@ -322,7 +322,7 @@ if(!function_exists('whatsapp_button'))
 			$text =  '?text='.urlencode($text);
 			
 			$url = 'https://wa.me/'.$number.$text;
-			$output = '<a class="pure-button button-whatsapp" target="_blank" href="'.esc_url($url).'"><i class="fab fa-whatsapp"></i> '.esc_html($label).'</a>';
+			$output = '<a class="pure-button button-whatsapp" target="_blank" href="'.esc_url($url).'"><span class="dashicons dashicons-whatsapp"></span> '.esc_html($label).'</a>';
 		}
 
 		return $output;

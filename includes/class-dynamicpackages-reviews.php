@@ -26,18 +26,11 @@ class Dynamicpackages_Reviews
 		add_filter('get_comments_number', array(&$this, 'ppl_merge_comment_count'), 100, 2);
 		add_action('wp', array(&$this, 'ppl_remove_comments_filter'));
 		add_filter('comment_form_defaults', array(&$this, 'comment_defaults'));
-		add_action( 'wp_enqueue_scripts', array(&$this, 'dashicons'));
 		add_action('wp_head', array(&$this, 'css'));
 		add_filter('minimal_ld_json', array(&$this, 'add_reviews'), 10);
 		add_filter('dy_reviews_stars', array(&$this, 'stars'), 10);
 		add_filter('dy_reviews_get_rating', array(&$this, 'get_rating'), 10);
 		add_filter('dy_reviews_wp_star_rating', array(&$this, 'get_stars'), 10);
-
-	}
-	
-	public function dashicons()
-	{
-		wp_enqueue_style( 'dashicons' );
 	}
 	
 	public function stars($the_id)
@@ -480,19 +473,6 @@ class Dynamicpackages_Reviews
 	public function css()
 	{
 		?><style type="text/css">
-			@font-face {
-				font-family: "dashicons";
-				src: url("<?php echo includes_url(); ?>fonts/dashicons.eot");
-			}
-
-			@font-face {
-				font-family: "dashicons";
-				src: url(data:application/x-font-woff;charset=utf-8;base64, format("woff"),
-				url("<?php echo includes_url(); ?>fonts/dashicons.ttf") format("truetype"),
-				url("<?php echo includes_url(); ?>fonts/dashicons.svg#dashicons") format("svg");
-				font-weight: normal;
-				font-style: normal;
-			}
 
 			.star-rating .star-full:before {
 				content: "\f155";

@@ -443,7 +443,7 @@ class usdc{
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('When paying with %s you must make sure that you use the %s network.', 'dynamicpackages'), $this->name, $network_name)).'</p>';
 		$message .= '<p class="large">'.esc_html(__('Our payment address is as follows:', 'dynamicpackages')).'</p>';
-		$message .= '<p class="large copyToClipboard pointer" '.$styleAttr.'><strong '.$styleAttr.'>'.esc_html($address).'</strong> <i class="fa fa-clipboard" aria-hidden="true"></i></p>';
+		$message .= '<p class="large copyToClipboard pointer" '.$styleAttr.'><strong '.$styleAttr.'>'.esc_html($address).'</strong> <span class="dashicons dashicons-clipboard"></span></p>';
 		
 		return $message;
 	}	

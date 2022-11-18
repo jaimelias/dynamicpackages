@@ -549,7 +549,7 @@ class wire_transfer{
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><i class="fas fa-globe"></i> '.esc_html($this->name).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><span class="dashicons dashicons-admin-site"></span> '.esc_html($this->name).'</button>';			
 		}
 		return $output;
 	}
@@ -585,6 +585,6 @@ class wire_transfer{
 
 	public function branding()
 	{
-		return '<p class="text-muted large"><i class="fas fa-globe"></i> '.$this->name.'</p>';
+		return '<p class="text-muted large"><span class="dashicons dashicons-admin-site"></span> '.$this->name.'</p>';
 	}	
 }

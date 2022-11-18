@@ -1473,7 +1473,7 @@ class dy_utilities {
 					$output .= '<p class="strong">'.esc_html($label).'</p>';
 				}
 				
-				$icon = ($icon_class) ? '<i class="'.esc_attr($icon_class).'" ></i>' : '';
+				$icon = ($icon_class) ? '<span class="'.esc_attr($icon_class).'" ></span>' : '';
 				$output .= '<ul class="dy-list-'.esc_attr($term_name).' bottom-20 dy-list"><li>'.$icon.' ';
 				$output .= implode('</li><li>'.$icon.' ', $terms_array);
 				$output .= '</li></ul>';

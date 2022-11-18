@@ -150,7 +150,7 @@ class Dynamicpackages_Tables{
 						{
 							$person_label = $this->min_persons . ' - ' . $this->max_persons;
 							$price_label .= ' - ' . $this->currency_symbol.number_format(intval($max_price), 2, '.', ',');
-							$row .= '<tr><td><i class="fas fa-male" ></i> '.esc_html($person_label).'</td>';
+							$row .= '<tr><td><span class="dashicons dashicons-admin-users"></span> '.esc_html($person_label).'</td>';
 						}
 						else
 						{
@@ -176,7 +176,7 @@ class Dynamicpackages_Tables{
 
 								if($show_one === false)
 								{
-									$row .= '<td><i class="fas fa-male" ></i> '.esc_html($person).'</td>';
+									$row .= '<td><span class="dashicons dashicons-admin-users"></span> '.esc_html($person).'</td>';
 								}
 								else
 								{
