@@ -26,7 +26,10 @@ class Dynamic_Core_Public {
 
         wp_enqueue_script('sentry-lazy-load', 'https://js.sentry-cdn.com/822912272dd54f53974343547ae543f3.min.js', array(), '', false);
         wp_add_inline_script('sentry-lazy-load', $this->sentry(), 'after');
-        wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), 'async_defer', true);
+        
+        wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), time(), true);
+        wp_add_inline_script('landing-cookies', $this->cookies(), 'before');
+
         wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
         wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), time(), true);
         wp_add_inline_script('dy-core-utilities', $this->args(), 'before');
@@ -62,6 +65,8 @@ class Dynamic_Core_Public {
         }
     }
 
+
+
     public function enqueue_styles()
     {
         global $dy_load_picker_scripts;
@@ -72,6 +77,14 @@ class Dynamic_Core_Public {
             wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.date.css'));
             wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.time.css'));
         }
+    }
+
+    public function cookies()
+    {
+        $visit_cookies = array('device', 'landing_domain', 'landing_path', 'channel');
+        $google_ads_cookies = array('utm_source', 'utm_medium', 'utm_campaign', 'gclid');
+
+        return 'const visitCookies = '.json_encode($visit_cookies).'; const googleAdsCookies = '.json_encode($google_ads_cookies).';';
     }
 
     public function sentry()

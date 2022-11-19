@@ -1,6 +1,4 @@
 const cookieExpirationInDays = 90;
-const visitCookies = ['device', 'landing_domain', 'landing_path', 'channel'];
-const googleAdsCookies = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid'];
 
 jQuery(() => {
 	set_cookies();
