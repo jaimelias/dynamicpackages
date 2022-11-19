@@ -5,7 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Public {
 
-	public function __construct() {
+	public function __construct($version) {
+		$this->version = $version;
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
@@ -60,7 +61,7 @@ class Dynamicpackages_Public {
 	
 	public function enqueue_styles() {
 		
-		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css', array(), time());
+		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css', array(), $this->version);
 	}
 	
 	public function enqueue_scripts() {
@@ -69,7 +70,7 @@ class Dynamicpackages_Public {
 
 		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
 		{
-			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery', 'dy-core-utilities'), time(), true );
+			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery', 'dy-core-utilities'), $this->version, true );
 		}
 		
 	}

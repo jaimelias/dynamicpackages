@@ -36,7 +36,7 @@ class Dynamicpackages_Admin {
 	
 	public function handsontable()
 	{
-		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), time(), 'all' );
+		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), '8.1.0', 'all' );
 		wp_enqueue_script( 'handsontableJS', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
 	}
 

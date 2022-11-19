@@ -111,15 +111,15 @@ class dynamicpackages {
 
 	private function define_public_hooks() 
 	{
-		new Dynamicpackages_Public();
+		new Dynamicpackages_Public($this->version);
 		new Dynamicpackages_Tables();
 		new Dynamicpackages_Shortcodes();
 		new Dynamicpackages_Forms();
 		new Dynamicpackages_JSON($this->reviews);
 		new Dynamicpackages_Actions();
-		new Dynamicpackages_Package_Page();
-		new Dynamicpackages_Booking_Page();
-		new Dynamicpackages_Confirmation_Page();
+		new Dynamicpackages_Package_Page($this->version);
+		new Dynamicpackages_Booking_Page($this->version);
+		new Dynamicpackages_Confirmation_Page($this->version);
 	}
 
 	private function define_gateteways_hooks()

@@ -5,8 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Confirmation_Page {
 
-    public function __construct()
+    public function __construct($version)
     {
+        $this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
         //fix bug
@@ -35,7 +36,7 @@ class Dynamicpackages_Confirmation_Page {
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages')
 			);
 
-            wp_enqueue_script('dynamicpackages-confirmation', $this->plugin_dir_url_file . 'js/dynamicpackages-confirmation-page.js', array( 'jquery'), time(), true );
+            wp_enqueue_script('dynamicpackages-confirmation', $this->plugin_dir_url_file . 'js/dynamicpackages-confirmation-page.js', array( 'jquery'), $this->version, true );
 			wp_localize_script('dynamicpackages-confirmation', 'dyPackageConfirmationArgs', $strings);
         }
     }

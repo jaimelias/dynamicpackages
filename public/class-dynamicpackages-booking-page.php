@@ -5,8 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Booking_Page {
 
-    public function __construct()
+    public function __construct($version)
     {
+		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		add_action('parse_query', array(&$this, 'load_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
@@ -42,7 +43,7 @@ class Dynamicpackages_Booking_Page {
 				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')
 			);
 
-			wp_enqueue_script('dynamicpackages-booking', $this->plugin_dir_url_file . 'js/dynamicpackages-booking-page.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), time(), true );
+			wp_enqueue_script('dynamicpackages-booking', $this->plugin_dir_url_file . 'js/dynamicpackages-booking-page.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), $this->version, true );
             wp_add_inline_script('dynamicpackages-booking', $this->checkout_args(), 'before');
             wp_localize_script('dynamicpackages-booking', 'dyPackageBookingArgs', $strings);
         }

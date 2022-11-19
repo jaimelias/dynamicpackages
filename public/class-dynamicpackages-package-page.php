@@ -5,8 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Package_Page {
 
-    public function __construct()
+    public function __construct($version)
     {
+		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
         add_action('parse_query', array(&$this, 'load_scripts'));
@@ -29,7 +30,7 @@ class Dynamicpackages_Package_Page {
         {
 			global $dy_load_picker_scripts;
 
-            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'landing-cookies', 'dy-core-utilities', 'picker-js'), time(), true );
+            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'landing-cookies', 'dy-core-utilities', 'picker-js'), $this->version, true );
             wp_add_inline_script('dynamicpackages-page', $this->enabled_times(), 'before');
         }
     }
