@@ -6,6 +6,7 @@ class Dynamic_Core_Public {
     
     public function __construct()
     {
+        $this->version = '0.0.1';
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
         $this->dirname_file = dirname( __FILE__ );
 
@@ -27,11 +28,11 @@ class Dynamic_Core_Public {
         wp_enqueue_script('sentry-lazy-load', 'https://js.sentry-cdn.com/822912272dd54f53974343547ae543f3.min.js', array(), '', false);
         wp_add_inline_script('sentry-lazy-load', $this->sentry(), 'after');
         
-        wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), time(), true);
+        wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), $this->version, true);
         wp_add_inline_script('landing-cookies', $this->cookies(), 'before');
 
         wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
-        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), time(), true);
+        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), $this->version, true);
         wp_add_inline_script('dy-core-utilities', $this->args(), 'before');
 
         if(isset($dy_load_recaptcha_scripts))
@@ -61,7 +62,7 @@ class Dynamic_Core_Public {
         
         if(isset($dy_load_request_form_utilities_scripts))
         {
-            wp_enqueue_script('dy-core-request-form-utilities', $this->plugin_dir_url_file . 'js/request-form-utilities.js', array('jquery', 'landing-cookies'), time(), false);
+            wp_enqueue_script('dy-core-request-form-utilities', $this->plugin_dir_url_file . 'js/request-form-utilities.js', array('jquery', 'landing-cookies'), $this->version, false);
         }
     }
 
