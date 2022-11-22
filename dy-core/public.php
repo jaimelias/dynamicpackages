@@ -44,18 +44,7 @@ class Dynamic_Core_Public {
 
         if(isset($dy_load_picker_scripts))
         {
-            wp_enqueue_script( 'picker-js', $this->plugin_dir_url_file . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
-            wp_enqueue_script( 'picker-date-js', $this->plugin_dir_url_file . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
-            wp_enqueue_script( 'picker-time-js', $this->plugin_dir_url_file . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
-            wp_enqueue_script( 'picker-legacy', $this->plugin_dir_url_file . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
-
-            $picker_translation = 'js/picker/translations/'.get_locale().'.js';
-                    
-            if(file_exists($this->dirname_file.'/'.$picker_translation))
-            {
-                wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_url_file.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
-            }	
-            //picker end
+            load_picker_scripts($this->plugin_dir_url_file, $this->dirname_file);
         }
 
 
@@ -67,16 +56,13 @@ class Dynamic_Core_Public {
     }
 
 
-
     public function enqueue_styles()
     {
         global $dy_load_picker_scripts;
 
         if(isset($dy_load_picker_scripts))
         {
-            wp_enqueue_style( 'picker-css', $this->plugin_dir_url_file . 'css/picker/default.css', array(), '3.6.2', 'all');
-            wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.date.css'));
-            wp_add_inline_style('picker-css', get_inline_file($this->dirname_file . '/css/picker/default.time.css'));
+            load_picker_styles($this->plugin_dir_url_file);
         }
     }
 
@@ -200,8 +186,5 @@ class Dynamic_Core_Public {
 	}
 
 }
-
-
-new Dynamic_Core_Public();
 
 ?>

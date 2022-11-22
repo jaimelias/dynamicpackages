@@ -36,7 +36,7 @@ class Dynamicpackages_Post_Types
 			'not_found_in_trash' => __( 'Not found in Trash', 'dynamicpackages' ),
 			'locations_list' => __( 'Packages list', 'dynamicpackages' ),
 			'locations_list_navigation' => __( 'Packages list navigation', 'dynamicpackages' ),
-			'filter_items_list' => __( 'Filter locations list', 'dynamicpackages' ),
+			'filter_items_list' => __( 'Filter package list', 'dynamicpackages' ),
 		);
 
 		$icon_url = $this->plugin_dir_file . 'assets/rocket.svg';
@@ -104,12 +104,6 @@ class Dynamicpackages_Post_Types
 				'name' => __( 'Add-ons', 'dynamicpackages'),
 				'singular_name' => __( 'Add-on', 'dynamicpackages'),
 				'emoji' => '🤑',
-				'public' => false
-			),
-			'package_provider' => array(
-				'name' => __( 'Providers', 'dynamicpackages'),
-				'singular_name' => __( 'Provider', 'dynamicpackages'),
-				'emoji' => '🤖',
 				'public' => false
 			)
 		);

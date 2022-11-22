@@ -348,8 +348,6 @@ class Sendgrid_Mailer
 	}
 }
 
-$SENDGRID_API_MAILER = new Sendgrid_Mailer();
-
 
 if(!function_exists('sg_mail'))
 {

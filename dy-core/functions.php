@@ -383,6 +383,10 @@ if(!function_exists('validate_recaptcha'))
 
 								if(array_key_exists('error-codes', $data))
 								{
+									write_log($data['error-codes']);
+
+									write_log(in_array('invalid-input-response' , $data['error-codes']));
+
 									if(in_array('invalid-input-response' , $data['error-codes']))
 									{
 										cloudflare_ban_ip_address();
@@ -412,6 +416,35 @@ if(!function_exists('get_inline_file'))
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;	
+	}
+}
+
+if(!function_exists('load_picker_scripts'))
+{
+    function load_picker_scripts($plugin_dir_url, $dirname_file)
+    {
+        wp_enqueue_script( 'picker-js', $plugin_dir_url . 'js/picker/picker.js', array('jquery'), '3.6.2', true);
+        wp_enqueue_script( 'picker-date-js', $plugin_dir_url . 'js/picker/picker.date.js', array('jquery', 'picker-js'), '3.6.2', true);
+        wp_enqueue_script( 'picker-time-js', $plugin_dir_url . 'js/picker/picker.time.js',array('jquery', 'picker-js'), '3.6.2', true);	
+        wp_enqueue_script( 'picker-legacy', $plugin_dir_url . 'js/picker/legacy.js', array('jquery', 'picker-js'), '3.6.2', true);
+
+        $picker_translation = 'js/picker/translations/'.get_locale().'.js';
+                
+        if(file_exists($dirname_file.'/'.$picker_translation))
+        {
+            wp_enqueue_script( 'picker-time-translation', $plugin_dir_url.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
+        }	
+        //picker end        
+    }
+}
+
+if(!function_exists('load_picker_styles'))
+{
+	function load_picker_styles($plugin_dir_url)
+	{
+		wp_enqueue_style( 'picker-css', $plugin_dir_url . 'css/picker/default.css', array(), '', 'all' );
+		wp_enqueue_style( 'picker-date-css', $plugin_dir_url . 'css/picker/default.date.css', array(), '', 'all' );
+		wp_enqueue_style( 'picker-time-css', $plugin_dir_url . 'css/picker/default.time.css', array(), '', 'all' );		
 	}
 }
 

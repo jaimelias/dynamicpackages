@@ -38,6 +38,4 @@ class Dynamic_Core_WP_JSON {
     }
 }
 
-new Dynamic_Core_WP_JSON();
-
 ?>

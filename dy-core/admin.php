@@ -17,7 +17,29 @@ class Dynamic_Core_Admin {
         add_action('admin_init', array(&$this, 'settings_init'), 1);
         add_action('admin_menu', array(&$this, 'admin_menu'), 1);
 		add_action('admin_head', array(&$this, 'args'));
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
     }
+
+
+	public function enqueue_scripts()
+	{
+		global $dy_load_picker_scripts;
+
+		if(isset($dy_load_picker_scripts))
+		{
+			load_picker_scripts($this->plugin_dir_url_file, $this->plugin_dir);
+		}
+	}
+	public function enqueue_styles()
+	{
+		global $dy_load_picker_scripts;
+
+		if(isset($dy_load_picker_scripts))
+		{
+			load_picker_styles($this->plugin_dir_url_file);
+		}
+	}
 
     public function args()
     {
@@ -207,8 +229,5 @@ class Dynamic_Core_Admin {
 	}
 
 }
-
-
-new Dynamic_Core_Admin();
 
 ?>

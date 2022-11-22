@@ -13,25 +13,32 @@ class Dynamicpackages_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->plugin_id = $plugin_id;
 		$this->version = $version;
-		$this->init();
-	}
-
-	public function init()
-	{
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 1);
-		add_action('admin_init', array(&$this, 'settings_init'), 1);
+		add_action('admin_menu', array(&$this, 'add_settings_page'));
+		add_action('admin_init', array(&$this, 'settings_init'));
+		add_action('admin_init', array(&$this, 'load_scripts'));
 		add_editor_style($this->plugin_dir_file . 'css/dynamicpackages-admin.css');
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 	}
 
+	public function load_scripts()
+	{
+		global $pagenow;
+
+		if(isset($pagenow))
+		{
+			if($pagenow === 'post.php')
+			{
+				$GLOBALS['dy_load_picker_scripts'] = true;
+			}
+		}
+		
+	}
+
 	public function enqueue_styles() {
 
 		$this->handsontable();
-		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', array(), time(), 'all' );	
-		wp_enqueue_style( 'picker-css', $this->plugin_dir_file . 'css/picker/default.css', array(), '', 'all' );
-		wp_enqueue_style( 'picker-date-css', $this->plugin_dir_file . 'css/picker/default.date.css', array(), '', 'all' );
-		wp_enqueue_style( 'picker-time-css', $this->plugin_dir_file . 'css/picker/default.time.css', array(), '', 'all' );
+		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
 	}
 	
 	public function handsontable()
@@ -42,17 +49,7 @@ class Dynamicpackages_Admin {
 
 	public function enqueue_scripts() {
 
-		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS'), time(), true );
-		wp_enqueue_script( 'picker-js', $this->plugin_dir_file . 'js/picker/picker.js', array('jquery'), '', false );
-		wp_enqueue_script( 'picker-date-js', $this->plugin_dir_file . 'js/picker/picker.date.js', array(), '', false );
-		wp_enqueue_script( 'picker-time-js', $this->plugin_dir_file . 'js/picker/picker.time.js', array(), '', false );	
-		wp_enqueue_script( 'picker-legacy', $this->plugin_dir_file . 'js/picker/legacy.js', array(), '', false );	
-		$picker_translation = 'js/picker/translations/'.substr(get_locale(), 0, -3).'.js';
-
-		if(file_exists(get_template_directory().$picker_translation))
-		{
-			wp_enqueue_script( 'picker-time-translation', $this->plugin_dir_file . $picker_translation, array(), '', false );
-		}
+		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS', 'picker-js'), time(), true );
 	}
 
 	

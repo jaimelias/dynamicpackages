@@ -75,7 +75,6 @@ class dynamicpackages {
 		
 		//admin
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
-		require_once $dir . 'admin/class-dynamicpackages-providers.php'; //optimized but needs admin-fields-class
 		require_once $dir . 'admin/class-dynamicpackages-add-ons.php';
 		require_once $dir . 'admin/class-dynamicpackages-metaboxes.php';
 		require_once $dir . 'admin/class-dynamicpackages-metapost.php';
@@ -104,7 +103,6 @@ class dynamicpackages {
 		new Dynamicpackages_Admin($this->plugin_id, $this->plugin_name, $this->version);
 		new Dynamicpackages_Metaboxes();
 		new Dynamicpackages_Metapost();
-		new Dynamicpackages_Taxonomy_Providers();
 		new Dynamicpackages_Taxonomy_Add_Ons();
 		new Dynamicpackages_Post_Types();
 	}

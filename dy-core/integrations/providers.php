@@ -3,13 +3,72 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 
-class Dynamicpackages_Taxonomy_Providers {
+class Dynamic_Core_Providers {
 
     function __construct()
     {
-		$this->name = 'package_provider';
+		$this->name = 'dy-providers';
+		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
         add_action('init', array(&$this, 'handle_create_edit'));
+		add_filter('dy_list_providers', array(&$this, 'get_providers'));
+		add_action('init', array(&$this, 'register_taxonomies'));
+		add_action( 'admin_head', array(&$this, 'admin_head') );
     }
+
+	public function admin_head()
+	{
+		if(isset($_GET['taxonomy']))
+		{
+			if($_GET['taxonomy'] === $this->name)
+			{
+				echo '<style>.term-slug-wrap, .term-parent-wrap, .term-description-wrap{display: none;}</style>';
+			}
+		}
+		
+	}
+
+	public function register_taxonomies(){
+
+		$taxonomies = array(
+			$this->name => array(
+				'name' => __( 'Providers', 'dynamicpackages'),
+				'singular_name' => __( 'Provider', 'dynamicpackages'),
+				'emoji' => '🤖',
+				'public' => false
+			)
+		);
+
+		foreach($taxonomies as $key => $value)
+		{
+			$singular = $value['singular_name'];
+			$plural = $value['name'];
+			$emoji = $value['emoji'];
+			$public = $value['public'];
+			$labels = $value;
+			$labels['search_items'] = sprintf(__('Search %s', 'dynamicpackages'), $plural);
+			$labels['all_items'] = sprintf(__('All %s', 'dynamicpackages'), $plural);
+			$labels['parent_item'] = sprintf(__('Parent %s', 'dynamicpackages'), $singular);
+			$labels['parent_item_colon'] = sprintf(__('Parent %s', 'dynamicpackages'), $singular);
+			$labels['edit_item'] = sprintf(__('Edit %s', 'dynamicpackages'), $singular);
+			$labels['update_item'] = sprintf(__('Update %s', 'dynamicpackages'), $singular);
+			$labels['add_new_item'] = sprintf(__('Add New %s', 'dynamicpackages'), $singular);
+			$labels['new_item_name'] = sprintf(__('New %s Name', 'dynamicpackages'), $singular);
+			$labels['menu_name'] = $emoji.' '.$plural;
+
+			$args = array(
+				'labels' => $labels,
+				'hierarchical' => true,
+				'public' => $public,
+				'show_in_rest'				=> true,
+				'show_ui' => true,
+				'show_admin_column' => true,
+				'show_in_nav_menus' => true,
+				'show_tagcloud' => true
+			);
+
+			register_taxonomy($key, array('dy-orders', 'packages', 'aircrafts' ), $args );
+		}
+	}
 
     public function handle_create_edit()
     {
@@ -17,7 +76,6 @@ class Dynamicpackages_Taxonomy_Providers {
 		add_action($this->name.'_edit_form_fields', array(&$this, 'form'), 10, 2);
 		add_action( 'create_'.$this->name, array(&$this, 'handle_save'), 10, 2);
 		add_action( 'edited_'.$this->name, array(&$this, 'handle_save'), 10, 2);
-		add_filter('dy_list_providers', array(&$this, 'get_providers'));
     }
 
 	public function handle_save($term_id) {
@@ -132,8 +190,8 @@ class Dynamicpackages_Taxonomy_Providers {
 				{
 					foreach ( $terms as $t )
 					{
-						$language = get_term_meta($t->term_id, 'package_provider_language', true);
-						$emails_str = get_term_meta($t->term_id, 'package_provider_emails', true);
+						$language = get_term_meta($t->term_id, $this->name . '_language', true);
+						$emails_str = get_term_meta($t->term_id, $this->name . '_emails', true);
 						$emails = $this->email_str_row_to_array($emails_str);
 						
 						$row = array(
