@@ -2,39 +2,21 @@
 const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst', 'zipcode', 'continent_code', 'continent_name'];
 const storeFieldNames = ['first_name', 'lastname', 'phone', 'email', 'repeat_email', 'country', 'city', 'address'];
 
+//refresh page to removed disabled button
+window.addEventListener('pageshow', event =>  {
+    const historyTraversal = event.persisted;
+
+    if ( historyTraversal ) 
+    {
+        window.location.reload();
+    }
+});
+
 jQuery(() => {
 
     storePopulate();
-    reEnableSubmitButton();
 	
 });
-
-const reEnableSubmitButton = () => {
-
-    let interval = null;
-
-    (() => {
-        interval = setInterval(() => {
-
-            if(window.location.href === sessionStorage.getItem('last_submit_url'))
-            {
-                if(jQuery('.disabled-by-submit').length > 0)
-                {
-                    jQuery('.disabled-by-submit').each(function(){
-                        jQuery(this).removeClass('disabled-by-submit');
-                    });
-
-                    sessionStorage.removeItem('last_submit_url');
-                    clearInterval(interval);
-                }
-            }
-
-            
-
-        }, 2000);
-    })();
-
-};
 
 const formToArray = form => {
    
@@ -118,8 +100,7 @@ const getNonce = async () => {
 const createFormSubmit = async (form) => {
 
     //disable button to prevent double-click
-    jQuery(form).find('button').prop('disabled', true).addClass('disabled-by-submit');
-    sessionStorage.setItem('last_submit_url', window.location.href);
+    jQuery(form).find('button').prop('disabled', true);
 
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
