@@ -5,8 +5,36 @@ const storeFieldNames = ['first_name', 'lastname', 'phone', 'email', 'repeat_ema
 jQuery(() => {
 
     storePopulate();
+    reEnableSubmitButton();
 	
 });
+
+const reEnableSubmitButton = () => {
+
+    let interval = null;
+
+    (() => {
+        interval = setInterval(() => {
+
+            if(window.location.href === sessionStorage.getItem('last_submit_url'))
+            {
+                if(jQuery('.disabled-by-submit').length > 0)
+                {
+                    jQuery('.disabled-by-submit').each(function(){
+                        jQuery(this).removeClass('disabled-by-submit');
+                    });
+
+                    sessionStorage.removeItem('last_submit_url');
+                    clearInterval(interval);
+                }
+            }
+
+            
+
+        }, 2000);
+    })();
+
+};
 
 const formToArray = form => {
    
@@ -90,7 +118,8 @@ const getNonce = async () => {
 const createFormSubmit = async (form) => {
 
     //disable button to prevent double-click
-    jQuery(form).find('button').prop('disabled', true);
+    jQuery(form).find('button').prop('disabled', true).addClass('disabled-by-submit');
+    sessionStorage.setItem('last_submit_url', window.location.href);
 
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
