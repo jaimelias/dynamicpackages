@@ -6,8 +6,9 @@ const storeFieldNames = ['first_name', 'lastname', 'phone', 'email', 'repeat_ema
 window.addEventListener('pageshow', event =>  {
     const historyTraversal = event.persisted;
 
-    if ( historyTraversal ) 
+    if ( historyTraversal && sessionStorage.getItem('last_form_submit_url') === window.location.href ) 
     {
+        sessionStorage.removeItem('last_form_submit_url');
         window.location.reload();
     }
 });
@@ -97,10 +98,16 @@ const getNonce = async () => {
     }).then(data => data.dy_nonce);
 };
 
+const handleSubmitButton = form => {
+    jQuery(form).find('button').prop('disabled', true);
+
+    sessionStorage.setItem('last_form_submit_url', window.location.href);
+};
+
 const createFormSubmit = async (form) => {
 
     //disable button to prevent double-click
-    jQuery(form).find('button').prop('disabled', true);
+    handleSubmitButton();
 
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
