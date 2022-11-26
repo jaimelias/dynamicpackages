@@ -2,7 +2,7 @@
 
 jQuery(() => {
 	selectGateway();
-	booking_calc();
+	addOnsCalc();
 });
 
 const selectGateway = () => {
@@ -101,31 +101,16 @@ const getUpdatedCheckoutArgs = () => {
 	
 	if(defaultCheckoutArgs)
 	{
-		const args  = defaultCheckoutArgs;
-		const tax = 0;
-		let amount = parseFloat(args.amount);
-		let regular_amount = parseFloat(args.regular_amount);
-		let deposit = 0;
+		let {amount, regular_amount, deposit, add_ons, pax_num} = defaultCheckoutArgs;
 		let payment_amount = 0;
 		let add_ons_id = [];
-		
 		let outstanding = 0;
 		
-		if(args.hasOwnProperty('deposit'))
+		if(deposit)
 		{
-			if(args.deposit > 0)
-			{
-				deposit = parseFloat(args.deposit) / 100;
-			}
+			deposit = deposit / 100;
 		}
-		if(args.hasOwnProperty('tax'))
-		{
-			if(args.tax > 0)
-			{
-				tax = parseFloat(args.tax) / 100;
-			}
-		}
-		
+
 		const thisForm = jQuery('#dy_package_request_form');
 		jQuery(thisForm).find('[name="add_ons"]').val();
 		
@@ -143,56 +128,37 @@ const getUpdatedCheckoutArgs = () => {
 		let add_ons_price = add_ons_id.map(id => {
 			let output = 0;
 			
-			for(let x = 0; x < args.add_ons.length; x++)
+			for(let x = 0; x < add_ons.length; x++)
 			{
-				if(id == args.add_ons[x].id)
+				if(id == add_ons[x].id)
 				{
-					output = parseFloat(args.add_ons[x].price) * parseFloat(args.pax_num);
+					output = parseFloat(add_ons[x].price) * parseFloat(pax_num);
 				}
 			}
 			return output;
 		});
 		
 		add_ons_price = add_ons_price.reduce((a, b) => a + b, 0);
-		
-		if(tax > 0)
-		{
-			add_ons_price = add_ons_price + (add_ons_price * tax);
-		}
-		
-
 		payment_amount = getPaymentAmount({amount, deposit, add_ons_price});
 		outstanding = getOutstandingAmount({amount, deposit});
 		
 		if(add_ons_price > 0)
 		{
 			regular_amount = regular_amount + add_ons_price;
-			amount = amount + add_ons_price;		
-		}		
+			amount = amount + add_ons_price;
+		}
 		
-		const new_args = {
+		const newArgs = {
 			outstanding: parseFloat(outstanding.toFixed(2)),
 			total: parseFloat(payment_amount.toFixed(2)),
 			amount: parseFloat(amount.toFixed(2)),
 			regular_amount: parseFloat(regular_amount.toFixed(2))
 		};
-				
-		for(k in new_args)
-		{
-			for(k2 in args)
-			{
-				if(k == k2)
-				{
-					args[k2] = new_args[k];
-				}
-				
-				output[k2] = args[k2];
-			}
-		}		
-	}
-	
 
-	return output;
+		return {...defaultCheckoutArgs, ...newArgs};
+	}
+
+	
 }
 
 const getPaymentAmount = ({amount, deposit, add_ons_price}) => {
@@ -216,9 +182,9 @@ const getOutstandingAmount = ({amount, deposit}) => {
 	return (amount === output) ? amount : amount - output;
 };
 
-const booking_calc = () => {
+const addOnsCalc = () => {
 		
-	jQuery(document).on('change', '#dynamic_table select.add_ons', () => {
+	jQuery('#dynamic_table').find('select.add_ons').on('change', () => {
 		
 		const checkoutArgs = getUpdatedCheckoutArgs();
 		const {amount, regular_amount, total, outstanding} = checkoutArgs;

@@ -111,9 +111,15 @@ if(!function_exists('current_language'))
 		{
 			if(isset($polylang))
 			{
-				$output = pll_current_language();
+				$lang = pll_current_language();
+
+				if($lang)
+				{
+					$output = $lang;
+				}
 			}
-			else
+
+			if(empty($output))
 			{
 				$locale = get_locale();
 				$locale_strlen = strlen($locale);
@@ -125,7 +131,7 @@ if(!function_exists('current_language'))
 				if($locale_strlen === 2)
 				{
 					$output = $locale;
-				}			
+				}
 			}
 
 			$GLOBALS[$which_var] = $output;
