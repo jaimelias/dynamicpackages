@@ -38,7 +38,7 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = '1.0.0';
+		$this->version = '1.0.1';
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_utility_hooks();
