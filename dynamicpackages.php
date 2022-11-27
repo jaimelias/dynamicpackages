@@ -207,39 +207,6 @@ function dy_date($format, $timestamp = null) {
 	return $datetime->format($format);
 }
 
-function dy_money($price = 0, $wrap = '')
-{
-	$output = '';
-	$amount = $price;
-	
-	if(is_singular('packages'))
-	{
-		if($price == 0 && dy_utilities::total() > 0)
-		{
-			$amount = dy_utilities::total(); 
-		}
-	}
-
-	if($amount > 0)
-	{
-		$output = currency_symbol();
-		
-		if(!empty($wrap))
-		{
-			$output .= '<span class="'.esc_html($wrap).'">';
-		}
-		
-		$output .= esc_html(money_format($amount));
-		
-		if(!empty($wrap))
-		{
-			$output .= '</span>';
-		}
-	}
-	
-	return $output;
-}
-
 
 function run_dynamicpackages() {
 

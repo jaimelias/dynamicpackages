@@ -362,7 +362,13 @@ class Dynamicpackages_Gateways
 	public function whatsapp_button()
 	{
 		$label = __('Support via Whatsapp', 'dynamicpackages');
-		$text = apply_filters('dy_description', null).' '.dy_money();
+		$total = dy_utilities::total();
+		$text = apply_filters('dy_description', null);
+
+		if($total > 0)
+		{
+			$text .= ' $'.money_format($total);
+		}
 
 		echo whatsapp_button($label, $text);
 	}
