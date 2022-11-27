@@ -222,14 +222,14 @@ function dy_money($price = 0, $wrap = '')
 
 	if($amount > 0)
 	{
-		$output = dy_utilities::currency_symbol();
+		$output = currency_symbol();
 		
 		if(!empty($wrap))
 		{
 			$output .= '<span class="'.esc_html($wrap).'">';
 		}
 		
-		$output .= esc_html(dy_utilities::currency_format($amount));
+		$output .= esc_html(currency_format($amount));
 		
 		if(!empty($wrap))
 		{

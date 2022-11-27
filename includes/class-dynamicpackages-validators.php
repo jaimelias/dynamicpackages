@@ -502,29 +502,7 @@ class dy_validators
 		
 		return $output;
 	}
-	public static function is_date($str)
-	{
-		$output = false;
-		$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
-		$which_var = strval($str).'_is_date';
-		global $$which_var;
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(preg_match($regex, $str))
-			{
-				$output = true;
-			}
 
-			$GLOBALS[$which_var] = $output;
-		}
-		
-		return $output;
-	}
 	public static function validate_coupon()
 	{
 		$output = false;

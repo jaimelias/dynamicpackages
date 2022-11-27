@@ -40,7 +40,7 @@ class paguelo_facil_on{
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
-		$this->currency_symbol = dy_utilities::currency_symbol();
+		$this->currency_symbol = currency_symbol();
 		$this->website_name = get_bloginfo('name');
 	}
 	
@@ -355,7 +355,7 @@ class paguelo_facil_on{
 				{
 					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, dy_utilities::currency_symbol(), dy_utilities::payment_amount()) . '</p>';
+					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, currency_symbol(), dy_utilities::payment_amount()) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
@@ -667,8 +667,8 @@ class paguelo_facil_on{
 	{
 		if(dy_validators::has_deposit())
 		{
-			$outstanding = dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::outstanding_amount());
-			$total =  dy_utilities::currency_symbol().dy_utilities::currency_format(dy_utilities::payment_amount());
+			$outstanding = currency_symbol().currency_format(dy_utilities::outstanding_amount());
+			$total =  currency_symbol().currency_format(dy_utilities::payment_amount());
 			$date = sanitize_text_field($_POST['booking_date']);
 			
 			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').'<br/><span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;

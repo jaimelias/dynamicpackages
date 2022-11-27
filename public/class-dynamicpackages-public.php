@@ -856,7 +856,7 @@ class Dynamicpackages_Public {
 					
 					if(intval(dy_utilities::starting_at()) > 0)
 					{
-						$excerpt .= ' '.dy_utilities::currency_symbol().intval(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', null).'. ';
+						$excerpt .= ' '.currency_symbol().intval(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', null).'. ';
 						
 						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
 						{
@@ -1329,7 +1329,7 @@ class Dynamicpackages_Public {
 			if($starting_at > 0)
 			{
 				$description = (empty($description)) ? get_the_title() : $description;
-				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . dy_utilities::currency_symbol().$starting_at.' '.apply_filters('dy_price_type', null) . '.';
+				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . currency_symbol().$starting_at.' '.apply_filters('dy_price_type', null) . '.';
 			}			
 		}
 		

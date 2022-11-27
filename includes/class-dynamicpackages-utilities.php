@@ -3,22 +3,7 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 class dy_utilities {
-	
-	public static function currency_format($amount)
-	{
-		return number_format(floatval($amount), 2, '.', '');
-	}
-
-	public static function currency_symbol()
-	{
-		return '$';
-	}
-	
-	public static function currency_name()
-	{
-		return 'USD';
-	}	
-	
+		
 	public static function booking_date()
 	{
 		if(isset($_REQUEST['booking_date']))
@@ -157,7 +142,7 @@ class dy_utilities {
 							else if($option == 'expiration')
 							{
 								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
-								$output = (dy_validators::is_date($output)) ? $output : null;
+								$output = (is_date($output)) ? $output : null;
 							}
 							else if($option == 'publish')
 							{
@@ -986,13 +971,13 @@ class dy_utilities {
 			{
 				$sum_arr = [$sum];
 
-				if(dy_validators::is_date($booking_date))
+				if(is_date($booking_date))
 				{
 					if(isset($_REQUEST['end_date']))
 					{
 						$end_date = sanitize_text_field($_REQUEST['end_date']);
 
-						if(dy_validators::is_date($end_date))
+						if(is_date($end_date))
 						{
 							$sum_arr[] = $sum;
 							$week_days_to_surcharge[] = $end_date;

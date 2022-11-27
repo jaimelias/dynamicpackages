@@ -52,7 +52,7 @@ class yappy_direct{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
@@ -160,7 +160,7 @@ class yappy_direct{
 	public function message($message)
 	{
 		$payment_amount = dy_utilities::payment_amount();
-		$currency_symbol = dy_utilities::currency_symbol();
+		$currency_symbol = currency_symbol();
 		$destination = (!empty($this->business)) ? strtoupper($this->business) : $this->number;
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
 		$last = (!empty($this->business)) ? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');

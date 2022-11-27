@@ -321,8 +321,8 @@ else
 									<link itemprop="availability" href="http://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
-									<meta itemprop="priceCurrency" content="<?php echo esc_attr(dy_utilities::currency_name()); ?>" />
-									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(dy_utilities::currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(number_format($starting_at, 0, '.', ','));?></span>
+									<meta itemprop="priceCurrency" content="<?php echo esc_attr(currency_name()); ?>" />
+									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(number_format($starting_at, 0, '.', ','));?></span>
 									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>

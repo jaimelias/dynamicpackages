@@ -66,7 +66,7 @@ class wire_transfer{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
@@ -173,7 +173,7 @@ class wire_transfer{
 	public function message($message)
 	{
 		
-		$amount = dy_utilities::currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');		
+		$amount = currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');		
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_validators::has_deposit())

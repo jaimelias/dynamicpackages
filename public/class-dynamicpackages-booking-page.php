@@ -76,7 +76,7 @@ class Dynamicpackages_Booking_Page {
 			'coupon_code' => esc_html($coupon_code),
 			'coupon_discount' => floatval($coupon_discount),
 			'coupon_discount_amount' => (floatval($coupon_discount) > 0 ) ? ($regular_amount - $amount) : 0,
-			'total' => floatval(dy_utilities::currency_format(dy_utilities::payment_amount())),
+			'total' => floatval(currency_format(dy_utilities::payment_amount())),
 			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'booking_hour' => esc_html(dy_utilities::hour()),
@@ -97,8 +97,8 @@ class Dynamicpackages_Booking_Page {
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
-			'currency_name' => dy_utilities::currency_name(),
-			'currency_symbol' => dy_utilities::currency_symbol(),
+			'currency_name' => currency_name(),
+			'currency_symbol' => currency_symbol(),
 			'outstanding' => floatval($this->outstanding()),
 			'amount' => $amount,
 			'regular_amount' => $regular_amount,
@@ -121,7 +121,7 @@ class Dynamicpackages_Booking_Page {
 			$deposit = dy_utilities::payment_amount();
 			$total = dy_utilities::total();
 			$outstanding = $total-$deposit;
-			$output .= ' - '.__('deposit', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.dy_utilities::currency_symbol().dy_utilities::currency_format($outstanding);					
+			$output .= ' - '.__('deposit', 'dynamicpackages').' '.currency_symbol().currency_format($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.currency_symbol().currency_format($outstanding);					
 		}
 		return $output;
 	}

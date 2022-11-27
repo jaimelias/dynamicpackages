@@ -345,7 +345,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					$price = $terms[$x]['price'];
 					$description = $terms[$x]['description'];
 					
-					$label .= ' <br/><small class="semibold">'.esc_html(dy_utilities::currency_symbol().number_format($price, 2, '.', ',').' '.__('per person', 'dynamicpackages')).'</small>';
+					$label .= ' <br/><small class="semibold">'.esc_html(currency_symbol().number_format($price, 2, '.', ',').' '.__('per person', 'dynamicpackages')).'</small>';
 
 					if(!empty($description))
 					{
@@ -448,7 +448,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					{
 						array_push($output, array(
 								'id' => $term_id, 
-								'price' => floatval(dy_utilities::currency_format($price)), 
+								'price' => floatval(currency_format($price)), 
 								'name' => $name,
 								'description' => $term->description
 							)

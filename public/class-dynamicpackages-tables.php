@@ -26,7 +26,7 @@ class Dynamicpackages_Tables{
 		$this->package_type = intval(package_field('package_package_type'));
 		$this->price_type = intval(package_field('package_fixed_price'));
 		$this->has_children = dy_validators::has_children();
-		$this->currency_symbol = dy_utilities::currency_symbol();
+		$this->currency_symbol = currency_symbol();
 	}
 
 	public function price_table()

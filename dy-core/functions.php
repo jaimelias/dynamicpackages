@@ -440,7 +440,7 @@ if(!function_exists('load_picker_scripts'))
         {
             wp_enqueue_script( 'picker-time-translation', $plugin_dir_url.$picker_translation, array('jquery', 'picker-js'), '3.6.2', true);
         }	
-        //picker end        
+        //picker end  
     }
 }
 
@@ -453,6 +453,61 @@ if(!function_exists('load_picker_styles'))
 		wp_enqueue_style( 'picker-time-css', $plugin_dir_url . 'css/picker/default.time.css', array(), '', 'all' );		
 	}
 }
+
+if(!function_exists('currency_format'))
+{
+	function currency_format($amount)
+	{
+		return number_format(floatval($amount), 2, '.', '');
+	}
+}
+
+if(!function_exists('currency_symbol'))
+{
+	function currency_symbol()
+	{
+		return '$';
+	}
+}
+
+if(!function_exists('currency_name'))
+{
+	function currency_name()
+	{
+		return 'USD';
+	}
+}
+
+if(!function_exists('is_date'))
+{
+	function is_date($str)
+	{
+		$output = false;
+		$which_var = strval($str).'_is_date';
+		global $$which_var;
+		
+		if(isset($$which_var))
+		{
+			$output = $$which_var;
+		}
+		else
+		{
+			$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
+
+			if(preg_match($regex, $str))
+			{
+				$output = true;
+			}
+
+			$GLOBALS[$which_var] = $output;
+		}
+		
+		return $output;
+	}
+}
+
+
+
 
 
 ?>

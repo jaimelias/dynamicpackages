@@ -160,7 +160,7 @@ class Dynamicpackages_Actions{
 	{
 		if(dy_validators::validate_quote())
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), dy_utilities::currency_symbol(), dy_utilities::currency_format(dy_utilities::total()), sanitize_text_field($_POST['title']));			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), currency_format(dy_utilities::total()), sanitize_text_field($_POST['title']));			
 		}
 		else
 		{

@@ -351,7 +351,7 @@ class Dynamicpackages_JSON
 						{	
 							for($x = 0; $x < count($api_disabled_dates); $x++)
 							{
-								if(dy_validators::is_date($api_disabled_dates[$x]))
+								if(is_date($api_disabled_dates[$x]))
 								{
 									$api_date = $api_disabled_dates[$x];
 									$api_date = explode("-", $api_date);

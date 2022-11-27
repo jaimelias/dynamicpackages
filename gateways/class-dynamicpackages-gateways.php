@@ -158,7 +158,7 @@ class Dynamicpackages_Gateways
 				$output .= ' '.__('the deposit', 'dynamicpackages');
 			}
 			
-			$output .= ' ('.dy_utilities::currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dy_utilities::payment_amount(), 2, '.', ',').'</span>';
+			$output .= ' ('.currency_symbol().'<span class="dy_calc dy_calc_total">'.number_format(dy_utilities::payment_amount(), 2, '.', ',').'</span>';
 			
 			$output .= ') '.__('with', 'dynamicpackages');
 			
