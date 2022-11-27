@@ -458,7 +458,9 @@ if(!function_exists('currency_format'))
 {
 	function currency_format($amount)
 	{
-		return number_format(floatval($amount), 2, '.', '');
+		//return number_format(floatval($amount), 2, '.', '');
+
+		return round($amount, 2);
 	}
 }
 
