@@ -495,9 +495,7 @@ if(!function_exists('is_valid_date'))
 			}
 			else
 			{
-				$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
-
-				if(preg_match($regex, $str))
+				if(DateTime::createFromFormat('Y-m-d', $str) !== false)
 				{
 					$output = true;
 				}
@@ -510,7 +508,35 @@ if(!function_exists('is_valid_date'))
 	}
 }
 
+if(!function_exists('is_valid_time'))
+{
+	function is_valid_time($str)
+	{
+		$output = false;
 
+		if(!empty($str))
+		{
+			$which_var = $str.'_is_valid_time';
+			global $$which_var;
+			
+			if(isset($$which_var))
+			{
+				$output = $$which_var;
+			}
+			else
+			{
+				if(DateTime::createFromFormat('H:i A', $str) !== false)
+				{
+					$output = true;
+				}
+
+				$GLOBALS[$which_var] = $output;
+			}
+		}
+				
+		return $output;
+	}
+}
 
 
 
