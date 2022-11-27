@@ -236,6 +236,8 @@ function dy_money($price = 0, $wrap = '')
 			$output .= '</span>';
 		}
 	}
+
+	write_log($output);
 	
 	return $output;
 }
