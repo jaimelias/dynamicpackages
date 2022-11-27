@@ -142,7 +142,7 @@ class dy_utilities {
 							else if($option == 'expiration')
 							{
 								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
-								$output = (is_date($output)) ? $output : null;
+								$output = (is_valid_date($output)) ? $output : null;
 							}
 							else if($option == 'publish')
 							{
@@ -971,13 +971,13 @@ class dy_utilities {
 			{
 				$sum_arr = [$sum];
 
-				if(is_date($booking_date))
+				if(is_valid_date($booking_date))
 				{
 					if(isset($_REQUEST['end_date']))
 					{
 						$end_date = sanitize_text_field($_REQUEST['end_date']);
 
-						if(is_date($end_date))
+						if(is_valid_date($end_date))
 						{
 							$sum_arr[] = $sum;
 							$week_days_to_surcharge[] = $end_date;

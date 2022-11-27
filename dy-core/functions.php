@@ -478,30 +478,34 @@ if(!function_exists('currency_name'))
 	}
 }
 
-if(!function_exists('is_date'))
+if(!function_exists('is_valid_date'))
 {
-	function is_date($str)
+	function is_valid_date($str)
 	{
 		$output = false;
-		$which_var = strval($str).'_is_date';
-		global $$which_var;
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
 
-			if(preg_match($regex, $str))
+		if(!empty($str))
+		{
+			$which_var = $str.'_is_valid_date';
+			global $$which_var;
+			
+			if(isset($$which_var))
 			{
-				$output = true;
+				$output = $$which_var;
 			}
+			else
+			{
+				$regex = "/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/";
 
-			$GLOBALS[$which_var] = $output;
+				if(preg_match($regex, $str))
+				{
+					$output = true;
+				}
+
+				$GLOBALS[$which_var] = $output;
+			}
 		}
-		
+				
 		return $output;
 	}
 }
