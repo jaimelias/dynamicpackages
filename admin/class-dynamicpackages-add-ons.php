@@ -448,7 +448,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					{
 						array_push($output, array(
 								'id' => $term_id, 
-								'price' => floatval(currency_format($price)), 
+								'price' => floatval(money_format($price)), 
 								'name' => $name,
 								'description' => $term->description
 							)

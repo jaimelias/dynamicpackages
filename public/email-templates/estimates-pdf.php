@@ -2,7 +2,7 @@
 
 $today = dy_utilities::format_date(strtotime(null));
 $currency_symbol = currency_symbol();
-$total = apply_filters('dy_email_total', currency_format(dy_utilities::total()));
+$total = apply_filters('dy_email_total', money_format(dy_utilities::total()));
 $company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');

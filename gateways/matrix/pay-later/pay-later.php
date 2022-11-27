@@ -63,7 +63,7 @@ class pay_later{
 				add_filter('dy_email_intro', array(&$this, 'subject'));
 				add_filter('dy_email_subject', array(&$this, 'subject'));
 
-				$total = currency_format(dy_utilities::total());
+				$total = money_format(dy_utilities::total());
 				$link = '<a href="'.esc_html($_POST['package_url']).'">'.esc_html($_POST['title']).'</a>';
 
 
@@ -91,7 +91,7 @@ class pay_later{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), currency_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)

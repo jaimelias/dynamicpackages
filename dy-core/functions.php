@@ -454,9 +454,9 @@ if(!function_exists('load_picker_styles'))
 	}
 }
 
-if(!function_exists('currency_format'))
+if(!function_exists('money_format'))
 {
-	function currency_format($amount)
+	function money_format($amount)
 	{
 		return number_format(floatval($amount), 2, '.', '');
 	}
