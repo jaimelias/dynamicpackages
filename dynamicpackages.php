@@ -229,7 +229,7 @@ function dy_money($price = 0, $wrap = '')
 			$output .= '<span class="'.esc_html($wrap).'">';
 		}
 		
-		$output .= esc_html(currency_format($amount));
+		$output .= esc_html($amount);
 		
 		if(!empty($wrap))
 		{
