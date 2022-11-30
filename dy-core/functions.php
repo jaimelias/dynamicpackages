@@ -389,12 +389,11 @@ if(!function_exists('validate_recaptcha'))
 
 								if(array_key_exists('error-codes', $data))
 								{
-									write_log($data['error-codes']);
+									$errors = $data['error-codes'];
 
-									write_log(in_array('invalid-input-response' , $data['error-codes']));
-
-									if(in_array('invalid-input-response' , $data['error-codes']))
+									if(in_array('invalid-input-response', $errors))
 									{
+										write_log($errors);
 										cloudflare_ban_ip_address();
 									}
 								}
