@@ -100,14 +100,13 @@ const getNonce = async () => {
 
 const handleSubmitButton = form => {
     jQuery(form).find('button').prop('disabled', true);
-
     sessionStorage.setItem('last_form_submit_url', window.location.href);
 };
 
 const createFormSubmit = async (form) => {
 
     //disable button to prevent double-click
-    handleSubmitButton();
+    handleSubmitButton(form);
 
     const {ipGeoLocation, lang} = dyCoreArgs;
 	let formFields = formToArray(form);
