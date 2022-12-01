@@ -19,24 +19,36 @@ if ( ! function_exists('write_log')) {
 	
 	function write_log ( $log )  {
 		
-		$output = '';
-		$request_uri = sanitize_text_field($_SERVER['REQUEST_URI']);
-		$user_agent = sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+		$separator = "**************************";
+		$separator_start = "\n\n" .$separator . 'WRITE_LOG_START' . $separator . "\n";
+		$separator_end = "\n" .$separator . 'WRITE_LOG_END' . $separator. "\n\n";
+		$output = $separator_start . "URI = " . $_SERVER['REQUEST_URI'] . "\nUSER_AGENT = " . $_SERVER['HTTP_USER_AGENT'] . "\nIP_ADDRESS = " . get_ip_address() .  "\nTYPE = " . gettype($log);
+		if(isset($_POST))
+		{
+			if(is_array($_POST))
+			{
+				if(!empty($_POST))
+				{
+					$output .= "\nPOST = " .json_encode($_POST);
+				}
+			}
+		}
+
+		$output .= "\nLOG = ";
 		
 		if ( is_array( $log ) || is_object( $log ) ) {
 
-			$output = print_r(var_error_log($log), true);
-			$output .= ' '.$request_uri;  
-			$output .= ' '.$user_agent;  
-			error_log( $output );
+			$log = print_r(var_error_log($log), true);
 		}
-		else
-		{
-			$output = $log;
-			$output .= ' '.$request_uri;  
-			$output .= ' '.$user_agent;
-			error_log( $log );
-		}
+
+
+		$output .= "\n\n" . $log . $separator_end;
+
+
+
+		error_log( $output );
+
+
 	}
 }
 
