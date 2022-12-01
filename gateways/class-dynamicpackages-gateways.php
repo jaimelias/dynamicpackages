@@ -367,7 +367,7 @@ class Dynamicpackages_Gateways
 
 		if($total > 0)
 		{
-			$text .= ' $'.money_format($total);
+			$text .= ' $'.money($total);
 		}
 
 		echo whatsapp_button($label, $text);

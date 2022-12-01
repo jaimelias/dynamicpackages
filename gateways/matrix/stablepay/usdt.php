@@ -86,7 +86,7 @@ class usdt{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money_format(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
@@ -428,7 +428,7 @@ class usdt{
 	public function message($message)
 	{
 		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
-		$amount = currency_symbol().''.money_format($amount);
+		$amount = currency_symbol().''.money($amount);
 		$network = sanitize_text_field($_POST['dy_network']);
 		$address = get_option($this->id . '_' . $network);
 		$network_name = $this->enabled_networks[$network]['name'];

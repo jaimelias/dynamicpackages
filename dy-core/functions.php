@@ -470,9 +470,9 @@ if(!function_exists('load_picker_styles'))
 	}
 }
 
-if(!function_exists('money_format'))
+if(!function_exists('money'))
 {
-	function money_format($amount)
+	function money($amount)
 	{
 		return number_format(floatval($amount), 2, '.', '');
 	}

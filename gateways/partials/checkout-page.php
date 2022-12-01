@@ -49,8 +49,8 @@
 		$deposit = dy_utilities::get_deposit();
 		$payment_amount = dy_utilities::total()*($deposit*0.01);
 		$outstanding_amount = floatval($total)-$payment_amount;
-		$outstanding_label = esc_html(__('Outstanding Balance', 'dynamicpackages')).' $<span class="dy_calc dy_calc_outstanding">'.money_format($outstanding_amount).'</span>';
-		$deposit_label = esc_html(__('Deposit', 'dynamicpackages')).' $<span class="dy_calc dy_calc_total">'.money_format($payment_amount).'</span> ('.esc_html($deposit).'%)';
+		$outstanding_label = esc_html(__('Outstanding Balance', 'dynamicpackages')).' $<span class="dy_calc dy_calc_outstanding">'.money($outstanding_amount).'</span>';
+		$deposit_label = esc_html(__('Deposit', 'dynamicpackages')).' $<span class="dy_calc dy_calc_total">'.money($payment_amount).'</span> ('.esc_html($deposit).'%)';
 	}
 	
 ?>
@@ -92,8 +92,8 @@
 						<?php else: ?>
 						<td><?php echo (esc_html__('Adults', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_regular'])); ?></strong></td>
 						<?php endif; ?>
-						<td>$<?php echo money_format($price_regular); ?></td>
-						<td>$<?php echo money_format($price_regular * $pax_regular); ?></td>
+						<td>$<?php echo money($price_regular); ?></td>
+						<td>$<?php echo money($price_regular * $pax_regular); ?></td>
 					</tr>
 					
 					<?php if($free > 0 && $pax_free > 0): ?>
@@ -107,8 +107,8 @@
 					<?php if($discount > 0 && $pax_discount > 0): ?>
 					<tr>
 						<td><?php echo (esc_html__('Children', 'dynamicpackages')).' '.esc_html($start_discount.' - '.$discount).' '.esc_html(__('years old', 'dynamicpackages')); ?>: <strong><?php esc_html_e(sanitize_text_field($_GET['pax_discount'])); ?></strong></td>
-						<td>$<?php echo money_format($price_discount); ?></td>
-						<td>$<?php echo money_format(($price_discount * $pax_discount)); ?></td>
+						<td>$<?php echo money($price_discount); ?></td>
+						<td>$<?php echo money(($price_discount * $pax_discount)); ?></td>
 					</tr>
 					<?php endif; ?>
 					
@@ -133,10 +133,10 @@
 					<tr>
 						<td colspan="3">
 							<?php if(dy_validators::validate_coupon()): ?>
-								<s class="small light text-muted"><?php echo (esc_html__('Regular Price', 'dynamicpackages')); ?> <span class="dy_calc dy_calc_regular"><?php echo money_format(dy_utilities::total('regular')); ?></span></s>
+								<s class="small light text-muted"><?php echo (esc_html__('Regular Price', 'dynamicpackages')); ?> <span class="dy_calc dy_calc_regular"><?php echo money(dy_utilities::total('regular')); ?></span></s>
 								<br/>
 							<?php endif; ?>
-							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> $<span class="dy_calc dy_calc_amount"><?php echo money_format(dy_utilities::total()); ?></span>
+							<?php echo esc_html(__('Total', 'dynamicpackages')); ?> $<span class="dy_calc dy_calc_amount"><?php echo money(dy_utilities::total()); ?></span>
 						</td>
 					</tr>
 					
