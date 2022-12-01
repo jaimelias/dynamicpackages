@@ -69,6 +69,7 @@ class Dynamicpackages_Booking_Page {
 		
 		$regular_amount = floatval(dy_utilities::total('regular'));
 		$amount = floatval(dy_utilities::total());
+		$payment_amount = floatval(dy_utilities::payment_amount());
 
 		$data = array(
 			'post_id' => intval($post->ID),
@@ -76,7 +77,7 @@ class Dynamicpackages_Booking_Page {
 			'coupon_code' => esc_html($coupon_code),
 			'coupon_discount' => floatval($coupon_discount),
 			'coupon_discount_amount' => (floatval($coupon_discount) > 0 ) ? ($regular_amount - $amount) : 0,
-			'total' => floatval(money_format(dy_utilities::payment_amount())),
+			'total' => $payment_amount,
 			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
 			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
 			'booking_hour' => esc_html(dy_utilities::hour()),
