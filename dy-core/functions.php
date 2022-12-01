@@ -142,6 +142,16 @@ if(!function_exists('current_language'))
 	}
 }
 
+if(!function_exists('get_ip_address'))
+{
+	function get_ip_address()
+	{
+		return (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) ? $_SERVER['HTTP_CF_CONNECTING_IP'] : $_SERVER['REMOTE_ADDR'];
+	}
+	
+}
+
+
 if(!function_exists('cloudflare_ban_ip_address'))
 {
 	function cloudflare_ban_ip_address(){
@@ -152,16 +162,11 @@ if(!function_exists('cloudflare_ban_ip_address'))
 		if(!empty($dy_cloudflare_api_token))
 		{
 			$url = 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules';
+			$ip = get_ip_address();
 
-
-			if(isset($_SERVER['HTTP_CF_CONNECTING_IP']))
+			
+			if(!isset($_SERVER['HTTP_CF_CONNECTING_IP']))
 			{
-				$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
-			}
-			else
-			{
-				$ip = $_SERVER['REMOTE_ADDR'];
-
 				if($_SERVER['SERVER_NAME'] !== 'localhost')
 				{
 					$admin_email = get_option('admin_email');
