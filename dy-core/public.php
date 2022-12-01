@@ -9,10 +9,6 @@ class Dynamic_Core_Public {
         $this->version = '0.0.3';
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
         $this->dirname_file = dirname( __FILE__ );
-
-
-        write_log($this);
-
         add_shortcode('whatsapp', array(&$this, 'whatsapp_button'));
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
         add_action( 'minimal_pre_body', array(&$this, 'gtm_tracking_iframe'));
