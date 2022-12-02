@@ -28,7 +28,7 @@ const selectGateway = () => {
 			if(type === 'card-on-site')
 			{
 				jQuery('#dy_card_payment_conditions').removeClass('hidden');
-				$('.dy_card_form_fields').removeClass('hidden');
+				jQuery('.dy_card_form_fields').removeClass('hidden');
 
 				cardRequiredFields.forEach(name => {
 					jQuery(thisForm).find('[name="'+name+'"]').addClass('required');

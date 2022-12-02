@@ -474,7 +474,7 @@ if(!function_exists('money'))
 {
 	function money($amount)
 	{
-		return number_format(floatval($amount), 2, '.', '');
+		return number_format(floatval($amount), 2, '.', ',');
 	}
 }
 
