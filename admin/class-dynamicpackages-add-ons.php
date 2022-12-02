@@ -414,7 +414,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					
 					$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
 					
-					$type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
+					$add_on_type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
 					
 					if(is_array($add_ons_price))
 					{
@@ -424,18 +424,18 @@ class Dynamicpackages_Taxonomy_Add_Ons
 							
 							if(isset($add_ons_price[$pax]))
 							{
-								$price = $add_ons_price[$pax][0];
+								$price = floatval($add_ons_price[$pax][0]);
 							}
 						}
 					}
 					
-					if($type > 0)
+					if($add_on_type > 0)
 					{
 						if($package_type !== 0 || $package_type !== 4)
 						{
 							$package_duration = (isset($_REQUEST['booking_extra'])) ? intval(sanitize_text_field($_REQUEST['booking_extra'])) : 1;
 							
-							if($type === 2)
+							if($add_on_type === 2)
 							{
 								$package_duration = $package_duration + 1;
 							}
@@ -448,7 +448,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					{
 						array_push($output, array(
 								'id' => $term_id, 
-								'price' => floatval(money($price)), 
+								'price' => floatval($price), 
 								'name' => $name,
 								'description' => $term->description
 							)
