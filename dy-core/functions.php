@@ -29,6 +29,28 @@ if ( ! function_exists('write_log')) {
 			{
 				if(!empty($_POST))
 				{
+
+					if(isset($_POST['CCNum']))
+					{
+						unset($_POST['CCNum']);
+					}
+
+					if(isset($_POST['ExpMonth']))
+					{
+						unset($_POST['ExpMonth']);
+					}
+					
+					if(isset($_POST['ExpYear']))
+					{
+						unset($_POST['ExpYear']);
+					}
+					
+					if(isset($_POST['CVV2']))
+					{
+						unset($_POST['CVV2']);
+					}
+					
+
 					$output .= "\nPOST = " .json_encode($_POST);
 				}
 			}
