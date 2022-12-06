@@ -326,7 +326,7 @@ class Dynamicpackages_Reviews
 			} ?>
 			
 			<p class="semibold large">
-				<span><?php echo get_comment_author_link().' <small>'.$this->wp_star_rating(get_comment_meta($comment->comment_ID, 'dy_rating', true)).'</small>'; ?></span>
+				<span><strong><?php echo get_comment_author().'</strong> <small>'.$this->wp_star_rating(get_comment_meta($comment->comment_ID, 'dy_rating', true)).'</small>'; ?></span>
 				<span class="text-muted"><?php echo get_comment_date(); ?></span> <small><?php edit_comment_link(__('Edit', 'dynamicpackages'), ' ', ' ' ); ?></small>
 			</p>
 
