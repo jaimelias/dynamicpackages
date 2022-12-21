@@ -19,14 +19,14 @@ class BccSettings implements \JsonSerializable
     /** @var $email string The email address that you would like to receive the BCC */
     private $email;
 
-	/**
-	 * Optional constructor
-	 *
-	 * @param bool|null   $enable Indicates if this setting is enabled
-	 * @param string|null $email  The email address that you would like
-	 *                            to receive the BCC
-	 * @throws \SendGrid\Mail\TypeException
-	 */
+    /**
+     * Optional constructor
+     *
+     * @param bool|null   $enable Indicates if this setting is enabled
+     * @param string|null $email  The email address that you would like
+     *                            to receive the BCC
+     * @throws \SendGrid\Mail\TypeException
+     */
     public function __construct($enable = null, $email = null)
     {
         if (isset($enable)) {
@@ -91,6 +91,7 @@ class BccSettings implements \JsonSerializable
      *
      * @return null|array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return array_filter(

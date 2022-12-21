@@ -22,13 +22,13 @@ class Section implements \JsonSerializable
     /** @var $value string Section value */
     private $value;
 
-	/**
-	 * Optional constructor
-	 *
-	 * @param string|null $key   Section key
-	 * @param string|null $value Section value
-	 * @throws \SendGrid\Mail\TypeException
-	 */
+    /**
+     * Optional constructor
+     *
+     * @param string|null $key   Section key
+     * @param string|null $value Section value
+     * @throws \SendGrid\Mail\TypeException
+     */
     public function __construct($key = null, $value = null)
     {
         if (isset($key)) {
@@ -92,6 +92,7 @@ class Section implements \JsonSerializable
      *
      * @return null|array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return array_filter(

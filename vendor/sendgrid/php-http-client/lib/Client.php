@@ -200,6 +200,11 @@ class Client
     /**
      * @var bool
      */
+    protected $verifySSLCerts;
+    
+    /**
+     * @var bool
+     */
     protected $retryOnLimit;
 
     /**
@@ -212,12 +217,13 @@ class Client
     /**
      * Initialize the client.
      *
-     * @param string $host         the base url (e.g. https://api.sendgrid.com)
-     * @param array  $headers      global request headers
-     * @param string $version      api version (configurable) - this is specific to the SendGrid API
-     * @param array  $path         holds the segments of the url path
-     * @param array  $curlOptions  extra options to set during curl initialization
-     * @param bool   $retryOnLimit set default retry on limit flag
+     * @param string $host           the base url (e.g. https://api.sendgrid.com)
+     * @param array  $headers        global request headers
+     * @param string $version        api version (configurable) - this is specific to the SendGrid API
+     * @param array  $path           holds the segments of the url path
+     * @param array  $curlOptions    extra options to set during curl initialization
+     * @param bool   $retryOnLimit   set default retry on limit flag
+     * @param bool   $verifySSLCerts set default verify certificates flag
      */
     public function __construct(
         $host,
@@ -225,7 +231,8 @@ class Client
         $version = null,
         $path = null,
         $curlOptions = null,
-        $retryOnLimit = false
+        $retryOnLimit = false,
+        $verifySSLCerts = true
     ) {
         $this->host = $host;
         $this->headers = $headers ?: [];
@@ -233,6 +240,7 @@ class Client
         $this->path = $path ?: [];
         $this->curlOptions = $curlOptions ?: [];
         $this->retryOnLimit = $retryOnLimit;
+        $this->verifySSLCerts = $verifySSLCerts;
         $this->isConcurrentRequest = false;
         $this->savedRequests = [];
     }
@@ -306,7 +314,21 @@ class Client
     }
 
     /**
-     * Set concurrent request flag.
+     * Set default verify certificates flag
+     *
+     * @param bool $verifySSLCerts
+     *
+     * @return Client
+     */
+    public function setVerifySSLCerts($verifySSLCerts)
+    {
+        $this->verifySSLCerts = $verifySSLCerts;
+
+        return $this;
+    }
+
+    /**
+     * Set concurrent request flag
      *
      * @param bool $isConcurrent
      *
@@ -324,13 +346,16 @@ class Client
      *
      * @param array $queryParams an array of all the query parameters
      *
+     * Nested arrays will resolve to multiple instances of the same parameter
+     *
      * @return string
      */
     private function buildUrl($queryParams = null)
     {
         $path = '/' . implode('/', $this->path);
         if (isset($queryParams)) {
-            $path .= '?' . http_build_query($queryParams);
+            // Regex replaces `[0]=`, `[1]=`, etc. with `=`.
+            $path .= '?' . preg_replace('/%5B(?:\d|[1-9]\d+)%5D=/', '=', http_build_query($queryParams));
         }
 
         return sprintf('%s%s%s', $this->host, $this->version ?: '', $path);
@@ -352,7 +377,7 @@ class Client
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER => true,
                 CURLOPT_CUSTOMREQUEST => strtoupper($method),
-                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYPEER => $this->verifySSLCerts,
                 CURLOPT_FAILONERROR => false,
             ] + $this->curlOptions;
 
@@ -368,6 +393,15 @@ class Client
             $headers = array_merge($headers, ['Content-Type: application/json']);
         }
         $options[CURLOPT_HTTPHEADER] = $headers;
+
+        if (class_exists('\\Composer\\CaBundle\\CaBundle') && method_exists('\\Composer\\CaBundle\\CaBundle', 'getSystemCaRootBundlePath')) {
+            $caPathOrFile = \Composer\CaBundle\CaBundle::getSystemCaRootBundlePath();
+            if (is_dir($caPathOrFile) || (is_link($caPathOrFile) && is_dir(readlink($caPathOrFile)))) {
+                $options[CURLOPT_CAPATH] = $caPathOrFile;
+            } else {
+                $options[CURLOPT_CAINFO] = $caPathOrFile;
+            }
+        }
 
         return $options;
     }
@@ -492,6 +526,8 @@ class Client
      * @param array $requests
      *
      * @return Response[]
+     *
+     * @throws InvalidRequest
      */
     public function makeAllRequests(array $requests = [])
     {
@@ -512,6 +548,11 @@ class Client
         $sleepDurations = 0;
         foreach ($channels as $id => $channel) {
             $content = curl_multi_getcontent($channel);
+
+            if ($content === false) {
+                throw new InvalidRequest(curl_error($channel), curl_errno($channel));
+            }
+
             $response = $this->parseResponse($channel, $content);
 
             if ($requests[$id]['retryOnLimit'] && $response->statusCode() === self::TOO_MANY_REQUESTS_HTTP_CODE) {
@@ -556,6 +597,7 @@ class Client
         }
         $client = new static($this->host, $this->headers, $this->version, $this->path);
         $client->setCurlOptions($this->curlOptions);
+        $client->setVerifySSLCerts($this->verifySSLCerts);
         $client->setRetryOnLimit($this->retryOnLimit);
         $this->path = [];
 

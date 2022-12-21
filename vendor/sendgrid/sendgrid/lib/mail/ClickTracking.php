@@ -19,15 +19,15 @@ class ClickTracking implements \JsonSerializable
     /* @var $enable_text bool Indicates if this setting should be included in the text/plain portion of your email */
     private $enable_text;
 
-	/**
-	 * Optional constructor
-	 *
-	 * @param bool|null $enable      Indicates if this setting is enabled
-	 * @param bool|null $enable_text Indicates if this setting should be
-	 *                               included in the text/plain portion of
-	 *                               your email
-	 * @throws \SendGrid\Mail\TypeException
-	 */
+    /**
+     * Optional constructor
+     *
+     * @param bool|null $enable      Indicates if this setting is enabled
+     * @param bool|null $enable_text Indicates if this setting should be
+     *                               included in the text/plain portion of
+     *                               your email
+     * @throws \SendGrid\Mail\TypeException
+     */
     public function __construct($enable = null, $enable_text = null)
     {
         if (isset($enable)) {
@@ -91,6 +91,7 @@ class ClickTracking implements \JsonSerializable
      *
      * @return null|array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return array_filter(

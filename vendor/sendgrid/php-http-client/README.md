@@ -1,11 +1,10 @@
 ![SendGrid Logo](twilio_sendgrid_logo.png)
 
-[![Travis Badge](https://travis-ci.org/sendgrid/php-http-client.svg?branch=main)](https://travis-ci.org/sendgrid/php-http-client)
+[![Tests](https://github.com/sendgrid/php-http-client/actions/workflows/test-and-deploy.yml/badge.svg)](https://github.com/sendgrid/php-http-client/actions/workflows/test-and-deploy.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sendgrid/php-http-client.svg?style=flat-square)](https://packagist.org/packages/sendgrid/php-http-client)
-[![Email Notifications Badge](https://dx.sendgrid.com/badge/php)](https://dx.sendgrid.com/newsletter/php)
 [![Twitter Follow](https://img.shields.io/twitter/follow/sendgrid.svg?style=social&label=Follow)](https://twitter.com/sendgrid)
 [![GitHub contributors](https://img.shields.io/github/contributors/sendgrid/php-http-client.svg)](https://github.com/sendgrid/php-http-client/graphs/contributors)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **Quickly and easily access any RESTful or RESTful-like API.**
 
@@ -20,7 +19,6 @@ All updates to this library are documented in our [CHANGELOG](CHANGELOG.md).
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
-- [Roadmap](#roadmap)
 - [How to Contribute](#contribute)
 - [Thanks](#thanks)
 - [About](#about)
@@ -40,7 +38,7 @@ Add php-http-client to your `composer.json` file. If you are not using [Composer
 ```json
 {
   "require": {
-    "sendgrid/php-http-client": "^3.11.1"
+    "sendgrid/php-http-client": "^3.14.4"
   }
 }
 ```
@@ -164,11 +162,6 @@ You can do the following to create a .env file:
 
 Then, just add your API Key into your .env file.
 
-<a name="roadmap"></a>
-# Roadmap
-
-If you are interested in the future direction of this project, please take a look at our [milestones](https://github.com/sendgrid/php-http-client/milestones). We would love to hear your feedback.
-
 <a name="contribute"></a>
 # How to Contribute
 
@@ -197,4 +190,4 @@ If you've instead found a bug in the library or would like new features added, g
 
 <a name="license"></a>
 # License
-[The MIT License (MIT)](LICENSE.md)
+[The MIT License (MIT)](LICENSE)
