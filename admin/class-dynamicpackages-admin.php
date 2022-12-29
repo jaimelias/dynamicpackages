@@ -27,7 +27,8 @@ class Dynamicpackages_Admin {
 
 		if(isset($pagenow))
 		{
-			if($pagenow === 'post.php' || $pagenow === 'term.php')
+			
+			if(in_array($pagenow, array('post.php', 'term.php', 'admin.php')))
 			{
 				$GLOBALS['dy_load_picker_scripts'] = true;
 			}
