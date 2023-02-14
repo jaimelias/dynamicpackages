@@ -607,20 +607,23 @@ class dy_utilities {
 	public static function get_date_range($from, $to, $add_extra = true)
 	{
 		$output = array();
-		$from = new DateTime($from);
-		$to = new DateTime($to);
-		
-		if($add_extra === true)
-		{
-			$to = $to->modify('+1 day');
-		}
-			
-		
-		$range = new DatePeriod($from, new DateInterval('P1D'), $to);
 
-		foreach ($range as $key => $value)
+		if(!empty($from) && !empty($to))
 		{
-			array_push($output, $value->format('Y-m-d'));
+			$from = new DateTime($from);
+			$to = new DateTime($to);
+			
+			if($add_extra === true)
+			{
+				$to = $to->modify('+1 day');
+			}
+
+			$range = new DatePeriod($from, new DateInterval('P1D'), $to);
+
+			foreach ($range as $key => $value)
+			{
+				array_push($output, $value->format('Y-m-d'));
+			}
 		}
 		
 		return $output;
