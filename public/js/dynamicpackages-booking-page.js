@@ -45,7 +45,7 @@ const selectGateway = () => {
 					jQuery('#dy_card_payment_conditions').addClass('hidden');
 				}
 				
-				$('.dy_card_form_fields').addClass('hidden');
+				jQuery('.dy_card_form_fields').addClass('hidden');
 
 				cardRequiredFields.forEach(name => {
 					jQuery(thisForm).find('[name="'+name+'"]').removeClass('required').removeClass('invalid_field');
