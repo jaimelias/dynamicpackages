@@ -113,7 +113,9 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 		}
 	};
 
-	const height = (maxNum > data.length) ? (cellHeight*maxNum)+headerHeight : (cellHeight*data.length)+headerHeight;
+	const height = (maxNum > data.length) 
+		? (cellHeight * maxNum)+ (headerHeight * 2) 
+		: (cellHeight * data.length) + (headerHeight * 2);
 	
 	jQuery(containerId).height(height);
 		
@@ -185,7 +187,7 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 			gridData = gridData.filter((v, i) => i+1 <= maxNum);
 		}
 
-		const height = (cellHeight*maxNum)+headerHeight;
+		const height = (cellHeight * maxNum)+ (headerHeight * 2);
 	
 		jQuery(containerId).height(height);
 		
@@ -288,7 +290,7 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 		console.log(oldData);
 	}
 
-	const height = (cellHeight * changes.length) + headerHeight;
+	const height = (cellHeight * changes.length) + (headerHeight * 2);
 
 	jQuery(containerId).height(height);
 	output = {...oldData, [gridId]: changes};
