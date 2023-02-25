@@ -2,7 +2,7 @@
 
 	$GLOBALS['dy_is_archive'] = true;
 	$posts_per_page = isset($dis_imp) ? $dis_imp : 12;
-	$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+	$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
 	$today = date("Y-m-d");
 	$tomorrow = date("Y-m-d", strtotime('tomorrow midnight'));
 	$week = date('Y-m-d', strtotime('+7 day', strtotime('today midnight')));
