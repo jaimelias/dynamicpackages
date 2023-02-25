@@ -894,12 +894,12 @@ class Dynamicpackages_Public {
 		if(dy_validators::validate_category_location())
 		{
 			$paged = current_page_number();
-			$url = get_the_permalink().'?';
+			$url = get_the_permalink();
 			$url_var = array();
 			
 			if($paged > 1)
 			{
-				$url_var['paged'] = sanitize_text_field($paged);
+				$url = esc_url($url . 'page/' . $paged);
 			}
 		
 			if(isset($_GET['location']))
@@ -925,6 +925,8 @@ class Dynamicpackages_Public {
 				$search =  substr($search, 0, 25);
 				$url_var['keywords'] = $search;
 			}			
+
+			$url = $url.'?';
 
 			$url_var = http_build_query($url_var);
 			
