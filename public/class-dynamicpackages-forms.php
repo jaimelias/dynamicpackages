@@ -449,7 +449,7 @@ class Dynamicpackages_Forms
 		if($archive_query->found_posts > $posts_per_page)
 		{
 			$big = 999999999;
-			$current = max( 1, get_query_var('page') );
+			$current = max( 1, get_query_var('paged') );
 
 			$pages =  paginate_links( array(
 				'format' => 'page/%#%',

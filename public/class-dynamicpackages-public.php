@@ -322,7 +322,7 @@ class Dynamicpackages_Public {
 					}					
 				}
 				
-				$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
+				$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
 				
 				if($paged > 1)
 				{
@@ -461,7 +461,7 @@ class Dynamicpackages_Public {
 				}
 			}
 			
-			$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
+			$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
 			
 			if($paged > 1)
 			{
@@ -893,7 +893,7 @@ class Dynamicpackages_Public {
 	{
 		if(dy_validators::validate_category_location())
 		{
-			$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
+			$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
 			$url = get_the_permalink().'?';
 			$url_var = array();
 			
