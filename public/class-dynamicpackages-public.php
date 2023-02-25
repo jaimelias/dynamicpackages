@@ -900,7 +900,14 @@ class Dynamicpackages_Public {
 			
 			if($paged > 1)
 			{
-				$url = $url . '/page/' . $paged;
+				$slug = 'page/' . $paged;
+
+				if(!is_front_page())
+				{
+					$slug = '/' . $slug;
+				}
+
+				$url = $url . $slug;
 			}
 		
 			if(isset($_GET['location']))
@@ -939,8 +946,14 @@ class Dynamicpackages_Public {
 			{
 				$paged = current_page_number();
 				$url = get_the_permalink();
+				$slug = 'page/' . $paged;
 
-				echo '<link rel="canonical" href="'.esc_url($url. '/page/' . $paged ).'" />';
+				if(!is_front_page())
+				{
+					$slug = '/' . $slug;
+				}
+
+				echo '<link rel="canonical" href="'.esc_url($url. $slug).'" />';
 			}
 		}
 	}
