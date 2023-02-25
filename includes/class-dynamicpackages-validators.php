@@ -669,7 +669,6 @@ class dy_validators
 
 			if(!empty($location) || !empty($category) || !empty($sort_by) || !empty($search))
 			{
-				remove_action('wp_head', 'rel_canonical');
 				$output = true;
 			}
 

@@ -29,6 +29,7 @@ class Dynamicpackages_Public {
 		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
 
 		//meta tags
+		add_action('wp', array(&$this, 'remove_canonicals'));
 		add_action('wp_head', array(&$this, 'meta_tags'));
 		add_action('wp_head', array(&$this, 'location_category_canonical'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
@@ -392,7 +393,7 @@ class Dynamicpackages_Public {
 			{
 				$location = '';
 				$category = '';
-				$title = __('Find Packages').': ';
+				$title = __('Find Packages', 'dynamicpackages') . ': ';
 
 				if(isset($_GET['keywords']))
 				{
@@ -899,7 +900,7 @@ class Dynamicpackages_Public {
 			
 			if($paged > 1)
 			{
-				$url = esc_url($url . 'page/' . $paged);
+				$url = $url . '/page/' . $paged;
 			}
 		
 			if(isset($_GET['location']))
@@ -931,6 +932,16 @@ class Dynamicpackages_Public {
 			$url_var = http_build_query($url_var);
 			
 			echo '<link rel="canonical" href="'.esc_url($url.$url_var).'" />';
+		}
+		else
+		{
+			if(current_page_number() > 1)
+			{
+				$paged = current_page_number();
+				$url = get_the_permalink();
+
+				echo '<link rel="canonical" href="'.esc_url($url. '/page/' . $paged ).'" />';
+			}
 		}
 	}
 	
@@ -1410,5 +1421,24 @@ class Dynamicpackages_Public {
 		}
 		
 		return $output;
+	}
+
+	public static function remove_canonicals()
+	{
+
+		if(dy_validators::validate_category_location())
+		{
+			remove_action('wp_head', 'rel_canonical');
+		}
+		else
+		{
+			$paged = current_page_number();
+
+			if($paged > 1)
+			{
+				remove_action('wp_head', 'rel_canonical');
+			}
+		}
+
 	}
 }
