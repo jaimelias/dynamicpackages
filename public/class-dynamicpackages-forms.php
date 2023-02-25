@@ -451,7 +451,7 @@ class Dynamicpackages_Forms
 			$big = 999999999;
 
 			$pages =  paginate_links( array(
-				'format' => '?paged=%#%',
+				'format' => 'page/%#%',
 				'current' => max( 1, get_query_var('paged') ),
 				'total' => $archive_query->max_num_pages,
 				'type'  => 'array',
