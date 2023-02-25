@@ -4,6 +4,28 @@ if ( !defined( 'WPINC' ) ) exit;
 
 define('DY_CORE_FUNCTIONS', true);
 
+if ( ! function_exists('current_page_number')) {
+
+	function current_page_number()
+	{
+		$page = 1;
+
+		if(!empty(get_query_var('page')))
+		{
+			$page = get_query_var('page');
+		}
+
+		if(!empty(get_query_var('paged')))
+		{
+			$page = get_query_var('paged');
+		}
+		
+		return $page;
+
+	}
+
+}
+
 if ( ! function_exists('write_log')) {
 	
 	if(! function_exists('var_error_log'))

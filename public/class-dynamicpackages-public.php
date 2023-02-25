@@ -322,7 +322,7 @@ class Dynamicpackages_Public {
 					}					
 				}
 				
-				$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+				$paged = current_page_number();
 				
 				if($paged > 1)
 				{
@@ -461,7 +461,7 @@ class Dynamicpackages_Public {
 				}
 			}
 			
-			$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+			$paged = current_page_number();
 			
 			if($paged > 1)
 			{
@@ -893,7 +893,7 @@ class Dynamicpackages_Public {
 	{
 		if(dy_validators::validate_category_location())
 		{
-			$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+			$paged = current_page_number();
 			$url = get_the_permalink().'?';
 			$url_var = array();
 			
