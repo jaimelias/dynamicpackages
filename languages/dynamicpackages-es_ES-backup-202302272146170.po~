@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2023-02-27 21:46+0000\n"
+"PO-Revision-Date: 2023-02-27 21:44+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -447,7 +447,7 @@ msgstr "Código"
 
 #: dy-core/admin.php:75
 msgid "Company"
-msgstr "Empresa"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:313
 msgid "Confirmation Message"
@@ -633,7 +633,7 @@ msgstr "Editar %s"
 
 #: dy-core/integrations/orders.php:27
 msgid "Edit Order"
-msgstr "Editar orden"
+msgstr ""
 
 #: admin/class-dynamicpackages-post-type.php:31
 msgid "Edit Package"
@@ -683,7 +683,7 @@ msgstr "Cotización"
 
 #: admin/class-dynamicpackages-metaboxes.php:592
 msgid "Event"
-msgstr "Evento"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:483
 msgid "Event Date"
