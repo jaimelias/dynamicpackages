@@ -13,8 +13,53 @@ class Dynamicpackages_Post_Types
 		$this->plugin_dir_file = plugin_dir_url( __FILE__ );
 		add_action('init', array(&$this, 'package_post_type'));
 		add_action('init', array(&$this, 'register_taxonomies'), 10);
+
+		//forces custom taxonomies to polylang
+		add_filter( 'pll_get_taxonomies', array(&$this, 'add_tax_to_pll'), 10, 2 );
 	}
 	
+	public function get_taxonomies_arr()
+	{
+		return array(
+			'package_location' => array(
+				'name' => __( 'Locations', 'dynamicpackages'),
+				'singular_name' => __( 'Location', 'dynamicpackages'),
+				'emoji' => '🌎',
+				'public' => true
+			),
+			'package_category' => array(
+				'name' => __( 'Categories', 'dynamicpackages'),
+				'singular_name' => __( 'Category', 'dynamicpackages'),
+				'emoji' => '🏷️',
+				'public' => true
+			),
+			'package_included' => array(
+				'name' => __( 'Included', 'dynamicpackages'),
+				'singular_name' => __( 'Included', 'dynamicpackages'),
+				'emoji' => '🍹',
+				'public' => false		
+			),
+			'package_not_included' => array(
+				'name' => __( 'Not Included', 'dynamicpackages'),
+				'singular_name' => __( 'Not Included', 'dynamicpackages'),
+				'emoji' => '❌',
+				'public' => false
+			),
+			'package_terms_conditions' => array(
+				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
+				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages'),
+				'emoji' => '📄',
+				'public' => true
+			),
+			'package_add_ons' => array(
+				'name' => __( 'Add-ons', 'dynamicpackages'),
+				'singular_name' => __( 'Add-on', 'dynamicpackages'),
+				'emoji' => '🤑',
+				'public' => false
+			)
+		);
+	}
+
 	public function package_post_type() {
 
 	
@@ -69,44 +114,7 @@ class Dynamicpackages_Post_Types
 	public function register_taxonomies(){
 
 
-		$taxonomies = array(
-			'package_location' => array(
-				'name' => __( 'Locations', 'dynamicpackages'),
-				'singular_name' => __( 'Location', 'dynamicpackages'),
-				'emoji' => '🌎',
-				'public' => true
-			),
-			'package_category' => array(
-				'name' => __( 'Categories', 'dynamicpackages'),
-				'singular_name' => __( 'Category', 'dynamicpackages'),
-				'emoji' => '🏷️',
-				'public' => true
-			),
-			'package_included' => array(
-				'name' => __( 'Included', 'dynamicpackages'),
-				'singular_name' => __( 'Included', 'dynamicpackages'),
-				'emoji' => '🍹',
-				'public' => false		
-			),
-			'package_not_included' => array(
-				'name' => __( 'Not Included', 'dynamicpackages'),
-				'singular_name' => __( 'Not Included', 'dynamicpackages'),
-				'emoji' => '❌',
-				'public' => false
-			),
-			'package_terms_conditions' => array(
-				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
-				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages'),
-				'emoji' => '📄',
-				'public' => true
-			),
-			'package_add_ons' => array(
-				'name' => __( 'Add-ons', 'dynamicpackages'),
-				'singular_name' => __( 'Add-on', 'dynamicpackages'),
-				'emoji' => '🤑',
-				'public' => false
-			)
-		);
+		$taxonomies = $this->get_taxonomies_arr();
 
 		foreach($taxonomies as $key => $value)
 		{
@@ -139,6 +147,28 @@ class Dynamicpackages_Post_Types
 			register_taxonomy($key, array( 'packages' ), $args );
 		}
 	}
+
+
+	public function add_tax_to_pll($taxonomies, $is_settings)
+	{
+
+		//forces custom taxonomies to polylang
+
+		if(!is_array($taxonomies))
+		{
+			return false;
+		}
+
+		$custom_taxonomies = $this->get_taxonomies_arr();
+
+		foreach($custom_taxonomies as $k => $v)
+		{
+			$taxonomies[$k] = $k;
+		}
+
+		return $taxonomies;
+	}
+
 }
 
 ?>
