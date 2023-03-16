@@ -117,7 +117,7 @@ class Sendgrid_Mailer
 
 		add_settings_field( 
 			'sendgrid_email', 
-			'Bot Email', 
+			'Bot Email (From)', 
 			array(&$this, 'settings_input'), 
 			'sendgrid_settings', 
 			'sendgrid_settings_section',
