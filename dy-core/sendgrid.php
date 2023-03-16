@@ -209,85 +209,114 @@ class Sendgrid_Mailer
 									
 				if($count_emails > 0)
 				{
-					if($this->is_transactional())
+					if(is_email($emails[0]))
 					{
-						$email = new \SendGrid\Mail\Mail(); 
-						$email->setFrom(sanitize_email($this->email), esc_html($this->name));
-						$email->setSubject($subject);
-						
-						for($x = 0; $x < $count_emails; $x++)
-						{	
-							if(is_email($emails[$x]))
-							{
-								//allow only 10 recipients
+						$to = $emails[0];
 
-								if($x <= 10)
+						if($this->is_transactional())
+						{
+
+							write_log('is transactional');
+
+							$email = new \SendGrid\Mail\Mail();
+							$email->addTo($to);
+							$email->setFrom(sanitize_email($this->email), esc_html($this->name));
+							$email->setSubject($subject);
+
+							for($x = 0; $x < $count_emails; $x++)
+							{	
+								if($x > 0 && $x <= 10)
 								{
-									if($x === 0)
-									{
-										$email->addTo($emails[$x]);
-									}
-									else
+									//allow only 10 recipients
+
+									if(is_email($emails[$x]))
 									{
 										$email->addCc($emails[$x], null, null, ($x-1));
 									}
+									else
+									{
+										$invalid_emails = true;
+										break;
+									}
 								}
 							}
-							else
+							
+							if(!$invalid_emails)
 							{
-								$invalid_emails = true;
-								break;
+								if($this->email_bcc)
+								{
+									$email->addBcc($this->email_bcc);
+								}
+								
+								$email->addContent('text/html', $message);				
+								
+								if($this->has_attachments($attachments))
+								{
+									for($x = 0; $x < count($attachments); $x++)
+									{						
+										$attachment = new Attachment();
+										$attachment->setContent($attachments[$x]['data']);
+										$attachment->setType('application/pdf');
+										$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
+										$attachment->setDisposition('attachment');
+										$email->addAttachment($attachment);	
+									}							
+								}
+								
+								$sendgrid = new \SendGrid(esc_html($this->web_api_key));
+								
+								try {
+									
+									$response = $sendgrid->send($email);
+									
+									if($response->statusCode() >= 200 && $response->statusCode() <= 299)
+									{
+										return $args;
+									}
+									else
+									{
+										write_log($response->body());
+									}
+								} 
+								catch(Exception $e)
+								{
+									write_log($e->getMessage());
+								}
 							}
 						}
-						
-						if(!$invalid_emails)
+						else
 						{
+							$headers = array('Content-Type: text/html; charset=UTF-8');
+
 							if($this->email_bcc)
 							{
-								$email->addBcc($this->email_bcc);
+								$headers[] = 'Bcc: ' . $this->email_bcc;
 							}
-							
-							$email->addContent('text/html', $message);				
-							
-							if($this->has_attachments($attachments))
+
+							for($x = 0; $x < $count_emails; $x++)
 							{
-								for($x = 0; $x < count($attachments); $x++)
-								{						
-									$attachment = new Attachment();
-									$attachment->setContent($attachments[$x]['data']);
-									$attachment->setType('application/pdf');
-									$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
-									$attachment->setDisposition('attachment');
-									$email->addAttachment($attachment);	
-								}							
+								if($x > 0 && $x <= 10)
+								{
+									if(is_email($emails[$x]))
+									{
+										$headers[] = 'Cc: ' . $emails[$x];
+									}
+									else
+									{
+										$invalid_emails = true;
+									}
+								}
 							}
-							
-							$sendgrid = new \SendGrid(esc_html($this->web_api_key));
-							
-							try {
-								
-								$response = $sendgrid->send($email);
-								
-								if($response->statusCode() >= 200 && $response->statusCode() <= 299)
-								{
-									return $args;
-								}
-								else
-								{
-									write_log($response->body());
-								}
-							} 
-							catch(Exception $e)
+
+							if(!$invalid_emails)
 							{
-								write_log($e->getMessage());
+								wp_mail($to, $subject, $message, $headers);
 							}
-						}
+						}						
 					}
 					else
 					{
-						$to = implode(',', $emails);
-						$headers = array('Content-Type: text/html; charset=UTF-8');
-						wp_mail($to, $subject, $message, $headers);
+						write_log('first item in $emails is not an email');
 					}						
 				}
 				else
