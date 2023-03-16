@@ -31,11 +31,11 @@ class Sendgrid_Mailer
 	{
 		add_action('admin_init', array(&$this, 'settings_init'), 1);
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 1);
+		add_filter('wp_mail_from', array(&$this, 'from_email'), 100, 1);
+		add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
 		
 		if($this->is_transactional())
 		{
-			add_filter('wp_mail_from', array(&$this, 'from_email'), 100, 1);
-			add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
 			add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 100, 1 );
 			add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
 		}
@@ -337,13 +337,14 @@ class Sendgrid_Mailer
 
 		return preg_replace($search, $replace, $template);			
 	}
-	public function from_name()
+	public function from_name($name)
 	{
-		return $this->name;
+		return $this->is_transactional() ? $this->name : get_bloginfo('name');
 	}
+
 	public function from_email($email)
 	{
-		return $this->email;
+		return ($this->is_transactional()) ? $this->email : $email;
 	}
 }
 
