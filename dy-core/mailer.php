@@ -226,9 +226,6 @@ class Dy_Mailer
 
 						if($this->is_transactional())
 						{
-
-							write_log('is transactional');
-
 							$email = new \SendGrid\Mail\Mail();
 							$email->addTo($to);
 							$email->setFrom(sanitize_email($this->email), esc_html($this->name));
@@ -379,12 +376,12 @@ class Dy_Mailer
 	}
 	public function from_name($name)
 	{
-		return $this->is_transactional() ? $this->name : get_bloginfo('name');
+		return ($this->name) ? $this->name : get_bloginfo('name');
 	}
 
 	public function from_email($email)
 	{
-		return ($this->is_transactional()) ? $this->email : $email;
+		return ($this->email) ? $this->email : $email;
 	}
 }
 
