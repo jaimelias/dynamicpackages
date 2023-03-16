@@ -9,10 +9,10 @@ if(!defined('DY_CORE_FUNCTIONS'))
     require_once $plugin_dir_path . 'functions.php';
 }
 
-if(!class_exists('Sendgrid_Mailer'))
+if(!class_exists('Dy_Mailer'))
 {
-    require_once $plugin_dir_path . 'sendgrid.php';
-    new Sendgrid_Mailer();
+    require_once $plugin_dir_path . 'mailer.php';
+    new Dy_Mailer();
 }
 
 if(!class_exists('Dynamic_Core_Admin'))

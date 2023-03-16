@@ -4,7 +4,7 @@ if ( !defined( 'WPINC' ) ) exit;
 
 use SendGrid\Mail\Attachment;
 
-class Sendgrid_Mailer
+class Dy_Mailer
 {
 	
 	public function __construct()
@@ -16,7 +16,7 @@ class Sendgrid_Mailer
 		$this->smtp_api_key = get_option('sendgrid_smtp_api_key');
 		$this->smtp_username = get_option('sendgrid_smtp_username');
 		$this->host = 'smtp.sendgrid.net';
-		$this->settings_title = 'Sendgrid Mailer';
+		$this->settings_title = 'Mailer Config';
 		$this->init();
 	}
 	
@@ -80,8 +80,8 @@ class Sendgrid_Mailer
 			
 			<h1><?php esc_html($this->settings_title); ?></h1>	
 			<?php
-			settings_fields( 'sendgrid_settings' );
-			do_settings_sections( 'sendgrid_settings' );
+			settings_fields( 'mailer_settings' );
+			do_settings_sections( 'mailer_settings' );
 			submit_button();
 			?>			
 		</form>
@@ -91,36 +91,38 @@ class Sendgrid_Mailer
 	
 	public function settings_init()
 	{
-		register_setting('sendgrid_settings', 'sendgrid_web_api_key', 'sanitize_user');
-		register_setting('sendgrid_settings', 'sendgrid_email', 'sanitize_text_field');
-		register_setting('sendgrid_settings', 'sendgrid_email_bcc', 'sanitize_text_field');
-		register_setting('sendgrid_settings', 'sendgrid_name', 'sanitize_text_field');
-		
-		register_setting('sendgrid_settings', 'sendgrid_smtp_api_key', 'sanitize_text_field');
-		register_setting('sendgrid_settings', 'sendgrid_smtp_username', 'sanitize_text_field');
+
+		//mailer settings
+		register_setting('mailer_settings', 'sendgrid_email', 'sanitize_text_field');
+		register_setting('mailer_settings', 'sendgrid_email_bcc', 'sanitize_text_field');
+		register_setting('mailer_settings', 'sendgrid_name', 'sanitize_text_field');		
+
+
+		//sendgrid settings
+		register_setting('mailer_settings', 'sendgrid_web_api_key', 'sanitize_user');
+		register_setting('mailer_settings', 'sendgrid_smtp_api_key', 'sanitize_text_field');
+		register_setting('mailer_settings', 'sendgrid_smtp_username', 'sanitize_text_field');
+
+		add_settings_section(
+			'mailer_settings_section', 
+			$this->settings_title, 
+			'', 
+			'mailer_settings'
+		);
 
 		add_settings_section(
 			'sendgrid_settings_section', 
-			$this->settings_title, 
+			'Sendgrid', 
 			'', 
-			'sendgrid_settings'
-		);
+			'mailer_settings'
+		);		
 		
-		add_settings_field( 
-			'sendgrid_web_api_key', 
-			'Web API Key', 
-			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
-			'sendgrid_settings_section',
-			array('name' => 'sendgrid_web_api_key') 
-		);
-
 		add_settings_field( 
 			'sendgrid_email', 
 			'Bot Email (From)', 
 			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
-			'sendgrid_settings_section',
+			'mailer_settings', 
+			'mailer_settings_section',
 			array('name' => 'sendgrid_email', 'type' => 'email') 
 		);
 		
@@ -128,25 +130,34 @@ class Sendgrid_Mailer
 			'sendgrid_email_bcc', 
 			'Inbox Email (Bcc)', 
 			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
-			'sendgrid_settings_section',
+			'mailer_settings', 
+			'mailer_settings_section',
 			array('name' => 'sendgrid_email_bcc', 'type' => 'email') 
 		);			
 
 		add_settings_field( 
 			'sendgrid_name', 
-			'Name', 
+			'From Name', 
 			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
-			'sendgrid_settings_section',
+			'mailer_settings', 
+			'mailer_settings_section',
 			array('name' => 'sendgrid_name') 
 		);	
+
+		add_settings_field( 
+			'sendgrid_web_api_key', 
+			'Web API Key', 
+			array(&$this, 'settings_input'), 
+			'mailer_settings', 
+			'sendgrid_settings_section',
+			array('name' => 'sendgrid_web_api_key') 
+		);
 
 		add_settings_field( 
 			'sendgrid_smtp_api_key', 
 			'SMTP API Key', 
 			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
+			'mailer_settings', 
 			'sendgrid_settings_section',
 			array('name' => 'sendgrid_smtp_api_key') 
 		);	
@@ -154,7 +165,7 @@ class Sendgrid_Mailer
 			'sendgrid_smtp_username', 
 			'SMTP Username', 
 			array(&$this, 'settings_input'), 
-			'sendgrid_settings', 
+			'mailer_settings', 
 			'sendgrid_settings_section',
 			array('name' => 'sendgrid_smtp_username') 
 		);
@@ -382,7 +393,7 @@ if(!function_exists('sg_mail'))
 {
 	function sg_mail($args)
 	{
-		$mailer = new Sendgrid_Mailer();
+		$mailer = new Dy_Mailer();
 		$mailer->send($args);
 		return true;
 	}
