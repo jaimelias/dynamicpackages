@@ -38,7 +38,6 @@ class Sendgrid_Mailer
 			add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
 			add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 100, 1 );
 			add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
-			add_filter('sg_mail', array(&$this, 'send'));
 		}
 	}
 
@@ -209,8 +208,8 @@ class Sendgrid_Mailer
 				$invalid_emails = false;
 									
 				if($count_emails > 0)
-				{					
-					if($this->web_api_key)
+				{
+					if($this->is_transactional())
 					{
 						$email = new \SendGrid\Mail\Mail(); 
 						$email->setFrom(sanitize_email($this->email), esc_html($this->name));
@@ -353,7 +352,9 @@ if(!function_exists('sg_mail'))
 {
 	function sg_mail($args)
 	{
-		return apply_filters('sg_mail', $args);
+		$mailer = new Sendgrid_Mailer();
+		$mailer->send($args);
+		return true;
 	}
 }
 
