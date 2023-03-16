@@ -117,7 +117,7 @@ class Sendgrid_Mailer
 
 		add_settings_field( 
 			'sendgrid_email', 
-			'Email', 
+			'Bot Email', 
 			array(&$this, 'settings_input'), 
 			'sendgrid_settings', 
 			'sendgrid_settings_section',
@@ -126,7 +126,7 @@ class Sendgrid_Mailer
 		
 		add_settings_field( 
 			'sendgrid_email_bcc', 
-			'Bcc', 
+			'Inbox Email (Bcc)', 
 			array(&$this, 'settings_input'), 
 			'sendgrid_settings', 
 			'sendgrid_settings_section',
