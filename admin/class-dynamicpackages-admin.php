@@ -73,6 +73,7 @@ class Dynamicpackages_Admin {
 		register_setting('dy_settings', 'dy_archive_hide_excerpt', 'esc_html');
 		register_setting('dy_settings', 'dy_archive_hide_enabled_days', 'esc_html');
 		register_setting('dy_settings', 'dy_archive_hide_start_address', 'esc_html');
+		register_setting('dy_settings', 'dy_archive_hide_max_persons', 'esc_html');
 
 		//cloudflare
 		register_setting('dy_settings', 'dy_cloudflare_api_token', 'esc_html');
@@ -188,6 +189,15 @@ class Dynamicpackages_Admin {
 			'dy_settings', 
 			'dy_list_section',
 			array('name' => 'dy_archive_hide_start_address', 'type' => 'checkbox')
+		);
+
+		add_settings_field( 
+			'dy_archive_hide_max_persons', 
+			esc_html(__( 'Hide Max. Persons', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_list_section',
+			array('name' => 'dy_archive_hide_max_persons', 'type' => 'checkbox')
 		);
 		
 	}

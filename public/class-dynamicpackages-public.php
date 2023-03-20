@@ -1048,6 +1048,7 @@ class Dynamicpackages_Public {
 		$check_in_end_hour = package_field('package_check_in_end_hour');
 		$return_address = package_field('package_return_address');
 		$return_hour = package_field('package_return_hour');
+		$max_persons = package_field('package_max_persons');
 		
 		$args = array(
 			'enabled_days' => array('calendar', $this->enabled_days()),
@@ -1062,6 +1063,7 @@ class Dynamicpackages_Public {
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
 			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. dy_utilities::return_hour()),
+			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
 			'return_address' => array('location', $return_address)
 		);
 		
@@ -1079,6 +1081,7 @@ class Dynamicpackages_Public {
 		}
 		if($is_checkout_page || $is_booking_page)
 		{
+			unset($args['max_persons']);
 			unset($args['enabled_days']);
 		}
 		if(!$check_in_hour)
@@ -1093,7 +1096,7 @@ class Dynamicpackages_Public {
 		{
 			unset($args['start_address']);
 		}
-		if(!$end_date && $is_transport && (is_booking_page() || is_checkout_page()))
+		if(!$end_date && $is_transport && ( $is_booking_page || $is_checkout_page ))
 		{
 			unset($args['end_date']);
 			unset($args['label_return']);
@@ -1143,6 +1146,10 @@ class Dynamicpackages_Public {
 			if(get_option('dy_archive_hide_enabled_days'))
 			{
 				unset($args['enabled_days']);
+			}
+			if(get_option('dy_archive_hide_max_persons'))
+			{
+				unset($args['max_persons']);
 			}
 		}
 
