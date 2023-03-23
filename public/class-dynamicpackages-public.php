@@ -1084,6 +1084,14 @@ class Dynamicpackages_Public {
 			unset($args['max_persons']);
 			unset($args['enabled_days']);
 		}
+		else
+		{
+			if(get_option('dy_archive_hide_max_persons'))
+			{
+				unset($args['max_persons']);
+			}
+		}
+
 		if(!$check_in_hour)
 		{
 			unset($args['check_in']);
@@ -1146,10 +1154,6 @@ class Dynamicpackages_Public {
 			if(get_option('dy_archive_hide_enabled_days'))
 			{
 				unset($args['enabled_days']);
-			}
-			if(get_option('dy_archive_hide_max_persons'))
-			{
-				unset($args['max_persons']);
 			}
 		}
 
