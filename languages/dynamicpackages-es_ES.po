@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2023-02-27 21:46+0000\n"
+"PO-Revision-Date: 2023-03-29 17:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -116,12 +116,12 @@ msgstr "Número de cuenta"
 msgid "Account Type"
 msgstr "Tipo de cuenta"
 
-#: admin/class-dynamicpackages-post-type.php:29
+#: admin/class-dynamicpackages-post-type.php:74
 #: dy-core/integrations/orders.php:25
 msgid "Add New"
 msgstr "Agregar nuevo"
 
-#: admin/class-dynamicpackages-post-type.php:124
+#: admin/class-dynamicpackages-post-type.php:132
 #: dy-core/integrations/providers.php:54
 #, php-format
 msgid "Add New %s"
@@ -131,7 +131,7 @@ msgstr "Agregar nuevo %s"
 msgid "Add New Order"
 msgstr "Agregar nueva orden"
 
-#: admin/class-dynamicpackages-post-type.php:28
+#: admin/class-dynamicpackages-post-type.php:73
 msgid "Add New Package"
 msgstr "Agregar nuevo paquete"
 
@@ -139,11 +139,11 @@ msgstr "Agregar nuevo paquete"
 msgid "Add to calendar"
 msgstr "Agregar al calendario"
 
-#: admin/class-dynamicpackages-post-type.php:105
+#: admin/class-dynamicpackages-post-type.php:56
 msgid "Add-on"
 msgstr "Extra"
 
-#: admin/class-dynamicpackages-post-type.php:104
+#: admin/class-dynamicpackages-post-type.php:55
 #: gateways/partials/checkout-page.php:123
 msgid "Add-ons"
 msgstr "Extras"
@@ -173,7 +173,7 @@ msgstr "Email del agente"
 msgid "Alias"
 msgstr "Alias"
 
-#: admin/class-dynamicpackages-post-type.php:119
+#: admin/class-dynamicpackages-post-type.php:127
 #: dy-core/integrations/providers.php:49
 #, php-format
 msgid "All %s"
@@ -195,7 +195,7 @@ msgstr ""
 msgid "All Orders"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:27
+#: admin/class-dynamicpackages-post-type.php:72
 msgid "All Packages"
 msgstr "Todos los paquetes"
 
@@ -356,7 +356,7 @@ msgstr "Datos de la tarjeta"
 msgid "Card Numbers"
 msgstr "Número de la tarjeta"
 
-#: admin/class-dynamicpackages-post-type.php:80
+#: admin/class-dynamicpackages-post-type.php:31
 msgid "Categories"
 msgstr "Categorías"
 
@@ -364,7 +364,7 @@ msgstr "Categorías"
 msgid "Categories:"
 msgstr "Categorías:"
 
-#: admin/class-dynamicpackages-post-type.php:81
+#: admin/class-dynamicpackages-post-type.php:32
 msgid "Category"
 msgstr "Categoría"
 
@@ -376,8 +376,8 @@ msgstr "CCLW"
 msgid "Check Pricing"
 msgstr "Ver precios"
 
-#: public/class-dynamicpackages-public.php:1058
-#: public/class-dynamicpackages-public.php:1063
+#: public/class-dynamicpackages-public.php:1059
+#: public/class-dynamicpackages-public.php:1064
 msgid "Check-in"
 msgstr "Check-in"
 
@@ -394,7 +394,7 @@ msgstr "Cuenta corriente"
 msgid "Checkout Error"
 msgstr "Error de pago"
 
-#: admin/class-dynamicpackages-admin.php:121
+#: admin/class-dynamicpackages-admin.php:122
 msgid "Checkout Webhook URL"
 msgstr "Webhook URL de pagos"
 
@@ -523,10 +523,14 @@ msgstr "Email de pruebas"
 msgid "default"
 msgstr "predeterminado"
 
+#: public/class-dynamicpackages-public.php:1060
+msgid "Departing"
+msgstr "Partida"
+
 #: admin/class-dynamicpackages-metaboxes.php:44
 #: admin/class-dynamicpackages-metaboxes.php:327
 #: public/class-dynamicpackages-public.php:721
-#: public/class-dynamicpackages-public.php:1055
+#: public/class-dynamicpackages-public.php:1056
 msgid "Departure"
 msgstr "Partida"
 
@@ -617,7 +621,7 @@ msgstr "Duración"
 msgid "Dynamic Packages"
 msgstr ""
 
-#: admin/class-dynamicpackages-admin.php:258
+#: admin/class-dynamicpackages-admin.php:268
 msgid "Dynamicpackages"
 msgstr "Dynamicpackages"
 
@@ -625,7 +629,7 @@ msgstr "Dynamicpackages"
 msgid "Edit"
 msgstr "Editar"
 
-#: admin/class-dynamicpackages-post-type.php:122
+#: admin/class-dynamicpackages-post-type.php:130
 #: dy-core/integrations/providers.php:52
 #, php-format
 msgid "Edit %s"
@@ -635,7 +639,7 @@ msgstr "Editar %s"
 msgid "Edit Order"
 msgstr "Editar orden"
 
-#: admin/class-dynamicpackages-post-type.php:31
+#: admin/class-dynamicpackages-post-type.php:76
 msgid "Edit Package"
 msgstr "Editar paquetes"
 
@@ -722,7 +726,7 @@ msgstr "Destacado"
 msgid "Filter locations list"
 msgstr "Filtrar lista de ubicaciones"
 
-#: admin/class-dynamicpackages-post-type.php:39
+#: admin/class-dynamicpackages-post-type.php:84
 msgid "Filter package list"
 msgstr ""
 
@@ -751,11 +755,11 @@ msgstr "Vie"
 msgid "Friday"
 msgstr "Viernes"
 
-#: admin/class-dynamicpackages-admin.php:159
+#: admin/class-dynamicpackages-admin.php:160
 #: admin/class-dynamicpackages-metaboxes.php:208
 #: admin/class-dynamicpackages-metaboxes.php:224
 #: admin/class-dynamicpackages-metaboxes.php:242
-#: public/class-dynamicpackages-public.php:1358
+#: public/class-dynamicpackages-public.php:1369
 msgid "From"
 msgstr "Desde"
 
@@ -784,7 +788,7 @@ msgstr "pago completo de"
 msgid "Full Payments and Deposits"
 msgstr "Pagos completos y depositos"
 
-#: admin/class-dynamicpackages-admin.php:99
+#: admin/class-dynamicpackages-admin.php:100
 msgid "Gateway Settings"
 msgstr "Configuración de plataforma de pagos"
 
@@ -792,7 +796,7 @@ msgstr "Configuración de plataforma de pagos"
 msgid "General Inquiry"
 msgstr "Solicitud general"
 
-#: admin/class-dynamicpackages-admin.php:83
+#: admin/class-dynamicpackages-admin.php:84
 #: gateways/matrix/bank/international.php:346
 #: gateways/matrix/bank/local.php:264 gateways/matrix/cuanto/cuanto.php:214
 #: gateways/matrix/nequi/nequi_direct.php:242
@@ -806,7 +810,7 @@ msgstr "Solicitud general"
 msgid "General Settings"
 msgstr "Configuración General"
 
-#: public/class-dynamicpackages-public.php:1279
+#: public/class-dynamicpackages-public.php:1290
 msgid "Get a"
 msgstr "Obtén un"
 
@@ -818,7 +822,7 @@ msgstr "Cotizar"
 msgid "get more leads even if the prices are not defined"
 msgstr "obtén más solicitudes aún si los precios no esta definidos"
 
-#: admin/class-dynamicpackages-admin.php:150
+#: admin/class-dynamicpackages-admin.php:151
 msgid "Global Disabled Dates"
 msgstr "Deshabilitar fechas globalmente"
 
@@ -864,19 +868,23 @@ msgstr ""
 "nuestro programa %s. Recibirá un correo electrónico de %s con más "
 "instrucciones para completar esta solicitud."
 
-#: admin/class-dynamicpackages-admin.php:177
+#: admin/class-dynamicpackages-admin.php:178
 msgid "Hide Enabled Days"
 msgstr "Enconder días habilitados"
+
+#: admin/class-dynamicpackages-admin.php:196
+msgid "Hide Max. Persons"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:582
 msgid "Hide Package"
 msgstr "Ocultar paquete"
 
-#: admin/class-dynamicpackages-admin.php:168
+#: admin/class-dynamicpackages-admin.php:169
 msgid "Hide Package Description (Excerpt)"
 msgstr "Esconder descripción de paquetes (extracto)"
 
-#: admin/class-dynamicpackages-admin.php:186
+#: admin/class-dynamicpackages-admin.php:187
 msgid "Hide Start Address"
 msgstr "Esconder dirección de inicio"
 
@@ -889,8 +897,6 @@ msgid "hight to low"
 msgstr "alto a bajo"
 
 #: includes/class-dynamicpackages-utilities.php:266
-#: public/class-dynamicpackages-public.php:1059
-#: public/class-dynamicpackages-public.php:1064
 msgid "Hour"
 msgstr "Hora"
 
@@ -923,8 +929,8 @@ msgstr "ID"
 msgid "Include?"
 msgstr "¿Incluir?"
 
-#: admin/class-dynamicpackages-post-type.php:86
-#: admin/class-dynamicpackages-post-type.php:87
+#: admin/class-dynamicpackages-post-type.php:37
+#: admin/class-dynamicpackages-post-type.php:38
 #: gateways/partials/checkout-page.php:115
 #: public/email-templates/estimates-pdf.php:23
 #: public/email-templates/estimates.php:26
@@ -939,7 +945,7 @@ msgstr "Incluye:"
 msgid "Increase maximum number of participants by"
 msgstr "Incrementar el número máximo de participantes por"
 
-#: admin/class-dynamicpackages-admin.php:106
+#: admin/class-dynamicpackages-admin.php:107
 msgid "Integrations Settings"
 msgstr "Configuración de integraciones"
 
@@ -1086,11 +1092,11 @@ msgstr "Unidad de tiempo"
 msgid "Local Bank Transfer"
 msgstr "Transferencia de banco local"
 
-#: admin/class-dynamicpackages-post-type.php:75
+#: admin/class-dynamicpackages-post-type.php:26
 msgid "Location"
 msgstr "Ubicación"
 
-#: admin/class-dynamicpackages-post-type.php:74
+#: admin/class-dynamicpackages-post-type.php:25
 msgid "Locations"
 msgstr "Ubicaciones"
 
@@ -1114,7 +1120,7 @@ msgstr "asegurate de utilizar"
 msgid "Max. Amount"
 msgstr "Cantidad Máxima"
 
-#: admin/class-dynamicpackages-admin.php:141
+#: admin/class-dynamicpackages-admin.php:142
 msgid "Max. Disabled Dates"
 msgstr "Máximo de fechas deshabilitadas"
 
@@ -1199,7 +1205,7 @@ msgstr "Número celular Nequi"
 msgid "New"
 msgstr "Nuevo"
 
-#: admin/class-dynamicpackages-post-type.php:125
+#: admin/class-dynamicpackages-post-type.php:133
 #: dy-core/integrations/providers.php:55
 #, php-format
 msgid "New %s Name"
@@ -1209,7 +1215,7 @@ msgstr "Nuevo nombre de %s"
 msgid "New Order"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:30
+#: admin/class-dynamicpackages-post-type.php:75
 msgid "New Package"
 msgstr "Nuevo paquete"
 
@@ -1220,13 +1226,13 @@ msgstr "Nuevos"
 
 #: public/class-dynamicpackages-forms.php:101
 #: public/class-dynamicpackages-public.php:485
-#: public/class-dynamicpackages-public.php:1227
+#: public/class-dynamicpackages-public.php:1238
 msgid "next 30 days"
 msgstr "próximos 30 días"
 
 #: public/class-dynamicpackages-forms.php:100
 #: public/class-dynamicpackages-public.php:484
-#: public/class-dynamicpackages-public.php:1223
+#: public/class-dynamicpackages-public.php:1234
 msgid "next 7 days"
 msgstr "próximos 7 días"
 
@@ -1248,18 +1254,18 @@ msgstr "Noches"
 msgid "No"
 msgstr "No"
 
-#: admin/class-dynamicpackages-post-type.php:35
+#: admin/class-dynamicpackages-post-type.php:80
 #: dy-core/integrations/orders.php:31 public/partials/archive.php:347
 msgid "Not found"
 msgstr "No encontrado"
 
-#: admin/class-dynamicpackages-post-type.php:36
+#: admin/class-dynamicpackages-post-type.php:81
 #: dy-core/integrations/orders.php:32
 msgid "Not found in Trash"
 msgstr "No encontrado en papelera"
 
-#: admin/class-dynamicpackages-post-type.php:92
-#: admin/class-dynamicpackages-post-type.php:93
+#: admin/class-dynamicpackages-post-type.php:43
+#: admin/class-dynamicpackages-post-type.php:44
 #: gateways/partials/checkout-page.php:116
 #: public/email-templates/estimates-pdf.php:25
 #: public/email-templates/estimates.php:28
@@ -1291,7 +1297,7 @@ msgstr "Número de temporadas especiales"
 msgid "off"
 msgstr "descuento"
 
-#: public/class-dynamicpackages-public.php:1281
+#: public/class-dynamicpackages-public.php:1292
 msgid "off using the coupon code"
 msgstr "de descuento usando el cupón"
 
@@ -1300,7 +1306,7 @@ msgstr "de descuento usando el cupón"
 msgid "Offer"
 msgstr "Oferta"
 
-#: public/class-dynamicpackages-public.php:1294
+#: public/class-dynamicpackages-public.php:1305
 msgid "Offer valid until"
 msgstr "Oferta válida hasta"
 
@@ -1369,21 +1375,21 @@ msgstr "Saldo"
 msgid "outstanding balance"
 msgstr "saldo"
 
-#: admin/class-dynamicpackages-post-type.php:23
-#: admin/class-dynamicpackages-post-type.php:25
-#: admin/class-dynamicpackages-post-type.php:45
+#: admin/class-dynamicpackages-post-type.php:68
+#: admin/class-dynamicpackages-post-type.php:70
+#: admin/class-dynamicpackages-post-type.php:90
 msgid "Package"
 msgstr "Paquete"
 
-#: admin/class-dynamicpackages-admin.php:113
+#: admin/class-dynamicpackages-admin.php:114
 msgid "Package Archive Page"
 msgstr "Página de archivo de paquetes"
 
-#: admin/class-dynamicpackages-post-type.php:46
+#: admin/class-dynamicpackages-post-type.php:91
 msgid "Package Description"
 msgstr "Descripción del paquete"
 
-#: admin/class-dynamicpackages-admin.php:90
+#: admin/class-dynamicpackages-admin.php:91
 msgid "Package List Settings"
 msgstr "Configuración de lista de paquetes"
 
@@ -1391,8 +1397,8 @@ msgstr "Configuración de lista de paquetes"
 msgid "Package Type"
 msgstr "Tipo de Paquete"
 
-#: admin/class-dynamicpackages-post-type.php:22
-#: admin/class-dynamicpackages-post-type.php:24
+#: admin/class-dynamicpackages-post-type.php:67
+#: admin/class-dynamicpackages-post-type.php:69
 #: public/class-dynamicpackages-public.php:781
 msgid "Packages"
 msgstr "Paquetes"
@@ -1402,11 +1408,11 @@ msgstr "Paquetes"
 msgid "Packages in"
 msgstr "Paquetes en"
 
-#: admin/class-dynamicpackages-post-type.php:37
+#: admin/class-dynamicpackages-post-type.php:82
 msgid "Packages list"
 msgstr "Lista de paquetes"
 
-#: admin/class-dynamicpackages-post-type.php:38
+#: admin/class-dynamicpackages-post-type.php:83
 msgid "Packages list navigation"
 msgstr "Navegar lista de paquetes"
 
@@ -1427,8 +1433,8 @@ msgstr "Paguelo Fácil On-site"
 msgid "Paid"
 msgstr "Pagado"
 
-#: admin/class-dynamicpackages-post-type.php:120
-#: admin/class-dynamicpackages-post-type.php:121
+#: admin/class-dynamicpackages-post-type.php:128
+#: admin/class-dynamicpackages-post-type.php:129
 #: dy-core/integrations/providers.php:50 dy-core/integrations/providers.php:51
 #, php-format
 msgid "Parent %s"
@@ -1438,7 +1444,7 @@ msgstr "%s Superior"
 msgid "Parent Order:"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:26
+#: admin/class-dynamicpackages-post-type.php:71
 msgid "Parent Package:"
 msgstr "Paquete superior:"
 
@@ -1516,6 +1522,10 @@ msgstr "Por persona"
 #: admin/class-dynamicpackages-add-ons.php:348
 msgid "per person"
 msgstr "por persona"
+
+#: public/class-dynamicpackages-public.php:1066
+msgid "pers. max."
+msgstr ""
 
 #: public/class-dynamicpackages-public.php:679
 msgid "person"
@@ -1637,7 +1647,7 @@ msgstr "Publicar"
 msgid "Purple"
 msgstr "Purpura"
 
-#: admin/class-dynamicpackages-admin.php:130
+#: admin/class-dynamicpackages-admin.php:131
 msgid "Quote Webhook URL"
 msgstr "URL de webhook de cotizaciones"
 
@@ -1697,13 +1707,17 @@ msgstr "Solicitar cotización"
 
 #: admin/class-dynamicpackages-metaboxes.php:345
 #: public/class-dynamicpackages-public.php:726
-#: public/class-dynamicpackages-public.php:1061
+#: public/class-dynamicpackages-public.php:1062
 msgid "Return"
 msgstr "Regreso"
 
 #: public/class-dynamicpackages-forms.php:169
 msgid "Return Time"
 msgstr "Hora de regreso"
+
+#: public/class-dynamicpackages-public.php:1065
+msgid "Returning"
+msgstr "Regreso"
 
 #: public/partials/reviews-template.php:7
 msgid "Review(s)"
@@ -1739,7 +1753,7 @@ msgstr "Ahorrando"
 msgid "Saving Account"
 msgstr "Cuenta Corriente"
 
-#: public/class-dynamicpackages-public.php:1054
+#: public/class-dynamicpackages-public.php:1055
 msgid "Schedule"
 msgstr "Horario"
 
@@ -1747,7 +1761,7 @@ msgstr "Horario"
 msgid "Schema Type"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:118
+#: admin/class-dynamicpackages-post-type.php:126
 #: dy-core/integrations/providers.php:48
 #, php-format
 msgid "Search %s"
@@ -1757,7 +1771,7 @@ msgstr "Buscar %s"
 msgid "Search Order"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:34
+#: admin/class-dynamicpackages-post-type.php:79
 msgid "Search Package"
 msgstr "Buscar paquete"
 
@@ -1808,7 +1822,7 @@ msgstr "Mostrar tabla de precios"
 msgid "Show Prices Per Person"
 msgstr "Mostrar precios por persona"
 
-#: public/class-dynamicpackages-public.php:1340
+#: public/class-dynamicpackages-public.php:1351
 msgid "Similar packages"
 msgstr "Paquetes similares"
 
@@ -1860,8 +1874,8 @@ msgstr "Tómese su tiempo para revisar nuestra factura en detalle."
 msgid "Tax Identification ID"
 msgstr "Código de identificación del contrubuyente"
 
-#: admin/class-dynamicpackages-post-type.php:98
-#: admin/class-dynamicpackages-post-type.php:99
+#: admin/class-dynamicpackages-post-type.php:49
+#: admin/class-dynamicpackages-post-type.php:50
 #: gateways/class-dynamicpackages-gateways.php:218
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
@@ -1930,7 +1944,7 @@ msgstr "Hay una nueva solicitud para el programa %s en %s."
 msgid "This coupon expires on %s."
 msgstr "Este cupón expira el %s."
 
-#: public/class-dynamicpackages-public.php:1288
+#: public/class-dynamicpackages-public.php:1299
 #, php-format
 msgid "This coupon is valid for booking of minimum %s %s."
 msgstr "Este cupón es válido para reservas de mínimo %s %s."
@@ -1953,7 +1967,7 @@ msgstr "Jueves"
 msgid "Title Modifier"
 msgstr "Modificador del título"
 
-#: admin/class-dynamicpackages-admin.php:159
+#: admin/class-dynamicpackages-admin.php:160
 #: admin/class-dynamicpackages-metaboxes.php:209
 #: admin/class-dynamicpackages-metaboxes.php:225
 #: admin/class-dynamicpackages-metaboxes.php:243
@@ -2024,8 +2038,8 @@ msgid "Today"
 msgstr "Hoy"
 
 #: public/class-dynamicpackages-public.php:482
-#: public/class-dynamicpackages-public.php:1188
-#: public/class-dynamicpackages-public.php:1215
+#: public/class-dynamicpackages-public.php:1199
+#: public/class-dynamicpackages-public.php:1226
 msgid "today"
 msgstr "hoy"
 
@@ -2034,8 +2048,8 @@ msgid "Tomorrow"
 msgstr "Mañana"
 
 #: public/class-dynamicpackages-public.php:483
-#: public/class-dynamicpackages-public.php:1194
-#: public/class-dynamicpackages-public.php:1219
+#: public/class-dynamicpackages-public.php:1205
+#: public/class-dynamicpackages-public.php:1230
 msgid "tomorrow"
 msgstr "mañana"
 
@@ -2061,7 +2075,7 @@ msgstr "Martes"
 msgid "Turquoise"
 msgstr "Turquesa"
 
-#: admin/class-dynamicpackages-post-type.php:123
+#: admin/class-dynamicpackages-post-type.php:131
 #: dy-core/integrations/providers.php:53
 #, php-format
 msgid "Update %s"
@@ -2071,7 +2085,7 @@ msgstr ""
 msgid "Update Order"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:32
+#: admin/class-dynamicpackages-post-type.php:77
 msgid "Update Package"
 msgstr "Actualizar paquete"
 
@@ -2124,7 +2138,7 @@ msgstr "Muy mal"
 msgid "View Order"
 msgstr ""
 
-#: admin/class-dynamicpackages-post-type.php:33
+#: admin/class-dynamicpackages-post-type.php:78
 msgid "View Package"
 msgstr "Ver paquete"
 

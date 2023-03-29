@@ -1057,12 +1057,12 @@ class Dynamicpackages_Public {
 			'booking_date' => array('calendar', $booking_date),
 			'duration' => array('clock', dy_utilities::show_duration()),
 			'check_in' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_hour),
-			'start_hour' => array('clock', __('Hour', 'dynamicpackages').' '.dy_utilities::hour()),
+			'start_hour' => array('clock', __('Departing', 'dynamicpackages').' '.dy_utilities::hour()),
 			'start_address' => array('location', $start_address),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
-			'return_hour' => array('clock', __('Hour', 'dynamicpackages').' '. dy_utilities::return_hour()),
+			'return_hour' => array('clock', __('Returning', 'dynamicpackages').' '. dy_utilities::return_hour()),
 			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
 			'return_address' => array('location', $return_address)
 		);

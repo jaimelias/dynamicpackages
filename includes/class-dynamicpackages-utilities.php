@@ -1422,14 +1422,18 @@ class dy_utilities {
 			if(in_the_loop())
 			{
 				global $post;
-				$the_id = $post->ID;
-				
-				if(property_exists($post, 'post_parent') && !has_term('', $term_name, $the_id))
-				{
-					$the_id = $post->post_parent;
-				}
 
-				$terms = get_the_terms($the_id, $term_name);
+				$current_terms = get_the_terms($post->ID, $term_name);
+				$current_terms = (is_array($current_terms)) ? $current_terms : array();
+
+				if(property_exists($post, 'post_parent'))
+				{
+					$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
+					$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
+				}
+				
+				$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
+			
 			}
 			else
 			{

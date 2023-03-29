@@ -18,7 +18,7 @@ $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = apply_filters('dy_description', null);
-$details = '<strong style="color: #666666">'.esc_html(__('Itinerary')).':</strong><br/>' . apply_filters('dy_details', null);
+$details = '<strong style="color: #666666">'.esc_html(__('Itinerary', 'dynamicpackages')).':</strong><br/>' . apply_filters('dy_details', null);
 $included = sanitize_text_field($_POST['package_included']);
 $label_included = __('Included', 'dynamicpackages');
 $not_included = sanitize_text_field($_POST['package_not_included']);
