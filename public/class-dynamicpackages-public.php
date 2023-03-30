@@ -82,12 +82,7 @@ class Dynamicpackages_Public {
 		global $dy_request_invalids;
 
 		if(is_singular('packages'))
-		{
-			if($post->post_parent > 0)
-			{
-				echo '<link rel="canonical" href="'.esc_url(get_permalink($post->post_parent)).'"/>';			
-			}
-		
+		{		
 			if(is_booking_page() || isset($dy_request_invalids) || is_checkout_page())
 			{	
 				echo '<meta name="robots" content="noindex, nofollow" />';
@@ -229,7 +224,6 @@ class Dynamicpackages_Public {
 
 			if($post->post_parent > 0)
 			{
-				remove_action('wp_head', 'rel_canonical');
 				$args = array('p' => $post->post_parent, 'posts_per_page' => 1, 'post_type' => 'packages');
 				$parent_query = new WP_Query($args);
 				
