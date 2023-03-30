@@ -55,7 +55,7 @@ function package_field($name, $this_id = null)
 {
 	$week_days = dy_utilities::get_week_days_abbr();
 	$languages = get_languages();
-	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons');
+	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_disabled_dates_api');
 	
 	for($x = 0; $x < count($week_days); $x++)
 	{
