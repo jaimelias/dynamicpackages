@@ -356,7 +356,14 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_starting_at', esc_attr( $starting_at ) );
 		}
 
-		//occupancy_day
+		//transport one-way surcharge
+		if(isset( $_POST['package_one_way_surcharge']))
+		{
+			update_post_meta( $post_id, 'package_one_way_surcharge', intval($_POST['package_one_way_surcharge']));
+		}
+
+		//surcharge per day of the week
+
 		if(isset( $_POST['package_week_day_surcharge_mon']))
 		{
 			update_post_meta( $post_id, 'package_week_day_surcharge_mon', intval($_POST['package_week_day_surcharge_mon']));

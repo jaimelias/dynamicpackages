@@ -81,6 +81,7 @@ class Dynamicpackages_Metaboxes
 		$this->enabled_num = intval(package_field('package_enabled_num'));
 		$this->package_check_in_end_hour = package_field('package_check_in_end_hour');
 		$this->check_in_hour = package_field('package_check_in_hour');
+		$this->one_way_surcharge = package_field('package_one_way_surcharge');
 		$this->start_hour = package_field('package_start_hour');
 		$this->start_address = package_field('package_start_address');
 		$this->return_hour = package_field('package_return_hour');
@@ -324,7 +325,13 @@ class Dynamicpackages_Metaboxes
     { ?>
 
 		<?php if ($this->package_type_transport): ?>
-			<h3><?php echo esc_html(__('Departure', 'dynamicpackages')); ?></h3>
+			<h3><?php echo esc_html(__('Transport', 'dynamicpackages')); ?></h3>
+
+			<p>
+			<label for="package_one_way_surcharge"><?php echo esc_html(__('One-way Surcharge', 'dynamicpackages')); ?></label></br>
+			<input type="number" name="package_one_way_surcharge" id="package_one_way_surcharge" value="<?php echo esc_attr($this->one_way_surcharge); ?>">%
+		</p>
+
 		<?php
         endif; ?>
 

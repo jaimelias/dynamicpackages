@@ -969,22 +969,20 @@ class dy_utilities {
 			$sum = $sum + $occupancy_price;
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$week_days_to_surcharge = array($booking_date);
+			$one_way_surcharge = intval(package_field('package_one_way_surcharge'));
 
 			if(dy_validators::package_type_transport())
 			{
 				$sum_arr = [$sum];
 
+				$end_date = (isset($_REQUEST['end_date'])) ? sanitize_text_field($_REQUEST['end_date']) : '';
+
 				if(is_valid_date($booking_date))
 				{
-					if(isset($_REQUEST['end_date']))
+					if(is_valid_date($end_date))
 					{
-						$end_date = sanitize_text_field($_REQUEST['end_date']);
-
-						if(is_valid_date($end_date))
-						{
-							$sum_arr[] = $sum;
-							$week_days_to_surcharge[] = $end_date;
-						}
+						$sum_arr[] = $sum;
+						$week_days_to_surcharge[] = $end_date;
 					}
 
 					$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
@@ -1002,6 +1000,12 @@ class dy_utilities {
 
 							$sum = array_sum($sum_arr);
 						}
+					}
+
+					if(!is_valid_date($end_date) && $one_way_surcharge > 0)
+					{
+						$one_way_surcharge = ($one_way_surcharge / 100) * $sum;
+						$sum += $one_way_surcharge;
 					}
 				}
 			}
