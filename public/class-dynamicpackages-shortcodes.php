@@ -94,7 +94,7 @@ class Dynamicpackages_Shortcodes {
 			}
 			if(array_key_exists('pagination', $attr))
 			{
-				if($attr['pagination'] != null)
+				if(filter_var($attr['pagination'], FILTER_VALIDATE_BOOLEAN)  === true)
 				{
 					$pagination_imp = true;
 				}
