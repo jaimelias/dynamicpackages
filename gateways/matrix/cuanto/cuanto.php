@@ -328,18 +328,22 @@ class cuanto{
 		
 		$add = false;
 		
-		if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
+
+		if($this->show())
 		{
-			$add = true;
-		}
-		
-		if($this->valid_recaptcha && is_checkout_page() && dy_validators::validate_request())
-		{
-			if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+			if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
 			{
 				$add = true;
-			}	
-		}		
+			}
+			
+			if($this->valid_recaptcha && is_checkout_page() && dy_validators::validate_request())
+			{
+				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+				{
+					$add = true;
+				}	
+			}
+		}
 		
 		if($add)
 		{
