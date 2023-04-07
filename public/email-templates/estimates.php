@@ -1,5 +1,6 @@
 <?php
 
+$post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
 $today = dy_utilities::format_date(strtotime(null));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
@@ -36,8 +37,10 @@ $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlenc
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
-
 $add_ons = apply_filters('dy_included_add_ons_list', null);
+
+$label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
+$package_url = get_the_permalink($post_id);
 
 $email_template = <<<EOT
 <!DOCTYPE html>
@@ -162,6 +165,8 @@ $email_template = <<<EOT
 					<tr>
 						<td style="padding: 5px; vertical-align: top;">
 							${description}
+							<br>
+							<strong><a href="${package_url}">${label_show_package} &#128279;</a></strong>
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
 							${details}
 							${add_ons}

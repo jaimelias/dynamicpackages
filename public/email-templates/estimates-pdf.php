@@ -1,5 +1,6 @@
 <?php
 
+$post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
 $today = dy_utilities::format_date(strtotime(null));
 $currency_symbol = currency_symbol();
 $total = apply_filters('dy_email_total', money(dy_utilities::total()));
@@ -32,7 +33,8 @@ $footer = $company_address;
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
 $add_ons = apply_filters('dy_included_add_ons_list', null);
 
-
+$label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
+$package_url = get_the_permalink($post_id);
 
 $email_pdf = <<<EOT
 	<style type="text/css">
@@ -89,6 +91,8 @@ $email_pdf = <<<EOT
 			<tr>
 				<td style="width: 70%;">
 					${description}
+					<br>
+					<strong><a href="${package_url}">${label_show_package}</a></strong>
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
 					${details}
 					${add_ons}
