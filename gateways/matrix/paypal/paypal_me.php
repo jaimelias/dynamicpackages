@@ -340,7 +340,7 @@ class paypal_me{
 
 		if($this->show())
 		{
-			if(is_singular('packages') && package_field('package_auto_booking') > 0)
+			if(is_singular('packages'))
 			{
 				$add = true;
 			}

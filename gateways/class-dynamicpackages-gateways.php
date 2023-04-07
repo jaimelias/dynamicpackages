@@ -176,7 +176,7 @@ class Dynamicpackages_Gateways
 	}
 	public function coupon($array)
 	{
-		if(is_singular('packages') && package_field('package_auto_booking') > 0)
+		if(is_singular('packages'))
 		{	
 			if(is_booking_page() && dy_validators::validate_coupon())
 			{

@@ -331,7 +331,7 @@ class cuanto{
 
 		if($this->show())
 		{
-			if($this->show() && is_singular('packages') && package_field('package_auto_booking') > 0)
+			if(is_singular('packages'))
 			{
 				$add = true;
 			}
