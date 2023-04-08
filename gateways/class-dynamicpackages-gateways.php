@@ -132,19 +132,22 @@ class Dynamicpackages_Gateways
 	{
 		$output = false;
 		$gateways = $this->list_gateways_cb();
+		$pax_num = intval(dy_utilities::pax_num());
+		$max_persons = intval(package_field('package_max_persons'));
+		$auto_booking = intval(package_field('package_auto_booking'));
 
-		if(is_array($gateways) && dy_utilities::pax_num() <= package_field('package_max_persons'))
+		if(is_array($gateways) && $pax_num <= $max_persons && $auto_booking > 0)
 		{
 			if(count($gateways) > 1)
 			{
 				$GLOBALS['has_gateway'] = true;
 				$output = true;
 			}
-
 		}
 		
 		return $output;
 	}
+
 	public function choose_gateway()
 	{
 		$output = null;
