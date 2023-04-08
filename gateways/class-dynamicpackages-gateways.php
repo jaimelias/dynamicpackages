@@ -197,11 +197,11 @@ class Dynamicpackages_Gateways
 	
 	public function checkout_area()
 	{
-		$output = '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p>';
+		$output = '';
 		
 		if($this->has_gateway())
 		{
-			$output .= '<div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
+			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
 		
 		$output .= apply_filters('dy_booking_sidebar', null);	
