@@ -50,7 +50,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
-		add_filter('list_gateways', array(&$this, 'coupon'), 9);
+		add_filter('list_gateways', array(&$this, 'filter_coupon_gateway'), 9);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);			
 		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
@@ -123,8 +123,7 @@ class Dynamicpackages_Gateways
 	
 	public function join_gateways()
 	{
-		$array = array_unique($this->list_gateways_cb());
-		
+		$array = array_unique($this->list_gateways_cb());		
 		return join(' '.__('or', 'dynamicpackages').' ', array_filter(array_merge(array(join(', ', array_slice($array, 0, -1))), array_slice($array, -1)), 'strlen'));
 	}
 	
@@ -177,7 +176,7 @@ class Dynamicpackages_Gateways
 		}
 		return $output;		
 	}
-	public function coupon($array)
+	public function filter_coupon_gateway($array)
 	{
 		if(is_singular('packages'))
 		{	
@@ -198,11 +197,11 @@ class Dynamicpackages_Gateways
 	
 	public function checkout_area()
 	{
-		$output = null;
+		$output = '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p>';
 		
 		if($this->has_gateway())
 		{
-			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
+			$output .= '<div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
 		
 		$output .= apply_filters('dy_booking_sidebar', null);	
