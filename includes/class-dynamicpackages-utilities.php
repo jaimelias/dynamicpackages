@@ -532,7 +532,7 @@ class dy_utilities {
 		$length_unit = package_field('package_length_unit');
 		
 		
-		if($package_type == 3 && $min_duration == 1 && $length_unit == 1 && $max_duration > $min_duration)
+		if($package_type == 3 && $length_unit == 1 && $max_duration > $min_duration)
 		{
 			return true;
 		}
@@ -550,7 +550,7 @@ class dy_utilities {
 		$length_unit = package_field('package_length_unit');
 		
 		
-		if($package_type == 2 && $min_duration == 1 && $length_unit == 2 && $max_duration > $min_duration)
+		if($package_type == 2 && $length_unit == 2 && $max_duration > $min_duration)
 		{
 			return true;
 		}

@@ -118,8 +118,9 @@ class Dynamicpackages_Forms
 		$option_free = package_field('package_free');
 		$by_hour = package_field('package_by_hour');
 		$package_type = package_field('package_package_type');
-		$min_duration = package_field('package_duration');
-		$max_duration = package_field('package_duration_max');
+		$min_duration = intval(package_field('package_duration'));
+		$max_duration = intval(package_field('package_duration_max'));
+		$list_durations = 1 + ($max_duration - $min_duration);
 		$length_unit = package_field('package_length_unit');
 		$is_transport = dy_validators::package_type_transport();
 		$date_label = ($is_transport) 
@@ -189,13 +190,14 @@ class Dynamicpackages_Forms
 			$form .= '<label>'.esc_html($time_label).'</label>';
 			$form .= '<p><select type="text" name="booking_extra">';
 			
-			for($x = ($min_duration); $x < (intval($max_duration)+1); $x++)
+			for($x = 0; $x < $list_durations; $x++)
 			{
-				$select_label = $x;
+				$index = $x + $min_duration;
+				$select_label = $index;
 				
 				if($length_unit == 1)
 				{
-					if($x == 1)
+					if($index == 1)
 					{
 						$select_label .= ' '.__('hour', 'dynamicpackages');
 					}
@@ -205,7 +207,7 @@ class Dynamicpackages_Forms
 					}
 				}
 				
-				$form .= '<option value="'.esc_attr($x).'">'.esc_html($select_label).'</option>';
+				$form .= '<option value="'.esc_attr($index).'">'.esc_html($select_label).'</option>';
 			}
 			
 			$form .= '</select></p>';					
