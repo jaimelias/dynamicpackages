@@ -34,7 +34,8 @@ class Dynamicpackages_Metapost{
 		{
 			if(intval($_POST['package_package_type']) == 2)
 			{
-				update_post_meta( $post_id, 'package_duration', 1);
+				//if this causes a miscalculation in the rental_per_hour then remove the comment
+				//update_post_meta( $post_id, 'package_duration', 1);
 				update_post_meta( $post_id, 'package_length_unit', 2);
 				
 				if(isset($_POST['package_duration_max']))
@@ -51,7 +52,8 @@ class Dynamicpackages_Metapost{
 			}
 			else if(intval($_POST['package_package_type']) == 3)
 			{
-				update_post_meta( $post_id, 'package_duration', 1);
+				//if this causes a miscalculation in the rental_per_day then remove the comment
+				//update_post_meta( $post_id, 'package_duration', 1);
 				update_post_meta( $post_id, 'package_length_unit', 1);
 				
 				if(isset($_POST['package_duration_max']))
