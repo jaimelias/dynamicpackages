@@ -53,12 +53,20 @@ class Dynamic_Core_Admin {
 
     public function settings_init()
     {
+
+		global $polylang;
+		$default_language = default_language();
+
         //settings - company
 		register_setting($this->setting_id, 'dy_email', 'sanitize_email');
 		register_setting($this->setting_id, 'dy_phone', 'esc_html');
-		register_setting($this->setting_id, 'dy_whatsapp', 'intval');
 		register_setting($this->setting_id, 'dy_address', 'esc_html');
-		register_setting($this->setting_id, 'dy_tax_id', 'esc_html'); 
+		register_setting($this->setting_id, 'dy_tax_id', 'esc_html');
+
+		register_setting($this->setting_id, 'dy_whatsapp', 'intval');
+
+
+
 
 		//settings - security
 		register_setting($this->setting_id, 'dy_recaptcha_site_key', 'sanitize_user');
@@ -98,12 +106,36 @@ class Dynamic_Core_Admin {
 		
 		add_settings_field( 
 			'dy_whatsapp', 
-			esc_html(__( 'Whatsapp', 'dynamicpackages' )), 
+			esc_html(__( 'Whatsapp', 'dynamicpackages' ).' '. strtoupper($default_language)), 
 			array(&$this, 'settings_input'), 
 			$this->setting_id, 
 			$this->section_company,
 			array('name' => 'dy_whatsapp', 'type' => 'number')
-		);		
+		);
+
+		if(isset($polylang))
+		{
+			$languages = get_languages();
+
+			for($x = 0; $x < count($languages); $x++)
+			{
+				$lang = $languages[$x];
+
+				if($default_language !== $lang)
+				{
+					register_setting($this->setting_id, 'dy_whatsapp_' . $lang, 'intval');
+
+					add_settings_field( 
+						'dy_whatsapp_' . $lang, 
+						esc_html(__( 'Whatsapp', 'dynamicpackages' ).' '. strtoupper($lang)), 
+						array(&$this, 'settings_input'), 
+						$this->setting_id, 
+						$this->section_company,
+						array('name' => 'dy_whatsapp_' . $lang, 'type' => 'number')
+					);			
+				}
+			}
+		}
 
 		add_settings_field( 
 			'dy_address', 

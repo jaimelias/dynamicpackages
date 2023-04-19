@@ -97,6 +97,46 @@ if ( ! function_exists('write_log')) {
 }
 
 
+
+
+if(!function_exists('default_language'))
+{
+	function default_language()
+	{
+		$which_var = 'wp_core_default_language';
+		global $$which_var;
+		global $polylang;
+		$lang = '';
+
+		if(isset($$which_var))
+		{
+			$lang = $$which_var;
+		}
+		else
+		{
+			if(isset($polylang))
+			{
+				$lang = pll_default_language();
+			}
+			else
+			{
+				$locale_str = get_locale();
+				$lang = $locale_str;
+			
+				if(strlen($locale_str) === 5)
+				{
+					$lang = substr($locale_str, 0, -3);
+				}
+			}
+
+			$GLOBALS[$which_var] = $lang;
+		}
+
+		return $lang;
+	}
+}
+
+
 if(!function_exists('get_languages'))
 {
 	function get_languages()
@@ -358,8 +398,25 @@ if(!function_exists('whatsapp_button'))
 {
 	function whatsapp_button($label = '', $text = '')
 	{
+		global $polylang;
 		$output = '';
-		$number = preg_replace('/[^0-9.]+/', '', get_option('dy_whatsapp'));
+		$whatsapp = get_option('dy_whatsapp');
+		$current_language = current_language();
+		$default_language = default_language();
+
+		if(isset($polylang))
+		{
+			if($current_language !== $default_language)
+			{
+				$lang_whatsapp = get_option('dy_whatsapp_' . $current_language);
+
+				$whatsapp = (!empty($lang_whatsapp)) 
+					? $lang_whatsapp 
+					: $whatsapp;
+			}
+		}
+
+		$number = preg_replace('/[^0-9.]+/', '', $whatsapp);
 
 		if(intval($number) > 0)
 		{
