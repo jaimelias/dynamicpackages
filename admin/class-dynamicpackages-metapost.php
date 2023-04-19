@@ -70,10 +70,6 @@ class Dynamicpackages_Metapost{
 			}
 			else
 			{
-				if(isset($_POST['package_duration']))
-				{
-					update_post_meta( $post_id, 'package_duration', esc_attr($_POST['package_duration']));
-				}
 				if (isset($_POST['package_length_unit']))
 				{
 					update_post_meta( $post_id, 'package_length_unit', esc_attr($_POST['package_length_unit']));
@@ -83,7 +79,12 @@ class Dynamicpackages_Metapost{
 					update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
 				}
 			}
-		}	
+		}
+
+		if(isset($_POST['package_duration']))
+		{
+			update_post_meta( $post_id, 'package_duration', esc_attr($_POST['package_duration']));
+		}
 		
 		if(isset( $_POST['package_display']))
 			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
