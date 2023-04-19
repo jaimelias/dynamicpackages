@@ -120,7 +120,7 @@ class Dynamicpackages_Forms
 		$package_type = package_field('package_package_type');
 		$min_duration = intval(package_field('package_duration'));
 		$max_duration = intval(package_field('package_duration_max'));
-		$list_durations = 1 + ($max_duration - $min_duration);
+		$list_durations = ($max_duration > $min_duration) ? (1 + ($max_duration - $min_duration)) : 0;
 		$length_unit = package_field('package_length_unit');
 		$is_transport = dy_validators::package_type_transport();
 		$date_label = ($is_transport) 

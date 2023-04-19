@@ -34,39 +34,11 @@ class Dynamicpackages_Metapost{
 		{
 			if(intval($_POST['package_package_type']) == 2)
 			{
-				//if this causes a miscalculation in the rental_per_hour then remove the comment
-				//update_post_meta( $post_id, 'package_duration', 1);
-				update_post_meta( $post_id, 'package_length_unit', 2);
-				
-				if(isset($_POST['package_duration_max']))
-				{
-					if(intval($_POST['package_duration_max']) > 1)
-					{
-						update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
-					}
-					else
-					{
-						update_post_meta( $post_id, 'package_duration_max', 2);
-					}
-				}				
+				update_post_meta( $post_id, 'package_length_unit', 2);				
 			}
 			else if(intval($_POST['package_package_type']) == 3)
 			{
-				//if this causes a miscalculation in the rental_per_day then remove the comment
-				//update_post_meta( $post_id, 'package_duration', 1);
-				update_post_meta( $post_id, 'package_length_unit', 1);
-				
-				if(isset($_POST['package_duration_max']))
-				{
-					if(intval($_POST['package_duration_max']) > 1)
-					{
-						update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
-					}
-					else
-					{
-						update_post_meta( $post_id, 'package_duration_max', 2);
-					}
-				}				
+				update_post_meta( $post_id, 'package_length_unit', 1);				
 			}
 			else
 			{
@@ -74,17 +46,34 @@ class Dynamicpackages_Metapost{
 				{
 					update_post_meta( $post_id, 'package_length_unit', esc_attr($_POST['package_length_unit']));
 				}
-				if(isset($_POST['package_duration_max']))
-				{
-					update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
-				}
 			}
 		}
 
 		if(isset($_POST['package_duration']))
 		{
 			update_post_meta( $post_id, 'package_duration', esc_attr($_POST['package_duration']));
+
+			if(isset($_POST['package_duration_max']))
+			{
+				if(intval($_POST['package_duration_max']) >= 1)
+				{
+					if(intval($_POST['package_duration']) > intval($_POST['package_duration_max']))
+					{
+						update_post_meta( $post_id, 'package_duration_max', esc_attr(intval($_POST['package_duration']) + 1));
+					}
+					else
+					{
+						update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
+					}
+				}
+				else
+				{
+					update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
+				}
+			}
 		}
+
+	
 		
 		if(isset( $_POST['package_display']))
 			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
