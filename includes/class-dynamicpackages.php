@@ -30,7 +30,7 @@ if ( !defined( 'WPINC' ) ) exit;
  * @author Jaimelías <jaimelias@about.me>
  */
 
-
+#[\AllowDynamicProperties]
 class dynamicpackages {
 
 

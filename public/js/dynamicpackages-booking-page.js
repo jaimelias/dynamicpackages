@@ -96,9 +96,7 @@ const selectGateway = () => {
 };
 
 const getUpdatedCheckoutArgs = () => {
-	
-	let output = {};
-	
+		
 	if(defaultCheckoutArgs)
 	{
 		let {amount, regular_amount, deposit, add_ons, pax_num} = defaultCheckoutArgs;
