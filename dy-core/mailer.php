@@ -4,6 +4,7 @@ if ( !defined( 'WPINC' ) ) exit;
 
 use SendGrid\Mail\Attachment;
 
+#[AllowDynamicProperties]
 class Dy_Mailer
 {
 	

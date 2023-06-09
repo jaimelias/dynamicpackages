@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Package_Page {
 
     public function __construct($version)

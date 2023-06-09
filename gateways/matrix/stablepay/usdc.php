@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+#[AllowDynamicProperties]
 class usdc{
 	
 	function __construct($plugin_id)

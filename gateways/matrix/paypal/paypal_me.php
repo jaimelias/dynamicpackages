@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+#[AllowDynamicProperties]
 class paypal_me{
 	
 	function __construct($plugin_id)

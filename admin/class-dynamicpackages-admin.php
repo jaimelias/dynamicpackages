@@ -3,7 +3,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Admin {
 
 	public function __construct($plugin_id, $plugin_name, $version )

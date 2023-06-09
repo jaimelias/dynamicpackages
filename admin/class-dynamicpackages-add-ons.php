@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Taxonomy_Add_Ons
 {
 	function __construct()

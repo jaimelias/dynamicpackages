@@ -3,7 +3,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Metapost{
 	
 	public function __construct()

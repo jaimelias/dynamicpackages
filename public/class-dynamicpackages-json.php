@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+#[AllowDynamicProperties]
 class Dynamicpackages_JSON
 {
 	function __construct($reviews)

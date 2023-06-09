@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class bank_transfer{
 	
 	function __construct($plugin_id)

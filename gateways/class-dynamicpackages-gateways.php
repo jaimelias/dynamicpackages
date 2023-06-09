@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Gateways
 {
 	function __construct($plugin_id)

@@ -2,6 +2,8 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+
+#[AllowDynamicProperties]
 class dy_utilities {
 		
 	public static function booking_date()

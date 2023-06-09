@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+#[AllowDynamicProperties]
 class dy_validators
 {
 	public static function validate_quote()

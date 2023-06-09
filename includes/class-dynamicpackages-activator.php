@@ -24,6 +24,7 @@ if ( !defined( 'WPINC' ) ) exit;
  * @subpackage dynamicpackages/includes
  * @author     Jaimelías <jaimelias@about.me>
  */
+
 class dynamicpackages_Activator {
 
 	/**

@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+#[AllowDynamicProperties]
 class paguelo_facil_on{
 	
 	function __construct($plugin_id)

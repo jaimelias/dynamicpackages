@@ -3,7 +3,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamicpackages_Post_Types
 {
 	// Register Custom Post Type

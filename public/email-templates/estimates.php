@@ -1,7 +1,7 @@
 <?php
 
 $post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
-$today = dy_utilities::format_date(strtotime(null));
+$today = dy_utilities::format_date(strtotime('today UTC'));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
@@ -46,7 +46,7 @@ $email_template = <<<EOT
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>${company_name}</title>
+		<title>{$company_name}</title>
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -116,13 +116,13 @@ $email_template = <<<EOT
 
 	<body style="font-family: Arial, sans-serif; line-height: 1.5; font-size: 14px;">
 		<div style="max-width: 800px; width: 100%; margin: 0 auto 0 auto;">
-			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">${description}</div>
+			<div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">{$description}</div>
 		
 			<div style="margin: 20px 0 40px 0; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
-				<p>${greeting}</p>
-				<p>${intro}</p>
-				<div>${message}</div>
-				<div>${confirmation_message}</div>
+				<p>{$greeting}</p>
+				<p>{$intro}</p>
+				<div>{$message}</div>
+				<div>{$confirmation_message}</div>
 			</div>
 		
 			<div class="doc_box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
@@ -132,12 +132,12 @@ $email_template = <<<EOT
 							<table style="width: 100%; line-height: inherit; text-align: left">
 								<tr>
 									<td class="title" style="padding: 0;vertical-align: top; padding: 5px 5px 20px 5px">
-										<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">${company_name}</h1>
-										<small style="color: #666666">${company_tax_id}</small>
+										<h1 style="font-size: 25px;line-height: 25px; padding: 0; margin: 0">{$company_name}</h1>
+										<small style="color: #666666">{$company_tax_id}</small>
 									</td>
 									<td style="padding: 0;vertical-align: top;text-align: right;padding: 5px 5px 20px 5px">
-										<strong style="color: #666666">${label_doc}</strong>
-										<br/>${today}
+										<strong style="color: #666666">{$label_doc}</strong>
+										<br/>{$today}
 									</td>
 								</tr>
 							</table>
@@ -145,67 +145,67 @@ $email_template = <<<EOT
 					</tr>
 					<tr class="information">
 						<td colspan="2" style="padding: 5px;vertical-align: top; text-align: right;">
-							<strong style="color: #666666">${label_client}</strong>
-							<br/> ${client_name}
-							<br/>${client_phone}
-							<br />${client_email}
+							<strong style="color: #666666">{$label_client}</strong>
+							<br/> {$client_name}
+							<br/>{$client_phone}
+							<br />{$client_email}
 							<br/>
 							<br/>
 						</td>
 					</tr>
 					<tr>
 						<td style="padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd;">
-							<strong style="color:#666666;">${label_item}</strong>
+							<strong style="color:#666666;">{$label_item}</strong>
 						</td>
 						<td style="width: 100px; padding: 5px; vertical-align: top; border-bottom: 1px solid #dddddd; text-align: right;">
-							<strong style="color:#666666;">${label_subtotal}</strong>
+							<strong style="color:#666666;">{$label_subtotal}</strong>
 						</td>
 					</tr>
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top;">
-							${description}
+							{$description}
 							<br>
-							<strong><a href="${package_url}">${label_show_package} &#128279;</a></strong>
+							<strong><a href="{$package_url}">{$label_show_package} &#128279;</a></strong>
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
-							${details}
-							${add_ons}
+							{$details}
+							{$add_ons}
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
-							<strong style="color:#666666;">${label_included}:</strong> ${included}
+							<strong style="color:#666666;">{$label_included}:</strong> {$included}
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
-							<strong style="color:#666666;">${label_not_included}:</strong> ${not_included}
+							<strong style="color:#666666;">{$label_not_included}:</strong> {$not_included}
 						</td>
 						<td style="width: 100px; padding: 5px;vertical-align: top; text-align: right; ">
-							${currency_symbol}${total}
+							{$currency_symbol}{$total}
 						</td>
 					</tr>			
 					
 					<tr>
 						<td style="padding: 5px; vertical-align: top"></td>
 						<td style="width: 100px; padding: 5px; vertical-align: top; text-align: right; line-height: 2;">
-							${totals_area}
+							{$totals_area}
 						</td>
 					</tr>
 					
 					<tr>
 						<td colspan="2" style="padding: 5px; vertical-align: top;">
 							<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;">
-							<strong style="color: #666666;">${label_notes}</strong>
+							<strong style="color: #666666;">{$label_notes}</strong>
 							<br/>
-							${notes}
+							{$notes}
 						</td>
 					</tr>
 					<tr>
 						<td colspan="2" style="padding: 5px; vertical-align: top; text-align: center;">
-							<small style="color: #666666">${company_contact}</small>
+							<small style="color: #666666">{$company_contact}</small>
 							<br/>
-							<small style="color: #666666;">${footer}</small>
+							<small style="color: #666666;">{$footer}</small>
 						</td>
 					</tr>          
 				</table>
 			</div>
 			
-			${action_button}
+			{$action_button}
 
 		</div>		
 	</body>

@@ -1,7 +1,7 @@
 <?php
 
 $post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
-$today = dy_utilities::format_date(strtotime(null));
+$today = dy_utilities::format_date(strtotime('today UTC'));
 $currency_symbol = currency_symbol();
 $total = apply_filters('dy_email_total', money(dy_utilities::total()));
 $company_name = get_bloginfo('name');
@@ -45,30 +45,30 @@ $email_pdf = <<<EOT
 	-->
 	</style>
 	<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
-		<bookmark title="${label_doc}" level="0" ></bookmark>
+		<bookmark title="{$label_doc}" level="0" ></bookmark>
 		
 		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
 			<tr>
 				<td style="width: 50%;">
 					<div>
-						<h1 style="margin: 0; padding: 0; font-size: 20pt;">${company_name}</h1>
-						<div style="color: #666666;">${company_tax_id}</div>			
+						<h1 style="margin: 0; padding: 0; font-size: 20pt;">{$company_name}</h1>
+						<div style="color: #666666;">{$company_tax_id}</div>			
 					</div>
 				</td>
 				<td style="width: 50%;">
 					<div style="text-align: right;">
-						<strong style="color: #666666;">${label_doc}</strong>
+						<strong style="color: #666666;">{$label_doc}</strong>
 						<br>
-						${today}
+						{$today}
 						<br>
 						<br>
-						<strong style="color: #666666;">${label_client}</strong>
+						<strong style="color: #666666;">{$label_client}</strong>
 						<br> 
-						${client_name}
+						{$client_name}
 						<br>
-						${client_phone}
+						{$client_phone}
 						<br>
-						${client_email}				
+						{$client_email}				
 					</div>
 				</td>
 			</tr>			
@@ -80,29 +80,29 @@ $email_pdf = <<<EOT
 		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
 			<tr>
 				<td style="width: 70%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
-					<strong style="color: #666666;">${label_item}</strong>
+					<strong style="color: #666666;">{$label_item}</strong>
 				</td>
 				<td style="width: 30%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
 					<div style="text-align: right;">
-						<strong style="color: #666666;">${label_subtotal}</strong>
+						<strong style="color: #666666;">{$label_subtotal}</strong>
 					</div>
 				</td>
 			</tr>
 			<tr>
 				<td style="width: 70%;">
-					${description}
+					{$description}
 					<br>
-					<strong><a href="${package_url}">${label_show_package}</a></strong>
+					<strong><a href="{$package_url}">{$label_show_package}</a></strong>
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					${details}
-					${add_ons}
+					{$details}
+					{$add_ons}
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">${label_included}:</strong> ${included}
+					<strong style="color: #666666;">{$label_included}:</strong> {$included}
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">${label_not_included}:</strong> ${not_included}
+					<strong style="color: #666666;">{$label_not_included}:</strong> {$not_included}
 				</td>
 				<td style="width: 30%;">
-					<div style="text-align: right;">${currency_symbol}${total}</div>
+					<div style="text-align: right;">{$currency_symbol}{$total}</div>
 				</td>
 			</tr>
 			
@@ -110,7 +110,7 @@ $email_pdf = <<<EOT
 				<td style="width: 70%; border-top: 1pt solid #cccccc;"></td>
 				<td style="width: 30%; border-top: 1pt solid #cccccc;">
 					<div style="text-align: right; line-height: 1.5;">
-						${totals_area}
+						{$totals_area}
 					</div>
 				</td>
 			</tr>
@@ -118,9 +118,9 @@ $email_pdf = <<<EOT
 			<tr>
 				<td style="width: 70%;">
 					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">${label_notes}</strong>
+					<strong style="color: #666666;">{$label_notes}</strong>
 					<br>
-					${notes}			
+					{$notes}			
 				</td>
 				<td style="width: 30%;"></td>
 			</tr>
@@ -130,9 +130,9 @@ $email_pdf = <<<EOT
 
 		<page_footer>
 			<div style="line-height: 1.5; text-align: center;">
-				${company_contact}
+				{$company_contact}
 				<br>
-				${footer}				
+				{$footer}				
 			</div>
 		</page_footer>
 		

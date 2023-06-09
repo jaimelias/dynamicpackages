@@ -137,17 +137,17 @@
         },
         {
             "name": "spipu/html2pdf",
-            "version": "v5.2.5",
-            "version_normalized": "5.2.5.0",
+            "version": "v5.2.7",
+            "version_normalized": "5.2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spipu/html2pdf.git",
-                "reference": "c002749cf21733d53fb9e50d082ca3d1bde06c85"
+                "reference": "b0f477711de3052041072897510e690975aa37ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/c002749cf21733d53fb9e50d082ca3d1bde06c85",
-                "reference": "c002749cf21733d53fb9e50d082ca3d1bde06c85",
+                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/b0f477711de3052041072897510e690975aa37ce",
+                "reference": "b0f477711de3052041072897510e690975aa37ce",
                 "shasum": ""
             },
             "require": {
@@ -157,15 +157,15 @@
                 "tecnickcom/tcpdf": "^6.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.0"
+                "phpunit/phpunit": "^5.0 || ^9.0"
             },
             "suggest": {
                 "ext-gd": "Allows to embed images into the PDF",
                 "fagundes/zff-html2pdf": "if you need to integrate Html2Pdf with Zend Framework 2 (zf2)"
             },
-            "time": "2022-04-03T22:05:23+00:00",
+            "time": "2023-02-02T15:50:45+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Spipu\\Html2Pdf\\": "src/"
@@ -191,7 +191,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spipu/html2pdf/issues",
-                "source": "https://github.com/spipu/html2pdf/tree/v5.2.5"
+                "source": "https://github.com/spipu/html2pdf/tree/v5.2.7"
             },
             "install-path": "../spipu/html2pdf"
         },
@@ -261,7 +261,7 @@
             },
             "time": "2022-12-17T10:28:59+00:00",
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "classmap": [
                     "config",

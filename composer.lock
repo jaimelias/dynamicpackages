@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "791a84f106ec8771364f776e37a37003",
+    "content-hash": "f43d722ff0ad037301ad8b0103c802e4",
     "packages": [
         {
             "name": "sendgrid/php-http-client",
@@ -137,16 +137,16 @@
         },
         {
             "name": "spipu/html2pdf",
-            "version": "v5.2.5",
+            "version": "v5.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spipu/html2pdf.git",
-                "reference": "c002749cf21733d53fb9e50d082ca3d1bde06c85"
+                "reference": "b0f477711de3052041072897510e690975aa37ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/c002749cf21733d53fb9e50d082ca3d1bde06c85",
-                "reference": "c002749cf21733d53fb9e50d082ca3d1bde06c85",
+                "url": "https://api.github.com/repos/spipu/html2pdf/zipball/b0f477711de3052041072897510e690975aa37ce",
+                "reference": "b0f477711de3052041072897510e690975aa37ce",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +156,7 @@
                 "tecnickcom/tcpdf": "^6.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.0"
+                "phpunit/phpunit": "^5.0 || ^9.0"
             },
             "suggest": {
                 "ext-gd": "Allows to embed images into the PDF",
@@ -188,9 +188,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spipu/html2pdf/issues",
-                "source": "https://github.com/spipu/html2pdf/tree/v5.2.5"
+                "source": "https://github.com/spipu/html2pdf/tree/v5.2.7"
             },
-            "time": "2022-04-03T22:05:23+00:00"
+            "time": "2023-02-02T15:50:45+00:00"
         },
         {
             "name": "starkbank/ecdsa",

@@ -5,6 +5,7 @@ if ( !defined( 'WPINC' ) ) exit;
 
 use Spipu\Html2Pdf\Html2Pdf;
 
+#[AllowDynamicProperties]
 class Dynamicpackages_Actions{
 
     public function __construct()

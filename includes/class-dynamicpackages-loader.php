@@ -2,6 +2,8 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+
+#[AllowDynamicProperties]
 class dynamicpackages_Loader {
 
 

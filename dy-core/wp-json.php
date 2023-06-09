@@ -3,7 +3,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-
+#[AllowDynamicProperties]
 class Dynamic_Core_WP_JSON {
 
 

@@ -17,6 +17,7 @@ if ( !defined( 'WPINC' ) ) exit;
 #
 #
 
+#[AllowDynamicProperties]
 class Parsedown
 {
     # ~
