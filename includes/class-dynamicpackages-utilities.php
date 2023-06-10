@@ -753,8 +753,6 @@ class dy_utilities {
 					{
 						$from_season = (!empty($seasons[$x][1])) ? strtotime($seasons[$x][1]) : 0;
 						$to_season = (!empty($seasons[$x][2])) ? strtotime($seasons[$x][2]) : 0;
-
-						write_log(array($seasons[$x][1], $seasons[$x][2]));
 				
 						if($booking_date >= $from_season && $booking_date <= $to_season)
 						{
