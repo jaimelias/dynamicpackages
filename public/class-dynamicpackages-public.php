@@ -17,6 +17,10 @@ class Dynamicpackages_Public {
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
 
+		//redirect
+		add_filter('wp_headers', array(&$this, 'redirect'));
+		add_filter('post_type_link', array(&$this, 'post_type_link'), 10, 2);
+
 		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
 		add_filter('the_content', array(&$this, 'the_content'), 100);
@@ -1458,5 +1462,37 @@ class Dynamicpackages_Public {
 			}
 		}
 
+	}
+
+	public function redirect()
+	{
+		$lang = current_language();
+		$url = package_field('package_redirect_url_' . $lang);
+
+		if( !empty($url) )
+		{
+			if( filter_var($url, FILTER_VALIDATE_URL) !== false)
+			{
+				wp_redirect( $url, 301 );
+				exit;
+			}
+		}
+
+	}
+
+	public function post_type_link($url, $post)
+	{
+		$lang = current_language();
+		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
+
+		if( !empty($redirect) && in_the_loop())
+		{
+			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false)
+			{
+				$url = $redirect;
+			}
+		}
+
+		return $url;
 	}
 }

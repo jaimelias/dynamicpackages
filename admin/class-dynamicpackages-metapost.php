@@ -258,6 +258,11 @@ class Dynamicpackages_Metapost{
 			{
 				update_post_meta( $post_id, 'package_child_title_'.$lang, esc_attr($_POST['package_child_title_'.$lang] ));
 			}
+
+			if(isset( $_POST['package_redirect_url_'.$lang]))
+			{
+				update_post_meta( $post_id, 'package_redirect_url_'.$lang, esc_url($_POST['package_redirect_url_'.$lang] ));
+			}
 		}
 		
 		// ALL THE CHECKBOXES REQUIRE AN ELSE

@@ -50,8 +50,15 @@ class Dynamicpackages_Metaboxes
         }
 
 		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , array(&$this,
-		'package_coupon_html'
+			'package_coupon_html'
+		) , 'packages', 'normal', 'default');
+
+
+	add_meta_box('package-h', __('Controls', 'dynamicpackages') , array(&$this,
+		'package_controls_html'
 	) , 'packages', 'normal', 'default');
+
+
     }
 
 	public function set_args()
@@ -130,7 +137,7 @@ class Dynamicpackages_Metaboxes
 	public function set_lang_fields()
 	{
 		//handles language based fields
-		$lang_fields = array('confirmation_message', 'child_title');
+		$lang_fields = array('confirmation_message', 'child_title', 'redirect_url');
 
 		for($x = 0; $x < count($lang_fields); $x++)
 		{
@@ -313,6 +320,27 @@ class Dynamicpackages_Metaboxes
 					<p>
 						<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html(__('Confirmation Message', 'dynamicpackages')); ?> - <?php esc_html_e($lang); ?></label></br>
 						<textarea cols="40" rows="6" type="text" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>"><?php echo esc_textarea($this->$id); ?></textarea>
+					</p>
+				<?php
+			}
+		?>
+		
+		<?php
+    }
+
+    public function package_controls_html($post)
+    { ?>
+
+		<?php
+			for($x = 0; $x < $this->count_languages; $x++)
+			{
+				$lang = $this->languages[$x];
+				$id = 'redirect_url_' . $lang;
+				$name = 'package_' . $id;
+				?>
+					<p>
+						<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html(__('Redirect URL', 'dynamicpackages')); ?> - <?php esc_html_e($lang); ?></label></br>
+						<input class="width-100" type="url" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_url($this->$id); ?>" />
 					</p>
 				<?php
 			}
