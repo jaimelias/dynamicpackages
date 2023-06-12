@@ -1469,7 +1469,7 @@ class Dynamicpackages_Public {
 		$lang = current_language();
 		$url = package_field('package_redirect_url_' . $lang);
 
-		if( !empty($url) )
+		if( !empty($url) && is_singular('packages'))
 		{
 			if( filter_var($url, FILTER_VALIDATE_URL) !== false)
 			{
