@@ -377,15 +377,8 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$the_id = $post->ID;
 			$package_type = intval(package_field('package_package_type'));
 			$package_unit = intval(package_field('package_length_unit'));
-			
-			if(property_exists($post, 'post_parent') && !has_term('', $this->name, $the_id))
-			{
-				if($post->post_parent > 0)
-				{
-					$the_id = $post->post_parent;
-				}
-			}
-			
+			$parent_terms = array();
+
 			$def_lang = true;
 			$pax = intval(dy_utilities::pax_num()) - 1;
 			
@@ -396,8 +389,20 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					$def_lang = false;
 				}				
 			}
+
+			$current_terms = get_the_terms($post->ID, $this->name);
+			$current_terms = (is_array($current_terms)) ? $current_terms : array();
+
+			if(property_exists($post, 'post_parent'))
+			{
+				if($post->post_parent > 0)
+				{
+					$parent_terms = get_the_terms($post->post_parent, $this->name);
+					$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
+				}
+			}			
 			
-			$terms = get_the_terms($the_id, $this->name);
+			$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
 			
 			if(is_array($terms))
 			{

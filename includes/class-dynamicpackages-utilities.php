@@ -1429,6 +1429,7 @@ class dy_utilities {
 			{
 				global $post;
 
+				$parent_terms = array();
 				$current_terms = get_the_terms($post->ID, $term_name);
 				$current_terms = (is_array($current_terms)) ? $current_terms : array();
 
