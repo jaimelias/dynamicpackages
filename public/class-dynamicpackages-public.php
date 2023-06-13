@@ -1259,10 +1259,15 @@ class Dynamicpackages_Public {
 				for($x = 0; $x < count($coupons); $x++)
 				{
 					if($coupons[$x][3] == 'true' && $coupons[$x][0])
-					{						
-						$expiration = new DateTime($coupons[$x][2]);
-						$expiration->setTime(0,0,0);
-						$expiration = $expiration->getTimestamp();	
+					{
+						$expiration = 0;
+
+						if(!empty($coupons[$x][2]))
+						{
+							$expiration = new DateTime($coupons[$x][2]);
+							$expiration->setTime(0,0,0);
+							$expiration = $expiration->getTimestamp();
+						}
 						
 						if($expiration >= strtotime('today midnight'))
 						{
@@ -1467,17 +1472,20 @@ class Dynamicpackages_Public {
 	public function redirect()
 	{
 		$lang = current_language();
-		$url = package_field('package_redirect_url_' . $lang);
 
-		if( !empty($url) && is_singular('packages'))
+		if(is_singular('packages'))
 		{
-			if( filter_var($url, FILTER_VALIDATE_URL) !== false)
+			$url = package_field('package_redirect_url_' . $lang);
+
+			if(!empty($url))
 			{
-				wp_redirect( $url, 301 );
-				exit;
+				if( filter_var($url, FILTER_VALIDATE_URL) !== false)
+				{
+					wp_redirect( $url, 301 );
+					exit;
+				}
 			}
 		}
-
 	}
 
 	public function post_type_link($url, $post)
