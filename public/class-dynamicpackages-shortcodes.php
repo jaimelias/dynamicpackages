@@ -41,7 +41,7 @@ class Dynamicpackages_Shortcodes {
 			?>
 			<p>
 				<label for="inquiry"><?php echo esc_html(__('Message', 'dynamicpackages')); ?></label>
-				<textarea id="inquiry" name="inquiry" required></textarea>
+				<textarea id="inquiry" name="inquiry" class="required"></textarea>
 			</p>
 			<?php
 		}

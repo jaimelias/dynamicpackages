@@ -91,6 +91,10 @@ const isValidInput = ({name, value}) => {
 	{
 		output =  true;
 	}
+	else if(name === 'inquiry' && isSpam(value))
+	{
+		output = true;
+	}
 	
 	return output;
 };
@@ -125,4 +129,16 @@ const isValidCard = value => {
 const isEmail = email => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+const isSpam = str => {
+	const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+	const domainRegex = /\b(?:https?:\/\/)?(?:www\.)?([A-Za-z0-9.-]+\.[A-Za-z]{2,})\b/;
+	const urlRegex = /\bhttps?:\/\/[^\s]+\b/;
+  
+	return (
+	  emailRegex.test(str) ||
+	  domainRegex.test(str) ||
+	  urlRegex.test(str)
+	);
 }
