@@ -790,7 +790,8 @@ class dy_validators
 				{
 					$args = array(
 						'post_type' => 'packages',
-						'post_parent' => $post->ID
+						'post_parent' => $post->ID,
+						'posts_per_page' => -1
 					);
 					
 					$children = get_posts($args);
