@@ -233,6 +233,21 @@ class dy_validators
 					{
 						$invalids[] = __('Phone is empty.', 'dynamicpackages');
 					}
+					if(isset($_POST['inquiry']))
+					{
+						if(empty($_POST['inquiry']))
+						{
+							$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
+						}
+						else
+						{
+							if(self::is_spam($_POST['inquiry']))
+							{
+								cloudflare_ban_ip_address();
+								$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
+							}
+						}
+					}
 				}
 				else
 				{
@@ -1025,7 +1040,24 @@ class dy_validators
 		
 		return $output;
 	}
+
+	public static function is_spam($str) {
+
+		$str = html_entity_decode(sanitize_text_field($str));
+		$emailRegex = '/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/';
+		$domainRegex = '/\b(?:https?:\/\/)?(?:www\.)?([A-Za-z0-9.-]+\.[A-Za-z]{2,})\b/';
+		$urlRegex = '/\bhttps?:\/\/[^\s]+\b/';
+
+		return (
+			preg_match($emailRegex, $str) ||
+			preg_match($domainRegex, $str) ||
+			preg_match($urlRegex, $str)
+		);
+	}
+
 }
+
+
 
 
 ?>
