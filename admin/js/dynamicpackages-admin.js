@@ -17,6 +17,7 @@ jQuery(() => {
 		handlePackageSchema();
 		initSeasonGrids();
 		initGridsFromTextArea();
+		handleSaveAndRefresh();
 	});	
 
 	jQuery('#package_num_seasons').change(() => {
@@ -709,3 +710,24 @@ const handleParentAttr = () => {
 
 };
 
+
+const handleSaveAndRefresh = () => {
+
+	const { subscribe } = wp.data;
+
+	subscribe(() => {
+
+		setTimeout(() => {
+			wp.data.dispatch('core/editor').savePost().then(r => {
+			
+				if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+				{
+					const {location} = window;
+					const url = new URL(location);
+					window.location.replace(url.href);	
+				}
+			});
+		}, 500);
+	});
+
+}
