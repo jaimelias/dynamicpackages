@@ -1269,7 +1269,7 @@ class Dynamicpackages_Public {
 							$expiration = $expiration->getTimestamp();
 						}
 						
-						if($expiration >= strtotime('today midnight'))
+						if($expiration >= strtotime('today midnight') || $expiration === 0)
 						{
 							$expiration = '';
 							$valid = true;
