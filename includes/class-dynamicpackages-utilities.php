@@ -130,36 +130,39 @@ class dy_utilities {
 					
 					for($x = 0; $x < count($coupons); $x++)
 					{
-						if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
+						if(!empty($coupons[$x][0]))
 						{
-							if($option == 'code')
+							if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
 							{
-								$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
+								if($option == 'code')
+								{
+									$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
+								}
+								else if($option == 'discount')
+								{
+									$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
+									$output = (is_numeric($output)) ? $output : null;
+								}	
+								else if($option == 'expiration')
+								{
+									$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
+									$output = (is_valid_date($output)) ? $output : null;
+								}
+								else if($option == 'publish')
+								{
+									$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : null;
+								}
+								else if($option == 'min_duration')
+								{
+									$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
+									$output = (is_numeric($output)) ? intval($output) : 0;
+								}
+								else if($option == 'max_duration')
+								{
+									$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
+									$output = (is_numeric($output)) ? intval($output) : 0;
+								}								
 							}
-							else if($option == 'discount')
-							{
-								$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
-								$output = (is_numeric($output)) ? $output : null;
-							}	
-							else if($option == 'expiration')
-							{
-								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
-								$output = (is_valid_date($output)) ? $output : null;
-							}
-							else if($option == 'publish')
-							{
-								$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : null;
-							}
-							else if($option == 'min_duration')
-							{
-								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
-								$output = (is_numeric($output)) ? intval($output) : 0;
-							}
-							else if($option == 'max_duration')
-							{
-								$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
-								$output = (is_numeric($output)) ? intval($output) : 0;
-							}								
 						}
 					}
 				}				
