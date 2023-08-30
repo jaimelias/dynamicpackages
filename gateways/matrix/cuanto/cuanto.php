@@ -366,7 +366,7 @@ class cuanto{
 	{
 		$payment_amount = dy_utilities::payment_amount();
 		$formated_amount = intval($payment_amount * 100);
-		$amount = number_format($payment_amount, 2, '.', '');
+		$amount = money($payment_amount);
 		$url = 'https://'.$this->domain.'/'.$this->username.'/c/'.$formated_amount;
 		$amount = currency_symbol().''.money($amount);
 		

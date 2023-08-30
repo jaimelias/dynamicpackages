@@ -372,7 +372,7 @@ class paypal_me{
 	
 	public function message($message)
 	{
-		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
+		$amount = money(dy_utilities::payment_amount());
 		$url = 'https://'.$this->domain.'/'.$this->username.'/'.$amount;
 		$amount = currency_symbol().''.money($amount);
 		

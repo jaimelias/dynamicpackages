@@ -254,7 +254,7 @@ class Dynamicpackages_Reviews
 
 				if ( $i !== 0  )
 				{
-					$output = number_format($total / $i, 2, '.', '');
+					$output = money($total / $i, 2);
 				}
 			}
 
@@ -632,7 +632,7 @@ class Dynamicpackages_Reviews
 			
 			if($rating > 0 && $count > 0)
 			{
-				$average = number_format((array_sum($rating)/$count), 2, '.', '');
+				$average = money((array_sum($rating)/$count));
 
 				$output = array(
 					'ratingValue' => $average,

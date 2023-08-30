@@ -160,7 +160,7 @@ class nequi_direct{
 	{
 		$first = __('To complete the booking please enter your Nequi App and send the', 'dynamicpackages');
 		$last = __('to the number', 'dynamicpackages');
-		$amount = currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');
+		$amount = currency_symbol().money(dy_utilities::payment_amount());
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_validators::has_deposit())

@@ -420,8 +420,7 @@ class busd{
 	
 	public function message($message)
 	{
-		$amount = number_format(dy_utilities::payment_amount(), 2, '.', '');
-		$amount = currency_symbol().''.money($amount);
+		$amount = currency_symbol() . money(dy_utilities::payment_amount());
 		$network = sanitize_text_field($_POST['dy_network']);
 		$address = get_option($this->id . '_' . $network);
 		$network_name = $this->enabled_networks[$network]['name'];

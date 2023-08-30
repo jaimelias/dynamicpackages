@@ -160,12 +160,12 @@ class yappy_direct{
 	
 	public function message($message)
 	{
-		$payment_amount = dy_utilities::payment_amount();
+		$payment_amount = money(dy_utilities::payment_amount());
 		$currency_symbol = currency_symbol();
 		$destination = (!empty($this->business)) ? strtoupper($this->business) : $this->number;
 		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
 		$last = (!empty($this->business)) ? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');
-		$amount = $currency_symbol.number_format($payment_amount, 2, '.', ',');
+		$amount = $currency_symbol . $payment_amount;
 		$label = __('payment', 'dynamicpackages');
 		
 		

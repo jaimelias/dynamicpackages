@@ -345,7 +345,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					$price = $terms[$x]['price'];
 					$description = $terms[$x]['description'];
 					
-					$label .= ' <br/><small class="semibold">'.esc_html(currency_symbol().number_format($price, 2, '.', ',').' '.__('per person', 'dynamicpackages')).'</small>';
+					$label .= ' <br/><small class="semibold">'.esc_html(currency_symbol().money($price).' '.__('per person', 'dynamicpackages')).'</small>';
 
 					if(!empty($description))
 					{

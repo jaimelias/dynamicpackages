@@ -56,7 +56,7 @@ class Dynamicpackages_JSON
 			if(is_singular('packages'))
 			{
 				global $post;
-				$starting_at = floatval(number_format(dy_utilities::starting_at($post->ID), 2, '.', ''));
+				$starting_at = floatval(money(dy_utilities::starting_at($post->ID)));
 				
 				if(dy_validators::is_valid_schema())
 				{

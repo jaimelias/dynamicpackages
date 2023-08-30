@@ -145,12 +145,12 @@ class Dynamicpackages_Tables{
 					if($this->price_type === 1)
 					{
 						$row = '';
-						$price_label = $this->currency_symbol.number_format(intval($min_price), 2, '.', ',');
+						$price_label = $this->currency_symbol . money(intval($min_price));
 						$td = '<td colspan="2">';
 						if($diff_percentage > 5) 
 						{
 							$person_label = $this->min_persons . ' - ' . $this->max_persons;
-							$price_label .= ' - ' . $this->currency_symbol.number_format(intval($max_price), 2, '.', ',');
+							$price_label .= ' - ' . $this->currency_symbol . money(intval($max_price));
 							$row .= '<tr><td><span class="dashicons dashicons-admin-users"></span> '.esc_html($person_label).'</td>';
 						}
 						else
@@ -191,7 +191,7 @@ class Dynamicpackages_Tables{
 								
 								if($show_rows)
 								{
-									$row .= $td.esc_html($this->currency_symbol.number_format($price, 2, '.', ',')).'</td>';
+									$row .= $td . esc_html($this->currency_symbol . money($price)).'</td>';
 									$row .= '</tr>';
 									$rows .= $row;	
 								}

@@ -177,7 +177,7 @@ class paguelo_facil_on{
 		{
 			$first_name = sanitize_text_field($_POST['first_name']);
 			$title = sanitize_text_field($_POST['title']);
-			$payment_amount = dy_utilities::payment_amount();
+			$payment_amount = money(dy_utilities::payment_amount());
 			
 			if($this->success === 2)
 			{
@@ -202,7 +202,7 @@ class paguelo_facil_on{
 		if(isset($this->success))
 		{
 			$title = sanitize_text_field($_POST['title']);
-			$payment_amount = dy_utilities::payment_amount();
+			$payment_amount = money(dy_utilities::payment_amount());
 			
 			if($this->success === 2)
 			{

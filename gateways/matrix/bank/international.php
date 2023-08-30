@@ -173,7 +173,7 @@ class wire_transfer{
 	public function message($message)
 	{
 		
-		$amount = currency_symbol().number_format(dy_utilities::payment_amount(), 2, '.', ',');		
+		$amount = currency_symbol().money(dy_utilities::payment_amount());	
 		$label = __('payment', 'dynamicpackages');
 		
 		if(dy_validators::has_deposit())
