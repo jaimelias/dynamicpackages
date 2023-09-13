@@ -361,23 +361,24 @@ if(!function_exists('home_lang'))
 
 			if($polylang)
 			{
+				$path = '';
 				$pll_url = pll_home_url();
-				$current_language = pll_current_language();
-				$parsed_url = parse_url($pll_url);
-				$scheme = $parsed_url['scheme'];
-				$host = $parsed_url['host'];
-				$path = $parsed_url['path'];
-				$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-				$langPath = '';
-				$path_arr = array_values(array_filter(explode('/', $path)));
 
-				if(in_array($current_language, $path_arr))
+				if(!empty($pll_url))
 				{
-					$path = $current_language;
-				}
-				else
-				{
-					$path = '';
+					$current_language = pll_current_language();
+					$parsed_url = parse_url($pll_url);
+					$scheme = $parsed_url['scheme'];
+					$host = $parsed_url['host'];
+					$path = $parsed_url['path'];
+					$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+					$langPath = '';
+					$path_arr = array_values(array_filter(explode('/', $path)));
+
+					if(in_array($current_language, $path_arr))
+					{
+						$path = $current_language;
+					}
 				}
 
 				$output =  home_url($path.'/');
