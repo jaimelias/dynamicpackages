@@ -106,7 +106,7 @@ class Dynamic_Core_Public {
     {
         $value = get_option('dy_gtm_tracking_id');
 
-        if($value): ?>
+        if(!empty($value)): ?>
 
         <!-- Start Google - Global Tag Manager (GMT) -->
         <script>
@@ -125,7 +125,7 @@ class Dynamic_Core_Public {
     {
         $value = get_option('dy_gtm_tracking_id');
 
-        if($value): ?>
+        if(!empty($value)): ?>
 
         <!-- Start Google - Global Tag Manager (GMT) noscript-->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo esc_html($value); ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -138,7 +138,7 @@ class Dynamic_Core_Public {
     {
         $analytics = get_option('dy_gtag_tracking_id');
 
-        if($analytics): ?>
+        if(!empty($analytics)): ?>
 
         <!-- Start Google - Analytics GA4 (GTAG) -->
 
@@ -159,7 +159,7 @@ class Dynamic_Core_Public {
     {
         $value = get_option('dy_facebook_pixel_id');
 
-        if($value): ?>
+        if(!empty($value)): ?>
 
         <!-- Start Facebook Pixel -->
         <script>
