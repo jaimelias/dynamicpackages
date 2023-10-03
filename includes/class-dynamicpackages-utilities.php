@@ -6,6 +6,12 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class dy_utilities {
 		
+
+	public static function sort_by_arr()
+	{
+		return array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
+	}
+
 	public static function booking_date()
 	{
 		if(isset($_REQUEST['booking_date']))

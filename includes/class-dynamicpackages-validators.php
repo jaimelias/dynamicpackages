@@ -665,12 +665,15 @@ class dy_validators
 			}
 			if(isset($_GET['sort']))
 			{
-				$package_arr = array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
-				$package_sort = sanitize_text_field($_GET['sort']);
+				$sort_by_arr = dy_utilities::sort_by_arr();
+				$sort_by_value = sanitize_text_field($_GET['sort']);
 
-				if(in_array($package_sort, $package_arr))
+				if(!empty($sort_by_value) || $sort_by_value !== 'any')
 				{
-					$sort_by = true;
+					if(in_array($sort_by_value, $sort_by_arr))
+					{
+						$sort_by = true;
+					}
 				}
 			}	
 

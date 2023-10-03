@@ -918,18 +918,29 @@ class Dynamicpackages_Public {
 			}
 			if(isset($_GET['sort']))
 			{
-				if($_GET['sort'] == 'new' || $_GET['sort'] == 'low' || $_GET['sort'] == 'high' || $_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
+				$sort_by_value = sanitize_text_field($_GET['sort']);
+
+				if(!empty($sort_by_value) || $sort_by_value !== 'any')
 				{
-					$url_var['sort'] = sanitize_text_field($_GET['sort']);
+					$sort_by_arr = dy_utilities::sort_by_arr();
+
+					if(in_array($sort_by_value, $sort_by_arr))
+					{
+						$url_var['sort'] = $sort_by_value;
+					}
 				}
+
 			}
 			if(isset($_GET['keywords']))
 			{
-				$search = strtolower(sanitize_text_field($_GET['keywords']));
-				$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
-				$search =  preg_replace('/\s+/', ' ', $search);				
-				$search =  substr($search, 0, 25);
-				$url_var['keywords'] = $search;
+				if(!empty($_GET['keywords']))
+				{
+					$search = strtolower(sanitize_text_field($_GET['keywords']));
+					$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
+					$search =  preg_replace('/\s+/', ' ', $search);				
+					$search =  substr($search, 0, 25);
+					$url_var['keywords'] = $search;
+				}
 			}			
 
 			$url = $url.'?';
