@@ -714,19 +714,29 @@ const handleParentAttr = () => {
 const handleSaveAndRefresh = () => {
 
 	const { subscribe } = wp.data;
+	let updated = false;
 
 	subscribe(() => {
 
 		setTimeout(() => {
-			wp.data.dispatch('core/editor').savePost().then(r => {
-			
-				if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
-				{
-					const {location} = window;
-					const url = new URL(location);
-					window.location.replace(url.href);	
-				}
-			});
+
+
+			if(updated === false)
+			{
+				wp.data.dispatch('core/editor').savePost().then(r => {
+				
+					if(wp.data.select('core/editor').didPostSaveRequestSucceed() === true)
+					{
+						const {location} = window;
+						const url = new URL(location);
+						window.location.replace(url.href);
+						updated = true;	
+					}
+				});
+
+			}
+
+
 		}, 500);
 	});
 
