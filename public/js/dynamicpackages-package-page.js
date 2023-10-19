@@ -85,9 +85,9 @@ const datePicker = async () => {
 					}
 
 					
-					if(name === 'booking_date')
+					if(name === 'end_date')
 					{
-						args.onSet = () => {
+						args.onOpen = () => {
 
 							const bookingDatePicker = jQuery(thisForm)
 								.find('input.dy_date_picker[name="booking_date"]')
@@ -223,6 +223,7 @@ const validateCheckPricesForm = () => {
 			let required = ['booking_date', 'booking_hour'];
 			const data = formToArray(thisForm);
 			const bookingDate = data.find(v => v.name === 'booking_date');
+			const endDate = data.find(v => v.name === 'end_date');
 			let paxNum = 0;
 
 			data.forEach(v => {
@@ -244,10 +245,22 @@ const validateCheckPricesForm = () => {
 				}
 			});
 
+			if(typeof bookingDate !== 'undefined' && typeof endDate !== 'undefined')
+			{
+				const dateNames = ['booking_date', 'end_date'];
+
+				if(new Date(bookingDate.value) > new Date(endDate.value))
+				{
+					invalids.push(...dateNames);
+
+					dateNames.forEach(n => {
+						jQuery(thisForm).find('[name="'+n+'"]').addClass('invalid_field');
+					});
+				}
+			}
+
 			if(invalids.length === 0)
 			{
-
-
 				data.forEach(v => {
 					const {name, value} = v;
 
