@@ -25,81 +25,87 @@ const datePicker = async () => {
 
 		jQuery(formContainer).each(function () {
 			const thisForm = jQuery(this).find('.dy_package_booking_form');
-			const field = jQuery(thisForm).find('input.dy_date_picker');
-			const name = jQuery(field).attr('name');
-			let fetchUrl = (name === 'end_date') ? url + '&return=true' : url;
+			const fields = jQuery(thisForm).find('input.dy_date_picker');
+
+			let args = {
+				container: '#availability_calendar',
+				format: 'yyyy-mm-dd',
+				firstDay: 1
+			};
 			
-			jQuery(thisForm).find('select.booking_select').each(function(){
-				fetchUrl += '&' + jQuery(this).attr('name') + '=' + jQuery(this).val();
-			});
-										
-			fetch(fetchUrl)
-			.then(response => {
-				if(response.ok)
-				{
-					return response;
-				}
-				else
-				{
-				  let error = new Error('Error ' + response.status + ': ' + response.statusText);
-				  error.response = response;
-				  throw error;			
-				}
-			}, error => {
-				throw new Error(error.message);
-			})
-			.then(response => response.json())
-			.then(data => {
+			jQuery(fields).each(function(){
+				const field = jQuery(this);
+
+				const name = jQuery(field).attr('name');
+				let fetchUrl = (name === 'end_date') ? url + '&return=true' : url;
 				
-				const today = new Date();
-				const hour = today.getHours();
-				const weekDay = today.getDay();
-				
-				let args = {
-					container: '#availability_calendar',
-					format: 'yyyy-mm-dd',
-					disable: data.disable,
-					firstDay: 1,
-					min: data.min,
-					max: data.max
-				};
-				
-				//stop tomorrow bookings
-				if(args.min === 1)
-				{
-					if(hour >= 17)
+				jQuery(thisForm).find('select.booking_select').each(function(){
+					fetchUrl += '&' + jQuery(this).attr('name') + '=' + jQuery(this).val();
+				});
+											
+				fetch(fetchUrl)
+				.then(response => {
+					if(response.ok)
 					{
-						args.min = 2;
+						return response;
 					}
-					if(weekDay === 0 || weekDay === 6)
+					else
 					{
-						if(hour >= 16)
+					let error = new Error('Error ' + response.status + ': ' + response.statusText);
+					error.response = response;
+					throw error;			
+					}
+				}, error => {
+					throw new Error(error.message);
+				})
+				.then(response => response.json())
+				.then(data => {
+					
+					const {disable, min, max} = data;
+					args = {...args, disable, min, max};
+
+					const today = new Date();
+					const hour = today.getHours();
+					const weekDay = today.getDay();
+
+					//stop tomorrow bookings
+					if(args.min === 1)
+					{
+						if(hour >= 17)
 						{
 							args.min = 2;
 						}
+						if(weekDay === 0 || weekDay === 6)
+						{
+							if(hour >= 16)
+							{
+								args.min = 2;
+							}
+						}
 					}
-				}
 
-				if(jQuery(field).attr('type') == 'text')
-				{
-					jQuery(field).pickadate(args);
-				}
-				else if(jQuery(field).attr('type') == 'date')
-				{
-					jQuery(field).attr({
-						'type': 'text'
+					if(jQuery(field).attr('type') == 'text')
+					{
+						jQuery(field).pickadate(args);
+					}
+					else if(jQuery(field).attr('type') == 'date')
+					{
+						jQuery(field).attr({
+							'type': 'text'
+						});
+						jQuery(field).pickadate(args);
+					}
+					
+					jQuery(field).removeAttr('disabled').attr({
+						'placeholder': null
 					});
-					jQuery(field).pickadate(args);
-				}
 				
-				jQuery(field).removeAttr('disabled').attr({
-					'placeholder': null
-				});
-			
-			})
-			.catch(error => {
-				throw error;
-			});			
+				})
+				.catch(error => {
+					throw error;
+				});	
+
+			});		
 
 		});
 	};
