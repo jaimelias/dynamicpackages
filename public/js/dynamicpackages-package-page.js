@@ -84,6 +84,30 @@ const datePicker = async () => {
 						}
 					}
 
+					if(name === 'end_date')
+					{
+						args.onOpen = function() {
+
+							const bookingDatePicker = jQuery(thisForm)
+								.find('input.dy_date_picker[name="booking_date"]')
+								.pickadate('picker');
+
+							const bookingDateVal = bookingDatePicker.get('select');
+
+							if(bookingDateVal)
+							{
+								const endDatePicker = jQuery(thisForm)
+									.find('input.dy_date_picker[name="end_date"]')
+									.pickadate('picker');
+
+								endDatePicker.set('clear');
+								endDatePicker.set('min', bookingDateVal);
+								endDatePicker.render();
+							}
+
+						}; 
+					}
+
 					if(jQuery(field).attr('type') == 'text')
 					{
 						jQuery(field).pickadate(args);
