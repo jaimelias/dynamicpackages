@@ -25,8 +25,8 @@ class Dynamic_Core_Public {
         global $dy_load_picker_scripts;
         global $dy_load_request_form_utilities_scripts;
 
-        wp_enqueue_script('sentry-lazy-load', 'https://js.sentry-cdn.com/822912272dd54f53974343547ae543f3.min.js', array(), '', false);
-        wp_add_inline_script('sentry-lazy-load', $this->sentry(), 'after');
+        //wp_enqueue_script('sentry-lazy-load', 'https://js.sentry-cdn.com/822912272dd54f53974343547ae543f3.min.js', array(), '', false);
+        //wp_add_inline_script('sentry-lazy-load', $this->sentry(), 'after');
         
         wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), $this->version, true);
         wp_add_inline_script('landing-cookies', $this->cookies(), 'before');
