@@ -84,25 +84,25 @@ const datePicker = async () => {
 						}
 					}
 
+					
 					if(name === 'booking_date')
 					{
-						args.onSet = function() {
+						args.onSet = () => {
 
 							const bookingDatePicker = jQuery(thisForm)
 								.find('input.dy_date_picker[name="booking_date"]')
 								.pickadate('picker');
 
 							const bookingDateVal = bookingDatePicker.get('select');
+							const endDate = jQuery(thisForm)
+								.find('input.dy_date_picker[name="end_date"]');
 
-							if(bookingDateVal && jQuery(thisForm)
-							.find('input.dy_date_picker[name="end_date"]').length !== 0)
+							if(bookingDateVal && endDate.length !== 0)
 							{
-								const endDatePicker = jQuery(thisForm)
-									.find('input.dy_date_picker[name="end_date"]')
-									.pickadate('picker');
+								const endDatePicker = endDate.pickadate('picker');
 
+								endDatePicker.set({min: bookingDateVal}, { muted: true });
 								endDatePicker.set('clear');
-								endDatePicker.set('min', bookingDateVal);
 								endDatePicker.render();
 							}
 
