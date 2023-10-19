@@ -84,9 +84,9 @@ const datePicker = async () => {
 						}
 					}
 
-					if(name === 'end_date')
+					if(name === 'booking_date')
 					{
-						args.onOpen = function() {
+						args.onSet = function() {
 
 							const bookingDatePicker = jQuery(thisForm)
 								.find('input.dy_date_picker[name="booking_date"]')
@@ -94,7 +94,8 @@ const datePicker = async () => {
 
 							const bookingDateVal = bookingDatePicker.get('select');
 
-							if(bookingDateVal)
+							if(bookingDateVal && jQuery(thisForm)
+							.find('input.dy_date_picker[name="end_date"]').length !== 0)
 							{
 								const endDatePicker = jQuery(thisForm)
 									.find('input.dy_date_picker[name="end_date"]')
