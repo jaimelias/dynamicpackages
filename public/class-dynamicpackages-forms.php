@@ -126,6 +126,8 @@ class Dynamicpackages_Forms
 		$date_label = ($is_transport) 
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
+
+		$plugin_dir_url = plugin_dir_url( __DIR__ );
 		
 		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_url(get_permalink()).'" data-gclid="true">';
 		
@@ -139,6 +141,8 @@ class Dynamicpackages_Forms
 				
 			}
 		}
+
+		$form .= '<img class="bottom-20" width="600" weight="200" alt="visa mastercard paypal yappy crypto usdt usdc btc" src="'.esc_url($plugin_dir_url.'gateways/matrix/assets/all/pagos.svg').'"  />';
 
 		$form .= $this->adults_select($price_chart, $min, $max, $option_disc, $option_free);
 		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
@@ -213,7 +217,7 @@ class Dynamicpackages_Forms
 			$form .= '</select></p>';					
 		}
 		
-		$book_now_text = __('Check Pricing', 'dynamicpackages');
+		$book_now_text = __('Bookings & Estimates', 'dynamicpackages');
 						
 
 
