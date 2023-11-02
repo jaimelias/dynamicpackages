@@ -1041,7 +1041,7 @@ class Dynamicpackages_Public {
 		{
 			if(is_valid_date($event_date))
 			{
-				$output = dy_utilities::format_date($event_date);
+				$output = dy_utilities::format_date(strtotime($event_date));
 			}
 			
 		}
