@@ -1011,6 +1011,7 @@ class Dynamicpackages_Public {
 		$labels_lon = dy_utilities::get_week_day_names_long();		
 		$enabled_days = array();
 		$enabled_days_lon = array();
+		$event_date = package_field('package_event_date');
 		
 		for($x = 0; $x < count($days); $x++)
 		{
@@ -1034,6 +1035,15 @@ class Dynamicpackages_Public {
 		else
 		{
 			$output = implode(', ', $enabled_days);
+		}
+
+		if(!empty($event_date))
+		{
+			if(is_valid_date($event_date))
+			{
+				$output = dy_utilities::format_date($event_date);
+			}
+			
 		}
 		
 		return $output;
