@@ -345,55 +345,57 @@ if(!function_exists('cloudflare_ban_ip_address'))
 
 if(!function_exists('home_lang'))
 {
-	function home_lang()
-	{
-		$which_var = 'wp_core_home_lang';
-		global $$which_var;
-		$output = '';
+    function home_lang()
+    {
+        $which_var = 'wp_core_home_lang';
+        global $$which_var;
+        $output = '';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			global $polylang;
+        if(isset($$which_var))
+        {
+            $output = $$which_var;
+        }
+        else
+        {
+            global $polylang;
 
-			if($polylang)
-			{
-				$path = '';
-				$pll_url = pll_home_url();
+            if($polylang)
+            {
+                $path = '';
+                $pll_url = pll_home_url();
 
-				if(!empty($pll_url))
-				{
-					$current_language = pll_current_language();
-					$parsed_url = parse_url($pll_url);
-					$scheme = $parsed_url['scheme'];
-					$host = $parsed_url['host'];
-					$path = $parsed_url['path'];
-					$port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-					$langPath = '';
-					$path_arr = array_values(array_filter(explode('/', $path)));
+                if(!empty($pll_url))
+                {
+                    $current_language = pll_current_language();
+                    $parsed_url = wp_parse_url($pll_url);
+                    $path_arr = array_values(array_filter(explode('/', $path)));
 
-					if(in_array($current_language, $path_arr))
-					{
-						$path = $current_language;
-					}
-				}
+                    if(in_array($current_language, $path_arr))
+                    {
+                        $parsed_url['path'] = $current_language;
+                    }
+                }
 
-				$output =  home_url($path.'/');
-			}
-			else
-			{
-				$output =  home_url('/');
-			}
+                $output = $parsed_url['scheme'] . '://'
+                    . $parsed_url['host']
+                    . (isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '')
+                    . (isset($parsed_url['path']) ? $parsed_url['path'] : '')
+                    . (isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '')
+                    . (isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '');
 
-			$GLOBALS[$which_var] = $output;
-		}
+            }
+            else
+            {
+                $output =  home_url('/');
+            }
 
-		return $output;
-	}
+            $GLOBALS[$which_var] = $output;
+        }
+
+        return $output;
+    }
 }
+
 
 if(!function_exists('whatsapp_button'))
 {
