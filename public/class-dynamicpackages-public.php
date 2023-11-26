@@ -1181,6 +1181,16 @@ class Dynamicpackages_Public {
 			unset($args['schedule']);
 		}
 		
+
+		foreach ($args as $key => $value) {
+			// Check if the first element of the inner array is null
+			if (empty($value[0])) {
+				// Remove the item with null first element
+				unset($args[$key]);
+			}
+		}
+
+
 		$output = '';
 
 		foreach($args as $k => $v)

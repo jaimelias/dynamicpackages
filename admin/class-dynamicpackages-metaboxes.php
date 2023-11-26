@@ -41,13 +41,18 @@ class Dynamicpackages_Metaboxes
 
         if (!$this->is_child)
         {
-            add_meta_box('package-e', __('Departure', 'dynamicpackages') , array(&$this,
-                'package_departure_html'
-            ) , 'packages', 'normal', 'default');
+
             add_meta_box('package-f', __('Messages', 'dynamicpackages') , array(&$this,
                 'package_messages_html'
             ) , 'packages', 'normal', 'default');
         }
+
+		if(!$this->is_child || ($this->is_transport && $this->is_child))
+		{
+            add_meta_box('package-e', __('Departure', 'dynamicpackages') , array(&$this,
+                'package_departure_html'
+            ) , 'packages', 'normal', 'default');
+		}
 
 		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , array(&$this,
 			'package_coupon_html'
@@ -111,6 +116,7 @@ class Dynamicpackages_Metaboxes
 		$this->package_type_transport = dy_validators::package_type_transport();
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
+		$this->is_transport = dy_validators::package_type_transport();
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_utilities::get_week_days_abbr();

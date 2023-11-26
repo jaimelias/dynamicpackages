@@ -53,10 +53,21 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 
 function package_field($name, $this_id = null)
 {
+	global $post;
 	$week_days = dy_utilities::get_week_days_abbr();
 	$languages = get_languages();
 	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_disabled_dates_api');
 	
+	if(dy_validators::package_type_transport())
+	{
+		$excludes[] =  'package_check_in_hour';
+		$excludes[] =  'package_start_hour';
+		$excludes[] =  'package_check_in_end_hour';
+		$excludes[] =  'package_return_hour';
+		$excludes[] = 'package_start_address';
+		$excludes[] = 'package_return_address';
+	}
+
 	for($x = 0; $x < count($week_days); $x++)
 	{
 		$excludes[] = 'package_week_day_surcharge_'.$week_days[$x];
@@ -65,8 +76,6 @@ function package_field($name, $this_id = null)
 
 	if($this_id === null)
 	{	
-		global $post;
-		
 		if(isset($post))
 		{
 			$this_id = $post->ID;

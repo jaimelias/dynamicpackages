@@ -973,11 +973,15 @@ class dy_validators
 				$output = $$which_var;
 			}
 			else {
-				
-				if(package_field('package_package_type') == 4)
+
+				$the_id = $post->ID;
+
+				if($post->post_parent > 0)
 				{
-					$output = true;
+					$the_id = $post->post_parent;
 				}
+				
+				$output = (intval(get_post_meta($the_id, 'package_package_type', true)) === 4) ? true : false;
 				
 				$GLOBALS[$which_var] = $output;
 			}
