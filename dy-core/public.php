@@ -171,7 +171,7 @@ class Dynamic_Core_Public {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window,document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '<?php echo esc_html($value); ?>'); 
+                fbq('init', '<?php echo esc_html(get_theme_mod('dy_facebook_pixel_id')); ?>'); 
             fbq('track', 'PageView');
 		</script>
         <!-- End Facebook Pixel -->
