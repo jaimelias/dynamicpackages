@@ -220,8 +220,7 @@ const addOnsCalc = () => {
 
 
 
-async function checkoutFormSubmit(token){
-
+function checkoutFormSubmit(token){
 
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
@@ -231,18 +230,18 @@ async function checkoutFormSubmit(token){
 	const formFields = formToArray(thisForm);
 	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
 	const excludedPurchase = ['contact', 'estimate_request'];
-	
+
 	formFields.forEach(i => {
 
 		const {name, value} = i;
 		const field = jQuery(thisForm).find('[name="'+name+'"]');
 		const label = jQuery(thisForm).find('label[for="'+name+'"]');
 		const isRequired = (jQuery(field).hasClass('required')) ? true : false;
-		const isNull = (value) ? false : true;
+		const isNull = !value;
 		
 		if(isRequired)
 		{
-			if(isNull || isValidInput({name, value}))
+			if(isNull || !isValidValue({name, value}))
 			{
 				if(name.startsWith('terms_conditions_'))
 				{
@@ -265,7 +264,7 @@ async function checkoutFormSubmit(token){
 				}
 				else
 				{
-					jQuery(this).removeClass('invalid_field');
+					jQuery(field).removeClass('invalid_field');
 				}
 			}
 		}

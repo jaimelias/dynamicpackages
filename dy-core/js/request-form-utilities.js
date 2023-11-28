@@ -71,33 +71,27 @@ const countryOptions = data => {
 }
 
 
-const isValidInput = ({name, value}) => {
-
-	let output = false;
-
-	if(name === 'CVV2' && value.length !== 3)
-	{
-		output =  true;
+const isValidValue = ({ name, value }) => {
+	if (!value) {
+	  return false;
 	}
-	else if(name === 'CCNum' && !isValidCard(value))
-	{
-		output =  true;
+  
+	switch (name) {
+	  case 'CVV2':
+		return value.length === 3;
+	  case 'CCNum':
+		return isValidCard(value);
+	  case 'email':
+		return isEmail(value);
+	  case 'repeat_email':
+		return isEmail(value) && value === jQuery('#dy_package_request_form').find('input[name="email"]').val();
+	  case 'inquiry':
+		return !isSpam(value);
+	  default:
+		return true;
 	}
-	else if(name === 'email' && !isEmail(value))
-	{
-		output =  true;
-	}
-	else if(name === 'repeat_email' && !isEmail(value))
-	{
-		output =  true;
-	}
-	else if(name === 'inquiry' && isSpam(value))
-	{
-		output = true;
-	}
-	
-	return output;
-};
+  };
+  
 
 const isValidCard = value => {
   

@@ -21,7 +21,20 @@ jQuery(() => {
 
 const formToArray = form => {
    
-    let data = jQuery(form).serializeArray();
+    let data = jQuery(form)
+        .serializeArray()
+        .map(o => {
+
+        let {value} = o;
+
+        if(typeof value === 'string')
+        {
+            o.value = o.value.trim();
+        }
+
+        return o;
+
+     });
     
      jQuery(form).find('input:checkbox').each(function () { 
         const {name, checked: value} = this;
