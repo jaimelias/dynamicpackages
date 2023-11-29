@@ -95,7 +95,7 @@ class Dy_Mailer
 
 		//mailer settings
 		register_setting('mailer_settings', 'sendgrid_email', 'sanitize_text_field');
-		register_setting('mailer_settings', 'sendgrid_email_bcc', 'sanitize_text_field');
+		register_setting('mailer_settings', 'sendgrid_email_bcc', 'sanitize_items_per_line');
 		register_setting('mailer_settings', 'sendgrid_name', 'sanitize_text_field');		
 
 
@@ -130,10 +130,10 @@ class Dy_Mailer
 		add_settings_field( 
 			'sendgrid_email_bcc', 
 			'Inbox Email (Bcc)', 
-			array(&$this, 'settings_input'), 
+			array(&$this, 'settings_textarea'), 
 			'mailer_settings', 
 			'mailer_settings_section',
-			array('name' => 'sendgrid_email_bcc', 'type' => 'email') 
+			array('name' => 'sendgrid_email_bcc') 
 		);			
 
 		add_settings_field( 
@@ -178,31 +178,20 @@ class Dy_Mailer
 			$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
 		?>
-		<input type="<?php echo $type; ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo $name; ?>" value="<?php echo esc_attr(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
+		<input type="<?php echo $type; ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr(get_option($name)); ?>" /> <span><?php echo $url; ?></span>
+
+	<?php }
+
+	public function settings_textarea($arr){
+		$name = $arr['name'];
+		$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
+	?>
+		<span><?php echo $url; ?></span>
+		<textarea rows="10" class="width-100" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>"><?php echo esc_textarea($this->sanitize_items_per_line('sanitize_email', get_option($name))); ?></textarea>
 
 	<?php }		
 
-	public function get_email_arr($str)
-	{
-		if(!empty($str))
-		{
-			$arr = explode(',', $str);
-			$emails = array_map('sanitize_email', $arr);
-			$is_arr = is_array($emails);
-			
-			if($is_arr)
-			{
-				$count_emails = count($emails);
-				
-				if($count_emails > 0)
-				{
-					return $emails;
-				}
-			}
-		}
-		
-		return array();
-	}
+
 
 	public function send($args = array())
 	{
@@ -249,14 +238,31 @@ class Dy_Mailer
 									}
 								}
 							}
-							
+
+							$bcc = $this->email_str_row_to_array($this->email_bcc);
+							$count_bcc = count($bcc);
+
+							if($count_bcc > 0)
+							{
+								for($x > 0; $x < $count_bcc; $x++)
+								{
+									if($x > 0 && $x <= 10)
+									{
+										if(is_email($bcc[$x]))
+										{
+											$email->addBcc($bcc[$x]);
+										}
+										else
+										{
+											$invalid_emails = true;
+											break;
+										}
+									}
+								}
+							}							
+
 							if(!$invalid_emails)
 							{
-								if($this->email_bcc)
-								{
-									$email->addBcc($this->email_bcc);
-								}
-								
 								$email->addContent('text/html', $message);				
 								
 								if($this->has_attachments($attachments))
@@ -384,6 +390,54 @@ class Dy_Mailer
 	{
 		return ($this->email) ? $this->email : $email;
 	}
+
+
+	public function email_str_row_to_array($str)
+	{
+		$output = array();
+
+		if($str)
+		{
+			$emails = explode("\r\n", html_entity_decode($str));		
+			$output = array_slice(array_unique(array_filter(array_map('sanitize_email', $emails))), 0, 10);
+		}
+
+
+		return $output;
+	}
+
+	public function sanitize_items_per_line($sanitize_func, $str)
+	{
+		$str = html_entity_decode($str);
+		$emails = explode("\r\n", $str);		
+		$arr = array_slice(array_unique(array_filter(array_map($sanitize_func, $emails))), 0, 10) ;
+
+		return implode("\r\n", $arr);
+	}
+
+	public function get_email_arr($str)
+	{
+		if(!empty($str))
+		{
+			$arr = explode(',', $str);
+			$emails = array_map('sanitize_email', $arr);
+			$is_arr = is_array($emails);
+			
+			if($is_arr)
+			{
+				$count_emails = count($emails);
+				
+				if($count_emails > 0)
+				{
+					return $emails;
+				}
+			}
+		}
+		
+		return array();
+	}	
+
+
 }
 
 
