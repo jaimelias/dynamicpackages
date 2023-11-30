@@ -171,7 +171,7 @@ class Dynamicpackages_Gateways
 		}
 		else{
 
-			$output = '🤖 ' . __('Get a quote in seconds! Quick, easy, and hassle-free. Just ask, and your estimate will be in your inbox in no time.', 'dynamicpackages') . ' ⬇️';
+			$output = '🤖 ' . $this->estimate->only_estimate . ' ⬇️';
 		}
 
 		return $output;		
@@ -201,7 +201,11 @@ class Dynamicpackages_Gateways
 		
 		if($this->has_gateway())
 		{
-			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
+			$output = '<p class="text-center bottom-20 large">'.$this->choose_gateway().'</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
+		}
+		else
+		{
+			$output = '<p class="text-center bottom-20 large">🤖 ' . $this->estimate->only_estimate . ' ⬇️</p>';
 		}
 		
 		$output .= apply_filters('dy_booking_sidebar', null);	

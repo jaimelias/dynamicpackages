@@ -23,6 +23,7 @@ class estimate_request{
 		$this->name_button = __('Get estimate', 'dynamicpackages');
 		$this->color = '#444';
 		$this->background_color = '#ccc';
+		$this->only_estimate = __('Get a quote in seconds! Quick, easy, and hassle-free. Just ask, and your estimate will be in your inbox in no time.', 'dynamicpackages');
 	}
 	
 	
