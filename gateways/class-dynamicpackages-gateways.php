@@ -137,7 +137,7 @@ class Dynamicpackages_Gateways
 
 		if(is_array($gateways) && $pax_num <= $max_persons && $auto_booking > 0)
 		{
-			if(count($gateways) > 1)
+			if(count($gateways) > 0)
 			{
 				$GLOBALS['has_gateway'] = true;
 				$output = true;
