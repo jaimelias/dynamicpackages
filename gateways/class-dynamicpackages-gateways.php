@@ -149,9 +149,12 @@ class Dynamicpackages_Gateways
 
 	public function choose_gateway()
 	{
-		$output = null;
-		
-		if(count($this->list_gateways_cb()) > 0)
+		$output = '';
+		$gateways = $this->list_gateways_cb();
+		$payment_gateways = array_diff($gateways, array($this->estimate->name));
+
+
+		if(count($payment_gateways) > 0)
 		{
 			$output = __('Pay', 'dynamicpackages');
 			
@@ -164,16 +167,13 @@ class Dynamicpackages_Gateways
 			
 			$output .= ') '.__('with', 'dynamicpackages');
 			
-			if(count($this->list_gateways_cb()) == 1)
-			{
-				$this_gateway = $this->list_gateways_cb();
-				$output .= ' '.$this_gateway[0];
-			}
-			else
-			{
-				$output .= ' '.$this->join_gateways();
-			}
+			$output .= ' ' . $this->join_gateways() . '.';
 		}
+		else{
+
+			$output = '🤖 ' . __('Get a quote in seconds! Quick, easy, and hassle-free. Just ask, and your estimate will be in your inbox in no time.', 'dynamicpackages') . ' ⬇️';
+		}
+
 		return $output;		
 	}
 	public function filter_coupon_gateway($array)
@@ -201,7 +201,7 @@ class Dynamicpackages_Gateways
 		
 		if($this->has_gateway())
 		{
-			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'.</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
+			$output .= '<p class="text-center bottom-20 large">'.$this->choose_gateway().'</p><div id="dy_payment_buttons" class="text-center bottom-20">'.$this->gateway_buttons().'</div>';
 		}
 		
 		$output .= apply_filters('dy_booking_sidebar', null);	

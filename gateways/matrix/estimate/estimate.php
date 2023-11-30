@@ -127,6 +127,6 @@ class estimate_request{
 
 	public function branding()
 	{
-		return '<p class="large">'.__('Send Your Request', 'dynamicpackages').'</p>';
+		return '<p class="large">'.__('Request a Quote', 'dynamicpackages').'</p>';
 	}
 }

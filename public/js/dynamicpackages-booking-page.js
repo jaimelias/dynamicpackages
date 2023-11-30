@@ -10,7 +10,9 @@ const selectGateway = () => {
 	const thisForm = jQuery('#dy_package_request_form');
 	const cardRequiredFields = ['country', 'city', 'address', 'CCNum', 'ExpMonth', 'ExpYear', 'CVV2'];
 
-	jQuery('#dy_payment_buttons').find('button').each(function(){
+	const buttons = jQuery('#dy_payment_buttons').find('button');
+
+	jQuery(buttons).each(function(){
 
 		jQuery(this).click(function(){
 
@@ -92,6 +94,15 @@ const selectGateway = () => {
 			jQuery(thisForm).find('input[name="dy_request"]').val(id);
 		});
 	});
+
+
+	//shows form if there is only one button
+	if(buttons.length === 1)
+	{
+		jQuery(buttons).trigger('click');
+		jQuery('#dy_payment_buttons').hide();
+	}
+
 
 };
 
