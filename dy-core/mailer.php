@@ -13,18 +13,17 @@ class Dy_Mailer
 		$this->email_limit = 10;
 		$this->web_api_key = get_option('sendgrid_web_api_key');
 		$this->email = get_option('sendgrid_email');
+		$this->email_to = get_option('sendgrid_email_to');
+		$this->email_cc = get_option('sendgrid_email_cc');
 		$this->email_bcc = get_option('sendgrid_email_bcc');
 		$this->name = (get_option('sendgrid_name')) ? get_option('sendgrid_name') : get_bloginfo('name');
-		$this->smtp_api_key = get_option('sendgrid_smtp_api_key');
-		$this->smtp_username = get_option('sendgrid_smtp_username');
-		$this->host = 'smtp.sendgrid.net';
 		$this->settings_title = 'Mailer Config';
 		$this->init();
 	}
 	
-	public function is_transactional()
+	public function is_enabled()
 	{
-		$output = (($this->web_api_key ||  ($this->smtp_api_key && $this->smtp_username)) && is_email($this->email)) ? true : false;
+		$output = ($this->web_api_key && is_email($this->email)) ? true : false;
 		
 		return $output;
 	}
@@ -36,34 +35,12 @@ class Dy_Mailer
 		add_filter('wp_mail_from', array(&$this, 'from_email'), 100, 1);
 		add_filter('wp_mail_from_name', array(&$this, 'from_name'), 100, 1);
 		
-		if($this->is_transactional())
+		if($this->is_enabled())
 		{
 			add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 100, 1 );
 			add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
 		}
 	}
-
-	public function phpmailer($mailer)
-	{
-		if(!isset($this->email_sent))
-		{
-			$mailer->IsSMTP();
-			$mailer->Host = $this->host;
-			$mailer->Port = 587;
-			$mailer->SMTPAuth = true;
-			$mailer->CharSet  = 'utf-8';
-			$mailer->SMTPSecure = 'tls';
-			$mailer->IsHTML(true);
-			$mailer->Username = $this->smtp_username;
-			$mailer->Password = $this->smtp_api_key;
-			$mailer->SMTPDebug = 0;
-			$this->email_sent = true;				
-		}
-		else
-		{
-			exit;
-		}
-	}		
 	
 	public function phpmailer_failed($wp_error)
 	{
@@ -194,143 +171,103 @@ class Dy_Mailer
 
 
 
-	public function send($args = array())
+	public function phpmailer($phpmailer)
 	{
-		if(is_array($args))
+		if(!$this->is_enabled())
 		{
-			if(count($args) > 0)
-			{
-				$subject = htmlspecialchars_decode($args['subject']);
-				$message = $this->minify_html($args['message']);
-				$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
-				$emails = (is_array($args['to'])) 
-					?  array_map('sanitize_email', array_unique($args['to'])) 
-					:  $this->email_str_row_to_array($args['to']);
-				$count_emails = count($emails);
-				$invalid_emails = false;
-									
-				if($count_emails > 0)
-				{
-					if($this->is_transactional())
-					{
-						$email = new \SendGrid\Mail\Mail();
-						$email->setFrom(sanitize_email($this->email), esc_html($this->name));
-						$email->setSubject($subject);
+			return $phpmailer;
+		}
 
-						for($x = 0; $x < $count_emails; $x++)
-						{	
-							if($x < $this->email_limit)
-							{
-								if(is_email($emails[$x]))
-								{
-									$email->addTo($emails[$x]);
-								}
-								else
-								{
-									$invalid_emails = true;
-									break;
-								}
-							}
-						}
+		$email = new \SendGrid\Mail\Mail();
+		$email->setFrom($this->email, $this->name);
+		$email->setSubject($phpmailer->Subject);
 
-						$bcc = $this->email_str_row_to_array($this->email_bcc);
-						$count_bcc = count($bcc);
+		if(!empty($phpmailer->Body))
+		{
+			$email->addContent('text/html', $phpmailer->Body);
+		}
+		
+		if(!empty($phpmailer->AltBody))
+		{
+			$email->addContent('text/plain', $phpmailer->AltBody);
+		}
+		
+		$to = $phpmailer->getToAddresses();
+		$cc = $phpmailer->getCcAddresses();
+		$bcc = $phpmailer->getBccAddresses();
 
-						if($count_bcc > 0)
-						{
-							for($x = 0; $x < $count_bcc; $x++)
-							{
-								if($x >= 0 && $x < $this->email_limit)
-								{
-									if(is_email($bcc[$x]))
-									{
-										$email->addBcc($bcc[$x]);
-									}
-									else
-									{
-										$invalid_emails = true;
-										break;
-									}
-								}
-							}
-						}							
+		//sets the emails from default wp_mail params
+		for($x = 0; $x < count($to); $x++)
+		{
+			$email->addTo($to[$x][0]);
+		}
+		for($x = 0; $x < count($cc); $x++)
+		{
+			$email->addCc($cc[$x][0]);
+		}
+		for($x = 0; $x < count($bcc); $x++)
+		{
+			$email->addBcc($bcc[$x][0]);
+		}
 
-						if(!$invalid_emails)
-						{
-							$email->addContent('text/html', $message);				
-							
-							if($this->has_attachments($attachments))
-							{
-								for($x = 0; $x < count($attachments); $x++)
-								{						
-									$attachment = new Attachment();
-									$attachment->setContent($attachments[$x]['data']);
-									$attachment->setType('application/pdf');
-									$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
-									$attachment->setDisposition('attachment');
-									$email->addAttachment($attachment);	
-								}							
-							}
-							
-							$sendgrid = new \SendGrid(esc_html($this->web_api_key));
-							
-							try {
-								
-								$response = $sendgrid->send($email);
-								
-								if($response->statusCode() >= 200 && $response->statusCode() <= 299)
-								{
-									return $args;
-								}
-								else
-								{
-									write_log($response->body());
-								}
-							} 
-							catch(Exception $e)
-							{
-								write_log($e->getMessage());
-							}
-						}
-					}
-					else
-					{
-						$headers = array('Content-Type: text/html; charset=UTF-8');
+		//set the emails from admin fields
+		$to = $this->email_str_row_to_array($this->email_to);
+		$cc = $this->email_str_row_to_array($this->email_cc);
+		$bcc = $this->email_str_row_to_array($this->email_bcc);
 
-						if($this->email_bcc)
-						{
-							$headers[] = 'Bcc: ' . $this->email_bcc;
-						}
+		for($x = 0; $x < count($to); $x++)
+		{
+			$email->addTo($to[$x]);
+		}
 
-						for($x = 0; $x < $count_emails; $x++)
-						{
-							if($x > 0 && $x <= 10)
-							{
-								if(is_email($emails[$x]))
-								{
-									$headers[] = 'Cc: ' . $emails[$x];
-								}
-								else
-								{
-									$invalid_emails = true;
-								}
-							}
-						}
+		for($x = 0; $x < count($cc); $x++)
+		{
+			$email->addCc($cc[$x]);
+		}
 
-						if(!$invalid_emails)
-						{
-							wp_mail($to, $subject, $message, $headers);
-						}
-					}						
-				}
-				else
-				{
-					write_log('$email is not an array');
-				}
+		for($x = 0; $x < count($bcc); $x++)
+		{
+			$email->addBcc($bcc[$x]);
+		}				
+		
+
+		//attachements
+		$attachments = $phpmailer->getAttachments();
+		
+
+		foreach ($attachments as $arr) {
+			$pathname = $arr[0];
+			$filename = $arr[2];
+			$mimetype = $arr[4];
+			$file = file_get_contents($pathname);
+			$attachment = new Attachment();
+			$attachment->setContent($file);
+			$attachment->setType($mimetype);
+			$attachment->setFilename(wp_specialchars_decode($filename));
+			$attachment->setDisposition('attachment');
+			$email->addAttachment($attachment);
+		}
+
+
+		$sendgrid = new \SendGrid($this->web_api_key);
+		
+		try {
+			
+			$response = $sendgrid->send($email);
+			
+			if (!($response->statusCode() >= 200 && $response->statusCode() <= 299)) {
+				write_log($response->body());
 			}
+
+			array_map('unlink', glob(wp_upload_dir()['basedir'] . '/temp_*.pdf'));
+
+		} 
+		catch(Exception $e)
+		{
+			write_log($e->getMessage());
 		}
 	}
-	
+
 	public function has_attachments($attachments)
 	{
 		$output = false;
@@ -415,17 +352,6 @@ class Dy_Mailer
 		return implode(PHP_EOL, $arr);
 	}
 	
-}
-
-
-if(!function_exists('sg_mail'))
-{
-	function sg_mail($args)
-	{
-		$mailer = new Dy_Mailer();
-		$mailer->send($args);
-		return true;
-	}
 }
 
 

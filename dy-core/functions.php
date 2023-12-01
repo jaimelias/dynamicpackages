@@ -267,15 +267,9 @@ if(!function_exists('cloudflare_ban_ip_address'))
 				{
 					$admin_email = get_option('admin_email');
 					$email_message = 'Cloudflare WAF is not Enabled in: ' . get_bloginfo('name');
+					$headers = array('Content-Type: text/html; charset=UTF-8');
 
-					$email_args = array(
-						'to' => sanitize_email($admin_email),
-						'subject' => $email_message,
-						'message' => $email_message
-					);
-
-
-					sg_mail($email_args);
+					wp_mail($admin_email, $email_message, $email_message, $headers);
 				}
 			}
 

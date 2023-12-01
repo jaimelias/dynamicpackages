@@ -78,14 +78,10 @@ class pay_later{
 				$message .= '<li>'.esc_html(sprintf(__('Phone: %s', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</li>';
 				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</li>';
 				$message .= '</ul>';
+				$headers = array('Content-Type: text/html; charset=UTF-8');
 
-				$args = array(
-					'to' => sanitize_email($this->user_name),
-					'subject' => $subject,
-					'message' => $message
-				);
 
-				sg_mail($args);
+				wp_mail(sanitize_email($this->user_name), $subject, $message, $headers);
 			}
 		}
 	}

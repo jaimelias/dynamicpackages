@@ -91,50 +91,47 @@ class Dynamicpackages_Actions{
         return apply_filters('dy_request_the_content', $content);
     }
 
-	public function doc_pdf()
+	public function doc_pdf($html, $filename)
 	{
-		require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
-		
+		$temp_path = wp_upload_dir()['basedir'];
+		$temp_filename = '/temp_' . uniqid() .'.pdf';
 		$doc_pdf = new Html2Pdf('P', 'A4', $this->current_language);
 		$doc_pdf->pdf->SetDisplayMode('fullpage');
-		$doc_pdf->writeHTML($email_pdf);
-		$doc_pdf_content = $doc_pdf->output('doc.pdf', 'S');
-		return $doc_pdf_content;
+		$doc_pdf->writeHTML($html);
+		$pdf_path = $temp_path . $temp_filename;
+		$doc_pdf->Output($pdf_path, 'F');
+		return array("filename" => $filename, "pathname" => $pdf_path);
 	}
 
     public function send_email()
     {
-		$args = array(
-			'subject' => $this->subject(),
-			'to' => sanitize_text_field($_POST['email'])
-		);
+
+		$attachments = array();
 
 		if(dy_validators::validate_quote())
 		{
-			$attachments = array();
-			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates.php';
-			$filename = __('Estimate', 'dynamicpackages') . '.pdf';
-			
-			$attachments[] = array(
-				'filename' => $filename,
-				'data' => $this->doc_pdf()
-			);
-			
-			$terms_pdf = $this->get_term_condition_attachment();
+			$estimate_filename = __('Estimate', 'dynamicpackages') . '.pdf';
+			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
+			$estimate = $this->doc_pdf($email_pdf, $estimate_filename);
+			$attachments[$estimate_filename] = $estimate['pathname'];
+			$terms_html = $this->get_term_condition_as_html();
 
-			if(is_array($terms_pdf))
+			if(is_array($terms_html))
 			{
-				if(count($terms_pdf) > 0)
+				if(count($terms_html) > 0)
 				{
-					for($x = 0; $x < count($terms_pdf); $x++)
+					for($x = 0; $x < count($terms_html); $x++)
 					{
-						$attachments[] = $terms_pdf[$x];
+						$term_html = $terms_html[$x]['html'];
+						$term_filename = $terms_html[$x]['filename'];
+						$term_pdf = $this->doc_pdf($term_html, $term_filename);
+						$attachments[$term_pdf['filename']] = $term_pdf['pathname'];
 					}
 				}
 			}
 
-			$args['message'] = $email_template;
-			$args['attachments'] = $attachments;
+			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates.php';
+			$message = $email_template;	
 		}
 		else
 		{			
@@ -147,14 +144,16 @@ class Dynamicpackages_Actions{
 				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(get_option('dy_phone')), sanitize_email(get_option('dy_email')))).'</p>';
 			}
 			
-			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</p>';
-			
-			$args['message'] = $message;
+			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</p>';			
 		}
 	
-		//die($args['message']);
-		
-		sg_mail($args);
+
+		$to = sanitize_text_field($_POST['email']);
+		$subject = $this->subject();
+		$body = $message;
+		$headers = array('Content-Type: text/html; charset=UTF-8');
+
+		wp_mail($to, $subject, $body, $headers,  $attachments);
     }
 	
 	public function subject()
@@ -205,7 +204,7 @@ class Dynamicpackages_Actions{
         return apply_filters('dy_request_the_title', $title);
     }
 	
-	public function get_term_condition_attachment()
+	public function get_term_condition_as_html()
 	{		
 		$output = array();
 		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
@@ -221,24 +220,16 @@ class Dynamicpackages_Actions{
 					$name = $terms_conditions[$x]->name;
 					
 					//PAGE
-					$page = '<style type="text/css">p{line-height: 1.25;}ul{line-height: 1.25;}ol{line-height: 1.25;}</style>';
-					$page .= '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
-					$page .= '<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">'.esc_html($name).'</h1>';
-					$page .= $Parsedown->text($terms_conditions[$x]->description);
-					$page .= '</page>';		
+					$html = '<style type="text/css">p{line-height: 1.25;}ul{line-height: 1.25;}ol{line-height: 1.25;}</style>';
+					$html .= '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
+					$html .= '<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">'.esc_html($name).'</h1>';
+					$html .= $Parsedown->text($terms_conditions[$x]->description);
+					$html .= '</page>';		
 					
 					//PDF
-					$pdf = new Html2Pdf('P', 'A4', $this->current_language);
-					$pdf->pdf->SetDisplayMode('fullpage');
-					$pdf->writeHTML($page);
-		
-					//OUTPUT
 					$filename = $name . '.pdf';
 					
-					$output[] = array(
-						'filename' => $filename,
-						'data' => $pdf->output($filename, 'S')
-					);
+					$output[] = array("html"=> $html, "filename" => $filename);
 				}		
 			}
 		}
