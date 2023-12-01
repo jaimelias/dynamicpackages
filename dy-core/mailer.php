@@ -244,7 +244,6 @@ class Dy_Mailer
 								{
 									if(is_email($bcc[$x]))
 									{
-										write_log($bcc[$x]);
 										$email->addBcc($bcc[$x]);
 									}
 									else
