@@ -10,6 +10,7 @@ class Dy_Mailer
 	
 	public function __construct()
 	{
+		$this->email_limit = 10;
 		$this->web_api_key = get_option('sendgrid_web_api_key');
 		$this->email = get_option('sendgrid_email');
 		$this->email_bcc = get_option('sendgrid_email_bcc');
@@ -187,7 +188,7 @@ class Dy_Mailer
 		$url = (array_key_exists('url', $arr)) ? '<a href="'.esc_url($arr['url']).'">?</a>' : null;
 	?>
 		<span><?php echo $url; ?></span>
-		<textarea rows="10" class="width-100" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>"><?php echo esc_textarea($this->sanitize_items_per_line('sanitize_email', get_option($name))); ?></textarea>
+		<textarea rows="10" class="width-100" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>"><?php echo esc_textarea($this->sanitize_items_per_line(get_option($name))); ?></textarea>
 
 	<?php }		
 
@@ -204,32 +205,47 @@ class Dy_Mailer
 				$attachments = (array_key_exists('attachments', $args)) ? $args['attachments'] : array();
 				$emails = (is_array($args['to'])) 
 					?  array_map('sanitize_email', array_unique($args['to'])) 
-					:  $this->get_email_arr($args['to']);
+					:  $this->email_str_row_to_array($args['to']);
 				$count_emails = count($emails);
 				$invalid_emails = false;
 									
 				if($count_emails > 0)
 				{
-					if(is_email($emails[0]))
+					if($this->is_transactional())
 					{
-						$to = $emails[0];
+						$email = new \SendGrid\Mail\Mail();
+						$email->setFrom(sanitize_email($this->email), esc_html($this->name));
+						$email->setSubject($subject);
 
-						if($this->is_transactional())
-						{
-							$email = new \SendGrid\Mail\Mail();
-							$email->addTo($to);
-							$email->setFrom(sanitize_email($this->email), esc_html($this->name));
-							$email->setSubject($subject);
-
-							for($x = 0; $x < $count_emails; $x++)
-							{	
-								if($x > 0 && $x <= 10)
+						for($x = 0; $x < $count_emails; $x++)
+						{	
+							if($x < $this->email_limit)
+							{
+								if(is_email($emails[$x]))
 								{
-									//allow only 10 recipients
+									$email->addTo($emails[$x]);
+								}
+								else
+								{
+									$invalid_emails = true;
+									break;
+								}
+							}
+						}
 
-									if(is_email($emails[$x]))
+						$bcc = $this->email_str_row_to_array($this->email_bcc);
+						$count_bcc = count($bcc);
+
+						if($count_bcc > 0)
+						{
+							for($x = 0; $x < $count_bcc; $x++)
+							{
+								if($x >= 0 && $x < $this->email_limit)
+								{
+									if(is_email($bcc[$x]))
 									{
-										$email->addCc($emails[$x], null, null, ($x-1));
+										write_log($bcc[$x]);
+										$email->addBcc($bcc[$x]);
 									}
 									else
 									{
@@ -238,100 +254,74 @@ class Dy_Mailer
 									}
 								}
 							}
+						}							
 
-							$bcc = $this->email_str_row_to_array($this->email_bcc);
-							$count_bcc = count($bcc);
-
-							if($count_bcc > 0)
+						if(!$invalid_emails)
+						{
+							$email->addContent('text/html', $message);				
+							
+							if($this->has_attachments($attachments))
 							{
-								for($x > 0; $x < $count_bcc; $x++)
+								for($x = 0; $x < count($attachments); $x++)
+								{						
+									$attachment = new Attachment();
+									$attachment->setContent($attachments[$x]['data']);
+									$attachment->setType('application/pdf');
+									$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
+									$attachment->setDisposition('attachment');
+									$email->addAttachment($attachment);	
+								}							
+							}
+							
+							$sendgrid = new \SendGrid(esc_html($this->web_api_key));
+							
+							try {
+								
+								$response = $sendgrid->send($email);
+								
+								if($response->statusCode() >= 200 && $response->statusCode() <= 299)
 								{
-									if($x > 0 && $x <= 10)
-									{
-										if(is_email($bcc[$x]))
-										{
-											$email->addBcc($bcc[$x]);
-										}
-										else
-										{
-											$invalid_emails = true;
-											break;
-										}
-									}
+									return $args;
 								}
-							}							
-
-							if(!$invalid_emails)
+								else
+								{
+									write_log($response->body());
+								}
+							} 
+							catch(Exception $e)
 							{
-								$email->addContent('text/html', $message);				
-								
-								if($this->has_attachments($attachments))
-								{
-									for($x = 0; $x < count($attachments); $x++)
-									{						
-										$attachment = new Attachment();
-										$attachment->setContent($attachments[$x]['data']);
-										$attachment->setType('application/pdf');
-										$attachment->setFilename(wp_specialchars_decode($attachments[$x]['filename']));
-										$attachment->setDisposition('attachment');
-										$email->addAttachment($attachment);	
-									}							
-								}
-								
-								$sendgrid = new \SendGrid(esc_html($this->web_api_key));
-								
-								try {
-									
-									$response = $sendgrid->send($email);
-									
-									if($response->statusCode() >= 200 && $response->statusCode() <= 299)
-									{
-										return $args;
-									}
-									else
-									{
-										write_log($response->body());
-									}
-								} 
-								catch(Exception $e)
-								{
-									write_log($e->getMessage());
-								}
+								write_log($e->getMessage());
 							}
 						}
-						else
-						{
-							$headers = array('Content-Type: text/html; charset=UTF-8');
-
-							if($this->email_bcc)
-							{
-								$headers[] = 'Bcc: ' . $this->email_bcc;
-							}
-
-							for($x = 0; $x < $count_emails; $x++)
-							{
-								if($x > 0 && $x <= 10)
-								{
-									if(is_email($emails[$x]))
-									{
-										$headers[] = 'Cc: ' . $emails[$x];
-									}
-									else
-									{
-										$invalid_emails = true;
-									}
-								}
-							}
-
-							if(!$invalid_emails)
-							{
-								wp_mail($to, $subject, $message, $headers);
-							}
-						}						
 					}
 					else
 					{
-						write_log('first item in $emails is not an email');
+						$headers = array('Content-Type: text/html; charset=UTF-8');
+
+						if($this->email_bcc)
+						{
+							$headers[] = 'Bcc: ' . $this->email_bcc;
+						}
+
+						for($x = 0; $x < $count_emails; $x++)
+						{
+							if($x > 0 && $x <= 10)
+							{
+								if(is_email($emails[$x]))
+								{
+									$headers[] = 'Cc: ' . $emails[$x];
+								}
+								else
+								{
+									$invalid_emails = true;
+								}
+							}
+						}
+
+						if(!$invalid_emails)
+						{
+							wp_mail($to, $subject, $message, $headers);
+						}
 					}						
 				}
 				else
@@ -398,7 +388,7 @@ class Dy_Mailer
 
 		if($str)
 		{
-			$emails = explode("\r\n", html_entity_decode($str));		
+			$emails = explode(PHP_EOL, html_entity_decode($str));		
 			$output = array_slice(array_unique(array_filter(array_map('sanitize_email', $emails))), 0, 10);
 		}
 
@@ -406,38 +396,26 @@ class Dy_Mailer
 		return $output;
 	}
 
-	public function sanitize_items_per_line($sanitize_func, $str)
+	public function sanitize_items_per_line($str)
 	{
-		$str = html_entity_decode($str);
-		$emails = explode("\r\n", $str);		
-		$arr = array_slice(array_unique(array_filter(array_map($sanitize_func, $emails))), 0, 10) ;
-
-		return implode("\r\n", $arr);
-	}
-
-	public function get_email_arr($str)
-	{
-		if(!empty($str))
-		{
-			$arr = explode(',', $str);
-			$emails = array_map('sanitize_email', $arr);
-			$is_arr = is_array($emails);
-			
-			if($is_arr)
-			{
-				$count_emails = count($emails);
-				
-				if($count_emails > 0)
-				{
-					return $emails;
-				}
-			}
+		$decoded_str = html_entity_decode($str);
+	
+		if ($decoded_str === false) {
+			// Handle decoding error, perhaps log or throw an exception
+			return false;
 		}
-		
-		return array();
-	}	
-
-
+	
+		// Normalize line endings
+		$emails = explode(PHP_EOL, $decoded_str);
+	
+		$unique_emails = array_unique(array_filter(array_map('sanitize_email', $emails)));
+	
+		// Limit the result to a configurable number
+		$arr = array_slice($unique_emails, 0, $this->email_limit);
+	
+		return implode(PHP_EOL, $arr);
+	}
+	
 }
 
 
