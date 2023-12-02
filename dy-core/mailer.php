@@ -269,7 +269,7 @@ class Dy_Mailer
 
 	public function unlink_attachments()
 	{
-		@array_map('unlink', glob(wp_upload_dir()['basedir'] . '/temp_*.pdf'));
+		@array_map('unlink', glob(wp_upload_dir()['basedir'] . '/temp_*'));
 	}
 
 	public function has_attachments($attachments)
