@@ -38,14 +38,9 @@ class Dy_Mailer
 		if($this->is_enabled())
 		{
 			add_action( 'phpmailer_init', array(&$this, 'phpmailer'), 100, 1 );
-			add_action( 'wp_mail_failed', array(&$this, 'phpmailer_failed'), 10, 1 );
 		}
 	}
-	
-	public function phpmailer_failed($wp_error)
-	{
-		write_log($wp_error->get_error_message());
-	}
+
 	
 	public function add_settings_page()
 	{
@@ -259,13 +254,22 @@ class Dy_Mailer
 				write_log($response->body());
 			}
 
-			array_map('unlink', glob(wp_upload_dir()['basedir'] . '/temp_*.pdf'));
-
 		} 
 		catch(Exception $e)
 		{
 			write_log($e->getMessage());
 		}
+
+
+		//deletes attachemets and suppress exceptions writes
+		$this->unlink_attachments();
+
+	}
+
+
+	public function unlink_attachments()
+	{
+		@array_map('unlink', glob(wp_upload_dir()['basedir'] . '/temp_*.pdf'));
 	}
 
 	public function has_attachments($attachments)

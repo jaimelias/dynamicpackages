@@ -100,6 +100,7 @@ class Dynamicpackages_Actions{
 		$doc_pdf->writeHTML($html);
 		$pdf_path = $temp_path . $temp_filename;
 		$doc_pdf->Output($pdf_path, 'F');
+
 		return array("filename" => $filename, "pathname" => $pdf_path);
 	}
 
