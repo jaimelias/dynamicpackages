@@ -54,19 +54,14 @@ class Dynamic_Core_Admin {
 
     public function settings_init()
     {
-
-		global $polylang;
 		$default_language = default_language();
+		$languages = get_languages();
 
         //settings - company
 		register_setting($this->setting_id, 'dy_email', 'sanitize_email');
 		register_setting($this->setting_id, 'dy_phone', 'esc_html');
 		register_setting($this->setting_id, 'dy_address', 'esc_html');
 		register_setting($this->setting_id, 'dy_tax_id', 'esc_html');
-
-		register_setting($this->setting_id, 'dy_whatsapp', 'intval');
-
-
 
 
 		//settings - security
@@ -105,37 +100,41 @@ class Dynamic_Core_Admin {
 			array('name' => 'dy_phone', 'type' => 'text')
 		);
 		
-		add_settings_field( 
-			'dy_whatsapp', 
-			esc_html(__( 'Whatsapp', 'dynamicpackages' ).' '. strtoupper($default_language)), 
-			array(&$this, 'settings_input'), 
-			$this->setting_id, 
-			$this->section_company,
-			array('name' => 'dy_whatsapp', 'type' => 'number')
-		);
 
-		if(isset($polylang))
+
+		for($x = 0; $x < count($languages); $x++)
 		{
-			$languages = get_languages();
+			$lang = $languages[$x];
 
-			for($x = 0; $x < count($languages); $x++)
-			{
-				$lang = $languages[$x];
+			$prefix = ($default_language === $lang) ? '' : '_'.$lang;
 
-				if($default_language !== $lang)
-				{
-					register_setting($this->setting_id, 'dy_whatsapp_' . $lang, 'intval');
+			//whatsapp multy languages
+			register_setting($this->setting_id, 'dy_whatsapp'.$prefix, 'intval');
 
-					add_settings_field( 
-						'dy_whatsapp_' . $lang, 
-						esc_html(__( 'Whatsapp', 'dynamicpackages' ).' '. strtoupper($lang)), 
-						array(&$this, 'settings_input'), 
-						$this->setting_id, 
-						$this->section_company,
-						array('name' => 'dy_whatsapp_' . $lang, 'type' => 'number')
-					);			
-				}
-			}
+			add_settings_field( 
+				'dy_whatsapp'.$prefix, 
+				esc_html(__( 'Whatsapp', 'dynamicpackages' ).' '. strtoupper($lang)), 
+				array(&$this, 'settings_input'), 
+				$this->setting_id, 
+				$this->section_company,
+				array('name' => 'dy_whatsapp'.$prefix, 'type' => 'number')
+			);
+			
+			//site notification multy languages
+			register_setting($this->setting_id, 'dy_site_alert'.$prefix, 'wp_kses_post');
+
+			add_settings_field( 
+				'dy_site_alert'.$prefix, 
+				esc_html(__( 'Site Nofification', 'dynamicpackages' ).' '. strtoupper($lang)), 
+				array(&$this, 'settings_textarea'), 
+				$this->setting_id, 
+				$this->section_company,
+				array(
+					'name' => 'dy_site_alert'.$prefix, 
+					'url' => 'https://onlinehtmleditor.dev/', 
+					'url_text' => __('Html Editor', 'dynamicpackages')
+				)
+			);	
 		}
 
 		add_settings_field( 
@@ -232,6 +231,17 @@ class Dynamic_Core_Admin {
                 id="<?php echo esc_attr($name); ?>" 
                 value="<?php echo esc_attr($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
     <?php }	
+
+	public function settings_textarea($arr){
+		$name = $arr['name'];
+		$url_text = (array_key_exists('url_text', $arr)) ? $arr['url_text'] : '?';
+		$url = (array_key_exists('url', $arr)) ? '<a target="_blank" rel="noopener noreferrer" href="'.esc_url($arr['url']).'">'.$url_text.'</a>' : null;
+		$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
+		$value = ($type == 'checkbox') ? 1 : get_option($name);
+		?>
+			<div class="text-right"><?php echo $url; ?></div>
+			<textarea class="width-100" rows="10" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" ><?php echo esc_textarea($value); ?></textarea>
+	<?php }	
 
     public  function admin_menu()
     {

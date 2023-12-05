@@ -17,6 +17,7 @@ class Dynamic_Core_Public {
         add_action( 'wp_head', array(&$this, 'facebook_pixel_tracking_script'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
+        add_action('minimal_site_alert', array(&$this, 'site_alert'));
     }
 
     public function enqueue_scripts()
@@ -184,6 +185,34 @@ class Dynamic_Core_Public {
 	{
 		return whatsapp_button();
 	}
+
+    public function site_alert()
+    {
+
+        $languages = get_languages();
+        $current_language = current_language();
+        $default_language = default_language();
+        $output = '';
+
+        for($x = 0; $x < count($languages); $x++)
+        {
+			$lang = $languages[$x];
+
+            if($lang === $current_language)
+            {
+                $prefix = ($default_language === $lang) ? '' : '_'.$lang;
+                $notification_raw = html_entity_decode(get_option('dy_site_alert'.$prefix));
+
+                if(!empty($notification_raw))
+                {
+                    $output = '<div class="dy-site-alert"><div class="dy-site-alert-content"><span class="dashicons dashicons-warning"></span> ' . $notification_raw . '</div></div>';
+                }
+            }
+        }
+
+        echo $output;
+
+    }
 
 }
 
