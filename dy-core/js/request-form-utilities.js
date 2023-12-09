@@ -50,7 +50,7 @@ const countryOptions = data => {
 		
 		for (var x = 0; x < data.length; x++) 
 		{
-			var this_option = jQuery('<option></option>').attr({'value': data[x][0]}).html(data[x][1]);
+			var this_option = jQuery('<option></option>').attr({'value': data[x][0]}).html(`${data[x][1]} +${data[x][2]}`);
 			
 			if (name && typeof Storage !== 'undefined')
 			{
