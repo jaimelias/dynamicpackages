@@ -75,9 +75,6 @@ class Dynamicpackages_Admin {
 		register_setting('dy_settings', 'dy_archive_hide_start_address', 'esc_html');
 		register_setting('dy_settings', 'dy_archive_hide_max_persons', 'esc_html');
 
-		//cloudflare
-		register_setting('dy_settings', 'dy_cloudflare_api_token', 'esc_html');
-
 
 		add_settings_section(
 			'dy_settings_section', 
