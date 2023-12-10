@@ -207,7 +207,7 @@ class dy_validators
 		{
 			if(is_checkout_page())
 			{
-				if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['email']) && isset($_POST['repeat_email']))
+				if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['country_calling_code']) && isset($_POST['email']) && isset($_POST['repeat_email']))
 				{
 					if(!is_email($_POST['email']))
 					{
@@ -232,6 +232,10 @@ class dy_validators
 					if(empty($_POST['phone']))
 					{
 						$invalids[] = __('Phone is empty.', 'dynamicpackages');
+					}
+					if(empty($_POST['country_calling_code']))
+					{
+						$invalids[] = __('Country Calling Code is empty.', 'dynamicpackages');
 					}
 					if(isset($_POST['inquiry']))
 					{

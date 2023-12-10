@@ -144,8 +144,10 @@ class Dynamicpackages_Actions{
 			{
 				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(get_option('dy_phone')), sanitize_email(get_option('dy_email')))).'</p>';
 			}
-			
-			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</p>';			
+
+
+			$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
+			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), $phone)).'</p>';			
 		}
 	
 

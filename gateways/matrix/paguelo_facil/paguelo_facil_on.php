@@ -695,6 +695,8 @@ class paguelo_facil_on{
 		$CVV2 = sanitize_text_field($_POST['CVV2']);
 		$email = sanitize_text_field($_POST['email']);
 		$hash = $CCNum.$CVV2.$email;
+
+		$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
 		
 		$data = array(
 			'CCLW' => $this->cclw,
@@ -709,7 +711,7 @@ class paguelo_facil_on{
 			'LastName' => sanitize_text_field($_POST['lastname']),
 			'Email' => $email,
 			'Address' => sanitize_text_field($_POST['address']),
-			'Tel' => sanitize_text_field($_POST['phone']),
+			'Tel' => $phone,
 			'Ip'=> $ip,
 			'SecretHash' => hash('sha512', $hash)
 		);

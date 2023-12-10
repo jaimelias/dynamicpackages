@@ -9,7 +9,7 @@ const countryDropdown = () => {
 	
 	const {pluginUrl, lang} = dyCoreArgs;
 
-	if(jQuery('.countrylist').length > 0)
+	if(jQuery('.countrylist, .countryCallingCode').length > 0)
 	{
 		return fetch(`${pluginUrl}json/countries/${lang}.json`).then(resp => {
 			if(resp.ok)
@@ -43,30 +43,37 @@ const countryOptions = data => {
 		.filter(i => i[0] && i[1])
 		.sort((a, b) => a[1].localeCompare(b[1]));
 
-	jQuery('.countrylist').each(function() {
+	jQuery('.countrylist, .countryCallingCode').each(function() {
 		
-		var field = jQuery(this);
-		var name = jQuery(field).attr('name');
-		
-		for (var x = 0; x < data.length; x++) 
+		const field = jQuery(this);
+		const name = jQuery(field).attr('name');
+		const storedValue = sessionStorage.getItem(name);
+		const hasCountryCallingCodes = jQuery(field).hasClass('countryCallingCode');
+
+		data.forEach(x => {
+
+			const countryFlag = x[3];
+			const countryName = x[1];
+			const countryCallingCode = x[2];
+			const countryCode = x[0];
+			const optionText = (hasCountryCallingCodes) 
+				? `${countryName} ${countryFlag} +${countryCallingCode}`
+				: `${countryName} ${countryFlag}`;
+
+			const optionValue = (hasCountryCallingCodes) ? countryCallingCode : countryCode;
+
+			const thisOption = jQuery('<option></option>').attr({'value': optionValue.replace('-', '')}).html(optionText);
+	
+			jQuery(this).append(thisOption);
+
+		});
+
+
+		if (typeof Storage !== 'undefined' && storedValue)
 		{
-			var this_option = jQuery('<option></option>').attr({'value': data[x][0]}).html(`${data[x][1]} +${data[x][2]}`);
-			
-			if (name && typeof Storage !== 'undefined')
-			{
-				if(sessionStorage.getItem(name))
-				{
-					var item = sessionStorage.getItem(name);
-					
-					if(item ===  data[x][0])
-					{
-						jQuery(this_option).attr({'selected': 'selected'});
-					}
-				}
-			}
-			
-			jQuery(this).append(this_option);
+			jQuery(field).find(`option[value="${storedValue}"]`).attr({'selected': 'selected'}).trigger('change');
 		}
+
 	});		
 }
 
@@ -85,6 +92,8 @@ const isValidValue = ({ name, value }) => {
 		return isEmail(value);
 	  case 'repeat_email':
 		return isEmail(value) && value === jQuery('#dy_package_request_form').find('input[name="email"]').val();
+		case 'country_calling_code':
+			return isNumber(value) && parseInt(value) >= 1;
 	  case 'inquiry':
 		return !isSpam(value);
 	  default:
@@ -136,3 +145,17 @@ const isSpam = str => {
 	  urlRegex.test(str)
 	);
 }
+
+const isNumber = value => {
+	// Check if the value is a number as a string
+	if (typeof value === 'string' && !isNaN(Number(value))) {
+	  return true;
+	}
+  
+	// Check if the value is a finite number (integer or float)
+	if (typeof value === 'number' && isFinite(value)) {
+	  return true;
+	}
+  
+	return false;
+  }

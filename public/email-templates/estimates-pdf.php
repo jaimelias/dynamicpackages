@@ -14,7 +14,7 @@ $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages
 $label_client = __('Client', 'dynamicpackages');
 $client_name = sanitize_text_field($_POST['first_name']) . ' ' . sanitize_text_field($_POST['lastname']);
 $client_email = sanitize_email($_POST['email']);
-$client_phone = sanitize_text_field($_POST['phone']);
+$client_phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
@@ -66,7 +66,7 @@ $email_pdf = <<<EOT
 						<br> 
 						{$client_name}
 						<br>
-						{$client_phone}
+						+{$client_phone}
 						<br>
 						{$client_email}				
 					</div>

@@ -1,6 +1,6 @@
 
 const excludeGeolocation = ['country_code3', 'is_eu', 'country_tld', 'languages', 'country_flag', 'geoname_id', 'time_zone_current_time', 'time_zone_dst_savings', 'time_zone_is_dst', 'zipcode', 'continent_code', 'continent_name'];
-const storeFieldNames = ['first_name', 'lastname', 'phone', 'email', 'repeat_email', 'country', 'city', 'address'];
+const storeFieldNames = ['first_name', 'lastname', 'country_calling_code', 'phone', 'email', 'repeat_email', 'country', 'city', 'address'];
 
 //refresh page to removed disabled button
 window.addEventListener('pageshow', event =>  {
@@ -129,8 +129,6 @@ const createFormSubmit = async (form) => {
     const hasEmail = (typeof formFields.find(i => i.name === 'email') !== 'undefined') ? true : false;
     let hashParams = jQuery(form).attr('data-hash-params') || '';
     const gclid = (jQuery(form).attr('data-gclid')) ? true : false;
-
-
 
     if(nonce)
     {

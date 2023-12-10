@@ -61,10 +61,17 @@
 			
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="phone"><?php echo (esc_html__('Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
-					<input type="text" name="phone" class="bottom-20 required" />				
+					<label for="country_calling_code"><?php echo (esc_html__('Country Calling Code', 'dynamicpackages')); ?></label>
+					<select name="country_calling_code" id="country_calling_code" class="countryCallingCode bottom-20 required">
+						<option value="">---</option>
+					</select>
 				</div>
-				<div class="pure-u-1 pure-u-md-1-2"></div>
+				<div class="pure-u-1 pure-u-md-1-2">
+
+					<label for="phone"><?php echo (esc_html__('Mobile Phone', 'dynamicpackages')); ?> <span class="dy_mobile_payment"></span></label>
+					<input type="number" name="phone" class="bottom-20 required" />	
+
+				</div>
 			</div>			
 			
 		</div>

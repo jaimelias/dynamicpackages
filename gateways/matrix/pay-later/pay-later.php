@@ -66,7 +66,7 @@ class pay_later{
 
 				$total = money(dy_utilities::total());
 				$link = '<a href="'.esc_html($_POST['package_url']).'">'.esc_html($_POST['title']).'</a>';
-
+				$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
 
 				$subject = $this->name . __(' in ', 'dynamicpackages') .$this->site_name.': ' . sanitize_text_field($_POST['first_name']) . ' ($' . $total . ')';
 				$message = '<p>'.sprintf(__('Hello %s,', 'dynamicpackages'), $this->user_name).'</p>';
@@ -75,7 +75,7 @@ class pay_later{
 
 				$message .= '<hr/><ul>';
 				$message .= '<li>'.esc_html(sprintf(__('Name: %s %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']))).'</li>';
-				$message .= '<li>'.esc_html(sprintf(__('Phone: %s', 'dynamicpackages'), sanitize_text_field($_POST['phone']))).'</li>';
+				$message .= '<li>'.esc_html(sprintf(__('Phone: %s', 'dynamicpackages'), $phone)).'</li>';
 				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</li>';
 				$message .= '</ul>';
 				$headers = array('Content-Type: text/html; charset=UTF-8');
