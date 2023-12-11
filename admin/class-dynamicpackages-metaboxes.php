@@ -568,7 +568,7 @@ class Dynamicpackages_Metaboxes
 		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url($this->disabled_dates_api); ?>" > </p>
 		</fieldset>
 		
-		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 0, 20); ?></h3>
+		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 1, 20); ?></h3>
 		
 		<?php echo dy_utilities::handsontable($this->enabled_dates_args); ?>	
 	

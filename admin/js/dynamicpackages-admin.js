@@ -18,7 +18,13 @@ jQuery(() => {
 		initSeasonGrids();
 		initGridsFromTextArea();
 		handleSaveAndRefresh();
-	});	
+	});
+
+	jQuery('#package_max_persons').change(() => {
+
+		initGridsFromTextArea();	
+
+	});
 
 	jQuery('#package_num_seasons').change(() => {
 		initSeasonGrids();
@@ -74,14 +80,42 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	const columns = getColType(containerId);
 	const colsNum = (headers.length > 2) ? headers.length : 2;
 	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum});
+
+	if(!content || defaultRows.length === 0)
+	{
+		return false;
+	}
 	
 	try
 	{
 		const parsedContent = JSON.parse(content);
+		const firstDefaultRow = defaultRows[0];
+
+		if(parsedContent.length === 0)
+		{
+			hasError = true;
+			data = defaultRows;
+		}
 
 		if(parsedContent.hasOwnProperty(gridId))
 		{
-			data = parsedContent[gridId];
+			if(parsedContent[gridId].length !== 0)
+			{
+				data = parsedContent[gridId];
+				
+				while (data.length < maxNum) {
+					data.push(firstDefaultRow);
+				}				
+
+				data = data.slice(0, maxNum);
+
+			}
+			else
+			{
+				hasError = true;
+				data = defaultRows;
+			}
+			
 		}
 		else
 		{
@@ -94,7 +128,6 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 		hasError = true;
 		data = defaultRows;
 	}
-
 	
 	if(hasError)
 	{
@@ -151,8 +184,10 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	}
 				
 	jQuery(grid).handsontable(args);
+
+	const instance = jQuery(grid).handsontable('getInstance');
 	
-	jQuery(maxId).on('change click', function() {
+	jQuery(maxId).on('change', function() {
 
 		if(jQuery(containerId).length === 0)
 		{
@@ -162,7 +197,6 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 		const thisField = jQuery(this);
 		const maxNum = parseInt(jQuery(thisField).val());
 		let rowNum = parseInt(jQuery(grid).handsontable('countRows'));
-		const instance = jQuery(grid).handsontable('getInstance');
 		let diff = 1;
 		
 		if(rowNum !== maxNum)
@@ -182,6 +216,11 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 		
 		let gridData = jQuery(grid).handsontable('getData');
 		gridData = populateSeasons({gridData, gridId: gridId});
+
+		if(typeof gridData === 'undefined')
+		{
+			return false;
+		}
 
 		if(gridData.length > maxNum)
 		{
