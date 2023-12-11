@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2023-12-10 03:14+0000\n"
+"PO-Revision-Date: 2023-12-11 02:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;esc_html_e\n"
-"X-Loco-Version: 2.6.6; wp-6.4.1\n"
+"X-Loco-Version: 2.6.6; wp-6.4.2\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: public/class-dynamicpackages-public.php:522
@@ -1211,7 +1211,7 @@ msgstr "Minutos"
 
 #: public/partials/quote-form.php:71
 msgid "Mobile Phone"
-msgstr ""
+msgstr "Teléfono Móvil"
 
 #: includes/class-dynamicpackages-utilities.php:1327
 msgid "Mon"
