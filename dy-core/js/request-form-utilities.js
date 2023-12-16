@@ -1,9 +1,27 @@
 jQuery(() => {
 
     countryDropdown();
-	
+	fixInputTypeNumber();
 });
 
+
+const fixInputTypeNumber = () => {
+
+
+	jQuery('input[type="number"]').on('input', function() {
+		let inputValue = jQuery(this).val();
+		
+		// Use a common regular expression pattern
+		let pattern = jQuery(this).attr('step') ? /[^\d.-]|(\.)(?=.*\.)|(-)(?=.*-)/g : /[^0-9]/g;
+	
+		// Use a single regular expression replacement
+		let sanitizedInput = inputValue.replace(pattern, '');
+	
+		// Update the input field with the sanitized value
+		jQuery(this).val(sanitizedInput);
+	});
+
+}; 
 
 const countryDropdown = () => {
 	
