@@ -1,7 +1,7 @@
 # Installation as Submodule
 
 ```
-git add submodule https://github.com/jaimelias/dy-core.git
+git submodule add https://github.com/jaimelias/dy-core.git submodules/dy-core
 ```
 
 # Update as Submodule
