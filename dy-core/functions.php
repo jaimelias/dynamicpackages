@@ -295,10 +295,8 @@ if(!function_exists('cloudflare_ban_ip_address'))
 			{
 				$code = $resp['response']['code'];
 				$data = json_decode($resp['body'], true);
-
-				$messages = $data['messages'];
-
-				$errors = $data['errors'];
+				$messages = (array_key_exists('messages', $data)) ? $data['messages'] : null;
+				$errors = (array_key_exists('error', $data)) ? $data['errors'] : null;
 
 				$log = array(
 					'messages' => $messages,
