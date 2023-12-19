@@ -5,6 +5,7 @@ jQuery(() => {
 	addOnsCalc();
 });
 
+
 const selectGateway = () => {
 	
 	const thisForm = jQuery('#dy_package_request_form');

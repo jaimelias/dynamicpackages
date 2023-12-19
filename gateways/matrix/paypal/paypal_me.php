@@ -28,6 +28,7 @@ class paypal_me{
 		$this->type = 'alt';	
 		$this->username = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
+		$this->min = get_option($this->id . '_min');
 		$this->max = get_option($this->id . '_max');
 		$this->color = '#000';
 		$this->background_color = '#FFD700';
@@ -121,7 +122,6 @@ class paypal_me{
 			{
 				if($this->is_valid())
 				{
-					
 					$output = true;
 				}
 			}		
@@ -173,6 +173,7 @@ class paypal_me{
 			if($this->is_active() )
 			{
 				$max = floatval($this->max);
+				$min = (empty($this->min)) ? 0 : floatval($this->min);
 				$show = intval($this->show);
 				$payment = package_field('package_payment');
 				$deposit = floatval(dy_utilities::get_deposit());
@@ -191,7 +192,7 @@ class paypal_me{
 					}
 				}
 				
-				if($total <= $max)
+				if($total >= $min && $total <= $max)
 				{
 					if($payment == $show && $payment == 0)
 					{
@@ -219,6 +220,8 @@ class paypal_me{
 		register_setting($this->id . '_settings', $this->id, 'sanitize_user');
 		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
+		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
+
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
@@ -234,6 +237,15 @@ class paypal_me{
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id
 		);	
+
+		add_settings_field( 
+			$this->id . '_min', 
+			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
+			array(&$this, 'input_number'), 
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id . '_min'
+		);
+
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 

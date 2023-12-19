@@ -258,12 +258,11 @@ class dy_utilities {
 		{
 			$subtotal = 0;
 			//sums regular price
-			$regular = self::get_price_regular($regular, 'total');
-			$subtotal = $regular + $subtotal;
+			$subtotal += self::get_price_regular($regular, 'total');
 
 			//sums discount price
 			$discount = self::get_price_discount($regular, 'total');
-			$subtotal = $discount + $subtotal;
+			$subtotal += $discount;
 			
 			$GLOBALS[$which_var] = $subtotal;
 		}
