@@ -785,13 +785,13 @@ class Dynamicpackages_Public {
 				); 
 				
 				$children_array = get_children($args);
-				
+
 				if(is_array($children_array))
 				{
 					if(count($children_array) > 0)
 					{
 						$has_rows = false;
-						$rows = '';
+						$rows_arr = array();
 						
 						foreach($children_array as $item)
 						{
@@ -799,7 +799,7 @@ class Dynamicpackages_Public {
 							{
 								if(!empty($item->post_name))
 								{
-									$has_rows = true;
+									$row = '';
 									$starting_at = intval(dy_utilities::starting_at($item->ID));
 									$subpackage_name = 'package_child_title_'.$this->current_language;
 									$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
@@ -811,17 +811,47 @@ class Dynamicpackages_Public {
 										$subpackage_name = $item->post_title;
 									}
 									
-									$rows .= '<tr>';
-									$rows .= '<td>'.esc_html($subpackage_name).'</td>';
-									$rows .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
-									$rows .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
-									$rows .= '</tr>';							
+									$row .= '<tr>';
+									$row .= '<td>'.esc_html($subpackage_name).'</td>';
+									$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
+									$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
+									$row .= '</tr>';
+									
+									$rows_arr[] = array('price' => $starting_at, 'row' => $row);
 								}
 							}
 						}
 						
-						if($has_rows === true)
+						$count_rows = count($rows_arr);
+
+						if($count_rows > 0)
 						{
+
+							function sort_by_price($array) {
+								usort($array, function($a, $b) {
+									return $a['price'] - $b['price'];
+								});
+							
+								return $array;
+							}
+							
+							if($count_rows === 1)
+							{
+								$rows = $rows_arr[0];
+							}
+							else
+							{
+
+								$rows = '';
+								$rows_arr = sort_by_price($rows_arr);
+
+								for ($x=0; $x < $count_rows; $x++)
+								{ 
+									$rows .= $rows_arr[$x]['row'];
+								}
+
+							}
+
 							$output .= '<table class="pure-table pure-table-bordered bottom-20"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
 						}		
 					}
