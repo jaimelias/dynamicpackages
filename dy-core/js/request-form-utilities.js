@@ -21,6 +21,22 @@ const fixInputTypeNumber = () => {
 		jQuery(this).val(sanitizedInput);
 	});
 
+	jQuery('input[type="email"]').on('input', function() {
+		let inputValue = jQuery(this).val();
+	
+		// Use a regular expression pattern for valid email characters
+		let pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(?![\/\\])[a-zA-Z]+\.[a-zA-Z]{2,}$/;
+	
+		// Use a single regular expression test to check if the input is a valid email
+		if (!pattern.test(inputValue)) {
+			// If not a valid email, remove invalid characters
+			let sanitizedInput = inputValue.replace(/[^a-zA-Z0-9._%+-@]/g, '').replace('/', '');
+			// Update the input field with the sanitized value
+			jQuery(this).val(sanitizedInput.toLowerCase());
+		}
+	});
+	
+
 }; 
 
 const countryDropdown = () => {
