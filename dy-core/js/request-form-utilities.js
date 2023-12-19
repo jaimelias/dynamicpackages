@@ -1,11 +1,11 @@
 jQuery(() => {
 
     countryDropdown();
-	fixInputTypeNumber();
+	fixInputSpecialTypes();
 });
 
 
-const fixInputTypeNumber = () => {
+const fixInputSpecialTypes = () => {
 
 
 	jQuery('input[type="number"]').on('input', function() {
