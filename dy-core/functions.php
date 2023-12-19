@@ -250,7 +250,7 @@ if(!function_exists('get_ip_address'))
 
 if(!function_exists('cloudflare_ban_ip_address'))
 {
-	function cloudflare_ban_ip_address(){
+	function cloudflare_ban_ip_address($ip = null){
 
 		$output = false;
 		$dy_cloudflare_api_token = get_option('dy_cloudflare_api_token');
@@ -258,8 +258,11 @@ if(!function_exists('cloudflare_ban_ip_address'))
 		if(!empty($dy_cloudflare_api_token))
 		{
 			$url = 'https://api.cloudflare.com/client/v4/user/firewall/access_rules/rules';
-			$ip = get_ip_address();
-
+			
+			if(empty($ip))
+			{
+				$ip = get_ip_address();
+			}
 			
 			if(!isset($_SERVER['HTTP_CF_CONNECTING_IP']))
 			{
