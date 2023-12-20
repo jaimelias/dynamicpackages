@@ -59,7 +59,21 @@ const initGridsFromTextArea = () => {
 };
 
 
-const getInitialGrid = ({rows, cols}) => [...Array(rows).keys()].map(() => [...Array(cols).keys()].map(() => ''));
+const getInitialGrid = ({rows, cols, columns}) => {
+
+	return [...Array(rows).keys()].map(() => {
+
+		return [...Array(cols).keys()].map((r, i) => {
+
+
+			const {type} = columns[i];
+
+			return (type === 'checkbox') ? false : '';
+		})
+
+	})
+
+};
 
 const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {	
 
@@ -68,6 +82,15 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	{
 		return false;
 	}
+	
+
+	// create an external HyperFormula instance
+	const hyperformulaInstance = HyperFormula.buildEmpty({
+		// to use an external HyperFormula instance,
+		// initialize it with the `'internal-use-in-handsontable'` license key
+		licenseKey: 'internal-use-in-handsontable',
+	});
+
 
 	//unescape textarea
 	let data = {};
@@ -79,7 +102,7 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	const headers = getHeaders(containerId);
 	const columns = getColType(containerId);
 	const colsNum = (headers.length > 2) ? headers.length : 2;
-	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum});
+	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum, columns});
 
 	if(!content || defaultRows.length === 0)
 	{
@@ -166,6 +189,10 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 		contextMenu: menu,
 		minRows: maxNum,
 		height,
+		formulas: {
+			engine: hyperformulaInstance,
+			sheetName: containerId
+		},
 		afterChange: (changes, source) => {
 			if (source !== 'loadData')
 			{
@@ -173,10 +200,7 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 				
 				const maxNum = parseInt(jQuery(maxId).val());
 
-				if(gridData.length > maxNum)
-				{
-					gridData = gridData.filter((v, i) => i+1 <= maxNum);
-				}
+				gridData = gridData.slice(0, maxNum);
 
 				updateTextArea({textareaId, changes: gridData, containerId});
 			}
@@ -280,7 +304,7 @@ const getColType = containerId => {
 		{
 			row.type = 'numeric';
 			row.format = '0.00';
-		}		
+		}
 		else if(columns[x] == 'date')
 		{
 			row.type = 'date';

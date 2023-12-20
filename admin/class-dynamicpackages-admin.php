@@ -44,8 +44,10 @@ class Dynamicpackages_Admin {
 	
 	public function handsontable()
 	{
-		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), '8.1.0', 'all' );
-		wp_enqueue_script( 'handsontableJS', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.js', array('jquery'), '8.1.0', true );
+
+		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), '14', 'all' );
+		wp_enqueue_script( 'hyperFormula', 'https://cdn.jsdelivr.net/npm/hyperformula/dist/hyperformula.full.min.js', array('jquery'), '2.6.0', true );
+		wp_enqueue_script( 'handsontableJS', 'https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js', array('jquery', 'hyperFormula'), '14', true );
 	}
 
 	public function enqueue_scripts() {
