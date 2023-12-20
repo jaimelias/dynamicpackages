@@ -68,6 +68,7 @@ const getInitialGrid = ({rows, cols, columns}) => {
 
 			const {type} = columns[i];
 
+
 			return (type === 'checkbox') ? false : '';
 		})
 
@@ -101,7 +102,7 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 	const grid = jQuery(containerId);
 	const headers = getHeaders(containerId);
 	const columns = getColType(containerId);
-	const colsNum = (headers.length > 2) ? headers.length : 2;
+	const colsNum = headers.length;
 	const defaultRows = getInitialGrid({rows: maxNum, cols: colsNum, columns});
 
 	if(!content || defaultRows.length === 0)
@@ -228,7 +229,7 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled}) => {
 			if(rowNum < maxNum)
 			{
 				diff = maxNum - rowNum;
-				instance.alter('insert_row', rowNum, diff);
+				instance.alter('insert_row_below', rowNum, diff);
 			}
 			else
 			{
