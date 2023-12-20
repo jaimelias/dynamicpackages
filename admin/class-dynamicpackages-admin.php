@@ -38,21 +38,12 @@ class Dynamicpackages_Admin {
 
 	public function enqueue_styles() {
 
-		$this->handsontable();
 		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
 	}
 	
-	public function handsontable()
-	{
-
-		wp_enqueue_style( 'handsontableCss', $this->plugin_dir . 'assets/handsontable/handsontable.full.min.css', array(), '14', 'all' );
-		wp_enqueue_script( 'hyperFormula', 'https://cdn.jsdelivr.net/npm/hyperformula/dist/hyperformula.full.min.js', array('jquery'), '2.6.0', true );
-		wp_enqueue_script( 'handsontableJS', 'https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js', array('jquery', 'hyperFormula'), '14', true );
-	}
-
 	public function enqueue_scripts() {
 
-		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'handsontableJS', 'picker-js'), time(), true );
+		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'hot', 'picker-js'), time(), true );
 	}
 
 	
