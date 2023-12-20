@@ -7,14 +7,17 @@ class Dynamic_Core_Public {
     
     public function __construct()
     {
-        $this->version = '0.0.2';
+        $this->version = '0.0.3';
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
         $this->dirname_file = dirname( __FILE__ );
         add_shortcode('whatsapp', array(&$this, 'whatsapp_button'));
         add_action( 'wp_head', array(&$this, 'gtm_tracking_script'));
         add_action( 'minimal_pre_body', array(&$this, 'gtm_tracking_iframe'));
+        add_action( 'wp_footer', array(&$this, 'whatsapp_modal'));
+        add_action( 'wp_footer', array(&$this, 'picker_containers'));
         add_action( 'wp_head', array(&$this, 'gtag_tracking_script'));
         add_action( 'wp_head', array(&$this, 'facebook_pixel_tracking_script'));
+        add_action('wp_head', array(&$this, 'whatsapp_modal_css'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
         add_action('minimal_site_alert', array(&$this, 'site_alert'));
@@ -38,8 +41,12 @@ class Dynamic_Core_Public {
         wp_add_inline_script('landing-cookies', $this->cookies(), 'before');
 
         wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
+
+        wp_enqueue_script('dy-qrcode', $this->plugin_dir_url_file . 'js/qrcode.min.js', array('jquery'), time(), true);
+
         wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), $this->version, true);
         wp_add_inline_script('dy-core-utilities', $this->args(), 'before');
+        
 
         if(isset($dy_load_recaptcha_scripts))
         {
@@ -70,6 +77,8 @@ class Dynamic_Core_Public {
         {
             load_picker_styles($this->plugin_dir_url_file);
         }
+
+        
     }
 
     public function cookies()
@@ -217,6 +226,96 @@ class Dynamic_Core_Public {
 
         echo $output;
 
+    }
+
+    public function picker_containers()
+    {
+        ?>
+            <div id="datepicker-container"></div>
+            <div id="timepicker-container"></div>
+        <?php
+    }
+
+    public function whatsapp_modal()
+    {
+        ?>
+
+            <div id="dy-whatsapp-modal" class="hidden">
+                <div id="dy-whatsapp-modal-content">
+                    <span id="dy-whatsapp-modal-close">&times;</span>
+                    <div id="dy-whatsapp-qrcode"></div>
+                    <div id="dy-whatsapp-link" class="pure-button small"><a href="#"><?php echo esc_html__('Open Web Whatsapp', 'dynamicpackages'); ?></a></div>
+                </div>
+            </div>
+
+        <?php
+    }
+
+    public function whatsapp_modal_css()
+    {
+        ?>
+        <style type="text/css" id="whatsapp-modal-css">
+            #dy-whatsapp-modal {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 300px;
+                height: 300px;
+                margin: 0;
+            }
+
+            #dy-whatsapp-modal-content {
+                width: 100%;
+                height: 100%;
+                background-color: #dcf8c6;
+                border-radius: 5px;
+                text-align: center;
+                box-shadow: 0 0 0 1px rgba(7,94,84, 0.2);
+                position: relative;
+            }
+
+            #dy-whatsapp-modal-content img{
+
+                margin: 0 auto;
+                top: 20px;
+                position: relative;
+                display: block;
+
+            }
+
+            #dy-whatsapp-link{
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                box-shadow: 0 0 1px rgba(0,0,0,0.3) !important;
+                display: inline-block !important;
+                border-radius: 25px !important;
+                background-color: #128c7e !important;
+
+            }
+            #dy-whatsapp-link a
+            {
+                color: #fff !important;
+                text-decoration: none;
+            }
+
+            #dy-whatsapp-modal-close {
+                position: absolute;
+                text-align: center;
+                top: -10px;
+                right: -10px;
+                width: 30px;
+                height: 30px;
+                font-size: 20px;
+                cursor: pointer;
+                color: #fff;
+                background-color: #075e54;
+            }
+
+        </style>
+        <?php
     }
 
 }

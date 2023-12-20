@@ -16,8 +16,62 @@ window.addEventListener('pageshow', event =>  {
 jQuery(() => {
 
     storePopulate();
-	
+	whatsappButton();
 });
+
+
+const whatsappButton = () => {
+
+    const modal = jQuery('#dy-whatsapp-modal');
+    const qrcode = jQuery('#dy-whatsapp-qrcode');
+    const link = jQuery('#dy-whatsapp-link');
+
+    jQuery('.button-whatsapp').each(function(){
+
+        const el = jQuery(this);
+
+        jQuery(el).click(function(e){
+
+            e.preventDefault();
+
+            const href = jQuery(el).attr('href');
+
+            if(/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+            {
+                window.location = href;
+                return true;;
+            }
+
+            jQuery(qrcode).text('');
+
+            new QRCode("dy-whatsapp-qrcode", {
+                text: href,
+                width: 200,
+                height: 200,
+                colorDark : "#075e54",
+                colorLight : "#dcf8c6",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            jQuery(link).attr({href});
+
+            jQuery(modal).toggleClass('hidden');
+
+        });
+
+
+        //closes the modal
+        jQuery('#dy-whatsapp-modal-close').click(function(){
+
+            jQuery(modal).toggleClass('hidden');
+
+        });
+
+
+
+    });
+
+};
 
 const formToArray = form => {
    
