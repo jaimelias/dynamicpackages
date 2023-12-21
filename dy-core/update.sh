@@ -28,13 +28,15 @@ cd ..
 perform_git_actions
 
 # Move to dynamicaviation directory
-cd dynamicaviation || exit
+cd ../dynamicaviation || exit
+./submodules.sh
 
 # Dynamicaviation directory
 perform_git_actions
 
 # Move to themes/minimalizr directory
 cd ../../themes/minimalizr || exit
+./submodules.sh
 
 # Minimalizr directory
 perform_git_actions
