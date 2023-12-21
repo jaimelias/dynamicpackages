@@ -79,11 +79,9 @@ const initSeasonGrids = () => {
         });
     }
 
-
-
 	const packageType = parseInt(jQuery('#package_package_type').val());
 	const occupancyDOM = buildOccupancyDOM();
-	const defaultOccupancyData = getDefaultData(occupancyDOM);
+	const defaultOccupancyData = getDefaultData({el: occupancyDOM, hotDataFilter});
 
 	if(packageType !== 1)
 	{
