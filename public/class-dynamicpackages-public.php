@@ -837,7 +837,7 @@ class Dynamicpackages_Public {
 							
 							if($count_rows === 1)
 							{
-								$rows = $rows_arr[0];
+								$rows = $rows_arr[0]['row'];
 							}
 							else
 							{
