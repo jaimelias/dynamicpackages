@@ -92,15 +92,22 @@ const initSeasonGrids = () => {
 
 	const preRender = jQuery('<div>');
 	jQuery(preRender).append(occupancyDOM);
-	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val());
+	const numSeasons = parseInt(jQuery('[name="package_num_seasons"]').val()) || 0;
 
 
 	let seasonConfigData = getDataFromTextarea({el: '#seasons_chart', hotDataFilter});
 	let occupancyChartData = getDataFromTextarea({el: occupancyDOM, hotDataFilter});
 
 	let {seasons_chart} = seasonConfigData;
+
+	if(seasons_chart.hasOwnProperty('seasons_chart'))
+	{
+		seasons_chart = seasons_chart.seasons_chart;
+	}
+
 	let newRows = [];
-	const diff = numSeasons - seasons_chart.length;
+	const seasonsLength = seasons_chart.length || 0;
+	const diff = numSeasons - seasonsLength || 0;
 
 	if(numSeasons > seasons_chart.length)
 	{
@@ -112,7 +119,7 @@ const initSeasonGrids = () => {
 			newRows.push(lastRow);
 		}
 
-		seasons_chart = [...seasons_chart, ...newRows];
+		seasons_chart = [...seasons_chart, ...newRows];	
 	}
 
 	for(let x = 0; x < numSeasons; x++)
@@ -149,7 +156,6 @@ const initSeasonGrids = () => {
 			
 			if(index > numSeasons)
 			{
-				console.log(k);
 				delete occupancyChartData[k];
 			}
 		}
