@@ -162,10 +162,14 @@ const showCouponForm = () => {
 	const  link = jQuery(container).find('a');
 	const field = jQuery(container).find('input[name="coupon_code"]');
 
-	if(field.val() !== '' || field.val() !== null)
+	if(field.val())
 	{
-		jQuery(field).removeClass('hidden').focus();
+		if(field.val().length >= 2)
+		{
+			jQuery(field).removeClass('hidden').focus();
+		}
 	}
+
 	
 	jQuery(link).click(e => {
 		e.preventDefault();
