@@ -118,7 +118,33 @@ class Dynamicpackages_Gateways
 		
 	public function list_gateways_cb()
 	{
-		return apply_filters('list_gateways', array());
+
+		$which_var = 'dy_list_gateways_cb';
+		global $$which_var;
+
+
+		if(isset($$which_var))
+		{
+			$output = $$which_var; 
+		}
+		else
+		{
+			$gateways = apply_filters('list_gateways', array());
+			
+			if(dy_validators::validate_coupon())
+			{
+				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
+				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);				
+				$gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+					return strcasecmp($gateway, $get_coupon) === 0;
+				});
+			}
+
+			$output = $gateways;
+			$GLOBALS[$which_var] = $output;
+		}
+
+		return $output;
 	}
 	
 	public function join_gateways()
@@ -176,23 +202,20 @@ class Dynamicpackages_Gateways
 
 		return $output;		
 	}
-	public function filter_coupon_gateway($array)
+	public function filter_coupon_gateway($gateways)
 	{
-		if(is_singular('packages'))
+		if(is_singular('packages') && is_array($gateways))
 		{	
-			if(is_booking_page() && dy_validators::validate_coupon())
+			if(is_booking_page() && dy_validators::validate_coupon() && count($gateways) > 0)
 			{
-				$coupon = ucwords(strtolower(sanitize_text_field($_GET['coupon_code'])));
-				
-				if(in_array($coupon, $array))
-				{
-					$coupon = array($coupon);
-					$array = array_intersect($coupon, $array);
-					
-				}				
+				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
+				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);				
+				$gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+					return strcasecmp($gateway, $get_coupon) === 0;
+				});
 			}
 		}
-		return $array;
+		return $gateways;
 	}
 	
 	public function checkout_area()
@@ -338,32 +361,6 @@ class Dynamicpackages_Gateways
 		}
 	}
 	
-
-	public function whatsapp_label($label)
-	{
-		if(is_singular('packages') && isset($_GET['booking_date']))
-		{
-			if(is_booking_page())
-			{
-				
-			}
-		}
-
-		return $label;
-	}
-
-	public function whatsapp_text($text)
-	{
-		if(is_singular('packages') && isset($_GET['booking_date']))
-		{
-			if(is_booking_page())
-			{
-				
-			}
-		}
-
-		return $text;
-	}
 
 	public function whatsapp_button()
 	{
