@@ -9,15 +9,20 @@ jQuery(() => {
 
 const reValidateDate = async () => {
 
-	//disables booking form if the date is also desabled in the by the api endpoing
+	//disables booking form if the date is also desabled in the by the api endpoing	
+
+	const thisForm = jQuery('#dy_package_request_form');
+
+	if(!jQuery('body').hasClass('single-packages'))
+	{
+		return false;
+	}
 
 
-	const disableBookingForm = () => {
+	const disableBookingForm = thisForm => {
 
-		const form = jQuery('#dy_package_request_form');
-  
-		if (form.length) {
-		  form.prop('disabled', true).find('input, select, textarea, button').prop('disabled', true);
+		if (thisForm.length) {
+			thisForm.prop('disabled', true).find('input, select, textarea, button').prop('disabled', true);
 		}
 	}
 
@@ -52,11 +57,11 @@ const reValidateDate = async () => {
 		});
   
 		if (formattedDisabledDates.includes(bookingDate)) {
-			disableBookingForm();
+			disableBookingForm(thisForm);
 		}
 	  }
 	} catch (error) {
-		disableBookingForm();
+		disableBookingForm(thisForm);
 	  throw error;
 	}
   };
