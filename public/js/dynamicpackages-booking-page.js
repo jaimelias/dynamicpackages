@@ -3,7 +3,63 @@
 jQuery(() => {
 	selectGateway();
 	addOnsCalc();
+	reValidateDate();
 });
+
+
+const reValidateDate = async () => {
+
+	//disables booking form if the date is also desabled in the by the api endpoing
+
+
+	const disableBookingForm = () => {
+
+		const form = jQuery('#dy_package_request_form');
+  
+		if (form.length) {
+		  form.prop('disabled', true).find('input, select, textarea, button').prop('disabled', true);
+		}
+	}
+
+	try {
+	  const { permalink } = dyCoreArgs;
+	  const d = new Date();
+	  const endpoint = `${permalink}?json=disabled_dates&stamp=${d.getTime()}`;
+	  const url = new URL(window.location.href);
+	  let bookingDate = '';
+  
+	  if (url.searchParams.has('booking_date')) {
+		const bookingDateParam = url.searchParams.get('booking_date');
+		if (bookingDateParam.length === 10) {
+		  bookingDate = bookingDateParam;
+		}
+	  }
+  
+	  const response = await fetch(endpoint);
+  
+	  if (!response.ok) {
+		throw new Error(`Error ${response.status}: ${response.statusText}`);
+	  }
+  
+	  const data = await response.json();
+	  const { disable } = data;
+  
+	  if (Array.isArray(disable) && disable.length > 0) {
+		const formattedDisabledDates = disable.map(dateArray => {
+		  const [year, month, day] = dateArray;
+		  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+		});
+  
+		if (formattedDisabledDates.includes(bookingDate)) {
+			disableBookingForm();
+		}
+	  }
+	} catch (error) {
+		disableBookingForm();
+	  throw error;
+	}
+  };
+  
 
 
 const selectGateway = () => {
