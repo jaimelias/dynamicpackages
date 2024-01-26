@@ -45,8 +45,9 @@ const reValidateDate = async () => {
 	  const { disable } = data;
   
 	  if (Array.isArray(disable) && disable.length > 0) {
-		const formattedDisabledDates = disable.map(dateArray => {
+		const formattedDisabledDates = disable.filter(v => Array.isArray(v)).map(dateArray => {
 		  const [year, month, day] = dateArray;
+
 		  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 		});
   
