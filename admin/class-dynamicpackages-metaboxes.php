@@ -434,7 +434,7 @@ class Dynamicpackages_Metaboxes
 			</p>
 			<p>
 				<label for="package_max_persons"><?php echo esc_html(__('Maximum Number of participants', 'dynamicpackages')); ?></label><br />
-				<?php $this->select_number('max_persons', 1, 100); ?>
+				<?php $this->select_number('max_persons', 1, 500); ?>
 			</p>
 			<p>
 				<label for="package_free"><span><?php echo esc_html(__('Children free up to', 'dynamicpackages')); ?></span></br>
