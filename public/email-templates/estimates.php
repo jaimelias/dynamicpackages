@@ -147,7 +147,7 @@ $email_template = <<<EOT
 						<td colspan="2" style="padding: 5px;vertical-align: top; text-align: right;">
 							<strong style="color: #666666">{$label_client}</strong>
 							<br/> {$client_name}
-							<br/>+{$client_phone}
+							<br/><a style="color: #666666" href="https://wa.me/{$client_phone}">+{$client_phone}</a>
 							<br />{$client_email}
 							<br/>
 							<br/>
