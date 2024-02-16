@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2023-12-11 02:09+0000\n"
+"PO-Revision-Date: 2024-02-16 22:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -40,7 +40,7 @@ msgstr "%s está teniendo problemas procesando tu pago"
 
 #: gateways/matrix/yappy/yappy_direct.php:61 gateways/matrix/bank/local.php:59
 #: gateways/matrix/bank/international.php:74
-#: gateways/matrix/cuanto/cuanto.php:60 gateways/matrix/paypal/paypal_me.php:60
+#: gateways/matrix/cuanto/cuanto.php:60 gateways/matrix/paypal/paypal_me.php:61
 #: gateways/matrix/stablepay/busd.php:85 gateways/matrix/stablepay/usdc.php:97
 #: gateways/matrix/stablepay/usdt.php:95
 #: gateways/matrix/nequi/nequi_direct.php:60
@@ -66,7 +66,7 @@ msgstr "%s, %s está teniendo problemas procesando tu pago."
 
 #: gateways/matrix/yappy/yappy_direct.php:56 gateways/matrix/bank/local.php:54
 #: gateways/matrix/bank/international.php:69
-#: gateways/matrix/cuanto/cuanto.php:55 gateways/matrix/paypal/paypal_me.php:55
+#: gateways/matrix/cuanto/cuanto.php:55 gateways/matrix/paypal/paypal_me.php:56
 #: gateways/matrix/stablepay/busd.php:80 gateways/matrix/stablepay/usdc.php:92
 #: gateways/matrix/stablepay/usdt.php:90
 #: gateways/matrix/nequi/nequi_direct.php:55
@@ -115,7 +115,7 @@ msgid "Account Type"
 msgstr "Tipo de cuenta"
 
 #: admin/class-dynamicpackages-post-type.php:74
-#: dy-core/integrations/orders.php:25
+#: dy-core/integrations/clients.php:24 dy-core/integrations/orders.php:25
 msgid "Add New"
 msgstr "Agregar nuevo"
 
@@ -124,6 +124,10 @@ msgstr "Agregar nuevo"
 #, php-format
 msgid "Add New %s"
 msgstr "Agregar nuevo %s"
+
+#: dy-core/integrations/clients.php:23
+msgid "Add New Client"
+msgstr ""
 
 #: dy-core/integrations/orders.php:24
 msgid "Add New Order"
@@ -146,7 +150,7 @@ msgstr "Extra"
 msgid "Add-ons"
 msgstr "Extras"
 
-#: dy-core/admin.php:145 gateways/partials/cc-form.php:17
+#: dy-core/admin.php:151 gateways/partials/cc-form.php:17
 msgid "Address"
 msgstr "Dirección"
 
@@ -177,7 +181,7 @@ msgstr "Alias"
 msgid "All %s"
 msgstr "Todos %s"
 
-#: gateways/class-dynamicpackages-gateways.php:333
+#: gateways/class-dynamicpackages-gateways.php:356
 msgid ""
 "All card payments may be subject to a verification process where we charge a "
 "random amount less than $5. To complete the reservation you must indicate "
@@ -188,6 +192,10 @@ msgstr ""
 "random amount less than $5. To complete the reservation you must indicate "
 "the exact amount of this charge. You can call your card support line or "
 "online banking for this."
+
+#: dy-core/integrations/clients.php:22
+msgid "All Clients"
+msgstr ""
 
 #: dy-core/integrations/orders.php:23
 msgid "All Orders"
@@ -207,7 +215,7 @@ msgstr "No aceptamos American Express. Por el momento solo Visa o Mastercard."
 msgid "Amount Due"
 msgstr "Saldo"
 
-#: dy-core/admin.php:84
+#: dy-core/admin.php:90
 msgid "Analytics"
 msgstr ""
 
@@ -253,7 +261,7 @@ msgstr "Precio base por persona"
 msgid "Based on"
 msgstr "basado en"
 
-#: gateways/class-dynamicpackages-gateways.php:330
+#: gateways/class-dynamicpackages-gateways.php:353
 msgid "Before Booking"
 msgstr "Antes de reservar"
 
@@ -324,7 +332,7 @@ msgstr "Azul"
 msgid "Book by Hour"
 msgstr "Reservar por hora"
 
-#: public/class-dynamicpackages-public.php:862
+#: public/class-dynamicpackages-public.php:892
 msgid "Book it with a"
 msgstr "Reserva con un"
 
@@ -375,8 +383,8 @@ msgstr "Categoría"
 msgid "CCLW"
 msgstr "CCLW"
 
-#: public/class-dynamicpackages-public.php:1078
-#: public/class-dynamicpackages-public.php:1083
+#: public/class-dynamicpackages-public.php:1108
+#: public/class-dynamicpackages-public.php:1113
 msgid "Check-in"
 msgstr "Check-in"
 
@@ -393,7 +401,7 @@ msgstr "Cuenta corriente"
 msgid "Checkout Error"
 msgstr "Error de pago"
 
-#: admin/class-dynamicpackages-admin.php:119
+#: admin/class-dynamicpackages-admin.php:112
 msgid "Checkout Webhook URL"
 msgstr "Webhook URL de pagos"
 
@@ -420,7 +428,7 @@ msgstr "Niños gratis hasta"
 msgid "children under"
 msgstr "niños menores de"
 
-#: gateways/class-dynamicpackages-gateways.php:302
+#: gateways/class-dynamicpackages-gateways.php:325
 msgid "Choose Network"
 msgstr "Elegir red"
 
@@ -428,12 +436,30 @@ msgstr "Elegir red"
 msgid "City"
 msgstr "Ciudad"
 
+#: dy-core/integrations/clients.php:18 dy-core/integrations/clients.php:20
+#: dy-core/integrations/clients.php:38
 #: public/email-templates/estimates-pdf.php:14
-#: public/email-templates/estimates.php:18
+#: public/email-templates/estimates.php:19
 msgid "Client"
 msgstr "Cliente"
 
-#: dy-core/admin.php:181
+#: dy-core/integrations/clients.php:39
+msgid "Client Description"
+msgstr ""
+
+#: dy-core/integrations/clients.php:17 dy-core/integrations/clients.php:19
+msgid "Clients"
+msgstr ""
+
+#: dy-core/integrations/clients.php:32
+msgid "Clients list"
+msgstr ""
+
+#: dy-core/integrations/clients.php:33
+msgid "Clients list navigation"
+msgstr ""
+
+#: dy-core/admin.php:187
 #, fuzzy
 #| msgid "Cloudflare Api Token"
 msgid "Cloudflare API Token"
@@ -444,7 +470,7 @@ msgstr "Cloudflare Api Token"
 msgid "Code"
 msgstr "Código"
 
-#: dy-core/admin.php:82
+#: dy-core/admin.php:88
 msgid "Company"
 msgstr "Empresa"
 
@@ -476,10 +502,6 @@ msgstr "¡Copiado al portapapeles!"
 msgid "Country"
 msgstr "País"
 
-#: public/partials/quote-form.php:64
-msgid "Country Calling Code"
-msgstr "Código de país"
-
 #: includes/class-dynamicpackages-validators.php:238
 msgid "Country Calling Code is empty."
 msgstr "El código de país está vacío."
@@ -488,7 +510,7 @@ msgstr "El código de país está vacío."
 msgid "Coupon"
 msgstr "Cupón"
 
-#: gateways/class-dynamicpackages-gateways.php:264
+#: gateways/class-dynamicpackages-gateways.php:287
 #, php-format
 msgid "Coupon %s activated. %s off applied on the rate."
 msgstr "Cupón %s activado. %s de descuento aplicado a la tarifa."
@@ -509,11 +531,11 @@ msgstr "Fecha"
 msgid "Date of Return"
 msgstr "Fecha de regreso"
 
-#: includes/class-dynamicpackages-utilities.php:277
+#: includes/class-dynamicpackages-utilities.php:276
 msgid "Day"
 msgstr "Día"
 
-#: includes/class-dynamicpackages-utilities.php:278
+#: includes/class-dynamicpackages-utilities.php:277
 #: admin/class-dynamicpackages-metaboxes.php:659
 #: public/class-dynamicpackages-forms.php:191
 msgid "Days"
@@ -534,13 +556,13 @@ msgstr "Email de pruebas"
 msgid "default"
 msgstr "predeterminado"
 
-#: public/class-dynamicpackages-public.php:1079
+#: public/class-dynamicpackages-public.php:1109
 msgid "Departing"
 msgstr "Partida"
 
 #: admin/class-dynamicpackages-metaboxes.php:52
 #: public/class-dynamicpackages-public.php:719
-#: public/class-dynamicpackages-public.php:1075
+#: public/class-dynamicpackages-public.php:1105
 msgid "Departure"
 msgstr "Partida"
 
@@ -569,7 +591,7 @@ msgstr "Hora de partida"
 msgid "Deposit"
 msgstr "Deposito"
 
-#: public/class-dynamicpackages-public.php:862
+#: public/class-dynamicpackages-public.php:892
 #: public/class-dynamicpackages-booking-page.php:125
 #: gateways/matrix/yappy/yappy_direct.php:174
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:357
@@ -580,7 +602,7 @@ msgid "deposit"
 msgstr "deposito"
 
 #: gateways/matrix/cuanto/cuanto.php:377
-#: gateways/matrix/paypal/paypal_me.php:383
+#: gateways/matrix/paypal/paypal_me.php:395
 #: gateways/matrix/stablepay/busd.php:432
 #: gateways/matrix/stablepay/usdc.php:441
 #: gateways/matrix/stablepay/usdt.php:443
@@ -631,7 +653,7 @@ msgstr "Duración"
 msgid "Dynamic Packages"
 msgstr ""
 
-#: admin/class-dynamicpackages-admin.php:265
+#: admin/class-dynamicpackages-admin.php:258
 msgid "Dynamicpackages"
 msgstr "Dynamicpackages"
 
@@ -645,6 +667,10 @@ msgstr "Editar"
 msgid "Edit %s"
 msgstr "Editar %s"
 
+#: dy-core/integrations/clients.php:26
+msgid "Edit Client"
+msgstr ""
+
 #: dy-core/integrations/orders.php:27
 msgid "Edit Order"
 msgstr "Editar orden"
@@ -653,7 +679,7 @@ msgstr "Editar orden"
 msgid "Edit Package"
 msgstr "Editar paquetes"
 
-#: dy-core/admin.php:90 public/partials/quote-form.php:53
+#: dy-core/admin.php:96 public/partials/quote-form.php:53
 msgid "Email"
 msgstr "Email"
 
@@ -703,7 +729,7 @@ msgstr "Evento"
 msgid "Event Date"
 msgstr "Fecha del evento"
 
-#: public/class-dynamicpackages-public.php:1033
+#: public/class-dynamicpackages-public.php:1063
 msgid "Everyday"
 msgstr "Todos los días"
 
@@ -723,7 +749,7 @@ msgstr "Mes de expiración"
 msgid "Expiration Year"
 msgstr "Año de expiración"
 
-#: dy-core/admin.php:225
+#: dy-core/admin.php:231
 msgid "Facebook Pixel ID"
 msgstr ""
 
@@ -732,7 +758,7 @@ msgstr ""
 msgid "Featured"
 msgstr "Destacado"
 
-#: dy-core/integrations/orders.php:35
+#: dy-core/integrations/clients.php:34 dy-core/integrations/orders.php:35
 msgid "Filter locations list"
 msgstr "Filtrar lista de ubicaciones"
 
@@ -757,19 +783,19 @@ msgstr "precio fijo"
 msgid "Force Enabled Dates"
 msgstr "Forzar habilitar fechas"
 
-#: includes/class-dynamicpackages-utilities.php:1331
+#: includes/class-dynamicpackages-utilities.php:1330
 msgid "Fri"
 msgstr "Vie"
 
-#: includes/class-dynamicpackages-utilities.php:1318
+#: includes/class-dynamicpackages-utilities.php:1317
 msgid "Friday"
 msgstr "Viernes"
 
 #: admin/class-dynamicpackages-metaboxes.php:222
 #: admin/class-dynamicpackages-metaboxes.php:238
 #: admin/class-dynamicpackages-metaboxes.php:256
-#: admin/class-dynamicpackages-admin.php:157
-#: public/class-dynamicpackages-public.php:1403
+#: admin/class-dynamicpackages-admin.php:150
+#: public/class-dynamicpackages-public.php:1433
 msgid "From"
 msgstr "Desde"
 
@@ -778,7 +804,7 @@ msgid "Full Payment"
 msgstr "Precio completo"
 
 #: gateways/matrix/cuanto/cuanto.php:373
-#: gateways/matrix/paypal/paypal_me.php:379
+#: gateways/matrix/paypal/paypal_me.php:391
 #: gateways/matrix/stablepay/busd.php:428
 #: gateways/matrix/stablepay/usdc.php:437
 #: gateways/matrix/stablepay/usdt.php:439
@@ -790,7 +816,7 @@ msgstr "pago completo de"
 #: gateways/matrix/bank/local.php:335
 #: gateways/matrix/bank/international.php:472
 #: gateways/matrix/cuanto/cuanto.php:239
-#: gateways/matrix/paypal/paypal_me.php:249
+#: gateways/matrix/paypal/paypal_me.php:261
 #: gateways/matrix/stablepay/busd.php:286
 #: gateways/matrix/stablepay/usdc.php:294
 #: gateways/matrix/stablepay/usdt.php:296
@@ -799,7 +825,7 @@ msgstr "pago completo de"
 msgid "Full Payments and Deposits"
 msgstr "Pagos completos y depositos"
 
-#: admin/class-dynamicpackages-admin.php:97
+#: admin/class-dynamicpackages-admin.php:90
 msgid "Gateway Settings"
 msgstr "Configuración de plataforma de pagos"
 
@@ -807,13 +833,13 @@ msgstr "Configuración de plataforma de pagos"
 msgid "General Inquiry"
 msgstr "Solicitud general"
 
-#: admin/class-dynamicpackages-admin.php:81
+#: admin/class-dynamicpackages-admin.php:74
 #: gateways/matrix/yappy/yappy_direct.php:248
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:506
 #: gateways/matrix/bank/local.php:264
 #: gateways/matrix/bank/international.php:346
 #: gateways/matrix/cuanto/cuanto.php:215
-#: gateways/matrix/paypal/paypal_me.php:225
+#: gateways/matrix/paypal/paypal_me.php:228
 #: gateways/matrix/stablepay/busd.php:269
 #: gateways/matrix/stablepay/usdc.php:277
 #: gateways/matrix/stablepay/usdt.php:279
@@ -822,7 +848,7 @@ msgstr "Solicitud general"
 msgid "General Settings"
 msgstr "Configuración General"
 
-#: public/class-dynamicpackages-public.php:1324
+#: public/class-dynamicpackages-public.php:1354
 msgid "Get a"
 msgstr "Obtén un"
 
@@ -843,7 +869,7 @@ msgstr "Cotizar"
 msgid "get more leads even if the prices are not defined"
 msgstr "obtén más solicitudes aún si los precios no esta definidos"
 
-#: admin/class-dynamicpackages-admin.php:148
+#: admin/class-dynamicpackages-admin.php:141
 msgid "Global Disabled Dates"
 msgstr "Deshabilitar fechas globalmente"
 
@@ -855,11 +881,11 @@ msgstr "Volver"
 msgid "Good"
 msgstr "Bueno"
 
-#: dy-core/admin.php:207
+#: dy-core/admin.php:213
 msgid "Google - Analytics GA4 (GTAG)"
 msgstr ""
 
-#: dy-core/admin.php:216
+#: dy-core/admin.php:222
 msgid "Google - Global Tag Manager (GMT)"
 msgstr ""
 
@@ -889,11 +915,11 @@ msgstr ""
 "nuestro programa %s. Recibirá un correo electrónico de %s con más "
 "instrucciones para completar esta solicitud."
 
-#: admin/class-dynamicpackages-admin.php:175
+#: admin/class-dynamicpackages-admin.php:168
 msgid "Hide Enabled Days"
 msgstr "Enconder días habilitados"
 
-#: admin/class-dynamicpackages-admin.php:193
+#: admin/class-dynamicpackages-admin.php:186
 msgid "Hide Max. Persons"
 msgstr ""
 
@@ -901,11 +927,11 @@ msgstr ""
 msgid "Hide Package"
 msgstr "Ocultar paquete"
 
-#: admin/class-dynamicpackages-admin.php:166
+#: admin/class-dynamicpackages-admin.php:159
 msgid "Hide Package Description (Excerpt)"
 msgstr "Esconder descripción de paquetes (extracto)"
 
-#: admin/class-dynamicpackages-admin.php:184
+#: admin/class-dynamicpackages-admin.php:177
 msgid "Hide Start Address"
 msgstr "Esconder dirección de inicio"
 
@@ -917,7 +943,7 @@ msgstr "caros a baratos"
 msgid "hight to low"
 msgstr "alto a bajo"
 
-#: includes/class-dynamicpackages-utilities.php:277
+#: includes/class-dynamicpackages-utilities.php:276
 msgid "Hour"
 msgstr "Hora"
 
@@ -925,7 +951,7 @@ msgstr "Hora"
 msgid "hour"
 msgstr "hora"
 
-#: includes/class-dynamicpackages-utilities.php:278
+#: includes/class-dynamicpackages-utilities.php:277
 #: admin/class-dynamicpackages-metaboxes.php:658
 msgid "Hours"
 msgstr "Horas"
@@ -934,7 +960,7 @@ msgstr "Horas"
 msgid "hours"
 msgstr "horas"
 
-#: dy-core/admin.php:138
+#: dy-core/admin.php:144
 msgid "Html Editor"
 msgstr ""
 
@@ -957,7 +983,7 @@ msgstr "¿Incluir?"
 #: admin/class-dynamicpackages-post-type.php:37
 #: admin/class-dynamicpackages-post-type.php:38
 #: public/email-templates/estimates-pdf.php:24
-#: public/email-templates/estimates.php:27
+#: public/email-templates/estimates.php:28
 #: gateways/partials/checkout-page.php:115
 msgid "Included"
 msgstr "Incluido"
@@ -975,7 +1001,7 @@ msgstr "Incrementar el número máximo de participantes por"
 msgid "Inquiry is empty."
 msgstr ""
 
-#: admin/class-dynamicpackages-admin.php:104
+#: admin/class-dynamicpackages-admin.php:97
 msgid "Integrations Settings"
 msgstr "Configuración de integraciones"
 
@@ -1055,11 +1081,11 @@ msgstr "Fecha de expiración inválida."
 msgid "Invalid expiration year."
 msgstr "Año de espiración invalido."
 
-#: gateways/class-dynamicpackages-gateways.php:275
+#: gateways/class-dynamicpackages-gateways.php:298
 msgid "Invalid or expired coupon"
 msgstr "Cupón inválido o expirado"
 
-#: dy-core/functions.php:502
+#: dy-core/functions.php:503
 msgid "Invalid Recaptcha"
 msgstr "Recaptcha invalido"
 
@@ -1080,7 +1106,7 @@ msgstr "Solicitud inválida."
 msgid "Invoice"
 msgstr "Factura"
 
-#: dy-core/admin.php:198
+#: dy-core/admin.php:204
 msgid "IpGeolocation.io API Token"
 msgstr ""
 
@@ -1088,13 +1114,13 @@ msgstr ""
 msgid "is rated"
 msgstr "está evaluado"
 
-#: gateways/class-dynamicpackages-gateways.php:331
+#: gateways/class-dynamicpackages-gateways.php:354
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:256
 msgid "It is not allowed to book for third parties."
 msgstr "No está permitido reservar para terceros."
 
 #: public/email-templates/estimates-pdf.php:22
-#: public/email-templates/estimates.php:31
+#: public/email-templates/estimates.php:32
 msgid "Itinerary"
 msgstr ""
 
@@ -1140,14 +1166,14 @@ msgstr "Ubicaciones"
 msgid "low to high"
 msgstr "baratos a caros"
 
-#: gateways/class-dynamicpackages-gateways.php:311
+#: gateways/class-dynamicpackages-gateways.php:334
 msgid "make sure you use"
 msgstr "asegurate de utilizar"
 
 #: gateways/matrix/yappy/yappy_direct.php:270
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:534
 #: gateways/matrix/cuanto/cuanto.php:229
-#: gateways/matrix/paypal/paypal_me.php:239
+#: gateways/matrix/paypal/paypal_me.php:251
 #: gateways/matrix/stablepay/busd.php:276
 #: gateways/matrix/stablepay/usdc.php:284
 #: gateways/matrix/stablepay/usdt.php:286
@@ -1155,7 +1181,7 @@ msgstr "asegurate de utilizar"
 msgid "Max. Amount"
 msgstr "Cantidad Máxima"
 
-#: admin/class-dynamicpackages-admin.php:139
+#: admin/class-dynamicpackages-admin.php:132
 msgid "Max. Disabled Dates"
 msgstr "Máximo de fechas deshabilitadas"
 
@@ -1188,6 +1214,7 @@ msgstr "Mensajes"
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:527
 #: gateways/matrix/bank/local.php:324
 #: gateways/matrix/bank/international.php:462
+#: gateways/matrix/paypal/paypal_me.php:243
 #: gateways/matrix/pay-later/pay-later.php:254
 msgid "Min. Amount"
 msgstr "Cantidad Min."
@@ -1200,24 +1227,20 @@ msgstr "Duración min."
 msgid "Minimum Number of participants"
 msgstr "Número mínimo de participantes"
 
-#: includes/class-dynamicpackages-utilities.php:277
+#: includes/class-dynamicpackages-utilities.php:276
 msgid "Minute"
 msgstr "Minuto"
 
-#: includes/class-dynamicpackages-utilities.php:278
+#: includes/class-dynamicpackages-utilities.php:277
 #: admin/class-dynamicpackages-metaboxes.php:657
 msgid "Minutes"
 msgstr "Minutos"
 
-#: public/partials/quote-form.php:71
-msgid "Mobile Phone"
-msgstr "Teléfono Móvil"
-
-#: includes/class-dynamicpackages-utilities.php:1327
+#: includes/class-dynamicpackages-utilities.php:1326
 msgid "Mon"
 msgstr "Lun"
 
-#: includes/class-dynamicpackages-utilities.php:1314
+#: includes/class-dynamicpackages-utilities.php:1313
 msgid "Monday"
 msgstr "Lunes"
 
@@ -1250,6 +1273,10 @@ msgstr "Nuevo"
 msgid "New %s Name"
 msgstr "Nuevo nombre de %s"
 
+#: dy-core/integrations/clients.php:25
+msgid "New Client"
+msgstr ""
+
 #: dy-core/integrations/orders.php:26
 msgid "New Order"
 msgstr ""
@@ -1264,22 +1291,22 @@ msgid "Newest"
 msgstr "Nuevos"
 
 #: public/class-dynamicpackages-public.php:483
-#: public/class-dynamicpackages-public.php:1267
+#: public/class-dynamicpackages-public.php:1297
 #: public/class-dynamicpackages-forms.php:101
 msgid "next 30 days"
 msgstr "próximos 30 días"
 
 #: public/class-dynamicpackages-public.php:482
-#: public/class-dynamicpackages-public.php:1263
+#: public/class-dynamicpackages-public.php:1293
 #: public/class-dynamicpackages-forms.php:100
 msgid "next 7 days"
 msgstr "próximos 7 días"
 
-#: includes/class-dynamicpackages-utilities.php:277
+#: includes/class-dynamicpackages-utilities.php:276
 msgid "Night"
 msgstr "Noche"
 
-#: includes/class-dynamicpackages-utilities.php:278
+#: includes/class-dynamicpackages-utilities.php:277
 #: admin/class-dynamicpackages-metaboxes.php:660
 #: public/class-dynamicpackages-forms.php:183
 msgid "Nights"
@@ -1294,19 +1321,20 @@ msgid "No"
 msgstr "No"
 
 #: admin/class-dynamicpackages-post-type.php:80
-#: dy-core/integrations/orders.php:31 public/partials/archive.php:347
+#: dy-core/integrations/clients.php:30 dy-core/integrations/orders.php:31
+#: public/partials/archive.php:347
 msgid "Not found"
 msgstr "No encontrado"
 
 #: admin/class-dynamicpackages-post-type.php:81
-#: dy-core/integrations/orders.php:32
+#: dy-core/integrations/clients.php:31 dy-core/integrations/orders.php:32
 msgid "Not found in Trash"
 msgstr "No encontrado en papelera"
 
 #: admin/class-dynamicpackages-post-type.php:43
 #: admin/class-dynamicpackages-post-type.php:44
 #: public/email-templates/estimates-pdf.php:26
-#: public/email-templates/estimates.php:29
+#: public/email-templates/estimates.php:30
 #: gateways/partials/checkout-page.php:116
 msgid "Not Included"
 msgstr "No incluido"
@@ -1316,11 +1344,11 @@ msgid "Not Included:"
 msgstr "No incluye"
 
 #: public/email-templates/estimates-pdf.php:30
-#: public/email-templates/estimates.php:34
+#: public/email-templates/estimates.php:35
 msgid "Notes"
 msgstr "Notas"
 
-#: gateways/matrix/paypal/paypal_me.php:388
+#: gateways/matrix/paypal/paypal_me.php:400
 msgid "now"
 msgstr "ya"
 
@@ -1336,7 +1364,7 @@ msgstr "Número de temporadas especiales"
 msgid "off"
 msgstr "descuento"
 
-#: public/class-dynamicpackages-public.php:1326
+#: public/class-dynamicpackages-public.php:1356
 msgid "off using the coupon code"
 msgstr "de descuento usando el cupón"
 
@@ -1345,7 +1373,7 @@ msgstr "de descuento usando el cupón"
 msgid "Offer"
 msgstr "Oferta"
 
-#: public/class-dynamicpackages-public.php:1339
+#: public/class-dynamicpackages-public.php:1369
 msgid "Offer valid until"
 msgstr "Oferta válida hasta"
 
@@ -1366,7 +1394,11 @@ msgstr ""
 msgid "Online Booking"
 msgstr "Reservar en línea"
 
-#: gateways/class-dynamicpackages-gateways.php:127
+#: dy-core/public.php:248
+msgid "Open Web Whatsapp"
+msgstr ""
+
+#: gateways/class-dynamicpackages-gateways.php:153
 msgid "or"
 msgstr "o"
 
@@ -1424,7 +1456,7 @@ msgstr "saldo"
 msgid "Package"
 msgstr "Paquete"
 
-#: admin/class-dynamicpackages-admin.php:111
+#: admin/class-dynamicpackages-admin.php:104
 msgid "Package Archive Page"
 msgstr "Página de archivo de paquetes"
 
@@ -1432,7 +1464,7 @@ msgstr "Página de archivo de paquetes"
 msgid "Package Description"
 msgstr "Descripción del paquete"
 
-#: admin/class-dynamicpackages-admin.php:88
+#: admin/class-dynamicpackages-admin.php:81
 msgid "Package List Settings"
 msgstr "Configuración de lista de paquetes"
 
@@ -1483,6 +1515,10 @@ msgstr "Pagado"
 msgid "Parent %s"
 msgstr "%s Superior"
 
+#: dy-core/integrations/clients.php:21
+msgid "Parent Client:"
+msgstr ""
+
 #: dy-core/integrations/orders.php:22
 msgid "Parent Order:"
 msgstr ""
@@ -1495,7 +1531,7 @@ msgstr "Paquete superior:"
 msgid "Participants"
 msgstr "Participantes"
 
-#: gateways/class-dynamicpackages-gateways.php:159
+#: gateways/class-dynamicpackages-gateways.php:185
 msgid "Pay"
 msgstr "Pagar"
 
@@ -1520,7 +1556,7 @@ msgstr "Paga con %s gracias a %s"
 msgid "Pay With an International Wire Transfer"
 msgstr "Paga con una transferencia bancaria internacional"
 
-#: gateways/matrix/paypal/paypal_me.php:388
+#: gateways/matrix/paypal/paypal_me.php:400
 msgid "Pay with Paypal"
 msgstr "Paga con Paypal"
 
@@ -1566,7 +1602,7 @@ msgstr "Por persona"
 msgid "per person"
 msgstr "por persona"
 
-#: public/class-dynamicpackages-public.php:1085
+#: public/class-dynamicpackages-public.php:1115
 msgid "pers. max."
 msgstr ""
 
@@ -1578,7 +1614,7 @@ msgstr "persona"
 msgid "persons"
 msgstr "personas"
 
-#: dy-core/admin.php:99
+#: dy-core/admin.php:105
 msgid "Phone"
 msgstr "Teléfono"
 
@@ -1610,7 +1646,7 @@ msgstr ""
 "Términos y Condiciones (adjuntos) antes de reservar."
 
 #: gateways/matrix/cuanto/cuanto.php:381
-#: gateways/matrix/paypal/paypal_me.php:387
+#: gateways/matrix/paypal/paypal_me.php:399
 #: gateways/matrix/stablepay/busd.php:437
 #: gateways/matrix/stablepay/usdc.php:446
 #: gateways/matrix/stablepay/usdt.php:448
@@ -1690,7 +1726,7 @@ msgstr "Publicar"
 msgid "Purple"
 msgstr "Purpura"
 
-#: admin/class-dynamicpackages-admin.php:128
+#: admin/class-dynamicpackages-admin.php:121
 msgid "Quote Webhook URL"
 msgstr "URL de webhook de cotizaciones"
 
@@ -1707,11 +1743,11 @@ msgstr "Precios"
 msgid "Rating"
 msgstr "Calificación"
 
-#: dy-core/admin.php:172
+#: dy-core/admin.php:178
 msgid "Recaptcha Secret Key"
 msgstr "Recaptcha Secret Key"
 
-#: dy-core/admin.php:163
+#: dy-core/admin.php:169
 msgid "Recaptcha Site Key"
 msgstr "Recaptcha Site Key"
 
@@ -1758,7 +1794,7 @@ msgstr "Solicitar cotización"
 
 #: admin/class-dynamicpackages-metaboxes.php:386
 #: public/class-dynamicpackages-public.php:724
-#: public/class-dynamicpackages-public.php:1081
+#: public/class-dynamicpackages-public.php:1111
 msgid "Return"
 msgstr "Regreso"
 
@@ -1766,7 +1802,7 @@ msgstr "Regreso"
 msgid "Return Time"
 msgstr "Hora de regreso"
 
-#: public/class-dynamicpackages-public.php:1084
+#: public/class-dynamicpackages-public.php:1114
 msgid "Returning"
 msgstr "Regreso"
 
@@ -1788,11 +1824,11 @@ msgstr "Los testimonios están cerrados."
 msgid "Round trip"
 msgstr "Ida y vuelta"
 
-#: includes/class-dynamicpackages-utilities.php:1332
+#: includes/class-dynamicpackages-utilities.php:1331
 msgid "Sat"
 msgstr "Sab"
 
-#: includes/class-dynamicpackages-utilities.php:1319
+#: includes/class-dynamicpackages-utilities.php:1318
 msgid "Saturday"
 msgstr "Sabado"
 
@@ -1804,7 +1840,7 @@ msgstr "Ahorrando"
 msgid "Saving Account"
 msgstr "Cuenta Corriente"
 
-#: public/class-dynamicpackages-public.php:1074
+#: public/class-dynamicpackages-public.php:1104
 msgid "Schedule"
 msgstr "Horario"
 
@@ -1818,6 +1854,10 @@ msgstr ""
 msgid "Search %s"
 msgstr "Buscar %s"
 
+#: dy-core/integrations/clients.php:29
+msgid "Search Client"
+msgstr ""
+
 #: dy-core/integrations/orders.php:30
 msgid "Search Order"
 msgstr ""
@@ -1826,7 +1866,7 @@ msgstr ""
 msgid "Search Package"
 msgstr "Buscar paquete"
 
-#: dy-core/admin.php:83
+#: dy-core/admin.php:89
 msgid "Security"
 msgstr ""
 
@@ -1843,12 +1883,12 @@ msgstr "Envianos tu solicitud y te responderemos muy pronto."
 msgid "Send Your Request"
 msgstr "Envíanos tu solicitud"
 
-#: dy-core/admin.php:189
+#: dy-core/admin.php:195
 msgid "Sentry API Key"
 msgstr ""
 
 #: public/email-templates/estimates-pdf.php:18
-#: public/email-templates/estimates.php:22
+#: public/email-templates/estimates.php:23
 msgid "Service"
 msgstr "Servicio"
 
@@ -1857,7 +1897,7 @@ msgstr "Servicio"
 #: gateways/matrix/bank/local.php:347
 #: gateways/matrix/bank/international.php:484
 #: gateways/matrix/cuanto/cuanto.php:251
-#: gateways/matrix/paypal/paypal_me.php:261
+#: gateways/matrix/paypal/paypal_me.php:273
 #: gateways/matrix/stablepay/busd.php:298
 #: gateways/matrix/stablepay/usdc.php:306
 #: gateways/matrix/stablepay/usdt.php:308
@@ -1871,7 +1911,7 @@ msgid "Show Badge"
 msgstr "Mostrar cinta"
 
 #: public/email-templates/estimates-pdf.php:36
-#: public/email-templates/estimates.php:42
+#: public/email-templates/estimates.php:43
 msgid "Show Package"
 msgstr ""
 
@@ -1883,11 +1923,11 @@ msgstr "Mostrar tabla de precios"
 msgid "Show Prices Per Person"
 msgstr "Mostrar precios por persona"
 
-#: public/class-dynamicpackages-public.php:1385
+#: public/class-dynamicpackages-public.php:1415
 msgid "Similar packages"
 msgstr "Paquetes similares"
 
-#: dy-core/admin.php:131
+#: dy-core/admin.php:137
 msgid "Site Nofification"
 msgstr ""
 
@@ -1895,7 +1935,7 @@ msgstr ""
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: public/class-dynamicpackages-public.php:854 public/partials/archive.php:325
+#: public/class-dynamicpackages-public.php:884 public/partials/archive.php:325
 msgid "Starting at"
 msgstr "Desde"
 
@@ -1908,20 +1948,20 @@ msgid "Subpackage Short Title"
 msgstr "Título corto del subpaquete"
 
 #: public/email-templates/estimates-pdf.php:20
-#: public/email-templates/estimates.php:24
+#: public/email-templates/estimates.php:25
 #: gateways/partials/checkout-page.php:85
 msgid "Subtotal"
 msgstr "Subtotal"
 
-#: includes/class-dynamicpackages-utilities.php:1333
+#: includes/class-dynamicpackages-utilities.php:1332
 msgid "Sun"
 msgstr "Dom"
 
-#: includes/class-dynamicpackages-utilities.php:1320
+#: includes/class-dynamicpackages-utilities.php:1319
 msgid "Sunday"
 msgstr "Domingo"
 
-#: gateways/class-dynamicpackages-gateways.php:370
+#: gateways/class-dynamicpackages-gateways.php:367
 msgid "Support via Whatsapp"
 msgstr "Soporte via Whatsapp"
 
@@ -1933,7 +1973,7 @@ msgstr "Recargo por día de semana"
 msgid "Take your time to review our invoice in detail."
 msgstr "Tómese su tiempo para revisar nuestra factura en detalle."
 
-#: dy-core/admin.php:154
+#: dy-core/admin.php:160
 #, fuzzy
 #| msgid "Tax Identification Number"
 msgid "Tax Identification ID"
@@ -1941,7 +1981,7 @@ msgstr "Código de identificación del contrubuyente"
 
 #: admin/class-dynamicpackages-post-type.php:49
 #: admin/class-dynamicpackages-post-type.php:50
-#: gateways/class-dynamicpackages-gateways.php:224
+#: gateways/class-dynamicpackages-gateways.php:247
 msgid "Terms & Conditions"
 msgstr "Términos y Condiciones"
 
@@ -1949,7 +1989,7 @@ msgstr "Términos y Condiciones"
 msgid "Terms & Conditions:"
 msgstr "Términos y Condiciones:"
 
-#: gateways/matrix/paypal/paypal_me.php:80
+#: gateways/matrix/paypal/paypal_me.php:81
 msgid "Thank you for choosing Paypal"
 msgstr "Gracias por elegir Paypal"
 
@@ -1981,11 +2021,11 @@ msgstr "Gracias por tu %s de %s%s: %s"
 msgid "Thank You for Your Request"
 msgstr "Gracias por tu solicitud"
 
-#: gateways/class-dynamicpackages-gateways.php:163
+#: gateways/class-dynamicpackages-gateways.php:189
 msgid "the deposit"
 msgstr "el deposito"
 
-#: gateways/class-dynamicpackages-gateways.php:309
+#: gateways/class-dynamicpackages-gateways.php:332
 msgid "The network you selected is"
 msgstr "La red que haz elegido es"
 
@@ -2004,12 +2044,12 @@ msgstr ""
 msgid "There is a new request for the program %s in %s."
 msgstr "Hay una nueva solicitud para el programa %s en %s."
 
-#: gateways/class-dynamicpackages-gateways.php:269
+#: gateways/class-dynamicpackages-gateways.php:292
 #, php-format
 msgid "This coupon expires on %s."
 msgstr "Este cupón expira el %s."
 
-#: public/class-dynamicpackages-public.php:1333
+#: public/class-dynamicpackages-public.php:1363
 #, php-format
 msgid "This coupon is valid for booking of minimum %s %s."
 msgstr "Este cupón es válido para reservas de mínimo %s %s."
@@ -2020,11 +2060,11 @@ msgid ""
 "WordPress admin area."
 msgstr ""
 
-#: includes/class-dynamicpackages-utilities.php:1330
+#: includes/class-dynamicpackages-utilities.php:1329
 msgid "Thu"
 msgstr "Jue"
 
-#: includes/class-dynamicpackages-utilities.php:1317
+#: includes/class-dynamicpackages-utilities.php:1316
 msgid "Thursday"
 msgstr "Jueves"
 
@@ -2035,7 +2075,7 @@ msgstr "Modificador del título"
 #: admin/class-dynamicpackages-metaboxes.php:223
 #: admin/class-dynamicpackages-metaboxes.php:239
 #: admin/class-dynamicpackages-metaboxes.php:257
-#: admin/class-dynamicpackages-admin.php:157
+#: admin/class-dynamicpackages-admin.php:150
 msgid "To"
 msgstr "Hasta"
 
@@ -2043,7 +2083,7 @@ msgstr "Hasta"
 msgid "to"
 msgstr "a"
 
-#: gateways/matrix/paypal/paypal_me.php:386
+#: gateways/matrix/paypal/paypal_me.php:398
 msgid ""
 "To complete the booking please click on the following link and enter your "
 "Paypal account."
@@ -2072,7 +2112,7 @@ msgstr "Para completar su reserva por favor entre a su App Yappy y envie su"
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
 
-#: gateways/class-dynamicpackages-gateways.php:332
+#: gateways/class-dynamicpackages-gateways.php:355
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:254
 msgid ""
 "To complete this reservation we require images of the passports (foreigners) "
@@ -2083,6 +2123,23 @@ msgstr ""
 "(extranjeros) o Documentos de Identidad (nacionales) de cada participante. "
 "Los documentos que envíe se compararán con los originales en el punto de "
 "encuentro."
+
+#: public/email-templates/estimates.php:9
+msgid ""
+"To complete your reservation with us, it is essential that we receive the "
+"payment. Our team processes payments during office hours and verifies the "
+"provided identification documents. Once we have received both the payment "
+"and the necessary documents, we proceed to send the confirmations via email. "
+"This policy ensures that we can confirm your reservation promptly and "
+"securely. We appreciate your understanding and cooperation in this process."
+msgstr ""
+"Para completar su reserva con nosotros, es esencial que recibamos el pago. "
+"Nuestro equipo procesa los pagos durante el horario de oficina y verifica "
+"los documentos de identificación proporcionados. Una vez que hayamos "
+"recibido tanto el pago como los documentos necesarios, procedemos a enviar "
+"las confirmaciones por correo electrónico. Esta política garantiza que "
+"podamos confirmar su reserva de manera rápida y segura. Agradecemos su "
+"comprensión y cooperación en este proceso."
 
 #: gateways/matrix/yappy/yappy_direct.php:167
 msgid "to the business"
@@ -2103,8 +2160,8 @@ msgid "Today"
 msgstr "Hoy"
 
 #: public/class-dynamicpackages-public.php:480
-#: public/class-dynamicpackages-public.php:1228
-#: public/class-dynamicpackages-public.php:1255
+#: public/class-dynamicpackages-public.php:1258
+#: public/class-dynamicpackages-public.php:1285
 msgid "today"
 msgstr "hoy"
 
@@ -2113,13 +2170,13 @@ msgid "Tomorrow"
 msgstr "Mañana"
 
 #: public/class-dynamicpackages-public.php:481
-#: public/class-dynamicpackages-public.php:1234
-#: public/class-dynamicpackages-public.php:1259
+#: public/class-dynamicpackages-public.php:1264
+#: public/class-dynamicpackages-public.php:1289
 msgid "tomorrow"
 msgstr "mañana"
 
 #: public/email-templates/estimates-pdf.php:19
-#: public/email-templates/estimates.php:23
+#: public/email-templates/estimates.php:24
 #: gateways/partials/checkout-page.php:139
 msgid "Total"
 msgstr "Total"
@@ -2129,11 +2186,11 @@ msgstr "Total"
 msgid "Transport"
 msgstr "Transporte"
 
-#: includes/class-dynamicpackages-utilities.php:1328
+#: includes/class-dynamicpackages-utilities.php:1327
 msgid "Tue"
 msgstr "Mar"
 
-#: includes/class-dynamicpackages-utilities.php:1315
+#: includes/class-dynamicpackages-utilities.php:1314
 msgid "Tuesday"
 msgstr "Martes"
 
@@ -2145,6 +2202,10 @@ msgstr "Turquesa"
 #: dy-core/integrations/providers.php:53
 #, php-format
 msgid "Update %s"
+msgstr ""
+
+#: dy-core/integrations/clients.php:27
+msgid "Update Client"
 msgstr ""
 
 #: dy-core/integrations/orders.php:28
@@ -2170,7 +2231,7 @@ msgstr ""
 "original de Paguelo Fácil."
 
 #: gateways/matrix/cuanto/cuanto.php:222
-#: gateways/matrix/paypal/paypal_me.php:232
+#: gateways/matrix/paypal/paypal_me.php:235
 msgid "Username"
 msgstr "Usuario"
 
@@ -2200,6 +2261,10 @@ msgstr ""
 msgid "Very Bad"
 msgstr "Muy mal"
 
+#: dy-core/integrations/clients.php:28
+msgid "View Client"
+msgstr ""
+
 #: dy-core/integrations/orders.php:29
 msgid "View Order"
 msgstr ""
@@ -2219,7 +2284,7 @@ msgid "Visa, Mastercard"
 msgstr "Visa, Mastercard"
 
 #: public/email-templates/estimates-pdf.php:28
-#: public/email-templates/estimates.php:32
+#: public/email-templates/estimates.php:33
 msgid "We accept"
 msgstr "Aceptamos"
 
@@ -2232,28 +2297,28 @@ msgstr ""
 "Te hemos enviado un email a %s con más detalles y la confirmación de esta "
 "reserva."
 
-#: includes/class-dynamicpackages-utilities.php:1329
+#: includes/class-dynamicpackages-utilities.php:1328
 msgid "Wed"
 msgstr "Mie"
 
-#: includes/class-dynamicpackages-utilities.php:1316
+#: includes/class-dynamicpackages-utilities.php:1315
 msgid "Wednesday"
 msgstr "Miércoles"
 
-#: includes/class-dynamicpackages-utilities.php:277
+#: includes/class-dynamicpackages-utilities.php:276
 msgid "Week"
 msgstr "Semana"
 
-#: includes/class-dynamicpackages-utilities.php:278
+#: includes/class-dynamicpackages-utilities.php:277
 #: admin/class-dynamicpackages-metaboxes.php:661
 msgid "Weeks"
 msgstr "Semanas"
 
-#: dy-core/admin.php:119
+#: dy-core/admin.php:125
 msgid "Whatsapp"
 msgstr ""
 
-#: public/email-templates/estimates.php:37
+#: public/email-templates/estimates.php:38
 msgid "Whatsapp Advisory"
 msgstr "Asesoría por Whatsapp"
 
@@ -2277,7 +2342,7 @@ msgstr "Blanco"
 msgid "Wire Transfer"
 msgstr "Transferencia internacional"
 
-#: gateways/class-dynamicpackages-gateways.php:168
+#: gateways/class-dynamicpackages-gateways.php:194
 msgid "with"
 msgstr "con"
 
@@ -2315,7 +2380,7 @@ msgstr "Amarillo"
 msgid "Yes"
 msgstr "Si"
 
-#: gateways/class-dynamicpackages-gateways.php:291
+#: gateways/class-dynamicpackages-gateways.php:314
 #, php-format
 msgid "You have chosen %s %s, but the minimum duration is %s %s."
 msgstr "Haz elegido %s %s, pero el mínimo es de %s %s."
