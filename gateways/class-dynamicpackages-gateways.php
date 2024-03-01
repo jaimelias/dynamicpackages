@@ -134,10 +134,26 @@ class Dynamicpackages_Gateways
 			if(dy_validators::validate_coupon())
 			{
 				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);				
-				$gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
-					return strcasecmp($gateway, $get_coupon) === 0;
-				});
+				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+
+				if(!empty($get_coupon))
+				{
+					$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+						
+						if(!empty($gateway))
+						{
+							return strcasecmp($gateway, $get_coupon) === 0;
+						}
+					});
+
+					if(is_array())
+					{
+						if(count($coupon_gateways) === 1)
+						{
+							$gateway = $coupon_gateways;
+						}
+					}
+				}
 			}
 
 			$output = $gateways;
@@ -209,10 +225,25 @@ class Dynamicpackages_Gateways
 			if(is_booking_page() && dy_validators::validate_coupon() && count($gateways) > 0)
 			{
 				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);				
-				$gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
-					return strcasecmp($gateway, $get_coupon) === 0;
-				});
+				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+				
+				if(!empty($get_coupon))
+				{
+					$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+						if(!empty($gateway))
+						{
+							return strcasecmp($gateway, $get_coupon) === 0;
+						}
+					});
+
+					if(is_array($coupon_gateways))
+					{
+						if(count($coupon_gateways) === 1)
+						{
+							return $coupon_gateways;
+						}
+					}
+				}
 			}
 		}
 		return $gateways;
