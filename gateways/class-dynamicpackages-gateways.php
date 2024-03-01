@@ -146,7 +146,7 @@ class Dynamicpackages_Gateways
 						}
 					});
 
-					if(is_array())
+					if(is_array($coupon_gateways))
 					{
 						if(count($coupon_gateways) === 1)
 						{
