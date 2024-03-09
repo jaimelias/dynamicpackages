@@ -213,7 +213,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					}
 					else
 					{
-						for($x = 0; $x < 100; $x++)
+						for($x = 0; $x < 499; $x++)
 						{
 							$is_selected = ($value == ($x+1)) ? 'selected="selected"' : '';
 							$options .= '<option  '.$is_selected.'>'.($x+1).'</option>';
