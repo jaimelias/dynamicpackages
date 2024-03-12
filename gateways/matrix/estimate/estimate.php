@@ -16,6 +16,7 @@ class estimate_request{
 
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'estimate_request';
 		$this->name = __('request an estimate', 'dynamicpackages');

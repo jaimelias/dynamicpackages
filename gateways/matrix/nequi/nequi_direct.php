@@ -22,6 +22,7 @@ class nequi_direct{
 	
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->gateway_short_name = 'nequi';
 		$this->name = 'Nequi';

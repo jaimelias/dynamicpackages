@@ -22,6 +22,7 @@ class yappy_direct{
 	
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->name = 'Yappy';
 		$this->id = 'yappy_direct';		
 		$this->gateway_short_name = 'yappy';

@@ -54,17 +54,22 @@ class Dynamicpackages_Actions{
 
     public function send_data()
     {
+		
+
 		if($this->is_request_submitted())
 		{
 			if(dy_validators::validate_request())
 			{
+				global $dy_orders;
+
 				if(isset($_REQUEST['add_ons']))
 				{
 					$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
 					$add_ons = sanitize_text_field($_REQUEST['add_ons']);
 					setcookie($add_ons_package_id, $add_ons, time() + 3600);
 				}
-
+				
+				$dy_orders->save_order($_POST, $this->providers);
 				$this->send_email();
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');

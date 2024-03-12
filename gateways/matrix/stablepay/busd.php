@@ -21,6 +21,7 @@ class busd{
 
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'busd';
 		$this->name = 'Binance USD (BUSD)';

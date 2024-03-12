@@ -20,6 +20,7 @@ class usdt{
 
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'usdt';
 		$this->name = 'Tether (USDT)';

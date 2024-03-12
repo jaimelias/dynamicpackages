@@ -20,6 +20,7 @@ class pay_later{
 	
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->site_name = get_bloginfo('name');
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = __('Buy Now & Pay Later', 'dynamicpackages');

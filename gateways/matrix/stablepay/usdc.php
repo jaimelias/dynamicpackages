@@ -22,6 +22,7 @@ class usdc{
 
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'usdc';
 		$this->name = 'USD Coin (USDC)';

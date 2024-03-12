@@ -20,6 +20,7 @@ class cuanto{
 	
 	public function init()
 	{
+		$this->checkout_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = 'Cuanto.app';
 		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');

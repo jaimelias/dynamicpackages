@@ -21,6 +21,7 @@ class paguelo_facil_on{
 	
 	public function init()
 	{
+		$this->checkout_status = 'paid';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
