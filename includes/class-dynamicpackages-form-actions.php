@@ -60,7 +60,7 @@ class Dynamicpackages_Actions{
 		{
 			if(dy_validators::validate_request())
 			{
-				global $dy_orders;
+				
 
 				if(isset($_REQUEST['add_ons']))
 				{
@@ -69,7 +69,8 @@ class Dynamicpackages_Actions{
 					setcookie($add_ons_package_id, $add_ons, time() + 3600);
 				}
 				
-				$dy_orders->save_order($_POST, $this->providers);
+				//global $dy_orders;
+				//$dy_orders->save_order($_POST, $this->providers);
 				$this->send_email();
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
@@ -100,7 +101,7 @@ class Dynamicpackages_Actions{
 	{
 		$temp_path = wp_upload_dir()['basedir'];
 		$temp_filename = '/temp_' . uniqid() .'.pdf';
-		$doc_pdf = new Html2Pdf('P', 'A4', $this->current_language);
+		$doc_pdf = new Html2Pdf('P', 'A4');
 		$doc_pdf->pdf->SetDisplayMode('fullpage');
 		$doc_pdf->writeHTML($html);
 		$pdf_path = $temp_path . $temp_filename;
