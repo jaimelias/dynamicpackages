@@ -16,6 +16,8 @@ class Dynamic_Core_Public {
 		{
 			$this->plugin_dir_url_file = get_stylesheet_directory_uri();
 			$this->plugin_dir = get_template_directory();
+
+            write_log(array($this->plugin_dir_url_file, $this->plugin_dir));
 		}
 
         add_shortcode('whatsapp', array(&$this, 'whatsapp_button'));
