@@ -34,7 +34,7 @@ class Dynamicpackages_Forms
 		
 		ob_start();
 		?>
-		<form id="dy_package_filter_form" data-action="<?php echo esc_url(get_permalink($package_main)); ?>" data-method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
+		<form id="dy_package_filter_form" data-action="<?php echo esc_attr(base64_encode(get_permalink($package_main))); ?>" data-method="get" data-home-url="<?php echo esc_url(home_lang()); ?>">
 		
 			<div class="pure-g gutters">
 
@@ -129,7 +129,7 @@ class Dynamicpackages_Forms
 
 		$plugin_dir_url = plugin_dir_url( __DIR__ );
 		
-		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_url(get_permalink()).'" data-gclid="true">';
+		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_attr(base64_encode(get_permalink())).'" data-gclid="true">';
 		
 		if($auto_booking == 1)
 		{

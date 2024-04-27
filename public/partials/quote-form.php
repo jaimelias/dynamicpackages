@@ -14,7 +14,7 @@
 	}
 ?>
 
-<form id="dy_package_request_form" <?php echo $hide_form;?> data-nonce="param" data-method="POST" data-action="<?php echo esc_url(get_permalink()); ?>">
+<form id="dy_package_request_form" <?php echo $hide_form;?> data-nonce="param" data-method="post" data-action="<?php echo esc_attr(base64_encode(get_permalink())); ?>">
 
 	    <div class="text-center bottom-20" id="dy_checkout_branding">
 			<p class="large text-muted">
