@@ -34,6 +34,12 @@ class paypal_me{
 		$this->color = '#000';
 		$this->background_color = '#FFD700';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
+
+		//service fee
+		$this->service_fee = get_option($this->id . '_service_fee');
+		$this->percent_symbol = '%';
+		$this->service_fee_notification = (floatval($this->service_fee) > 0) ? '<p class="large"><strong>'.esc_html(sprintf(__('All payments made with PayPal are subject to a an additional %s%s service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' : '';
+		$this->service_fee_confirmation = (floatval($this->service_fee) > 0) ? '<p class="large"><strong>'.esc_html(sprintf(__('This price already includes an additional %s%s Paypal payment service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' : '';
 	}
 
 	public function send_data()
@@ -222,6 +228,7 @@ class paypal_me{
 		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
+		register_setting($this->id . '_settings', $this->id . '_service_fee', 'floatval');
 
 		
 		add_settings_section(
@@ -253,6 +260,14 @@ class paypal_me{
 			array(&$this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
+		);
+
+		add_settings_field( 
+			$this->id . '_service_fee', 
+			esc_html(__( 'Service Fee', 'dynamicpackages' )), 
+			array(&$this, 'input_number'), 
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id . '_service_fee'
 		);
 
 		$show_args = array(
@@ -380,12 +395,16 @@ class paypal_me{
 
 	public function branding()
 	{
-		return '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="205" height="50" alt="'.esc_attr($this->name).'" />';
+		
+		$output = '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="205" height="50" alt="'.esc_attr($this->name).'" />';
+		$output .= $this->service_fee_notification;
+
+		return $output;
 	}
 	
 	public function message($message)
 	{
-		$amount = money(dy_utilities::payment_amount());
+		$amount = money(dy_utilities::payment_amount($this->service_fee));
 		$url = 'https://'.$this->domain.'/'.$this->username.'/'.$amount;
 		$amount = currency_symbol().''.money($amount);
 		
@@ -396,6 +415,7 @@ class paypal_me{
 			$label = __('deposit of', 'dynamicpackages');
 		}	
 		
+		$message .= $this->service_fee_confirmation;
 		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link and enter your Paypal account.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
 		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #FFD700; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'">'.esc_html(__('Pay with Paypal', 'dynamicpackages').' '.__('now', 'dynamicpackages')).'</a></p>';		

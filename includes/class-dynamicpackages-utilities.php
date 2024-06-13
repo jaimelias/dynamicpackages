@@ -1274,7 +1274,7 @@ class dy_utilities {
 		return $total;
 	}
 	
-	public static function payment_amount()
+	public static function payment_amount($service_fee = 0)
 	{
 		$the_id = self::checkout_package_ID();
 		$total = floatval(self::subtotal(null, $the_id));
@@ -1286,6 +1286,13 @@ class dy_utilities {
 		}
 		
 		$total = $total + self::get_add_ons_total();
+
+		$service_fee = floatval($service_fee);
+
+		if($service_fee > 0)
+		{
+			$total = $total * (1 + ($service_fee / 100));
+		}
 				
 		return $total;
 	}	
