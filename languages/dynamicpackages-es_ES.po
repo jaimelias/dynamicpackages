@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2024-06-17 20:30+0000\n"
+"PO-Revision-Date: 2024-06-17 20:44+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;esc_html_e\n"
-"X-Loco-Version: 2.6.6; wp-6.4.2\n"
+"X-Loco-Version: 2.6.10; wp-6.5.4\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: public/class-dynamicpackages-public.php:522
@@ -111,7 +111,7 @@ msgstr ""
 #: gateways/matrix/yappy/yappy_direct.php:191
 #, php-format
 msgid "A. Send the %s (%s) to the Yappy number %s."
-msgstr "A. Envía %s (%s) al número Yappy %s."
+msgstr "A. Envía el %s (%s) al número Yappy %s."
 
 #: admin/class-dynamicpackages-metaboxes.php:528
 msgid "Accept Bookings"
@@ -706,7 +706,7 @@ msgstr "Ingresa el cupón"
 
 #: gateways/matrix/yappy/yappy_direct.php:194
 msgid "Enter your Banco General Yappy app."
-msgstr "Abre tu aplicación Yappy de Banco General"
+msgstr "Abre tu aplicación Yappy de Banco General."
 
 #: public/class-dynamicpackages-public.php:186
 #: public/class-dynamicpackages-public.php:351

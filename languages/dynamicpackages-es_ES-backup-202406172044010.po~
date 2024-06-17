@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2024-06-17 19:36+0000\n"
+"PO-Revision-Date: 2024-06-17 20:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -39,7 +39,7 @@ msgid "%s is having problems processing your payment"
 msgstr "%s está teniendo problemas procesando tu pago"
 
 #: gateways/matrix/yappy/yappy_direct.php:63
-#: gateways/matrix/yappy/yappy_direct.php:164 gateways/matrix/bank/local.php:60
+#: gateways/matrix/yappy/yappy_direct.php:175 gateways/matrix/bank/local.php:60
 #: gateways/matrix/bank/international.php:75
 #: gateways/matrix/cuanto/cuanto.php:61 gateways/matrix/paypal/paypal_me.php:68
 #: gateways/matrix/stablepay/busd.php:86 gateways/matrix/stablepay/usdc.php:98
@@ -98,6 +98,20 @@ msgstr "1 email por línea. Máximo 10 emails."
 #: public/class-dynamicpackages-public.php:655
 msgid "@"
 msgstr "a las"
+
+#: gateways/matrix/yappy/yappy_direct.php:190
+#, php-format
+msgid ""
+"A. Find us at the Yappy Business Directory by the company name %s and then "
+"send us the %s (%s)."
+msgstr ""
+"A. Encuentranos en el Directorio de Negocios de Yappy por el nombre %s y "
+"luego envíanos el %s (%s)."
+
+#: gateways/matrix/yappy/yappy_direct.php:191
+#, php-format
+msgid "A. Send the %s (%s) to the Yappy number %s."
+msgstr "A. Envía %s (%s) al número Yappy %s."
 
 #: admin/class-dynamicpackages-metaboxes.php:528
 msgid "Accept Bookings"
@@ -232,6 +246,15 @@ msgstr "Disponibilidad"
 #: includes/class-dynamicpackages-reviews.php:128
 msgid "Average"
 msgstr "Promedio"
+
+#: gateways/matrix/yappy/yappy_direct.php:164
+#, php-format
+msgid ""
+"B. Alternatively, you can also scan the following QR code within your Banco "
+"General Yappy app and then send us the %s (%s)."
+msgstr ""
+"B. Alternativamente, también puedes escanear el siguiente código QR dentro "
+"de tu aplicación Banco General Yappy y luego enviarnos el %s (%s)."
 
 #: includes/class-dynamicpackages-reviews.php:129
 msgid "Bad"
@@ -577,7 +600,8 @@ msgstr "Deposito"
 
 #: public/class-dynamicpackages-public.php:892
 #: public/class-dynamicpackages-booking-page.php:125
-#: gateways/matrix/yappy/yappy_direct.php:181
+#: gateways/matrix/yappy/yappy_direct.php:161
+#: gateways/matrix/yappy/yappy_direct.php:187
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:358
 #: gateways/matrix/bank/local.php:166
 #: gateways/matrix/bank/international.php:182
@@ -679,6 +703,10 @@ msgstr "Permitir reservas automaticas"
 #: public/class-dynamicpackages-forms.php:239
 msgid "Enter coupon code"
 msgstr "Ingresa el cupón"
+
+#: gateways/matrix/yappy/yappy_direct.php:194
+msgid "Enter your Banco General Yappy app."
+msgstr "Abre tu aplicación Yappy de Banco General"
 
 #: public/class-dynamicpackages-public.php:186
 #: public/class-dynamicpackages-public.php:351
@@ -791,7 +819,7 @@ msgstr "Precio completo"
 msgid "full payment of"
 msgstr "pago completo de"
 
-#: gateways/matrix/yappy/yappy_direct.php:288
+#: gateways/matrix/yappy/yappy_direct.php:300
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:546
 #: gateways/matrix/bank/local.php:336
 #: gateways/matrix/bank/international.php:473
@@ -814,7 +842,7 @@ msgid "General Inquiry"
 msgstr "Solicitud general"
 
 #: admin/class-dynamicpackages-admin.php:74
-#: gateways/matrix/yappy/yappy_direct.php:256
+#: gateways/matrix/yappy/yappy_direct.php:268
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:507
 #: gateways/matrix/bank/local.php:265
 #: gateways/matrix/bank/international.php:347
@@ -1146,7 +1174,7 @@ msgstr "baratos a caros"
 msgid "make sure you use"
 msgstr "asegurate de utilizar"
 
-#: gateways/matrix/yappy/yappy_direct.php:278
+#: gateways/matrix/yappy/yappy_direct.php:290
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:535
 #: gateways/matrix/cuanto/cuanto.php:230
 #: gateways/matrix/paypal/paypal_me.php:259
@@ -1506,7 +1534,7 @@ msgstr "Pagar"
 msgid "Pay From Your Bank"
 msgstr "Paga desde tu banco"
 
-#: gateways/matrix/yappy/yappy_direct.php:429
+#: gateways/matrix/yappy/yappy_direct.php:441
 #: gateways/matrix/cuanto/cuanto.php:383
 #: gateways/matrix/nequi/nequi_direct.php:394
 #, php-format
@@ -1533,7 +1561,8 @@ msgstr "Paga con Paypal"
 msgid "Payment"
 msgstr "Pago"
 
-#: gateways/matrix/yappy/yappy_direct.php:177
+#: gateways/matrix/yappy/yappy_direct.php:157
+#: gateways/matrix/yappy/yappy_direct.php:187
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:358
 #: gateways/matrix/bank/local.php:162
 #: gateways/matrix/bank/international.php:178
@@ -1693,7 +1722,7 @@ msgstr "Publicar"
 msgid "Purple"
 msgstr "Purpura"
 
-#: gateways/matrix/yappy/yappy_direct.php:309
+#: gateways/matrix/yappy/yappy_direct.php:321
 msgid "QR Code Url"
 msgstr ""
 
@@ -1837,7 +1866,6 @@ msgstr "Buscar paquete"
 msgid "Security"
 msgstr "Seguridad"
 
-#: gateways/matrix/yappy/yappy_direct.php:185
 #: gateways/matrix/nequi/nequi_direct.php:174
 msgid "Send"
 msgstr "Envía"
@@ -1863,7 +1891,7 @@ msgstr "Servicio"
 msgid "Service Fee"
 msgstr ""
 
-#: gateways/matrix/yappy/yappy_direct.php:300
+#: gateways/matrix/yappy/yappy_direct.php:312
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:558
 #: gateways/matrix/bank/local.php:348
 #: gateways/matrix/bank/international.php:485
@@ -1909,6 +1937,11 @@ msgstr "Ordenar por"
 #: public/class-dynamicpackages-public.php:884 public/partials/archive.php:325
 msgid "Starting at"
 msgstr "Desde"
+
+#: gateways/matrix/yappy/yappy_direct.php:193
+#: gateways/matrix/yappy/yappy_direct.php:195
+msgid "Step"
+msgstr "Paso"
 
 #: public/partials/quote-form.php:4
 msgid "Submit"
@@ -2083,15 +2116,6 @@ msgstr "Para completar la reserva por favor ingrese a su App Nequi y envíe el"
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
 
-#: gateways/matrix/yappy/yappy_direct.php:174
-#| msgid "To complete the booking please enter your Yappy App and send the"
-msgid ""
-"To complete this booking please enter your Banco General Yappy app and send "
-"the"
-msgstr ""
-"Para completar su reserva por favor entre a su aplicación Yappy del Banco "
-"General y envie su"
-
 #: gateways/class-dynamicpackages-gateways.php:386
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:255
 msgid ""
@@ -2121,16 +2145,11 @@ msgstr ""
 "podamos confirmar su reserva de manera rápida y segura. Agradecemos su "
 "comprensión y cooperación en este proceso."
 
-#: gateways/matrix/yappy/yappy_direct.php:175
-msgid "to the business"
-msgstr "al negocio"
-
 #: gateways/matrix/bank/local.php:172
 #: gateways/matrix/bank/international.php:188
 msgid "to the following account"
 msgstr "a la siguiente cuenta"
 
-#: gateways/matrix/yappy/yappy_direct.php:175
 #: gateways/matrix/nequi/nequi_direct.php:163
 msgid "to the number"
 msgstr "al número"
@@ -2318,11 +2337,11 @@ msgstr "Transferencia internacional"
 msgid "with"
 msgstr "con"
 
-#: gateways/matrix/yappy/yappy_direct.php:271
+#: gateways/matrix/yappy/yappy_direct.php:283
 msgid "Yappy Business Name"
 msgstr "Nombre de negocio Yappy"
 
-#: gateways/matrix/yappy/yappy_direct.php:263
+#: gateways/matrix/yappy/yappy_direct.php:275
 msgid "Yappy Cell Phone Number"
 msgstr "Número de teléfono Yappy"
 
@@ -2351,13 +2370,6 @@ msgstr "Amarillo"
 #: admin/class-dynamicpackages-metaboxes.php:680
 msgid "Yes"
 msgstr "Si"
-
-#: gateways/matrix/yappy/yappy_direct.php:153
-msgid ""
-"You can also scan the following QR code within your Banco General Yappy app."
-msgstr ""
-"Tambien puedes escanear el siguiente código QR en tu aplicación Yappy del "
-"Banco General."
 
 #: gateways/class-dynamicpackages-gateways.php:345
 #, php-format
