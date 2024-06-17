@@ -31,6 +31,7 @@ class yappy_direct{
 		$this->business = get_option($this->id . '_business');
 		$this->max = get_option($this->id . '_max');
 		$this->show = get_option($this->id . '_show');
+		$this->qrcode = get_option($this->id . '_qrcode');
 		$this->color = '#fff';
 		$this->background_color = '#013685';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
@@ -146,6 +147,23 @@ class yappy_direct{
 			if($this->valid_recaptcha)
 			{
 				$content = $this->message(null);
+
+				if(!empty($this->qrcode))
+				{
+					$payment_amount = money(dy_utilities::payment_amount());
+					$currency_symbol = currency_symbol();
+					$amount = $currency_symbol . $payment_amount;
+
+					$label = __('payment', 'dynamicpackages');
+		
+					if(dy_validators::has_deposit())
+					{
+						$label = __('deposit', 'dynamicpackages');
+					}
+
+					$content .= '<p class="large dy_pad padding-10">'.esc_html(sprintf(__('B. Alternatively, you can also scan the following QR code within your Banco General Yappy app and then send us the %s (%s).', 'dynamicpackages'), $label, $amount)).'</p>';
+					$content .= '<p><img width="250" height="250" src="'.esc_url($this->qrcode).'" alt="yappy qrcode"/></p>';
+				}
 			}
 		}
 		return $content;
@@ -154,7 +172,7 @@ class yappy_direct{
 	{
 		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			$title = esc_html(__('Thank you for using Yappy', 'dynamicpackages'));
+			$title = esc_html(sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name));
 		}
 		return $title;
 	}
@@ -163,21 +181,21 @@ class yappy_direct{
 	{
 		$payment_amount = money(dy_utilities::payment_amount());
 		$currency_symbol = currency_symbol();
-		$destination = (!empty($this->business)) ? strtoupper($this->business) : $this->number;
-		$first = __('To complete the booking please enter your Yappy App and send the', 'dynamicpackages');
-		$last = (!empty($this->business)) ? __('to the business', 'dynamicpackages') : __('to the number', 'dynamicpackages');
+		$destination = (!empty($this->business)) ? '@'.strtoupper($this->business) : $this->number;
+		$destination = '<strong>'.esc_html($destination).'</strong>';
 		$amount = $currency_symbol . $payment_amount;
-		$label = __('payment', 'dynamicpackages');
+		$label = (dy_validators::has_deposit()) ? esc_html(__('deposit', 'dynamicpackages')) : esc_html(__('payment', 'dynamicpackages'));
 		
+		$text = (!empty($this->business)) 
+			? sprintf(__('A. Find us at the Yappy Business Directory by the company name %s and then send us the %s (%s).', 'dynamicpackages'), $destination, $label, $amount)
+			: sprintf(__('A. Send the %s (%s) to the Yappy number %s.', 'dynamicpackages'), $label, $amount, $destination);
 		
-		if(dy_validators::has_deposit())
-		{
-			$label = __('deposit', 'dynamicpackages');
-		}
-		
-		$message .= '<p class="large">'.esc_html($first.' '.$label.' ('.$amount.') '.$last).' <strong>'.esc_html($destination).'</strong>.</p>';	
-		$message .= '<p class="large dy_pad padding-10 strong">'.esc_html(__('Send', 'dynamicpackages').' '.$amount.' '.$last.' '. $destination).'</p>';
-		
+		$message = '<p><strong>'.esc_html(__('Step', 'dynamicpackages')).' 1:</strong></p>';
+		$message .= '<p class="large dy_pad padding-10">'.esc_html(__('Enter your Banco General Yappy app.', 'dynamicpackages')).'</p>';
+		$message .= '<p><strong>'.esc_html(__('Step', 'dynamicpackages')).' 2:</strong></p>';
+		$message .= '<p class="large dy_pad padding-10">'.$text.'</p>';
+
+
 		return $message;
 	}
 
@@ -243,6 +261,7 @@ class yappy_direct{
 		register_setting($this->id . '_settings', $this->id . '_business', 'esc_html');
 		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
+		register_setting($this->id . '_settings', $this->id . '_qrcode', 'esc_url');
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
@@ -295,7 +314,15 @@ class yappy_direct{
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			$show_args
-		);		
+		);
+		
+		add_settings_field( 
+			$this->id . '_qrcode', 
+			esc_html(__( 'QR Code Url', 'dynamicpackages' )), 
+			array(&$this, 'input_url'), 
+			$this->id . '_settings', 
+			$this->id . '_settings_section', $this->id . '_qrcode'
+		);
 	}
 	
 	public function input_text($name){
@@ -308,6 +335,12 @@ class yappy_direct{
 		$option = get_option($name);
 		?>
 		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
+		<?php
+	}
+	public function input_url($name){
+		$option = get_option($name);
+		?>
+		<input type="url" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
 		<?php
 	}
 

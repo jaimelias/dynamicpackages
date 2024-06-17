@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2024-06-13 22:25+0000\n"
+"PO-Revision-Date: 2024-06-17 19:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -38,7 +38,8 @@ msgstr "Dirección del contrato %s"
 msgid "%s is having problems processing your payment"
 msgstr "%s está teniendo problemas procesando tu pago"
 
-#: gateways/matrix/yappy/yappy_direct.php:62 gateways/matrix/bank/local.php:60
+#: gateways/matrix/yappy/yappy_direct.php:63
+#: gateways/matrix/yappy/yappy_direct.php:164 gateways/matrix/bank/local.php:60
 #: gateways/matrix/bank/international.php:75
 #: gateways/matrix/cuanto/cuanto.php:61 gateways/matrix/paypal/paypal_me.php:68
 #: gateways/matrix/stablepay/busd.php:86 gateways/matrix/stablepay/usdc.php:98
@@ -64,7 +65,7 @@ msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
 msgid "%s, %s is having problems processing your payment"
 msgstr "%s, %s está teniendo problemas procesando tu pago."
 
-#: gateways/matrix/yappy/yappy_direct.php:57 gateways/matrix/bank/local.php:55
+#: gateways/matrix/yappy/yappy_direct.php:58 gateways/matrix/bank/local.php:55
 #: gateways/matrix/bank/international.php:70
 #: gateways/matrix/cuanto/cuanto.php:56 gateways/matrix/paypal/paypal_me.php:63
 #: gateways/matrix/stablepay/busd.php:81 gateways/matrix/stablepay/usdc.php:93
@@ -576,7 +577,7 @@ msgstr "Deposito"
 
 #: public/class-dynamicpackages-public.php:892
 #: public/class-dynamicpackages-booking-page.php:125
-#: gateways/matrix/yappy/yappy_direct.php:175
+#: gateways/matrix/yappy/yappy_direct.php:181
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:358
 #: gateways/matrix/bank/local.php:166
 #: gateways/matrix/bank/international.php:182
@@ -790,7 +791,7 @@ msgstr "Precio completo"
 msgid "full payment of"
 msgstr "pago completo de"
 
-#: gateways/matrix/yappy/yappy_direct.php:281
+#: gateways/matrix/yappy/yappy_direct.php:288
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:546
 #: gateways/matrix/bank/local.php:336
 #: gateways/matrix/bank/international.php:473
@@ -813,7 +814,7 @@ msgid "General Inquiry"
 msgstr "Solicitud general"
 
 #: admin/class-dynamicpackages-admin.php:74
-#: gateways/matrix/yappy/yappy_direct.php:249
+#: gateways/matrix/yappy/yappy_direct.php:256
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:507
 #: gateways/matrix/bank/local.php:265
 #: gateways/matrix/bank/international.php:347
@@ -1097,7 +1098,7 @@ msgstr "No está permitido reservar para terceros."
 #: public/email-templates/estimates-pdf.php:22
 #: public/email-templates/estimates.php:32
 msgid "Itinerary"
-msgstr ""
+msgstr "Itinerario"
 
 #. Author of the plugin
 msgid "jaimelias"
@@ -1145,7 +1146,7 @@ msgstr "baratos a caros"
 msgid "make sure you use"
 msgstr "asegurate de utilizar"
 
-#: gateways/matrix/yappy/yappy_direct.php:271
+#: gateways/matrix/yappy/yappy_direct.php:278
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:535
 #: gateways/matrix/cuanto/cuanto.php:230
 #: gateways/matrix/paypal/paypal_me.php:259
@@ -1505,7 +1506,7 @@ msgstr "Pagar"
 msgid "Pay From Your Bank"
 msgstr "Paga desde tu banco"
 
-#: gateways/matrix/yappy/yappy_direct.php:408
+#: gateways/matrix/yappy/yappy_direct.php:429
 #: gateways/matrix/cuanto/cuanto.php:383
 #: gateways/matrix/nequi/nequi_direct.php:394
 #, php-format
@@ -1532,7 +1533,7 @@ msgstr "Paga con Paypal"
 msgid "Payment"
 msgstr "Pago"
 
-#: gateways/matrix/yappy/yappy_direct.php:170
+#: gateways/matrix/yappy/yappy_direct.php:177
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:358
 #: gateways/matrix/bank/local.php:162
 #: gateways/matrix/bank/international.php:178
@@ -1692,6 +1693,10 @@ msgstr "Publicar"
 msgid "Purple"
 msgstr "Purpura"
 
+#: gateways/matrix/yappy/yappy_direct.php:309
+msgid "QR Code Url"
+msgstr ""
+
 #: admin/class-dynamicpackages-admin.php:121
 msgid "Quote Webhook URL"
 msgstr "URL de webhook de cotizaciones"
@@ -1723,7 +1728,7 @@ msgstr "Rojo"
 
 #: admin/class-dynamicpackages-metaboxes.php:348
 msgid "Redirect URL"
-msgstr ""
+msgstr "Redirigir a URL"
 
 #: admin/class-dynamicpackages-metaboxes.php:190
 #: admin/class-dynamicpackages-metaboxes.php:206
@@ -1830,9 +1835,9 @@ msgstr "Buscar paquete"
 
 #: dy-core/admin.php:95
 msgid "Security"
-msgstr ""
+msgstr "Seguridad"
 
-#: gateways/matrix/yappy/yappy_direct.php:179
+#: gateways/matrix/yappy/yappy_direct.php:185
 #: gateways/matrix/nequi/nequi_direct.php:174
 msgid "Send"
 msgstr "Envía"
@@ -1858,7 +1863,7 @@ msgstr "Servicio"
 msgid "Service Fee"
 msgstr ""
 
-#: gateways/matrix/yappy/yappy_direct.php:293
+#: gateways/matrix/yappy/yappy_direct.php:300
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:558
 #: gateways/matrix/bank/local.php:348
 #: gateways/matrix/bank/international.php:485
@@ -1879,7 +1884,7 @@ msgstr "Mostrar cinta"
 #: public/email-templates/estimates-pdf.php:36
 #: public/email-templates/estimates.php:43
 msgid "Show Package"
-msgstr ""
+msgstr "Mostrar paquete"
 
 #: admin/class-dynamicpackages-metaboxes.php:410
 msgid "Show Price Table"
@@ -1966,10 +1971,6 @@ msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 #: gateways/matrix/nequi/nequi_direct.php:155
 msgid "Thank you for using Nequi"
 msgstr "Gracias por usar Nequi"
-
-#: gateways/matrix/yappy/yappy_direct.php:157
-msgid "Thank you for using Yappy"
-msgstr "Gracias por utilizar Yappy"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:360
 #, php-format
@@ -2077,14 +2078,19 @@ msgstr ""
 msgid "To complete the booking please enter your Nequi App and send the"
 msgstr "Para completar la reserva por favor ingrese a su App Nequi y envíe el"
 
-#: gateways/matrix/yappy/yappy_direct.php:167
-msgid "To complete the booking please enter your Yappy App and send the"
-msgstr "Para completar su reserva por favor entre a su App Yappy y envie su"
-
 #: gateways/matrix/bank/local.php:169
 #: gateways/matrix/bank/international.php:185
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
+
+#: gateways/matrix/yappy/yappy_direct.php:174
+#| msgid "To complete the booking please enter your Yappy App and send the"
+msgid ""
+"To complete this booking please enter your Banco General Yappy app and send "
+"the"
+msgstr ""
+"Para completar su reserva por favor entre a su aplicación Yappy del Banco "
+"General y envie su"
 
 #: gateways/class-dynamicpackages-gateways.php:386
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:255
@@ -2115,7 +2121,7 @@ msgstr ""
 "podamos confirmar su reserva de manera rápida y segura. Agradecemos su "
 "comprensión y cooperación en este proceso."
 
-#: gateways/matrix/yappy/yappy_direct.php:168
+#: gateways/matrix/yappy/yappy_direct.php:175
 msgid "to the business"
 msgstr "al negocio"
 
@@ -2124,7 +2130,7 @@ msgstr "al negocio"
 msgid "to the following account"
 msgstr "a la siguiente cuenta"
 
-#: gateways/matrix/yappy/yappy_direct.php:168
+#: gateways/matrix/yappy/yappy_direct.php:175
 #: gateways/matrix/nequi/nequi_direct.php:163
 msgid "to the number"
 msgstr "al número"
@@ -2312,11 +2318,11 @@ msgstr "Transferencia internacional"
 msgid "with"
 msgstr "con"
 
-#: gateways/matrix/yappy/yappy_direct.php:264
+#: gateways/matrix/yappy/yappy_direct.php:271
 msgid "Yappy Business Name"
 msgstr "Nombre de negocio Yappy"
 
-#: gateways/matrix/yappy/yappy_direct.php:256
+#: gateways/matrix/yappy/yappy_direct.php:263
 msgid "Yappy Cell Phone Number"
 msgstr "Número de teléfono Yappy"
 
@@ -2345,6 +2351,13 @@ msgstr "Amarillo"
 #: admin/class-dynamicpackages-metaboxes.php:680
 msgid "Yes"
 msgstr "Si"
+
+#: gateways/matrix/yappy/yappy_direct.php:153
+msgid ""
+"You can also scan the following QR code within your Banco General Yappy app."
+msgstr ""
+"Tambien puedes escanear el siguiente código QR en tu aplicación Yappy del "
+"Banco General."
 
 #: gateways/class-dynamicpackages-gateways.php:345
 #, php-format
