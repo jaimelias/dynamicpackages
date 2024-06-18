@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2024-06-17 20:44+0000\n"
+"PO-Revision-Date: 2024-06-18 05:10+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -1395,7 +1395,7 @@ msgstr "Reservar en línea"
 
 #: dy-core/public.php:252
 msgid "Open Web Whatsapp"
-msgstr ""
+msgstr "Abrir Whatsapp Web"
 
 #: gateways/class-dynamicpackages-gateways.php:169
 msgid "or"
