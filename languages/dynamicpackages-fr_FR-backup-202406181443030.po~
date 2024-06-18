@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Dynamic Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-16 15:51+0000\n"
-"PO-Revision-Date: 2024-06-18 14:43+0000\n"
+"PO-Revision-Date: 2024-06-18 14:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: French (France)\n"
 "Language: fr_FR\n"
@@ -2213,7 +2213,7 @@ msgstr "Turquoise"
 #: dy-core/integrations/providers.php:52
 #, php-format
 msgid "Update %s"
-msgstr "Mises à jour %s"
+msgstr "Mises à jour"
 
 #: dy-core/integrations/orders.php:28
 msgid "Update Order"
