@@ -511,15 +511,15 @@ class Dynamicpackages_Public {
 			$package_type = intval(package_field('package_package_type'));
 			$duration = intval(package_field('package_duration'));
 			$duration_unit = intval(package_field('package_length_unit'));
-			$output = '';
-			
-			if($price_type === 0)
-			{
-				$output = __('Per Person', 'dynamicpackages').' ';
-			}
+			$duration_max = intval(package_field('package_duration_max'));
+			$output = __('Per Person', 'dynamicpackages').' ';
+
 			if($package_type === 1)
 			{
-				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
+				if($duration_max > 0)
+				{
+					$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
+				}
 			}
 			if(dy_utilities::package_type_by_hour())
 			{
