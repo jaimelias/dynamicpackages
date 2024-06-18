@@ -516,7 +516,7 @@ class Dynamicpackages_Public {
 
 			if($package_type === 1)
 			{
-				if($duration_max > 0)
+				if($duration_max > 0 && $duration_max > $duration)
 				{
 					$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 				}
