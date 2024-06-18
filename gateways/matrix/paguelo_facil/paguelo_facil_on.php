@@ -123,54 +123,36 @@ class paguelo_facil_on{
 
 	public function send_data()
 	{
-		
-		
 		if(dy_validators::validate_request() && $this->is_request_submitted() && $this->valid_recaptcha && isset($this->success))
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
 			add_filter('dy_email_subject', array(&$this, 'subject'));
 			add_filter('dy_email_intro', array(&$this, 'intro'));
-			add_filter('dy_email_label_doc', array(&$this, 'label_doc'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
-			
+
 			
 			if($this->success == 2)
 			{
 				add_filter('dy_totals_area', array(&$this, 'totals_area'));
-				add_filter('dy_webhook_option', array(&$this, 'webhook_option'));
+
+				add_filter('dy_webhook_option', function(){
+					return 'dy_webhook';
+				});
+
 				add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
+				add_filter('dy_email_label_doc', function(){
+					return esc_html(__('Invoice', 'dynamicpackages'));
+				});
 			}
 			else
 			{
-				add_filter('dy_fail_checkout_gateway_name', array(&$this, 'gateway_name'));
+				add_filter('dy_fail_checkout_gateway_name', function(){
+					return $this->id;
+				});
 			}
 		}
 	}
-	
-	public function webhook_option()
-	{
-		return 'dy_webhook';
-	}
-
-	public function gateway_name($output)
-	{
-		return $this->id;
-	}
-
-	public function label_doc($output)
-	{
-		
-		if(isset($this->success))
-		{
-			if($this->success === 2)
-			{
-				$output = __('Invoice', 'dynamicpackages');
-			}
-		}
-		
-		return $output;
-	}	
 	
 	public function subject($output)
 	{		

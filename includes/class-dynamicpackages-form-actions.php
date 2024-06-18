@@ -117,10 +117,10 @@ class Dynamicpackages_Actions{
 
 		if(dy_validators::validate_quote())
 		{
-			$estimate_filename = __('Estimate', 'dynamicpackages') . '.pdf';
+			$attachment_filename = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages')) . '.pdf';
 			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
-			$estimate = $this->doc_pdf($email_pdf, $estimate_filename);
-			$attachments[$estimate_filename] = $estimate['pathname'];
+			$estimate = $this->doc_pdf($email_pdf, $attachment_filename);
+			$attachments[$attachment_filename] = $estimate['pathname'];
 			$terms_html = $this->get_term_condition_as_html();
 
 			if(is_array($terms_html))
