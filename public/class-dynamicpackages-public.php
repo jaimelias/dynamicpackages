@@ -518,6 +518,8 @@ class Dynamicpackages_Public {
 			{
 				$output = __('Per Person', 'dynamicpackages').' ';
 			}
+
+
 			if($package_type === 1)
 			{
 				if($duration === 1 && $duration_max > $duration)
@@ -525,16 +527,15 @@ class Dynamicpackages_Public {
 					$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 				}
 			}
-
-			if(dy_utilities::package_type_by_hour())
+			else if(dy_utilities::package_type_by_hour())
 			{
 				$output .= __('Per Hour', 'dynamicpackages');
 			}
-			if(dy_utilities::package_type_by_day())
+			else if(dy_utilities::package_type_by_day())
 			{
 				$output .=__('Per Day', 'dynamicpackages');
 			}
-			if(dy_validators::package_type_transport())
+			else if(dy_validators::package_type_transport())
 			{
 				$output .=__('One-way', 'dynamicpackages');
 			}
