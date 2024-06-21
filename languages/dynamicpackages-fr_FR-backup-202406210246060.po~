@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Dynamic Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-16 15:51+0000\n"
-"PO-Revision-Date: 2024-06-21 02:46+0000\n"
+"PO-Revision-Date: 2024-06-18 14:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: French (France)\n"
 "Language: fr_FR\n"
@@ -1832,7 +1832,7 @@ msgstr "Aller-retour"
 
 #: includes/class-dynamicpackages-utilities.php:1338
 msgid "Sat"
-msgstr "Sam"
+msgstr "Assis"
 
 #: includes/class-dynamicpackages-utilities.php:1325
 msgid "Saturday"
@@ -1967,7 +1967,7 @@ msgstr "Total"
 
 #: includes/class-dynamicpackages-utilities.php:1339
 msgid "Sun"
-msgstr "Dim"
+msgstr "Soleil"
 
 #: includes/class-dynamicpackages-utilities.php:1326
 msgid "Sunday"
@@ -2305,7 +2305,7 @@ msgstr ""
 
 #: includes/class-dynamicpackages-utilities.php:1335
 msgid "Wed"
-msgstr "Mer"
+msgstr "Épouser"
 
 #: includes/class-dynamicpackages-utilities.php:1322
 msgid "Wednesday"
