@@ -33,12 +33,6 @@ if(!class_exists('Dynamic_Core_WP_JSON'))
     new Dynamic_Core_WP_JSON();
 }
 
-if(!class_exists('Dynamic_Core_Orders'))
-{
-    //require_once $plugin_dir_path . 'integrations/orders.php';
-    //$GLOBALS['dy_orders'] =  new Dynamic_Core_Orders();
-}
-
 if(!class_exists('Dynamic_Core_Providers'))
 {
     require_once $plugin_dir_path . 'integrations/providers.php';
