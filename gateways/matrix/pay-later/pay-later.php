@@ -20,7 +20,7 @@ class pay_later{
 	
 	public function init()
 	{
-		$this->checkout_status = 'pending';
+		$this->order_status = 'pending';
 		$this->site_name = get_bloginfo('name');
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = __('Buy Now & Pay Later', 'dynamicpackages');
@@ -64,6 +64,9 @@ class pay_later{
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
 				add_filter('dy_email_intro', array(&$this, 'subject'));
 				add_filter('dy_email_subject', array(&$this, 'subject'));
+				add_filter('dy_order_status', function(){
+					return $this->order_status;
+				});
 
 				$total = money(dy_utilities::total());
 				$link = '<a href="'.esc_html($_POST['package_url']).'">'.esc_html($_POST['title']).'</a>';

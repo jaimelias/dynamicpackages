@@ -23,7 +23,7 @@ class Dynamicpackages_Actions{
 	{
 		$this->current_language = current_language();
 		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
-		$this->providers = apply_filters('dy_list_providers', array());
+		
 	}
 
 	public function is_request_submitted()
@@ -69,15 +69,17 @@ class Dynamicpackages_Actions{
 					setcookie($add_ons_package_id, $add_ons, time() + 3600);
 				}
 				
-				//global $dy_orders;
-				//$dy_orders->save_order($_POST, $this->providers);
-				$this->send_email();
+				global $dy_orders;
+				$dy_orders->save_order($_POST);
+				
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 				$webhook_args = $_POST;
-				$webhook_args['providers'] = $this->providers;
+				$webhook_args['providers'] = apply_filters('dy_list_providers', array());
+
 
 				dy_utilities::webhook($webhook_option, json_encode($webhook_args));
+				$this->send_email();
 			} 
 		}
     }

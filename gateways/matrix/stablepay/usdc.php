@@ -22,7 +22,7 @@ class usdc{
 
 	public function init()
 	{
-		$this->checkout_status = 'pending';
+		$this->order_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'usdc';
 		$this->name = 'USD Coin (USDC)';
@@ -84,6 +84,9 @@ class usdc{
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
 				add_filter('dy_email_intro', array(&$this, 'subject'));
 				add_filter('dy_email_subject', array(&$this, 'subject'));
+				add_filter('dy_order_status', function(){
+					return $this->order_status;
+				});
 			}
 		}
 	}

@@ -22,7 +22,7 @@ class nequi_direct{
 	
 	public function init()
 	{
-		$this->checkout_status = 'pending';
+		$this->order_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->gateway_short_name = 'nequi';
 		$this->name = 'Nequi';
@@ -47,6 +47,9 @@ class nequi_direct{
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
 				add_filter('dy_email_intro', array(&$this, 'subject'));
 				add_filter('dy_email_subject', array(&$this, 'subject'));
+				add_filter('dy_order_status', function(){
+					return $this->order_status;
+				});
 			}
 		}
 	}

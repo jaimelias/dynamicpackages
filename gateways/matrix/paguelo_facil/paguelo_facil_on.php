@@ -21,7 +21,7 @@ class paguelo_facil_on{
 	
 	public function init()
 	{
-		$this->checkout_status = 'paid';
+		$this->order_status = 'paid';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
@@ -130,6 +130,9 @@ class paguelo_facil_on{
 			add_filter('dy_email_subject', array(&$this, 'subject'));
 			add_filter('dy_email_intro', array(&$this, 'intro'));
 			add_filter('dy_email_notes', array(&$this, 'email_notes'));
+			add_filter('dy_order_status', function(){
+				return $this->order_status;
+			});
 
 			
 			if($this->success == 2)

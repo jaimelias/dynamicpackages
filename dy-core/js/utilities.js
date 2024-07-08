@@ -245,7 +245,7 @@ const createFormSubmit = async (form) => {
         }
     }
 
-    //formSubmit({method, action, formFields});
+    formSubmit({method, action, formFields});
 	
 };
 

@@ -22,7 +22,7 @@ class yappy_direct{
 	
 	public function init()
 	{
-		$this->checkout_status = 'pending';
+		$this->order_status = 'pending';
 		$this->name = 'Yappy';
 		$this->id = 'yappy_direct';		
 		$this->gateway_short_name = 'yappy';
@@ -49,6 +49,9 @@ class yappy_direct{
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
 				add_filter('dy_email_intro', array(&$this, 'subject'));
 				add_filter('dy_email_subject', array(&$this, 'subject'));
+				add_filter('dy_order_status', function(){
+					return $this->order_status;
+				});
 			}
 		}
 	}
