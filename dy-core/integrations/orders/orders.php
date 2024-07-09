@@ -9,9 +9,35 @@ class Dynamic_Core_Orders {
     function __construct()
     {
 		$this->name = 'dy-orders';
-		$this->valid_order_status = array('pending', 'paid', 'confirmed', 'postponed', 'cancelled');
-		$this->valid_order_status_labels = array(__('Pending', 'dynamicpackages'), __('Paid', 'dynamicpackages'), __('Confirmed', 'dynamicpackages'), __('Postponed', 'dynamicpackages'), __('Cancelled', 'dynamicpackages'));
-		
+		$this->valid_order_status = array(
+			'pending', 
+			'paid', 
+			'confirmed', 
+			'postponed', 
+			'cancelled'
+		);
+		$this->valid_order_status_labels = array(
+			__('Pending', 'dynamicpackages'), 
+			__('Paid', 'dynamicpackages'), 
+			__('Confirmed', 'dynamicpackages'), 
+			__('Postponed', 'dynamicpackages'), 
+			__('Cancelled', 'dynamicpackages')
+		);
+
+		$this->booking_fields = array(
+			'pax_regular',
+			'pax_discount',
+			'pax_free',
+			'booking_date',
+			'booking_hour',
+			'end_date',
+			'return_hour',
+			'booking_extra',
+			'coupon_code',
+			'hash',
+		);
+
+
         add_action('init', array(&$this, 'package_post_type'));
 
 		require_once(plugin_dir_path( __FILE__ ) . 'orders-metaboxes.php');
@@ -68,6 +94,18 @@ class Dynamic_Core_Orders {
 
 
     
+	public function create_new_order()
+	{
+		$post_data = array(
+			'post_title'    => 'temp_'.time(),
+			'post_type'     => 'dy-orders',
+			'post_status'   => 'publish'
+		);
+		
+		return wp_insert_post($post_data);
+	}
+
+
 	public function save_order($data)
 	{
         //the order status should be changed in each payment gateway
@@ -85,14 +123,7 @@ class Dynamic_Core_Orders {
 		//here i would add the code create a new post or get the orderID
 
 		$unique_id = uniqid();
-
-		$post_data = array(
-			'post_title'    => 'temp_'.$unique_id,
-			'post_type'     => 'dy-orders',
-			'post_status'   => 'publish'
-		);
-
-		$order_id = wp_insert_post($post_data);
+		$order_id = $this->create_new_order();
 
 		if(!$order_id)
 		{
@@ -104,6 +135,7 @@ class Dynamic_Core_Orders {
 		$metadata = array_merge(
 			array(
 				'unique_id' => $unique_id,
+				'booking_query' => $this->get_booking_query($data)
 			), 
 			$data
 		);
@@ -124,6 +156,25 @@ class Dynamic_Core_Orders {
 		return $order_id;
 	}
 
+	public function get_booking_query($data)
+	{
+
+		$query = array();
+
+		for($x = 0; $x < count($this->booking_fields); $x++)
+		{
+			$k = $this->booking_fields[$x];
+
+			if(array_key_exists($k, $data))
+			{
+				$query[$k] = $data[$k];
+			}
+		}
+
+
+		return http_build_query($query);
+
+	}
 
     public function validate_data($data) {
         
