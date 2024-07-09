@@ -73,6 +73,7 @@ class Dynamicpackages_Booking_Page {
 
 		$data = array(
 			'post_id' => intval($post->ID),
+			'hash' => sanitize_text_field($_GET['hash']),
 			'description' => esc_html($description),
 			'coupon_code' => esc_html($coupon_code),
 			'coupon_discount' => floatval($coupon_discount),

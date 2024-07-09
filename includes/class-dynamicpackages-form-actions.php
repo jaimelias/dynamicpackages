@@ -70,11 +70,19 @@ class Dynamicpackages_Actions{
 				}
 				
 				global $dy_orders;
-				$dy_orders->save_order($_POST);
-				
+
+				$data = $_POST;
+				unset($data['CCNum']);
+				unset($data['ExpMonth']);
+				unset($data['ExpYear']);
+				unset($data['CVV2']);
+				unset($data['g-recaptcha-response']);
+				unset($data['dy_nonce']);
+
+				$dy_orders->save_order($data);
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
-				$webhook_args = $_POST;
+				$webhook_args = $data;
 				$webhook_args['providers'] = apply_filters('dy_list_providers', array());
 
 

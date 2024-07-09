@@ -2,6 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+
 #[AllowDynamicProperties]
 class Dynamic_Core_Orders {
 
@@ -9,7 +10,12 @@ class Dynamic_Core_Orders {
     {
 		$this->name = 'dy-orders';
 		$this->valid_order_status = array('pending', 'paid', 'confirmed', 'postponed', 'cancelled');
+		$this->valid_order_status_labels = array(__('Pending', 'dynamicpackages'), __('Paid', 'dynamicpackages'), __('Confirmed', 'dynamicpackages'), __('Postponed', 'dynamicpackages'), __('Cancelled', 'dynamicpackages'));
+		
         add_action('init', array(&$this, 'package_post_type'));
+
+		require_once(plugin_dir_path( __FILE__ ) . 'orders-metaboxes.php');
+		new Dynamic_Core_Orders_Metaboxes($this->valid_order_status, $this->valid_order_status_labels);
     }
 
 	public function package_post_type() {
@@ -76,6 +82,8 @@ class Dynamic_Core_Orders {
             wp_die('Invalid data: orders.php -> save_order');
         }
 
+		//here i would add the code create a new post or get the orderID
+
 		$unique_id = uniqid();
 
 		$post_data = array(
@@ -84,66 +92,51 @@ class Dynamic_Core_Orders {
 			'post_status'   => 'publish'
 		);
 
-		$post_id = wp_insert_post($post_data);
+		$order_id = wp_insert_post($post_data);
 
-		if(!$post_id)
+		if(!$order_id)
 		{
 			wp_die('Post Type Not Set: orders.php -> save_order');
 		}
 
         $providers = apply_filters('dy_list_providers', array());
 
-		//this var has to passed later to the send email form 
-		$hash_string = $unique_id.$post_id;
-
-		$metadata = array(
-			'unique_id' => $unique_id,
-			'hash' => hash('sha1', $hash_string),
-			'first_name' =>  $data['first_name'],
-			'lastname' => $data['lastname'],
-			'phone' => $data['country_calling_code'] .''.$data['phone'],
-			'email' => $data['email'],
-			'lang' => $data['lang'],
-			'description' => $data['description'],
-			'add_ons' => $data['add_ons'],
-			'post_id' => $data['post_id'],
-			'package_url' => $data['package_url'],
-			'total' => $data['total'],
-			'outstanding' => $data['outstanding'],
-			'amount' => $data['amount'],
-			'payment_type' => $data['payment_type'],
-			'deposit' => $data['deposit']
+		$metadata = array_merge(
+			array(
+				'unique_id' => $unique_id,
+			), 
+			$data
 		);
 
-		$metadata_json = json_encode($metadata);
-		add_post_meta($post_id, 'order_metadata', $metadata_json, true);
-		add_post_meta($post_id, 'order_status', $order_status, true);
+		add_post_meta($order_id, 'dy_order_metadata', json_encode($metadata, JSON_UNESCAPED_UNICODE), true);
+		add_post_meta($order_id, 'dy_order_status', $order_status, true);
 
 		// Updates post title with the id of the order and name of the client
-		$new_title = $post_id . ' - ' . $data['first_name'] . ' '. $data['lastname']. ': '. $data['title'];
+		$new_title = $order_id . ' - ' . $data['first_name'] . ' '. $data['lastname']. ' ['.$data['email'].']: '. $data['title'];
 		$post_update_data = array(
-			'ID'         => $post_id,
-			'post_title' => $new_title,
-			'post_name' => 'order-' . $post_id
+			'ID'         => $order_id,
+			'post_title' => esc_html($new_title),
+			'post_name' => 'order-' . $order_id
 		);
 
 		wp_update_post($post_update_data);
 
-		return $post_id;
+		return $order_id;
 	}
 
 
     public function validate_data($data) {
         
         $required_fields = [
+			'hash',
             'first_name',
             'lastname',
+			'description',
+            'add_ons',
             'country_calling_code',
             'phone',
             'email',
             'lang',
-            'description',
-            'add_ons',
             'post_id',
             'package_url',
             'total',
