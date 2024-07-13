@@ -10,7 +10,7 @@ jQuery(() => {
 const datePicker = async () => {
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
-	const {permalink} = dyCoreArgs;
+	const {permalink, timestamp} = dyCoreArgs;
 	
 	if(formContainer.length === 0)
 	{
@@ -51,7 +51,7 @@ const datePicker = async () => {
 					const {disable, min, max} = data;
 					args = {...args, disable, min, max};
 
-					const today = new Date();
+					const today = new Date(timestamp);
 					const hour = today.getHours();
 					const weekDay = today.getDay();
 
