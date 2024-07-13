@@ -58,7 +58,6 @@ const datePicker = async () => {
 					const hour = today.getHours();
 					const weekDay = today.getDay();
 
-
 					//stop tomorrow bookings
 					if(args.min === 1)
 					{
