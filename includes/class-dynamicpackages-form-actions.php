@@ -79,7 +79,8 @@ class Dynamicpackages_Actions{
 				unset($data['g-recaptcha-response']);
 				unset($data['dy_nonce']);
 
-				$dy_orders->save_order($data);
+				//only in development
+				//$dy_orders->save_order($data);
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 				$webhook_args = $data;

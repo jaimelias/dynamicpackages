@@ -17,8 +17,6 @@ const datePicker = async () => {
 	{
 		return false;
 	}
-
-	console.log(site_timestamp)
 	
 	const d = new Date();
 	let url = permalink+'?json=disabled_dates&stamp='+d.getTime();	
@@ -51,26 +49,26 @@ const datePicker = async () => {
 				.then(response => response.json())
 				.then(data => {
 					
-					const {disable, min, max} = data;
-					args = {...args, disable, min, max};
+					const {disable, min, max} = data
+					args = {...args, disable, min, max}
 
-					const today = new Date(site_timestamp);
-					const hour = today.getHours();
-					const weekDay = today.getDay();
+
+					const today = new Date(site_timestamp)
+					const hour = today.getHours()
+					const weekDay = today.getDay()
+					let officeClose = 17
 
 					//stop tomorrow bookings
 					if(args.min === 1)
 					{
-						if(hour >= 8)
-						{
-							args.min = 2;
-						}
 						if(weekDay === 0 || weekDay === 6)
 						{
-							if(hour >= 16)
-							{
-								args.min = 2;
-							}
+							officeClose = 16
+						}
+
+						if(hour >= officeClose)
+						{
+							args.min = 2
 						}
 					}
 					

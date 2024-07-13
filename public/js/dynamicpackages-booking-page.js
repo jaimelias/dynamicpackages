@@ -28,7 +28,8 @@ const reValidateDate = async () => {
 
 	try {
 	  const { permalink } = dyCoreArgs;
-	  const d = new Date();
+	  const {site_timestamp} = await getNonce() || undefined;
+	  const d = (site_timestamp) ? new Date(site_timestamp) : new Date();
 	  const endpoint = `${permalink}?json=disabled_dates&stamp=${d.getTime()}`;
 	  const url = new URL(window.location.href);
 	  let bookingDate = '';
@@ -47,9 +48,28 @@ const reValidateDate = async () => {
 	  }
   
 	  const data = await response.json();
-	  const { disable } = data;
-  
-	  if (Array.isArray(disable) && disable.length > 0) {
+	  const { disable, min } = data;
+	  let officeClose = 17
+
+
+	  if(min === 1)
+	  {
+		const hour = d.getHours()
+		const weekDay = d.getDay()
+
+		if(weekDay === 0 || weekDay === 6)
+		{
+			officeClose = 16
+		}
+
+
+		if(hour >= officeClose)
+		{
+			disableBookingForm(thisForm)
+		}
+		
+	  }
+	  else if (Array.isArray(disable) && disable.length > 0) {
 		const formattedDisabledDates = disable.filter(v => Array.isArray(v)).map(dateArray => {
 		  const [year, month, day] = dateArray;
 
