@@ -10,12 +10,15 @@ jQuery(() => {
 const datePicker = async () => {
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
-	const {permalink, timestamp} = dyCoreArgs;
+	const {permalink} = dyCoreArgs;
+	const {site_timestamp} = await getNonce() || undefined;
 	
-	if(formContainer.length === 0)
+	if(formContainer.length === 0 && !site_timestamp)
 	{
 		return false;
 	}
+
+	console.log(site_timestamp)
 	
 	const d = new Date();
 	let url = permalink+'?json=disabled_dates&stamp='+d.getTime();	
@@ -51,14 +54,15 @@ const datePicker = async () => {
 					const {disable, min, max} = data;
 					args = {...args, disable, min, max};
 
-					const today = new Date(timestamp);
+					const today = new Date(site_timestamp);
 					const hour = today.getHours();
 					const weekDay = today.getDay();
+
 
 					//stop tomorrow bookings
 					if(args.min === 1)
 					{
-						if(hour >= 17)
+						if(hour >= 8)
 						{
 							args.min = 2;
 						}
@@ -70,7 +74,6 @@ const datePicker = async () => {
 							}
 						}
 					}
-
 					
 					if(name === 'end_date')
 					{
