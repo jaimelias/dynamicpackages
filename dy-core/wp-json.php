@@ -42,8 +42,7 @@ class Dynamic_Core_WP_JSON
 
         $result = new WP_REST_Response(array(
             'dy_nonce' => wp_create_nonce('dy_nonce'),
-            'utc_date_time' => date('Y-m-d H:i:s', time()),
-            'utc' => time(),
+            'timestamp' => round(microtime(true) * 1000),
             'site_timezone' => $timezone,
             'site_utc_offset' => $utc_offset
         ), 200);
