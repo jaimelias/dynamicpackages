@@ -26,63 +26,80 @@ const reValidateDate = async () => {
 		}
 	}
 
+	const isDateBeforeLimit = (min, today, bookingDate) => {
+
+		//document.getElementsByName('booking_date')[0].value = "2024-07-17"
+
+		const limitDate = new Date(today)
+		limitDate.setHours(23, 59, 59, 999)
+
+		if(min > 1)
+		{
+			limitDate.setDate(today.getDate() + 1)
+		}
+
+		bookingDate.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds())
+		
+		return bookingDate <= limitDate
+	}
+
 	try {
-	  const { permalink } = dyCoreArgs;
-	  const {site_timestamp} = await getNonce() || undefined;
-	  const d = (site_timestamp) ? new Date(site_timestamp) : new Date();
-	  const endpoint = `${permalink}?json=disabled_dates&stamp=${d.getTime()}`;
+	  const { permalink } = dyCoreArgs
+	  const {site_timestamp} = await getNonce() || undefined
+	  const today = (site_timestamp) ? new Date(site_timestamp) : new Date()
+	  const endpoint = `${permalink}?json=disabled_dates&stamp=${today.getTime()}`
 	  const url = new URL(window.location.href);
-	  let bookingDate = '';
+	  let bookingDateParam, bookingDate
   
 	  if (url.searchParams.has('booking_date')) {
-		const bookingDateParam = url.searchParams.get('booking_date');
-		if (bookingDateParam.length === 10) {
-		  bookingDate = bookingDateParam;
-		}
+
+			bookingDateParam = url.searchParams.get('booking_date')
+
+			if (bookingDateParam.length === 10)
+			{
+				bookingDate = new Date(bookingDateParam)
+			}
 	  }
   
 	  const response = await fetch(endpoint);
   
 	  if (!response.ok) {
-		throw new Error(`Error ${response.status}: ${response.statusText}`);
+		throw new Error(`Error ${response.status}: ${response.statusText}`)
 	  }
   
-	  const data = await response.json();
-	  const { disable, min } = data;
+	  const data = await response.json()
+	  const { disable, min } = data
 	  let officeClose = 17
 
-
-	  if(min === 1)
+	  if(min)
 	  {
-		const hour = d.getHours()
-		const weekDay = d.getDay()
+		const hour = today.getHours()
+		const weekDay = today.getDay()
 
 		if(weekDay === 0 || weekDay === 6)
 		{
 			officeClose = 16
 		}
 
-
-		if(hour >= officeClose)
+		if(hour >= officeClose && isDateBeforeLimit(min, today, bookingDate))
 		{
 			disableBookingForm(thisForm)
 		}
-		
 	  }
-	  else if (Array.isArray(disable) && disable.length > 0) {
+	  if (Array.isArray(disable) && disable.length > 0) {
 		const formattedDisabledDates = disable.filter(v => Array.isArray(v)).map(dateArray => {
-		  const [year, month, day] = dateArray;
+		  const [year, month, day] = dateArray
 
-		  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+		  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 		});
   
-		if (formattedDisabledDates.includes(bookingDate)) {
+		if (formattedDisabledDates.includes(bookingDateParam)) {
 			disableBookingForm(thisForm);
 		}
 	  }
 	} catch (error) {
-		disableBookingForm(thisForm);
-	  throw error;
+		disableBookingForm(thisForm)
+		throw error
 	}
   };
   

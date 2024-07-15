@@ -49,28 +49,28 @@ const datePicker = async () => {
 				.then(response => response.json())
 				.then(data => {
 					
-					const {disable, min, max} = data
-					args = {...args, disable, min, max}
 
+					args = {...args, ...data}
 
 					const today = new Date(site_timestamp)
 					const hour = today.getHours()
 					const weekDay = today.getDay()
 					let officeClose = 17
 
-					//stop tomorrow bookings
-					if(args.min === 1)
+					//by default 0 0 today is converted into a true boolean
+					if((typeof args.min !== 'boolean') && args.min === 1)
 					{
 						if(weekDay === 0 || weekDay === 6)
 						{
 							officeClose = 16
 						}
-
+						
 						if(hour >= officeClose)
 						{
-							args.min = 2
+							args.min++
 						}
 					}
+
 					
 					if(name === 'end_date')
 					{
