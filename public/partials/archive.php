@@ -69,7 +69,7 @@
 		
 		if(isset($cat_imp))
 		{
-			if($cat_imp != 'any')
+			if(!empty($cat_imp ) && $cat_imp != 'any')
 			{
 				$cat_imp_args = array(
 					'taxonomy' => 'package_category',
@@ -83,7 +83,7 @@
 		
 		if(isset($loc_imp))
 		{
-			if($loc_imp != 'any')
+			if(!empty($loc_imp) && $loc_imp != 'any')
 			{
 				$loc_imp_args = array(
 					'taxonomy' => 'package_location',

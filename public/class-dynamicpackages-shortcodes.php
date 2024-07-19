@@ -60,44 +60,47 @@ class Dynamicpackages_Shortcodes {
 		{
 			if(array_key_exists('category', $attr))
 			{
-				if($attr['category'] != null)
+				if(!empty($attr['category']))
 				{
-					$cat_imp = $attr['category'];
+					$cat_imp = explode(",", $attr['category']);
 				}
 			}
 			if(array_key_exists('location', $attr))
 			{
-				if($attr['location'] != null)
+				if(!empty($attr['location']))
 				{
-					$loc_imp = $attr['location'];				
+					$loc_imp = explode(",", $attr['location']);			
 				}
 			}
 			if(array_key_exists('cols', $attr))
 			{
-				if($attr['cols'] != null)
+				if(!empty($attr['cols']))
 				{
 					$col_imp = $attr['cols'];
 				}
 			}
 			if(array_key_exists('display', $attr))
 			{
-				if($attr['display'] != null)
+				if(!empty($attr['display']))
 				{
 					$dis_imp = $attr['display'];
 				}
 			}
 			if(array_key_exists('all', $attr))
 			{
-				if($attr['all'] != null)
+				if(!empty($attr['all']))
 				{
 					$all_imp = true;
 				}
 			}
 			if(array_key_exists('pagination', $attr))
 			{
-				if(filter_var($attr['pagination'], FILTER_VALIDATE_BOOLEAN)  === true)
+				if(!empty($attr['pagination']))
 				{
-					$pagination_imp = true;
+					if(filter_var($attr['pagination'], FILTER_VALIDATE_BOOLEAN)  === true)
+					{
+						$pagination_imp = true;
+					}
 				}
 			}
 			else
