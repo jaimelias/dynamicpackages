@@ -8,101 +8,95 @@ jQuery(() => {
 
 
 const reValidateDate = async () => {
+    // Disables booking form if the date is also disabled by the API endpoint
+    const thisForm = jQuery('#dy_package_request_form');
 
-	//disables booking form if the date is also desabled in the by the api endpoing	
+    if (!jQuery('body').hasClass('single-packages')) return false;
 
-	const thisForm = jQuery('#dy_package_request_form');
+    const disableBookingForm = (form) => {
+        if (form.length) {
+            form.prop('disabled', true).find('input, select, textarea, button').prop('disabled', true);
+        }
+    };
 
-	if(!jQuery('body').hasClass('single-packages'))
-	{
-		return false;
+    const dateToOffset = (today, date) => {
+        date.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds());
+        return date;
+    };
+
+    const isDateBeforeLimit = (min, today, bookingDate) => {
+        const limitDate = new Date(today);
+        limitDate.setHours(23, 59, 59, 999);
+        if (min > 1) limitDate.setDate(today.getDate() + 1);
+        return bookingDate <= limitDate;
+    };
+
+	const getDayOfTheWeek = date => {
+		let dayOfTheWeek = date.getDay()
+
+		if(dayOfTheWeek === 0)
+		{
+			dayOfTheWeek = 7
+		}
+		else
+		{
+			dayOfTheWeek++
+		}
+
+		return dayOfTheWeek
 	}
 
+    try {
+        const { permalink } = dyCoreArgs;
+        const { site_timestamp } = await getNonce() || {};
+        const today = site_timestamp ? new Date(site_timestamp) : new Date();
+        const endpoint = `${permalink}?json=disabled_dates&stamp=${today.getTime()}`;
+        const url = new URL(window.location.href);
+        let bookingDateParam = url.searchParams.get('booking_date');
+        let bookingDate;
 
-	const disableBookingForm = thisForm => {
+        if (bookingDateParam?.length === 10) {
+            bookingDate = dateToOffset(today, new Date(bookingDateParam));
+        }
 
-		if (thisForm.length) {
-			thisForm.prop('disabled', true).find('input, select, textarea, button').prop('disabled', true);
-		}
-	}
+        const response = await fetch(endpoint);
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
 
-	const isDateBeforeLimit = (min, today, bookingDate) => {
+        const data = await response.json();
+        const { disable, min } = data;
+        let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
-		//document.getElementsByName('booking_date')[0].value = "2024-07-17"
+        if (min && today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
+            disableBookingForm(thisForm);
+        }
 
-		const limitDate = new Date(today)
-		limitDate.setHours(23, 59, 59, 999)
+        if (Array.isArray(disable) && disable.length > 0) {
+            const formattedDisabledDates = disable
+                .filter(d => Array.isArray(d) && d.length === 3)
+                .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
 
-		if(min > 1)
+            if (formattedDisabledDates.includes(bookingDateParam)) {
+                disableBookingForm(thisForm);
+            }
+        }
+
+		const bookingDayOfTheWeek = getDayOfTheWeek(bookingDate)
+		const disableDaysOfTheWeek = disable.filter(d => typeof d === 'number' && !isNaN(d))
+		const forcedEnabledDates = disable
+			.filter(d => Array.isArray(d) && d.length === 4 && d[3] === 'inverted')
+			.map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+
+
+		if(disableDaysOfTheWeek.includes(bookingDayOfTheWeek) && !forcedEnabledDates.includes(bookingDateParam))
 		{
-			limitDate.setDate(today.getDate() + 1)
-		}
-
-		bookingDate.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds())
-		
-		return bookingDate <= limitDate
-	}
-
-	try {
-	  const { permalink } = dyCoreArgs
-	  const {site_timestamp} = await getNonce() || undefined
-	  const today = (site_timestamp) ? new Date(site_timestamp) : new Date()
-	  const endpoint = `${permalink}?json=disabled_dates&stamp=${today.getTime()}`
-	  const url = new URL(window.location.href);
-	  let bookingDateParam, bookingDate
-  
-	  if (url.searchParams.has('booking_date')) {
-
-			bookingDateParam = url.searchParams.get('booking_date')
-
-			if (bookingDateParam.length === 10)
-			{
-				bookingDate = new Date(bookingDateParam)
-			}
-	  }
-  
-	  const response = await fetch(endpoint);
-  
-	  if (!response.ok) {
-		throw new Error(`Error ${response.status}: ${response.statusText}`)
-	  }
-  
-	  const data = await response.json()
-	  const { disable, min } = data
-	  let officeClose = 17
-
-	  if(min)
-	  {
-		const hour = today.getHours()
-		const weekDay = today.getDay()
-
-		if(weekDay === 0 || weekDay === 6)
-		{
-			officeClose = 16
-		}
-
-		if(hour >= officeClose && isDateBeforeLimit(min, today, bookingDate))
-		{
-			disableBookingForm(thisForm)
-		}
-	  }
-	  if (Array.isArray(disable) && disable.length > 0) {
-		const formattedDisabledDates = disable.filter(v => Array.isArray(v)).map(dateArray => {
-		  const [year, month, day] = dateArray
-
-		  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-		});
-  
-		if (formattedDisabledDates.includes(bookingDateParam)) {
 			disableBookingForm(thisForm);
 		}
-	  }
-	} catch (error) {
-		disableBookingForm(thisForm)
-		throw error
-	}
-  };
-  
+
+    } catch (error) {
+        disableBookingForm(thisForm);
+        throw error;
+    }
+};
 
 
 const selectGateway = () => {
