@@ -52,12 +52,20 @@ const reValidateDate = async () => {
         const today = site_timestamp ? new Date(site_timestamp) : new Date();
         const endpoint = `${permalink}?json=disabled_dates&stamp=${today.getTime()}`;
         const url = new URL(window.location.href);
-        let bookingDateParam = url.searchParams.get('booking_date');
+        let bookingDateStr = url.searchParams.get('booking_date');
         let bookingDate;
 
-        if (bookingDateParam?.length === 10) {
-            bookingDate = dateToOffset(today, new Date(bookingDateParam));
+
+		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') : ''
+		let endDate;
+
+        if (bookingDateStr.length === 10) {
+            bookingDate = dateToOffset(today, new Date(bookingDateStr));
         }
+		if(endDateStr.length === 10)
+		{
+			endDate = dateToOffset(today, new Date(endDateStr))
+		}
 
         const response = await fetch(endpoint);
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -75,21 +83,52 @@ const reValidateDate = async () => {
                 .filter(d => Array.isArray(d) && d.length === 3)
                 .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
 
-            if (formattedDisabledDates.includes(bookingDateParam)) {
+            if (formattedDisabledDates.includes(bookingDateStr) || (endDateStr.length === 10 && formattedDisabledDates.includes(endDateStr))) {
                 disableBookingForm(thisForm);
             }
         }
 
 		const bookingDayOfTheWeek = getDayOfTheWeek(bookingDate)
+		const endDayOfTheWeek = (endDateStr.length === 10) ?  getDayOfTheWeek(endDate) : undefined
 		const disableDaysOfTheWeek = disable.filter(d => typeof d === 'number' && !isNaN(d))
 		const forcedEnabledDates = disable
 			.filter(d => Array.isArray(d) && d.length === 4 && d[3] === 'inverted')
 			.map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
 
 
-		if(disableDaysOfTheWeek.includes(bookingDayOfTheWeek) && !forcedEnabledDates.includes(bookingDateParam))
+		if(disableDaysOfTheWeek.includes(bookingDayOfTheWeek))
 		{
-			disableBookingForm(thisForm);
+
+			let disableByBookingDay = true
+
+			
+			if(forcedEnabledDates.includes(bookingDateStr))
+			{
+				disableByBookingDay = false
+			}
+
+
+			if(disableByBookingDay)
+			{
+				
+				disableBookingForm(thisForm);
+			}
+		}
+
+		if(endDateStr.length === 10 && disableDaysOfTheWeek.includes(endDayOfTheWeek))
+		{
+
+			let disableByEndDay = true
+
+			if(forcedEnabledDates.includes(endDateStr))
+			{
+				disableByEndDay = false
+			}
+
+			if(disableByEndDay)
+			{
+				disableBookingForm(thisForm);
+			}
 		}
 
     } catch (error) {
