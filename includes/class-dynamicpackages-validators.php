@@ -247,7 +247,7 @@ class dy_validators
 						{
 							if(self::is_spam($_POST['inquiry']))
 							{
-								cloudflare_ban_ip_address();
+								//cloudflare_ban_ip_address();
 								$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
 							}
 						}
