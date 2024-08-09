@@ -586,7 +586,7 @@ class dy_validators
 										$range_date->setTime(0, 0, 0);
 										$range_date = $range_date->getTimestamp();
 										
-										if ($range_date >= $expiration_stamp && $bookings_after_expires === false) 
+										if ($range_date > $expiration_stamp && $bookings_after_expires === false) 
 										{
 											$arr_valid_expiration[] = false;
 										} 
