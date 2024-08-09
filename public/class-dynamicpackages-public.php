@@ -1372,7 +1372,7 @@ class Dynamicpackages_Public {
 								
 								if(!empty($expiration))
 								{
-									$label .= '<br/><small>'.esc_html(__('Offer valid until', 'dynamicpackages'));
+									$label .= '<br/><small>'.esc_html(__('Offer expires on', 'dynamicpackages'));
 									$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.</small>';
 								}
 								$label = apply_filters('coupon_gateway', $label, $coupons[$x][0]);
