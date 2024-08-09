@@ -603,7 +603,14 @@ class dy_validators
 								}
 								else
 								{
-									if($booking_date_stamp > $expiration_stamp && $bookings_after_expires === true)
+									if($booking_date_stamp >= $expiration_stamp)
+									{
+										if($bookings_after_expires === true)
+										{
+											$valid_expiration = true;
+										}
+									}
+									else
 									{
 										$valid_expiration = true;
 									}									
