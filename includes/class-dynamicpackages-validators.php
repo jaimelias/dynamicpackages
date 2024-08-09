@@ -548,11 +548,24 @@ class dy_validators
 					$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 					$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
 					
-					if($get_coupon == $coupon_code)
+					if($get_coupon === $coupon_code)
 					{
 						$expiration = dy_utilities::get_coupon('expiration');
 						$min_duration = dy_utilities::get_coupon('min_duration');
 						$max_duration = dy_utilities::get_coupon('max_duration');
+						$bookings_after_expires = dy_utilities::get_coupon('bookings_after_expires') || false;
+
+
+						//expiration
+						$expiration_stamp = new DateTime($expiration);
+						$expiration_stamp->setTime(0,0,0);
+						$expiration_stamp = $expiration_stamp->getTimestamp();
+
+						//booking
+						$booking_date_stamp = new DateTime($_REQUEST['booking_date']);
+						$booking_date_stamp->setTime(0,0,0);
+						$booking_date_stamp = $booking_date_stamp->getTimestamp();
+
 						$valid_expiration = false;
 						$valid_duration = false;
 
@@ -562,33 +575,38 @@ class dy_validators
 						}
 						else
 						{
-							$expiration_stamp = new DateTime($expiration);
-							$expiration_stamp->setTime(0,0,0);
-							$expiration_stamp = $expiration_stamp->getTimestamp();							
-							
-							if($expiration_stamp >= dy_strtotime('today midnight'))
+							if($expiration_stamp > dy_strtotime('today midnight'))
 							{
 								if(!self::package_type_transport() && !self::is_package_single_day())
 								{
-									for($x = 0; $x < count($booking_dates_range); $x++)
-									{
+									$arr_valid_expiration = array();
+
+									for ($x = 0; $x < count($booking_dates_range); $x++) {
 										$range_date = new DateTime($booking_dates_range[$x]);
-										$range_date->setTime(0,0,0);
+										$range_date->setTime(0, 0, 0);
 										$range_date = $range_date->getTimestamp();
 										
-										if($expiration_stamp > $range_date)
+										if ($range_date >= $expiration_stamp && $bookings_after_expires === false) 
 										{
-											$valid_expiration = true;
-										}
+											$arr_valid_expiration[] = false;
+										} 
 										else
 										{
-											$valid_expiration = false;
+											$arr_valid_expiration[] = true;
 										}
 									}
+
+									if (!in_array(false, $arr_valid_expiration)) {
+										$valid_expiration = true;
+									}
+
 								}
 								else
 								{
-									$valid_expiration = true;
+									if($booking_date_stamp > $expiration_stamp && $bookings_after_expires === true)
+									{
+										$valid_expiration = true;
+									}									
 								}	
 							}							
 						}

@@ -156,7 +156,7 @@ class dy_utilities {
 								}
 								else if($option == 'publish')
 								{
-									$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : null;
+									$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
 								}
 								else if($option == 'min_duration')
 								{
@@ -167,7 +167,11 @@ class dy_utilities {
 								{
 									$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
 									$output = (is_numeric($output)) ? intval($output) : 0;
-								}								
+								}
+								else if($option == 'bookings_after_expires')
+								{
+									$output = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
+								}							
 							}
 						}
 					}

@@ -167,7 +167,8 @@ class Dynamicpackages_Metaboxes
 				__('Expiration', 'dynamicpackages') ,
 				__('Publish', 'dynamicpackages') ,
 				__('Min. Duration', 'dynamicpackages') ,
-				__('Max. Duration', 'dynamicpackages')
+				__('Max. Duration', 'dynamicpackages'),
+				__('Bookings After Expires', 'dynamicpackages'),
 			) ,
 			'type' => array(
 				'text',
@@ -175,7 +176,8 @@ class Dynamicpackages_Metaboxes
 				'date',
 				'checkbox',
 				'numeric',
-				'numeric'
+				'numeric',
+				'checkbox',
 			) ,
 			'min' => 'package_max_coupons',
 			'max' => 'package_max_coupons',
