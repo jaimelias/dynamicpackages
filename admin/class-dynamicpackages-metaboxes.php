@@ -283,13 +283,14 @@ class Dynamicpackages_Metaboxes
 		);
 	}
 
-    public function select_number($name, $min = 1, $max = 20, $attr = '')
+    public function select_number($name, $min = 1, $max = 50, $attr = '')
     {
+		$max = $max + $min;
         $options = '';
         $value = $this->$name;
 		$name_attr = 'package_'.$name;
 
-        for ($x = $min;$x < $max;$x++)
+        for ($x = $min; $x < $max; $x++)
         {
             $selected = '';
 
@@ -561,7 +562,7 @@ class Dynamicpackages_Metaboxes
 				<?php echo $this->build_disabled_days(); ?>
 			</p>
 
-			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('disabled_num', 1, 20); ?></h3>
+			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('disabled_num', 1, 30); ?></h3>
 			
 			<?php echo dy_utilities::handsontable($this->disabled_dates_args); ?>
 		<?php endif; ?>
