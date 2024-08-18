@@ -74,7 +74,7 @@ const reValidateDate = async () => {
         const { disable, min } = data;
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
-        if (min && today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
+        if (min >= 1 && today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
             disableBookingForm(thisForm);
         }
 
