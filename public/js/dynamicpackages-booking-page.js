@@ -25,10 +25,6 @@ const reValidateDate = async () => {
     };
 
     const isDateBeforeLimit = (min, today, bookingDate) => {
-
-		if(min === 0) return false
-		if(typeof min === 'boolean') return false
-
         const limitDate = new Date(today);
         limitDate.setHours(23, 59, 59, 999);
         if (min > 1) limitDate.setDate(today.getDate() + 1);
@@ -78,10 +74,13 @@ const reValidateDate = async () => {
         const { disable, min } = data;
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
+		if(typeof min === 'number')
+		{
+			if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
+				disableBookingForm(thisForm);
+			}
+		}
 
-        if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
-            disableBookingForm(thisForm);
-        }
 
         if (Array.isArray(disable) && disable.length > 0) {
             const formattedDisabledDates = disable
@@ -115,6 +114,7 @@ const reValidateDate = async () => {
 
 			if(disableByBookingDay)
 			{
+				
 				disableBookingForm(thisForm);
 			}
 		}
@@ -134,9 +134,6 @@ const reValidateDate = async () => {
 				disableBookingForm(thisForm);
 			}
 		}
-
-		console.log({min, today, dateBeforeLimit: isDateBeforeLimit(min, today, bookingDate), disable, disableDaysOfTheWeek, bookingDayOfTheWeek})
-
 
     } catch (error) {
         disableBookingForm(thisForm);
