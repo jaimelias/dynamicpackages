@@ -25,6 +25,9 @@ const reValidateDate = async () => {
     };
 
     const isDateBeforeLimit = (min, today, bookingDate) => {
+
+		if(typeof min === 'boolean') return false
+
         const limitDate = new Date(today);
         limitDate.setHours(23, 59, 59, 999);
         if (min > 1) limitDate.setDate(today.getDate() + 1);
@@ -74,7 +77,7 @@ const reValidateDate = async () => {
         const { disable, min } = data;
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
-        if (min >= 1 && today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
+        if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
             disableBookingForm(thisForm);
         }
 
