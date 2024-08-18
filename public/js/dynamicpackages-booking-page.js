@@ -26,6 +26,7 @@ const reValidateDate = async () => {
 
     const isDateBeforeLimit = (min, today, bookingDate) => {
 
+		if(min === 0) return false
 		if(typeof min === 'boolean') return false
 
         const limitDate = new Date(today);
