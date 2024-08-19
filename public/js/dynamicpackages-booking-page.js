@@ -25,6 +25,9 @@ const reValidateDate = async () => {
     };
 
     const isDateBeforeLimit = (min, today, bookingDate) => {
+
+		if(typeof min === 'boolean') return false
+
         const limitDate = new Date(today);
         limitDate.setHours(23, 59, 59, 999);
         if (min > 1) limitDate.setDate(today.getDate() + 1);
@@ -47,6 +50,7 @@ const reValidateDate = async () => {
 	}
 
     try {
+
         const { permalink } = dyCoreArgs;
         const { site_timestamp } = await getNonce() || {};
         const today = site_timestamp ? new Date(site_timestamp) : new Date();
@@ -74,13 +78,9 @@ const reValidateDate = async () => {
         const { disable, min } = data;
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
-		if(typeof min === 'number')
-		{
-			if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
-				disableBookingForm(thisForm);
-			}
-		}
-
+        if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
+            disableBookingForm(thisForm);
+        }
 
         if (Array.isArray(disable) && disable.length > 0) {
             const formattedDisabledDates = disable
