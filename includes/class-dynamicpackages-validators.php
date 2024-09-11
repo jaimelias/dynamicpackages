@@ -398,16 +398,9 @@ class dy_validators
 		{
 			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']) && isset($_POST['country']) && isset($_POST['address']) && isset($_POST['city']))
 			{
-				if(!self::luhn_check($_POST['CCNum']))
+				if(!self::luhn_check($_POST['CCNum']) && !self::american_express_check($_POST['CCNum']))
 				{
 					$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
-				}
-				else
-				{					
-					if( self::american_express_check($_POST['CCNum']) )
-					{
-						$invalids[] = __('American Express is not accepted. At the moment we only accept Visa or Mastercard.', 'dynamicpackages');
-					}
 				}
 				if(empty($_POST['ExpMonth']))
 				{
