@@ -398,7 +398,7 @@ class dy_validators
 		{
 			if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']) && isset($_POST['country']) && isset($_POST['address']) && isset($_POST['city']))
 			{
-				if(!self::luhn_check($_POST['CCNum']) && !self::american_express_check($_POST['CCNum']))
+				if(!self::luhn_check($_POST['CCNum']))
 				{
 					$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
 				}
@@ -908,20 +908,6 @@ class dy_validators
 	}
 
 	
-	public static function american_express_check($number)
-	{
-
-		$first2Char = substr($number, 0, 2 );
-
-		if($first2Char === '34' || $first2Char === '37' && strlen($number) === 15)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
 	public static function luhn_check($number) 
 	{
 	  $number = preg_replace('/\D/', '', $number);
