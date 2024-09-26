@@ -1149,7 +1149,9 @@ class dy_utilities {
 			if(!filter_var($webhook, FILTER_VALIDATE_URL) === false)
 			{
 				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, $webhook);
+
+				$endpoint = str_replace('&#038;', '&', $webhook);
+				curl_setopt($ch, CURLOPT_URL, $endpoint);
 				curl_setopt($ch, CURLOPT_POST, 1);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data)));
