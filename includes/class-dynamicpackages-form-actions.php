@@ -85,9 +85,11 @@ class Dynamicpackages_Actions{
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 				$webhook_args = $data;
 				$webhook_args['providers'] = apply_filters('dy_list_providers', array());
+				$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', array());
 
+				$payload = json_encode($webhook_args);
 
-				dy_utilities::webhook($webhook_option, json_encode($webhook_args));
+				dy_utilities::webhook($webhook_option, $payload);
 				$this->send_email();
 			} 
 		}

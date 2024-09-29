@@ -17,6 +17,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		add_action('admin_init', array(&$this, 'title_modifier'), 10, 2);
 		add_action('dy_checkout_items', array(&$this, 'checkout_items'), 10);
 		add_filter('dy_included_add_ons_list', array(&$this, 'included_add_ons_list'));
+		add_filter('dy_included_add_ons_arr', array(&$this, 'included_add_ons_arr'));
 		add_filter('dy_has_add_ons', array(&$this, 'has_add_ons'));
 		add_filter('dy_get_add_ons', array(&$this, 'get_add_ons'));
 	}
@@ -467,30 +468,42 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 		return $output;	
 	}
-	
-	public function included_add_ons_list($output)
+
+
+	public function included_add_ons_arr($output = [])
 	{
-		if($this->has_add_ons() && isset($_POST['add_ons']))
-		{
+		if ($this->has_add_ons() && isset($_POST['add_ons'])) {
 			$add_ons = $this->get_add_ons();
 			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
 			$add_ons_count = count($add_ons);
 			
-			if(is_array($add_ons) && is_array($add_ons_included))
-			{
-				for($x = 0; $x < $add_ons_count; $x++)
-				{
-					if(in_array($add_ons[$x]['id'], $add_ons_included))
-					{
-						$separator = ($add_ons[$x]['description']) ? ': ' : null;
-						$output .= '<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">'.$add_ons[$x]['name'].$separator.'</strong>' . $add_ons[$x]['description'];
+			if (is_array($add_ons) && is_array($add_ons_included)) {
+				for ($x = 0; $x < $add_ons_count; $x++) {
+					if (in_array($add_ons[$x]['id'], $add_ons_included)) {
+						$output[] = $add_ons[$x];
 					}
-				}					
-			}			
+				}                    
+			}            
 		}
-
 		return $output;
 	}
+	
+	public function included_add_ons_list($output = '')
+	{
+		// Use included_add_ons_arr to get the filtered add-ons
+		$included_add_ons = $this->included_add_ons_arr();
+		
+		if (!empty($included_add_ons)) {
+			foreach ($included_add_ons as $add_on) {
+				$separator = ($add_on['description']) ? ': ' : null;
+				$output .= '<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">'
+						 . $add_on['name'] . $separator . '</strong>' . $add_on['description'];
+			}
+		}
+	
+		return $output;
+	}
+	
 	
 }
 
