@@ -782,7 +782,9 @@ class Dynamicpackages_Public {
 			{
 				$duration = package_field('package_duration');
 				$duration_unit = package_field('package_length_unit');
-				$label = __('Packages', 'dynamicpackages');
+				$header_name = 'package_child_title_'.$this->current_language;
+				$header_title = package_field($header_name, $post->ID);
+				$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : $header_title;
 				
 				$args = array(
 					'post_parent' => $post->ID,

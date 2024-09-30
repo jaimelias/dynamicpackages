@@ -603,7 +603,7 @@ class Dynamicpackages_Metaboxes
 
 			wp_nonce_field('_package_nonce', 'package_nonce');
 
-			if ($this->is_child)
+			if ($this->is_child || $this->has_children)
 			{
 
 				for($x = 0; $x < $this->count_languages; $x++)
