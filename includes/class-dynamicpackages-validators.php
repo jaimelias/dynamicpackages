@@ -547,18 +547,6 @@ class dy_validators
 						$min_duration = dy_utilities::get_coupon('min_duration');
 						$max_duration = dy_utilities::get_coupon('max_duration');
 						$bookings_after_expires = dy_utilities::get_coupon('bookings_after_expires') || false;
-
-
-						//expiration
-						$expiration_stamp = new DateTime($expiration);
-						$expiration_stamp->setTime(0,0,0);
-						$expiration_stamp = $expiration_stamp->getTimestamp();
-
-						//booking
-						$booking_date_stamp = new DateTime($_REQUEST['booking_date']);
-						$booking_date_stamp->setTime(0,0,0);
-						$booking_date_stamp = $booking_date_stamp->getTimestamp();
-
 						$valid_expiration = false;
 						$valid_duration = false;
 
@@ -568,6 +556,17 @@ class dy_validators
 						}
 						else
 						{
+
+							//expiration
+							$expiration_stamp = new DateTime($expiration);
+							$expiration_stamp->setTime(0,0,0);
+							$expiration_stamp = $expiration_stamp->getTimestamp();
+
+							//booking
+							$booking_date_stamp = new DateTime($_REQUEST['booking_date']);
+							$booking_date_stamp->setTime(0,0,0);
+							$booking_date_stamp = $booking_date_stamp->getTimestamp();
+
 							if($expiration_stamp > dy_strtotime('today midnight'))
 							{
 								if(!self::package_type_transport() && !self::is_package_single_day())
