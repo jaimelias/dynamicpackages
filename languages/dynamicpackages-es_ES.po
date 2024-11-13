@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2024-08-09 23:20+0000\n"
+"PO-Revision-Date: 2024-11-13 20:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -55,7 +55,7 @@ msgstr "Instrucciones de pago por %s"
 msgid "%s Settings"
 msgstr "Configuración de %s"
 
-#: includes/class-dynamicpackages-form-actions.php:183
+#: includes/class-dynamicpackages-form-actions.php:185
 #, php-format
 msgid "%s, %s has sent you an estimate for %s%s - %s"
 msgstr "%s, %s te ha enviado una cotización por %s%s - %s"
@@ -81,7 +81,7 @@ msgstr "%s, %s te ha enviado una solicitud de pagos de %s%s usando %s - %s"
 msgid "%s, Thank You for Your %s of %s%s: %s"
 msgstr "%s, Gracias por tu %s de %s%s: %s"
 
-#: includes/class-dynamicpackages-form-actions.php:190
+#: includes/class-dynamicpackages-form-actions.php:192
 #, php-format
 msgid "%s, thanks for your request: %s"
 msgstr "%s, Gracias por tu solicitud: %s"
@@ -113,7 +113,7 @@ msgstr ""
 msgid "A. Send the %s (%s) to the Yappy number %s."
 msgstr "A. Envía el %s (%s) al número Yappy %s."
 
-#: admin/class-dynamicpackages-metaboxes.php:530
+#: admin/class-dynamicpackages-metaboxes.php:531
 msgid "Accept Bookings"
 msgstr "Aceptar reservas"
 
@@ -222,12 +222,6 @@ msgstr ""
 "Todos los pagos realizados con PayPal están sujetos a una tarifa adicional "
 "de servicio del %s%s."
 
-#: includes/class-dynamicpackages-validators.php:409
-msgid ""
-"American Express is not accepted. At the moment we only accept Visa or "
-"Mastercard."
-msgstr "No aceptamos American Express. Por el momento solo Visa o Mastercard."
-
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:665
 msgid "Amount Due"
 msgstr "Saldo"
@@ -236,7 +230,7 @@ msgstr "Saldo"
 msgid "Analytics"
 msgstr ""
 
-#: admin/class-dynamicpackages-metaboxes.php:550
+#: admin/class-dynamicpackages-metaboxes.php:551
 msgid "and"
 msgstr "y"
 
@@ -261,7 +255,7 @@ msgstr ""
 msgid "Bad"
 msgstr "Malo"
 
-#: admin/class-dynamicpackages-metaboxes.php:700
+#: admin/class-dynamicpackages-metaboxes.php:701
 msgid "Badge Color"
 msgstr "Color de la cinta"
 
@@ -277,7 +271,7 @@ msgstr "Nombre del banco"
 msgid "Bank Settings"
 msgstr "Configuración del banco"
 
-#: admin/class-dynamicpackages-metaboxes.php:504
+#: admin/class-dynamicpackages-metaboxes.php:505
 #, fuzzy
 #| msgid "Base Prices Per Person"
 msgid "Base Prices - Per Person"
@@ -329,16 +323,16 @@ msgstr "Configuración del banco del beneficiario"
 msgid "Beneficiary Bank Swift"
 msgstr "Swift del banco beneficiario"
 
-#: admin/class-dynamicpackages-metaboxes.php:691
+#: admin/class-dynamicpackages-metaboxes.php:692
 #: public/class-dynamicpackages-public.php:759
 msgid "Best Seller"
 msgstr "Más vendido"
 
-#: admin/class-dynamicpackages-metaboxes.php:532
+#: admin/class-dynamicpackages-metaboxes.php:533
 msgid "Between"
 msgstr "entre"
 
-#: admin/class-dynamicpackages-metaboxes.php:548
+#: admin/class-dynamicpackages-metaboxes.php:549
 msgid "between"
 msgstr "entre"
 
@@ -346,19 +340,19 @@ msgstr "entre"
 msgid "Billing Address"
 msgstr "Dirección de facturación"
 
-#: admin/class-dynamicpackages-metaboxes.php:705
+#: admin/class-dynamicpackages-metaboxes.php:706
 msgid "Black"
 msgstr "Negro"
 
-#: admin/class-dynamicpackages-metaboxes.php:709
+#: admin/class-dynamicpackages-metaboxes.php:710
 msgid "Blue"
 msgstr "Azul"
 
-#: admin/class-dynamicpackages-metaboxes.php:542
+#: admin/class-dynamicpackages-metaboxes.php:543
 msgid "Book by Hour"
 msgstr "Reservar por hora"
 
-#: public/class-dynamicpackages-public.php:898
+#: public/class-dynamicpackages-public.php:900
 msgid "Book it with a"
 msgstr "Reserva con un"
 
@@ -417,13 +411,13 @@ msgstr "Categoría"
 msgid "CCLW"
 msgstr "CCLW"
 
-#: public/class-dynamicpackages-public.php:1114
-#: public/class-dynamicpackages-public.php:1119
+#: public/class-dynamicpackages-public.php:1116
+#: public/class-dynamicpackages-public.php:1121
 msgid "Check-in"
 msgstr "Check-in"
 
-#: admin/class-dynamicpackages-metaboxes.php:375
-#: admin/class-dynamicpackages-metaboxes.php:391
+#: admin/class-dynamicpackages-metaboxes.php:376
+#: admin/class-dynamicpackages-metaboxes.php:392
 msgid "Check-in Hour"
 msgstr "Hora de check-in"
 
@@ -450,11 +444,11 @@ msgstr "niño menor de"
 msgid "Children"
 msgstr "Niños"
 
-#: admin/class-dynamicpackages-metaboxes.php:447
+#: admin/class-dynamicpackages-metaboxes.php:448
 msgid "Children Discount up to"
 msgstr "Niños con descuento hasta"
 
-#: admin/class-dynamicpackages-metaboxes.php:442
+#: admin/class-dynamicpackages-metaboxes.php:443
 msgid "Children free up to"
 msgstr "Niños gratis hasta"
 
@@ -482,7 +476,7 @@ msgid "Cloudflare API Token"
 msgstr "Cloudflare Api Token"
 
 #: admin/class-dynamicpackages-metaboxes.php:165
-#: admin/class-dynamicpackages-metaboxes.php:641
+#: admin/class-dynamicpackages-metaboxes.php:642
 msgid "Code"
 msgstr "Código"
 
@@ -490,7 +484,7 @@ msgstr "Código"
 msgid "Company"
 msgstr "Empresa"
 
-#: admin/class-dynamicpackages-metaboxes.php:329
+#: admin/class-dynamicpackages-metaboxes.php:330
 msgid "Confirmation Message"
 msgstr "Mensaje de confirmación"
 
@@ -556,12 +550,12 @@ msgid "Day"
 msgstr "Día"
 
 #: includes/class-dynamicpackages-utilities.php:281
-#: admin/class-dynamicpackages-metaboxes.php:661
+#: admin/class-dynamicpackages-metaboxes.php:662
 #: public/class-dynamicpackages-forms.php:191
 msgid "Days"
 msgstr "Días"
 
-#: admin/class-dynamicpackages-metaboxes.php:537
+#: admin/class-dynamicpackages-metaboxes.php:538
 msgid "days"
 msgstr "días"
 
@@ -569,25 +563,25 @@ msgstr "días"
 msgid "Debug Email"
 msgstr "Email de pruebas"
 
-#: admin/class-dynamicpackages-metaboxes.php:414
-#: admin/class-dynamicpackages-metaboxes.php:627
-#: admin/class-dynamicpackages-metaboxes.php:635
-#: admin/class-dynamicpackages-metaboxes.php:682
+#: admin/class-dynamicpackages-metaboxes.php:415
+#: admin/class-dynamicpackages-metaboxes.php:628
+#: admin/class-dynamicpackages-metaboxes.php:636
+#: admin/class-dynamicpackages-metaboxes.php:683
 msgid "default"
 msgstr "predeterminado"
 
-#: public/class-dynamicpackages-public.php:1115
+#: public/class-dynamicpackages-public.php:1117
 msgid "Departing"
 msgstr "Partida"
 
 #: admin/class-dynamicpackages-metaboxes.php:52
 #: public/class-dynamicpackages-public.php:725
-#: public/class-dynamicpackages-public.php:1111
+#: public/class-dynamicpackages-public.php:1113
 msgid "Departure"
 msgstr "Partida"
 
-#: admin/class-dynamicpackages-metaboxes.php:383
-#: admin/class-dynamicpackages-metaboxes.php:399
+#: admin/class-dynamicpackages-metaboxes.php:384
+#: admin/class-dynamicpackages-metaboxes.php:400
 msgid "Departure Address"
 msgstr "Dirección de partida"
 
@@ -595,8 +589,8 @@ msgstr "Dirección de partida"
 msgid "Departure Date"
 msgstr "Fecha de partida"
 
-#: admin/class-dynamicpackages-metaboxes.php:379
-#: admin/class-dynamicpackages-metaboxes.php:395
+#: admin/class-dynamicpackages-metaboxes.php:380
+#: admin/class-dynamicpackages-metaboxes.php:396
 msgid "Departure Hour"
 msgstr "Hora de partida"
 
@@ -604,14 +598,14 @@ msgstr "Hora de partida"
 msgid "Departure Time"
 msgstr "Hora de partida"
 
-#: admin/class-dynamicpackages-metaboxes.php:463
+#: admin/class-dynamicpackages-metaboxes.php:464
 #: gateways/partials/checkout-page.php:53
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:170
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:195
 msgid "Deposit"
 msgstr "Deposito"
 
-#: public/class-dynamicpackages-public.php:898
+#: public/class-dynamicpackages-public.php:900
 #: public/class-dynamicpackages-booking-page.php:125
 #: gateways/matrix/yappy/yappy_direct.php:164
 #: gateways/matrix/yappy/yappy_direct.php:190
@@ -635,15 +629,15 @@ msgstr "deposito de"
 msgid "Description"
 msgstr "Descripción"
 
-#: admin/class-dynamicpackages-metaboxes.php:559
+#: admin/class-dynamicpackages-metaboxes.php:560
 msgid "Disable Days"
 msgstr "Desabilitar días"
 
-#: admin/class-dynamicpackages-metaboxes.php:564
+#: admin/class-dynamicpackages-metaboxes.php:565
 msgid "Disabled Dates"
 msgstr "Deshabilitar fechas"
 
-#: admin/class-dynamicpackages-metaboxes.php:569
+#: admin/class-dynamicpackages-metaboxes.php:570
 msgid "Disabled Dates API Endpoint"
 msgstr "Deshabilitar fechas vía API"
 
@@ -656,7 +650,7 @@ msgstr "Descuento"
 msgid "Discount (%)"
 msgstr "Descuento (%)"
 
-#: includes/class-dynamicpackages-form-actions.php:162
+#: includes/class-dynamicpackages-form-actions.php:164
 #, php-format
 msgid ""
 "Do not hesitate to call us at %s or email us at %s if you have any questions."
@@ -665,7 +659,7 @@ msgstr ""
 "alguna pregunta."
 
 #: admin/class-dynamicpackages-metaboxes.php:260
-#: admin/class-dynamicpackages-metaboxes.php:668
+#: admin/class-dynamicpackages-metaboxes.php:669
 #: public/class-dynamicpackages-forms.php:187
 msgid "Duration"
 msgstr "Duración"
@@ -709,7 +703,7 @@ msgstr "Email y el email repetido no son iguales."
 msgid "Email: %s"
 msgstr "Email: %s"
 
-#: admin/class-dynamicpackages-metaboxes.php:420
+#: admin/class-dynamicpackages-metaboxes.php:421
 msgid "Enable Automatic Booking"
 msgstr "Permitir reservas automaticas"
 
@@ -736,21 +730,21 @@ msgid ""
 "resubmit your comment with a rating."
 msgstr "Error:  No agregaste la calificación. Regresa y agregalo."
 
-#: includes/class-dynamicpackages-form-actions.php:131
+#: includes/class-dynamicpackages-form-actions.php:133
 #: public/email-templates/estimates-pdf.php:13
 #: public/email-templates/estimates.php:5
 msgid "Estimate"
 msgstr "Cotización"
 
-#: admin/class-dynamicpackages-metaboxes.php:635
+#: admin/class-dynamicpackages-metaboxes.php:636
 msgid "Event"
 msgstr "Evento"
 
-#: admin/class-dynamicpackages-metaboxes.php:526
+#: admin/class-dynamicpackages-metaboxes.php:527
 msgid "Event Date"
 msgstr "Fecha del evento"
 
-#: public/class-dynamicpackages-public.php:1069
+#: public/class-dynamicpackages-public.php:1071
 msgid "Everyday"
 msgstr "Todos los días"
 
@@ -774,7 +768,7 @@ msgstr "Año de expiración"
 msgid "Facebook Pixel ID"
 msgstr ""
 
-#: admin/class-dynamicpackages-metaboxes.php:694
+#: admin/class-dynamicpackages-metaboxes.php:695
 #: public/class-dynamicpackages-public.php:759
 msgid "Featured"
 msgstr "Destacado"
@@ -796,19 +790,19 @@ msgstr "Encontrar paquetes"
 msgid "First name is empty."
 msgstr "El primer nombre no es válido."
 
-#: admin/class-dynamicpackages-metaboxes.php:683
+#: admin/class-dynamicpackages-metaboxes.php:684
 msgid "fixed prices"
 msgstr "precio fijo"
 
-#: admin/class-dynamicpackages-metaboxes.php:573
+#: admin/class-dynamicpackages-metaboxes.php:574
 msgid "Force Enabled Dates"
 msgstr "Forzar habilitar fechas"
 
-#: includes/class-dynamicpackages-utilities.php:1341
+#: includes/class-dynamicpackages-utilities.php:1343
 msgid "Fri"
 msgstr "Vie"
 
-#: includes/class-dynamicpackages-utilities.php:1328
+#: includes/class-dynamicpackages-utilities.php:1330
 msgid "Friday"
 msgstr "Viernes"
 
@@ -816,11 +810,11 @@ msgstr "Viernes"
 #: admin/class-dynamicpackages-metaboxes.php:240
 #: admin/class-dynamicpackages-metaboxes.php:258
 #: admin/class-dynamicpackages-admin.php:150
-#: public/class-dynamicpackages-public.php:1439
+#: public/class-dynamicpackages-public.php:1441
 msgid "From"
 msgstr "Desde"
 
-#: admin/class-dynamicpackages-metaboxes.php:462
+#: admin/class-dynamicpackages-metaboxes.php:463
 msgid "Full Payment"
 msgstr "Precio completo"
 
@@ -850,7 +844,7 @@ msgstr "Pagos completos y depositos"
 msgid "Gateway Settings"
 msgstr "Configuración de plataforma de pagos"
 
-#: includes/class-dynamicpackages-form-actions.php:189
+#: includes/class-dynamicpackages-form-actions.php:191
 msgid "General Inquiry"
 msgstr "Solicitud general"
 
@@ -869,7 +863,7 @@ msgstr "Solicitud general"
 msgid "General Settings"
 msgstr "Configuración General"
 
-#: public/class-dynamicpackages-public.php:1360
+#: public/class-dynamicpackages-public.php:1362
 msgid "Get a"
 msgstr "Obtén un"
 
@@ -886,7 +880,7 @@ msgstr ""
 msgid "Get estimate"
 msgstr "Cotizar"
 
-#: admin/class-dynamicpackages-metaboxes.php:453
+#: admin/class-dynamicpackages-metaboxes.php:454
 msgid "get more leads even if the prices are not defined"
 msgstr "obtén más solicitudes aún si los precios no esta definidos"
 
@@ -910,15 +904,15 @@ msgstr ""
 msgid "Google - Global Tag Manager (GMT)"
 msgstr ""
 
-#: admin/class-dynamicpackages-metaboxes.php:711
+#: admin/class-dynamicpackages-metaboxes.php:712
 msgid "Green"
 msgstr "Verde"
 
-#: admin/class-dynamicpackages-metaboxes.php:707
+#: admin/class-dynamicpackages-metaboxes.php:708
 msgid "Grey"
 msgstr "Gris"
 
-#: includes/class-dynamicpackages-form-actions.php:157
+#: includes/class-dynamicpackages-form-actions.php:159
 #: public/email-templates/estimates.php:6
 #: gateways/matrix/pay-later/pay-later.php:76
 #, php-format
@@ -944,7 +938,7 @@ msgstr "Enconder días habilitados"
 msgid "Hide Max. Persons"
 msgstr ""
 
-#: admin/class-dynamicpackages-metaboxes.php:625
+#: admin/class-dynamicpackages-metaboxes.php:626
 msgid "Hide Package"
 msgstr "Ocultar paquete"
 
@@ -973,7 +967,7 @@ msgid "hour"
 msgstr "hora"
 
 #: includes/class-dynamicpackages-utilities.php:281
-#: admin/class-dynamicpackages-metaboxes.php:660
+#: admin/class-dynamicpackages-metaboxes.php:661
 msgid "Hours"
 msgstr "Horas"
 
@@ -1013,7 +1007,7 @@ msgstr "Incluido"
 msgid "Included:"
 msgstr "Incluye:"
 
-#: admin/class-dynamicpackages-metaboxes.php:452
+#: admin/class-dynamicpackages-metaboxes.php:453
 msgid "Increase maximum number of participants by"
 msgstr "Incrementar el número máximo de participantes por"
 
@@ -1064,15 +1058,15 @@ msgstr "Configuración del banco del intermediario"
 msgid "Intermediary Bank Swift"
 msgstr "Swift del banco intermediario"
 
-#: includes/class-dynamicpackages-validators.php:434
+#: includes/class-dynamicpackages-validators.php:427
 msgid "Invalid address."
 msgstr "Dirección inválida."
 
-#: includes/class-dynamicpackages-validators.php:430
+#: includes/class-dynamicpackages-validators.php:423
 msgid "Invalid city."
 msgstr "Ciudad inválida."
 
-#: includes/class-dynamicpackages-validators.php:426
+#: includes/class-dynamicpackages-validators.php:419
 msgid "Invalid country."
 msgstr "País inválido."
 
@@ -1084,7 +1078,7 @@ msgstr ""
 "Tarjeta invalida. Por favor regrese a la página anterior para corregir los "
 "números."
 
-#: includes/class-dynamicpackages-validators.php:422
+#: includes/class-dynamicpackages-validators.php:415
 msgid "Invalid CVV (security code on the back of the card)."
 msgstr ""
 "Código de seguridad invalido (los 3 números en la parte de posterior de la "
@@ -1094,11 +1088,11 @@ msgstr ""
 msgid "Invalid email."
 msgstr "Email inválido."
 
-#: includes/class-dynamicpackages-validators.php:414
+#: includes/class-dynamicpackages-validators.php:407
 msgid "Invalid expiration month."
 msgstr "Fecha de expiración inválida."
 
-#: includes/class-dynamicpackages-validators.php:418
+#: includes/class-dynamicpackages-validators.php:411
 msgid "Invalid expiration year."
 msgstr "Año de espiración invalido."
 
@@ -1145,7 +1139,7 @@ msgstr "Itinerario"
 msgid "jaimelias"
 msgstr "jaimelias"
 
-#: admin/class-dynamicpackages-metaboxes.php:695
+#: admin/class-dynamicpackages-metaboxes.php:696
 #: public/class-dynamicpackages-public.php:759
 msgid "Last Minute Deal"
 msgstr "Oferta de último minuto"
@@ -1162,7 +1156,7 @@ msgstr "El segundo nombre no es válido."
 msgid "Leave a Review"
 msgstr "Dejar un testimonio"
 
-#: admin/class-dynamicpackages-metaboxes.php:657
+#: admin/class-dynamicpackages-metaboxes.php:658
 msgid "Length Unit"
 msgstr "Unidad de tiempo"
 
@@ -1206,12 +1200,12 @@ msgstr "Máximo de fechas deshabilitadas"
 msgid "Max. Duration"
 msgstr "Duración máxima"
 
-#: admin/class-dynamicpackages-metaboxes.php:673
+#: admin/class-dynamicpackages-metaboxes.php:674
 msgid "Maximum Duration"
 msgstr "Duración máxima"
 
-#: admin/class-dynamicpackages-add-ons.php:137
-#: admin/class-dynamicpackages-metaboxes.php:438
+#: admin/class-dynamicpackages-add-ons.php:138
+#: admin/class-dynamicpackages-metaboxes.php:439
 msgid "Maximum Number of participants"
 msgstr "Número máximo de participantes"
 
@@ -1240,7 +1234,7 @@ msgstr "Cantidad Min."
 msgid "Min. Duration"
 msgstr "Duración min."
 
-#: admin/class-dynamicpackages-metaboxes.php:432
+#: admin/class-dynamicpackages-metaboxes.php:433
 msgid "Minimum Number of participants"
 msgstr "Número mínimo de participantes"
 
@@ -1249,19 +1243,19 @@ msgid "Minute"
 msgstr "Minuto"
 
 #: includes/class-dynamicpackages-utilities.php:281
-#: admin/class-dynamicpackages-metaboxes.php:659
+#: admin/class-dynamicpackages-metaboxes.php:660
 msgid "Minutes"
 msgstr "Minutos"
 
-#: includes/class-dynamicpackages-utilities.php:1337
+#: includes/class-dynamicpackages-utilities.php:1339
 msgid "Mon"
 msgstr "Lun"
 
-#: includes/class-dynamicpackages-utilities.php:1324
+#: includes/class-dynamicpackages-utilities.php:1326
 msgid "Monday"
 msgstr "Lunes"
 
-#: admin/class-dynamicpackages-metaboxes.php:650
+#: admin/class-dynamicpackages-metaboxes.php:651
 msgid "Multi-day"
 msgstr "Varios días"
 
@@ -1279,7 +1273,7 @@ msgstr "Nombre: %s %s"
 msgid "Nequi Cell Phone Number"
 msgstr "Número celular Nequi"
 
-#: admin/class-dynamicpackages-metaboxes.php:692
+#: admin/class-dynamicpackages-metaboxes.php:693
 #: public/class-dynamicpackages-public.php:759
 msgid "New"
 msgstr "Nuevo"
@@ -1304,13 +1298,13 @@ msgid "Newest"
 msgstr "Nuevos"
 
 #: public/class-dynamicpackages-public.php:483
-#: public/class-dynamicpackages-public.php:1303
+#: public/class-dynamicpackages-public.php:1305
 #: public/class-dynamicpackages-forms.php:101
 msgid "next 30 days"
 msgstr "próximos 30 días"
 
 #: public/class-dynamicpackages-public.php:482
-#: public/class-dynamicpackages-public.php:1299
+#: public/class-dynamicpackages-public.php:1301
 #: public/class-dynamicpackages-forms.php:100
 msgid "next 7 days"
 msgstr "próximos 7 días"
@@ -1320,16 +1314,16 @@ msgid "Night"
 msgstr "Noche"
 
 #: includes/class-dynamicpackages-utilities.php:281
-#: admin/class-dynamicpackages-metaboxes.php:662
+#: admin/class-dynamicpackages-metaboxes.php:663
 #: public/class-dynamicpackages-forms.php:183
 msgid "Nights"
 msgstr "Noches"
 
-#: admin/class-dynamicpackages-add-ons.php:357
-#: admin/class-dynamicpackages-metaboxes.php:415
-#: admin/class-dynamicpackages-metaboxes.php:545
-#: admin/class-dynamicpackages-metaboxes.php:627
-#: admin/class-dynamicpackages-metaboxes.php:683
+#: admin/class-dynamicpackages-add-ons.php:358
+#: admin/class-dynamicpackages-metaboxes.php:416
+#: admin/class-dynamicpackages-metaboxes.php:546
+#: admin/class-dynamicpackages-metaboxes.php:628
+#: admin/class-dynamicpackages-metaboxes.php:684
 msgid "No"
 msgstr "No"
 
@@ -1364,11 +1358,11 @@ msgstr "Notas"
 msgid "now"
 msgstr "ya"
 
-#: admin/class-dynamicpackages-metaboxes.php:311
+#: admin/class-dynamicpackages-metaboxes.php:312
 msgid "Number of coupons"
 msgstr "Número de cupones"
 
-#: admin/class-dynamicpackages-metaboxes.php:472
+#: admin/class-dynamicpackages-metaboxes.php:473
 msgid "Number of Special Seasons"
 msgstr "Número de temporadas especiales"
 
@@ -1376,20 +1370,20 @@ msgstr "Número de temporadas especiales"
 msgid "off"
 msgstr "descuento"
 
-#: public/class-dynamicpackages-public.php:1362
+#: public/class-dynamicpackages-public.php:1364
 msgid "off using the coupon code"
 msgstr "de descuento usando el cupón"
 
-#: admin/class-dynamicpackages-metaboxes.php:693
+#: admin/class-dynamicpackages-metaboxes.php:694
 #: public/class-dynamicpackages-public.php:759
 msgid "Offer"
 msgstr "Oferta"
 
-#: public/class-dynamicpackages-public.php:1375
+#: public/class-dynamicpackages-public.php:1377
 msgid "Offer expires on"
 msgstr "Oferta expira"
 
-#: admin/class-dynamicpackages-metaboxes.php:649
+#: admin/class-dynamicpackages-metaboxes.php:650
 msgid "One day"
 msgstr "Un día"
 
@@ -1398,7 +1392,7 @@ msgstr "Un día"
 msgid "One-way"
 msgstr "Una vía"
 
-#: admin/class-dynamicpackages-metaboxes.php:367
+#: admin/class-dynamicpackages-metaboxes.php:368
 msgid "One-way Surcharge"
 msgstr ""
 
@@ -1414,7 +1408,7 @@ msgstr "Abrir Whatsapp Web"
 msgid "or"
 msgstr "o"
 
-#: admin/class-dynamicpackages-metaboxes.php:719
+#: admin/class-dynamicpackages-metaboxes.php:720
 msgid "Orange"
 msgstr "Anaranjado"
 
@@ -1447,7 +1441,7 @@ msgstr ""
 msgid "Our payment address is as follows:"
 msgstr "Nuestra dirección de pago en la siguiente:"
 
-#: includes/class-dynamicpackages-form-actions.php:158
+#: includes/class-dynamicpackages-form-actions.php:160
 #, php-format
 msgid ""
 "Our staff will be in touch with you very soon with more information about "
@@ -1482,13 +1476,13 @@ msgstr "Descripción del paquete"
 msgid "Package List Settings"
 msgstr "Configuración de lista de paquetes"
 
-#: admin/class-dynamicpackages-metaboxes.php:647
+#: admin/class-dynamicpackages-metaboxes.php:648
 msgid "Package Type"
 msgstr "Tipo de Paquete"
 
 #: admin/class-dynamicpackages-post-type.php:67
 #: admin/class-dynamicpackages-post-type.php:69
-#: public/class-dynamicpackages-public.php:785
+#: public/class-dynamicpackages-public.php:787
 msgid "Packages"
 msgstr "Paquetes"
 
@@ -1572,7 +1566,7 @@ msgstr "Paga con una transferencia bancaria internacional"
 msgid "Pay with Paypal"
 msgstr "Paga con Paypal"
 
-#: admin/class-dynamicpackages-metaboxes.php:460
+#: admin/class-dynamicpackages-metaboxes.php:461
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:170
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:195
 msgid "Payment"
@@ -1615,11 +1609,11 @@ msgstr "Por hora"
 msgid "Per Person"
 msgstr "Por persona"
 
-#: admin/class-dynamicpackages-add-ons.php:348
+#: admin/class-dynamicpackages-add-ons.php:349
 msgid "per person"
 msgstr "por persona"
 
-#: public/class-dynamicpackages-public.php:1121
+#: public/class-dynamicpackages-public.php:1123
 msgid "pers. max."
 msgstr ""
 
@@ -1698,15 +1692,15 @@ msgstr ""
 msgid "Price"
 msgstr "Precio"
 
-#: admin/class-dynamicpackages-add-ons.php:127
+#: admin/class-dynamicpackages-add-ons.php:128
 msgid "Price is fixed"
 msgstr "Precio fijo"
 
-#: admin/class-dynamicpackages-add-ons.php:237
+#: admin/class-dynamicpackages-add-ons.php:238
 msgid "Prices"
 msgstr "Precios"
 
-#: admin/class-dynamicpackages-add-ons.php:143
+#: admin/class-dynamicpackages-add-ons.php:144
 #: gateways/partials/checkout-page.php:84
 msgid "Prices Per Person"
 msgstr "Precios por persona"
@@ -1719,7 +1713,7 @@ msgstr "Control de precios"
 msgid "Proceed"
 msgstr "Proceder"
 
-#: admin/class-dynamicpackages-metaboxes.php:636
+#: admin/class-dynamicpackages-metaboxes.php:637
 msgid "Product"
 msgstr "Producto"
 
@@ -1743,7 +1737,7 @@ msgstr "Proveedores"
 msgid "Publish"
 msgstr "Publicar"
 
-#: admin/class-dynamicpackages-metaboxes.php:715
+#: admin/class-dynamicpackages-metaboxes.php:716
 msgid "Purple"
 msgstr "Purpura"
 
@@ -1760,7 +1754,7 @@ msgid "Rated"
 msgstr "Calificado"
 
 #: admin/class-dynamicpackages-metaboxes.php:33
-#: public/class-dynamicpackages-public.php:811
+#: public/class-dynamicpackages-public.php:813
 msgid "Rates"
 msgstr "Precios"
 
@@ -1776,11 +1770,11 @@ msgstr "Recaptcha Secret Key"
 msgid "Recaptcha Site Key"
 msgstr "Recaptcha Site Key"
 
-#: admin/class-dynamicpackages-metaboxes.php:717
+#: admin/class-dynamicpackages-metaboxes.php:718
 msgid "Red"
 msgstr "Rojo"
 
-#: admin/class-dynamicpackages-metaboxes.php:350
+#: admin/class-dynamicpackages-metaboxes.php:351
 msgid "Redirect URL"
 msgstr "Redirigir a URL"
 
@@ -1793,11 +1787,11 @@ msgstr "Regular"
 msgid "Regular Price"
 msgstr "Precio regular"
 
-#: admin/class-dynamicpackages-metaboxes.php:651
+#: admin/class-dynamicpackages-metaboxes.php:652
 msgid "Rental (per day)"
 msgstr "Alquiler (por día)"
 
-#: admin/class-dynamicpackages-metaboxes.php:652
+#: admin/class-dynamicpackages-metaboxes.php:653
 msgid "Rental (per hour)"
 msgstr "Alquiler (por hora)"
 
@@ -1817,9 +1811,9 @@ msgstr "solicita una cotización"
 msgid "Request Quote"
 msgstr "Solicitar cotización"
 
-#: admin/class-dynamicpackages-metaboxes.php:388
+#: admin/class-dynamicpackages-metaboxes.php:389
 #: public/class-dynamicpackages-public.php:730
-#: public/class-dynamicpackages-public.php:1117
+#: public/class-dynamicpackages-public.php:1119
 msgid "Return"
 msgstr "Regreso"
 
@@ -1827,7 +1821,7 @@ msgstr "Regreso"
 msgid "Return Time"
 msgstr "Hora de regreso"
 
-#: public/class-dynamicpackages-public.php:1120
+#: public/class-dynamicpackages-public.php:1122
 msgid "Returning"
 msgstr "Regreso"
 
@@ -1849,11 +1843,11 @@ msgstr "Los testimonios están cerrados."
 msgid "Round trip"
 msgstr "Ida y vuelta"
 
-#: includes/class-dynamicpackages-utilities.php:1342
+#: includes/class-dynamicpackages-utilities.php:1344
 msgid "Sat"
 msgstr "Sab"
 
-#: includes/class-dynamicpackages-utilities.php:1329
+#: includes/class-dynamicpackages-utilities.php:1331
 msgid "Saturday"
 msgstr "Sabado"
 
@@ -1865,11 +1859,11 @@ msgstr "Ahorrando"
 msgid "Saving Account"
 msgstr "Cuenta Corriente"
 
-#: public/class-dynamicpackages-public.php:1110
+#: public/class-dynamicpackages-public.php:1112
 msgid "Schedule"
 msgstr "Horario"
 
-#: admin/class-dynamicpackages-metaboxes.php:633
+#: admin/class-dynamicpackages-metaboxes.php:634
 msgid "Schema Type"
 msgstr ""
 
@@ -1930,7 +1924,7 @@ msgstr ""
 msgid "Show"
 msgstr "Mostrar"
 
-#: admin/class-dynamicpackages-metaboxes.php:688
+#: admin/class-dynamicpackages-metaboxes.php:689
 msgid "Show Badge"
 msgstr "Mostrar cinta"
 
@@ -1939,15 +1933,15 @@ msgstr "Mostrar cinta"
 msgid "Show Package"
 msgstr "Mostrar paquete"
 
-#: admin/class-dynamicpackages-metaboxes.php:412
+#: admin/class-dynamicpackages-metaboxes.php:413
 msgid "Show Price Table"
 msgstr "Mostrar tabla de precios"
 
-#: admin/class-dynamicpackages-metaboxes.php:680
+#: admin/class-dynamicpackages-metaboxes.php:681
 msgid "Show Prices Per Person"
 msgstr "Mostrar precios por persona"
 
-#: public/class-dynamicpackages-public.php:1421
+#: public/class-dynamicpackages-public.php:1423
 msgid "Similar packages"
 msgstr "Paquetes similares"
 
@@ -1959,7 +1953,7 @@ msgstr ""
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: public/class-dynamicpackages-public.php:890 public/partials/archive.php:325
+#: public/class-dynamicpackages-public.php:892 public/partials/archive.php:325
 msgid "Starting at"
 msgstr "Desde"
 
@@ -1972,7 +1966,7 @@ msgstr "Paso"
 msgid "Submit"
 msgstr "Enviar"
 
-#: admin/class-dynamicpackages-metaboxes.php:615
+#: admin/class-dynamicpackages-metaboxes.php:616
 msgid "Subpackage Short Title"
 msgstr "Título corto del subpaquete"
 
@@ -1982,11 +1976,11 @@ msgstr "Título corto del subpaquete"
 msgid "Subtotal"
 msgstr "Subtotal"
 
-#: includes/class-dynamicpackages-utilities.php:1343
+#: includes/class-dynamicpackages-utilities.php:1345
 msgid "Sun"
 msgstr "Dom"
 
-#: includes/class-dynamicpackages-utilities.php:1330
+#: includes/class-dynamicpackages-utilities.php:1332
 msgid "Sunday"
 msgstr "Domingo"
 
@@ -1994,7 +1988,7 @@ msgstr "Domingo"
 msgid "Support via Whatsapp"
 msgstr "Soporte via Whatsapp"
 
-#: admin/class-dynamicpackages-metaboxes.php:484
+#: admin/class-dynamicpackages-metaboxes.php:485
 msgid "Surcharge per day of the week"
 msgstr "Recargo por día de semana"
 
@@ -2022,7 +2016,7 @@ msgstr "Términos y Condiciones:"
 msgid "Thank you for choosing Paypal"
 msgstr "Gracias por elegir Paypal"
 
-#: includes/class-dynamicpackages-form-actions.php:103
+#: includes/class-dynamicpackages-form-actions.php:105
 msgid "Thank you for contacting us. Our staff will be in touch with you soon."
 msgstr "Gracias por contactarnos, nuestro staff estará en contacto muy pronto."
 
@@ -2040,8 +2034,8 @@ msgstr "Gracias por tu %s de %s%s."
 msgid "Thank You for Your %s of %s%s: %s"
 msgstr "Gracias por tu %s de %s%s: %s"
 
-#: includes/class-dynamicpackages-form-actions.php:201
-#: includes/class-dynamicpackages-form-actions.php:221
+#: includes/class-dynamicpackages-form-actions.php:203
+#: includes/class-dynamicpackages-form-actions.php:223
 #: public/email-templates/estimates.php:7
 msgid "Thank You for Your Request"
 msgstr "Gracias por tu solicitud"
@@ -2074,7 +2068,7 @@ msgstr "Hay una nueva solicitud para el programa %s en %s."
 msgid "This coupon expires on %s."
 msgstr "Este cupón expira el %s."
 
-#: public/class-dynamicpackages-public.php:1369
+#: public/class-dynamicpackages-public.php:1371
 #, php-format
 msgid "This coupon is valid for booking of minimum %s %s."
 msgstr "Este cupón es válido para reservas de mínimo %s %s."
@@ -2093,15 +2087,15 @@ msgstr ""
 "Este precio ya incluye una tarifa adicional de servicio de pago de PayPal "
 "del %s%s."
 
-#: includes/class-dynamicpackages-utilities.php:1340
+#: includes/class-dynamicpackages-utilities.php:1342
 msgid "Thu"
 msgstr "Jue"
 
-#: includes/class-dynamicpackages-utilities.php:1327
+#: includes/class-dynamicpackages-utilities.php:1329
 msgid "Thursday"
 msgstr "Jueves"
 
-#: admin/class-dynamicpackages-add-ons.php:46
+#: admin/class-dynamicpackages-add-ons.php:47
 msgid "Title Modifier"
 msgstr "Modificador del título"
 
@@ -2112,7 +2106,7 @@ msgstr "Modificador del título"
 msgid "To"
 msgstr "Hasta"
 
-#: admin/class-dynamicpackages-metaboxes.php:534
+#: admin/class-dynamicpackages-metaboxes.php:535
 msgid "to"
 msgstr "a"
 
@@ -2184,8 +2178,8 @@ msgid "Today"
 msgstr "Hoy"
 
 #: public/class-dynamicpackages-public.php:480
-#: public/class-dynamicpackages-public.php:1264
-#: public/class-dynamicpackages-public.php:1291
+#: public/class-dynamicpackages-public.php:1266
+#: public/class-dynamicpackages-public.php:1293
 msgid "today"
 msgstr "hoy"
 
@@ -2194,8 +2188,8 @@ msgid "Tomorrow"
 msgstr "Mañana"
 
 #: public/class-dynamicpackages-public.php:481
-#: public/class-dynamicpackages-public.php:1270
-#: public/class-dynamicpackages-public.php:1295
+#: public/class-dynamicpackages-public.php:1272
+#: public/class-dynamicpackages-public.php:1297
 msgid "tomorrow"
 msgstr "mañana"
 
@@ -2205,20 +2199,20 @@ msgstr "mañana"
 msgid "Total"
 msgstr "Total"
 
-#: admin/class-dynamicpackages-metaboxes.php:364
-#: admin/class-dynamicpackages-metaboxes.php:653
+#: admin/class-dynamicpackages-metaboxes.php:365
+#: admin/class-dynamicpackages-metaboxes.php:654
 msgid "Transport"
 msgstr "Transporte"
 
-#: includes/class-dynamicpackages-utilities.php:1338
+#: includes/class-dynamicpackages-utilities.php:1340
 msgid "Tue"
 msgstr "Mar"
 
-#: includes/class-dynamicpackages-utilities.php:1325
+#: includes/class-dynamicpackages-utilities.php:1327
 msgid "Tuesday"
 msgstr "Martes"
 
-#: admin/class-dynamicpackages-metaboxes.php:713
+#: admin/class-dynamicpackages-metaboxes.php:714
 msgid "Turquoise"
 msgstr "Turquesa"
 
@@ -2255,19 +2249,19 @@ msgstr ""
 msgid "Username"
 msgstr "Usuario"
 
-#: admin/class-dynamicpackages-add-ons.php:128
+#: admin/class-dynamicpackages-add-ons.php:129
 msgid "Variable duration price"
 msgstr "Precio de duración variable"
 
-#: admin/class-dynamicpackages-add-ons.php:129
+#: admin/class-dynamicpackages-add-ons.php:130
 msgid "Variable duration price + 1"
 msgstr "Precio de duración variable + 1"
 
-#: admin/class-dynamicpackages-metaboxes.php:510
+#: admin/class-dynamicpackages-metaboxes.php:511
 msgid "Variable Duration Prices - Per Person"
 msgstr "Precio de duración variable - Por persona"
 
-#: admin/class-dynamicpackages-add-ons.php:131
+#: admin/class-dynamicpackages-add-ons.php:132
 msgid ""
 "Variable price works only on multi-day and daily rental packages. If the "
 "package is calculated per night 1 additional day will be added to this add-"
@@ -2313,11 +2307,11 @@ msgstr ""
 "Te hemos enviado un email a %s con más detalles y la confirmación de esta "
 "reserva."
 
-#: includes/class-dynamicpackages-utilities.php:1339
+#: includes/class-dynamicpackages-utilities.php:1341
 msgid "Wed"
 msgstr "Mie"
 
-#: includes/class-dynamicpackages-utilities.php:1326
+#: includes/class-dynamicpackages-utilities.php:1328
 msgid "Wednesday"
 msgstr "Miércoles"
 
@@ -2326,7 +2320,7 @@ msgid "Week"
 msgstr "Semana"
 
 #: includes/class-dynamicpackages-utilities.php:281
-#: admin/class-dynamicpackages-metaboxes.php:663
+#: admin/class-dynamicpackages-metaboxes.php:664
 msgid "Weeks"
 msgstr "Semanas"
 
@@ -2338,7 +2332,7 @@ msgstr ""
 msgid "Whatsapp Advisory"
 msgstr "Asesoría por Whatsapp"
 
-#: includes/class-dynamicpackages-form-actions.php:167
+#: includes/class-dynamicpackages-form-actions.php:169
 #, php-format
 msgid "When is a good time to call you at %s? Or do you prefer Whatsapp?"
 msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
@@ -2350,7 +2344,7 @@ msgstr "¿Cuándo es buen momento para llamarte al %s, o prefieres Whatsapp?"
 msgid "When paying with %s you must make sure that you use the %s network."
 msgstr "Cuando pagues por %s asegurate de utilizar la red %s."
 
-#: admin/class-dynamicpackages-metaboxes.php:703
+#: admin/class-dynamicpackages-metaboxes.php:704
 msgid "White"
 msgstr "Blanco"
 
@@ -2370,8 +2364,8 @@ msgstr "Nombre de negocio Yappy"
 msgid "Yappy Cell Phone Number"
 msgstr "Número de teléfono Yappy"
 
-#: admin/class-dynamicpackages-metaboxes.php:444
-#: admin/class-dynamicpackages-metaboxes.php:449
+#: admin/class-dynamicpackages-metaboxes.php:445
+#: admin/class-dynamicpackages-metaboxes.php:450
 msgid "year old"
 msgstr "años"
 
@@ -2384,15 +2378,15 @@ msgstr "años"
 msgid "years old"
 msgstr "años"
 
-#: admin/class-dynamicpackages-metaboxes.php:721
+#: admin/class-dynamicpackages-metaboxes.php:722
 msgid "Yellow"
 msgstr "Amarillo"
 
-#: admin/class-dynamicpackages-add-ons.php:357
-#: admin/class-dynamicpackages-metaboxes.php:414
-#: admin/class-dynamicpackages-metaboxes.php:546
-#: admin/class-dynamicpackages-metaboxes.php:628
-#: admin/class-dynamicpackages-metaboxes.php:682
+#: admin/class-dynamicpackages-add-ons.php:358
+#: admin/class-dynamicpackages-metaboxes.php:415
+#: admin/class-dynamicpackages-metaboxes.php:547
+#: admin/class-dynamicpackages-metaboxes.php:629
+#: admin/class-dynamicpackages-metaboxes.php:683
 msgid "Yes"
 msgstr "Si"
 
