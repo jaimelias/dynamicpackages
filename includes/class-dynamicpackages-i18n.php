@@ -46,12 +46,21 @@ class dynamicpackages_i18n {
 	 */
 	public function load_plugin_textdomain() {
 
+		$dir = dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages';
+
+		//wordpress 6.7 load_plugin_textdomain bug fix start
+		$mofile = WP_PLUGIN_DIR . '/'. $dir . '/' . $this->domain . '-' . get_locale() . '.mo';
+
+		if (file_exists($mofile)) {
+			load_textdomain($this->domain, $mofile);
+		}
+		//wordpress 6.7 load_plugin_textdomain bug fix end
+
 		load_plugin_textdomain(
 			$this->domain,
 			false,
-			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
+			$mofile
 		);
-
 	}
 
 	/**
