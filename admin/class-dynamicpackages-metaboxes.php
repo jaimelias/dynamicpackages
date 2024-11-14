@@ -124,6 +124,7 @@ class Dynamicpackages_Metaboxes
 		$this->set_lang_fields();
 		$this->set_week_day_fields();
 		$this->set_handsontable_args();
+		$this->redirect_page = intval(package_field('package_redirect_page'));
 	}
 
 	public function set_week_day_fields(){
@@ -353,7 +354,14 @@ class Dynamicpackages_Metaboxes
 					</p>
 				<?php
 			}
+
+			
 		?>
+
+			<select name="package_redirect_page" id="package_redirect_page">
+				<option value="0" <?php echo ($this->redirect_page == 0) ? 'selected' : ''; ?>>Package Page</option>
+				<option value="1" <?php echo ($this->redirect_page == 1) ? 'selected' : ''; ?>>Booking Page</option>
+			</select>
 		
 		<?php
     }

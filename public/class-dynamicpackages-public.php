@@ -1545,8 +1545,10 @@ class Dynamicpackages_Public {
 		if(is_singular('packages'))
 		{
 			$url = package_field('package_redirect_url_' . $lang);
+			$redirect_page = package_field('package_redirect_page');
+			$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
 
-			if(!empty($url))
+			if(!empty($url) && $valid_redirect_page)
 			{
 				if( filter_var($url, FILTER_VALIDATE_URL) !== false)
 				{
@@ -1561,10 +1563,18 @@ class Dynamicpackages_Public {
 	{
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
+		$redirect_page = package_field('package_redirect_page');
 
-		if( !empty($redirect) && (in_the_loop() || isset($_GET['minimal-sitemap'])))
+		if(empty($redirect))
 		{
-			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false)
+			return $url;
+		}
+
+		$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
+ 		
+		if(in_the_loop() || isset($_GET['minimal-sitemap']))
+		{
+			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
 			{
 				$url = $redirect;
 			}

@@ -243,7 +243,8 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_return_hour', esc_attr($_POST['package_return_hour']));
 		if(isset( $_POST['package_return_address']))
 			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));				
-		
+		if(isset( $_POST['package_redirect_page']))
+			update_post_meta( $post_id, 'package_redirect_page', esc_attr($_POST['package_redirect_page']));		
 			
 		for($x = 0; $x < count($languages); $x++)
 		{
