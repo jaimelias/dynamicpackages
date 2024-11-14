@@ -1546,7 +1546,11 @@ class Dynamicpackages_Public {
 		{
 			$url = package_field('package_redirect_url_' . $lang);
 			$redirect_page = package_field('package_redirect_page');
-			$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
+			$valid_redirect_page = (
+				(!is_booking_page() && (empty($redirect_page) || intval($redirect_page) === 0)
+				||
+				(is_booking_page() && intval($redirect_page) === 1)
+			)) ? true : false;
 
 			if(!empty($url) && $valid_redirect_page)
 			{
