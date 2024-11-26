@@ -374,7 +374,7 @@ class paguelo_facil_on{
 		
 	public function get_errors()
 	{
-		$output = null;
+		$output = '';
 
 		if(isset($this->error_codes))
 		{
@@ -413,9 +413,9 @@ class paguelo_facil_on{
 		{
 			if($this->success === 2)
 			{
-				$output = null;
+				$output = '';
 				$message = package_field('package_confirmation_message');
-				$details = apply_filters('dy_details', null); 
+				$details = apply_filters('dy_details', false); 
 				$output .= ($details) ? $details : null;
 				$output .= ($message) ? '<br/><br/>' . esc_html($message) : null;				
 			}

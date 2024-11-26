@@ -653,7 +653,7 @@ class Dynamicpackages_Public {
 	public static function description()
 	{	
 		global $post;
-		$output = null;
+		$output = '';
 		
 		if(isset($post) && isset($_REQUEST['booking_date']))
 		{
@@ -750,7 +750,7 @@ class Dynamicpackages_Public {
 	
 	public function show_badge()
 	{
-		$output = null;
+		$output = '';
 		$code = package_field('package_badge');
 		
 		if($code > 0)
@@ -1022,7 +1022,7 @@ class Dynamicpackages_Public {
 	public function get_all_coupons()
 	{
 		global $get_all_coupons;
-		$output = null;
+		$output = [];
 		
 		if(isset($get_all_coupons))
 		{
@@ -1321,7 +1321,7 @@ class Dynamicpackages_Public {
 		{
 			$duration_unit = package_field('package_length_unit');
 			$coupons = $this->get_all_coupons();
-			$output = null;			
+			$output = '';			
 						
 			if(is_array($coupons))
 			{

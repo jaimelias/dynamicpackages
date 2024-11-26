@@ -525,7 +525,7 @@ class Dynamicpackages_Reviews
 	
 	public function get_random_name()
 	{
-		$output = null;
+		$output = '';
 		$url = 'https://randomuser.me/api/';
 		$lang = substr(get_locale(), 0, -3);
 		

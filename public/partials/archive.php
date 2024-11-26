@@ -312,7 +312,7 @@ else
 								<p itemprop="description" class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden': 'hide-sm' ?>"><?php echo (get_the_excerpt()); ?></p>
 							<?php endif; ?>
 							
-							<div class="small"><?php echo apply_filters('dy_details', null); ?></div>
+							<div class="small"><?php echo apply_filters('dy_details', false); ?></div>
 							
 							
 							<?php if($starting_at): ?>

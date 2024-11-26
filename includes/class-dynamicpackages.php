@@ -71,6 +71,7 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-package-page.php';
 		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
 		require_once $dir . 'public/class-dynamicpackages-confirmation-page.php';
+		require_once $dir . 'public/class-dynamicpackages-export-post-types.php';
 		
 		//admin
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
@@ -117,6 +118,7 @@ class dynamicpackages {
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
 		new Dynamicpackages_Confirmation_Page($this->version);
+		new Dynamicpackages_Export_Post_Types($this->version);
 	}
 
 	private function define_gateteways_hooks()

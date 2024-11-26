@@ -68,7 +68,7 @@
 <div class="pure-g gutters">
 	<div class="pure-u-1 pure-u-md-1-3">
 		<div class="bottom-20">
-			<?php echo apply_filters('dy_details', null); ?>
+			<?php echo apply_filters('dy_details', false); ?>
 			<?php if(isset($add_to_calendar)) : ?>
 				<div class="text-center bottom-10"><?php echo $add_to_calendar; ?></div>
 			<?php endif; ?>

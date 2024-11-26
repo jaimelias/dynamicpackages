@@ -21,7 +21,7 @@ class dy_utilities {
 	}
 	public static function handsontable($args)
 	{
-		$output = null;
+		$output = '';
 		
 		if(is_array($args))
 		{
@@ -62,7 +62,7 @@ class dy_utilities {
 	}
 	public static function end_date()
 	{
-		$output = null;
+		$output = '';
 		
 		if(isset($_REQUEST['end_date']))
 		{
@@ -114,7 +114,7 @@ class dy_utilities {
 	{
 		$which_var = $option.'_get_coupon';
 		global $$which_var;
-		$output = null;
+		$output = '';
 		
 		if(isset($$which_var))
 		{
@@ -276,11 +276,12 @@ class dy_utilities {
 
 	public static function duration_label($unit, $value)
 	{
-		//duration_label(unit number, duration value);
+		//duration_label(unit number, duration value, $translate);
+		
 		$singular = array(__('Minute', 'dynamicpackages'), __('Hour', 'dynamicpackages'), __('Day', 'dynamicpackages'), __('Night', 'dynamicpackages'), __('Week', 'dynamicpackages'));
 		$plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));
-		$output = '';
 		
+		$output = '';
 		$label = $singular;
 		
 		if($value > 1)
@@ -513,7 +514,7 @@ class dy_utilities {
 			$the_id = get_the_ID();
 		}
 		
-		$output = null;
+		$output = [];
 		$which_var = '$price_chart_'.$the_id;
 		global $$which_var;
 		
@@ -532,7 +533,7 @@ class dy_utilities {
 					$output = $price_chart['price_chart'];
 				}
 			}
-			
+
 			$GLOBALS[$which_var] = $output;
 		}
 		return $output;
@@ -581,7 +582,7 @@ class dy_utilities {
 			$the_id = get_the_ID();
 		}		
 		
-		$output = null;
+		$output = [];
 		$which_var = '$occupancy_chart_'.$the_id;
 		global $$which_var;
 		
@@ -601,7 +602,7 @@ class dy_utilities {
 	public static function get_season_chart()
 	{
 		//package_seasons_chart
-		$output = null;
+		$output = [];
 		$which_var = 'seasons_chart_'.get_the_ID();
 		global $$which_var;
 		
@@ -1102,7 +1103,7 @@ class dy_utilities {
 	
 	public static function hour()
 	{
-		$output = null;
+		$output = '';
 		$field = package_field('package_start_hour' );
 
 		if($field)
@@ -1123,7 +1124,7 @@ class dy_utilities {
 	
 	public static function return_hour()
 	{
-		$output = null;
+		$output = '';
 		$field = package_field('package_return_hour' );
 
 		if(!empty($field))
@@ -1358,7 +1359,7 @@ class dy_utilities {
 
 	public static function event_date_update($the_id)
 	{
-		$output = null;
+		$output = '';
 		global $polylang;
 		global $post;
 		

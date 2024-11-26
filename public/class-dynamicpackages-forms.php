@@ -448,7 +448,7 @@ class Dynamicpackages_Forms
 	
 	public function pagination($args)
 	{
-		$output = null;
+		$output = '';
 		$archive_query = $args['archive_query'];
 		$posts_per_page = $args['posts_per_page'];
 		
