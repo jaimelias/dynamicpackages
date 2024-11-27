@@ -13,6 +13,8 @@ class Dynamicpackages_Export_Post_Types{
     {
 
         $package_type = intval(package_field('package_package_type'));
+        $duration_unit = intval(package_field('package_length_unit'));
+        $min_duration = intval(package_field('package_duration'));
 
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
@@ -20,7 +22,7 @@ class Dynamicpackages_Export_Post_Types{
             'check_in_hour' => package_field('package_check_in_hour'),
             'start_hour' => dy_utilities::hour(),
             'start_address' => package_field('package_start_address'),
-            'package_type' => $this->package_type_label()
+            'package_type' => $this->package_type_label($package_type, $duration_unit)
         ];
     
         if (dy_validators::package_type_transport()) {
@@ -31,15 +33,13 @@ class Dynamicpackages_Export_Post_Types{
             ];
         }
     
-        $package['pricing'] = [
-            'starting_at' => dy_utilities::starting_at()
-        ];
+        $package['rates'] = [];
     
         $package_free = intval(package_field('package_free'));
         $package_discount = intval(package_field('package_discount'));
     
         if ($package_free > 0) {
-            $package['pricing']['free_children_until_age'] = $package_free;
+            $package['rates']['free_children_until_age'] = $package_free;
         }
     
         $children_key_prefix = $package_free > 0 
@@ -47,15 +47,39 @@ class Dynamicpackages_Export_Post_Types{
             : "children_up_to_" . $package_discount . "_years_old";
         
         
-        $price_prefix = ($package_type === 2 || $package_type === 3) ? 'rental_prices_' : 'fixed_prices_';
-        $price_suffix = $this->price_suffix();
         
-
+       //base prices
         $price_chart = dy_utilities::get_hot_chat('package_price_chart');
+        $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
+        $package['rates'][$price_key_name] = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+
+        if($package_type === 1)
+        {
+            
+            $occupancy_chart = dy_utilities::get_hot_chat('package_occupancy_chart');
+            $occupancy_price_key_name = $this->occupancy_price_key_name($package_type, $duration_unit);
+
+            $package['rates']['seasons_'.$occupancy_price_key_name] = [
+                'season_chart_0' => [
+                    'is_default_season' => true,
+                    'name' => '',
+                    'date_from' => '',
+                    'date_to' => '',
+                    'min_duration' => $min_duration .' '. $this->occupancy_duration_label($package_type, $duration_unit),
+                    'prices' => $this->parse_price_chart($occupancy_chart, 'occupancy_chart', $children_key_prefix)
+                ]
+            ];
 
 
-        //base prices
-        $package['pricing'][$price_prefix . $price_suffix] = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+            $seasons_chart = dy_utilities::get_hot_chat('package_seasons_chart');
+            $rates_by_season = $this->get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit);
+
+            $package['rates']['seasons_'.$occupancy_price_key_name] = array_merge(
+                $package['rates']['seasons_'.$occupancy_price_key_name],
+                $rates_by_season
+            );
+        }
+        
 
 
         $surcharges = $this->get_surcharges($package_type);
@@ -70,6 +94,42 @@ class Dynamicpackages_Export_Post_Types{
         return $post;
     }
 
+
+    public function get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit)
+    {
+        if(!is_array($seasons_chart)){
+            return [];
+        }
+
+        if(!array_key_exists('seasons_chart', $seasons_chart))
+        {
+            return [];
+        }
+
+        $output = [];
+
+        for($x = 0; $x < count($seasons_chart['seasons_chart']); $x++)
+        {
+
+            $this_season = $seasons_chart['seasons_chart'][$x];
+
+            $season_id = $this_season[4];
+
+            $season = [
+                'is_default_season' => false,
+                'name' => $this_season[0],
+                'date_from' => $this_season[1],
+                'date_to' => $this_season[2],
+                'min_duration' => $this_season[3] .' '. $this->occupancy_duration_label($package_type, $duration_unit)
+            ];
+
+            $chart = dy_utilities::get_hot_chat('package_occupancy_chart');
+            $season['prices'] = $this->parse_price_chart($chart, 'occupancy_chart'.$season_id, $children_key_prefix);
+            $output[$season_id] = $season;
+        }
+        
+        return $output;
+    }
 
     public function get_surcharges($package_type)
     {
@@ -102,8 +162,8 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = [];
 
-        if (is_array($price_chart) && isset($price_chart['price_chart'])) {
-            foreach ($price_chart['price_chart'] as $index => $price_row) {
+        if (is_array($price_chart) && isset($price_chart[$price_chart_key])) {
+            foreach ($price_chart[$price_chart_key] as $index => $price_row) {
                 $adult_key = ($index + 1) . '_adult';
                 $child_key = ($index + 1) . '_child';
     
@@ -120,10 +180,8 @@ class Dynamicpackages_Export_Post_Types{
         return $output;
     }
 
-    public function package_type_label()
+    public function package_type_label($package_type, $duration_unit)
     {
-        $package_type = intval(package_field('package_package_type'));
-        $duration_unit = intval(package_field('package_length_unit'));
         $output = '';
 
         if($package_type === 0)
@@ -161,49 +219,74 @@ class Dynamicpackages_Export_Post_Types{
 		return $output;      
     }
     
-	public function price_suffix()
-	{
-        $package_type = intval(package_field('package_package_type'));
-        $duration_unit = intval(package_field('package_length_unit'));
-        $output = '';
 
+    public function fixed_price_key_name($package_type, $duration_unit)
+    {
+        $output = 'fixed_price_per_person';
 
-        if($package_type === 0)
-        {
-            $output = 'per_person';
-        }
-        else if($package_type === 1)
-        {
-            if($duration_unit === 2)
-            {
-                $output = 'per_person_per_day';
-            }
-            else if($duration_unit === 3)
-            {
-                $output = 'per_person_per_night';
-            }
-            else if($duration_unit === 4)
-            {
-                $output = 'per_person_per_week';
-            }
-        }
         if($package_type === 2)
         {
-            $output = 'per_person_per_day';
+            $output = 'rental_price_per_person_per_day';
         }
         if($package_type === 3)
         {
-            $output = 'per_person_per_hour';
+            $output = 'rental_price_per_person_per_hour';
         }
         if($package_type === 4)
         {
-            $output = 'per_person_one_way';
+            $output = 'price_per_person_one_way';
+        }
+
+        return $output;
+    }
+
+	public function occupancy_price_key_name($package_type, $duration_unit)
+	{
+        $output = '';
+
+        if($package_type === 1)
+        {
+            if($duration_unit === 2)
+            {
+                $output = 'price_per_person_per_day';
+            }
+            else if($duration_unit === 3)
+            {
+                $output = 'price_per_person_per_night';
+            }
+            else if($duration_unit === 4)
+            {
+                $output = 'price_per_person_per_week';
+            }
         }
 
 		return $output;
 	}
     
     
+    public function occupancy_duration_label($package_type, $duration_unit)
+    {
+        $output = '';
+
+        if($package_type === 1)
+        {
+            if($duration_unit === 2)
+            {
+                $output = 'day';
+            }
+            else if($duration_unit === 3)
+            {
+                $output = 'night';
+            }
+            else if($duration_unit === 4)
+            {
+                $output = 'week';
+            }
+        }
+
+		return $output;      
+    }
+
 }
 
 ?>
