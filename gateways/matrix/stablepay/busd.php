@@ -3,7 +3,9 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 #[AllowDynamicProperties]
-class busd{
+class busd {
+
+	private static $cache = [];
 	
 	function __construct($plugin_id)
 	{

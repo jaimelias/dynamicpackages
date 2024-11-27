@@ -3,8 +3,10 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 #[AllowDynamicProperties]
-class paypal_me{
+class paypal_me {
 	
+	private static $cache = [];
+
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;

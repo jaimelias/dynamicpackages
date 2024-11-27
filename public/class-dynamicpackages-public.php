@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Public {
 
+	private static $cache = [];
+
 	public function __construct($version) {
 		$this->version = $version;
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
@@ -1030,7 +1032,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$coupons = json_decode(html_entity_decode(package_field('package_coupons')), true);
+			$coupons = dy_utilities::get_hot_chat('package_coupons');
 			
 			if(array_key_exists('coupons', $coupons))
 			{

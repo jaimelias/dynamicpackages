@@ -11,13 +11,16 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_fields($post)
     {
+
+        $package_type = intval(package_field('package_package_type'));
+
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
             'duration' => dy_utilities::show_duration(true),
             'check_in_hour' => package_field('package_check_in_hour'),
             'start_hour' => dy_utilities::hour(),
             'start_address' => package_field('package_start_address'),
-            'package_type' => $this->package_type()
+            'package_type' => $this->package_type_label()
         ];
     
         if (dy_validators::package_type_transport()) {
@@ -42,17 +45,58 @@ class Dynamicpackages_Export_Post_Types{
         $children_key_prefix = $package_free > 0 
             ? "children_from_" . ($package_free + 1) . "_up_to_" . $package_discount . "_years_old" 
             : "children_up_to_" . $package_discount . "_years_old";
+        
+        
+        $price_prefix = ($package_type === 2 || $package_type === 3) ? 'rental_prices_' : 'fixed_prices_';
         $price_suffix = $this->price_suffix();
+        
 
-        $price_chart = json_decode(html_entity_decode(package_field('package_price_chart')), true);
+        $price_chart = dy_utilities::get_hot_chat('package_price_chart');
 
-        $package['pricing']['fixed_prices_' . $price_suffix] = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+
+        //base prices
+        $package['pricing'][$price_prefix . $price_suffix] = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+
+
+        $surcharges = $this->get_surcharges($package_type);
+
+        if(!empty($surcharges))
+        {
+            $package = array_merge($package, $surcharges);
+        }
 
         $post['package'] = $package;
     
         return $post;
     }
 
+
+    public function get_surcharges($package_type)
+    {
+        $output = [];
+        $week_days = dy_utilities::get_week_days_abbr();
+        $week_day_surcharges = [];
+        
+
+        for($x = 0; $x < count($week_days); $x++)
+        {
+            $surcharge = intval(package_field('package_week_day_surcharge_'.$week_days[$x]));
+
+            if($surcharge > 0)
+            {
+                $week_day_surcharges[$week_days[$x]] = $surcharge;
+            }
+        }
+
+        if(!empty($week_day_surcharges))
+        {
+            $output['percent_surcharges_by_weekday'] = $week_day_surcharges;
+        }
+
+        //$one_way_surcharges = package_field('package_one_way_surcharge');
+
+        return $output;
+    }
 
     public function parse_price_chart($price_chart, $price_chart_key, $children_key_prefix)
     {
@@ -76,7 +120,7 @@ class Dynamicpackages_Export_Post_Types{
         return $output;
     }
 
-    public function package_type()
+    public function package_type_label()
     {
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
@@ -88,15 +132,15 @@ class Dynamicpackages_Export_Post_Types{
         }
         else if($package_type === 1)
         {
-            if($duration_unit === 0)
+            if($duration_unit === 2)
             {
                 $output = 'Multi-day Trip: day based';
             }
-            else if($duration_unit === 1)
+            else if($duration_unit === 3)
             {
                 $output = 'Multi-day Trip: night based';
             }
-            else if($duration_unit === 2)
+            else if($duration_unit === 4)
             {
                 $output = 'Multi-day Trip: week based';
             }
@@ -130,15 +174,15 @@ class Dynamicpackages_Export_Post_Types{
         }
         else if($package_type === 1)
         {
-            if($duration_unit === 0)
+            if($duration_unit === 2)
             {
                 $output = 'per_person_per_day';
             }
-            else if($duration_unit === 1)
+            else if($duration_unit === 3)
             {
                 $output = 'per_person_per_night';
             }
-            else if($duration_unit === 2)
+            else if($duration_unit === 4)
             {
                 $output = 'per_person_per_week';
             }

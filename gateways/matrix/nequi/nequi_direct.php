@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class nequi_direct{
 	
+	private static $cache = [];
+
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;

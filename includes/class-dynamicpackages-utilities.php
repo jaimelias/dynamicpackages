@@ -5,7 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 
 #[AllowDynamicProperties]
 class dy_utilities {
-		
+
+	private static $cache = [];
 
 	public static function sort_by_arr()
 	{
@@ -112,76 +113,72 @@ class dy_utilities {
 	
 	public static function get_coupon($option)
 	{
-		$which_var = $option.'_get_coupon';
-		global $$which_var;
+		$cache_key = $option.'_get_coupon';
 		$output = '';
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
-		else
+		
+		$option = strtolower($option);
+		$coupons = dy_utilities::get_hot_chat('package_coupons');
+		$output = 'option not selected';
+		$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
+		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
+		
+		if(is_array($coupons))
 		{
-			$option = strtolower($option);
-			$coupons = json_decode(html_entity_decode(package_field('package_coupons' )), true);
-			$output = 'option not selected';
-			$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
-			$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
-			
-			if(is_array($coupons))
+			if(array_key_exists('coupons', $coupons))
 			{
-				if(array_key_exists('coupons', $coupons))
+				$coupons = $coupons['coupons'];
+				
+				for($x = 0; $x < count($coupons); $x++)
 				{
-					$coupons = $coupons['coupons'];
-					
-					for($x = 0; $x < count($coupons); $x++)
+					if(!empty($coupons[$x][0]))
 					{
-						if(!empty($coupons[$x][0]))
+						if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
 						{
-							if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
+							if($option == 'code')
 							{
-								if($option == 'code')
-								{
-									$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
-								}
-								else if($option == 'discount')
-								{
-									$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
-									$output = (is_numeric($output)) ? $output : null;
-								}	
-								else if($option == 'expiration')
-								{
-									$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
-									$output = (is_valid_date($output)) ? $output : null;
-								}
-								else if($option == 'publish')
-								{
-									$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
-								}
-								else if($option == 'min_duration')
-								{
-									$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
-									$output = (is_numeric($output)) ? intval($output) : 0;
-								}
-								else if($option == 'max_duration')
-								{
-									$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
-									$output = (is_numeric($output)) ? intval($output) : 0;
-								}
-								else if($option == 'bookings_after_expires')
-								{
-									$output = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
-								}							
+								$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
 							}
+							else if($option == 'discount')
+							{
+								$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
+								$output = (is_numeric($output)) ? $output : null;
+							}	
+							else if($option == 'expiration')
+							{
+								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
+								$output = (is_valid_date($output)) ? $output : null;
+							}
+							else if($option == 'publish')
+							{
+								$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
+							}
+							else if($option == 'min_duration')
+							{
+								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
+								$output = (is_numeric($output)) ? intval($output) : 0;
+							}
+							else if($option == 'max_duration')
+							{
+								$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
+								$output = (is_numeric($output)) ? intval($output) : 0;
+							}
+							else if($option == 'bookings_after_expires')
+							{
+								$output = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
+							}							
 						}
 					}
-				}				
-			}
-			
-			if($output != null)
-			{
-				$GLOBALS[$which_var] = $output;
-			}
+				}
+			}				
+		}
+		
+		if(!empty($output))
+		{
+			self::$cache[$cache_key] = $output;
 		}
 		
 		return $output;
@@ -190,32 +187,29 @@ class dy_utilities {
 
 	public static function checkout_package_ID()
 	{
-		$which_var = 'checkout_package_ID';
-		global $$which_var;
+		$cache_key = 'checkout_package_ID';
+		$the_id = 0;
 
-		if(isset($$which_var))
-		{
-			$the_id = $$which_var;
-		}
-		else
-		{
-			if(isset($_POST['post_id']))
-			{
-				if(intval($_POST['post_id']) > 0)
-				{
-					$the_id = sanitize_text_field($_POST['post_id']);
-				}
-			}
-
-			if(!isset($the_id))
-			{
-				$the_id = get_the_ID();
-			}
-
-			$GLOBALS[$which_var] = $the_id;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
 
-		
+		if(isset($_POST['post_id']))
+		{
+			if(intval($_POST['post_id']) > 0)
+			{
+				$the_id = sanitize_text_field($_POST['post_id']);
+			}
+		}
+
+		if(!isset($the_id))
+		{
+			$the_id = get_the_ID();
+		}
+
+		//store output in $cache
+		self::$cache[$cache_key] = $the_id;
+
 		return $the_id;
 	}
 
@@ -223,54 +217,48 @@ class dy_utilities {
 	public static function total($regular = null)
 	{
 		$the_id = self::checkout_package_ID();
-		$which_var = 'dy_total_'.$regular.'_'.$the_id;
-		global $$which_var; 
+		$cache_key = 'dy_total_'.$regular.'_'.$the_id;
 		$total = 0;
 		
-		if(isset($$which_var))
-		{
-			$total = $$which_var;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		if(is_booking_page() || is_checkout_page())
+		{	
+			$total = self::subtotal($regular, $the_id) + self::get_add_ons_total();
 		}
 		else
 		{
-			if(is_booking_page() || is_checkout_page())
-			{	
-				$total = self::subtotal($regular, $the_id) + self::get_add_ons_total();
-			}
-			else
-			{
-				$total = self::starting_at();
-			}
-						
-			$GLOBALS[$which_var] = $total;
+			$total = self::starting_at();
 		}
+					
+		//store output in $cache
+		self::$cache[$cache_key] = $total;
 		
 		return $total;
 	}
 
 	public static function subtotal($regular = null, $the_id = 0)
 	{
-		$which_var = 'dy_subtotal_'.$regular.'_'.$the_id;
-		global $$which_var; 
+		$cache_key = 'dy_subtotal_'.$regular.'_'.$the_id;
 		$subtotal = 0;
 		
-		if(isset($$which_var))
-		{
-			$subtotal = $$which_var;
-		}		
-		else
-		{
-			$subtotal = 0;
-			//sums regular price
-			$subtotal += self::get_price_regular($regular, 'total');
-
-			//sums discount price
-			$discount = self::get_price_discount($regular, 'total');
-			$subtotal += $discount;
-			
-			$GLOBALS[$which_var] = $subtotal;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
+
+		$subtotal = 0;
+		//sums regular price
+		$subtotal += self::get_price_regular($regular, 'total');
+
+		//sums discount price
+		$discount = self::get_price_discount($regular, 'total');
+		$subtotal += $discount;
 		
+		//store output in $cache
+		self::$cache[$cache_key] = $subtotal;
+
 		return $subtotal;
 	}
 
@@ -297,211 +285,199 @@ class dy_utilities {
 	{
 		$duration_label = '';
 		$the_id = get_the_ID();
-		$which_var = 'dy_show_duration_'.$the_id.'_'.$max;
-		global $$which_var;
+		$cache_key = 'dy_show_duration_'.$the_id.'_'.$max;
 
-		if(isset($$which_var))
-		{
-			$duration_label = $$which_var;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
-		else
-		{
-			$duration = intval(package_field('package_duration'));
-			$duration_label = floatval(package_field('package_duration'));
-			$duration_unit = intval(package_field('package_length_unit'));
-			$duration_max = floatval(package_field('package_duration_max'));	
-			
-			if(!empty($duration))
-			{
-				$min_nights = self::get_min_nights();
 
-				if(self::package_type_by_hour() || self::package_type_by_day() || $duration_unit === 2 || $duration_unit === 3)
-				{
-					if($min_nights)
-					{
-						$duration = $min_nights;
-					}
-				}
-					
-				if(!is_booking_page())
-				{
-					if($duration_max > $duration)
-					{
-						$duration_label = $duration;
-						
-						if($max === true)
-						{
-							$duration_label .= ' - '.$duration_max;
-						}
-					}			
-				}
-				else
+		$duration = intval(package_field('package_duration'));
+		$duration_label = floatval(package_field('package_duration'));
+		$duration_unit = intval(package_field('package_length_unit'));
+		$duration_max = floatval(package_field('package_duration_max'));	
+		
+		if(!empty($duration))
+		{
+			$min_nights = self::get_min_nights();
+
+			if(self::package_type_by_hour() || self::package_type_by_day() || $duration_unit === 2 || $duration_unit === 3)
+			{
+				if($min_nights)
 				{
 					$duration = $min_nights;
-					$duration_label = $duration;
 				}
+			}
 				
-				
-				$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
-				$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
+			if(!is_booking_page())
+			{
+				if($duration_max > $duration)
+				{
+					$duration_label = $duration;
+					
+					if($max === true)
+					{
+						$duration_label .= ' - '.$duration_max;
+					}
+				}			
+			}
+			else
+			{
+				$duration = $min_nights;
+				$duration_label = $duration;
 			}
 			
-			$GLOBALS[$which_var] = $duration_label;
+			
+			$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
+			$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
 		}
+		
+		//store output in $cache
+		self::$cache[$cache_key] = $duration_label;
 
 		return $duration_label;
 	}
 
 
-	public static function starting_at_archive($id = '')
-	{
-		$the_id = $id;
-		
-		if($the_id === '')
+	public static function starting_at_archive($the_id = null)
+	{	
+		if(!$the_id)
 		{
 			$the_id = get_the_ID();
 		}
 		
 		$name = 'dy_start_archive';
-		$which_var = $name.'_'.$the_id;
-		global $$which_var;
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$output = self::starting_at();
-			
-			if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
-			{
-				$prices = array();
-				$children = dy_validators::has_children();
-		
-				foreach ( $children as $child )
-				{
-					array_push($prices, self::starting_at($child->ID, $the_id));
-				}
+		$cache_key = $name.'_'.$the_id;
 
-				if(is_array($prices))
-				 {
-					if(count($prices) > 0)
-					{
-						 $output = min($prices);
-					}
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}		
+
+		$output = self::starting_at();
+		
+		if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
+		{
+			$prices = array();
+			$children = dy_validators::has_children();
+	
+			foreach ( $children as $child )
+			{
+				array_push($prices, self::starting_at($child->ID, $the_id));
+			}
+
+			if(is_array($prices))
+				{
+				if(count($prices) > 0)
+				{
+						$output = min($prices);
 				}
 			}
-			
-			$GLOBALS[$which_var] = $output;
 		}
 		
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
-	public static function starting_at($id = null, $parent_id = null)
-	{
-		$the_id = $id;
-		
-		if($the_id === null)
+
+	public static function starting_at($the_id = null, $parent_id = null)
+	{		
+		if(!$the_id)
 		{
 			$the_id = get_the_ID();
 		}
 		
 		$output = 0;
 		$name = 'dy_starting_at';
-		$which_var = $name.'_'.$the_id;
-		global $$which_var;		
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
+		$cache_key = $name.'_'.$the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
-		else
+	
+		$prices = array();
+		$max = intval(package_field('package_max_persons', $the_id));
+		$min = intval(package_field('package_min_persons', $the_id));
+		$duration = floatval(package_field('package_duration'));
+		$price_chart = self::get_price_chart($the_id);
+		$occupancy_chart = self::get_occupancy_chart($the_id);	
+		$occupancy_chart = (is_array($occupancy_chart)) 
+			? (array_key_exists('occupancy_chart', $occupancy_chart)) 
+			? $occupancy_chart['occupancy_chart'] 
+			: null 
+			: null;
+		$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
+		$duration_unit = intval(package_field('package_length_unit'));
+		$duration_max = intval(package_field('package_duration_max'));
+		$package_type = intval(package_field('package_package_type'));
+				
+		for($t = 0; $t < $max; $t++)
 		{
-			$prices = array();
-			$max = intval(package_field('package_max_persons', $the_id));
-			$min = intval(package_field('package_min_persons', $the_id));
-			$duration = floatval(package_field('package_duration'));
-			$price_chart = self::get_price_chart($the_id);
-			$occupancy_chart = self::get_occupancy_chart($the_id);	
-			$occupancy_chart = (is_array($occupancy_chart)) 
-				? (array_key_exists('occupancy_chart', $occupancy_chart)) 
-				? $occupancy_chart['occupancy_chart'] 
-				: null 
-				: null;
-			$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
-			$duration_unit = intval(package_field('package_length_unit'));
-			$duration_max = intval(package_field('package_duration_max'));
-			$package_type = intval(package_field('package_package_type'));
-					
-			for($t = 0; $t < $max; $t++)
+			if($t >= ($min-1))
 			{
-				if($t >= ($min-1))
+				$base_price = 0;
+				$occupancy_price = 0;
+				
+				if(is_array($price_chart))
 				{
-					$base_price = 0;
-					$occupancy_price = 0;
-					
-					if(is_array($price_chart))
+					if(isset($price_chart[$t][0]))
 					{
-						if(isset($price_chart[$t][0]))
+						if(!empty($price_chart[$t][0]))
 						{
-							if(!empty($price_chart[$t][0]))
-							{
-								$base_price = floatval($price_chart[$t][0]);
-							}
+							$base_price = floatval($price_chart[$t][0]);
 						}
 					}
-					if(is_array($occupancy_chart))
-					{
-						if(isset($occupancy_chart[$t][0]))
-						{
-							if(!empty($occupancy_chart[$t][0]))
-							{
-								
-								$occupancy_price = floatval($occupancy_chart[$t][0]);
-								
-								if($duration_max === 0 && $package_type !== 1)
-								{
-									$occupancy_price = $occupancy_price * $duration;
-								}
-							}
-						}
-					}
-					
-					if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 1)
-					{
-						$price = ($base_price + ($occupancy_price * $duration)) / $duration;
-					}
-					else
-					{
-						$price = $base_price + $occupancy_price;
-					}
-					
-					
-					if($price_type == 1)
-					{
-						$price = $price * intval($t+1);
-					}
-								
-					array_push($prices, $price);				
 				}
-			}
+				if(is_array($occupancy_chart))
+				{
+					if(isset($occupancy_chart[$t][0]))
+					{
+						if(!empty($occupancy_chart[$t][0]))
+						{
 							
-			if(is_array($prices))
-			{
-				if(count($prices) > 0)
-				{
-					if($min > 1)
-					{
-						array_slice($prices, ($min - 1), count($prices));
+							$occupancy_price = floatval($occupancy_chart[$t][0]);
+							
+							if($duration_max === 0 && $package_type !== 1)
+							{
+								$occupancy_price = $occupancy_price * $duration;
+							}
+						}
 					}
-					
-					$output = floatval(min($prices));
 				}
+				
+				if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 1)
+				{
+					$price = ($base_price + ($occupancy_price * $duration)) / $duration;
+				}
+				else
+				{
+					$price = $base_price + $occupancy_price;
+				}
+				
+				
+				if($price_type == 1)
+				{
+					$price = $price * intval($t+1);
+				}
+							
+				array_push($prices, $price);				
 			}
-			
-			$GLOBALS[$which_var] = $output;
 		}
+						
+		if(is_array($prices))
+		{
+			if(count($prices) > 0)
+			{
+				if($min > 1)
+				{
+					array_slice($prices, ($min - 1), count($prices));
+				}
+				
+				$output = floatval(min($prices));
+			}
+		}
+		
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
 
 		return $output;
 	}
@@ -515,27 +491,25 @@ class dy_utilities {
 		}
 		
 		$output = [];
-		$which_var = '$price_chart_'.$the_id;
-		global $$which_var;
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$price_chart = json_decode(html_entity_decode(package_field('package_price_chart', $the_id)), true);
-		
-			if(is_array($price_chart))
-			{
-				if(array_key_exists('price_chart', $price_chart))
-				{
-					$output = $price_chart['price_chart'];
-				}
-			}
+		$cache_key = '$price_chart_'.$the_id;
 
-			$GLOBALS[$which_var] = $output;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
+		
+		$price_chart = dy_utilities::get_hot_chat('package_price_chart', $the_id);
+	
+		if(is_array($price_chart))
+		{
+			if(array_key_exists('price_chart', $price_chart))
+			{
+				$output = $price_chart['price_chart'];
+			}
+		}
+
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 
@@ -582,39 +556,34 @@ class dy_utilities {
 			$the_id = get_the_ID();
 		}		
 		
-		$output = [];
-		$which_var = '$occupancy_chart_'.$the_id;
-		global $$which_var;
+		$cache_key = '$occupancy_chart_'.$the_id;
 		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
 		}
-		else
-		{
-			$chart = json_decode(html_entity_decode(package_field('package_occupancy_chart', $the_id)), true);
-			$GLOBALS[$which_var] = $chart;
-			$output = $chart;
-		}
+
+		$chart = dy_utilities::get_hot_chat('package_occupancy_chart', $the_id);
 		
-		return $output;
+		//store output in $cache
+		self::$cache[$cache_key] = $chart;
+
+		return $chart;
 	}
 	public static function get_season_chart()
 	{
 		//package_seasons_chart
 		$output = [];
-		$which_var = 'seasons_chart_'.get_the_ID();
-		global $$which_var;
+		$cache_key = 'seasons_chart_'.get_the_ID();
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		$output = dy_utilities::get_hot_chat('package_seasons_chart');	
 		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{			
-			$output = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
-			$GLOBALS[$which_var] = $output;
-		}
+		
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}	
@@ -647,7 +616,7 @@ class dy_utilities {
 	public static function get_disabled_range()
 	{
 		$output = array();
-		$disabled = json_decode(html_entity_decode(package_field('package_disabled_dates' )), true);
+		$disabled = dy_utilities::get_hot_chat('package_disabled_dates');
 		
 		if(is_array($disabled))
 		{
@@ -689,7 +658,7 @@ class dy_utilities {
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
-			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
+			$seasons = dy_utilities::get_hot_chat('package_seasons_chart');
 			$duration_arr = [];
 			
 			if(isset($_REQUEST['booking_extra']))
@@ -805,9 +774,11 @@ class dy_utilities {
 		if(isset($_REQUEST['booking_date']))
 		{
 			$sum = 0;
-			$occupancy_chart = json_decode(html_entity_decode(package_field('package_occupancy_chart' )), true);
+
+			
+			$occupancy_chart = dy_utilities::get_hot_chat('package_occupancy_chart');
 			$duration = self::get_min_nights();
-			$seasons = json_decode(html_entity_decode(package_field('package_seasons_chart' )), true);
+			$seasons = dy_utilities::get_hot_chat('package_seasons_chart');
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
@@ -970,90 +941,88 @@ class dy_utilities {
 	public static function get_price_calc($sum, $regular, $type)
 	{
 
-		$which_var ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_the_ID();
-		global $$which_var;
+		$cache_key ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_the_ID();
 
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$package_type = intval(package_field('package_package_type'));
+		$occupancy_price = (dy_validators::package_type_multi_day()) ? self::get_price_occupancy($type) : 0;
+		$sum = $sum + $occupancy_price;
+		$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+		$week_days_to_surcharge = array($booking_date);
+		$one_way_surcharge = intval(package_field('package_one_way_surcharge'));
+
+		if(dy_validators::package_type_transport())
 		{
-			$sum = $$which_var;
+			$sum_arr = [$sum];
+
+			$end_date = (isset($_REQUEST['end_date'])) ? sanitize_text_field($_REQUEST['end_date']) : '';
+
+			if(is_valid_date($booking_date))
+			{
+				if(is_valid_date($end_date))
+				{
+					$sum_arr[] = $sum;
+					$week_days_to_surcharge[] = $end_date;
+				}
+
+				$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
+
+				if(is_array($surcharges_arr))
+				{
+					if(count($surcharges_arr) > 0)
+					{
+						for($x = 0; $x < count($surcharges_arr); $x++)
+						{
+							$surcharges = (floatval($surcharges_arr[$x]) > 0) ? floatval($surcharges_arr[$x]) : 0;
+							$surcharge_percentage = ($surcharges > 0) ? (($surcharges_arr[$x]/100) * $sum_arr[$x]) : 0;
+							$sum_arr[$x] =  $sum_arr[$x] + $surcharge_percentage;
+						}
+
+						$sum = array_sum($sum_arr);
+					}
+				}
+
+				if(!is_valid_date($end_date) && $one_way_surcharge > 0)
+				{
+					$one_way_surcharge = ($one_way_surcharge / 100) * $sum;
+					$sum += $one_way_surcharge;
+				}
+			}
 		}
 		else
 		{
-			$package_type = intval(package_field('package_package_type'));
-			$occupancy_price = (dy_validators::package_type_multi_day()) ? self::get_price_occupancy($type) : 0;
-			$sum = $sum + $occupancy_price;
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-			$week_days_to_surcharge = array($booking_date);
-			$one_way_surcharge = intval(package_field('package_one_way_surcharge'));
-
-			if(dy_validators::package_type_transport())
+			if((self::package_type_by_hour() || self::package_type_by_day()) && isset($_REQUEST['booking_extra']))
 			{
-				$sum_arr = [$sum];
+				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+			}
 
-				$end_date = (isset($_REQUEST['end_date'])) ? sanitize_text_field($_REQUEST['end_date']) : '';
+			if(!dy_validators::package_type_multi_day())
+			{
+				$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
 
-				if(is_valid_date($booking_date))
+				if(is_array($surcharges_arr))
 				{
-					if(is_valid_date($end_date))
+					if(count($surcharges_arr) === 1)
 					{
-						$sum_arr[] = $sum;
-						$week_days_to_surcharge[] = $end_date;
-					}
-
-					$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
-
-					if(is_array($surcharges_arr))
-					{
-						if(count($surcharges_arr) > 0)
-						{
-							for($x = 0; $x < count($surcharges_arr); $x++)
-							{
-								$surcharges = (floatval($surcharges_arr[$x]) > 0) ? floatval($surcharges_arr[$x]) : 0;
-								$surcharge_percentage = ($surcharges > 0) ? (($surcharges_arr[$x]/100) * $sum_arr[$x]) : 0;
-								$sum_arr[$x] =  $sum_arr[$x] + $surcharge_percentage;
-							}
-
-							$sum = array_sum($sum_arr);
-						}
-					}
-
-					if(!is_valid_date($end_date) && $one_way_surcharge > 0)
-					{
-						$one_way_surcharge = ($one_way_surcharge / 100) * $sum;
-						$sum += $one_way_surcharge;
+						$surcharge = floatval($surcharges_arr[0]);
+						$surcharge_percentage = ($surcharge > 0) ? (($surcharge/100) * $sum) : 0;
+						$sum = $sum + $surcharge_percentage;
 					}
 				}
 			}
-			else
-			{
-				if((self::package_type_by_hour() || self::package_type_by_day()) && isset($_REQUEST['booking_extra']))
-				{
-					$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
-				}
-
-				if(!dy_validators::package_type_multi_day())
-				{
-					$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
-
-					if(is_array($surcharges_arr))
-					{
-						if(count($surcharges_arr) === 1)
-						{
-							$surcharge = floatval($surcharges_arr[0]);
-							$surcharge_percentage = ($surcharge > 0) ? (($surcharge/100) * $sum) : 0;
-							$sum = $sum + $surcharge_percentage;
-						}
-					}
-				}
-			}
-			
-			if(dy_validators::validate_coupon() && $regular === null)
-			{
-				$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
-			}
-
-			$GLOBALS[$which_var] = $sum;
 		}
+		
+		if(dy_validators::validate_coupon() && $regular === null)
+		{
+			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $sum;
+
 
 		return $sum;
 	}
@@ -1175,39 +1144,37 @@ class dy_utilities {
 			return $terms_conditions;
 		}
 
-		$which_var = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
-		global $$which_var;
+		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
 
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+
+		if(isset($post))
 		{
-			$terms_conditions = $$which_var;
-		}
-		else
-		{
-			if(isset($post))
+			$the_id = $post->ID;
+			
+			if(property_exists($post, 'post_parent'))
 			{
-				$the_id = $post->ID;
-				
-				if(property_exists($post, 'post_parent'))
-				{
-					$the_id = $post->post_parent;
-				}		
-				
-				$terms = get_the_terms($the_id, $term_name);
+				$the_id = $post->post_parent;
+			}		
+			
+			$terms = get_the_terms($the_id, $term_name);
 
-				
-				if($terms)
+			
+			if($terms)
+			{
+				for($x = 0; $x < count($terms); $x++)
 				{
-					for($x = 0; $x < count($terms); $x++)
-					{
-						array_push($terms_conditions, $terms[$x]);
-					}			
-				}		
-			}
-
-			$GLOBALS[$which_var] = $terms_conditions;
+					array_push($terms_conditions, $terms[$x]);
+				}			
+			}		
 		}
-		
+
+        //store output in $cache
+        self::$cache[$cache_key] = $terms_conditions;
+
 		return $terms_conditions;
 	}
 
@@ -1435,73 +1402,100 @@ class dy_utilities {
 		$output = '';
 		$is_link_str = ($is_link) ? 1 : 0;
 		$icon_class_str = (!empty($icon_class)) ? 1 : 0;
-		$which_var = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
-		global $$which_var;
+		$cache_key = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
 
-		if(isset($$which_var))
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+
+		$terms_array = array();
+
+		if(in_the_loop())
 		{
-			$output = $$which_var;
+			global $post;
+
+			$parent_terms = array();
+			$current_terms = get_the_terms($post->ID, $term_name);
+			$current_terms = (is_array($current_terms)) ? $current_terms : array();
+
+			if(property_exists($post, 'post_parent'))
+			{
+				$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
+				$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
+			}
+			
+			$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
+		
 		}
 		else
 		{
-
-			$terms_array = array();
-
-			if(in_the_loop())
-			{
-				global $post;
-
-				$parent_terms = array();
-				$current_terms = get_the_terms($post->ID, $term_name);
-				$current_terms = (is_array($current_terms)) ? $current_terms : array();
-
-				if(property_exists($post, 'post_parent'))
-				{
-					$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
-					$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
-				}
-				
-				$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
-			
-			}
-			else
-			{
-				$terms = get_terms(array('taxonomy' => $term_name));
-			}
-
-			if ( ! empty( $terms ) && ! is_wp_error( $terms ) )
-			{
-				foreach ( $terms as $t )
-				{
-					$url = get_term_link($t);
-					$title_modifier = get_term_meta($t->term_id, 'tax_title_modifier', true);
-
-					$title = (strlen($title_modifier) > strlen($t->name)) ? $title_modifier : $t->name;
-
-					$item = ($is_link) 
-						? '<a href="'.esc_url($url).'" title="'.esc_attr($title).'" >'.esc_html($t->name).'</a>' 
-						: esc_html($t->name);
-						
-					array_push($terms_array, $item);
-				}
-			}
-			
-			
-			if(count($terms_array) > 0)
-			{
-				if($label)
-				{
-					$output .= '<p class="strong">'.esc_html($label).'</p>';
-				}
-				
-				$icon = ($icon_class) ? '<span class="'.esc_attr($icon_class).'" ></span>' : '';
-				$output .= '<ul class="dy-list-'.esc_attr($term_name).' bottom-20 dy-list"><li>'.$icon.' ';
-				$output .= implode('</li><li>'.$icon.' ', $terms_array);
-				$output .= '</li></ul>';
-			}	
-			
-			$GLOBALS[$which_var] = $output;
+			$terms = get_terms(array('taxonomy' => $term_name));
 		}
+
+		if ( ! empty( $terms ) && ! is_wp_error( $terms ) )
+		{
+			foreach ( $terms as $t )
+			{
+				$url = get_term_link($t);
+				$title_modifier = get_term_meta($t->term_id, 'tax_title_modifier', true);
+
+				$title = (strlen($title_modifier) > strlen($t->name)) ? $title_modifier : $t->name;
+
+				$item = ($is_link) 
+					? '<a href="'.esc_url($url).'" title="'.esc_attr($title).'" >'.esc_html($t->name).'</a>' 
+					: esc_html($t->name);
+					
+				array_push($terms_array, $item);
+			}
+		}
+		
+		
+		if(count($terms_array) > 0)
+		{
+			if($label)
+			{
+				$output .= '<p class="strong">'.esc_html($label).'</p>';
+			}
+			
+			$icon = ($icon_class) ? '<span class="'.esc_attr($icon_class).'" ></span>' : '';
+			$output .= '<ul class="dy-list-'.esc_attr($term_name).' bottom-20 dy-list"><li>'.$icon.' ';
+			$output .= implode('</li><li>'.$icon.' ', $terms_array);
+			$output .= '</li></ul>';
+		}	
+		
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
+
+		return $output;
+	}
+
+	public static function get_hot_chat($key_name, $the_id = '') {
+
+		$cache_key = 'dy_get_hot_chat_' . $key_name . '_' . $the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		// Retrieve and decode the JSON data
+		$raw_data = (empty($the_id)) ? package_field($key_name) : package_field($key_name, $the_id);
+
+		// Check if $raw_data is empty or not a string
+		if (empty($raw_data) || !is_string($raw_data)) {
+			return [];
+		}
+
+		// Decode the JSON data
+		$output = json_decode(html_entity_decode($raw_data), true);
+
+		// Validate the JSON decoding
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			return [];
+		}
+
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
 
 		return $output;
 	}

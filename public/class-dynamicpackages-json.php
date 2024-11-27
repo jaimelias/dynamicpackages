@@ -274,9 +274,11 @@ class Dynamicpackages_JSON
 			$disable['min'] = $from;
 			$disable['max'] = $to;	
 			$disabled_dates = array();
-			$get_disabled_dates = json_decode(html_entity_decode(package_field('package_disabled_dates')), true);
-			$global_disabled_dates = json_decode(html_entity_decode(get_option('dy_disabled_dates' )), true);
-			$get_enabled_dates = json_decode(html_entity_decode(package_field('package_enabled_dates' )), true);
+
+			
+			$get_disabled_dates = dy_utilities::get_hot_chat('package_disabled_dates');
+			$global_disabled_dates = dy_utilities::get_hot_chat('dy_disabled_dates');
+			$get_enabled_dates = dy_utilities::get_hot_chat('package_enabled_dates');
 			
 			if(is_array($global_disabled_dates))
 			{

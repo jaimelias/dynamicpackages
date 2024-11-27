@@ -5,6 +5,7 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Reviews
 {
+	private static $cache = [];
 
 	function __construct()
 	{

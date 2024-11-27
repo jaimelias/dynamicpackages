@@ -5,6 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Gateways
 {
+
+	private static $cache = [];
+
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
@@ -118,49 +121,42 @@ class Dynamicpackages_Gateways
 		
 	public function list_gateways_cb()
 	{
+		$cache_key = 'dy_list_gateways_cb';
 
-		$which_var = 'dy_list_gateways_cb';
-		global $$which_var;
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-
-		if(isset($$which_var))
+		$gateways = apply_filters('list_gateways', array());
+		
+		if(dy_validators::validate_coupon())
 		{
-			$output = $$which_var; 
-		}
-		else
-		{
-			$gateways = apply_filters('list_gateways', array());
-			
-			if(dy_validators::validate_coupon())
+			$get_coupon = strtolower(dy_utilities::get_coupon('code'));
+			$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+
+			if(!empty($get_coupon))
 			{
-				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
-
-				if(!empty($get_coupon))
-				{
-					$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
-						
-						if(!empty($gateway))
-						{
-							return strcasecmp($gateway, $get_coupon) === 0;
-						}
-					});
-
-					if(is_array($coupon_gateways))
+				$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+					
+					if(!empty($gateway))
 					{
-						if(count($coupon_gateways) === 1)
-						{
-							$gateway = $coupon_gateways;
-						}
+						return strcasecmp($gateway, $get_coupon) === 0;
+					}
+				});
+
+				if(is_array($coupon_gateways))
+				{
+					if(count($coupon_gateways) === 1)
+					{
+						$gateway = $coupon_gateways;
 					}
 				}
 			}
-
-			$output = $gateways;
-			$GLOBALS[$which_var] = $output;
 		}
 
-		return $output;
+		self::$cache[$cache_key] = $gateways;
+
+		return $gateways;
 	}
 	
 	public function join_gateways()

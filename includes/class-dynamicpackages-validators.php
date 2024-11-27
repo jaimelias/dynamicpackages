@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class dy_validators
 {
+	private static $cache = [];
+
 	public static function validate_quote()
 	{
 		$output = false;
@@ -491,7 +493,7 @@ class dy_validators
 		{
 			if(package_field( 'package_max_coupons' ) && package_field( 'package_coupons' ))
 			{
-				$coupons = json_decode(html_entity_decode(package_field( 'package_coupons' )), true);
+				$coupons = dy_utilities::get_hot_chat('package_coupons');
 				
 				if(is_array($coupons))
 				{

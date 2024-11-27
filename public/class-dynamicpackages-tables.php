@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Tables{
 
+	private static $cache = [];
+
 	function __construct()
 	{
 		$this->init();

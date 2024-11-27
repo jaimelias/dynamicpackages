@@ -3,7 +3,9 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 #[AllowDynamicProperties]
-class yappy_direct{
+class yappy_direct {
+
+	private static $cache = [];
 	
 	function __construct($plugin_id)
 	{
