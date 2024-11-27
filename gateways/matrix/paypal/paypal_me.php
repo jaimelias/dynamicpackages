@@ -99,73 +99,67 @@ class paypal_me {
 	public function is_active()
 	{
 		$output = false;
-		$which_var = $this->id.'_is_active';
-		global $$which_var; 
+		$cache_key = $this->id.'_is_active';
 		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(!empty($this->username))
-			{
-				$output = true;
-			}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-			$GLOBALS[$which_var] = $output;
+		if(!empty($this->username))
+		{
+			$output = true;
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 	
 	public function show()
 	{
 		$output = false;
-		$which_var = $this->id.'_show';
-		global $$which_var; 
+		$cache_key = $this->id.'_show';
 		
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if(is_singular('packages') && $this->is_active())
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_singular('packages') && $this->is_active())
+			if($this->is_valid())
 			{
-				if($this->is_valid())
-				{
-					$output = true;
-				}
-			}		
-			
-			$GLOBALS[$which_var] = $output;
-		}
+				$output = true;
+			}
+		}		
+		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 	public function is_request_submitted()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid_request';
-		global $$which_var;
+		$cache_key = $this->id . '_is_valid_request';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
 		global $dy_request_invalids;
 		
-		if(isset($$which_var))
+		if(is_checkout_page() && !isset($dy_request_invalids))
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_checkout_page() && !isset($dy_request_invalids))
+			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 			{
-				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
-				{
-					$output = true;
-					
-				}
+				$output = true;
+				
 			}
-			
-			$GLOBALS[$which_var] = $output;	
 		}
+		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}
@@ -173,56 +167,52 @@ class paypal_me {
 	public function is_valid()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid';
-		global $$which_var;
-		
-		if(isset($$which_var))
+		$cache_key = $this->id . '_is_valid';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if($this->is_active() )
 		{
-			return $$which_var;
-		}
-		else
-		{
-			if($this->is_active() )
+			$max = floatval($this->max);
+			$min = (empty($this->min)) ? 0 : floatval($this->min);
+			$show = intval($this->show);
+			$payment = package_field('package_payment');
+			$deposit = floatval(dy_utilities::get_deposit());
+			
+			if(is_booking_page() || is_checkout_page())
 			{
-				$max = floatval($this->max);
-				$min = (empty($this->min)) ? 0 : floatval($this->min);
-				$show = intval($this->show);
-				$payment = package_field('package_payment');
-				$deposit = floatval(dy_utilities::get_deposit());
+				$total = dy_utilities::payment_amount();
+			}
+			else
+			{
+				$total = floatval(dy_utilities::starting_at());
 				
-				if(is_booking_page() || is_checkout_page())
+				if(package_field('package_fixed_price') == 0)
 				{
-					$total = dy_utilities::payment_amount();
-				}
-				else
-				{
-					$total = floatval(dy_utilities::starting_at());
-					
-					if(package_field('package_fixed_price') == 0)
-					{
-						$total = $total * intval(package_field('package_max_persons'));
-					}
-				}
-				
-				if($total >= $min && $total <= $max)
-				{
-					if($payment == $show && $payment == 0)
-					{
-						$output = true;
-					}
-					else
-					{
-						if(dy_validators::has_deposit())
-						{
-							$output = true;
-						}
-					}
+					$total = $total * intval(package_field('package_max_persons'));
 				}
 			}
 			
-			$GLOBALS[$which_var] = $output;
+			if($total >= $min && $total <= $max)
+			{
+				if($payment == $show && $payment == 0)
+				{
+					$output = true;
+				}
+				else
+				{
+					if(dy_validators::has_deposit())
+					{
+						$output = true;
+					}
+				}
+			}
 		}
 
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}

@@ -184,40 +184,37 @@ class Dynamicpackages_Reviews
 	public function get_comments($id)
 	{
 		$comments = array();
-		$which_var = 'dy_get_comments_' . $id;
-		global $$which_var;
+		$cache_key = 'dy_get_comments_' . $id;
 
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$comments = get_approved_comments($id);		
+		global $polylang;
+		
+		if(isset($polylang))
 		{
-			$comments = $$which_var;
-		}
-		else
-		{
-			$comments = get_approved_comments($id);		
-			global $polylang;
+			$translationIds = PLL()->model->post->get_translations($id);
 			
-			if(isset($polylang))
+			foreach ( $translationIds as $key => $translationID )
 			{
-				$translationIds = PLL()->model->post->get_translations($id);
-				
-				foreach ( $translationIds as $key => $translationID )
+				if( $translationID !== $id ) 
 				{
-					if( $translationID !== $id ) 
+					$translatedPostComments = get_approved_comments($translationID);
+
+					if($translatedPostComments)
 					{
-						$translatedPostComments = get_approved_comments($translationID);
-
-						if($translatedPostComments)
-						{
-							$comments = array_merge($comments, $translatedPostComments);
-						}
+						$comments = array_merge($comments, $translatedPostComments);
 					}
+				}
 
-				}			
-			}
-
-			$GLOBALS[$which_var] = $comments;
+			}			
 		}
 
+        //store output in $cache
+        self::$cache[$cache_key] = $comments;
+        
 		
 		return $comments;
 	}
@@ -226,41 +223,38 @@ class Dynamicpackages_Reviews
 	{
 
 		$output = false;
-		$which_var = 'dy_get_rating_' . $id;
-		global $$which_var;
+		$cache_key = 'dy_get_rating_' . $id;
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$comments = $this->get_comments($id);
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-			if ( $comments )
+		$comments = $this->get_comments($id);
+
+		if ( $comments )
+		{
+			$i = 0;
+			$total = 0;
+			
+			foreach( $comments as $comment )
 			{
-				$i = 0;
-				$total = 0;
+				$rate = get_comment_meta( $comment->comment_ID, 'dy_rating', true );
 				
-				foreach( $comments as $comment )
+				if( isset( $rate ) && '' !== $rate )
 				{
-					$rate = get_comment_meta( $comment->comment_ID, 'dy_rating', true );
-					
-					if( isset( $rate ) && '' !== $rate )
-					{
-						$i++;
-						$total += $rate;
-					}
-				}
-
-				if ( $i !== 0  )
-				{
-					$output = money($total / $i, 2);
+					$i++;
+					$total += $rate;
 				}
 			}
 
-			$GLOBALS[$which_var] = $output;
+			if ( $i !== 0  )
+			{
+				$output = money($total / $i, 2);
+			}
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		return $output;
 		

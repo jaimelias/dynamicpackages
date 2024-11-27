@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class bank_transfer{
 	
+	private static $cache = [];
+
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
@@ -66,74 +68,70 @@ class bank_transfer{
 	public function is_active()
 	{
 		$output = false;
-		$which_var = $this->id.'_is_active';
-		global $$which_var; 
+		$cache_key = $this->id.'_is_active';
 		
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(!empty($this->number))
-			{
-				$output = true;
-			}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }	
 
-			$GLOBALS[$which_var] = $output;
+		if(!empty($this->number))
+		{
+			$output = true;
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
+
 	public function show()
 	{
 		$output = false;
-		$which_var = $this->id.'_show';
-		global $$which_var; 
+		$cache_key = $this->id.'_show';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
 		
-		if(isset($$which_var))
+		if(is_singular('packages') && $this->is_active())
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_singular('packages') && $this->is_active())
+			if($this->is_valid())
 			{
-				if($this->is_valid())
-				{
-					$output = true;
-				}
+				$output = true;
 			}
-			
-			$GLOBALS[$which_var] = $output;
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 
 	public function is_request_submitted()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid_request';
-		global $$which_var;
+		$cache_key = $this->id . '_is_valid_request';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+
 		global $dy_request_invalids;
 		
-		if(isset($$which_var))
+		if(is_checkout_page() && !isset($dy_request_invalids))
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_checkout_page() && !isset($dy_request_invalids))
+			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 			{
-				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
-				{
-					$output = true;
-					
-				}
+				$output = true;
+				
 			}
-			
-			$GLOBALS[$which_var] = $output;	
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}
@@ -199,55 +197,52 @@ class bank_transfer{
 	public function is_valid()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid';
-		global $$which_var;
-		
-		if(isset($$which_var))
+		$cache_key = $this->id . '_is_valid';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }	
+
+		if($this->is_active() )
 		{
-			return $$which_var;
-		}
-		else
-		{
-			if($this->is_active() )
+			$min = floatval($this->min);
+			$show = intval($this->show);
+			$payment = package_field('package_payment');
+			$deposit = floatval(dy_utilities::get_deposit());
+			
+			if(is_booking_page() || is_checkout_page())
 			{
-				$min = floatval($this->min);
-				$show = intval($this->show);
-				$payment = package_field('package_payment');
-				$deposit = floatval(dy_utilities::get_deposit());
+				$total = dy_utilities::payment_amount();
+			}
+			else
+			{
+				$total = floatval(dy_utilities::starting_at());
 				
-				if(is_booking_page() || is_checkout_page())
+				if(package_field('package_fixed_price') == 0)
 				{
-					$total = dy_utilities::payment_amount();
+					$total = $total * intval(package_field('package_max_persons'));
+				}
+				
+			}
+			
+			if($total >= $min)
+			{
+				if($payment == $show && $payment == 0)
+				{
+					$output = true;
 				}
 				else
 				{
-					$total = floatval(dy_utilities::starting_at());
-					
-					if(package_field('package_fixed_price') == 0)
-					{
-						$total = $total * intval(package_field('package_max_persons'));
-					}
-					
-				}
-				
-				if($total >= $min)
-				{
-					if($payment == $show && $payment == 0)
+					if(dy_validators::has_deposit())
 					{
 						$output = true;
 					}
-					else
-					{
-						if(dy_validators::has_deposit())
-						{
-							$output = true;
-						}
-					}
 				}
 			}
-			
-			$GLOBALS[$which_var] = $output;
 		}
+		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		return $output;
 	}

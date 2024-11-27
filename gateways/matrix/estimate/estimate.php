@@ -32,64 +32,61 @@ class estimate_request{
 	public function is_active()
 	{
 		$output = false;
-		$which_var = $this->id.'_is_active';
-		global $$which_var; 
+		$cache_key = $this->id.'_is_active';
 		
-		if(isset($$which_var))
-		{
-			$output =  $$which_var;
-		}
-		else
-		{
-			$output = true;
-			$GLOBALS[$which_var] = $output;
-		}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$output = true;
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+		
 		return $output;
 	}
 	public function show()
 	{
 		$output = false;
-		$which_var = $this->id.'_show';
-		global $$which_var; 
-		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_singular('packages') && $this->is_active())
-			{
-				if($this->is_valid())
-				{
-					$output = true;
-				}
+		$cache_key = $this->id.'_show';
 
-				$GLOBALS[$which_var] = $output;
-			}			
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if(is_singular('packages') && $this->is_active())
+		{
+			if($this->is_valid())
+			{
+				$output = true;
+			}
+
+			//store output in $cache
+			self::$cache[$cache_key] = $output;
 		}
+
+
 		return $output;
 	}
 	
 	public function is_valid()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid';
-		global $$which_var;
+		$cache_key = $this->id . '_is_valid';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
 		
-		if(isset($$which_var))
+		if($this->is_active())
 		{
-			return $$which_var;
+			$output = true;
 		}
-		else
-		{
-			if($this->is_active())
-			{
-				$output = true;
-			}
-			
-			$GLOBALS[$which_var] = $output;
-		}
+		
+        
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		return $output;
 	}

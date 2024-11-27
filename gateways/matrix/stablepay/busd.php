@@ -118,143 +118,133 @@ class busd {
 	public function is_active()
 	{
 		$output = false;
-		$which_var = $this->id.'_is_active';
-		global $$which_var; 
+		$cache_key = $this->id.'_is_active';
 		
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$active_networks = false;
+
+		foreach($this->all_networks as $key => $value)
 		{
-			$output = $$which_var;
+			if(!empty(get_option($this->id . '_' . $key)))
+			{
+				$active_networks = true;
+				break;
+			}
 		}
-		else
+
+		if($active_networks)
 		{
-			$active_networks = false;
-
-			foreach($this->all_networks as $key => $value)
-			{
-				if(!empty(get_option($this->id . '_' . $key)))
-				{
-					$active_networks = true;
-					break;
-				}
-			}
-
-			if($active_networks)
-			{
-				
-				$output = true;
-			}
-
-			$GLOBALS[$which_var] = $output;
+			$output = true;
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 	public function show()
 	{
 		$output = false;
 
-		$which_var = $this->id.'_show';
-		global $$which_var; 		
+		$cache_key = $this->id.'_show';
 
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+
+		if(is_singular('packages') && $this->is_active())
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_singular('packages') && $this->is_active())
+			if($this->is_valid())
 			{
-				if($this->is_valid())
-				{
-					
-					$output = true;
-				}
-			}	
-			
-			$GLOBALS[$which_var] = $output;
+				
+				$output = true;
+			}
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		return $output;
 	}
 	public function is_request_submitted()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid_request';
-		global $$which_var;
+		$cache_key = $this->id . '_is_valid_request';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
 		global $dy_request_invalids;
 		
-		if(isset($$which_var))
+		if(is_checkout_page() && isset($_POST['dy_network']) && !isset($dy_request_invalids))
 		{
-			$output = $$which_var;
-		}
-		else
-		{
-			if(is_checkout_page() && isset($_POST['dy_network']) && !isset($dy_request_invalids))
-			{
-				$network = sanitize_text_field($_POST['dy_network']);
+			$network = sanitize_text_field($_POST['dy_network']);
 
-				if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
-				{
-					$output = true;		
-				}
-			}	
-			
-			$GLOBALS[$which_var] = $output;
-		}
+			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
+			{
+				$output = true;		
+			}
+		}	
 		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 	
 	public function is_valid()
 	{
 		$output = false;
-		$which_var = $this->id . '_is_valid';
-		global $$which_var;
+		$cache_key = $this->id . '_is_valid';
 		
-		if(isset($$which_var))
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if($this->is_active() )
 		{
-			return $$which_var;
-		}
-		else
-		{
-			if($this->is_active() )
+			$max = floatval($this->max);
+			$show = intval($this->show);
+			$payment = package_field('package_payment');
+			$deposit = floatval(dy_utilities::get_deposit());
+			
+			if(is_booking_page() || is_checkout_page())
 			{
-				$max = floatval($this->max);
-				$show = intval($this->show);
-				$payment = package_field('package_payment');
-				$deposit = floatval(dy_utilities::get_deposit());
+				$total = dy_utilities::payment_amount();
+			}
+			else
+			{
+				$total = floatval(dy_utilities::starting_at());
 				
-				if(is_booking_page() || is_checkout_page())
+				if(package_field('package_fixed_price') == 0)
 				{
-					$total = dy_utilities::payment_amount();
-				}
-				else
-				{
-					$total = floatval(dy_utilities::starting_at());
-					
-					if(package_field('package_fixed_price') == 0)
-					{
-						$total = $total * intval(package_field('package_max_persons'));
-					}
-				}
-				
-				if($total <= $max)
-				{
-					if($payment == $show && $payment == 0)
-					{
-						$output = true;
-					}
-					else
-					{
-						if(dy_validators::has_deposit())
-						{
-							$output = true;
-						}
-					}
+					$total = $total * intval(package_field('package_max_persons'));
 				}
 			}
 			
-			$GLOBALS[$which_var] = $output;
+			if($total <= $max)
+			{
+				if($payment == $show && $payment == 0)
+				{
+					$output = true;
+				}
+				else
+				{
+					if(dy_validators::has_deposit())
+					{
+						$output = true;
+					}
+				}
+			}
 		}
+		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}
