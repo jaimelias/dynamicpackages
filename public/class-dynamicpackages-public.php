@@ -500,50 +500,47 @@ class Dynamicpackages_Public {
 	{
 		$name = 'dy_price_type';
 		$the_id = get_the_ID();
-		$which_var = $name.'_'.$the_id;
-		global $$which_var;
+		$cache_key = $name.'_'.$the_id;
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$price_type = intval(package_field('package_fixed_price'));
+		$package_type = intval(package_field('package_package_type'));
+		$duration = intval(package_field('package_duration'));
+		$duration_unit = intval(package_field('package_length_unit'));
+		$duration_max = intval(package_field('package_duration_max'));
+		$output = '';
 		
-		if(isset($$which_var))
+		if($price_type === 0)
 		{
-			$output = $$which_var;
+			$output = __('Per Person', 'dynamicpackages').' ';
 		}
-		else
+
+
+		if($package_type === 1)
 		{
-			$price_type = intval(package_field('package_fixed_price'));
-			$package_type = intval(package_field('package_package_type'));
-			$duration = intval(package_field('package_duration'));
-			$duration_unit = intval(package_field('package_length_unit'));
-			$duration_max = intval(package_field('package_duration_max'));
-			$output = '';
-			
-			if($price_type === 0)
+			if($duration === 1 && $duration_max > $duration)
 			{
-				$output = __('Per Person', 'dynamicpackages').' ';
+				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 			}
-
-
-			if($package_type === 1)
-			{
-				if($duration === 1 && $duration_max > $duration)
-				{
-					$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
-				}
-			}
-			else if(dy_utilities::package_type_by_hour())
-			{
-				$output .= __('Per Hour', 'dynamicpackages');
-			}
-			else if(dy_utilities::package_type_by_day())
-			{
-				$output .=__('Per Day', 'dynamicpackages');
-			}
-			else if(dy_validators::package_type_transport())
-			{
-				$output .=__('One-way', 'dynamicpackages');
-			}
-
-			$GLOBALS[$which_var] = $output;
 		}
+		else if(dy_utilities::package_type_by_hour())
+		{
+			$output .= __('Per Hour', 'dynamicpackages');
+		}
+		else if(dy_utilities::package_type_by_day())
+		{
+			$output .=__('Per Day', 'dynamicpackages');
+		}
+		else if(dy_validators::package_type_transport())
+		{
+			$output .=__('One-way', 'dynamicpackages');
+		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		return $output;
 	}
@@ -551,36 +548,34 @@ class Dynamicpackages_Public {
 	public function get_location_list()
 	{
 		$output = '';
-		$which_var = 'dy_get_location_list';
-		global $$which_var;
+		$cache_key = 'dy_get_location_list';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'dashicons dashicons-location');
-			$GLOBALS[$which_var] = $output;
-		}
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'dashicons dashicons-location');
+        
+		//store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
 	public function get_category_list()
 	{
 		$output = '';
-		$which_var = 'dy_get_category_list';
-		global $$which_var;
+		$cache_key = 'dy_get_category_list';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'dashicons dashicons-tag');
-			$GLOBALS[$which_var] = $output;
-		}
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'dashicons dashicons-tag');
+        
+		//store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
@@ -589,36 +584,33 @@ class Dynamicpackages_Public {
 	public function get_taxonomies_list()
 	{
 		$output = '';
-		$which_var = 'dy_get_taxonomies_list';
-		global $$which_var;
+		$cache_key = 'dy_get_taxonomies_list';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'dashicons dashicons-warning');
-			$GLOBALS[$which_var] = $output;
-		}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'dashicons dashicons-warning');
+        
+		//store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;	
 	}	
 	public function get_included_list()
 	{
 		$output = '';
-		$which_var = 'dy_get_included_list';
-		global $$which_var;
+		$cache_key = 'dy_get_included_list';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'dashicons dashicons-yes');
-			$GLOBALS[$which_var] = $output;
-		}
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+        
+		$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'dashicons dashicons-yes');
+        
+		//store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
@@ -627,19 +619,17 @@ class Dynamicpackages_Public {
 	{
 
 		$output = '';
-		$which_var = 'dy_get_not_included_list';
-		global $$which_var;
+		$cache_key = 'dy_get_not_included_list';
 
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else 
-		{
-			$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'dashicons dashicons-no');
-			$GLOBALS[$which_var] = $output;
-		}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'dashicons dashicons-no');
+        
+		//store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
@@ -768,109 +758,105 @@ class Dynamicpackages_Public {
 	
 	public function children_package()
 	{
-		$which_var = 'dy_children_package';
-		global $$which_var;
+		$cache_key = 'dy_children_package';
 		$output = '';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			global $post;
-			
-			if(!dy_validators::is_child() && isset($post))
-			{
-				$duration = package_field('package_duration');
-				$duration_unit = package_field('package_length_unit');
-				$header_name = 'package_child_title_'.$this->current_language;
-				$header_title = package_field($header_name, $post->ID);
-				$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : $header_title;
-				
-				$args = array(
-					'post_parent' => $post->ID,
-					'post_type'   => 'packages', 
-					'numberposts' => -1
-				); 
-				
-				$children_array = get_children($args);
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-				if(is_array($children_array))
+		global $post;
+		
+		if(!dy_validators::is_child() && isset($post))
+		{
+			$duration = package_field('package_duration');
+			$duration_unit = package_field('package_length_unit');
+			$header_name = 'package_child_title_'.$this->current_language;
+			$header_title = package_field($header_name, $post->ID);
+			$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : $header_title;
+			
+			$args = array(
+				'post_parent' => $post->ID,
+				'post_type'   => 'packages', 
+				'numberposts' => -1
+			); 
+			
+			$children_array = get_children($args);
+
+			if(is_array($children_array))
+			{
+				if(count($children_array) > 0)
 				{
-					if(count($children_array) > 0)
+					$has_rows = false;
+					$rows_arr = array();
+					
+					foreach($children_array as $item)
 					{
-						$has_rows = false;
-						$rows_arr = array();
-						
-						foreach($children_array as $item)
+						if(property_exists($item, 'post_name'))
 						{
-							if(property_exists($item, 'post_name'))
+							if(!empty($item->post_name))
 							{
-								if(!empty($item->post_name))
+								$row = '';
+								$starting_at = intval(dy_utilities::starting_at($item->ID));
+								$subpackage_name = 'package_child_title_'.$this->current_language;
+								$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
+								
+								$subpackage_name = package_field($subpackage_name, $item->ID);
+								
+								if(empty($subpackage_name))
 								{
-									$row = '';
-									$starting_at = intval(dy_utilities::starting_at($item->ID));
-									$subpackage_name = 'package_child_title_'.$this->current_language;
-									$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
-									
-									$subpackage_name = package_field($subpackage_name, $item->ID);
-									
-									if(empty($subpackage_name))
-									{
-										$subpackage_name = $item->post_title;
-									}
-									
-									$row .= '<tr>';
-									$row .= '<td>'.esc_html($subpackage_name).'</td>';
-									$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
-									$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
-									$row .= '</tr>';
-									
-									$rows_arr[] = array('price' => $starting_at, 'row' => $row);
+									$subpackage_name = $item->post_title;
 								}
+								
+								$row .= '<tr>';
+								$row .= '<td>'.esc_html($subpackage_name).'</td>';
+								$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
+								$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
+								$row .= '</tr>';
+								
+								$rows_arr[] = array('price' => $starting_at, 'row' => $row);
 							}
 						}
-						
-						$count_rows = count($rows_arr);
+					}
+					
+					$count_rows = count($rows_arr);
 
-						if($count_rows > 0)
+					if($count_rows > 0)
+					{
+
+						function sort_by_price($array) {
+							usort($array, function($a, $b) {
+								return $a['price'] - $b['price'];
+							});
+						
+							return $array;
+						}
+						
+						if($count_rows === 1)
+						{
+							$rows = $rows_arr[0]['row'];
+						}
+						else
 						{
 
-							function sort_by_price($array) {
-								usort($array, function($a, $b) {
-									return $a['price'] - $b['price'];
-								});
-							
-								return $array;
-							}
-							
-							if($count_rows === 1)
-							{
-								$rows = $rows_arr[0]['row'];
-							}
-							else
-							{
+							$rows = '';
+							$rows_arr = sort_by_price($rows_arr);
 
-								$rows = '';
-								$rows_arr = sort_by_price($rows_arr);
-
-								for ($x=0; $x < $count_rows; $x++)
-								{ 
-									$rows .= $rows_arr[$x]['row'];
-								}
-
+							for ($x=0; $x < $count_rows; $x++)
+							{ 
+								$rows .= $rows_arr[$x]['row'];
 							}
 
-							$output .= '<table class="pure-table pure-table-bordered bottom-20"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
-						}		
-					}
-				}			
-			}
+						}
 
-			$GLOBALS[$which_var] = $output;
+						$output .= '<table class="pure-table pure-table-bordered bottom-20"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+					}		
+				}
+			}			
 		}
 
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
@@ -1409,24 +1395,21 @@ class Dynamicpackages_Public {
 	public function similar_packages_link()
 	{
 		$output = '';
-		$which_var = 'dy_similar_packages_link';
-		global $$which_var;
+		$cache_key = 'dy_similar_packages_link';
 
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			global $post;
-			
-			if(isset($post) && dy_validators::is_child())
-			{
-				$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><span class="dashicons dashicons-arrow-left"></span> <strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a></div>';			
-			}
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-			$GLOBALS[$which_var] = $output;
+		global $post;
+		
+		if(isset($post) && dy_validators::is_child())
+		{
+			$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><span class="dashicons dashicons-arrow-left"></span> <strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a></div>';			
 		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}
@@ -1450,74 +1433,71 @@ class Dynamicpackages_Public {
 	public function event_arr()
 	{
 		$output = array();
-		$which_var = 'event_arr';
-		global $$which_var;
+		$cache_key = 'event_arr';
 		
-		if(isset($$which_var))
-		{
-			$output = $$which_var;
-		}
-		else
-		{
-			$package_start_address = package_field('package_start_address');
-			$package_start_hour = package_field('package_start_hour');
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
-			if(!empty($package_start_address) && !empty($package_start_hour))
+		$package_start_address = package_field('package_start_address');
+		$package_start_hour = package_field('package_start_hour');
+
+		if(!empty($package_start_address) && !empty($package_start_hour))
+		{
+			$package_event_date = package_field('package_event_date');
+			
+			if(!empty($package_event_date))
 			{
-				$package_event_date = package_field('package_event_date');
+				$today = strtotime(dy_date('Y-m-d'));
+				$event_date = strtotime(dy_date($package_event_date));
 				
-				if(!empty($package_event_date))
+				if($event_date > $today)
 				{
-					$today = strtotime(dy_date('Y-m-d'));
-					$event_date = strtotime(dy_date($package_event_date));
-					
-					if($event_date > $today)
-					{
-						array_push($output, $event_date);
-					}
+					array_push($output, $event_date);
 				}
-				else
-				{
-					$from = intval(package_field('package_booking_from'));
-					$to = intval(package_field('package_booking_to'));
+			}
+			else
+			{
+				$from = intval(package_field('package_booking_from'));
+				$to = intval(package_field('package_booking_to'));
 
-					if($from >= 0 && $to > $from)
+				if($from >= 0 && $to > $from)
+				{
+					$new_range = array();
+					$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
+					$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
+					$range = dy_utilities::get_date_range($today, $last_day);
+					$disabled_range = dy_utilities::get_disabled_range();
+					$week_days = dy_utilities::get_week_days_list();
+					$count_range = 	(count($range) <= 30) ? count($range) : 30;
+											
+					for($x = 0; $x < $count_range; $x++)
 					{
-						$new_range = array();
-						$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
-						$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
-						$range = dy_utilities::get_date_range($today, $last_day);
-						$disabled_range = dy_utilities::get_disabled_range();
-						$week_days = dy_utilities::get_week_days_list();
-						$count_range = 	(count($range) <= 30) ? count($range) : 30;
-												
-						for($x = 0; $x < $count_range; $x++)
+						if(!in_array($range[$x], $disabled_range))
 						{
-							if(!in_array($range[$x], $disabled_range))
+							$day = dy_date('N', dy_strtotime($range[$x]));
+							
+							if(!in_array($day, $week_days))
 							{
-								$day = dy_date('N', dy_strtotime($range[$x]));
-								
-								if(!in_array($day, $week_days))
-								{
-									array_push($new_range, $range[$x]);
-								}
+								array_push($new_range, $range[$x]);
 							}
 						}
-						
-						if(is_array($new_range))
+					}
+					
+					if(is_array($new_range))
+					{
+						if(count($new_range) > 0)
 						{
-							if(count($new_range) > 0)
-							{
-								$output = $new_range;
-							}
+							$output = $new_range;
 						}
 					}
 				}
 			}
-
-			$GLOBALS[$which_var] = $output;
 		}
-		
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+
 		return $output;
 	}
 
