@@ -153,6 +153,27 @@ class dy_validators
 		return $output;
 	}	
 	
+
+	public static function is_checkout_page()
+	{
+		$output = false;
+		$cache_key = 'dy_is_checkout_page';
+	
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if(isset($_POST['dy_request']) && isset($_POST['post_id']))
+		{
+			$output = true;
+		}
+
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+		
+		return $output;
+	}
+
 	public static function validate_request()
 	{
 		$output = false;
@@ -162,7 +183,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(is_checkout_page())
+		if(self::is_checkout_page())
 		{
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
@@ -190,7 +211,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(is_checkout_page())
+		if(self::is_checkout_page())
 		{
 			if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['country_calling_code']) && isset($_POST['email']) && isset($_POST['repeat_email']))
 			{
@@ -269,7 +290,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(is_checkout_page() && self::validate_contact_details() && self::validate_booking_details())
+		if(self::is_checkout_page() && self::validate_contact_details() && self::validate_booking_details())
 		{
 			if($gateway_name == $_POST['dy_request'] && self::validate_card())
 			{

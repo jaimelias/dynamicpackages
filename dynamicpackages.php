@@ -50,66 +50,82 @@ require_once plugin_dir_path( __FILE__ ) . 'dy-core/loader.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 
 
+class Dynamicpackages_Fields
+{
+    private static $cache = [];
+
+    public static function get($name, $this_id = null)
+    {
+        global $post;
+        $week_days = dy_utilities::get_week_days_abbr();
+        $languages = get_languages();
+
+        // Define base excluded fields
+        $excludes = array_merge(
+            [
+                'package_occupancy_chart',
+                'package_price_chart',
+                'package_min_persons',
+                'package_max_persons',
+                'package_disabled_dates',
+                'package_disabled_num',
+                'package_child_title',
+                'package_free',
+                'package_discount',
+                'package_increase_persons',
+                'package_disabled_dates_api',
+            ],
+            dy_validators::package_type_transport() ? [
+                'package_check_in_hour',
+                'package_start_hour',
+                'package_check_in_end_hour',
+                'package_return_hour',
+                'package_start_address',
+                'package_return_address',
+            ] : [],
+            array_map(fn($day) => "package_week_day_surcharge_$day", $week_days),
+            array_map(fn($day) => "package_day_$day", $week_days)
+        );
+
+        // Determine the correct post ID
+        if ($this_id === null && isset($post)) {
+            $this_id = $post->ID;
+
+            if (property_exists($post, 'post_parent') && $post->post_parent > 0) {
+                // Add language-specific excludes
+                $excludes = array_merge(
+                    $excludes,
+                    array_map(fn($lang) => "package_child_title_$lang", $languages)
+                );
+
+                // Use parent post ID if the name is not excluded
+                if (!in_array($name, $excludes)) {
+                    $this_id = $post->post_parent;
+                }
+            }
+        }
+
+        // Use cache if available
+        $cache_key = $name . '_' . $this_id;
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+        // Retrieve the field value
+        $this_field = get_post_meta($this_id, $name, true);
+
+        // Store the value in cache
+        return self::$cache[$cache_key] = $this_field;
+    }
+}
+
+
+
+
 
 function package_field($name, $this_id = null)
 {
-	global $post;
-	$week_days = dy_utilities::get_week_days_abbr();
-	$languages = get_languages();
-	$excludes = array('package_occupancy_chart', 'package_price_chart', 'package_min_persons', 'package_max_persons', 'package_disabled_dates', 'package_disabled_num', 'package_child_title', 'package_free', 'package_discount', 'package_increase_persons', 'package_disabled_dates_api');
-	
-	if(dy_validators::package_type_transport())
-	{
-		$excludes[] =  'package_check_in_hour';
-		$excludes[] =  'package_start_hour';
-		$excludes[] =  'package_check_in_end_hour';
-		$excludes[] =  'package_return_hour';
-		$excludes[] = 'package_start_address';
-		$excludes[] = 'package_return_address';
-	}
-
-	for($x = 0; $x < count($week_days); $x++)
-	{
-		$excludes[] = 'package_week_day_surcharge_'.$week_days[$x];
-		$excludes[] = 'package_day_'.$week_days[$x];
-	}
-
-	if($this_id === null)
-	{	
-		if(isset($post))
-		{
-			$this_id = $post->ID;
-			
-			if(property_exists($post, 'post_parent'))
-			{
-
-				for($x = 0; $x < count($languages); $x++)
-				{
-					$lang = $languages[$x];
-					array_push($excludes, 'package_child_title_'.$lang);
-				}
-				
-				if($post->post_parent > 0 && !in_array($name, $excludes))
-				{
-					$this_id = $post->post_parent;
-				}
-			}
-		}
-	}
-	
-	$which_var = $name.'_'.$this_id;
-	global $$which_var;
-	
-	if(isset($$which_var))
-	{
-		return $$which_var;
-	}
-	else
-	{
-		$this_field = get_post_meta($this_id, $name, true);
-		$GLOBALS[$which_var] = $this_field;
-		return $this_field;
-	}	
+	return Dynamicpackages_Fields::get($name, $this_id = null);
 }
 
 function is_booking_page()
@@ -119,25 +135,7 @@ function is_booking_page()
 
 function is_checkout_page()
 {
-	$output = false;
-	$which_var = 'is_checkout_page';
-	global $$which_var;
-
-	if(isset($$which_var))
-	{
-		$output = $$which_var;
-	}
-	else
-	{
-		if(isset($_POST['dy_request']) && isset($_POST['post_id']))
-		{
-			$output = true;
-		}
-
-		$GLOBALS[$which_var] = $output;
-	}
-	
-	return $output;
+	return dy_validators::is_checkout_page();
 }
 
 function has_package()
