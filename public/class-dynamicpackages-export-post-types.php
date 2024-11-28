@@ -48,8 +48,12 @@ class Dynamicpackages_Export_Post_Types{
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
         $min_duration = intval(package_field('package_duration'));
-		$min_hour = package_field('package_min_hour');
-		$max_hour = package_field('package_max_hour');
+		$min_hour = intval(package_field('package_min_hour'));
+		$max_hour = intval(package_field('package_max_hour'));
+		$auto_booking = intval(package_field('package_auto_booking'));
+		$payment_type = intval(package_field('package_payment'));
+		$deposit = intval(package_field('package_deposit'));
+
 
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
@@ -134,6 +138,17 @@ class Dynamicpackages_Export_Post_Types{
         {
             $package = array_merge($package, $surcharges);
         }
+
+
+
+        $package['web_checkout'] = ($auto_booking === 1) ? 'available' : 'web not available';
+        
+
+        if($auto_booking)
+        {
+            $package['payment_type'] = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
+        }
+        
     
         return array_merge($post, $package);
     }
