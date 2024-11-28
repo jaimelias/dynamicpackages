@@ -11,10 +11,31 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_fields($post)
     {
+        $current_language = current_language();
+        $redirect_url = package_field('package_redirect_url_' . $current_language);
+        
+        if(!empty($redirect_url))
+        {
+            $post['exclude'] = true;
+            return $post;
+        }
+
+        if(dy_validators::has_children())
+        {
+            $post['exclude'] = true;
+            return $post;
+        }
+
+        if(dy_validators::is_child())
+        {
+
+        }
+
 
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
         $min_duration = intval(package_field('package_duration'));
+        
 
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
