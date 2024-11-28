@@ -22,14 +22,28 @@ class Dynamicpackages_Export_Post_Types{
         if(dy_validators::is_child())
         {
             $parent_content = get_post_field('post_content', $post['post_parent']);
-            $post['content'] .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
+            $post['post_content'] .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
 
-            if(empty($post['excerpt']))
+            if(empty($post['post_excerpt']))
             {
                 $parent_excerpt = get_post_field('post_excerpt', $post['post_parent']);
                 $post['post_excerpt'] = $parent_excerpt;
             }
         }
+
+
+        $post['itinerary'] = $post['post_content'];
+        $post['itinerary_summary'] = $post['post_excerpt'];
+        $post['booking_links'] = $post['links'];
+
+        unset($post['links']);
+        unset($post['date']);
+        unset($post['modified']);
+        unset($post['author']);
+        unset($post['post_parent']);
+        unset($post['type']);
+        unset($post['post_content']);
+        unset($post['post_excerpt']);
 
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
