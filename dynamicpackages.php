@@ -240,10 +240,28 @@ function dy_date($format, $timestamp = null) {
 }
 
 
+function load_dynamicpackage_textdomain() {
+
+    $dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
+    
+    load_plugin_textdomain(
+        'dynamicpackages',
+        false,
+        $dir
+    );
+}
+    
+add_action('init', 'load_dynamicpackage_textdomain');
+    
+
 function run_dynamicpackages() {
 
 	$plugin = new dynamicpackages();
 	$plugin->run();
 
 }
+
+
+
+
 run_dynamicpackages();

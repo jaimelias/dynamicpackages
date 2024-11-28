@@ -38,24 +38,24 @@ class dynamicpackages {
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.32';
+
+	}
+
+	public function run() {
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_utility_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_gateteways_hooks();
 	}
 
-
-
 	private function load_dependencies() {
 
 		$dir = plugin_dir_path(dirname( __FILE__ ));
 		
 		require_once $dir . 'vendor/autoload.php';
-		require_once $dir . 'includes/class-dynamicpackages-loader.php'; //optimized
+		//require_once $dir . 'includes/class-dynamicpackages-loader.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-parsedown.php'; //optimized
-		require_once $dir . 'includes/class-dynamicpackages-i18n.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
@@ -82,15 +82,6 @@ class dynamicpackages {
 
 		//gateways
 		require_once $dir . 'gateways/class-dynamicpackages-gateways.php';
-
-		$this->loader = new dynamicpackages_Loader();
-	}
-
-	private function set_locale() {
-
-		$plugin_i18n = new dynamicpackages_i18n();
-		$plugin_i18n->set_domain($this->plugin_id);
-		$this->loader->add_action('init', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	public function define_utility_hooks()
@@ -126,7 +117,5 @@ class dynamicpackages {
 		new Dynamicpackages_Gateways($this->plugin_id);
 	}
 
-	public function run() {
-		$this->loader->run();
-	}
+
 }
