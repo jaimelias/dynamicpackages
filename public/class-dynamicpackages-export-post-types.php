@@ -14,13 +14,7 @@ class Dynamicpackages_Export_Post_Types{
         $current_language = current_language();
         $redirect_url = package_field('package_redirect_url_' . $current_language);
         
-        if(!empty($redirect_url))
-        {
-            $post['exclude'] = true;
-            return $post;
-        }
-
-        if(dy_validators::has_children())
+        if(!empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
         {
             $post['exclude'] = true;
             return $post;
@@ -28,14 +22,19 @@ class Dynamicpackages_Export_Post_Types{
 
         if(dy_validators::is_child())
         {
+            $parent_content = get_post_field('post_content', $post['post_parent']);
+            $post['content'] .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
 
+            if(empty($post['excerpt']))
+            {
+                $parent_excerpt = get_post_field('post_excerpt', $post['post_parent']);
+                $post['post_excerpt'] = $parent_excerpt;
+            }
         }
-
 
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
         $min_duration = intval(package_field('package_duration'));
-        
 
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
@@ -72,7 +71,15 @@ class Dynamicpackages_Export_Post_Types{
        //base prices
         $price_chart = dy_utilities::get_hot_chat('package_price_chart');
         $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
-        $package['rates'][$price_key_name] = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+        $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
+
+        if($package_type === 4)
+        {
+            $parsed_price_chart = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix));
+            $package['rates']['prices_per_person_round_trip'] = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix), true);
+        }
+
+        $package['rates'][$price_key_name] = $parsed_price_chart;
 
         if($package_type === 1)
         {
@@ -101,18 +108,14 @@ class Dynamicpackages_Export_Post_Types{
             );
         }
         
-
-
         $surcharges = $this->get_surcharges($package_type);
 
         if(!empty($surcharges))
         {
             $package = array_merge($package, $surcharges);
         }
-
-        $post['package'] = $package;
     
-        return $post;
+        return array_merge($post, $package);
     }
 
 
@@ -174,7 +177,11 @@ class Dynamicpackages_Export_Post_Types{
             $output['percent_surcharges_by_weekday'] = $week_day_surcharges;
         }
 
-        //$one_way_surcharges = package_field('package_one_way_surcharge');
+
+        if($package_type === 4)
+        {
+            $one_way_surcharges = package_field('package_one_way_surcharge');
+        }
 
         return $output;
     }
@@ -306,6 +313,26 @@ class Dynamicpackages_Export_Post_Types{
         }
 
 		return $output;      
+    }
+
+    public function parse_transport_prices($prices_chart, $is_round_trip = false) {
+
+        $surcharge = intval(package_field('package_one_way_surcharge'));
+
+        foreach ($prices_chart as $category => &$subCategory) {
+            foreach ($subCategory as $key => &$price) {
+
+                if($is_round_trip)
+                {
+                    $price *= 2;
+                }
+                if($surcharge > 0)
+                {
+                    $price += ($surcharge / 100) * $price;
+                }
+            }
+        }
+        return $prices_chart;
     }
 
 }
