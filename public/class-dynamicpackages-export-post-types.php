@@ -8,13 +8,12 @@ class Dynamicpackages_Export_Post_Types{
         add_filter('dy_export_post_types', array(&$this, 'get_fields'));
     }
 
-
     public function get_fields($post)
     {
         $current_language = current_language();
         $redirect_url = package_field('package_redirect_url_' . $current_language);
         
-        if(!empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
+        if($this->filter_by_language() || !empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
         {
             $post['exclude'] = true;
             return $post;
@@ -35,6 +34,8 @@ class Dynamicpackages_Export_Post_Types{
         $package_type = intval(package_field('package_package_type'));
         $duration_unit = intval(package_field('package_length_unit'));
         $min_duration = intval(package_field('package_duration'));
+		$min_hour = package_field('package_min_hour');
+		$max_hour = package_field('package_max_hour');
 
         $package = [
             'max_capacity_per_booking' => package_field('package_max_persons'),
@@ -44,6 +45,11 @@ class Dynamicpackages_Export_Post_Types{
             'start_address' => package_field('package_start_address'),
             'package_type' => $this->package_type_label($package_type, $duration_unit)
         ];
+
+        if($min_hour && $max_hour)
+        {
+            $package['booking_schedule'] = $min_hour . ' - '. $max_hour;
+        }
     
         if (dy_validators::package_type_transport()) {
             $package += [
@@ -333,6 +339,32 @@ class Dynamicpackages_Export_Post_Types{
             }
         }
         return $prices_chart;
+    }
+
+
+    public function filter_by_language()
+    {
+        $current_language = current_language();
+
+        if(isset($_REQUEST['language']))
+        {
+            if(!empty($_REQUEST['language']))
+            {
+                $languages = get_languages();
+
+                if(in_array($_REQUEST['language'],  $languages))
+                {
+                    if($current_language === $_REQUEST['language'])
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    throw new Error('invalid language in Dynamicpackages_Export_Post_Types::get_fields');
+                }
+            }
+        }
     }
 
 }
