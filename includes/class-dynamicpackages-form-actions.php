@@ -8,6 +8,8 @@ use Spipu\Html2Pdf\Html2Pdf;
 #[AllowDynamicProperties]
 class Dynamicpackages_Actions{
 
+	private static $cache = [];
+
     public function __construct()
     {
 		$this->valid_recaptcha = validate_recaptcha();
@@ -54,14 +56,16 @@ class Dynamicpackages_Actions{
 
     public function send_data()
     {
-		
+		$cache_key = 'dy_send_data';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 
 		if($this->is_request_submitted())
 		{
 			if(dy_validators::validate_request())
 			{
-				
-
 				if(isset($_REQUEST['add_ons']))
 				{
 					$add_ons_package_id = sanitize_key('dy_add_ons_' . get_the_ID());
@@ -91,7 +95,10 @@ class Dynamicpackages_Actions{
 
 				dy_utilities::webhook($webhook_option, $payload);
 				$this->send_email();
-			} 
+
+				//store output in $cache
+				self::$cache[$cache_key] = true;
+			}
 		}
     }
     public function the_content($content)
