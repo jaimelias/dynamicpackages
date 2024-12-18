@@ -122,6 +122,12 @@ class Dynamicpackages_Fields
         // Retrieve the field value
         $this_field = get_post_meta($this_id, $name, true);
 
+        if(isset($_REQUEST['enable_payment']) && $name === 'package_auto_booking')
+        {
+            $this_field = '1';
+        }
+
+
         // Store the value in the cache
         self::$cache[$cache_key] = $this_field;
 

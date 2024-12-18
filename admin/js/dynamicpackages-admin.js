@@ -5,8 +5,6 @@ jQuery(() => {
 	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
 	handleParentAttr();
 	handlePackageType();
-	handlePackagePayment();
-	handlePackageAutoBooking();
 	handlePackageSchema();
 	handleMinMaxPax();
 	initSeasonGrids();
@@ -33,13 +31,6 @@ jQuery(() => {
 		initGridsFromTextArea(hotDataFilter);
 	});
 	
-	jQuery('#package_payment').change(()=>  {
-		handlePackagePayment();
-	});
-
-	jQuery('#package_auto_booking').change(()=>  {
-		handlePackageAutoBooking();
-	});
 });
 
 
@@ -163,63 +154,6 @@ const initSeasonGrids = () => {
 
 	jQuery('#package_occupancy_chart').html(JSON.stringify(occupancyChartData));
 	jQuery('#special_seasons').html(preRender);
-};
-
-
-
-
-const handlePackagePayment = () => {
-
-	if(jQuery('#package_auto_booking').length === 0)
-	{
-		return false;
-	}
-
-	jQuery('#package_payment').each(function(){
-		const value = parseInt(jQuery(this).val());
-		const deposit = jQuery('#package_deposit');
-
-		if(value === 0)
-		{
-			jQuery(deposit).val('').prop('disabled', true);
-		}
-		else
-		{
-			jQuery(deposit).prop('disabled', false);
-		}
-	});
-};
-
-const handlePackageAutoBooking = () => {
-
-	if(jQuery('#package_auto_booking').length === 0)
-	{
-		return false;
-	}
-
-
-	jQuery('#package_auto_booking').each(function(){
-		const value = parseInt(jQuery(this).val());
-		const payment = jQuery('#package_payment');
-		const paymentVal = parseInt(jQuery(payment).val());
-		const deposit = jQuery('#package_deposit');
-
-		if(value === 0)
-		{
-			jQuery(deposit).val('').prop('disabled', true);
-			jQuery(payment).prop('disabled', true);
-		}
-		else
-		{
-			jQuery(payment).prop('disabled', false);
-
-			if(paymentVal === 1)
-			{
-				jQuery(deposit).prop('disabled', false);
-			}
-		}
-	});
-
 };
 
 const handlePackageType = () => {

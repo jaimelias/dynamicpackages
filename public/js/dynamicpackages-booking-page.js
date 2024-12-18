@@ -4,6 +4,7 @@ jQuery(() => {
 	selectGateway();
 	addOnsCalc();
 	reValidateDate();
+	copyPaymentLink();
 });
 
 
@@ -524,5 +525,31 @@ const populateCheckoutForm = form => {
 			}
 		}
 	}		
+}
+
+
+const copyPaymentLink = () => {
+
+	if(jQuery('.dy_copy_payment_link').length === 0)
+	{
+		return true;
+	}
+
+    jQuery('.dy_copy_payment_link').on('click', function () {
+        // Use the URL constructor to modify the URL
+        let currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('enable_payment', 'true');
+
+        // Copy the updated URL to the clipboard
+        navigator.clipboard.writeText(currentUrl.href).then(function () {
+            console.log('Payment link copied to clipboard: ' + currentUrl.href);
+        }).catch(function (err) {
+            console.error('Could not copy text: ', err);
+        });
+
+        // Change the dashicon to "dashicons dashicons-media-text"
+        $(this).find('span').attr('class', 'dashicons dashicons-media-text');
+    });
+
 }
 

@@ -64,6 +64,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
 		add_action('dy_crypto_form', array(&$this, 'crypto_form'));		
 		add_action('dy_whatsapp_button', array(&$this, 'whatsapp_button'));
+		add_action('dy_copy_payment_link', array(&$this, 'copy_payment_link'));
 	}
 	
 
@@ -402,6 +403,23 @@ class Dynamicpackages_Gateways
 
 		echo whatsapp_button($label, $text);
 	}
+
+	public function copy_payment_link(): void
+	{
+		// Check if payment is enabled or if the user is logged in
+		if (!is_user_logged_in() || intval(dy_utilities::total()) === 0) {
+			return;
+		}
+
+		// Output the button HTML
+		echo sprintf(
+			'<button type="button" class="dy_copy_payment_link pure-button rounded pure-button-bordered bottom-20">
+				<span class="dashicons dashicons-money-alt"></span> %s
+			</button>',
+			esc_html__('Copy payment link', 'dynamicpackages')
+		);
+	}
+	
 }
 
 ?>
