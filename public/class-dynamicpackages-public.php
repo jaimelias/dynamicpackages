@@ -1085,132 +1085,116 @@ class Dynamicpackages_Public {
 		$is_transport = dy_validators::package_type_transport();
 		$is_checkout_page = is_checkout_page();
 		$is_booking_page = is_booking_page();
-
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
 		$check_in_hour = package_field('package_check_in_hour');
+		$start_hour = dy_utilities::hour();
 		$start_address = package_field('package_start_address');
 		$check_in_end_hour = package_field('package_check_in_end_hour');
 		$return_address = package_field('package_return_address');
-		$return_hour = package_field('package_return_hour');
+		$return_hour = dy_utilities::return_hour();
 		$max_persons = package_field('package_max_persons');
+		$show_max_persons = (get_option('dy_archive_hide_max_persons')) ? true : false;
+		$is_package_by_hour = boolval(package_field('package_by_hour'));
+		$schedule = '';
+		$is_transport_fixed = false;
+
+		if($is_package_by_hour && $min_hour && $max_hour)
+		{
+			$schedule = __('Schedule', 'dynamicpackages') .' '. $min_hour . ' - '. $max_hour;
+		}
+		else if($is_transport && $start_hour && $return_hour && !$is_package_by_hour)
+		{
+			$is_transport_fixed = true;
+			$schedule = sprintf(__('Departure %s - Return %s', 'dynamicpackages'), $start_hour, $return_hour);
+		}
 		
 		$args = array(
+			'duration' => array('clock', dy_utilities::show_duration()),
 			'enabled_days' => array('calendar', $this->enabled_days()),
-			'schedule' => array('clock', __('Schedule', 'dynamicpackages') .' '. $min_hour . ' - '. $max_hour),
+			'schedule' => array('clock', $schedule),
 			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
 			'booking_date' => array('calendar', $booking_date),
-			'duration' => array('clock', dy_utilities::show_duration()),
 			'check_in' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_hour),
-			'start_hour' => array('clock', __('Departing', 'dynamicpackages').' '.dy_utilities::hour()),
+			'start_hour' => array('clock', __('Departing', 'dynamicpackages').' '.$start_hour),
 			'start_address' => array('location', $start_address),
 			'label_return' => array(null, __('Return', 'dynamicpackages')),
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
-			'return_hour' => array('clock', __('Returning', 'dynamicpackages').' '. dy_utilities::return_hour()),
+			'return_hour' => array('clock', __('Returning', 'dynamicpackages').' '. $return_hour),
 			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
 			'return_address' => array('location', $return_address)
 		);
 		
-		if(!$this->enabled_days())
+
+		$req = [];
+		$zone = '';
+
+		if($is_archive || is_page() || is_tax())
 		{
-			unset($args['enabled_days']);
+			if($this->enabled_days()) $req[] = 'enabled_days';
+			if($schedule) $req[] = 'schedule';
+			if($show_max_persons) $req[] = 'max_persons';
+			if(dy_utilities::hour() && $is_transport_fixed === false) $req[] = 'start_hour';
+			if(!get_option('dy_archive_hide_start_address')) $req[] = 'start_address';
+			if(!get_option('dy_archive_hide_enabled_days')) $req[] = 'enabled_days';
+
 		}
-		if(!$booking_date)
+		else if(is_singular('packages') && !$is_booking_page && !$is_checkout_page)
 		{
-			unset($args['booking_date']);
-		}
-		if(!$min_hour && !$max_hour)
-		{
-			unset($args['schedule']);
-		}
-		if($is_checkout_page || $is_booking_page)
-		{
-			unset($args['max_persons']);
-			unset($args['enabled_days']);
-		}
-		else
-		{
-			if(get_option('dy_archive_hide_max_persons'))
+			$req[] = 'duration';
+			if($this->enabled_days()) $req[] = 'enabled_days';
+			if($schedule && $is_transport_fixed === false) $req[] = 'schedule';
+			if($show_max_persons) $req[] = 'max_persons';
+
+			if($is_transport)
 			{
-				unset($args['max_persons']);
+				$req[] = 'label_departure';
+			}
+
+			if($check_in_hour) $req[] = 'check_in';
+			if(dy_utilities::hour()) $req[] = 'start_hour';
+			if($start_address) $req[] = 'start_address';
+
+			if($is_transport)
+			{
+				$req[] = 'label_return';
+				$req[] = 'end_date';
+				if($return_hour) $req[] = 'return_hour';
+				if($check_in_end_hour) $req[] = 'check_in_end_hour';
+				if($return_address)$req[] = 'return_address';				
+			}
+		}
+		else if($is_booking_page || $is_checkout_page)
+		{
+			if($is_transport)
+			{
+				$req[] = 'label_departure';
+			}
+			else
+			{
+				$req[] = 'duration';
+			}
+
+			if($booking_date) $req[] = 'booking_date';
+			if($check_in_hour) $req[] = 'check_in';
+			if(dy_utilities::hour()) $req[] = 'start_hour';
+			if($start_address) $req[] = 'start_address';
+
+			if($is_transport)
+			{
+				$req[] = 'label_return';
+				$req[] = 'end_date';
+				if($return_hour) $req[] = 'return_hour';
+				if($check_in_end_hour) $req[] = 'check_in_end_hour';
+				if($return_address)$req[] = 'return_address';
 			}
 		}
 
-		if(!$check_in_hour)
-		{
-			unset($args['check_in']);
-		}
-		if(!dy_utilities::hour())
-		{
-			unset($args['start_hour']);
-		}
-		if(!$start_address)
-		{
-			unset($args['start_address']);
-		}
-		if(!$end_date && $is_transport && ( $is_booking_page || $is_checkout_page ))
-		{
-			unset($args['end_date']);
-			unset($args['label_return']);
-			unset($args['return_hour']);
-			unset($args['check_in_end_hour']);
-			unset($args['return_address']);
-		}
-		if($is_transport)
-		{
-			unset($args['duration']);
-		}
-		if(!$check_in_end_hour)
-		{
-			unset($args['check_in_end_hour']);
-		}
-		if(!$return_hour)
-		{
-			unset($args['return_hour']);
-		}
-		if(!$return_address)
-		{
-			unset($args['return_address']);
-		}
-		if(!$is_transport || is_page() || is_tax())
-		{
-			if(!$is_booking_page && !$is_checkout_page)
-			{
-				unset($args['duration']);
-			}
-			
-			unset($args['label_departure']);
-			unset($args['label_return']);
-			unset($args['end_date']);
-			unset($args['check_in_end_hour']);
-			unset($args['return_hour']);
-			unset($args['return_address']);
-		}
-		
-		if($is_archive)
-		{
-			unset($args['check_in']);
-			
-			if(get_option('dy_archive_hide_start_address'))
-			{
-				unset($args['start_address']);
-			}
-			if(get_option('dy_archive_hide_enabled_days'))
-			{
-				unset($args['enabled_days']);
-			}
-		}
-
-		if(is_booking_page() || is_checkout_page())
-		{
-			unset($args['schedule']);
-		}
-		
 
 		foreach ($args as $key => $value) {
 			// Check if the first element of the inner array is null
-			if (empty($value[0])) {
+			if (empty($value[0])  || !in_array($key, $req)) {
 				// Remove the item with null first element
 				unset($args[$key]);
 			}

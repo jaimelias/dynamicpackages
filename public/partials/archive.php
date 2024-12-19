@@ -302,11 +302,9 @@ else
 								<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
 							</div>
 
-							<?php if(!dy_validators::package_type_transport()) : ?>
-								<div class="dy_pad bottom-10 semibold">
+							<div class="dy_pad bottom-10 semibold">
 									<?php esc_html_e(dy_utilities::show_duration(true)); ?>
-								</div>
-							<?php endif; ?>
+							</div>
 
 							<?php if(has_excerpt()): ?>
 								<p itemprop="description" class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden': 'hide-sm' ?>"><?php echo (get_the_excerpt()); ?></p>
