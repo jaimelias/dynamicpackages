@@ -6,11 +6,19 @@ jQuery(() => {
 	handleParentAttr();
 	handlePackageType();
 	handlePackageSchema();
+	handlePackagePayment();
 	handleMinMaxPax();
 	initSeasonGrids();
 
 
 	initGridsFromTextArea(hotDataFilter);
+
+	if(jQuery('#package_payment').length !== 0)
+	{
+		jQuery('#package_payment').change(() => {
+			handlePackagePayment();
+		})
+	}
 
 	jQuery('#package_package_type').change(() => {
 		handlePackageType();
@@ -316,6 +324,26 @@ const handlePackageSchema  = () => {
 	{
 		jQuery(eventOption).prop('disabled', false);
 		jQuery(productOption).prop('disabled', false);
+	}
+};
+
+const handlePackagePayment  = () => {
+
+	if(jQuery('#package_payment').length === 0 || jQuery('#package_deposit').length === 0)
+	{
+		return false;
+	}
+
+	const paymentType = jQuery('#package_payment')
+	const depositAmount = jQuery('#package_deposit')
+
+	if(parseInt(paymentType.val()) === 0)
+	{
+		jQuery(depositAmount).val('').prop('disabled', true)
+	}
+	else
+	{
+		jQuery(depositAmount).prop('disabled', false).val('25');
 	}
 };
 
