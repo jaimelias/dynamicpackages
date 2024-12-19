@@ -1110,6 +1110,8 @@ class Dynamicpackages_Public {
 		}
 		
 		$args = array(
+			'label_itinerary' => array(null, __('Itinerary', 'dynamicpackages')),
+			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
 			'duration' => array('clock', dy_utilities::show_duration()),
 			'enabled_days' => array('calendar', $this->enabled_days()),
 			'schedule' => array('clock', $schedule),
@@ -1122,13 +1124,12 @@ class Dynamicpackages_Public {
 			'end_date' => array('calendar', $end_date),
 			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
 			'return_hour' => array('clock', __('Returning', 'dynamicpackages').' '. $return_hour),
-			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
 			'return_address' => array('location', $return_address)
 		);
 		
 
 		$req = [];
-		$zone = '';
+		$show_labels = false;
 
 		if($is_archive || is_page() || is_tax())
 		{
@@ -1142,6 +1143,8 @@ class Dynamicpackages_Public {
 		}
 		else if(is_singular('packages') && !$is_booking_page && !$is_checkout_page)
 		{
+
+			$show_labels = true;
 			$req[] = 'duration';
 			if($this->enabled_days()) $req[] = 'enabled_days';
 			if($schedule && $is_transport_fixed === false) $req[] = 'schedule';
@@ -1149,6 +1152,7 @@ class Dynamicpackages_Public {
 
 			if($is_transport)
 			{
+				$req[] = 'label_itinerary';
 				$req[] = 'label_departure';
 			}
 
@@ -1167,6 +1171,13 @@ class Dynamicpackages_Public {
 		}
 		else if($is_booking_page || $is_checkout_page)
 		{
+			if($is_booking_page)
+			{
+				$show_labels = true;
+			}
+
+
+
 			if($is_transport)
 			{
 				$req[] = 'label_departure';
@@ -1191,11 +1202,14 @@ class Dynamicpackages_Public {
 			}
 		}
 
-
 		foreach ($args as $key => $value) {
 			// Check if the first element of the inner array is null
-			if (empty($value[0])  || !in_array($key, $req)) {
+			if (!in_array($key, $req)) {
 				// Remove the item with null first element
+				unset($args[$key]);
+			}
+			else if(empty($value[0]) && $show_labels === false)
+			{
 				unset($args[$key]);
 			}
 		}
