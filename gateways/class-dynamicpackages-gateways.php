@@ -50,6 +50,7 @@ class Dynamicpackages_Gateways
 	}
 	public function init()
 	{
+		add_filter('wp', array(&$this, 'modify_headers'), 100);
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
@@ -404,10 +405,26 @@ class Dynamicpackages_Gateways
 		echo whatsapp_button($label, $text);
 	}
 
+	public function modify_headers()
+	{
+		if(is_user_logged_in())
+		{
+			setcookie('has_user_logged_in', 'true', time() + (30 * 24 * 60 * 60), "/");
+		}		
+	}
+
 	public function copy_payment_link(): void
 	{
-		// Check if payment is enabled or if the user is logged in
-		if (!is_user_logged_in() || intval(dy_utilities::total()) === 0) {
+
+		$show_button = true;
+
+		if(!isset($_COOKIE['has_user_logged_in']) && !is_user_logged_in())
+		{
+			return;
+		}
+		
+		if(intval(dy_utilities::total()) === 0)
+		{
 			return;
 		}
 
