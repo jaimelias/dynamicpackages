@@ -103,11 +103,11 @@ class Dynamicpackages_Booking_Page {
 			'outstanding' => floatval($this->outstanding()),
 			'amount' => $amount,
 			'regular_amount' => $regular_amount,
-			'payment_type' => esc_html($this->payment_type()),
+			'payment_type' => esc_html(dy_utilities::payment_type()),
 			'deposit' => floatval(dy_utilities::get_deposit()),
 			'add_ons' => $add_ons
 		);
-		
+
 		return 'const defaultCheckoutArgs = '.json_encode($data).';';			
 	}
 
@@ -202,27 +202,6 @@ class Dynamicpackages_Booking_Page {
 			}
 
 			$GLOBALS['dy_outstanding'] = $output;
-		}
-		return $output;
-	}
-	
-	public function payment_type()
-	{
-		global $dy_payment_type;
-		$output = 'full';
-		
-		if(isset($dy_payment_type))
-		{
-			$output = $dy_payment_type;
-		}
-		else
-		{
-			if(package_field('package_payment' ) == 1 && intval(package_field('package_auto_booking')) == 1)
-			{
-				$output = 'deposit';
-			}
-			
-			$GLOBALS['dy_payment_type'] = $dy_payment_type;
 		}
 		return $output;
 	}

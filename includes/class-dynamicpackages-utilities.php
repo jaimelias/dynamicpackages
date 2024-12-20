@@ -1027,6 +1027,7 @@ class dy_utilities {
 		return $sum;
 	}
 
+
 	public static function get_deposit()
 	{
 		global $dy_get_deposit;
@@ -1038,11 +1039,13 @@ class dy_utilities {
 		}
 		else
 		{
-			if(package_field('package_payment' ) == 1 && intval(package_field('package_auto_booking')) == 1)
+			if(package_field('package_payment' ) == 1)
 			{
-				if(floatval(package_field('package_deposit' )) > 0)
+				$deposit = floatval(package_field('package_deposit'));
+
+				if($deposit > 0)
 				{
-					$output = package_field('package_deposit');
+					$output = $deposit;
 				}
 			}
 			else
@@ -1051,6 +1054,29 @@ class dy_utilities {
 			}
 			
 			$GLOBALS['dy_get_deposit'] = $output;
+		}
+		return $output;
+	}
+
+	public function payment_type()
+	{
+		global $dy_payment_type;
+		$output = 'full';
+		
+		if(isset($dy_payment_type))
+		{
+			$output = $dy_payment_type;
+		}
+		else
+		{
+			$deposit = floatval(package_field('package_deposit'));
+			
+			if(package_field('package_payment' ) == 1 && $deposit > 0)
+			{
+				$output = 'deposit';
+			}
+			
+			$GLOBALS['dy_payment_type'] = $dy_payment_type;
 		}
 		return $output;
 	}
