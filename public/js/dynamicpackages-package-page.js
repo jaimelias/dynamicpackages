@@ -91,7 +91,7 @@ const datePicker = async () => {
 
 					if(windowLocationUrl.searchParams.has('force_availability'))
 					{
-						args = {}
+						args = {...args, min: true, max: 365, disable: []}
 					}
 
 					
