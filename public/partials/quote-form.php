@@ -40,6 +40,11 @@
 			<input type="hidden" name="enable_payment" value="true"/>
 		<?php endif; ?>
 
+
+		<?php if(isset($_GET['force_availability'])): ?>
+			<input type="hidden" name="force_availability" value="true"/>
+		<?php endif; ?>		
+
 		<div>
 			<h3><?php echo (esc_html__('Contact Details', 'dynamicpackages')); ?></h3>
 			<div class="pure-g gutters">

@@ -127,6 +127,20 @@ class Dynamicpackages_Fields
             $this_field = '1';
         }
 
+        elseif(isset($_REQUEST['force_availability']))
+        {
+            if($name === 'package_disabled_dates_api') $this_field = '';
+            else if($name === 'package_booking_from') $this_field = '0';
+            else if($name === 'package_booking_to') $this_field = '365';
+            else if($name === 'package_day_mon') $this_field = '';
+            else if($name === 'package_day_tue') $this_field = '';
+            else if($name === 'package_day_wed') $this_field = '';
+            else if($name === 'package_day_thu') $this_field = '';
+            else if($name === 'package_day_fri') $this_field = '';
+            else if($name === 'package_day_sat') $this_field = '';
+            else if($name === 'package_day_sun') $this_field = '';
+        }
+
 
         // Store the value in the cache
         self::$cache[$cache_key] = $this_field;

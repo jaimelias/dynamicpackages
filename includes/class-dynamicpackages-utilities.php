@@ -1058,7 +1058,7 @@ class dy_utilities {
 		return $output;
 	}
 
-	public function payment_type()
+	public static function payment_type()
 	{
 		global $dy_payment_type;
 		$output = 'full';

@@ -5,7 +5,24 @@ jQuery(() => {
 	datePicker();
 	validateCheckPricesForm();
 	showCouponForm();
+	forceAvailability();
 });
+
+const forceAvailability = () => {
+
+	if(jQuery('.dy_force_availability_link').length === 0)
+	{
+		return true;
+	}
+
+    jQuery('.dy_force_availability_link').on('click', function () {
+        // Use the URL constructor to modify the URL
+        let url = new URL(window.location.href);
+        url.searchParams.set('force_availability', 'true');
+		window.location = url.href;
+    });
+
+}
 
 const datePicker = async () => {
 
@@ -18,6 +35,7 @@ const datePicker = async () => {
 		return false;
 	}
 	
+	const windowLocationUrl = new URL(window.location);
 	const d = new Date();
 	let url = permalink+'?json=disabled_dates&stamp='+d.getTime();	
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
@@ -71,6 +89,11 @@ const datePicker = async () => {
 						}
 					}
 
+					if(windowLocationUrl.searchParams.has('force_availability'))
+					{
+						args = {}
+					}
+
 					
 					if(name === 'end_date')
 					{
@@ -95,6 +118,8 @@ const datePicker = async () => {
 
 						}; 
 					}
+
+
 
 					if(jQuery(field).attr('type') == 'text')
 					{

@@ -144,6 +144,11 @@ class Dynamicpackages_Forms
 
 		$form .= '<div style="max-width: 300px; margin: 0 auto 20px auto;"><img width="600" weight="200" alt="visa mastercard paypal yappy crypto usdt usdc btc" src="'.esc_url($plugin_dir_url.'gateways/matrix/assets/all/pagos.svg').'"  /></div>';
 
+
+		if(isset($_GET['force_availability'])){
+			$form .= '<input type="hidden" name="force_availability" value="true"/>';
+		}
+
 		$form .= $this->adults_select($price_chart, $min, $max, $option_disc, $option_free);
 		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
 		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);			

@@ -66,6 +66,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_crypto_form', array(&$this, 'crypto_form'));		
 		add_action('dy_whatsapp_button', array(&$this, 'whatsapp_button'));
 		add_action('dy_copy_payment_link', array(&$this, 'copy_payment_link'));
+		add_action('dy_force_availability_link', array(&$this, 'force_availability_link'));
 	}
 	
 
@@ -433,8 +434,27 @@ class Dynamicpackages_Gateways
 			'<button type="button" class="dy_copy_payment_link pure-button rounded pure-button-bordered bottom-20">
 				<span class="dashicons dashicons-money-alt"></span> %s
 			</button>',
-			esc_html__('Copy payment link', 'dynamicpackages')
+			esc_html(__('Copy payment link', 'dynamicpackages'))
 		);
+	}
+
+	public function force_availability_link()
+	{
+		$show_button = true;
+
+		if(!isset($_COOKIE['has_user_logged_in']) && !is_user_logged_in())
+		{
+			return;
+		}
+
+
+		echo sprintf(
+			'<button type="button" class="dy_force_availability_link pure-button rounded pure-button-bordered bottom-20">
+				<span class="dashicons dashicons-calendar"></span> %s
+			</button>',
+			esc_html(__('Force availability', 'dynamicpackages'))
+		);
+
 	}
 	
 }

@@ -10,7 +10,16 @@ jQuery(() => {
 
 const reValidateDate = async () => {
     // Disables booking form if the date is also disabled by the API endpoint
-    const thisForm = jQuery('#dy_package_request_form');
+
+
+	const thisForm = jQuery('#dy_package_request_form');
+
+	const windowLocationUrl = new URL(window.location);
+
+	if(windowLocationUrl.searchParams.has('force_availability'))
+	{
+		return true;
+	}
 
     if (!jQuery('body').hasClass('single-packages')) return false;
 

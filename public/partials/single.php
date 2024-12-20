@@ -10,6 +10,8 @@
 		
 		<?php do_action('dy_children_package'); ?>
 		
+		<?php do_action('dy_force_availability_link'); ?>
+
 		<?php if(!dy_validators::has_children()):?>
 			<?php do_action('dy_check_prices_form'); ?>
 		<?php endif; ?>
