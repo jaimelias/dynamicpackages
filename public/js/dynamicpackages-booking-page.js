@@ -61,10 +61,15 @@ const reValidateDate = async () => {
 
     try {
 
-        const { permalink } = dyCoreArgs;
+        const { permalink, post_id } = dyCoreArgs;
         const { site_timestamp } = await getNonce() || {};
         const today = site_timestamp ? new Date(site_timestamp) : new Date();
-        const endpoint = `${permalink}?json=disabled_dates&stamp=${today.getTime()}`;
+
+		const endpoint = new URL(permalink)
+		endpoint.searchParams.set('json', 'disabled_dates')
+		endpoint.searchParams.set('dy_id', post_id)
+		endpoint.searchParams.set('stamp', today.getTime())
+
         const url = new URL(window.location.href);
         let bookingDateStr = url.searchParams.get('booking_date');
         let bookingDate;
@@ -81,7 +86,7 @@ const reValidateDate = async () => {
 			endDate = dateToOffset(today, new Date(endDateStr))
 		}
 
-        const response = await fetch(endpoint);
+        const response = await fetch(endpoint.href);
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
 
         const data = await response.json();

@@ -43,7 +43,7 @@ class dy_validators
 		
 	}
 	
-	public static function validate_booking_date()
+	public static function validate_booking_date($the_id = null)
 	{
 		$output = false;
 		$cache_key = 'dy_validate_booking_date';
@@ -56,9 +56,9 @@ class dy_validators
 		if(isset($_GET['booking_date']))
 		{
 			$booking_date = dy_utilities::booking_date();
-			$min_range = dy_utilities::min_range();
-			$max_range = dy_utilities::max_range();
-			$event_date = strtotime(package_field('package_event_date'));
+			$min_range = dy_utilities::min_range($the_id);
+			$max_range = dy_utilities::max_range($the_id);
+			$event_date = strtotime(package_field('package_event_date', $the_id));
 			
 			if($booking_date)
 			{
@@ -129,11 +129,13 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(self::validate_booking_date() && isset($_GET['pax_regular']) && self::validate_hash())
+		$the_id = get_dy_id();
+
+		if(self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
 		{
 			$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
 			
-			if($pax_regular >= package_field('package_min_persons'))
+			if($pax_regular >= package_field('package_min_persons', $the_id))
 			{
 				$output = true;
 			}

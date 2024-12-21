@@ -58,8 +58,16 @@ class Dynamicpackages_Fields
         global $post;
 
         // Ensure global $post is available
-        if ($this_id === null && isset($post)) {
-            $this_id = $post->ID;
+        if ($this_id === null ) {
+
+            if(isset($post))
+            {
+                $this_id = $post->ID;
+            }
+            else
+            {
+                throw new Exception("'this_id' can not be null if 'post' is undefined in class 'Dynamicpackages_Fields': $name");
+            }
         }
 
         // Fetch week days and languages with fallbacks

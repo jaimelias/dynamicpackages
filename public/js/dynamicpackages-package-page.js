@@ -27,7 +27,7 @@ const forceAvailability = () => {
 const datePicker = async () => {
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
-	const {permalink} = dyCoreArgs;
+	const {permalink, post_id} = dyCoreArgs;
 	const {site_timestamp} = await getNonce() || undefined;
 	
 	if(formContainer.length === 0 && !site_timestamp)
@@ -35,12 +35,20 @@ const datePicker = async () => {
 		return false;
 	}
 	
-	const windowLocationUrl = new URL(window.location);
-	const d = new Date();
-	let url = permalink+'?json=disabled_dates&stamp='+d.getTime();	
+
+
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
 	const buildPicker = () => {
+
+
+		const windowLocationUrl = new URL(window.location);
+		const d = new Date();	
+		const endpoint = new URL(permalink);
+		endpoint.searchParams.set('json', 'disabled_dates');
+		endpoint.searchParams.set('dy_id', post_id);
+		endpoint.searchParams.set('stamp', d.getTime());
+	
 
 		jQuery(formContainer).each(function () {
 			const thisForm = jQuery(this).find('.dy_package_booking_form');
@@ -53,21 +61,24 @@ const datePicker = async () => {
 			};
 			
 			jQuery(fields).each(function(){
+				
 				const field = jQuery(this);
-
 				const name = jQuery(field).attr('name');
-				let fetchUrl = (name === 'end_date') ? url + '&return=true' : url;
+
+				if(name === 'end_date')
+				{
+					endpoint.searchParams.set('return', 'true');
+				}
 				
 				jQuery(thisForm).find('select.booking_select').each(function(){
-					fetchUrl += '&' + jQuery(this).attr('name') + '=' + jQuery(this).val();
+					endpoint.searchParams.set(jQuery(this).attr('name'), jQuery(this).val())
 				});
-											
-				fetch(fetchUrl)
+
+				fetch(endpoint.href)
 				.then(response => (response.ok ? response : Promise.reject(new Error(`Error ${response.status}: ${response.statusText}`))))
 				.then(response => response.json())
 				.then(data => {
 					
-
 					args = {...args, ...data}
 
 					const today = new Date(site_timestamp)

@@ -73,18 +73,18 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function min_range()
+	public static function min_range($the_id = null)
 	{
-		$date_from = package_field('package_booking_from');
+		$date_from = package_field('package_booking_from', $the_id);
 		$date_from = ($date_from) ? $date_from : 0;
 		$min_range = strtotime("+ {$date_from} days", strtotime('today midnight'));
 		//fix first day
 		return strtotime("- 1 days", $min_range);	
 	}	
 
-	public static function max_range()
+	public static function max_range($the_id = null)
 	{
-		$date_to = package_field('package_booking_to');
+		$date_to = package_field('package_booking_to', $the_id);
 		$date_to  = ($date_to) ? $date_to : 365;;
 		return strtotime("+ {$date_to} days", strtotime('today midnight'));		
 	}
