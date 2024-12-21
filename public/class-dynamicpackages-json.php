@@ -75,7 +75,7 @@ class Dynamicpackages_JSON
 					//aggregateRating
 					$aggregateRating = array();
 					$aggregateRating['@type'] = 'aggregateRating';
-					$aggregateRating['ratingValue'] = esc_html($this->reviews->get_rating(get_the_ID()));
+					$aggregateRating['ratingValue'] = esc_html($this->reviews->get_rating(get_dy_id()));
 					$aggregateRating['reviewCount'] = esc_html(get_comments_number());
 
 					//reviews
@@ -126,7 +126,7 @@ class Dynamicpackages_JSON
 						
 						$arr['description'] = $post->post_excerpt;
 						
-						if($this->reviews->get_rating(get_the_ID()) > 0)
+						if($this->reviews->get_rating(get_dy_id()) > 0)
 						{
 							$arr['aggregateRating'] = $aggregateRating;
 						}
@@ -194,7 +194,7 @@ class Dynamicpackages_JSON
 							$event['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
 							$event['eventStatus'] = 'https://schema.org/EventScheduled';
 							
-							if($this->reviews->get_rating(get_the_ID()) > 0)
+							if($this->reviews->get_rating(get_dy_id()) > 0)
 							{
 								$event['aggregateRating'] = $aggregateRating;
 							}							

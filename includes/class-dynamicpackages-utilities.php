@@ -204,7 +204,7 @@ class dy_utilities {
 
 		if(!isset($the_id))
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}
 
 		//store output in $cache
@@ -284,7 +284,7 @@ class dy_utilities {
 	public static function show_duration($max = false)
 	{
 		$duration_label = '';
-		$the_id = get_the_ID();
+		$the_id = get_dy_id();
 		$cache_key = 'dy_show_duration_'.$the_id.'_'.$max;
 
 		if (isset(self::$cache[$cache_key])) {
@@ -342,7 +342,7 @@ class dy_utilities {
 	{	
 		if(!$the_id)
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}
 		
 		$name = 'dy_start_archive';
@@ -383,7 +383,7 @@ class dy_utilities {
 	{		
 		if(!$the_id)
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}
 		
 		$output = 0;
@@ -487,7 +487,7 @@ class dy_utilities {
 	{
 		if($the_id === null)
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}
 		
 		$output = [];
@@ -553,7 +553,7 @@ class dy_utilities {
 	{
 		if($the_id === '')
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}		
 		
 		$cache_key = '$occupancy_chart_'.$the_id;
@@ -573,7 +573,7 @@ class dy_utilities {
 	{
 		//package_seasons_chart
 		$output = [];
-		$cache_key = 'seasons_chart_'.get_the_ID();
+		$cache_key = 'seasons_chart_'.get_dy_id();
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
@@ -941,7 +941,7 @@ class dy_utilities {
 	public static function get_price_calc($sum, $regular, $type)
 	{
 
-		$cache_key ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_the_ID();
+		$cache_key ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_dy_id();
 
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
@@ -1360,7 +1360,7 @@ class dy_utilities {
 		{
 			if(pll_current_language($post->post_name) != pll_default_language())
 			{
-				$the_id = pll_get_post(get_the_ID(), pll_default_language());
+				$the_id = pll_get_post(get_dy_id(), pll_default_language());
 			}
 		}
 		

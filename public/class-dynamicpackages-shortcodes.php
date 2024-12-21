@@ -121,7 +121,7 @@ class Dynamicpackages_Shortcodes {
 						}
 					}
 					
-					if(get_the_ID() == $package_main)
+					if(get_dy_id() == $package_main)
 					{
 						$pagination_imp = true;
 					}					

@@ -131,24 +131,27 @@ class dy_validators
 
 		$the_id = get_dy_id();
 
-		if(self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
+		if($the_id !== null)
 		{
-			$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
-			
-			if($pax_regular >= package_field('package_min_persons', $the_id))
+			if(self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
 			{
-				$output = true;
+				$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
+				
+				if($pax_regular >= package_field('package_min_persons', $the_id))
+				{
+					$output = true;
+				}
+				else
+				{
+					$output = false;
+				}
 			}
 			else
 			{
 				$output = false;
 			}
 		}
-		else
-		{
-			$output = false;
-		}
-		
+
         //store output in $cache
         self::$cache[$cache_key] = $output;
 
@@ -839,7 +842,7 @@ class dy_validators
 
 		if($the_id === '')
 		{
-			$the_id = get_the_ID();
+			$the_id = get_dy_id();
 		}
 
 		$cache_key = $the_id.'_is_valid_schema';

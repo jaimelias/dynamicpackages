@@ -324,7 +324,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			if(is_array($terms))
 			{
 
-				$add_ons_package_id = 'dy_add_ons_' . get_the_ID();
+				$add_ons_package_id = 'dy_add_ons_' . get_dy_id();
 
 				if(isset($_COOKIE[$add_ons_package_id]))
 				{

@@ -6,7 +6,7 @@
 	$request_form = (is_singular('packages')) ? 'estimate_request' : 'contact';
 
 	$add_ons_value = '';
-	$add_ons_package_id = 'dy_add_ons_' . get_the_ID();
+	$add_ons_package_id = 'dy_add_ons_' . get_dy_id();
 	
 	if(isset($_COOKIE[$add_ons_package_id]))
 	{
@@ -35,7 +35,7 @@
 		<!-- Config -->
 		<input type="hidden" name="dy_request" value="<?php echo esc_attr($request_form); ?>" />
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
-		<input type="hidden" name="dy_id" value="<?php echo esc_attr(get_the_ID()); ?>"/>
+		<input type="hidden" name="dy_id" value="<?php echo esc_attr(get_dy_id()); ?>"/>
 		
 		<?php if(isset($_GET['enable_payment'])): ?>
 			<input type="hidden" name="enable_payment" value="true"/>

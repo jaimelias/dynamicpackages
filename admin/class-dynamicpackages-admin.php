@@ -243,7 +243,7 @@ class Dynamicpackages_Admin {
 			<option value="<?php echo esc_attr(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
 			<?php if($wp_query->have_posts()): ?>
 				<?php while ($wp_query->have_posts()): $wp_query->the_post(); ?>
-					<option value="<?php echo get_the_ID();?>" <?php selected($options, get_the_ID()); ?>><?php echo get_the_title();?></option>
+					<option value="<?php echo get_dy_id();?>" <?php selected($options, get_dy_id()); ?>><?php echo get_the_title();?></option>
 				<?php endwhile; wp_reset_postdata(); ?>
 			<?php endif; ?>
 		</select>

@@ -3,7 +3,7 @@
 	<div id="dy_reviews">
 		<h3>
 			<?php
-				echo apply_filters('dy_reviews_wp_star_rating', apply_filters('dy_reviews_get_rating', get_the_ID())).' '.__('Rated', 'dynamicpackages').' <span>'.esc_html(apply_filters('dy_reviews_get_rating', get_the_ID())).'</span>';
+				echo apply_filters('dy_reviews_wp_star_rating', apply_filters('dy_reviews_get_rating', get_dy_id())).' '.__('Rated', 'dynamicpackages').' <span>'.esc_html(apply_filters('dy_reviews_get_rating', get_dy_id())).'</span>';
 				echo ' '.__('Based on', 'dynamicpackages').' <span>'.esc_html(get_comments_number()).'</span> '.esc_html(__('Review(s)', 'dynamicpackages'));
 			?>
 		</h3>

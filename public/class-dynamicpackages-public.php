@@ -499,7 +499,7 @@ class Dynamicpackages_Public {
 	public static function price_type()
 	{
 		$name = 'dy_price_type';
-		$the_id = get_the_ID();
+		$the_id = get_dy_id();
 		$cache_key = $name.'_'.$the_id;
 
         if (isset(self::$cache[$cache_key])) {
