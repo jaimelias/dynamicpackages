@@ -9,6 +9,12 @@ class Dynamicpackages_Tables{
 
 	function __construct()
 	{
+		if(is_admin())
+		{
+			return;
+		}
+
+
 		$this->init();
 	}
 
