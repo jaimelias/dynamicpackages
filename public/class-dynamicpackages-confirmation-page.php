@@ -23,8 +23,7 @@ class Dynamicpackages_Confirmation_Page {
 		
 		if(is_checkout_page() && !isset($post))
 		{
-			$this_id = intval(sanitize_text_field($_POST['post_id']));
-			$GLOBALS['post'] = get_post($this_id);
+			$GLOBALS['post'] = get_post(get_dy_id());
 		}
 	}
 

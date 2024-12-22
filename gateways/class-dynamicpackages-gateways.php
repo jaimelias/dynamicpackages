@@ -447,6 +447,22 @@ class Dynamicpackages_Gateways
 			return;
 		}
 
+		if(dy_validators::has_children())
+		{
+			return;
+		}
+
+		if(isset($_GET['force_availability']))
+		{
+			echo sprintf(
+				'<div class="minimal_warning bottom-20">
+					<span class="dashicons dashicons-warning"></span> %s
+				</div>',
+				esc_html(__('The availability of this package has been forced. Proceed with caution.', 'dynamicpackages'))
+			);
+
+			return;
+		}
 
 		echo sprintf(
 			'<button type="button" class="dy_force_availability_link pure-button rounded pure-button-bordered bottom-20">
