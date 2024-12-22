@@ -14,7 +14,6 @@ class Dynamicpackages_Tables{
 			return;
 		}
 
-
 		$this->init();
 	}
 

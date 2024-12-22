@@ -8,6 +8,12 @@ class Dynamicpackages_Public {
 	private static $cache = [];
 
 	public function __construct($version) {
+
+		if(is_admin())
+		{
+			return;
+		}
+
 		$this->version = $version;
 		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
