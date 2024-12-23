@@ -1100,7 +1100,9 @@ class Dynamicpackages_Public {
 		$return_address = package_field('package_return_address');
 		$return_hour = dy_utilities::return_hour();
 		$max_persons = package_field('package_max_persons');
-		$show_max_persons = (get_option('dy_archive_hide_max_persons')) ? true : false;
+		$show_max_persons = (intval(get_option('dy_archive_hide_max_persons')) === 1 || intval(package_field('package_fixed_price')) === 0) 
+			? false 
+			: true;
 		$is_package_by_hour = boolval(package_field('package_by_hour'));
 		$schedule = '';
 		$is_transport_fixed = false;
