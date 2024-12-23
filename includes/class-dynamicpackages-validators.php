@@ -481,7 +481,7 @@ class dy_validators
 
 		if(package_field( 'package_max_coupons' ) && package_field( 'package_coupons' ))
 		{
-			$coupons = dy_utilities::get_hot_chat('package_coupons');
+			$coupons = dy_utilities::get_hot_chart('package_coupons');
 			
 			if(is_array($coupons))
 			{

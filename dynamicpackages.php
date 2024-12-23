@@ -60,11 +60,9 @@ class Dynamicpackages_Fields
         // Ensure global $post is available
         if ($this_id === null ) {
 
-            if(isset($post))
-            {
-                $this_id = $post->ID;
-            }
-            else
+            $this_id = get_dy_id();
+
+            if($this_id === null)
             {
                 throw new Exception("'this_id' can not be null if 'post' is undefined in class 'Dynamicpackages_Fields': $name");
             }

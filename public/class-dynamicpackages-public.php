@@ -1024,7 +1024,7 @@ class Dynamicpackages_Public {
 		}
 		else
 		{
-			$coupons = dy_utilities::get_hot_chat('package_coupons');
+			$coupons = dy_utilities::get_hot_chart('package_coupons');
 			
 			if(array_key_exists('coupons', $coupons))
 			{

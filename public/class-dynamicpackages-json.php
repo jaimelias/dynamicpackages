@@ -276,9 +276,9 @@ class Dynamicpackages_JSON
 			$disabled_dates = array();
 
 			
-			$get_disabled_dates = dy_utilities::get_hot_chat('package_disabled_dates');
-			$global_disabled_dates = dy_utilities::get_hot_chat('dy_disabled_dates');
-			$get_enabled_dates = dy_utilities::get_hot_chat('package_enabled_dates');
+			$get_disabled_dates = dy_utilities::get_hot_chart('package_disabled_dates');
+			$global_disabled_dates = dy_utilities::get_hot_chart('dy_disabled_dates');
+			$get_enabled_dates = dy_utilities::get_hot_chart('package_enabled_dates');
 			
 			if(is_array($global_disabled_dates))
 			{
