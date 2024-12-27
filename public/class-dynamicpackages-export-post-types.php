@@ -93,7 +93,7 @@ class Dynamicpackages_Export_Post_Types{
         
         
        //base prices
-        $price_chart = dy_utilities::get_hot_chart('package_price_chart');
+        $price_chart = dy_utilities::get_package_hot_chart('package_price_chart');
         $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
         $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
 
@@ -108,7 +108,7 @@ class Dynamicpackages_Export_Post_Types{
         if($package_type === 1)
         {
             
-            $occupancy_chart = dy_utilities::get_hot_chart('package_occupancy_chart');
+            $occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
             $occupancy_price_key_name = $this->occupancy_price_key_name($package_type, $duration_unit);
 
             $package['rates']['seasons_'.$occupancy_price_key_name] = [
@@ -123,7 +123,7 @@ class Dynamicpackages_Export_Post_Types{
             ];
 
 
-            $seasons_chart = dy_utilities::get_hot_chart('package_seasons_chart');
+            $seasons_chart = dy_utilities::get_package_hot_chart('package_seasons_chart');
             $rates_by_season = $this->get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit);
 
             $package['rates']['seasons_'.$occupancy_price_key_name] = array_merge(
@@ -182,7 +182,7 @@ class Dynamicpackages_Export_Post_Types{
                 'min_duration' => $this_season[3] .' '. $this->occupancy_duration_label($package_type, $duration_unit)
             ];
 
-            $chart = dy_utilities::get_hot_chart('package_occupancy_chart');
+            $chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
             $season['prices'] = $this->parse_price_chart($chart, 'occupancy_chart'.$season_id, $children_key_prefix);
             $output[$season_id] = $season;
         }

@@ -121,7 +121,7 @@ class dy_utilities {
 		}
 		
 		$option = strtolower($option);
-		$coupons = dy_utilities::get_hot_chart('package_coupons');
+		$coupons = dy_utilities::get_package_hot_chart('package_coupons');
 		$output = 'option not selected';
 		$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
 		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
@@ -497,7 +497,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 		
-		$price_chart = dy_utilities::get_hot_chart('package_price_chart', $the_id);
+		$price_chart = dy_utilities::get_package_hot_chart('package_price_chart', $the_id);
 	
 		if(is_array($price_chart))
 		{
@@ -562,7 +562,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$chart = dy_utilities::get_hot_chart('package_occupancy_chart', $the_id);
+		$chart = dy_utilities::get_package_hot_chart('package_occupancy_chart', $the_id);
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $chart;
@@ -579,7 +579,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$output = dy_utilities::get_hot_chart('package_seasons_chart');	
+		$output = dy_utilities::get_package_hot_chart('package_seasons_chart');	
 		
 		
 		//store output in $cache
@@ -616,7 +616,7 @@ class dy_utilities {
 	public static function get_disabled_range()
 	{
 		$output = array();
-		$disabled = dy_utilities::get_hot_chart('package_disabled_dates');
+		$disabled = dy_utilities::get_package_hot_chart('package_disabled_dates');
 		
 		if(is_array($disabled))
 		{
@@ -658,7 +658,7 @@ class dy_utilities {
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
-			$seasons = dy_utilities::get_hot_chart('package_seasons_chart');
+			$seasons = dy_utilities::get_package_hot_chart('package_seasons_chart');
 			$duration_arr = [];
 			
 			if(isset($_REQUEST['booking_extra']))
@@ -776,9 +776,9 @@ class dy_utilities {
 			$sum = 0;
 
 			
-			$occupancy_chart = dy_utilities::get_hot_chart('package_occupancy_chart');
+			$occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
 			$duration = self::get_min_nights();
-			$seasons = dy_utilities::get_hot_chart('package_seasons_chart');
+			$seasons = dy_utilities::get_package_hot_chart('package_seasons_chart');
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
@@ -1496,14 +1496,46 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function get_hot_chart($key_name, $the_id = null) {
+	public static function get_option_hot_chart($key_name) {
+
+
+		$cache_key = 'dy_get_option_hot_chart' . $key_name;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		// Retrieve and decode the JSON data
+		$raw_data = get_option($key_name);
+
+		// Check if $raw_data is empty or not a string
+		if (empty($raw_data) || !is_string($raw_data)) {
+			return [];
+		}
+
+		// Decode the JSON data
+		$output = json_decode(html_entity_decode($raw_data), true);
+
+		// Validate the JSON decoding
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			return [];
+		}
+
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
+
+		return $output;
+	}
+
+
+	public static function get_package_hot_chart($key_name, $the_id = null) {
 
 		if(!$the_id)
 		{
 			$the_id = get_dy_id();
 		}
 
-		$cache_key = 'dy_get_hot_chat_' . $key_name . '_' . $the_id;
+		$cache_key = 'dy_get_package_hot_chart' . $key_name . '_' . $the_id;
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
