@@ -25,8 +25,10 @@ class Dynamicpackages_Tables{
 
 	public function args()
 	{
-		$this->price_chart = dy_utilities::get_price_chart();
-		$this->occupancy_chart = dy_utilities::get_occupancy_chart();
+		$the_id = get_dy_id();
+
+		$this->price_chart = dy_utilities::get_price_chart($the_id);
+		$this->occupancy_chart = dy_utilities::get_occupancy_chart($the_id);
 		$this->show_pricing = intval(package_field('package_show_pricing'));
 		$this->min_persons = intval(package_field( 'package_min_persons' ));
 		$this->max_persons = intval(package_field('package_max_persons'));

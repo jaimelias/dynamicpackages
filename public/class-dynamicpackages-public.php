@@ -1208,7 +1208,7 @@ class Dynamicpackages_Public {
 					$req[] = 'end_date';
 					if($return_hour) $req[] = 'return_hour';
 					if($check_in_end_hour) $req[] = 'check_in_end_hour';
-					if($return_address)$req[] = 'return_address';
+					if($return_address) $req[] = 'return_address';
 				}
 			}
 		}
