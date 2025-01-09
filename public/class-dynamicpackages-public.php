@@ -1200,13 +1200,16 @@ class Dynamicpackages_Public {
 			if(dy_utilities::hour()) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
-			if($is_transport)
+			if(isset($_REQUEST['end_date']))
 			{
-				$req[] = 'label_return';
-				$req[] = 'end_date';
-				if($return_hour) $req[] = 'return_hour';
-				if($check_in_end_hour) $req[] = 'check_in_end_hour';
-				if($return_address)$req[] = 'return_address';
+				if($_REQUEST['end_date'] !== '')
+				{
+					$req[] = 'label_return';
+					$req[] = 'end_date';
+					if($return_hour) $req[] = 'return_hour';
+					if($check_in_end_hour) $req[] = 'check_in_end_hour';
+					if($return_address)$req[] = 'return_address';
+				}
 			}
 		}
 
