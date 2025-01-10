@@ -14,13 +14,19 @@ class Dynamicpackages_Tables{
 			return;
 		}
 
+		$this->init();
+	}
+
+	public function init()
+	{
 		add_action('wp', array(&$this, 'args'));
 		add_action('dy_price_table', array(&$this, 'price_table'), 100);
 	}
 
 	public function args()
 	{
-		if(is_singular('packages'))
+
+		if(!is_singular('packages'))
 		{
 			return true;
 		}
@@ -41,8 +47,7 @@ class Dynamicpackages_Tables{
 
 	public function price_table()
 	{
-
-		if(is_singular('packages'))
+		if(!is_singular('packages'))
 		{
 			return true;
 		}

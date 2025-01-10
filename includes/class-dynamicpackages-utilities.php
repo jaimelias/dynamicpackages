@@ -491,7 +491,7 @@ class dy_utilities {
 		}
 		
 		$output = [];
-		$cache_key = '$price_chart_'.$the_id;
+		$cache_key = 'price_chart_'.$the_id;
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
@@ -556,7 +556,7 @@ class dy_utilities {
 			$the_id = get_dy_id();
 		}		
 		
-		$cache_key = '$occupancy_chart_'.$the_id;
+		$cache_key = 'occupancy_chart_'.$the_id;
 		
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
