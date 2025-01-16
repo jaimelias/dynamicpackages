@@ -1557,11 +1557,11 @@ class Dynamicpackages_Public {
 	public function post_type_link($url, $post)
 	{
 
-		if(property_exists($post, 'ID'))
+		if(!property_exists($post, 'ID'))
 		{
 			return $url;
 		}
-		
+
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
 		$redirect_page = package_field('package_redirect_page');
