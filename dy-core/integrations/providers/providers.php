@@ -5,7 +5,6 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamic_Core_Providers {
 
-
 	private static $cache = [];
 
     function __construct()
