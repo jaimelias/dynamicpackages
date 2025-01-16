@@ -1529,27 +1529,29 @@ class Dynamicpackages_Public {
 
 	}
 
-	public function redirect()
+	public function redirect($headers)
 	{
+		if(!is_singular('packages') || is_404())
+		{
+			return $headers;
+		}
+
 		$lang = current_language();
 
-		if(is_singular('packages'))
-		{
-			$url = package_field('package_redirect_url_' . $lang);
-			$redirect_page = package_field('package_redirect_page');
-			$valid_redirect_page = (
-				(!is_booking_page() && (empty($redirect_page) || intval($redirect_page) === 0)
-				||
-				(is_booking_page() && intval($redirect_page) === 1)
-			)) ? true : false;
+		$url = package_field('package_redirect_url_' . $lang);
+		$redirect_page = package_field('package_redirect_page');
+		$valid_redirect_page = (
+			(!is_booking_page() && (empty($redirect_page) || intval($redirect_page) === 0)
+			||
+			(is_booking_page() && intval($redirect_page) === 1)
+		)) ? true : false;
 
-			if(!empty($url) && $valid_redirect_page)
+		if(!empty($url) && $valid_redirect_page)
+		{
+			if( filter_var($url, FILTER_VALIDATE_URL) !== false)
 			{
-				if( filter_var($url, FILTER_VALIDATE_URL) !== false)
-				{
-					wp_redirect( $url, 301 );
-					exit;
-				}
+				wp_redirect( $url, 301 );
+				exit;
 			}
 		}
 	}
@@ -1557,7 +1559,7 @@ class Dynamicpackages_Public {
 	public function post_type_link($url, $post)
 	{
 
-		if(!property_exists($post, 'ID'))
+		if(!property_exists($post, 'ID') || is_404())
 		{
 			return $url;
 		}
