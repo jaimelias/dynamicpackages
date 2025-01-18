@@ -1558,9 +1558,7 @@ class Dynamicpackages_Public {
 
 	public function post_type_link($url, $post)
 	{
-
-		if(!property_exists($post, 'ID') || is_404())
-		{
+		if (!is_object($post) || !property_exists($post, 'ID') || is_404() || is_customize_preview() || is_admin()) {
 			return $url;
 		}
 
