@@ -66,14 +66,17 @@ class Dynamicpackages_Actions{
 		{
 			if(dy_validators::validate_request())
 			{
+
+				$the_id = get_dy_id();
+
 				if(isset($_REQUEST['add_ons']))
 				{
-					$add_ons_package_id = sanitize_key('dy_add_ons_' . get_dy_id());
+					$add_ons_package_id = sanitize_key('dy_add_ons_' . $the_id);
 					$add_ons = sanitize_text_field($_REQUEST['add_ons']);
 					setcookie($add_ons_package_id, $add_ons, time() + 3600);
 				}
 				
-				global $dy_orders;
+				
 
 				$data = $_POST;
 				unset($data['CCNum']);
@@ -84,7 +87,10 @@ class Dynamicpackages_Actions{
 				unset($data['dy_nonce']);
 
 				//only in development
+				//global $dy_orders;
 				//$dy_orders->save_order($data);
+
+				$data['disabled_dates_api'] = package_field('package_disabled_dates_api', $the_id);
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
 				$webhook_args = $data;
