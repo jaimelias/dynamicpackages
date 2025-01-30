@@ -394,8 +394,21 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(isset($_POST['CCNum']) && isset($_POST['ExpMonth']) && isset($_POST['ExpYear']) && isset($_POST['CVV2']) && isset($_POST['country']) && isset($_POST['address']) && isset($_POST['city']))
+		$required_params = ['CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'country', 'address', 'city', 'unique_tx_id'];
+
+		for($x = 0; $x < count($required_params); $x++)
 		{
+			if(!array_key_exists($required_params[$x], $_POST))
+			{
+				$invalids[] = sprintf(__('Required param %s not found.', 'dynamicpackages'), $required_params[$x]);
+			}
+		}
+
+		if(count($invalids) !== 0)
+		{
+			cloudflare_ban_ip_address(json_encode($invalids));
+		}
+		else {
 			if(!self::luhn_check($_POST['CCNum']))
 			{
 				$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
@@ -423,6 +436,11 @@ class dy_validators
 			if(empty($_POST['address']))
 			{
 				$invalids[] = __('Invalid address.', 'dynamicpackages');
+			}
+			if(empty($_POST['unique_tx_id']) || strlen($_POST['unique_tx_id']) !== 13)
+			{
+				$invalids[] = __('Invalid unique_tx_id.', 'dynamicpackages');
+				cloudflare_ban_ip_address(json_encode($invalids));
 			}
 		}
 		

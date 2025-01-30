@@ -1,5 +1,8 @@
 
 <div id="dy_cc_form">
+
+	<input type="hidden" name="unique_tx_id" value="<?php echo esc_attr(uniqid()); ?>" />
+
 	<hr/>
 	<div class="dy_card_form_fields hidden">
 
