@@ -22,6 +22,7 @@ class paguelo_facil_on{
 		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));	
 	}
 	
+
 	public function init()
 	{
 		$this->order_status = 'paid';
@@ -51,6 +52,7 @@ class paguelo_facil_on{
 	
 	public function checkout()
 	{
+		//validate_checkout validates $_POST['unique_tx_id']
 		if(dy_validators::validate_checkout($this->id) === false || $this->valid_recaptcha === false || self::$txt_status !== null) {
 			return true;
 		}
@@ -69,26 +71,19 @@ class paguelo_facil_on{
 
 		$transient_is_processing_value = get_transient('is_processing_' . $transient_key); //returns false if not found
 
-		if($transient_is_processing_value === 'is_processing')
+		if($transient_is_processing_value === 'is_processing' && self::$txt_status === null)
 		{
-			if(self::$txt_status !== null)
-			{
-				return true;
-			}
-			else
-			{
-				$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found
+			$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found
 
-				if($transient_success_value === false)
-				{
-					self::$txt_status = 0;
-				}
-				else {
-					self::$txt_status = intval($transient_success_value);	
-				}
-
-				return true;
+			if($transient_success_value === false)
+			{
+				self::$txt_status = 0;
 			}
+			else {
+				self::$txt_status = intval($transient_success_value);	
+			}
+
+			return true;
 		}
 
 		set_transient('is_processing_' . $transient_key, 'is_processing', 60);
