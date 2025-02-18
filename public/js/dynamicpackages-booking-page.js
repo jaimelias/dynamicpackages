@@ -49,7 +49,7 @@ const reValidateDate = async () => {
 
 		if(dayOfTheWeek === 0)
 		{
-			dayOfTheWeek = 7
+			dayOfTheWeek = 6
 		}
 		else
 		{
