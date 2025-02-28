@@ -391,7 +391,7 @@ class paypal_me {
 	public function branding()
 	{
 		
-		$output = '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="205" height="50" alt="'.esc_attr($this->name).'" />';
+		$output = '<img src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'.svg').'" width="205" height="50" alt="'.esc_attr($this->name).'" />';
 		$output .= $this->service_fee_notification;
 
 		return $output;

@@ -21,7 +21,6 @@ class Dynamicpackages_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/nequi/nequi_direct.php';
 		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
 		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
@@ -34,12 +33,14 @@ class Dynamicpackages_Gateways
 	
 	public function load_classes()
 	{
-		$this->add_to_calendar = new dy_Add_To_Calendar();
+
 		$this->estimate = new estimate_request($this->plugin_id);
+
+
+		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
 		$this->cuanto = new cuanto($this->plugin_id);
 		$this->paypal_me = new paypal_me($this->plugin_id);
-		$this->nequi_direct = new nequi_direct($this->plugin_id);
 		$this->yappy_direct = new yappy_direct($this->plugin_id);
 		$this->pay_later = new pay_later($this->plugin_id);
 		$this->bank_transfer = new bank_transfer($this->plugin_id);
@@ -164,9 +165,25 @@ class Dynamicpackages_Gateways
 	
 	public function join_gateways()
 	{
-		$array = array_unique($this->list_gateways_cb());		
-		return join(' '.__('or', 'dynamicpackages').' ', array_filter(array_merge(array(join(', ', array_slice($array, 0, -1))), array_slice($array, -1)), 'strlen'));
+		$arr = $this->list_gateways_cb();
+	
+		// Ensure $arr is an array before applying array_unique
+		if (!is_array($arr) || empty($arr)) {
+			return '';
+		}
+	
+		$arr = array_unique(array_map('strval', $arr));
+	
+		if (count($arr) === 1) {
+			return $arr[0];
+		}
+	
+		$lastSeparator = __('or', 'dynamicpackages');
+		$lastItem = array_pop($arr);
+	
+		return implode(', ', $arr) . ' ' . $lastSeparator . ' ' . $lastItem;
 	}
+	
 	
 	public function has_gateway()
 	{

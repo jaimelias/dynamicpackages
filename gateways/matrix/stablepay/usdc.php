@@ -383,7 +383,7 @@ class usdc {
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/crypto/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
+			$icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
 
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" data-networks="'.esc_attr(json_encode($this->enabled_networks)).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button">'.$icon.' '.esc_html($this->name).'</button>';
 		}
@@ -425,7 +425,7 @@ class usdc {
 	
 	public function branding()
 	{
-		return '<img src="'.esc_url($this->plugin_dir_url.'assets/crypto/'.$this->id.'.svg').'" width="50" height="50" alt="'.esc_attr($this->name).'" />';
+		return '<img src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'.svg').'" width="50" height="50" alt="'.esc_attr($this->name).'" />';
 	}
 	
 	public function message($message)

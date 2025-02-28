@@ -387,7 +387,7 @@ class yappy_direct {
 	{
 		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
 		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';"  class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'" /> '.esc_html($this->name).'</button>';			
+			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';"  class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" /> '.esc_html($this->name).'</button>';			
 		}
 		return $output;
 	}
@@ -428,7 +428,7 @@ class yappy_direct {
 
 	public function branding()
 	{
-		return '<img src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'.svg').'" width="80" height="69" alt="'.esc_attr($this->name).'" />';
+		return '<img src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'.svg').'" width="80" height="69" alt="'.esc_attr($this->name).'" />';
 	}
 
 	
@@ -436,7 +436,7 @@ class yappy_direct {
 	{
 		if(strtolower($gateway) == $this->gateway_short_name)
 		{
-			$str = '<aside class="clearfix"><img class="inline-block pull-left" style="vertical-align: middle; margin-right: 10px;" width="40" height="40" alt="yappy" src="'.esc_url($this->plugin_dir_url.'assets/alt/'.$this->id.'_icon.svg').'" /><span class="semibold">'.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->name)).'.</span> '.$str.'</aside>';
+			$str = '<aside class="clearfix"><img class="inline-block pull-left" style="vertical-align: middle; margin-right: 10px;" width="40" height="40" alt="yappy" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" /><span class="semibold">'.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->name)).'.</span> '.$str.'</aside>';
 		}
 		
 		return $str;

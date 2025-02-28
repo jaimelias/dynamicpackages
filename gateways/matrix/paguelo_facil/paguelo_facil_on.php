@@ -31,8 +31,8 @@ class paguelo_facil_on{
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
-		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
-		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
+		$this->methods_o = __('Amex, Mastercard or Visa', 'dynamicpackages');
+		$this->methods_arr = ['Amex', 'Mastercard', 'Visa'];
 		$this->cclw = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
 		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
@@ -635,7 +635,7 @@ class paguelo_facil_on{
 	}
 	public function button($output)
 	{
-		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
+		if($this->show() && array_intersect($this->list_gateways_cb(), $this->methods_arr))
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';			
 		}
@@ -668,7 +668,7 @@ class paguelo_facil_on{
 		
 		if($add)
 		{
-			$array[] = $this->methods_c;
+			array_push($array, ...$this->methods_arr);
 		}
 		
 		return $array;	
@@ -829,8 +829,9 @@ class paguelo_facil_on{
 
 	public function branding()
 	{
-		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/card/visa-mastercard.svg').'" width="250" height="50" /></p>';
+		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/amex-mastercard-visa.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
 		return $output;
 	}
+	
 }

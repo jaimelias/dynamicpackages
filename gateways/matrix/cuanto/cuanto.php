@@ -25,8 +25,8 @@ class cuanto{
 		$this->order_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = 'Cuanto.app';
-		$this->methods_o = __('Visa or Mastercard', 'dynamicpackages');
-		$this->methods_c = __('Visa, Mastercard', 'dynamicpackages');
+		$this->methods_o = __('Mastercard or Visa', 'dynamicpackages');
+		$this->methods_arr = ['Mastercard', 'Visa'];
 		$this->type = 'card-off-site';
 		$this->domain = 'cuanto.app';		
 		$this->username = get_option($this->id);
@@ -309,7 +309,7 @@ class cuanto{
 	}	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->methods_c, $this->list_gateways_cb()))
+		if($this->show() && array_intersect($this->list_gateways_cb(), $this->methods_arr))
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';
 		}
@@ -344,7 +344,7 @@ class cuanto{
 		
 		if($add)
 		{
-			$array[] = $this->methods_c;
+			array_push($array, ...$this->methods_arr);
 		}
 		
 		return $array;	
@@ -353,7 +353,7 @@ class cuanto{
 
 	public function branding()
 	{
-		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/card/visa-mastercard.svg').'" width="250" height="50" /></p>';
+		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.esc_html(sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->name)).'</p>';
 		return $output;
 	}

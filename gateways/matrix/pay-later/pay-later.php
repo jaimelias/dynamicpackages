@@ -397,7 +397,7 @@ class pay_later{
 	public function branding()
 	{
 		//message start
-		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/card/visa-mastercard.svg').'" width="250" height="50" /></p>';
+		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.esc_html($this->name).'</p>';
 
 		if($this->message)
