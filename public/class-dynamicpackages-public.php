@@ -1562,12 +1562,10 @@ class Dynamicpackages_Public {
 			return $url;
 		}
 
-		if(get_post_type( $post ) !== 'packages')
+		if(in_the_loop() && get_post_type( $post ) === 'packages')
 		{
 			return $url;
 		}
-
-		write_log($post);
 
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
