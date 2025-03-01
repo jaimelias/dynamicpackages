@@ -27,7 +27,7 @@ class Dynamicpackages_Public {
 
 		//redirect
 		add_filter('wp_headers', array(&$this, 'redirect'));
-		//add_filter('post_type_link', array(&$this, 'post_type_link'), 100, 2);
+		add_filter('post_type_link', array(&$this, 'post_type_link'), 10, 2);
 
 		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
@@ -1558,6 +1558,7 @@ class Dynamicpackages_Public {
 
 	public function post_type_link($url, $post)
 	{
+
 		if (!isset($post) || empty($post) || is_404() || is_customize_preview() || is_admin()) {
 			return $url;
 		}
@@ -1566,6 +1567,9 @@ class Dynamicpackages_Public {
 		{
 			return $url;
 		}
+
+
+		wp_die(get_post_type( $post ));
 
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
