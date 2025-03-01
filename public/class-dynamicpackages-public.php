@@ -1558,38 +1558,30 @@ class Dynamicpackages_Public {
 
 	public function post_type_link($url, $post)
 	{
-		if (!isset($post) || empty($post) || is_404() || is_customize_preview() || is_admin()) {
+
+		if (empty($post) || is_404() || is_customize_preview() || is_admin() || get_post_type($post) !== 'packages' || is_category() || is_tag()) {
 			return $url;
 		}
 
-		if(!get_post_type( $post ) === 'packages')
+		$lang = current_language();
+		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
+		$redirect_page = package_field('package_redirect_page');
+
+		if(empty($redirect))
 		{
 			return $url;
 		}
 
-
-		if(is_page() || is_singular('packages') || !is_tag())
+		$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
+		
+		if(in_the_loop() || isset($_GET['minimal-sitemap']))
 		{
-			$lang = current_language();
-			$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
-			$redirect_page = package_field('package_redirect_page');
-
-			if(empty($redirect))
+			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
 			{
-				return $url;
+				$url = $redirect;
 			}
-
-			$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
-			
-			if(in_the_loop() || isset($_GET['minimal-sitemap']))
-			{
-				if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
-				{
-					$url = $redirect;
-				}
-			}
-
 		}
+
 
 		return $url;
 	}
