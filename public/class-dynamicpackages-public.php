@@ -1568,9 +1568,6 @@ class Dynamicpackages_Public {
 			return $url;
 		}
 
-
-		wp_die(get_post_type( $post ));
-
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
 		$redirect_page = package_field('package_redirect_page');
