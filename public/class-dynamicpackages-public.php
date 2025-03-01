@@ -1568,7 +1568,7 @@ class Dynamicpackages_Public {
 		}
 
 
-		if(is_page() || is_singular('packages'))
+		if(is_page() || is_singular('packages') || !is_tag())
 		{
 			$lang = current_language();
 			$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
