@@ -1562,7 +1562,7 @@ class Dynamicpackages_Public {
 			return $url;
 		}
 
-		if(in_the_loop() && get_post_type( $post ) === 'packages')
+		if(get_post_type( $post ) === 'packages' && (is_page() || is_singular('packages')))
 		{
 			return $url;
 		}
