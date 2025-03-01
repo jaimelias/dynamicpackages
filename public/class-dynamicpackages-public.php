@@ -27,7 +27,7 @@ class Dynamicpackages_Public {
 
 		//redirect
 		add_filter('wp_headers', array(&$this, 'redirect'));
-		add_filter('post_type_link', array(&$this, 'post_type_link'), 100, 2);
+		//add_filter('post_type_link', array(&$this, 'post_type_link'), 100, 2);
 
 		//template
 		add_filter('template_include', array(&$this, 'package_template'), 99);
