@@ -1558,8 +1558,7 @@ class Dynamicpackages_Public {
 
 	public function post_type_link($url, $post)
 	{
-
-		if (!isset($post) || empty($post) || is_404() || is_customize_preview() || is_admin()) {
+		if (!isset($post) || empty($post) || is_404() || is_customize_preview() || is_admin() || is_tag() || is_category()) {
 			return $url;
 		}
 
@@ -1567,6 +1566,8 @@ class Dynamicpackages_Public {
 		{
 			return $url;
 		}
+
+		
 
 		$lang = current_language();
 		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
