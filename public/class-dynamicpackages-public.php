@@ -1562,28 +1562,33 @@ class Dynamicpackages_Public {
 			return $url;
 		}
 
-		if(!get_post_type( $post ) === 'packages' && !is_page() && !is_singular('packages'))
+		if(!get_post_type( $post ) === 'packages')
 		{
 			return $url;
 		}
 
-		$lang = current_language();
-		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
-		$redirect_page = package_field('package_redirect_page');
 
-		if(empty($redirect))
+		if(is_page() || is_singular('packages'))
 		{
-			return $url;
-		}
+			$lang = current_language();
+			$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
+			$redirect_page = package_field('package_redirect_page');
 
-		$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
- 		
-		if(in_the_loop() || isset($_GET['minimal-sitemap']))
-		{
-			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
+			if(empty($redirect))
 			{
-				$url = $redirect;
+				return $url;
 			}
+
+			$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
+			
+			if(in_the_loop() || isset($_GET['minimal-sitemap']))
+			{
+				if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
+				{
+					$url = $redirect;
+				}
+			}
+
 		}
 
 		return $url;
