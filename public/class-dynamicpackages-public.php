@@ -1558,11 +1558,11 @@ class Dynamicpackages_Public {
 
 	public function post_type_link($url, $post)
 	{
-		if (!is_object($post) || !property_exists($post, 'ID') || is_404() || is_customize_preview() || is_admin()) {
+		if (!isset($post) || empty($post) || is_404() || is_customize_preview() || is_admin()) {
 			return $url;
 		}
 
-		if($post->post_type !== 'packages')
+		if(get_post_type( $post ) !== 'packages')
 		{
 			return $url;
 		}
