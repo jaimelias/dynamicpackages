@@ -404,7 +404,7 @@ function checkoutFormSubmit(token){
 		
 		if(isRequired)
 		{
-			if(isNull || !isValidValue({name, value}))
+			if(isNull || !isValidValue({name, value, thisForm}))
 			{
 				if(name.startsWith('terms_conditions_'))
 				{

@@ -60,7 +60,7 @@
 			</div>					
 			<div class="pure-u-1 pure-u-lg-1-3">
 				<label for="CVV2">CVV</label>
-				<input min="0" max="999" type="number" name="CVV2" id="CVV2" class="bottom-20"/>
+				<input min="0" max="9999" type="number" name="CVV2" id="CVV2" class="bottom-20"/>
 			</div>
 		</div>
 		<hr/>
