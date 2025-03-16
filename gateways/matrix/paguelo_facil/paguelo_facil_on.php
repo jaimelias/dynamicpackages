@@ -31,8 +31,8 @@ class paguelo_facil_on{
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
-		$this->methods_o = __('Amex, Mastercard or Visa', 'dynamicpackages');
-		$this->methods_arr = ['Amex', 'Mastercard', 'Visa'];
+		$this->methods_o = __('Mastercard or Visa', 'dynamicpackages');
+		$this->methods_arr = ['Mastercard', 'Visa'];
 		$this->cclw = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
 		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
@@ -829,7 +829,7 @@ class paguelo_facil_on{
 
 	public function branding()
 	{
-		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/amex-mastercard-visa.svg').'" width="250" height="50" /></p>';
+		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
 		return $output;
 	}
