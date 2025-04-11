@@ -71,17 +71,19 @@ const reValidateDate = async () => {
 		endpoint.searchParams.set('stamp', today.getTime())
 
         const url = new URL(window.location.href);
-        let bookingDateStr = url.searchParams.get('booking_date');
+        let bookingDateStr = url.searchParams.get('booking_date') + ' 00:00:00';
         let bookingDate;
 
+		console.log(bookingDateStr)
 
-		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') : ''
+
+		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') + ' 00:00:00' : ''
 		let endDate;
 
-        if (bookingDateStr.length === 10) {
+        if (bookingDateStr.length > 0) {
             bookingDate = dateToOffset(today, new Date(bookingDateStr));
         }
-		if(endDateStr.length === 10)
+		if(endDateStr.length > 0)
 		{
 			endDate = dateToOffset(today, new Date(endDateStr))
 		}
