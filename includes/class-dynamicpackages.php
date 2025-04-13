@@ -37,8 +37,7 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = '1.0.8';
-
+		$this->version = '1.0.9';
 	}
 
 	public function run() {

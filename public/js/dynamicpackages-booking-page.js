@@ -7,6 +7,7 @@ jQuery(() => {
 	copyPaymentLink();
 });
 
+const localRegex = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?$/;
 
 const reValidateDate = async () => {
     // Disables booking form if the date is also disabled by the API endpoint
@@ -80,10 +81,10 @@ const reValidateDate = async () => {
 		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') + ' 00:00:00' : ''
 		let endDate;
 
-        if (bookingDateStr.length > 0) {
+        if (localRegex.test(bookingDateStr)) {
             bookingDate = dateToOffset(today, new Date(bookingDateStr));
         }
-		if(endDateStr.length > 0)
+		if(localRegex.test(endDateStr))
 		{
 			endDate = dateToOffset(today, new Date(endDateStr))
 		}
@@ -104,13 +105,13 @@ const reValidateDate = async () => {
                 .filter(d => Array.isArray(d) && d.length === 3)
                 .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
 
-            if (formattedDisabledDates.includes(bookingDateStr) || (endDateStr.length === 10 && formattedDisabledDates.includes(endDateStr))) {
+            if (formattedDisabledDates.includes(bookingDateStr) || (localRegex.test(endDateStr) && formattedDisabledDates.includes(endDateStr))) {
                 disableBookingForm(thisForm);
             }
         }
 
 		const bookingDayOfTheWeek = getDayOfTheWeek(bookingDate)
-		const endDayOfTheWeek = (endDateStr.length === 10) ?  getDayOfTheWeek(endDate) : undefined
+		const endDayOfTheWeek = (localRegex.test(endDateStr)) ?  getDayOfTheWeek(endDate) : undefined
 		const disableDaysOfTheWeek = disable.filter(d => typeof d === 'number' && !isNaN(d))
 		const forcedEnabledDates = disable
 			.filter(d => Array.isArray(d) && d.length === 4 && d[3] === 'inverted')
@@ -136,9 +137,8 @@ const reValidateDate = async () => {
 			}
 		}
 
-		if(endDateStr.length === 10 && disableDaysOfTheWeek.includes(endDayOfTheWeek))
+		if(localRegex.test(endDateStr) && disableDaysOfTheWeek.includes(endDayOfTheWeek))
 		{
-
 			let disableByEndDay = true
 
 			if(forcedEnabledDates.includes(endDateStr))

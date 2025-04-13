@@ -310,32 +310,45 @@ class Dynamicpackages_JSON
 			{
 				for($x = 0; $x < count($disabled_dates); $x++)
 				{
-					if($disabled_dates[$x][0] && $disabled_dates[$x][1])
+					if(empty($disabled_dates[$x][0]) && is_valid_date($disabled_dates[$x][0]) === false)
 					{
-						$period = new DatePeriod(
-							 new DateTime($disabled_dates[$x][0]),
-							 new DateInterval('P1D'),
-							 new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
-						);
-						
-						$range = array();
-						$range_fix = array();
-						
-						foreach ($period as $key => $value)
-						{
-							$this_date = $value->format('Y-m-d');
-							$this_date = explode("-", $this_date);
-							$this_date = array_map('intval', $this_date);
-							$this_date = array_map(function($arr, $keys){
-								if($keys == 1)
-								{
-									$arr = $arr - 1;
-								}
-								return $arr;
-							}, $this_date, array_keys($this_date));
-							$disable['disable'][] = $this_date;
-						}						
+						continue;
 					}
+
+					$date_from = $disabled_dates[$x][0] . ' 00:00:00';
+					$date_to = (empty($disabled_dates[$x][1]) || is_valid_date($disabled_dates[$x][1]) === false) 
+						? $disabled_dates[$x][0]  . ' 00:00:00' 
+						: $disabled_dates[$x][1]  . ' 00:00:00';
+
+					if(is_valid_date($date_from) === false)
+					{
+						write_log([$date_from, is_valid_date($date_from), date($date_from)]);
+					}
+
+					$period = new DatePeriod(
+						new DateTime($disabled_dates[$x][0]),
+						new DateInterval('P1D'),
+						new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
+				   );
+				   
+				   $range = array();
+				   $range_fix = array();
+				   
+				   foreach ($period as $key => $value)
+				   {
+					   $this_date = $value->format('Y-m-d');
+					   $this_date = explode("-", $this_date);
+					   $this_date = array_map('intval', $this_date);
+					   $this_date = array_map(function($arr, $keys){
+						   if($keys == 1)
+						   {
+							   $arr = $arr - 1;
+						   }
+						   return $arr;
+					   }, $this_date, array_keys($this_date));
+					   $disable['disable'][] = $this_date;
+				   }
+
 				}			
 			}
 		
