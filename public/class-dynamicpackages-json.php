@@ -250,6 +250,11 @@ class Dynamicpackages_JSON
 		$disable = array();
 		$disable['disable'] = array();
 		$days = dy_utilities::get_week_days_abbr();
+		$error_fallback = array(
+			'disable' => [0, 1, 2, 3, 4, 5, 6],
+			'min' => true,
+			'max' => 365
+		);
 		
 		if(empty(package_field('package_event_date')))
 		{
@@ -310,25 +315,20 @@ class Dynamicpackages_JSON
 			{
 				for($x = 0; $x < count($disabled_dates); $x++)
 				{
-					if(empty($disabled_dates[$x][0]) && is_valid_date($disabled_dates[$x][0]) === false)
+					if(!is_valid_date($disabled_dates[$x][0]))
 					{
 						continue;
 					}
 
 					$date_from = $disabled_dates[$x][0] . ' 00:00:00';
-					$date_to = (empty($disabled_dates[$x][1]) || is_valid_date($disabled_dates[$x][1]) === false) 
+					$date_to = (!is_valid_date($disabled_dates[$x][1])) 
 						? $disabled_dates[$x][0]  . ' 00:00:00' 
 						: $disabled_dates[$x][1]  . ' 00:00:00';
-
-					if(is_valid_date($date_from) === false)
-					{
-						write_log([$date_from, is_valid_date($date_from), date($date_from)]);
-					}
 
 					$period = new DatePeriod(
 						new DateTime($disabled_dates[$x][0]),
 						new DateInterval('P1D'),
-						new DateTime(date('Y-m-d', strtotime($disabled_dates[$x][1] . ' +1 day')))
+						new DateTime(date('Y-m-d H:i:s', strtotime($disabled_dates[$x][1] . ' +1 day')))
 				   );
 				   
 				   $range = array();
@@ -336,7 +336,7 @@ class Dynamicpackages_JSON
 				   
 				   foreach ($period as $key => $value)
 				   {
-					   $this_date = $value->format('Y-m-d');
+					   $this_date = $value->format('Y-m-d H:i:s');
 					   $this_date = explode("-", $this_date);
 					   $this_date = array_map('intval', $this_date);
 					   $this_date = array_map(function($arr, $keys){
@@ -358,33 +358,35 @@ class Dynamicpackages_JSON
 			{
 				$api_disabled_dates = wp_remote_get($api_disabled_endpoint);
 				
-				if(is_array($api_disabled_dates))
-				{	
-					if(array_key_exists('body', $api_disabled_dates))
-					{
-						$api_disabled_dates = json_decode($api_disabled_dates['body']);
-						
-						if(is_array($api_disabled_dates))
-						{	
-							for($x = 0; $x < count($api_disabled_dates); $x++)
+				if(is_wp_error($api_disabled_dates) || !is_array($api_disabled_dates) || wp_remote_retrieve_response_code($api_disabled_dates) !== 200)
+				{
+					return $error_fallback;
+				}
+
+				if(array_key_exists('body', $api_disabled_dates))
+				{
+					$api_disabled_dates = json_decode($api_disabled_dates['body']);
+					
+					if(is_array($api_disabled_dates))
+					{	
+						for($x = 0; $x < count($api_disabled_dates); $x++)
+						{
+							if(is_valid_date($api_disabled_dates[$x]))
 							{
-								if(is_valid_date($api_disabled_dates[$x]))
-								{
-									$api_date = $api_disabled_dates[$x];
-									$api_date = explode("-", $api_date);
-									$api_date = array_map('intval', $api_date);
-									$api_date = array_map(function($arr, $keys){
-										if($keys == 1)
-										{
-											$arr = $arr - 1;
-										}
-										return $arr;
-									}, $api_date, array_keys($api_date));
-									$disable['disable'][] = $api_date;									
-								}
+								$api_date = $api_disabled_dates[$x];
+								$api_date = explode("-", $api_date);
+								$api_date = array_map('intval', $api_date);
+								$api_date = array_map(function($arr, $keys){
+									if($keys == 1)
+									{
+										$arr = $arr - 1;
+									}
+									return $arr;
+								}, $api_date, array_keys($api_date));
+								$disable['disable'][] = $api_date;									
 							}
 						}
-					}					
+					}
 				}
 			}
 			
@@ -406,51 +408,59 @@ class Dynamicpackages_JSON
 			{
 				for($x = 0; $x < count($enabled_dates); $x++)
 				{
-					if($enabled_dates[$x][0] && $enabled_dates[$x][1])
+
+					if(!is_valid_date($enabled_dates[$x][0]))
 					{
-						$period = new DatePeriod(
-							 new DateTime($enabled_dates[$x][0]),
-							 new DateInterval('P1D'),
-							 new DateTime(date('Y-m-d', strtotime($enabled_dates[$x][1] . ' +1 day')))
-						);
+						continue;
+					}
+
+					$from_date = $enabled_dates[$x][0] . ' 00:00:00';
+					$to_date = (!is_valid_date($enabled_dates[$x][1])) 
+						? $enabled_dates[$x][0] . ' 00:00:00'
+						: $enabled_dates[$x][1] . ' 00:00:00';
+
+					$period = new DatePeriod(
+						new DateTime($enabled_dates[$x][0]),
+						new DateInterval('P1D'),
+						new DateTime(date('Y-m-d H:i:s', strtotime($enabled_dates[$x][1] . ' +1 day')))
+					);
+					
+					$range = array();
+					$range_fix = array();
+					
+					foreach ($period as $key => $value)
+					{
+						$this_date = $value->format('Y-m-d H:i:s');
+						$valid_date = true;
 						
-						$range = array();
-						$range_fix = array();
-						
-						foreach ($period as $key => $value)
+						if(isset($api_disabled_dates))
 						{
-							$this_date = $value->format('Y-m-d');
-							$valid_date = true;
-							
-							if(isset($api_disabled_dates))
+							if(is_array($api_disabled_dates))
 							{
-								if(is_array($api_disabled_dates))
+								if(in_array($this_date, $api_disabled_dates))
 								{
-									if(in_array($this_date, $api_disabled_dates))
-									{
-										$valid_date = false;
-									}
-								}								
-							}
+									$valid_date = false;
+								}
+							}								
+						}
+						
+						if($valid_date)
+						{
+							$this_date = explode("-", $this_date);
+							$this_date = array_map('intval', $this_date);
+							$this_date = array_map(function($arr, $keys){
+								if($keys == 1)
+								{
+									$arr = $arr - 1;
+								}							
+								return $arr;
+							}, $this_date, array_keys($this_date));
 							
-							if($valid_date)
-							{
-								$this_date = explode("-", $this_date);
-								$this_date = array_map('intval', $this_date);
-								$this_date = array_map(function($arr, $keys){
-									if($keys == 1)
-									{
-										$arr = $arr - 1;
-									}							
-									return $arr;
-								}, $this_date, array_keys($this_date));
-								
-								$this_date[] = 'inverted';
-								
-								$disable['disable'][] = $this_date;								
-							}
-						}						
-					}					
+							$this_date[] = 'inverted';
+							
+							$disable['disable'][] = $this_date;								
+						}
+					}				
 				}			
 			}
 			
