@@ -269,13 +269,23 @@ function dy_date($format, $timestamp = null) {
 
 function load_dynamicpackage_textdomain() {
 
-    $dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
-    
-    load_plugin_textdomain(
-        'dynamicpackages',
-        false,
-        $dir
-    );
+    $domain = 'dynamicpackages';
+    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+
+
+    /*
+        $dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
+        
+        load_plugin_textdomain(
+            $domain,
+            false,
+            $dir
+        ); 
+    */
+
+    $mofile = WP_LANG_DIR . '/plugins/' . $domain . '-' . $locale . '.mo';
+
+    load_textdomain( $domain, $mofile );
 }
     
 add_action('init', 'load_dynamicpackage_textdomain');
