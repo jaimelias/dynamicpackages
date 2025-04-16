@@ -38,27 +38,31 @@ class dynamicpackages {
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.9';
+
+		add_action('init', array(&$this, 'load_dynamicpackage_textdomain'));
+		$this->initialize_plugin();
 	}
 
-	public function run() {
+	public function initialize_plugin(){
 		$this->load_dependencies();
 		$this->define_utility_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_gateteways_hooks();
+		$this->define_gateteways_hooks();	
 	}
 
 	private function load_dependencies() {
 
 		$dir = plugin_dir_path(dirname( __FILE__ ));
-		
+
 		require_once $dir . 'vendor/autoload.php';
-		//require_once $dir . 'includes/class-dynamicpackages-loader.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-parsedown.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-fields.php'; //optimized
+
 		
 		//public
 		require_once $dir . 'public/class-dynamicpackages-public.php';
@@ -81,6 +85,7 @@ class dynamicpackages {
 
 		//gateways
 		require_once $dir . 'gateways/class-dynamicpackages-gateways.php';
+
 	}
 
 	public function define_utility_hooks()
@@ -116,5 +121,31 @@ class dynamicpackages {
 		new Dynamicpackages_Gateways($this->plugin_id);
 	}
 
+
+	public function load_dynamicpackage_textdomain() {
+
+		$domain = 'dynamicpackages';
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+	
+		
+		$dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
+		
+		load_plugin_textdomain(
+			$domain,
+			false,
+			$dir
+		);
+		
+
+		/* 		
+				
+			$mofile = WP_LANG_DIR . '/plugins/' . $domain . '-' . $locale . '.mo';
+			
+			load_textdomain( $domain, $mofile );  
+		
+		*/
+		
+		
+	}
 
 }
