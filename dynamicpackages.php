@@ -278,7 +278,7 @@ function load_dynamicpackage_textdomain() {
     );
 }
     
-add_action('init', 'load_dynamicpackage_textdomain');
+add_action('plugins_loaded', 'load_dynamicpackage_textdomain');
     
 
 function run_dynamicpackages() {
