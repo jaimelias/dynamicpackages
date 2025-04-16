@@ -43,27 +43,13 @@ function deactivate_dynamicpackages() {
 register_activation_hook( __FILE__, 'activate_dynamicpackages' );
 register_deactivation_hook( __FILE__, 'deactivate_dynamicpackages' );
 
-//dynamic core scripts
-require_once plugin_dir_path( __FILE__ ) . 'dy-core/loader.php';
+
 
 //init plugin
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 
 
-function is_booking_page()
-{
-	return dy_validators::is_booking_page();
-}
 
-function is_checkout_page()
-{
-	return dy_validators::is_checkout_page();
-}
-
-function has_package()
-{
-	return dy_validators::has_package();
-}
 
 
 add_action( 'plugins_loaded', function() {

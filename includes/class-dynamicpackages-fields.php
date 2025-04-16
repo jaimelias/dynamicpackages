@@ -3,6 +3,12 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+
+function package_field($name, $this_id = null)
+{
+    return Dynamicpackages_Fields::get($name, $this_id);
+}
+
 class Dynamicpackages_Fields
 {
     private static $cache = [];
@@ -127,11 +133,5 @@ class Dynamicpackages_Fields
         }
     }
 }
-
-function package_field($name, $this_id = null)
-{
-    return Dynamicpackages_Fields::get($name, $this_id);
-}
-
 
 ?>

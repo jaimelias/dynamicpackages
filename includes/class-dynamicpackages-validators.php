@@ -2,6 +2,21 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+function is_booking_page()
+{
+	return dy_validators::is_booking_page();
+}
+
+function is_checkout_page()
+{
+	return dy_validators::is_checkout_page();
+}
+
+function has_package()
+{
+	return dy_validators::has_package();
+}
+
 #[AllowDynamicProperties]
 class dy_validators
 {

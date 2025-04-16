@@ -38,9 +38,9 @@ class dynamicpackages {
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.9';
+		$this->initialize_plugin();
 
 		add_action('init', array(&$this, 'load_dynamicpackage_textdomain'));
-		$this->initialize_plugin();
 	}
 
 	public function initialize_plugin(){
@@ -54,6 +54,9 @@ class dynamicpackages {
 	private function load_dependencies() {
 
 		$dir = plugin_dir_path(dirname( __FILE__ ));
+
+		//dynamic core scripts
+		require_once $dir . 'dy-core/loader.php';
 
 		require_once $dir . 'vendor/autoload.php';
 		require_once $dir . 'includes/class-dynamicpackages-parsedown.php'; //optimized
@@ -135,16 +138,6 @@ class dynamicpackages {
 			false,
 			$dir
 		);
-		
-
-		/* 		
-				
-			$mofile = WP_LANG_DIR . '/plugins/' . $domain . '-' . $locale . '.mo';
-			
-			load_textdomain( $domain, $mofile );  
-		
-		*/
-		
 		
 	}
 
