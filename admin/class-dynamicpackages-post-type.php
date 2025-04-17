@@ -14,46 +14,50 @@ class Dynamicpackages_Post_Types
 		add_action('init', array(&$this, 'package_post_type'));
 		add_action('init', array(&$this, 'register_taxonomies'), 10);
 
-		//forces custom taxonomies to polylang
+		//forces custom taxonomies to polylang. 
+		//Strings inside add_tax_to_pll or get_taxonomies_arr must must not be translated to avoid _load_textdomain_just_in_time error
 		add_filter( 'pll_get_taxonomies', array(&$this, 'add_tax_to_pll'), 10, 2 );
 	}
 	
 	public function get_taxonomies_arr()
 	{
+		//forces custom taxonomies to polylang. 
+		//Strings inside add_tax_to_pll or get_taxonomies_arr must must not be translated to avoid _load_textdomain_just_in_time error
+
 		return array(
 			'package_location' => array(
-				'name' => __( 'Locations', 'dynamicpackages'),
-				'singular_name' => __( 'Location', 'dynamicpackages'),
+				'name' => __( 'Locations'),
+				'singular_name' => __( 'Location'),
 				'emoji' => '🌎',
 				'public' => true
 			),
 			'package_category' => array(
-				'name' => __( 'Categories', 'dynamicpackages'),
-				'singular_name' => __( 'Category', 'dynamicpackages'),
+				'name' => __( 'Categories'),
+				'singular_name' => __( 'Category'),
 				'emoji' => '🏷️',
 				'public' => true
 			),
 			'package_included' => array(
-				'name' => __( 'Included', 'dynamicpackages'),
-				'singular_name' => __( 'Included', 'dynamicpackages'),
+				'name' => __( 'Included'),
+				'singular_name' => __( 'Included'),
 				'emoji' => '🍹',
 				'public' => false		
 			),
 			'package_not_included' => array(
-				'name' => __( 'Not Included', 'dynamicpackages'),
-				'singular_name' => __( 'Not Included', 'dynamicpackages'),
+				'name' => __( 'Not Included'),
+				'singular_name' => __( 'Not Included'),
 				'emoji' => '❌',
 				'public' => false
 			),
 			'package_terms_conditions' => array(
-				'name' => __( 'Terms & Conditions', 'dynamicpackages'),
-				'singular_name' => __( 'Terms & Conditions', 'dynamicpackages'),
+				'name' => __( 'Terms & Conditions'),
+				'singular_name' => __( 'Terms & Conditions'),
 				'emoji' => '📄',
 				'public' => true
 			),
 			'package_add_ons' => array(
-				'name' => __( 'Add-ons', 'dynamicpackages'),
-				'singular_name' => __( 'Add-on', 'dynamicpackages'),
+				'name' => __( 'Add-ons'),
+				'singular_name' => __( 'Add-on'),
 				'emoji' => '🤑',
 				'public' => false
 			)
@@ -152,7 +156,9 @@ class Dynamicpackages_Post_Types
 	public function add_tax_to_pll($taxonomies, $is_settings)
 	{
 
-		//forces custom taxonomies to polylang
+
+		//forces custom taxonomies to polylang. 
+		//Strings inside add_tax_to_pll or get_taxonomies_arr must must not be translated to avoid _load_textdomain_just_in_time error
 
 		if(!is_array($taxonomies))
 		{

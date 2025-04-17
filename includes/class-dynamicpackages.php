@@ -38,13 +38,21 @@ class dynamicpackages {
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
 		$this->version = '1.0.9';
-		$this->initialize_plugin();
+		
+		$this->load_dependencies();
 
-		add_action('init', array(&$this, 'load_dynamicpackage_textdomain'));
+
+		new Dynamicpackages_Post_Types();
+		
+		add_action('init', array(&$this, 'load_dynamicpackage_textdomain'), 0);
+
+		
+
+		$this->initialize_plugin();
 	}
 
 	public function initialize_plugin(){
-		$this->load_dependencies();
+		
 		$this->define_utility_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -102,7 +110,7 @@ class dynamicpackages {
 		new Dynamicpackages_Metaboxes();
 		new Dynamicpackages_Metapost();
 		new Dynamicpackages_Taxonomy_Add_Ons();
-		new Dynamicpackages_Post_Types();
+
 	}
 
 	private function define_public_hooks() 
