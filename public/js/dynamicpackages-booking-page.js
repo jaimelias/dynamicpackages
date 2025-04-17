@@ -30,11 +30,6 @@ const reValidateDate = async () => {
         }
     };
 
-    const dateToOffset = (today, date) => {
-        date.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds());
-        return date;
-    };
-
     const isDateBeforeLimit = (min, today, bookingDate) => {
 
 		if(typeof min === 'boolean') return false
@@ -45,20 +40,7 @@ const reValidateDate = async () => {
         return bookingDate <= limitDate;
     };
 
-	const getDayOfTheWeek = date => {
-		let dayOfTheWeek = date.getDay()
-
-		if(dayOfTheWeek === 0)
-		{
-			dayOfTheWeek = 6
-		}
-		else
-		{
-			dayOfTheWeek++
-		}
-
-		return dayOfTheWeek
-	}
+	const getDayOfTheWeek = date => date.getDay()
 
     try {
 
@@ -82,11 +64,11 @@ const reValidateDate = async () => {
 		let endDate;
 
         if (localRegex.test(bookingDateStr)) {
-            bookingDate = dateToOffset(today, new Date(bookingDateStr));
+            bookingDate = new Date(bookingDateStr);
         }
 		if(localRegex.test(endDateStr))
 		{
-			endDate = dateToOffset(today, new Date(endDateStr))
+			endDate = new Date(endDateStr)
 		}
 
         const response = await fetch(endpoint.href);
@@ -95,6 +77,7 @@ const reValidateDate = async () => {
         const data = await response.json();
         const { disable, min } = data;
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
+
 
         if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
             disableBookingForm(thisForm);

@@ -8,12 +8,7 @@ class Dynamicpackages_Metaboxes
 
     public function __construct()
     {
-		$this->add_metaboxes();
-    }
-
-    public function add_metaboxes()
-    {
-        add_action('add_meta_boxes', array(&$this, 'package_add_meta_box'));
+		add_action('add_meta_boxes', array(&$this, 'package_add_meta_box'));
     }
 
     public function package_add_meta_box()
