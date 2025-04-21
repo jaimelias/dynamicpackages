@@ -36,6 +36,10 @@
 		<input type="hidden" name="dy_request" value="<?php echo esc_attr($request_form); ?>" />
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
 		<input type="hidden" name="dy_id" value="<?php echo esc_attr(get_dy_id()); ?>"/>
+
+		<?php if(isset($_GET['route'])): ?>
+			<input type="hidden" name="route" value="<?php echo esc_attr(sanitize_text_field($_GET['route'])); ?>"/>
+		<?php endif; ?>
 		
 		<?php if(isset($_GET['enable_payment'])): ?>
 			<input type="hidden" name="enable_payment" value="true"/>

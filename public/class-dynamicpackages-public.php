@@ -1096,6 +1096,15 @@ class Dynamicpackages_Public {
 	
 	public function details()
 	{
+
+		$name = 'dy_details_list';
+		$the_id = get_dy_id();
+		$cache_key = $name.'_'.$the_id;
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
@@ -1249,12 +1258,7 @@ class Dynamicpackages_Public {
 		}
 		else if($is_booking_page || $is_checkout_page)
 		{
-			if($is_booking_page)
-			{
-				$show_labels = true;
-			}
-
-
+			$show_labels = true;
 
 			if($is_transport)
 			{
@@ -1304,14 +1308,17 @@ class Dynamicpackages_Public {
 			{
 				if($v[0])
 				{
-					$output .= '<div class="dy_pad bottom-5 dashicons-before dashicons-'.esc_attr($v[0]).'"> '.esc_html($v[1]).'</div>';
+					
+					$output .= '<div class="dy_pad bottom-5 dashicons-before dashicons-'.esc_attr($v[0]).'"> <span class="hidden">-</span> '.esc_html($v[1]).'</div>';
 				}
 				else
 				{
-					$output .= '<div class="dy_pad bottom-5 strong">'.esc_html($v[1]).'</div>';
+					$output .= '<div class="dy_pad bottom-5"><strong>'.esc_html($v[1]).'</strong></div>';
 				}
 			}
 		}
+
+		self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}
