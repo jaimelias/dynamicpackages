@@ -2038,7 +2038,7 @@ msgstr "Turquesa"
 #: admin/class-dynamicpackages-post-type.php:135
 #, php-format
 msgid "Update %s"
-msgstr "Actualización %s"
+msgstr "Actualiza %s"
 
 #: admin/class-dynamicpackages-post-type.php:81
 msgid "Update Package"

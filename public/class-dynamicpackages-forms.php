@@ -163,7 +163,7 @@ class Dynamicpackages_Forms
 		{
 			$route_a = $start_address_short . ' - ' . $return_address_short;
 			$route_b =  $return_address_short . ' - ' . $start_address_short;
-			$form .= '<label>'.esc_html(__('Route', 'dynamicpackages')).' »</label>';
+			$form .= '<label>'.esc_html(__('Route (Origin - Destination)', 'dynamicpackages')).' »</label>';
 			$form .= '<p><select name="route" class="required"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';			
 		}
 
