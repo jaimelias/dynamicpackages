@@ -127,6 +127,9 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 
+		$start_address_short = package_field('package_start_address_short');
+		$return_address_short = package_field('package_return_address_short');
+
 		$plugin_dir_url = plugin_dir_url( __DIR__ );
 		
 		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_attr(base64_encode(get_permalink())).'" data-gclid="true">';
@@ -155,6 +158,15 @@ class Dynamicpackages_Forms
 		$form .= $this->discount_select($price_chart, $min, $max, $option_disc, $option_free);		
 		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);			
 
+
+		if($is_transport && !empty($start_address_short) && !empty($return_address_short))
+		{
+			$route_a = $start_address_short . ' - ' . $return_address_short;
+			$route_b =  $return_address_short . ' - ' . $start_address_short;
+			$form .= '<label>'.esc_html(__('Route', 'dynamicpackages')).' »</label>';
+			$form .= '<p><select name="route" class="required"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';			
+		}
+
 		if(empty(package_field('package_event_date')))
 		{
 			$form .= '<label>'.esc_html($date_label).'</label>';
@@ -164,7 +176,7 @@ class Dynamicpackages_Forms
 		{
 			$form .= '<input type="hidden" value="'.esc_attr(package_field('package_event_date')).'" name="booking_date" class="required" />';	
 		}
-		
+
 		if($by_hour == 1)
 		{
 			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' »</label>';
@@ -173,6 +185,7 @@ class Dynamicpackages_Forms
 		
 		if($is_transport)
 		{
+			$form .= '<hr/>';
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
 			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
 			

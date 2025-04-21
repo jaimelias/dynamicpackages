@@ -648,103 +648,116 @@ class Dynamicpackages_Public {
 		}
 	}
 	
-	public static function description()
-	{	
+	public static function description() {
 		global $post;
-		$output = '';
-		
-		if(isset($post) && isset($_REQUEST['booking_date']))
-		{
-			$departure_date = dy_utilities::format_date(dy_utilities::booking_date());
-			$start_hour = (dy_utilities::hour()) ? ' '.__('@', 'dynamicpackages').' '.dy_utilities::hour() : null;
-			$itinerary = $departure_date.$start_hour;
-			$end_date = (isset($_REQUEST['end_date'])) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
-			$pax_discount = (isset($_REQUEST['pax_discount'])) ? intval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
-			$discount = (package_field('package_discount' )) ? package_field('package_discount' ) : 0;
-			$free = (package_field('package_free')) ? package_field('package_free') : 0;
-			$adults = intval(sanitize_text_field($_REQUEST['pax_regular']));
-			$people = array();
-			$people['adults'] = $adults;
-			$pax_free = (isset($_REQUEST['pax_free'])) ? intval(sanitize_text_field($_REQUEST['pax_free'])) : 0;
-			
-			if($pax_discount > 0)
-			{
-				$people['discount'] = intval(sanitize_text_field($_REQUEST['pax_discount']));
-			}
-			
-			if($pax_free > 0)
-			{
-				$people['free'] = intval(sanitize_text_field($_REQUEST['pax_free']));
-			}			
 	
-			
-			$participants = array(__('person', 'dynamicpackages'), __('persons', 'dynamicpackages'));
-			
-			if(array_key_exists('free', $people) || array_key_exists('discount', $people))
-			{
-				$participants = array(__('adult', 'dynamicpackages'), __('adults', 'dynamicpackages'));
-			}
-			
-			$labels_singular = array($participants[0], __('child under', 'dynamicpackages'));
-			$labels_plural = array($participants[1], __('children under', 'dynamicpackages'));
-			$labels = $labels_singular;
-			$people_imp = array();
-			
-			foreach($people as $k => $v)
-			{
-				if($v > 0)
-				{
-					$text = null;
-					if($v > 1)
-					{
-						$labels = $labels_plural;
-					}
-					
-					if($k == 'adults')
-					{
-						$text = $v.' '.$labels[0];
-					}
-					if($k == 'discount')
-					{
-						$text = $v.' '.$labels[1].' '.$discount.' '.__('years old', 'dynamicpackages');
-					}	
-					if($k == 'free')
-					{
-						$text = $v.' '.$labels[1].' '.$free.' '.__('years old', 'dynamicpackages');
-					}
-					array_push($people_imp, $text);
-				}
-			}
-			
-			$people_imp = implode(', ', $people_imp);
-			
-			if(dy_validators::package_type_transport() && isset($_REQUEST['end_date']))
-			{
-				$itinerary = __('Departure', 'dynamicpackages') .' '. $departure_date;
-				
-				if(strlen($_REQUEST['end_date']) > 5)
-				{
-					$description = __('Round trip', 'dynamicpackages');
-					$itinerary .= ' | ' . __('Return', 'dynamicpackages') . ' ' . $end_date;
-				}
-				else
-				{
-					$description = __('One-way', 'dynamicpackages');
-				}
-			}
-			else
-			{
-				$description = dy_utilities::show_duration();
-			}
-					
-			$description .= ' | ' . $post->post_title;
-			$description .= ' ('.$itinerary.'): ';
-			$description .= $people_imp;			
-			$output = $description;			
-		}		
+		// Guard: nothing to do without a post or booking date
+		if ( empty( $post ) || empty( $_REQUEST['booking_date'] ) ) {
+			return '';
+		}
 	
-		return $output;
+		// Core flags & data
+		$isTransport    = dy_validators::package_type_transport();
+		$routeRaw       = sanitize_text_field( $_REQUEST['route'] ?? '' );
+		$modifyRoute    = $isTransport && $routeRaw !== '0';
+	
+		$startShort     = package_field( 'package_start_address_short' );
+		$returnShort    = package_field( 'package_return_address_short' );
+	
+		// Dates & hours
+		$depDate        = dy_utilities::format_date( dy_utilities::booking_date() );
+		$depHour        = dy_utilities::hour() ? '@ ' . dy_utilities::hour() : '';
+	
+		$endRaw         = sanitize_text_field( $_REQUEST['end_date'] ?? '' );
+		$hasReturn      = $endRaw && is_valid_date( $endRaw );
+		$retDate        = $hasReturn ? dy_utilities::format_date( dy_utilities::end_date() ) : '';
+		$retHour        = ( $hasReturn && dy_utilities::return_hour() ) ? '@ ' . dy_utilities::return_hour() : '';
+	
+		// Passenger counts
+		$counts = [
+			'adults'   => intval( sanitize_text_field( $_REQUEST['pax_regular'] ?? 0 ) ),
+			'discount' => intval( sanitize_text_field( $_REQUEST['pax_discount'] ?? 0 ) ),
+			'free'     => intval( sanitize_text_field( $_REQUEST['pax_free'] ?? 0 ) ),
+		];
+		$ages = [
+			'discount' => package_field( 'package_discount' ) ?: 0,
+			'free'     => package_field( 'package_free' ) ?: 0,
+		];
+	
+		// Build each “X persons” chunk
+		$chunks = [];
+		foreach ( $counts as $type => $num ) {
+			if ( $num < 1 ) {
+				continue;
+			}
+			switch ( $type ) {
+				case 'adults':
+					$label = _n( 'person', 'persons', $num, 'dynamicpackages' );
+					$chunks[] = sprintf( '%d %s', $num, $label );
+					break;
+				case 'discount':
+				case 'free':
+					$labelAge = $ages[ $type ];
+					$label = _n( 'adult', 'adults', $num, 'dynamicpackages' );
+					$chunks[] = sprintf( '%d %s %d %s',
+						$num,
+						$label,
+						$labelAge,
+						__( 'years old', 'dynamicpackages' )
+					);
+					break;
+			}
+		}
+		$peopleStr = implode( ', ', $chunks );
+	
+		// Itinerary & trip type
+		if ( $isTransport ) {
+			// Dynamic “Departure” / “Return” labels
+			if ( $startShort && $returnShort ) {
+				$depLabel = $modifyRoute
+					? "{$returnShort}-{$startShort}"
+					: "{$startShort}-{$returnShort}";
+				$retLabel = $modifyRoute
+					? "{$startShort}-{$returnShort}"
+					: "{$returnShort}-{$startShort}";
+			} else {
+				$depLabel = __( 'Departure', 'dynamicpackages' );
+				$retLabel = __( 'Return', 'dynamicpackages' );
+			}
+	
+			// Build legs
+			$itinerary  = sprintf(
+				'%s %s %s',
+				$depLabel,
+				$depDate,
+				$modifyRoute ? $retHour : $depHour
+			);
+			$tripType = __( 'One-way', 'dynamicpackages' );
+	
+			if ( $hasReturn ) {
+				$itinerary .= ' | ' . sprintf(
+					'%s %s %s',
+					$retLabel,
+					$retDate,
+					$modifyRoute ? $depHour : $retHour
+				);
+				$tripType = __( 'Round trip', 'dynamicpackages' );
+			}
+		} else {
+			$itinerary = trim( sprintf( '%s %s', $depDate, $depHour ) );
+			$tripType  = dy_utilities::show_duration();
+		}
+	
+		// Final assembly
+		return sprintf(
+			'%s | %s (%s): %s',
+			$tripType,
+			$post->post_title,
+			$itinerary,
+			$peopleStr
+		);
 	}
+	
 	
 	public function show_badge()
 	{
@@ -1096,8 +1109,12 @@ class Dynamicpackages_Public {
 		$check_in_hour = package_field('package_check_in_hour');
 		$start_hour = dy_utilities::hour();
 		$start_address = package_field('package_start_address');
+		$start_address_short = package_field('package_start_address_short');
 		$check_in_end_hour = package_field('package_check_in_end_hour');
 		$return_address = package_field('package_return_address');
+		$return_address_short = package_field('package_return_address_short');
+
+		
 		$return_hour = dy_utilities::return_hour();
 		$max_persons = package_field('package_max_persons');
 		$show_max_persons = (intval(get_option('dy_archive_hide_max_persons')) === 1 || intval(package_field('package_fixed_price')) === 0) 
@@ -1116,25 +1133,78 @@ class Dynamicpackages_Public {
 			$is_transport_fixed = true;
 			$schedule = sprintf(__('Departure %s - Return %s', 'dynamicpackages'), $start_hour, $return_hour);
 		}
-		
-		$args = array(
-			'label_itinerary' => array(null, __('Itinerary', 'dynamicpackages')),
-			'max_persons' => array('admin-users', $max_persons .' '.__('pers. max.', 'dynamicpackages')),
-			'duration' => array('clock', dy_utilities::show_duration()),
-			'enabled_days' => array('calendar', $this->enabled_days()),
-			'schedule' => array('clock', $schedule),
-			'label_departure' => array(null, __('Departure', 'dynamicpackages')),
-			'booking_date' => array('calendar', $booking_date),
-			'check_in' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_hour),
-			'start_hour' => array('clock', __('Departing', 'dynamicpackages').' '.$start_hour),
-			'start_address' => array('location', $start_address),
-			'label_return' => array(null, __('Return', 'dynamicpackages')),
-			'end_date' => array('calendar', $end_date),
-			'check_in_end_hour' => array('clock', __('Check-in', 'dynamicpackages') . ' '. $check_in_end_hour),
-			'return_hour' => array('clock', __('Returning', 'dynamicpackages').' '. $return_hour),
-			'return_address' => array('location', $return_address)
-		);
-		
+
+		// Base labels
+		$label_departure = __('Departure', 'dynamicpackages');
+		$label_return    = __('Return',    'dynamicpackages');
+
+		// Determine if we should swap start/return
+		$modify_route = $is_transport
+			&& isset($_REQUEST['route'])
+			&& sanitize_text_field($_REQUEST['route']) !== '0';
+
+		// Only override labels if we have both addresses
+		if (
+			$is_transport
+			&& ! empty($start_address_short)
+			&& ! empty($return_address_short)
+		) {
+			// Prepare the two‑item orders for departure and return
+			if ($modify_route) {
+				$dep_pair = [$return_address_short, $start_address_short];
+				$ret_pair = [$start_address_short, $return_address_short];
+			} else {
+				$dep_pair = [$start_address_short, $return_address_short];
+				$ret_pair = [$return_address_short, $start_address_short];
+			}
+
+			$label_departure = sprintf(
+				__('Departure (%s – %s)', 'dynamicpackages'),
+				$dep_pair[0],
+				$dep_pair[1]
+			);
+			$label_return = sprintf(
+				__('Return (%s – %s)', 'dynamicpackages'),
+				$ret_pair[0],
+				$ret_pair[1]
+			);
+		}
+
+		// Core args
+		$args = [
+			'label_itinerary' => [ null,            __('Itinerary',   'dynamicpackages') ],
+			'max_persons'     => [ 'admin-users',   $max_persons . ' ' . __('pers. max.', 'dynamicpackages') ],
+			'duration'        => [ 'clock',         dy_utilities::show_duration() ],
+			'enabled_days'    => [ 'calendar',      $this->enabled_days() ],
+			'schedule'        => [ 'clock',         $schedule ],
+		];
+
+		// Swap‐aware values
+		$sa = $modify_route;  // shorthand
+		$first_address  = $sa ? $return_address : $start_address;
+		$second_address = $sa ? $start_address        : $return_address;
+		$first_hour     = $sa ? $return_hour          : $start_hour;
+		$second_hour    = $sa ? $start_hour           : $return_hour;
+		$first_checkin  = $sa ? $check_in_end_hour    : $check_in_hour;
+		$second_checkin = $sa ? $check_in_hour        : $check_in_end_hour;
+
+		// Build once
+		$route = [
+			'label_departure'    => [ null,     $label_departure ],
+			'booking_date'       => [ 'calendar',$booking_date ],
+			'check_in'           => [ 'clock',   __('Check‑in', 'dynamicpackages') . ' ' . $first_checkin ],
+			'start_hour'         => [ 'clock',   __('Departing', 'dynamicpackages') . ' ' . $first_hour ],
+			'start_address'      => [ 'location',$first_address ],
+			'label_return'       => [ null,     $label_return ],
+			'end_date'           => [ 'calendar',$end_date ],
+			'check_in_end_hour'  => [ 'clock',   __('Check‑in', 'dynamicpackages') . ' ' . $second_checkin ],
+			'return_hour'        => [ 'clock',   __('Returning', 'dynamicpackages') . ' ' . $second_hour ],
+			'return_address'     => [ 'location',$second_address ],
+		];
+
+		// Merge in one go
+		$args = array_merge($args, $route);
+
 
 		$req = [];
 		$show_labels = false;

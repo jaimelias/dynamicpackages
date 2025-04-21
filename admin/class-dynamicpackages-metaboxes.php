@@ -91,8 +91,10 @@ class Dynamicpackages_Metaboxes
 		$this->one_way_surcharge = package_field('package_one_way_surcharge');
 		$this->start_hour = package_field('package_start_hour');
 		$this->start_address = package_field('package_start_address');
+		$this->start_address_short = package_field('package_start_address_short');
 		$this->return_hour = package_field('package_return_hour');
 		$this->return_address = package_field('package_return_address');
+		$this->return_address_short = package_field('package_return_address_short');
 		$this->increase_persons = intval(package_field('package_increase_persons'));
 		$this->event_date = package_field('package_event_date');
 		$this->by_hour = intval(package_field('package_by_hour'));
@@ -388,6 +390,11 @@ class Dynamicpackages_Metaboxes
 			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea($this->start_address); ?></textarea>
 		</p>
 
+		<p>
+			<label for="package_start_address_short"><?php echo esc_html(__('Departure Address Short', 'dynamicpackages')); ?></label></br>
+			<input type="text" name="package_start_address_short" id="package_start_address_short" value="<?php echo esc_attr($this->start_address_short); ?>"> 
+		</p>
+
 		<?php if ($this->package_type_transport): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
@@ -402,7 +409,12 @@ class Dynamicpackages_Metaboxes
 			<p>
 				<label for="package_return_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
 				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo esc_textarea($this->return_address); ?></textarea>
-			</p>			
+			</p>
+			
+			<p>
+				<label for="package_return_address_short"><?php echo esc_html(__('Short Departure Address', 'dynamicpackages')); ?></label></br>
+				<input type="text" name="package_return_address_short" id="package_return_address_short" value="<?php echo esc_attr($this->return_address_short); ?>">
+			</p>		
 			
 		<?php endif; ?>
 

@@ -236,6 +236,8 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_start_hour', esc_attr($_POST['package_start_hour']));
 		if(isset( $_POST['package_start_address']))
 			update_post_meta( $post_id, 'package_start_address', esc_attr($_POST['package_start_address']));
+		if(isset( $_POST['package_start_address_short']))
+			update_post_meta( $post_id, 'package_start_address_short', esc_attr($_POST['package_start_address_short']));
 		//return
 		if(isset( $_POST['package_check_in_end_hour']))
 			update_post_meta( $post_id, 'package_check_in_end_hour', esc_attr($_POST['package_check_in_end_hour']));
@@ -243,6 +245,8 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_return_hour', esc_attr($_POST['package_return_hour']));
 		if(isset( $_POST['package_return_address']))
 			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));				
+		if(isset( $_POST['package_return_address_short']))
+			update_post_meta( $post_id, 'package_return_address_short', esc_attr($_POST['package_return_address_short']));				
 		if(isset( $_POST['package_redirect_page']))
 			update_post_meta( $post_id, 'package_redirect_page', esc_attr($_POST['package_redirect_page']));		
 			

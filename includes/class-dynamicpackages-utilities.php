@@ -1129,7 +1129,11 @@ class dy_utilities {
 		
 		if(isset($_REQUEST['return_hour']))
 		{
-			$output = sanitize_text_field($_REQUEST['return_hour']);
+			if(!empty($_REQUEST['return_hour']))
+			{
+				$output = sanitize_text_field($_REQUEST['return_hour']);
+			}
+			
 		}
 		
 		return $output;
