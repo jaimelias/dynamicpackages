@@ -170,12 +170,12 @@ class Dynamicpackages_Public {
 					$content .= $parent_content;
 				}
 				
-				$GLOBALS['new_content'] = $content;
+				$partial_content = $content;
 				
 				ob_start();
 				require_once($this->dirname_file . '/partials/single.php');
 				$content = ob_get_contents();
-				ob_end_clean();	
+				ob_end_clean();
 
 			}
 		}

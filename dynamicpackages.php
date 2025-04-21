@@ -52,6 +52,4 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages.php';
 
 
 
-add_action( 'plugins_loaded', function() {
-    new dynamicpackages();
-});
+new dynamicpackages();

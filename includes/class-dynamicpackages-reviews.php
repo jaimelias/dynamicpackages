@@ -112,7 +112,7 @@ class Dynamicpackages_Reviews
 							<label><?php echo (esc_html__('Alias', 'dynamicpackages')); ?></label>
 						</div>
 						<div>
-							<input type="text" name="dy_alias" value="<?php echo $this->get_random_name(); ?>" />
+							<input type="text" name="dy_alias" value="" />
 						</div>
 					</div><br/>
 					<?php endif; ?>
@@ -516,53 +516,6 @@ class Dynamicpackages_Reviews
 		}
 
 		return $output;
-	}	
-	
-	public function get_random_name()
-	{
-		$output = '';
-		$url = 'https://randomuser.me/api/';
-		$lang = substr(get_locale(), 0, -3);
-		
-		if($lang == 'en')
-		{
-			$url .= '?nat=us,gb';
-		}
-		else if($lang == 'es')
-		{
-			$url .= '?nat=es';
-		}
-		else if($lang == 'nl')
-		{
-			$url .= '?nat=nl';
-		}
-		else if($lang == 'DA')
-		{
-			$url .= '?nat=DK';
-		}		
-		
-        $ch = curl_init(); 
-        curl_setopt($ch, CURLOPT_URL, $url); 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
-        $output = curl_exec($ch); 
-        curl_close($ch);
-		
-		$output = json_decode($output, true);
-		
-		if(is_array($output))
-		{
-			if(count($output) > 0)
-			{
-				if(array_key_exists('results', $output))
-				{
-					$output = $output['results'][0];
-					$output = $output['name'];
-					$output = ucfirst($output['first']).' '.ucfirst($output['last']);
-				}
-				
-				return esc_html($output);				
-			}
-		}		
 	}
 	
 	public function total_reviews()

@@ -1,4 +1,4 @@
-<?php global $post; global $new_content; dy_utilities::event_date_update($post->ID); ?>
+<?php global $post; dy_utilities::event_date_update($post->ID); ?>
 
 <div class="pure-g gutters">
 
@@ -25,7 +25,7 @@
 	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
 		<div class="bottom-20"><?php echo apply_filters('dy_details', false); ?></div>
 	
-	<?php  echo  $new_content; ?>
+	<?php  echo  $partial_content ?>
 	
 	<?php do_action('dy_similar_packages_link'); ?>
 
