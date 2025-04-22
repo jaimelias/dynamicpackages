@@ -194,23 +194,37 @@ const timePicker = () => {
 }
 
 const showCouponForm = () => {
-	const container = jQuery('#coupon_code');
-	const  link = jQuery(container).find('a');
-	const field = jQuery(container).find('input[name="coupon_code"]');
 
-	if(field.val())
+	const formContainer = jQuery('.dy_package_booking_form_container');
+
+	if(formContainer.length === 0)
 	{
-		if(field.val().length >= 2)
-		{
-			jQuery(field).removeClass('hidden').focus();
-		}
+		return false;
 	}
 
+	jQuery(formContainer).each(function(){
+		const thisForm = jQuery(this).find('.dy_package_booking_form');
+		const container = jQuery(thisForm).find('.coupon_code_container');
+		const  link = jQuery(container).find('a');
+		const field = jQuery(container).find('input[name="coupon_code"]');
+
+		if(field.val())
+		{
+			if(field.val().length >= 2)
+			{
+				jQuery(field).removeClass('hidden');
+			}
+		}
 	
-	jQuery(link).click(e => {
-		e.preventDefault();
-		jQuery(field).removeClass('hidden').focus();
-	});	
+		
+		jQuery(link).click(e => {
+			e.preventDefault();
+			jQuery(field).toggleClass('hidden').focus();
+		});
+
+	})
+
+	
 }
 
 
@@ -242,7 +256,9 @@ const validateCheckPricesForm = () => {
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
 
 
-			if(value === '' && cookieValue)
+
+
+			if(value === '' && cookieValue && !name.startsWith('coupon_code'))
 			{
 				jQuery(field).val(cookieValue);
 			}
@@ -251,28 +267,18 @@ const validateCheckPricesForm = () => {
 		if(transportTypeField.length !== 0)
 		{
 			transportTypeField.change(function() {
+				
 				const transportOptionSelectedVal = jQuery(this).find('option:selected').val();
 
-				if(transportOptionSelectedVal === '')
+				if(transportOptionSelectedVal === '0')
 				{
-					transportTypeField.addClass('invalid_field');
-					departureContainer.addClass('hidden')
+					departureContainer.removeClass('hidden')
 					returnContainer.addClass('hidden')
 				}
-				else
+				else if(transportOptionSelectedVal === '1')
 				{
-					transportTypeField.removeClass('invalid_field');
-
-					if(transportOptionSelectedVal === '0')
-					{
-						departureContainer.removeClass('hidden')
-						returnContainer.addClass('hidden')
-					}
-					else if(transportOptionSelectedVal === '1')
-					{
-						departureContainer.removeClass('hidden')
-						returnContainer.removeClass('hidden')
-					}
+					departureContainer.removeClass('hidden')
+					returnContainer.removeClass('hidden')
 				}
 
 			})
@@ -281,7 +287,7 @@ const validateCheckPricesForm = () => {
 
 		jQuery(submitButton).click(() => {
 			let invalids = [];
-			let required = ['booking_date', 'booking_hour', 'route'];
+			let required = ['booking_date', 'booking_hour', 'route', 'transport_type'];
 			const data = formToArray(thisForm);
 			const bookingDate = data.find(v => v.name === 'booking_date');
 			const endDate = data.find(v => v.name === 'end_date');
@@ -357,7 +363,7 @@ const validateCheckPricesForm = () => {
 					
 					if(name)
 					{
-						if(name !== 'hash')
+						if(name !== 'hash' || !name.startsWith('coupon_code_'))
 						{
 							setCookie(`${name}_${post_id}`, value, 1);
 						}

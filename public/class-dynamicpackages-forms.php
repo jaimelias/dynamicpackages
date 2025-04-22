@@ -164,9 +164,9 @@ class Dynamicpackages_Forms
 			$route_a = $start_address_short . ' - ' . $return_address_short;
 			$route_b =  $return_address_short . ' - ' . $start_address_short;
 			$form .= '<label>'.esc_html(__('Route (Origin - Destination)', 'dynamicpackages')).'</label>';
-			$form .= '<p><select name="route" class="required"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';
+			$form .= '<p><select name="route"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';
 			$form .= '<label>'.esc_html(__('Transport type', 'dynamicpackages')).'</label>';
-			$form .= '<p><select class="transport_type" class="required"><option value="">---</option><option value="0">'.esc_html(__('One-way', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Round trip', 'dynamicpackages')).'</option></select></p>';
+			$form .= '<p><select name="transport_type"><option value="">---</option><option value="0">'.esc_html(__('One-way', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Round trip', 'dynamicpackages')).'</option></select></p>';
 		}
 
 		//departure transport hidden start
@@ -176,17 +176,17 @@ class Dynamicpackages_Forms
 		{
 			
 			$form .= '<label>'.esc_html($date_label).'</label>';
-			$form .= '<p><input type="text" name="booking_date" class="required dy_date_picker" placeholder="Loading..." disabled/></p>';		
+			$form .= '<p><input type="text" name="booking_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';		
 		}
 		else
 		{
-			$form .= '<input type="hidden" value="'.esc_attr(package_field('package_event_date')).'" name="booking_date" class="required" />';	
+			$form .= '<input type="hidden" value="'.esc_attr(package_field('package_event_date')).'" name="booking_date" />';	
 		}
 
 		if($by_hour == 1)
 		{
 			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' »</label>';
-			$form .= '<p><input type="text" name="booking_hour"  class="required dy_time_picker" /></p>';	
+			$form .= '<p><input type="text" name="booking_hour"  class="dy_time_picker" /></p>';	
 		}
 
 		//departure transport hidden end and start of departure hidden
@@ -267,7 +267,7 @@ class Dynamicpackages_Forms
 			}
 			
 			
-			$form .= '<div class="bottom-20" id="coupon_code"><a href="#coupon_code" class="semibold bottom-5 block"><span class="dashicons dashicons-awards"></span> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="coupon_code"  value="'.esc_attr($get_coupon).'" /></div>';
+			$form .= '<div class="bottom-20 coupon_code_container"><a href="#coupon_code" class="semibold bottom-5 block"><span class="dashicons dashicons-awards"></span> '.esc_html(__('Enter coupon code', 'dynamicpackages')).'</a><input placeholder="'.esc_html(__('Enter coupon code', 'dynamicpackages')).'" '.$coupon_hidden.' type="text" name="coupon_code"  value="'.esc_attr($get_coupon).'" /></div>';
 		}		
 		
 		$form .= '<div><button type="button" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <span class="dashicons dashicons-arrow-right"></span></button></div>';	
