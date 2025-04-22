@@ -205,7 +205,7 @@ class Dynamicpackages_Forms
 		}
 
 		//departure transport hidden end and start of departure hidden
-		$form .= ($is_transport) ? '</div>' : '';
+		$form .= ($is_transport) ? '<hr/></div>' : '';
 		
 		
 		if(($package_type == 1 || dy_utilities::package_type_by_hour() || dy_utilities::package_type_by_day()) && $max_duration > $min_duration)
