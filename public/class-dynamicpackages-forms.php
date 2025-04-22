@@ -5,6 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Forms
 {
+
+	private static $cache = [];
+
 	public function __construct()
 	{
 		add_filter('dy_package_filter_form_cb', array(&$this, 'package_filter_form'));
@@ -108,6 +111,15 @@ class Dynamicpackages_Forms
 	
 	public function check_prices_form()
 	{
+
+		$name = 'dy_check_prices_form';
+		$the_id = get_dy_id();
+		$cache_key = $name.'_'.$the_id;
+
+        if (isset(self::$cache[$cache_key])) {
+            echo self::$cache[$cache_key];
+        }
+
 		$auto_booking = package_field('package_auto_booking');
 		$price_chart = dy_utilities::get_price_chart();
 		$starting_at = dy_utilities::starting_at();
@@ -272,7 +284,11 @@ class Dynamicpackages_Forms
 		
 		$form .= '<div><button type="button" class="width-100 dy_check_prices block pure-button rounded">'.esc_html($book_now_text).' <span class="dashicons dashicons-arrow-right"></span></button></div>';	
 		$form .= '</form></div>';
-		echo $form;			
+		
+		
+		self::$cache[$cache_key] = $form;
+
+		echo $form;
 
 	}
 	
