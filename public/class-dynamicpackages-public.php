@@ -655,6 +655,14 @@ class Dynamicpackages_Public {
 		if ( empty( $post ) || empty( $_REQUEST['booking_date'] ) ) {
 			return '';
 		}
+
+		$name = 'dy_description_str';
+		$the_id = get_dy_id();
+		$cache_key = $name.'_'.$the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 	
 		// Core flags & data
 		$isTransport    = dy_validators::package_type_transport();
@@ -749,13 +757,18 @@ class Dynamicpackages_Public {
 		}
 	
 		// Final assembly
-		return sprintf(
+		$output = sprintf(
 			'%s | %s (%s): %s',
 			$tripType,
 			$post->post_title,
 			$itinerary,
 			$peopleStr
 		);
+
+
+		self::$cache[$cache_key] = $output;
+
+		return $output;
 	}
 	
 	

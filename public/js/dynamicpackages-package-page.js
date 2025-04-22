@@ -231,6 +231,9 @@ const validateCheckPricesForm = () => {
 		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
 		const startingAt = parseInt(jQuery(thisForm).attr('data-starting-at'));
 		const title = jQuery(thisForm).attr('data-title');
+		const transportTypeField = jQuery(thisForm).find('.transport_type');
+		const departureContainer = jQuery(thisForm).find('.departure_transport_hidden');
+		const returnContainer = jQuery(thisForm).find('.return_transport_hidden');
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
@@ -245,6 +248,37 @@ const validateCheckPricesForm = () => {
 			}
 		});	
 
+		if(transportTypeField.length !== 0)
+		{
+			transportTypeField.change(function() {
+				const transportOptionSelectedVal = jQuery(this).find('option:selected').val();
+
+				if(transportOptionSelectedVal === '')
+				{
+					transportTypeField.addClass('invalid_field');
+					departureContainer.addClass('hidden')
+					returnContainer.addClass('hidden')
+				}
+				else
+				{
+					transportTypeField.removeClass('invalid_field');
+
+					if(transportOptionSelectedVal === '0')
+					{
+						departureContainer.removeClass('hidden')
+						returnContainer.addClass('hidden')
+					}
+					else if(transportOptionSelectedVal === '1')
+					{
+						departureContainer.removeClass('hidden')
+						returnContainer.removeClass('hidden')
+					}
+				}
+
+			})
+		}
+
+
 		jQuery(submitButton).click(() => {
 			let invalids = [];
 			let required = ['booking_date', 'booking_hour', 'route'];
@@ -252,6 +286,21 @@ const validateCheckPricesForm = () => {
 			const bookingDate = data.find(v => v.name === 'booking_date');
 			const endDate = data.find(v => v.name === 'end_date');
 			let paxNum = 0;
+
+			if(transportTypeField.length !== 0)
+			{
+				const transportVal = transportTypeField.val()
+
+				if(transportVal === '')
+				{
+					transportTypeField.addClass('invalid_field')
+					invalids.push('transport_type')
+				}
+				else
+				{
+					transportTypeField.removeClass('invalid_field')
+				}
+			}
 
 			data.forEach(v => {
 				const {name, value} = v;

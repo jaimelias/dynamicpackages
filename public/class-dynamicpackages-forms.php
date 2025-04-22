@@ -163,14 +163,20 @@ class Dynamicpackages_Forms
 		{
 			$route_a = $start_address_short . ' - ' . $return_address_short;
 			$route_b =  $return_address_short . ' - ' . $start_address_short;
-			$form .= '<label>'.esc_html(__('Route (Origin - Destination)', 'dynamicpackages')).' »</label>';
-			$form .= '<p><select name="route" class="required"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';			
+			$form .= '<label>'.esc_html(__('Route (Origin - Destination)', 'dynamicpackages')).'</label>';
+			$form .= '<p><select name="route" class="required"><option value="">---</option><option value="0">'.esc_html($route_a).'</option><option value="1">'.esc_html($route_b).'</option></select></p>';
+			$form .= '<label>'.esc_html(__('Transport type', 'dynamicpackages')).'</label>';
+			$form .= '<p><select class="transport_type" class="required"><option value="">---</option><option value="0">'.esc_html(__('One-way', 'dynamicpackages')).'</option><option value="1">'.esc_html(__('Round trip', 'dynamicpackages')).'</option></select></p>';
 		}
+
+		//departure transport hidden start
+		$form .= ($is_transport) ? '<div class="departure_transport_hidden hidden"><hr/>' : '';
 
 		if(empty(package_field('package_event_date')))
 		{
+			
 			$form .= '<label>'.esc_html($date_label).'</label>';
-			$form .= '<p><input type="text" name="booking_date" class="required dy_date_picker" placeholder="Loading..." disabled/></p>';			
+			$form .= '<p><input type="text" name="booking_date" class="required dy_date_picker" placeholder="Loading..." disabled/></p>';		
 		}
 		else
 		{
@@ -182,10 +188,12 @@ class Dynamicpackages_Forms
 			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' »</label>';
 			$form .= '<p><input type="text" name="booking_hour"  class="required dy_time_picker" /></p>';	
 		}
+
+		//departure transport hidden end and start of departure hidden
+		$form .= ($is_transport) ? '</div><div class="return_transport_hidden hidden"><hr/>' : '';
 		
 		if($is_transport)
 		{
-			$form .= '<hr/>';
 			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
 			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
 			
@@ -195,6 +203,9 @@ class Dynamicpackages_Forms
 				$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';
 			}		
 		}
+
+		//departure transport hidden end and start of departure hidden
+		$form .= ($is_transport) ? '</div>' : '';
 		
 		
 		if(($package_type == 1 || dy_utilities::package_type_by_hour() || dy_utilities::package_type_by_day()) && $max_duration > $min_duration)
