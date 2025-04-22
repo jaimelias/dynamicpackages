@@ -245,7 +245,7 @@ const validateCheckPricesForm = () => {
 		const submitButton = jQuery(thisForm).find('button.dy_check_prices');
 		const startingAt = parseInt(jQuery(thisForm).attr('data-starting-at'));
 		const title = jQuery(thisForm).attr('data-title');
-		const transportTypeField = jQuery(thisForm).find('.transport_type');
+		const transportTypeField = jQuery(thisForm).find('[name="transport_type"]');
 		const departureContainer = jQuery(thisForm).find('.departure_transport_hidden');
 		const returnContainer = jQuery(thisForm).find('.return_transport_hidden');
 
@@ -262,25 +262,40 @@ const validateCheckPricesForm = () => {
 			{
 				jQuery(field).val(cookieValue);
 			}
-		});	
+		});
+
+
+		const showHideTransportContainers = transportField => {
+
+			console.log({transportField})
+
+			const transportOptionSelectedVal = jQuery(transportField).find('option:selected').val();
+
+			if(transportOptionSelectedVal === '0')
+			{
+				departureContainer.removeClass('hidden')
+				returnContainer.addClass('hidden')
+			}
+			else if(transportOptionSelectedVal === '1')
+			{
+				departureContainer.removeClass('hidden')
+				returnContainer.removeClass('hidden')
+			}
+			else{
+				departureContainer.addClass('hidden')
+				returnContainer.addClass('hidden')				
+			}
+
+
+		}
 
 		if(transportTypeField.length !== 0)
 		{
+			showHideTransportContainers(transportTypeField)
+
 			transportTypeField.change(function() {
 				
-				const transportOptionSelectedVal = jQuery(this).find('option:selected').val();
-
-				if(transportOptionSelectedVal === '0')
-				{
-					departureContainer.removeClass('hidden')
-					returnContainer.addClass('hidden')
-				}
-				else if(transportOptionSelectedVal === '1')
-				{
-					departureContainer.removeClass('hidden')
-					returnContainer.removeClass('hidden')
-				}
-
+				showHideTransportContainers(this)
 			})
 		}
 
