@@ -320,6 +320,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$pax = intval(dy_utilities::pax_num()) - 1;
 			$terms = $this->get_add_ons();
 			$add_ons_arr = array();
+			$addon_colspan  = (!wp_is_mobile()) ? 2 : 1;
 			
 			if(is_array($terms))
 			{
@@ -355,7 +356,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					
 					if(intval($price) > 0)
 					{
-						$output .= '<tr><td colspan="2">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.esc_attr($term_id).'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
+						$output .= '<tr><td colspan="'.esc_attr($addon_colspan).'">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.esc_attr($term_id).'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
 					}					
 				}
 			}
