@@ -22,7 +22,7 @@
 
 	</div>
 
-	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100">
+	<div class="pure-u-1 pure-u-sm-1-1 pure-u-md-2-3 height-100 entry-content">
 		<div class="bottom-20"><?php echo apply_filters('dy_details', false); ?></div>
 	
 	<?php  echo  $partial_content ?>

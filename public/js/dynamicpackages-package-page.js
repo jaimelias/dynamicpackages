@@ -277,15 +277,15 @@ const validateCheckPricesForm = () => {
 
 				departureContainer.removeClass('hidden')
 				returnContainer.addClass('hidden')
-				jQuery(thisForm).find('.departure_route_label').text(routeSelectText)
+				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
 				jQuery(thisForm).find('.return_route_label').text('')
 			}
 			else if(transportOptionSelectedVal === '1')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.removeClass('hidden')
-				jQuery(thisForm).find('.departure_route_label').text(routeSelectText)
-				jQuery(thisForm).find('.return_route_label').text(`${routeDestination} - ${routeOrigin}`)
+				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
+				jQuery(thisForm).find('.return_route_label').html(`${routeDestination} &raquo; ${routeOrigin}`)
 			}
 			else{
 				departureContainer.addClass('hidden')

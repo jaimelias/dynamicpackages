@@ -158,7 +158,7 @@ class Dynamicpackages_Forms
 			}
 		}
 
-		$form .= '<div style="max-width: 300px; margin: 0 auto 20px auto;"><img width="600" weight="200" alt="visa mastercard paypal yappy crypto usdt usdc btc" src="'.esc_url($plugin_dir_url.'gateways/matrix/assets/pagos.svg').'"  /></div>';
+		$form .= '<div style="max-width: 300px; margin: 0 auto 20px auto;"><img class="img-responsive" width="600" weight="200" alt="visa mastercard paypal yappy crypto usdt usdc btc" src="'.esc_url($plugin_dir_url.'gateways/matrix/assets/pagos.svg').'"  /></div>';
 
 
 		$form .= '<input type="hidden" name="dy_id" value="'.esc_attr(get_dy_id()).'"/>';
@@ -183,11 +183,13 @@ class Dynamicpackages_Forms
 		}
 
 		//departure transport hidden start
-		$form .= ($is_transport) ? '<div class="departure_route_container hidden"><hr/>' : '';
+		$form .= ($is_transport && $has_route) ? '<div class="departure_route_container hidden"><hr/>' : '';
+
+		$departure_route_label = ($is_transport && $has_route) ? '<div class="small light departure_route_label"></div>' : '';
 
 		if(empty(package_field('package_event_date')))
 		{
-			$departure_route_label = ($is_transport && $has_route) ? '<div class="small light departure_route_label"></div>' : '';
+			
 			$form .= '<label>'.esc_html($date_label).$departure_route_label.'</label>';
 			$form .= '<p><input type="text" name="booking_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';		
 		}
@@ -198,12 +200,12 @@ class Dynamicpackages_Forms
 
 		if($by_hour == 1)
 		{
-			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' »</label>';
+			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' &raquo;'.$departure_route_label.'</label>';
 			$form .= '<p><input type="text" name="booking_hour"  class="dy_time_picker" /></p>';	
 		}
 
 		//departure transport hidden end and start of departure hidden
-		$form .= ($is_transport) ? '</div><div class="return_route_container hidden"><hr/>' : '';
+		$form .= ($is_transport && $has_route) ? '</div><div class="return_route_container hidden"><hr/>' : '';
 		
 		if($is_transport)
 		{
@@ -213,13 +215,13 @@ class Dynamicpackages_Forms
 			
 			if($by_hour == 1)
 			{
-				$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo; </label>';
+				$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo;'.$return_route_label.'</label>';
 				$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';
 			}		
 		}
 
 		//departure transport hidden end and start of departure hidden
-		$form .= ($is_transport) ? '<hr/></div>' : '';
+		$form .= ($is_transport && $has_route) ? '<hr/></div>' : '';
 		
 		
 		if(($package_type == 1 || dy_utilities::package_type_by_hour() || dy_utilities::package_type_by_day()) && $max_duration > $min_duration)

@@ -881,7 +881,7 @@ class Dynamicpackages_Public {
 
 						}
 
-						$output .= '<table class="pure-table pure-table-bordered bottom-20"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
 					}		
 				}
 			}			

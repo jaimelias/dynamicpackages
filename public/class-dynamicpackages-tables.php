@@ -225,7 +225,7 @@ class Dynamicpackages_Tables{
 				if($rows)
 				{
 					$price_title = __('Price', 'dynamicpackages').' '.apply_filters('dy_price_type', null);
-					$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_title).' (USD)</th></tr></thead><tbody class="small">';
+					$output = '<div class="table-vertical-responsive bottom-20"><table class="pure-table pure-table-bordered text-center width-100"><thead class="small uppercase"><tr><th colspan="2">'.esc_html($price_title).' (USD)</th></tr></thead><tbody class="small">';
 					$output .= $rows;
 					$output .= '</tbody>';
 					$output .= '</table></div>';

@@ -12,6 +12,7 @@ class Dynamicpackages_Package_Page {
 
         add_action('parse_query', array(&$this, 'load_scripts'));
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('entry_content_class', array(&$this, 'entry_content_class'));
     }
 
 	public function is_valid()
@@ -81,6 +82,10 @@ class Dynamicpackages_Package_Page {
 				}
 			}
 		}
+	}
+
+	public function entry_content_class($class) {
+		return '';
 	}
 
 }
