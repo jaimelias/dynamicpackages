@@ -246,8 +246,9 @@ const validateCheckPricesForm = () => {
 		const startingAt = parseInt(jQuery(thisForm).attr('data-starting-at'));
 		const title = jQuery(thisForm).attr('data-title');
 		const transportTypeField = jQuery(thisForm).find('[name="transport_type"]');
-		const departureContainer = jQuery(thisForm).find('.departure_transport_hidden');
-		const returnContainer = jQuery(thisForm).find('.return_transport_hidden');
+		const departureContainer = jQuery(thisForm).find('.departure_route_container');
+		const returnContainer = jQuery(thisForm).find('.return_route_container');
+		const routeField = jQuery(thisForm).find('[name="route"]')
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
@@ -265,25 +266,32 @@ const validateCheckPricesForm = () => {
 		});
 
 
-		const showHideTransportContainers = transportField => {
-
-			console.log({transportField})
+		const showHideTransportContainers = (transportField, routeField, thisForm) => {
 
 			const transportOptionSelectedVal = jQuery(transportField).find('option:selected').val();
+			const routeSelectText = jQuery(routeField).find('option:selected').text();
+			const [routeOrigin = '', routeDestination = ''] = routeSelectText.split(' - ');
 
 			if(transportOptionSelectedVal === '0')
 			{
+
 				departureContainer.removeClass('hidden')
 				returnContainer.addClass('hidden')
+				jQuery(thisForm).find('.departure_route_label').text(routeSelectText)
+				jQuery(thisForm).find('.return_route_label').text('')
 			}
 			else if(transportOptionSelectedVal === '1')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.removeClass('hidden')
+				jQuery(thisForm).find('.departure_route_label').text(routeSelectText)
+				jQuery(thisForm).find('.return_route_label').text(`${routeDestination} - ${routeOrigin}`)
 			}
 			else{
 				departureContainer.addClass('hidden')
-				returnContainer.addClass('hidden')				
+				returnContainer.addClass('hidden')
+				jQuery(thisForm).find('.departure_route_label').text('')
+				jQuery(thisForm).find('.return_route_label').text('')		
 			}
 
 
@@ -291,11 +299,16 @@ const validateCheckPricesForm = () => {
 
 		if(transportTypeField.length !== 0)
 		{
-			showHideTransportContainers(transportTypeField)
+			showHideTransportContainers(transportTypeField, routeField, thisForm)
 
 			transportTypeField.change(function() {
 				
-				showHideTransportContainers(this)
+				showHideTransportContainers(this, routeField, thisForm)
+			})
+
+			routeField.change(function() {
+				
+				showHideTransportContainers(this, routeField, thisForm)
 			})
 		}
 

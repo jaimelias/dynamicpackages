@@ -141,6 +141,7 @@ class Dynamicpackages_Forms
 
 		$start_address_short = package_field('package_start_address_short');
 		$return_address_short = package_field('package_return_address_short');
+		$has_route = !empty($start_address_short) && !empty($return_address_short);
 
 		$plugin_dir_url = plugin_dir_url( __DIR__ );
 		
@@ -171,7 +172,7 @@ class Dynamicpackages_Forms
 		$form .= $this->free_select($price_chart, $min, $max, $option_disc, $option_free);			
 
 
-		if($is_transport && !empty($start_address_short) && !empty($return_address_short))
+		if($is_transport && $has_route)
 		{
 			$route_a = $start_address_short . ' - ' . $return_address_short;
 			$route_b =  $return_address_short . ' - ' . $start_address_short;
@@ -182,12 +183,12 @@ class Dynamicpackages_Forms
 		}
 
 		//departure transport hidden start
-		$form .= ($is_transport) ? '<div class="departure_transport_hidden hidden"><hr/>' : '';
+		$form .= ($is_transport) ? '<div class="departure_route_container hidden"><hr/>' : '';
 
 		if(empty(package_field('package_event_date')))
 		{
-			
-			$form .= '<label>'.esc_html($date_label).'</label>';
+			$departure_route_label = ($is_transport && $has_route) ? '<div class="small light departure_route_label"></div>' : '';
+			$form .= '<label>'.esc_html($date_label).$departure_route_label.'</label>';
 			$form .= '<p><input type="text" name="booking_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';		
 		}
 		else
@@ -202,11 +203,12 @@ class Dynamicpackages_Forms
 		}
 
 		//departure transport hidden end and start of departure hidden
-		$form .= ($is_transport) ? '</div><div class="return_transport_hidden hidden"><hr/>' : '';
+		$form .= ($is_transport) ? '</div><div class="return_route_container hidden"><hr/>' : '';
 		
 		if($is_transport)
 		{
-			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo; </label>';
+			$return_route_label = ($has_route) ? '<div class="small light return_route_label"></div>' : '';
+			$form .= '<label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo;'.$return_route_label.'</label>';
 			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
 			
 			if($by_hour == 1)
