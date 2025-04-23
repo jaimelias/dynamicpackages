@@ -139,6 +139,9 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 
+		$start_hour = package_field('package_start_hour');
+		$return_hour = package_field('package_return_hour');
+
 		$start_address_short = package_field('package_start_address_short');
 		$return_address_short = package_field('package_return_address_short');
 		$has_route = !empty($start_address_short) && !empty($return_address_short);
@@ -162,6 +165,11 @@ class Dynamicpackages_Forms
 
 
 		$form .= '<input type="hidden" name="dy_id" value="'.esc_attr(get_dy_id()).'"/>';
+
+		if(($by_hour === '0' && $start_hour !== '' && $return_hour !== ''))
+		{
+			$form .= '<input type="hidden" name="schedule" value="'.esc_attr($start_hour .' - '.$return_hour).'"/>';
+		}
 
 		if(isset($_GET['force_availability'])){
 			$form .= '<input type="hidden" name="force_availability" value="true"/>';

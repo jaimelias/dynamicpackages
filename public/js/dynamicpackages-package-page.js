@@ -249,15 +249,13 @@ const validateCheckPricesForm = () => {
 		const departureContainer = jQuery(thisForm).find('.departure_route_container');
 		const returnContainer = jQuery(thisForm).find('.return_route_container');
 		const routeField = jQuery(thisForm).find('[name="route"]')
+		const scheduleField = jQuery(thisForm).find('[name="schedule"]')
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
 			const cookieName = `${name}_${post_id}`;
 			const cookieValue = getCookie(cookieName);
 			const field = jQuery(thisForm).find('[name="'+name+'"]');
-
-
-
 
 			if(value === '' && cookieValue && !name.startsWith('coupon_code'))
 			{
@@ -266,25 +264,43 @@ const validateCheckPricesForm = () => {
 		});
 
 
-		const showHideTransportContainers = (transportTypeField, routeField, thisForm) => {
+		const showHideTransportContainers = (transportTypeField, routeField) => {
 
 			const transportTypeVal = jQuery(transportTypeField).find('option:selected').val();
-			const routeSelectText = jQuery(routeField).find('option:selected').text();
+			const routeSelect = jQuery(routeField).find('option:selected')
+			const routeSelectVal = jQuery(routeSelect).val();
+			const routeSelectText = jQuery(routeSelect).text();
 			const [routeOrigin = '', routeDestination = ''] = routeSelectText.split(' - ');
+			const scheduleArr = (scheduleField.length !== 0) ? scheduleField.val().split(' - ') : [];
+			let departureSchedule = ''
+			let returnSchedule = ''
+
+			if(scheduleArr.length === 2) {
+				if(routeSelectVal === '0')
+				{
+					departureSchedule = ` (${scheduleArr[0]})`
+					returnSchedule = ` (${scheduleArr[1]})`
+				}
+				else if(routeSelectVal === '1')
+				{
+					departureSchedule = ` (${scheduleArr[1]})`
+					returnSchedule = ` (${scheduleArr[0]})`
+				}
+			}
 
 			if(transportTypeVal === '0')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.addClass('hidden')
-				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
+				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}${departureSchedule}`)
 				jQuery(thisForm).find('.return_route_label').text('')
 			}
 			else if(transportTypeVal === '1')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.removeClass('hidden')
-				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
-				jQuery(thisForm).find('.return_route_label').html(`${routeDestination} &raquo; ${routeOrigin}`)
+				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}${departureSchedule}`)
+				jQuery(thisForm).find('.return_route_label').html(`${routeDestination} &raquo; ${routeOrigin}${returnSchedule}`)
 			}
 			else{
 				jQuery(departureContainer).addClass('hidden')
@@ -298,15 +314,15 @@ const validateCheckPricesForm = () => {
 
 		if(transportTypeField.length !== 0)
 		{
-			showHideTransportContainers(transportTypeField, routeField, thisForm)
+			showHideTransportContainers(transportTypeField, routeField)
 
 			transportTypeField.change(function() {
 
-				showHideTransportContainers(this, routeField, thisForm)
+				showHideTransportContainers(this, routeField)
 			})
 
 			routeField.change(function() {
-				showHideTransportContainers(transportTypeField, this, thisForm)
+				showHideTransportContainers(transportTypeField, this)
 			})
 		}
 
