@@ -118,6 +118,7 @@ class Dynamicpackages_Forms
 
         if (isset(self::$cache[$cache_key])) {
             echo self::$cache[$cache_key];
+			return true;
         }
 
 		$auto_booking = package_field('package_auto_booking');

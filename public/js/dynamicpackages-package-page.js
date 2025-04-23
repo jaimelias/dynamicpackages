@@ -266,6 +266,8 @@ const validateCheckPricesForm = () => {
 
 		const showHideTransportContainers = (transportTypeField, routeField) => {
 
+			if(transportTypeField.length === 0 || routeField.length === 0) return;
+
 			const transportTypeVal = jQuery(transportTypeField).find('option:selected').val();
 			const routeSelect = jQuery(routeField).find('option:selected')
 			const routeSelectVal = jQuery(routeSelect).val();
