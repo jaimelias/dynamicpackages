@@ -266,20 +266,20 @@ const validateCheckPricesForm = () => {
 		});
 
 
-		const showHideTransportContainers = (transportField, routeField, thisForm) => {
+		const showHideTransportContainers = (transportTypeField, routeField, thisForm) => {
 
-			const transportOptionSelectedVal = jQuery(transportField).find('option:selected').val();
+			const transportTypeVal = jQuery(transportTypeField).find('option:selected').val();
 			const routeSelectText = jQuery(routeField).find('option:selected').text();
 			const [routeOrigin = '', routeDestination = ''] = routeSelectText.split(' - ');
 
-			if(transportOptionSelectedVal === '0')
+			if(transportTypeVal === '0')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.addClass('hidden')
 				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
 				jQuery(thisForm).find('.return_route_label').text('')
 			}
-			else if(transportOptionSelectedVal === '1')
+			else if(transportTypeVal === '1')
 			{
 				departureContainer.removeClass('hidden')
 				returnContainer.removeClass('hidden')
@@ -301,13 +301,12 @@ const validateCheckPricesForm = () => {
 			showHideTransportContainers(transportTypeField, routeField, thisForm)
 
 			transportTypeField.change(function() {
-				
+
 				showHideTransportContainers(this, routeField, thisForm)
 			})
 
 			routeField.change(function() {
-				
-				showHideTransportContainers(this, routeField, thisForm)
+				showHideTransportContainers(transportTypeField, this, thisForm)
 			})
 		}
 
