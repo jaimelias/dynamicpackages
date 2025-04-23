@@ -78,7 +78,7 @@
 	</div>
 	<div class="pure-u-1 pure-u-md-2-3">
 		<?php if(intval($total) > 0): ?>
-			<table id="dynamic_table" class="text-center pure-table pure-table-bordered">
+			<table id="dynamic_table" class="text-center pure-table pure-table-bordered width-100">
 				<thead>
 					<tr>
 						<th><?php echo (esc_html__('Description', 'dynamicpackages')); ?></th>
