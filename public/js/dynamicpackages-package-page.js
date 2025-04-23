@@ -274,7 +274,6 @@ const validateCheckPricesForm = () => {
 
 			if(transportOptionSelectedVal === '0')
 			{
-
 				departureContainer.removeClass('hidden')
 				returnContainer.addClass('hidden')
 				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}`)
@@ -288,8 +287,8 @@ const validateCheckPricesForm = () => {
 				jQuery(thisForm).find('.return_route_label').html(`${routeDestination} &raquo; ${routeOrigin}`)
 			}
 			else{
-				departureContainer.addClass('hidden')
-				returnContainer.addClass('hidden')
+				jQuery(departureContainer).addClass('hidden')
+				jQuery(returnContainer).addClass('hidden')
 				jQuery(thisForm).find('.departure_route_label').text('')
 				jQuery(thisForm).find('.return_route_label').text('')		
 			}

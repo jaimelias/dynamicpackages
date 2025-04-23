@@ -27,6 +27,9 @@ form#dy_package_filter_form button
 {
 	margin-bottom: 20px;
 }
+.dy_package_booking_form_container p {
+	margin: 0 0 20px 0;
+}
 .dy_package_booking_form_container>form.dy_package_booking_form
 {
 	margin-bottom: 0 !important;
