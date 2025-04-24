@@ -38,6 +38,39 @@ jQuery(() => {
 		initSeasonGrids();
 		initGridsFromTextArea(hotDataFilter);
 	});
+
+	if(jQuery('#package_by_hour').length !== 0){
+		jQuery('#package_by_hour').change(function () {
+			const byHourVal = jQuery(this).val()
+
+			console.log({byHourVal})
+
+			if(byHourVal === '0')
+			{
+				jQuery('#package_min_hour').val('')
+				jQuery('#package_max_hour').val('')
+			}
+			else if(byHourVal === '1')
+			{
+				if(jQuery('#package_check_in_hour').length !== 0) 
+				{
+					jQuery('#package_check_in_hour').val('')
+				}
+				if(jQuery('#package_start_hour').length !== 0)
+				{
+					jQuery('#package_start_hour').val('')
+				}
+				if(jQuery('#package_check_in_end_hour').length !== 0)
+				{
+					jQuery('#package_check_in_end_hour').val('')
+				}
+				if(jQuery('#package_return_hour').length !== 0)
+				{
+					jQuery('#package_return_hour').val('')
+				}
+			}
+		})
+	}
 	
 });
 

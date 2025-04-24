@@ -90,6 +90,25 @@ class Dynamicpackages_Actions{
 				//global $dy_orders;
 				//$dy_orders->save_order($data);
 
+				//write_log(json_encode($data));
+
+				$by_hour = package_field('package_by_hour');
+				$start_hour = package_field('package_start_hour');
+				$return_hour = package_field('package_return_hour');
+				$invertHours = $by_hour === '0' && $start_hour !== '' && $return_hour !== '';
+
+				if($invertHours && array_key_exists('package_type', $data) && array_key_exists('route', $data))
+				{
+					if($data['package_type'] === 'transport' && $data['route'] === '1')
+					{
+						if(array_key_exists('booking_hour', $data) && array_key_exists('return_hour', $data))
+						{
+							list($data['booking_hour'], $data['return_hour']) = [$data['return_hour'], $data['booking_hour']];
+						}
+						
+					}
+				}
+
 				$data['disabled_dates_api'] = package_field('package_disabled_dates_api', $the_id);
 
 				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');

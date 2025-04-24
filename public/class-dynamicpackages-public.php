@@ -765,7 +765,6 @@ class Dynamicpackages_Public {
 			$peopleStr
 		);
 
-
 		self::$cache[$cache_key] = $output;
 
 		return $output;

@@ -169,7 +169,7 @@ class Dynamicpackages_Forms
 
 		if(($by_hour === '0' && $start_hour !== '' && $return_hour !== ''))
 		{
-			$form .= '<input type="hidden" name="schedule" value="'.esc_attr($start_hour .' - '.$return_hour).'"/>';
+			$form .= '<input type="hidden" class="schedule" value="'.esc_attr($start_hour .' - '.$return_hour).'"/>';
 		}
 
 		if(isset($_GET['force_availability'])){

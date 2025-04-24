@@ -249,7 +249,7 @@ const validateCheckPricesForm = () => {
 		const departureContainer = jQuery(thisForm).find('.departure_route_container');
 		const returnContainer = jQuery(thisForm).find('.return_route_container');
 		const routeField = jQuery(thisForm).find('[name="route"]')
-		const scheduleField = jQuery(thisForm).find('[name="schedule"]')
+		const scheduleField = jQuery(thisForm).find('input.schedule')
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;

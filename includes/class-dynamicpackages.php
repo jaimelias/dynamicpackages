@@ -37,10 +37,9 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = '1.2.7';
+		$this->version = '1.2.9';
 		
 		$this->load_dependencies();
-
 
 		new Dynamicpackages_Post_Types();
 		
