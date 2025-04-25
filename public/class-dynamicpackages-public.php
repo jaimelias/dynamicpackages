@@ -667,7 +667,7 @@ class Dynamicpackages_Public {
 		// Core flags & data
 		$isTransport    = dy_validators::package_type_transport();
 		$routeRaw       = sanitize_text_field( $_REQUEST['route'] ?? '' );
-		$modifyRoute    = $isTransport && $routeRaw !== '0';
+		$modify_route    = $isTransport && $routeRaw === '1';
 	
 		$startShort     = package_field( 'package_start_address_short' );
 		$returnShort    = package_field( 'package_return_address_short' );
@@ -722,10 +722,10 @@ class Dynamicpackages_Public {
 		if ( $isTransport ) {
 			// Dynamic “Departure” / “Return” labels
 			if ( $startShort && $returnShort ) {
-				$depLabel = $modifyRoute
+				$depLabel = $modify_route
 					? "{$returnShort}-{$startShort}"
 					: "{$startShort}-{$returnShort}";
-				$retLabel = $modifyRoute
+				$retLabel = $modify_route
 					? "{$startShort}-{$returnShort}"
 					: "{$returnShort}-{$startShort}";
 			} else {
@@ -738,7 +738,7 @@ class Dynamicpackages_Public {
 				'%s %s %s',
 				$depLabel,
 				$depDate,
-				$modifyRoute ? $retHour : $depHour
+				$modify_route ? $retHour : $depHour
 			);
 			$tripType = __( 'One-way', 'dynamicpackages' );
 	
@@ -747,7 +747,7 @@ class Dynamicpackages_Public {
 					'%s %s %s',
 					$retLabel,
 					$retDate,
-					$modifyRoute ? $depHour : $retHour
+					$modify_route ? $depHour : $retHour
 				);
 				$tripType = __( 'Round trip', 'dynamicpackages' );
 			}
@@ -1160,9 +1160,7 @@ class Dynamicpackages_Public {
 		$label_return    = __('Return',    'dynamicpackages');
 
 		// Determine if we should swap start/return
-		$modify_route = $is_transport
-			&& isset($_REQUEST['route'])
-			&& sanitize_text_field($_REQUEST['route']) !== '0';
+		$modify_route = $is_transport && isset($_REQUEST['route']) && sanitize_text_field($_REQUEST['route']) === '1';
 
 		// Only override labels if we have both addresses
 		if (
