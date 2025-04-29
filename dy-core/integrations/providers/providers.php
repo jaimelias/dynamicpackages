@@ -10,7 +10,7 @@ class Dynamic_Core_Providers {
     function __construct()
     {
 		$this->name = 'dy-providers';
-        add_action('init', array(&$this, 'handle_create_edit'));
+        $this->handle_create_edit();
 		add_filter('dy_list_providers', array(&$this, 'get_providers'));
 		add_action('init', array(&$this, 'register_taxonomies'));
 		add_action( 'admin_head', array(&$this, 'admin_head') );
@@ -91,6 +91,10 @@ class Dynamic_Core_Providers {
 		{
 			update_term_meta($term_id, $this->name.'_emails', esc_textarea($this->sanitize_items_per_line('sanitize_email', $_POST[$this->name.'_emails'])));
 		}
+		if(isset($_POST[$this->name.'_whatsapp']))
+		{
+			update_term_meta($term_id, $this->name.'_whatsapp', sanitize_text_field($_POST[$this->name.'_whatsapp']));
+		}
 	}
 
 	public function sanitize_items_per_line($sanitize_func, $str)
@@ -106,6 +110,13 @@ class Dynamic_Core_Providers {
 	{
 		$emails = get_term_meta($term_id, $this->name.'_emails', true);
 		return '<textarea rows="10" name="'.esc_attr($this->name.'_emails').'">'.esc_textarea($this->sanitize_items_per_line($sanitize_func, $emails)).'</textarea>';
+	}
+
+	public function input_field($term_id, $type = 'text')
+	{
+		$name = $this->name.'_whatsapp';
+		$value = get_term_meta($term_id, $name, true);
+		return '<input type="'.esc_attr($type).'" name="'.esc_attr($name).'" value="'.esc_attr($value).'" />';
 	}
 
 	public function language_select($term_id)
@@ -152,6 +163,7 @@ class Dynamic_Core_Providers {
 		$rows = '';
         $term_id = $term->term_id;
 		$rows .= $this->admin_taxonomy_form_row($this->name.'_language', __('Provider Language'), $this->language_select($term_id));
+		$rows .= $this->admin_taxonomy_form_row($this->name.'_whatsapp', __('Whatsapp'), $this->input_field($term_id, 'number'));
 		$rows .= $this->admin_taxonomy_form_row($this->name.'_emails', __('Provider Emails'), $this->textarea_items_per_line($term_id, 'sanitize_email'), __('1 email per line. Up to 10 emails maximum.'));
 		echo $rows;
     }
@@ -213,12 +225,14 @@ class Dynamic_Core_Providers {
 					$language = get_term_meta($t->term_id, $this->name . '_language', true);
 					$emails_str = get_term_meta($t->term_id, $this->name . '_emails', true);
 					$emails = $this->email_str_row_to_array($emails_str);
+					$whatsapp = get_term_meta($t->term_id, $this->name . '_whatsapp', true);
 					
 					$row = array(
 						'id' => $t->term_id,
 						'name' => $t->name,
 						'language' => $language,
 						'emails' => $emails,
+						'whatsapp' => $whatsapp
 					);
 
 					$output[] = $row;
