@@ -98,7 +98,7 @@ const reValidateDate = async () => {
 		const disableDaysOfTheWeek = disable.filter(d => typeof d === 'number' && !isNaN(d))
 		const forcedEnabledDates = disable
 			.filter(d => Array.isArray(d) && d.length === 4 && d[3] === 'inverted')
-			.map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+			.map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')} 00:00:00`);
 
 
 		if(disableDaysOfTheWeek.includes(bookingDayOfTheWeek))
