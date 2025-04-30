@@ -649,6 +649,11 @@ class Dynamicpackages_Public {
 	}
 	
 	public static function description() {
+
+		//in this example free of cost if for infants under centain age and discount if four children older than infant but under center age
+		// the correct example of adult with children is "Round trip | Ferry to Saboga Island (Departure April 12, 2025 | Return April 13, 2025): 1 adult, 1 child under 4 years old"
+		// the correct example of adult with chidlren and infant is "Round trip | Ferry to Saboga Island (Departure April 12, 2025 | Return April 13, 2025): 1 adult, 1 infant under 4 years old, 1 child under 11 years old"
+
 		global $post;
 	
 		// Guard: nothing to do without a post or booking date
@@ -684,15 +689,15 @@ class Dynamicpackages_Public {
 		// Passenger counts
 		$counts = [
 			'adults'   => intval( sanitize_text_field( $_REQUEST['pax_regular'] ?? 0 ) ),
-			'discount' => intval( sanitize_text_field( $_REQUEST['pax_discount'] ?? 0 ) ),
-			'free'     => intval( sanitize_text_field( $_REQUEST['pax_free'] ?? 0 ) ),
+			// swap the order here if you want infants listed before children:
+			'discount' => intval( sanitize_text_field( $_REQUEST['pax_discount'] ?? 0 ) ), // children
+			'free'     => intval( sanitize_text_field( $_REQUEST['pax_free']     ?? 0 ) ), // infants
 		];
 		$ages = [
-			'discount' => package_field( 'package_discount' ) ?: 0,
-			'free'     => package_field( 'package_free' ) ?: 0,
+			'discount' => package_field( 'package_discount' ) ?: 0, // child max age
+			'free'     => package_field( 'package_free'     ) ?: 0, // infant max age
 		];
 	
-		// Build each “X persons” chunk
 		$chunks = [];
 		foreach ( $counts as $type => $num ) {
 			if ( $num < 1 ) {
@@ -700,22 +705,34 @@ class Dynamicpackages_Public {
 			}
 			switch ( $type ) {
 				case 'adults':
-					$label = _n( 'person', 'persons', $num, 'dynamicpackages' );
+					$label = _n( 'adult', 'adults', $num, 'dynamicpackages' );
 					$chunks[] = sprintf( '%d %s', $num, $label );
 					break;
-				case 'discount':
-				case 'free':
-					$labelAge = $ages[ $type ];
-					$label = _n( 'adult', 'adults', $num, 'dynamicpackages' );
-					$chunks[] = sprintf( '%d %s %d %s',
+		
+				case 'free': // infants
+					$label = _n( 'infant', 'infants', $num, 'dynamicpackages' );
+					$chunks[] = sprintf(
+						'%d %s under %d %s',
 						$num,
 						$label,
-						$labelAge,
+						$ages[ $type ],
+						__( 'years old', 'dynamicpackages' )
+					);
+					break;
+		
+				case 'discount': // children
+					$label = _n( 'child', 'children', $num, 'dynamicpackages' );
+					$chunks[] = sprintf(
+						'%d %s under %d %s',
+						$num,
+						$label,
+						$ages[ $type ],
 						__( 'years old', 'dynamicpackages' )
 					);
 					break;
 			}
 		}
+		
 		$peopleStr = implode( ', ', $chunks );
 	
 		// Itinerary & trip type
