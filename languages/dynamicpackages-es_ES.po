@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2025-04-30 18:06+0000\n"
+"PO-Revision-Date: 2025-04-30 18:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;esc_html_e\n"
-"X-Loco-Version: 2.6.10; wp-6.5.4\n"
+"X-Loco-Version: 2.7.2; wp-6.8.1\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: public/class-dynamicpackages-public.php:532
@@ -149,7 +149,7 @@ msgstr "Dirección"
 msgid "adult"
 msgid_plural "adults"
 msgstr[0] "adulto"
-msgstr[1] ""
+msgstr[1] "adultos"
 
 #: public/class-dynamicpackages-forms.php:331
 #: gateways/partials/checkout-page.php:107
