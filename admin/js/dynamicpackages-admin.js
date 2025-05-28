@@ -6,6 +6,7 @@ jQuery(() => {
 	handleParentAttr();
 	handlePackageType();
 	handlePackageSchema();
+	handlePackagePayment();
 	handleMinMaxPax();
 	initSeasonGrids();
 
@@ -375,7 +376,12 @@ const handlePackagePayment  = () => {
 	}
 	else
 	{
-		jQuery(depositAmount).prop('disabled', false).val('25');
+		jQuery(depositAmount).prop('disabled', false)
+
+		if(Number(depositAmount) === 0)
+		{
+			jQuery(depositAmount).val('25')
+		}
 	}
 };
 
