@@ -173,7 +173,7 @@ class Dynamicpackages_Metapost{
 		}
 		if(isset( $_POST['package_deposit']))
 		{
-			if(intval($_POST['package_deposit']) > 0)
+			if(floatval($_POST['package_deposit']) > 0)
 			{
 				update_post_meta( $post_id, 'package_deposit', esc_attr($_POST['package_deposit']));
 			}

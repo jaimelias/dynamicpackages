@@ -1163,6 +1163,9 @@ class dy_utilities {
 	
 				if ($httpCode !== 200) {
 					write_log($result);
+				} else {
+
+					write_log($result);
 				}
 			}
 		}
