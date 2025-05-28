@@ -370,7 +370,7 @@ const handlePackagePayment  = () => {
 	const paymentType = jQuery('#package_payment')
 	const depositAmount = jQuery('#package_deposit')
 
-	if(parseInt(paymentType.val()) === 0)
+	if(parseFloat(paymentType.val()) === 0)
 	{
 		jQuery(depositAmount).val('').prop('disabled', true)
 	}
