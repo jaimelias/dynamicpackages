@@ -6,7 +6,6 @@ jQuery(() => {
 	handleParentAttr();
 	handlePackageType();
 	handlePackageSchema();
-	handlePackagePayment();
 	handleMinMaxPax();
 	initSeasonGrids();
 
@@ -369,8 +368,6 @@ const handlePackagePayment  = () => {
 
 	const paymentType = jQuery('#package_payment')
 	const depositAmount = jQuery('#package_deposit')
-
-	console.log(paymentType.val(), (depositAmount).val())
 
 	if(parseFloat(paymentType.val()) === 0)
 	{
