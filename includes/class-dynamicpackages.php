@@ -37,7 +37,7 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = '1.3.3';
+		$this->version = '1.3.4';
 		
 		$this->load_dependencies();
 

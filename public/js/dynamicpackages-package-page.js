@@ -82,9 +82,14 @@ const datePicker = async () => {
 					args = {...args, ...data}
 
 					const today = new Date(site_timestamp)
+
+					
+
 					const hour = today.getHours()
 					const weekDay = today.getDay()
 					let officeClose = 17
+
+					console.log({weekDay, hour, today})
 
 					//by default 0 0 today is converted into a true boolean
 					if((typeof args.min !== 'boolean') && args.min === 1)

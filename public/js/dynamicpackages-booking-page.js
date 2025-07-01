@@ -30,15 +30,27 @@ const reValidateDate = async () => {
         }
     };
 
-    const isDateBeforeLimit = (min, today, bookingDate) => {
+    const isDateBefore23h = (min, today, bookingDate) => {
 
 		if(typeof min === 'boolean') return false
+
+		
 
         const limitDate = new Date(today);
         limitDate.setHours(23, 59, 59, 999);
         if (min > 1) limitDate.setDate(today.getDate() + 1);
         return bookingDate <= limitDate;
     };
+
+	const isDateBeforeOrEqualMin = (min, today, bookingDate) => {
+		if(typeof min === 'boolean') return false
+		if(typeof min !== 'number') return true
+
+		const limitDate = new Date(today)
+		limitDate.setHours(0, 0, 0, 0)
+		limitDate.setDate(limitDate.getDate() + (min-1))
+		return bookingDate <= limitDate
+	}
 
 	const getDayOfTheWeek = date => date.getDay()
 
@@ -56,9 +68,6 @@ const reValidateDate = async () => {
         const url = new URL(window.location.href);
         let bookingDateStr = url.searchParams.get('booking_date') + ' 00:00:00';
         let bookingDate;
-
-		console.log(bookingDateStr)
-
 
 		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') + ' 00:00:00' : ''
 		let endDate;
@@ -79,14 +88,18 @@ const reValidateDate = async () => {
         let officeClose = [0, 6].includes(today.getDay()) ? 16 : 17;
 
 
-        if (today.getHours() >= officeClose && isDateBeforeLimit(min, today, bookingDate)) {
-            disableBookingForm(thisForm);
+        if (today.getHours() >= officeClose && isDateBefore23h(min, today, bookingDate)) {
+            disableBookingForm(thisForm)
         }
+		if(isDateBeforeOrEqualMin(min, today, bookingDate))
+		{
+			disableBookingForm(thisForm)
+		}
 
         if (Array.isArray(disable) && disable.length > 0) {
             const formattedDisabledDates = disable
                 .filter(d => Array.isArray(d) && d.length === 3)
-                .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')} 00:00:00`);
 
             if (formattedDisabledDates.includes(bookingDateStr) || (localRegex.test(endDateStr) && formattedDisabledDates.includes(endDateStr))) {
                 disableBookingForm(thisForm);

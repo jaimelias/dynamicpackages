@@ -17,7 +17,7 @@ class dy_utilities {
 	{
 		if(isset($_REQUEST['booking_date']))
 		{
-			return ($_REQUEST['booking_date']) ? strtotime(sanitize_text_field($_REQUEST['booking_date'])) : null;
+			return ($_REQUEST['booking_date']) ? strtotime(sanitize_text_field($_REQUEST['booking_date'].' 00:00:00')) : null;
 		}
 	}
 	public static function handsontable($args)
@@ -67,7 +67,7 @@ class dy_utilities {
 		
 		if(isset($_REQUEST['end_date']))
 		{
-			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'])) : null;	
+			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'].' 00:00:00')) : null;	
 		}
 		
 		return $output;
@@ -75,12 +75,23 @@ class dy_utilities {
 
 	public static function min_range($the_id = null)
 	{
-		$date_from = package_field('package_booking_from', $the_id);
-		$date_from = ($date_from) ? $date_from : 0;
-		$min_range = strtotime("+ {$date_from} days", strtotime('today midnight'));
-		//fix first day
-		return strtotime("- 1 days", $min_range);	
-	}	
+		// get number of days offset (default to 0)
+		$date_from = (int) package_field('package_booking_from', $the_id);
+
+		// today at midnight as a base timestamp
+		$base = strtotime('today 00:00');
+
+		if($date_from === 0)
+		{
+			return $base;
+		}
+
+		$min_range = strtotime("+{$date_from} days", $base);
+		//$min_range = strtotime("-1 day", $min_range);
+
+		// return the final timestamp
+		return $min_range;
+	}
 
 	public static function max_range($the_id = null)
 	{
