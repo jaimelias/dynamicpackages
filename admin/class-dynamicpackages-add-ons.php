@@ -460,11 +460,13 @@ class Dynamicpackages_Taxonomy_Add_Ons
 							$additional_duration = dy_utilities::get_multi_day_duration($booking_date, $end_date);
 							$package_duration = $package_duration + $additional_duration;
 
+							write_log($additional_duration);
+
 							if($add_on_type === 2)
 							{
 								$package_duration = $package_duration + 1;
 							}
-							
+														
 							$price = $price * $package_duration;
 						}
 					}

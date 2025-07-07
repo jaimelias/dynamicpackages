@@ -34,23 +34,18 @@ class dy_utilities {
 
 	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
 	{
-		// If no end date provided, minimum is 0
-		if (!isset($strtotime_end) || is_null($strtotime_end)) {
+		// No end date or end < start → 0 days
+		if (is_null($strtotime_end) || is_null($strtotime_start) || $strtotime_end < $strtotime_start) {
 			return 0;
 		}
 
-		// If start is missing or end is before start, also return minimum of 0
-		if (is_null($strtotime_start) || $strtotime_end < $strtotime_start) {
-			return 0;
-		}
-
-		// Calculate inclusive full days difference
 		$secondsPerDay = 24 * 60 * 60;
-		$dayDiff = floor(($strtotime_end - $strtotime_start) / $secondsPerDay) + 1;
+		// Exclusive difference in full days
+		$dayDiff = floor(($strtotime_end - $strtotime_start) / $secondsPerDay);
 
-		// Enforce minimum of 0
-		return max(0, (int) $dayDiff);
+		return (int) max(0, $dayDiff);
 	}
+
 
 
 	public static function handsontable($args)
