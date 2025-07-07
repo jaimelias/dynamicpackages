@@ -438,10 +438,25 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					
 					if($add_on_type > 0)
 					{
-						if($package_type !== 0 || $package_type !== 4)
+						//multi-day or rental per day
+						if($package_type === 1 || $package_type === 2)
 						{
 							$package_duration = (isset($_REQUEST['booking_extra'])) ? intval(sanitize_text_field($_REQUEST['booking_extra'])) : 1;
 							
+							if($add_on_type === 2)
+							{
+								$package_duration = $package_duration + 1;
+							}
+							
+							$price = $price * $package_duration;
+						}
+						else if($package_type === 4)
+						{
+							$package_duration = 1;
+							$booking_date = dy_utilities::booking_date();
+							$end_date = (isset($_REQUEST['end_date'])) ? dy_utilities::end_date() : $booking_date;
+							$package_duration = dy_utilities::get_multi_day_duration($booking_date, $end_date);
+
 							if($add_on_type === 2)
 							{
 								$package_duration = $package_duration + 1;

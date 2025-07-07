@@ -20,6 +20,38 @@ class dy_utilities {
 			return ($_REQUEST['booking_date']) ? strtotime(sanitize_text_field($_REQUEST['booking_date'].' 00:00:00')) : null;
 		}
 	}
+	public static function end_date()
+	{
+		$output = '';
+		
+		if(isset($_REQUEST['end_date']))
+		{
+			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'].' 00:00:00')) : null;	
+		}
+		
+		return $output;
+	}
+
+	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
+	{
+		// If no end date provided, minimum is 1
+		if (!isset($strtotime_end) || is_null($strtotime_end)) {
+			return 1;
+		}
+
+		// If start is missing or end is before start, also return minimum of 1
+		if (is_null($strtotime_start) || $strtotime_end < $strtotime_start) {
+			return 1;
+		}
+
+		// Calculate inclusive full days difference
+		$secondsPerDay = 24 * 60 * 60;
+		$dayDiff = floor(($strtotime_end - $strtotime_start) / $secondsPerDay) + 1;
+
+		// Enforce minimum of 1
+		return max(1, (int) $dayDiff);
+	}
+
 	public static function handsontable($args)
 	{
 		$output = '';
@@ -61,17 +93,7 @@ class dy_utilities {
 		
 		return $output;
 	}
-	public static function end_date()
-	{
-		$output = '';
-		
-		if(isset($_REQUEST['end_date']))
-		{
-			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'].' 00:00:00')) : null;	
-		}
-		
-		return $output;
-	}
+
 
 	public static function min_range($the_id = null)
 	{
