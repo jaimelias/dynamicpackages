@@ -303,8 +303,7 @@ class Dynamicpackages_Forms
 
 					for($x = 0; $x < count($coupons); $x++)
 					{
-						
-						if($coupons[$x][3] === true && $coupons[$x][0])
+						if(!empty($coupons[$x][3]) && !empty($coupons[$x][0]))
 						{
 							$expiration = 0;
 
@@ -317,30 +316,12 @@ class Dynamicpackages_Forms
 
 							if($expiration >= strtotime('today midnight') || $expiration === 0)
 							{
-								$expiration = '';
-								$valid = true;
+								$gateways = array_map('strtolower', apply_filters('list_gateways', []));
 
-								if(!empty($coupons[$x][2]))
+								if(!in_array($coupons[$x][0], $gateways))
 								{
-									$expiration = new DateTime($coupons[$x][2]);
-									$expiration->setTime(0,0,0);
-									$expiration = $expiration->getTimestamp();
-									
-									if($expiration < strtotime('today midnight'))
-									{
-										$valid = false;
-									}
-								}
-
-								if($valid)
-								{
-									$gateways = array_map('strtolower', apply_filters('list_gateways', []));
-
-									if(!in_array($coupons[$x][0], $gateways))
-									{
-										$get_coupon = $coupons[$x][0];
-									}
-									
+									$get_coupon = $coupons[$x][0];
+									break;
 								}
 							}
 						}
