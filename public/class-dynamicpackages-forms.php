@@ -300,27 +300,27 @@ class Dynamicpackages_Forms
 				if(is_array($coupons) && array_key_exists('coupons', $coupons))
 				{
 					$coupons = $coupons['coupons'];
+					$gateways = array_map('strtolower', apply_filters('list_gateways', []));
 
 					for($x = 0; $x < count($coupons); $x++)
 					{
 						if(!empty($coupons[$x][3]) && !empty($coupons[$x][0]))
 						{
 							$expiration = 0;
+							$coupon_code = strtolower($coupons[$x][0]);
 
 							if(!empty($coupons[$x][2]))
 							{
-								$expiration = new DateTime($coupons[$x][2]);
-								$expiration->setTime(0,0,0);
+								$expiration_date = $coupons[$x][2] . ' 00:00:00';
+								$expiration = new DateTime($expiration_date);
 								$expiration = $expiration->getTimestamp();
 							}
 
-							if($expiration >= strtotime('today midnight') || $expiration === 0)
+							if($expiration >= strtotime('today 00:00') || $expiration === 0)
 							{
-								$gateways = array_map('strtolower', apply_filters('list_gateways', []));
-
-								if(!in_array($coupons[$x][0], $gateways))
+								if(!in_array($coupon_code, $gateways))
 								{
-									$get_coupon = $coupons[$x][0];
+									$get_coupon = $coupon_code;
 									break;
 								}
 							}
