@@ -6,6 +6,28 @@ if ( !defined( 'WPINC' ) ) exit;
 
 function package_field($name, $this_id = null)
 {
+    //enable this code debugs memory exaust
+    if(false)
+    {
+        // grab the backtrace, but limit it to the top 3 stack frames so your logs stay readable
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+
+        // log just the immediate caller (frame #1) plus its file/line,
+        // or dump the whole trace if you need more context
+        if (isset($trace[1])) {
+            $caller = $trace[1];
+            write_log(sprintf(
+                'package_field('.$name.', '.$this_id.') called by %s() in %s on line %d',
+                $caller['function'] ?? '[global]',
+                $caller['file'] ?? '[unknown file]',
+                $caller['line'] ?? 0
+            ));
+        } else {
+            // fallback: dump the whole trace array
+            write_log($trace);
+        }
+    }
+
     return Dynamicpackages_Fields::get($name, $this_id);
 }
 
@@ -48,17 +70,8 @@ class Dynamicpackages_Fields
             'package_disabled_dates_api',
         ];
 
-        // Add transport-specific excludes if applicable
-        if (dy_validators::package_type_transport()) {
-            $excludes = array_merge($excludes, [
-                'package_check_in_hour',
-                'package_start_hour',
-                'package_check_in_end_hour',
-                'package_return_hour',
-                'package_start_address',
-                'package_return_address',
-            ]);
-        }
+
+
 
         // Add day-specific excludes
         foreach ($week_days as $day) {
@@ -76,6 +89,20 @@ class Dynamicpackages_Fields
             if (!in_array($name, $excludes)) {
                 $this_id = $post->post_parent;
             }
+        }
+
+        $is_transport = (int) get_post_meta($this_id, 'package_package_type', true); //do not change this code
+         
+        // Add transport-specific excludes if applicable
+        if ($is_transport === 4) {
+            $excludes = array_merge($excludes, [
+                'package_check_in_hour',
+                'package_start_hour',
+                'package_check_in_end_hour',
+                'package_return_hour',
+                'package_start_address',
+                'package_return_address',
+            ]);
         }
 
         // Generate a unique cache key
@@ -107,7 +134,6 @@ class Dynamicpackages_Fields
             else if($name === 'package_day_sat') $this_field = '';
             else if($name === 'package_day_sun') $this_field = '';
         }
-
 
         // Store the value in the cache
         self::$cache[$cache_key] = $this_field;

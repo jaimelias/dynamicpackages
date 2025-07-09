@@ -110,10 +110,9 @@ class Dynamicpackages_Metaboxes
 		$this->schema = intval(package_field('package_schema'));
 		$this->is_child = dy_validators::is_child();
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
-		$this->package_type_transport = dy_validators::package_type_transport();
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
-		$this->is_transport = dy_validators::package_type_transport();
+		$this->is_transport = dy_utilities::get_package_type() === 'transport';
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_utilities::get_week_days_abbr();
@@ -366,7 +365,7 @@ class Dynamicpackages_Metaboxes
     public function package_departure_html($post)
     { ?>
 
-		<?php if ($this->package_type_transport): ?>
+		<?php if ($this->is_transport): ?>
 			<h3><?php echo esc_html(__('Transport', 'dynamicpackages')); ?></h3>
 
 			<p>
@@ -395,7 +394,7 @@ class Dynamicpackages_Metaboxes
 			<input type="text" name="package_start_address_short" id="package_start_address_short" value="<?php echo esc_attr($this->start_address_short); ?>"> 
 		</p>
 
-		<?php if ($this->package_type_transport): ?>
+		<?php if ($this->is_transport): ?>
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
 			<p>

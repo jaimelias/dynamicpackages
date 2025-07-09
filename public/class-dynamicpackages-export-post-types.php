@@ -45,7 +45,7 @@ class Dynamicpackages_Export_Post_Types{
         unset($post['post_content']);
         unset($post['post_excerpt']);
 
-        $package_type = intval(package_field('package_package_type'));
+        $package_type = dy_utilities::get_package_type();
         $duration_unit = intval(package_field('package_length_unit'));
         $min_duration = intval(package_field('package_duration'));
 		$min_hour = intval(package_field('package_min_hour'));
@@ -69,7 +69,7 @@ class Dynamicpackages_Export_Post_Types{
             $package['booking_schedule'] = $min_hour . ' - '. $max_hour;
         }
     
-        if (dy_validators::package_type_transport()) {
+        if ($package_type === 'transport') {
             $package += [
                 'return_hour' => package_field('package_return_hour'),
                 'return_check_in_hour' => package_field('package_check_in_end_hour'),
@@ -97,7 +97,7 @@ class Dynamicpackages_Export_Post_Types{
         $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
         $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
 
-        if($package_type === 4)
+        if($package_type === 'transport')
         {
             $parsed_price_chart = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix));
             $package['rates']['prices_per_person_round_trip'] = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix), true);
@@ -105,7 +105,7 @@ class Dynamicpackages_Export_Post_Types{
 
         $package['rates'][$price_key_name] = $parsed_price_chart;
 
-        if($package_type === 1)
+        if($package_type === 'multi-day')
         {
             
             $occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
@@ -213,7 +213,7 @@ class Dynamicpackages_Export_Post_Types{
         }
 
 
-        if($package_type === 4)
+        if($package_type === 'transport')
         {
             $one_way_surcharges = package_field('package_one_way_surcharge');
         }
@@ -247,11 +247,11 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = '';
 
-        if($package_type === 0)
+        if($package_type === 'one-day')
         {
             $output = 'One Day Trip';
         }
-        else if($package_type === 1)
+        else if($package_type === 'multi-day')
         {
             if($duration_unit === 2)
             {
@@ -266,15 +266,15 @@ class Dynamicpackages_Export_Post_Types{
                 $output = 'Multi-day Trip: week based';
             }
         }
-        if($package_type === 2)
+        if($package_type === 'rental-per-day')
         {
             $output = 'Multi-day Rental';
         }
-        if($package_type === 3)
+        if($package_type === 'rental-per-hour')
         {
             $output = 'Multi-hour Rental';
         }
-        if($package_type === 4)
+        if($package_type === 'transport')
         {
             $output = 'Transport';
         }
@@ -287,15 +287,15 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = 'fixed_price_per_person';
 
-        if($package_type === 2)
+        if($package_type === 'rental-per-day')
         {
             $output = 'rental_price_per_person_per_day';
         }
-        if($package_type === 3)
+        if($package_type === 'rental-per-hour')
         {
             $output = 'rental_price_per_person_per_hour';
         }
-        if($package_type === 4)
+        if($package_type === 'transport')
         {
             $output = 'price_per_person_one_way';
         }
@@ -307,7 +307,7 @@ class Dynamicpackages_Export_Post_Types{
 	{
         $output = '';
 
-        if($package_type === 1)
+        if($package_type === 'multi-day')
         {
             if($duration_unit === 2)
             {
@@ -331,7 +331,7 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = '';
 
-        if($package_type === 1)
+        if($package_type === 'rental-per-day')
         {
             if($duration_unit === 2)
             {

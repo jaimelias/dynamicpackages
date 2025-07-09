@@ -377,8 +377,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		{
 			global $polylang;
 			global $post;
-			$the_id = $post->ID;
-			$package_type = dy_utilities::get_package_type($the_id);
+			$package_type = dy_utilities::get_package_type($post->ID);
 			$package_unit = (int) package_field('package_length_unit');
 			$parent_terms = array();
 
@@ -439,8 +438,6 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					
 					if($add_on_type > 0)
 					{
-						
-
 						//multi-day or rental per day
 						if($package_type === 'multi-day' || $package_type === 'rental-per-day')
 						{

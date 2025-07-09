@@ -90,7 +90,7 @@ class Dynamicpackages_Booking_Page {
 			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
 			'package_code' => esc_html(package_field('package_trip_code')),
 			'title' => esc_html($post->post_title),
-			'package_type' => esc_html($this->get_type()),
+			'package_type' => esc_html(dy_utilities::get_package_type($post->ID)),
 			'categories' => dy_utilities::get_taxo_names('package_category'),
 			'locations' => dy_utilities::get_taxo_names('package_location'),
 			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included')),
@@ -124,32 +124,6 @@ class Dynamicpackages_Booking_Page {
 			$outstanding = $total-$deposit;
 			$output .= ' - '.__('deposit', 'dynamicpackages').' '.currency_symbol().money($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.currency_symbol().money($outstanding);					
 		}
-		return $output;
-	}
-	
-	
-	public function get_type()
-	{
-		$output = 'one day';
-		$package_type = package_field( 'package_package_type' );
-		
-		if($package_type === '1')
-		{
-			$output = 'multi-day';
-		}
-		else if($package_type === '2')
-		{
-			$output = 'per day';
-		}
-		else if($package_type === '3')
-		{
-			$output = 'per hour';
-		}
-		else if($package_type === '4')
-		{
-			$output = 'transport';
-		}
-
 		return $output;
 	}
 	

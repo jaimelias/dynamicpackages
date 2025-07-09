@@ -513,7 +513,7 @@ class Dynamicpackages_Public {
         }
 
 		$price_type = intval(package_field('package_fixed_price'));
-		$package_type = intval(package_field('package_package_type'));
+		$package_type = dy_utilities::get_package_type($the_id);
 		$duration = intval(package_field('package_duration'));
 		$duration_unit = intval(package_field('package_length_unit'));
 		$duration_max = intval(package_field('package_duration_max'));
@@ -525,22 +525,22 @@ class Dynamicpackages_Public {
 		}
 
 
-		if($package_type === 1)
+		if($package_type === 'multi-day')
 		{
 			if($duration === 1 && $duration_max > $duration)
 			{
 				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 			}
 		}
-		else if(dy_utilities::package_type_by_hour())
+		else if($package_type === 'rental-per-hour')
 		{
 			$output .= __('Per Hour', 'dynamicpackages');
 		}
-		else if(dy_utilities::package_type_by_day())
+		else if($package_type === 'rental-per-day')
 		{
 			$output .=__('Per Day', 'dynamicpackages');
 		}
-		else if(dy_validators::package_type_transport())
+		else if($package_type === 'transport')
 		{
 			$output .=__('One-way', 'dynamicpackages');
 		}
@@ -670,7 +670,7 @@ class Dynamicpackages_Public {
         }
 	
 		// Core flags & data
-		$isTransport    = dy_validators::package_type_transport();
+		$isTransport    = dy_utilities::get_package_type() === 'transport';
 		$routeRaw       = sanitize_text_field( $_REQUEST['route'] ?? '' );
 		$modify_route    = $isTransport && $routeRaw === '1';
 	
@@ -1139,7 +1139,7 @@ class Dynamicpackages_Public {
 		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
-		$is_transport = dy_validators::package_type_transport();
+		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
 		$is_checkout_page = is_checkout_page();
 		$is_booking_page = is_booking_page();
 		$min_hour = package_field('package_min_hour');
@@ -1420,6 +1420,7 @@ class Dynamicpackages_Public {
 	{
 		if(dy_validators::has_coupon())
 		{
+			$package_type = dy_utilities::get_package_type();
 			$duration_unit = package_field('package_length_unit');
 			$coupons = $this->get_all_coupons();
 			$output = '';			
@@ -1465,7 +1466,7 @@ class Dynamicpackages_Public {
 								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));
 								$label .= ' <strong>'.strtoupper(esc_html($coupons[$x][0])).'</strong>.';
 								
-								if(isset($coupons[$x][4]) && !dy_validators::package_type_transport() && !dy_validators::is_package_single_day())
+								if(isset($coupons[$x][4]) && $package_type !== 'transport' && $package_type !== 'one-day')
 								{
 									if(is_numeric($coupons[$x][4]))
 									{

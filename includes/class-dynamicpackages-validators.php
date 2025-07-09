@@ -553,6 +553,7 @@ class dy_validators
 		{
 			if(!empty($_REQUEST['coupon_code']))
 			{
+				$package_type = dy_utilities::get_package_type();
 				$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
 				$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
 				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
@@ -590,7 +591,7 @@ class dy_validators
 
 						if($expiration_stamp > dy_strtotime('today midnight'))
 						{
-							if(!self::package_type_transport() && !self::is_package_single_day())
+							if($package_type !== 'transport' && $package_type !== 'one-day')
 							{
 								$arr_valid_expiration = array();
 
@@ -935,111 +936,6 @@ class dy_validators
 
 	  return ($total % 10 == 0) ? TRUE : FALSE;
 
-	}
-	
-	public static function is_package_single_day()
-	{
-		$output = false;
-		global $post;
-
-		if(isset($post))
-		{
-			$cache_key = $post->ID.'_is_package_single_day';
-
-			if (isset(self::$cache[$cache_key])) {
-				return self::$cache[$cache_key];
-			}
-
-			if(package_field('package_package_type') == 0)
-			{
-				$output = true;
-			}
-			
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
-		}
-
-		return $output;		
-	}
-	
-	public static function package_type_transport()
-	{
-		$output = false;
-		global $post;
-
-		if(isset($post))
-		{
-			$cache_key = $post->ID.'_package_type_transport';
-
-			if (isset(self::$cache[$cache_key])) {
-				return self::$cache[$cache_key];
-			}
-	
-			$the_id = $post->ID;
-
-			if($post->post_parent > 0)
-			{
-				$the_id = $post->post_parent;
-			}
-			
-			$output = (intval(get_post_meta($the_id, 'package_package_type', true)) === 4) ? true : false;
-			
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
-		}
-		
-		return $output;
-	}
-
-	public static function package_type_multi_day()
-	{
-		$output = false;
-		global $post;
-
-		if(isset($post))
-		{
-			$cache_key = $post->ID.'_package_type_multi_day';
-
-			if (isset(self::$cache[$cache_key])) {
-				return self::$cache[$cache_key];
-			}
-	
-			if(package_field('package_package_type') == 1)
-			{
-				$output = true;
-			}
-			
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
-		}
-		
-		return $output;
-	}
-
-	public static function package_type_one_day()
-	{
-		$output = false;
-		global $post;
-
-		if(isset($post))
-		{
-			$cache_key = $post->ID.'_package_type_one_day';
-
-			if (isset(self::$cache[$cache_key])) {
-				return self::$cache[$cache_key];
-			}
-	
-			if(package_field('package_package_type') == 0)
-			{
-				$output = true;
-			}
-			
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
-
-		}
-		
-		return $output;
 	}
 
 	public static function is_spam($str) {

@@ -130,12 +130,12 @@ class Dynamicpackages_Forms
 		$option_disc = package_field('package_discount');
 		$option_free = package_field('package_free');
 		$by_hour = package_field('package_by_hour');
-		$package_type = package_field('package_package_type');
+		$package_type = dy_utilities::get_package_type();
 		$min_duration = intval(package_field('package_duration'));
 		$max_duration = intval(package_field('package_duration_max'));
 		$list_durations = ($max_duration > $min_duration) ? (1 + ($max_duration - $min_duration)) : 0;
 		$length_unit = package_field('package_length_unit');
-		$is_transport = dy_validators::package_type_transport();
+		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
 		$date_label = ($is_transport) 
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
@@ -237,7 +237,7 @@ class Dynamicpackages_Forms
 		$form .= ($is_transport && $has_route) ? '<hr/></div>' : '';
 		
 		
-		if(($package_type == 1 || dy_utilities::package_type_by_hour() || dy_utilities::package_type_by_day()) && $max_duration > $min_duration)
+		if(($package_type === 'multi-day' || $package_type === 'rental-per-day' || $package_type === 'rental-per-hour') && $max_duration > $min_duration)
 		{
 			
 			$time_label = __('Nights', 'dynamicpackages');

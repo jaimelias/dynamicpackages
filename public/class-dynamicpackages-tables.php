@@ -39,7 +39,7 @@ class Dynamicpackages_Tables{
 		$this->min_persons = intval(package_field( 'package_min_persons' ));
 		$this->max_persons = intval(package_field('package_max_persons'));
 		$this->duration = intval(package_field('package_duration'));
-		$this->package_type = intval(package_field('package_package_type'));
+		$this->package_type = dy_utilities::get_package_type();
 		$this->price_type = intval(package_field('package_fixed_price'));
 		$this->has_children = dy_validators::has_children();
 		$this->currency_symbol = currency_symbol();
@@ -93,7 +93,7 @@ class Dynamicpackages_Tables{
 						//this fix hides the table to avoid showing incorrect prices
 						// if the package is multi-day the table will attempt to calculate the price of one unit
 						// if there base price is > 0 then the system will calculate incorrectly adding up the base + occupancy
-						if($this->package_type === 1 && $base_price > 0)
+						if($this->package_type === 'multi-day' && $base_price > 0)
 						{
 							break;
 						}
@@ -111,15 +111,15 @@ class Dynamicpackages_Tables{
 					}							
 				}
 
-				if($this->package_type === 1)
+				if($this->package_type === 'multi-day')
 				{
 					$price =  $base_price + $occupancy_price;
 				}
-				else if($this->package_type === 0)
+				else if($this->package_type === 'one-day')
 				{
 					$price = $base_price;
 				}
-				else if($this->package_type === 2 && $this->package_type === 3)
+				else if($this->package_type === 'rental-per-day' && $this->package_type === 'rental-per-hour')
 				{
 					$price = $base_price * $this->duration;
 				}

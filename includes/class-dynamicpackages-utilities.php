@@ -183,7 +183,7 @@ class dy_utilities {
 		}
 		
 		$option = strtolower($option);
-		$coupons = dy_utilities::get_package_hot_chart('package_coupons');
+		$coupons = self::get_package_hot_chart('package_coupons');
 		$output = 'option not selected';
 		$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
 		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
@@ -356,13 +356,14 @@ class dy_utilities {
 		$duration = intval(package_field('package_duration'));
 		$duration_label = floatval(package_field('package_duration'));
 		$duration_unit = intval(package_field('package_length_unit'));
-		$duration_max = floatval(package_field('package_duration_max'));	
+		$duration_max = floatval(package_field('package_duration_max'));
+		$package_type = self::get_package_type($the_id);
 		
 		if(!empty($duration))
 		{
 			$min_nights = self::get_min_nights();
 
-			if(self::package_type_by_hour() || self::package_type_by_day() || $duration_unit === 2 || $duration_unit === 3)
+			if($package_type === 'rental-per-hour' || $package_type === 'rental-per-day' || $duration_unit === 2 || $duration_unit === 3)
 			{
 				if($min_nights)
 				{
@@ -459,7 +460,7 @@ class dy_utilities {
 		$prices = array();
 		$max = intval(package_field('package_max_persons', $the_id));
 		$min = intval(package_field('package_min_persons', $the_id));
-		$duration = floatval(package_field('package_duration'));
+		
 		$price_chart = self::get_price_chart($the_id);
 		$occupancy_chart = self::get_occupancy_chart($the_id);	
 		$occupancy_chart = (is_array($occupancy_chart)) 
@@ -468,9 +469,10 @@ class dy_utilities {
 			: null 
 			: null;
 		$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
-		$duration_unit = intval(package_field('package_length_unit'));
-		$duration_max = intval(package_field('package_duration_max'));
-		$package_type = intval(package_field('package_package_type'));
+		$duration = ($parent_id) ? floatval(package_field('package_duration', $parent_id)) : floatval(package_field('package_duration', $the_id));
+		$duration_unit = ($parent_id) ? intval(package_field('package_length_unit', $parent_id)) : intval(package_field('package_length_unit', $the_id));
+		$duration_max = ($parent_id) ?  intval(package_field('package_duration_max', $parent_id)): intval(package_field('package_duration_max', $the_id));
+		$package_type = ($parent_id) ? self::get_package_type($parent_id) : self::get_package_type($the_id);
 				
 		for($t = 0; $t < $max; $t++)
 		{
@@ -498,7 +500,7 @@ class dy_utilities {
 							
 							$occupancy_price = floatval($occupancy_chart[$t][0]);
 							
-							if($duration_max === 0 && $package_type !== 1)
+							if($duration_max === 0 && $package_type !== 'multi-day')
 							{
 								$occupancy_price = $occupancy_price * $duration;
 							}
@@ -506,7 +508,7 @@ class dy_utilities {
 					}
 				}
 				
-				if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 1)
+				if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 'multi-day')
 				{
 					$price = ($base_price + ($occupancy_price * $duration)) / $duration;
 				}
@@ -531,7 +533,7 @@ class dy_utilities {
 			{
 				if($min > 1)
 				{
-					array_slice($prices, ($min - 1), count($prices));
+					$prices = array_slice($prices, ($min - 1), count($prices));
 				}
 				
 				$output = floatval(min($prices));
@@ -559,7 +561,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 		
-		$price_chart = dy_utilities::get_package_hot_chart('package_price_chart', $the_id);
+		$price_chart = self::get_package_hot_chart('package_price_chart', $the_id);
 	
 		if(is_array($price_chart))
 		{
@@ -573,42 +575,6 @@ class dy_utilities {
 		self::$cache[$cache_key] = $output;
 
 		return $output;
-	}
-
-	public static function package_type_by_hour()
-	{
-		$package_type = intval(package_field('package_package_type' ));
-		$min_duration = intval(package_field('package_duration' ));
-		$max_duration = intval(package_field('package_duration_max' ));	
-		$length_unit = package_field('package_length_unit');
-		
-		
-		if($package_type == 3 && $length_unit == 1 && $max_duration > $min_duration)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public static function package_type_by_day()
-	{
-		$package_type = intval(package_field('package_package_type' ));
-		$min_duration = intval(package_field('package_duration' ));
-		$max_duration = intval(package_field('package_duration_max' ));	
-		$length_unit = package_field('package_length_unit');
-		
-		
-		if($package_type == 2 && $length_unit == 2 && $max_duration > $min_duration)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 	
 	public static function get_occupancy_chart($the_id = '')
@@ -624,7 +590,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$chart = dy_utilities::get_package_hot_chart('package_occupancy_chart', $the_id);
+		$chart = self::get_package_hot_chart('package_occupancy_chart', $the_id);
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $chart;
@@ -641,7 +607,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$output = dy_utilities::get_package_hot_chart('package_seasons_chart');	
+		$output = self::get_package_hot_chart('package_seasons_chart');	
 		
 		
 		//store output in $cache
@@ -678,7 +644,7 @@ class dy_utilities {
 	public static function get_disabled_range()
 	{
 		$output = array();
-		$disabled = dy_utilities::get_package_hot_chart('package_disabled_dates');
+		$disabled = self::get_package_hot_chart('package_disabled_dates');
 		
 		if(is_array($disabled))
 		{
@@ -720,7 +686,7 @@ class dy_utilities {
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
-			$seasons = dy_utilities::get_package_hot_chart('package_seasons_chart');
+			$seasons = self::get_package_hot_chart('package_seasons_chart');
 			$duration_arr = [];
 			
 			if(isset($_REQUEST['booking_extra']))
@@ -838,9 +804,9 @@ class dy_utilities {
 			$sum = 0;
 
 			
-			$occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
+			$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart');
 			$duration = self::get_min_nights();
-			$seasons = dy_utilities::get_package_hot_chart('package_seasons_chart');
+			$seasons = self::get_package_hot_chart('package_seasons_chart');
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
@@ -928,7 +894,6 @@ class dy_utilities {
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
 			$pax_regular = (isset($_REQUEST['pax_regular'])) ? floatval(sanitize_text_field($_REQUEST['pax_regular'])) : 0;
-			$package_type = intval(package_field('package_package_type'));
 
 			if(is_array($price_chart))
 			{
@@ -970,7 +935,6 @@ class dy_utilities {
 				$base_price = 0;
 				$price_chart = self::get_price_chart();
 				$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
-				$package_type = intval(package_field('package_package_type'));
 
 				if(is_array($price_chart))
 				{
@@ -1009,14 +973,14 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
-		$package_type = intval(package_field('package_package_type'));
-		$occupancy_price = (dy_validators::package_type_multi_day()) ? self::get_price_occupancy($type) : 0;
+		$package_type = self::get_package_type();
+		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
 		$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 		$week_days_to_surcharge = array($booking_date);
 		$one_way_surcharge = intval(package_field('package_one_way_surcharge'));
 
-		if(dy_validators::package_type_transport())
+		if($package_type === 'transport')
 		{
 			$sum_arr = [$sum];
 
@@ -1056,12 +1020,12 @@ class dy_utilities {
 		}
 		else
 		{
-			if((self::package_type_by_hour() || self::package_type_by_day()) && isset($_REQUEST['booking_extra']))
+			if(($package_type === 'rental-per-hour' || $package_type === 'rental-per-day') && isset($_REQUEST['booking_extra']))
 			{
 				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
 			}
 
-			if(!dy_validators::package_type_multi_day())
+			if($package_type !== 'multi-day')
 			{
 				$surcharges_arr = self::get_range_week_day_surcharges($week_days_to_surcharge);
 
