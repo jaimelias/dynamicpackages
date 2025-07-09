@@ -128,6 +128,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 				__('Price is fixed', 'dynamicpackages'), 
 				__('Variable duration price', 'dynamicpackages'),
 				__('Variable duration price + 1', 'dynamicpackages'),
+				__('Transport (charged each way)', 'dynamicpackages'),
 			), 
 			'description' => __('Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.', 'dynamicpackages')
 		);
@@ -377,8 +378,8 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			global $polylang;
 			global $post;
 			$the_id = $post->ID;
-			$package_type = intval(package_field('package_package_type'));
-			$package_unit = intval(package_field('package_length_unit'));
+			$package_type = dy_utilities::get_package_type($the_id);
+			$package_unit = (int) package_field('package_length_unit');
 			$parent_terms = array();
 
 			$def_lang = true;
@@ -441,7 +442,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 						
 
 						//multi-day or rental per day
-						if($package_type === 1 || $package_type === 2)
+						if($package_type === 'multi-day' || $package_type === 'rental-per-day')
 						{
 							$package_duration = (isset($_REQUEST['booking_extra'])) ? intval(sanitize_text_field($_REQUEST['booking_extra'])) : 1;
 							
@@ -452,7 +453,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 							
 							$price = $price * $package_duration;
 						}
-						else if($package_type === 4)
+						else if($package_type === 'transport')
 						{
 							$package_duration = 1;
 							$booking_date = dy_utilities::booking_date();
@@ -464,6 +465,10 @@ class Dynamicpackages_Taxonomy_Add_Ons
 							{
 								$package_duration = $package_duration + 1;
 							}
+							else if($add_on_type === 3 && !empty($end_date))
+							{
+								$package_duration = 2; //charged each way
+							}
 
 							$price = $price * $package_duration;
 						}
@@ -473,7 +478,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					{
 						array_push($output, array(
 								'id' => $term_id, 
-								'price' => floatval($price), 
+								'price' => $price, 
 								'name' => $name,
 								'description' => $term->description
 							)

@@ -8,6 +8,39 @@ class dy_utilities {
 
 	private static $cache = [];
 
+
+	public static function get_package_type($the_id = null)
+	{
+
+		$cache_key = $the_id.'_get_package_type';
+		$output = '';
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		$all_types = [
+			'0' => 'one-day',
+			'1' => 'multi-day',
+			'2' => 'rental-per-day',
+			'3' => 'rental-per-hour',
+			'4' => 'transport',
+		];
+
+		$type = (string) package_field('package_package_type', $the_id);
+
+		if(!array_key_exists($type, $all_types)) {
+			wp_die('Invalid package type "'.$type.'" found in get_package_type ');
+		}
+
+		$output = $all_types[$type];
+
+		self::$cache[$cache_key] = $output;
+
+		return $output;
+		
+	}
+
 	public static function sort_by_arr()
 	{
 		return array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
