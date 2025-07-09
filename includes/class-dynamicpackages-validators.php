@@ -512,13 +512,15 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(package_field( 'package_max_coupons' ) && package_field( 'package_coupons' ))
+		$max_coupons = (int) package_field( 'package_max_coupons');
+
+		if($max_coupons > 0)
 		{
 			$coupons = dy_utilities::get_package_hot_chart('package_coupons');
 			
 			if(is_array($coupons))
 			{
-				if(array_key_exists('coupons', $coupons) && package_field( 'package_max_coupons' ) > 0)
+				if(array_key_exists('coupons', $coupons))
 				{
 					if(isset($coupons['coupons'][0]))
 					{
@@ -532,7 +534,7 @@ class dy_validators
 				}					
 			}
 		}
-		
+
         //store output in $cache
         self::$cache[$cache_key] = $output;
 		

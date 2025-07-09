@@ -293,6 +293,59 @@ class Dynamicpackages_Forms
 					$get_coupon = sanitize_text_field($_GET['coupon']);
 					$coupon_hidden = '';
 				}
+			} else
+			{
+				$coupons = dy_utilities::get_package_hot_chart('package_coupons');
+
+				if(is_array($coupons) && array_key_exists('coupons', $coupons))
+				{
+					$coupons = $coupons['coupons'];
+
+					for($x = 0; $x < count($coupons); $x++)
+					{
+						
+						if($coupons[$x][3] === true && $coupons[$x][0])
+						{
+							$expiration = 0;
+
+							if(!empty($coupons[$x][2]))
+							{
+								$expiration = new DateTime($coupons[$x][2]);
+								$expiration->setTime(0,0,0);
+								$expiration = $expiration->getTimestamp();
+							}
+
+							if($expiration >= strtotime('today midnight') || $expiration === 0)
+							{
+								$expiration = '';
+								$valid = true;
+
+								if(!empty($coupons[$x][2]))
+								{
+									$expiration = new DateTime($coupons[$x][2]);
+									$expiration->setTime(0,0,0);
+									$expiration = $expiration->getTimestamp();
+									
+									if($expiration < strtotime('today midnight'))
+									{
+										$valid = false;
+									}
+								}
+
+								if($valid)
+								{
+									$gateways = array_map('strtolower', apply_filters('list_gateways', []));
+
+									if(!in_array($coupons[$x][0], $gateways))
+									{
+										$get_coupon = $coupons[$x][0];
+									}
+									
+								}
+							}
+						}
+					}
+				}
 			}
 			
 			

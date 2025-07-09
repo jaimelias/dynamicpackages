@@ -70,9 +70,6 @@ class Dynamicpackages_Fields
             'package_disabled_dates_api',
         ];
 
-
-
-
         // Add day-specific excludes
         foreach ($week_days as $day) {
             $excludes[] = "package_week_day_surcharge_$day";

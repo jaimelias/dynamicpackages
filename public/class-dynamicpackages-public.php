@@ -1429,7 +1429,7 @@ class Dynamicpackages_Public {
 			{
 				for($x = 0; $x < count($coupons); $x++)
 				{
-					if($coupons[$x][3] == 'true' && $coupons[$x][0])
+					if($coupons[$x][3] === true && $coupons[$x][0])
 					{
 						$expiration = 0;
 
