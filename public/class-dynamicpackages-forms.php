@@ -309,9 +309,9 @@ class Dynamicpackages_Forms
 							$expiration = 0;
 							$coupon_code = strtolower($coupons[$x][0]);
 
-							if(!empty($coupons[$x][2]))
+							if(is_valid_date($coupons[$x][2]))
 							{
-								$expiration_date = $coupons[$x][2] . ' 00:00:00';
+								$expiration_date = $coupons[$x][2] . ' 23:59:59';
 								$expiration = new DateTime($expiration_date);
 								$expiration = $expiration->getTimestamp();
 							}

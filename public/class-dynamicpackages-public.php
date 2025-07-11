@@ -1055,27 +1055,7 @@ class Dynamicpackages_Public {
 	
 
 	
-	public function get_all_coupons()
-	{
-		global $get_all_coupons;
-		$output = [];
-		
-		if(isset($get_all_coupons))
-		{
-			$output = $get_all_coupons;
-		}
-		else
-		{
-			$coupons = dy_utilities::get_package_hot_chart('package_coupons');
-			
-			if(array_key_exists('coupons', $coupons))
-			{
-				$output = $coupons['coupons'];
-				$GLOBALS['get_all_coupons'] = $output;
-			}			
-		}
-		return $output;
-	}
+
 
 	public function enabled_days()
 	{
@@ -1422,67 +1402,51 @@ class Dynamicpackages_Public {
 		{
 			$package_type = dy_utilities::get_package_type();
 			$duration_unit = package_field('package_length_unit');
-			$coupons = $this->get_all_coupons();
+			$coupons = dy_utilities::get_package_hot_chart('package_coupons');
 			$output = '';			
 						
-			if(is_array($coupons))
+			if(is_array($coupons) && array_key_exists('coupons', $coupons))
 			{
+				$coupons = $coupons['coupons'];
+
 				for($x = 0; $x < count($coupons); $x++)
 				{
-					if($coupons[$x][3] === true && $coupons[$x][0])
+					if(!empty($coupons[$x][3]) && !empty($coupons[$x][0]))
 					{
 						$expiration = 0;
 
-						if(!empty($coupons[$x][2]))
+						if(is_valid_date($coupons[$x][2]))
 						{
-							$expiration = new DateTime($coupons[$x][2]);
-							$expiration->setTime(0,0,0);
+							$expiration_date = $coupons[$x][2] . ' 23:59:59';
+							$expiration = new DateTime($expiration_date);
 							$expiration = $expiration->getTimestamp();
 						}
 						
 						if($expiration >= strtotime('today midnight') || $expiration === 0)
 						{
-							$expiration = '';
-							$valid = true;
+							$label = '';
+							$output .= '<div class="dy_coupon bottom-20 dy_pad">';
+							$label .= esc_html(__('Get a', 'dynamicpackages'));
+							$label .= ' <strong>'.esc_html($coupons[$x][1]).'%</strong>';
+							$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));
+							$label .= ' <strong>'.strtoupper(esc_html($coupons[$x][0])).'</strong>.';
 							
-							if(!empty($coupons[$x][2]))
+							if(isset($coupons[$x][4]) && $package_type !== 'transport' && $package_type !== 'one-day')
 							{
-								$expiration = new DateTime($coupons[$x][2]);
-								$expiration->setTime(0,0,0);
-								$expiration = $expiration->getTimestamp();
-								
-								if($expiration < strtotime('today midnight'))
+								if(is_numeric($coupons[$x][4]))
 								{
-									$valid = false;
+									$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(dy_utilities::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
 								}
 							}
-
-							if($valid === true)
+							
+							if(!empty($expiration))
 							{
-								$label = '';
-								$output .= '<div class="dy_coupon bottom-20 dy_pad">';
-								$label .= esc_html(__('Get a', 'dynamicpackages'));
-								$label .= ' <strong>'.esc_html($coupons[$x][1]).'%</strong>';
-								$label .= ' '.esc_html(__('off using the coupon code', 'dynamicpackages'));
-								$label .= ' <strong>'.strtoupper(esc_html($coupons[$x][0])).'</strong>.';
-								
-								if(isset($coupons[$x][4]) && $package_type !== 'transport' && $package_type !== 'one-day')
-								{
-									if(is_numeric($coupons[$x][4]))
-									{
-										$label .= '<br/><small>' . sprintf(__('This coupon is valid for booking of minimum %s %s.', 'dynamicpackages'), esc_html($coupons[$x][4]), esc_html(dy_utilities::duration_label($duration_unit, $coupons[$x][4]))).'</small>';
-									}
-								}
-								
-								if(!empty($expiration))
-								{
-									$label .= '<br/><small>'.esc_html(__('Offer expires on', 'dynamicpackages'));
-									$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.</small>';
-								}
-								$label = apply_filters('coupon_gateway', $label, $coupons[$x][0]);
-								$output .= $label;
-								$output .= '</div>';								
-							}								
+								$label .= '<br/><small>'.esc_html(__('Offer expires on', 'dynamicpackages'));
+								$label .= ' '.esc_html(date_i18n(get_option('date_format' ), strtotime($coupons[$x][2]))).'.</small>';
+							}
+							$label = apply_filters('coupon_gateway', $label, $coupons[$x][0]);
+							$output .= $label;
+							$output .= '</div>';								
 						}
 					}
 

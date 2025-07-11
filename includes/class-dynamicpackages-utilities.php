@@ -173,10 +173,10 @@ class dy_utilities {
 		return $output;
 	}
 	
-	public static function get_coupon($option)
+	public static function get_coupon($option = null)
 	{
 		$cache_key = $option.'_get_coupon';
-		$output = '';
+		$output = (object) array();
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
@@ -184,62 +184,58 @@ class dy_utilities {
 		
 		$option = strtolower($option);
 		$coupons = self::get_package_hot_chart('package_coupons');
-		$output = 'option not selected';
 		$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
 		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
 		
-		if(is_array($coupons))
+		if(is_array($coupons) && array_key_exists('coupons', $coupons))
 		{
-			if(array_key_exists('coupons', $coupons))
+			$coupons = $coupons['coupons'];
+			
+			for($x = 0; $x < count($coupons); $x++)
 			{
-				$coupons = $coupons['coupons'];
-				
-				for($x = 0; $x < count($coupons); $x++)
+				if(!empty($coupons[$x][0]))
 				{
-					if(!empty($coupons[$x][0]))
+					if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
 					{
-						if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
+						if($option === 'code')
 						{
-							if($option == 'code')
-							{
-								$output = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
-							}
-							else if($option == 'discount')
-							{
-								$output = (isset($coupons[$x][1])) ? $coupons[$x][1] : null;
-								$output = (is_numeric($output)) ? $output : null;
-							}	
-							else if($option == 'expiration')
-							{
-								$output = (isset($coupons[$x][2])) ? $coupons[$x][2] : null;
-								$output = (is_valid_date($output)) ? $output : null;
-							}
-							else if($option == 'publish')
-							{
-								$output = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
-							}
-							else if($option == 'min_duration')
-							{
-								$output = (isset($coupons[$x][4])) ? $coupons[$x][4] : null;
-								$output = (is_numeric($output)) ? intval($output) : 0;
-							}
-							else if($option == 'max_duration')
-							{
-								$output = (isset($coupons[$x][5])) ? $coupons[$x][5] : null;
-								$output = (is_numeric($output)) ? intval($output) : 0;
-							}
-							else if($option == 'bookings_after_expires')
-							{
-								$output = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
-							}							
+							$output->code = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
 						}
+						else if($option === 'discount')
+						{
+							$output->discount = (isset($coupons[$x][1]) && is_numeric($coupons[$x][1])) ? $coupons[$x][1] : 0;
+
+						}	
+						else if($option === 'expiration')
+						{
+							$output->expiration = (isset($coupons[$x][2]) && is_valid_date($coupons[$x][2])) ? $coupons[$x][2] : null;
+						}
+						else if($option === 'publish')
+						{
+							$output->publish = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
+						}
+						else if($option === 'min_duration')
+						{
+							$output->min_duration = (isset($coupons[$x][4]) && is_numeric($coupons[$x][4])) ? $coupons[$x][4] : 0;
+						}
+						else if($option === 'max_duration')
+						{
+							$output->max_duration = (isset($coupons[$x][5]) && is_numeric($coupons[$x][5])) ? $coupons[$x][5] : 0;
+						}
+						else if($option === 'bookings_after_expires')
+						{
+							$output->bookings_after_expires = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
+						}							
 					}
 				}
 			}				
 		}
+
+		$output = ($option !== null) ? $output->$option: $output;
 		
-		if(!empty($output))
+		if (!empty((array)$output))
 		{
+
 			self::$cache[$cache_key] = $output;
 		}
 		
