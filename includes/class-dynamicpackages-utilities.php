@@ -1175,7 +1175,7 @@ class dy_utilities {
 					write_log($result);
 				} else {
 
-					write_log($result);
+					//write_log($result);
 				}
 			}
 		}
