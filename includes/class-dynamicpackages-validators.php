@@ -555,7 +555,7 @@ class dy_validators
 		{
 			if(!empty($_REQUEST['coupon_code']))
 			{
-				$coupon_params = dy_utilities::get_coupon();
+				$coupon_params = dy_utilities::get_active_coupon_params();
 				$stored_coupon_code = $coupon_params->code;
 				$package_type = dy_utilities::get_package_type();
 				$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));

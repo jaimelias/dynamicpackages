@@ -173,7 +173,7 @@ class dy_utilities {
 		return $output;
 	}
 	
-	public static function get_coupon()
+	public static function get_active_coupon_params()
 	{
 		$cache_key = 'dy_get_coupon';
 
@@ -956,7 +956,7 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
-		$coupon_params = self::get_coupon();
+		$coupon_params = self::get_active_coupon_params();
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;

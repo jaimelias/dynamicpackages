@@ -135,7 +135,7 @@ class Dynamicpackages_Gateways
 		
 		if(dy_validators::validate_coupon())
 		{
-			$coupon_params = dy_utilities::get_coupon();
+			$coupon_params = dy_utilities::get_active_coupon_params();
 			$coupon_code = $coupon_params->code;
 
 			if(!empty($coupon_code))
@@ -240,7 +240,7 @@ class Dynamicpackages_Gateways
 		{	
 			if(is_booking_page() && dy_validators::validate_coupon() && count($gateways) > 0)
 			{
-				$coupon_params = dy_utilities::get_coupon();
+				$coupon_params = dy_utilities::get_active_coupon_params();
 				$coupon_code = $coupon_params->code;
 				
 				if(!empty($coupon_code))
@@ -329,7 +329,7 @@ class Dynamicpackages_Gateways
 			{
 				if(dy_validators::validate_coupon())
 				{
-					$coupon_params = dy_utilities::get_coupon();
+					$coupon_params = dy_utilities::get_active_coupon_params();
 					$coupon_expiration = $coupon_params->expiration;
 					$coupon_code = $coupon_params->code;
 					$coupon_discount =  $coupon_params->discount;
