@@ -555,22 +555,25 @@ class dy_validators
 		{
 			if(!empty($_REQUEST['coupon_code']))
 			{
+				$coupon_params = dy_utilities::get_coupon();
+				$stored_coupon_code = $coupon_params->code;
 				$package_type = dy_utilities::get_package_type();
 				$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
 				$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
-				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+
+
+
 				$duration = dy_utilities::get_min_nights();
 				$booking_date = sanitize_text_field($_REQUEST['booking_date']);
 				$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
 				$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
 				
-				if($get_coupon === $coupon_code)
+				if($stored_coupon_code === $coupon_code)
 				{
-					$expiration = dy_utilities::get_coupon('expiration');
-					$min_duration = dy_utilities::get_coupon('min_duration');
-					$max_duration = dy_utilities::get_coupon('max_duration');
-					$bookings_after_expires = dy_utilities::get_coupon('bookings_after_expires') || false;
+					$coupon_expiration = $coupon_params->expiration;
+					$coupon_min_duration = $coupon_params->min_duration;
+					$coupon_max_duration = $coupon_params->max_duration;
+					$coupon_bookings_after_expires = $coupon_params->bookings_after_expires;
 					$valid_expiration = false;
 					$valid_duration = false;
 
@@ -582,7 +585,7 @@ class dy_validators
 					{
 
 						//expiration
-						$expiration_stamp = new DateTime($expiration);
+						$expiration_stamp = new DateTime($coupon_expiration);
 						$expiration_stamp->setTime(0,0,0);
 						$expiration_stamp = $expiration_stamp->getTimestamp();
 
@@ -602,7 +605,7 @@ class dy_validators
 									$range_date->setTime(0, 0, 0);
 									$range_date = $range_date->getTimestamp();
 									
-									if ($range_date > $expiration_stamp && $bookings_after_expires === false) 
+									if ($range_date > $expiration_stamp && $coupon_bookings_after_expires === false) 
 									{
 										$arr_valid_expiration[] = false;
 									} 
@@ -621,7 +624,7 @@ class dy_validators
 							{
 								if($booking_date_stamp >= $expiration_stamp)
 								{
-									if($bookings_after_expires === true)
+									if($coupon_bookings_after_expires === true)
 									{
 										$valid_expiration = true;
 									}
@@ -634,9 +637,9 @@ class dy_validators
 						}							
 					}
 											
-					if($min_duration > 0)
+					if($coupon_min_duration > 0)
 					{
-						if($duration >= $min_duration)
+						if($duration >= $coupon_min_duration)
 						{
 							$valid_duration = true;
 						}							
@@ -646,9 +649,9 @@ class dy_validators
 						$valid_duration = true;
 					}
 					
-					if($valid_duration && $max_duration > 0)
+					if($valid_duration && $coupon_max_duration > 0)
 					{
-						if($duration > $max_duration)
+						if($duration > $coupon_max_duration)
 						{
 							$valid_duration = false;
 						}

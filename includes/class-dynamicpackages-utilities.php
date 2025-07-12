@@ -173,73 +173,60 @@ class dy_utilities {
 		return $output;
 	}
 	
-	public static function get_coupon($option = null)
+	public static function get_coupon()
 	{
-		$cache_key = $option.'_get_coupon';
-		$output = (object) array();
+		$cache_key = 'dy_get_coupon';
+
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
 		}
+
+		$output = (object) array();
+		$output->code = null;
+		$output->discount = 0;
+		$output->expiration = null;
+		$output->publish = false;
+		$output->min_duration = 0;
+		$output->max_duration = 0;
+		$output->bookings_after_expires = false;
 		
-		$option = strtolower($option);
 		$coupons = self::get_package_hot_chart('package_coupons');
-		$coupon_code = strtolower(sanitize_text_field($_REQUEST['coupon_code']));
-		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
+		$raw_code = isset($_REQUEST['coupon_code']) ? $_REQUEST['coupon_code'] : '';
+		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', strtolower(sanitize_text_field($raw_code)));
+
 		
 		if(is_array($coupons) && array_key_exists('coupons', $coupons))
 		{
 			$coupons = $coupons['coupons'];
+			$count_coupons = count($coupons);
 			
-			for($x = 0; $x < count($coupons); $x++)
+			for($x = 0; $x < $count_coupons; $x++)
 			{
 				if(!empty($coupons[$x][0]))
 				{
-					if($coupon_code == preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])))
-					{
-						if($option === 'code')
-						{
-							$output->code = (isset($coupons[$x][0])) ? $coupons[$x][0] : null;
-						}
-						else if($option === 'discount')
-						{
-							$output->discount = (isset($coupons[$x][1]) && is_numeric($coupons[$x][1])) ? $coupons[$x][1] : 0;
+					$stored_code = (isset($coupons[$x][0]) && !empty($coupons[$x][0]) && is_string($coupons[$x][0])) 
+						? preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])) 
+						: null;
 
-						}	
-						else if($option === 'expiration')
-						{
-							$output->expiration = (isset($coupons[$x][2]) && is_valid_date($coupons[$x][2])) ? $coupons[$x][2] : null;
-						}
-						else if($option === 'publish')
-						{
-							$output->publish = (isset($coupons[$x][3])) ? $coupons[$x][3] : false;
-						}
-						else if($option === 'min_duration')
-						{
-							$output->min_duration = (isset($coupons[$x][4]) && is_numeric($coupons[$x][4])) ? $coupons[$x][4] : 0;
-						}
-						else if($option === 'max_duration')
-						{
-							$output->max_duration = (isset($coupons[$x][5]) && is_numeric($coupons[$x][5])) ? $coupons[$x][5] : 0;
-						}
-						else if($option === 'bookings_after_expires')
-						{
-							$output->bookings_after_expires = (isset($coupons[$x][6])) ? $coupons[$x][6] : false;
-						}							
-					}
+					if($coupon_code !== $stored_code) continue;
+
+					$output->code = $stored_code;
+					$output->discount = (isset($coupons[$x][1]) && is_numeric($coupons[$x][1])) ? (float) $coupons[$x][1] : 0;
+					$output->expiration = (isset($coupons[$x][2]) && is_valid_date($coupons[$x][2])) ? $coupons[$x][2] : null;
+					$output->publish = (isset($coupons[$x][3])) ? (bool) $coupons[$x][3] : false;
+					$output->min_duration = (isset($coupons[$x][4]) && is_numeric($coupons[$x][4])) ? (int) $coupons[$x][4] : 0;
+					$output->max_duration = (isset($coupons[$x][5]) && is_numeric($coupons[$x][5])) ? (int) $coupons[$x][5] : 0;
+					$output->bookings_after_expires = (isset($coupons[$x][6])) ? (bool) $coupons[$x][6] : false;
+
+					break; //early exit after match
 				}
 			}				
 		}
-
-		$output = ($option !== null) ? $output->$option: $output;
 		
-		if (!empty((array)$output))
-		{
-
-			self::$cache[$cache_key] = $output;
-		}
-		
+		self::$cache[$cache_key] = $output;
 		return $output;
+
 	}	
 
 
@@ -969,6 +956,7 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
+		$coupon_params = self::get_coupon();
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
@@ -1039,7 +1027,7 @@ class dy_utilities {
 		
 		if(dy_validators::validate_coupon() && $regular === null)
 		{
-			$sum = $sum * ((100 - floatval(self::get_coupon('discount'))) /100);
+			$sum = $sum * ((100 - $coupon_params->discount) /100);
 		}
 
         //store output in $cache

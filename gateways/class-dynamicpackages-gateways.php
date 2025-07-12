@@ -135,16 +135,16 @@ class Dynamicpackages_Gateways
 		
 		if(dy_validators::validate_coupon())
 		{
-			$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-			$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+			$coupon_params = dy_utilities::get_coupon();
+			$coupon_code = $coupon_params->code;
 
-			if(!empty($get_coupon))
+			if(!empty($coupon_code))
 			{
-				$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+				$coupon_gateways = array_filter($gateways, function ($gateway) use ($coupon_code) {
 					
 					if(!empty($gateway))
 					{
-						return strcasecmp($gateway, $get_coupon) === 0;
+						return strcasecmp($gateway, $coupon_code) === 0;
 					}
 				});
 
@@ -240,15 +240,15 @@ class Dynamicpackages_Gateways
 		{	
 			if(is_booking_page() && dy_validators::validate_coupon() && count($gateways) > 0)
 			{
-				$get_coupon = strtolower(dy_utilities::get_coupon('code'));
-				$get_coupon = preg_replace("/[^A-Za-z0-9 ]/", '', $get_coupon);
+				$coupon_params = dy_utilities::get_coupon();
+				$coupon_code = $coupon_params->code;
 				
-				if(!empty($get_coupon))
+				if(!empty($coupon_code))
 				{
-					$coupon_gateways = array_filter($gateways, function ($gateway) use ($get_coupon) {
+					$coupon_gateways = array_filter($gateways, function ($gateway) use ($coupon_code) {
 						if(!empty($gateway))
 						{
-							return strcasecmp($gateway, $get_coupon) === 0;
+							return strcasecmp($gateway, $coupon_code) === 0;
 						}
 					});
 
@@ -329,14 +329,17 @@ class Dynamicpackages_Gateways
 			{
 				if(dy_validators::validate_coupon())
 				{
-					$expiration = dy_utilities::get_coupon('expiration');
+					$coupon_params = dy_utilities::get_coupon();
+					$coupon_expiration = $coupon_params->expiration;
+					$coupon_code = $coupon_params->code;
+					$coupon_discount =  $coupon_params->discount;
 					
-					echo '<p class="minimal_success strong">'.esc_html(sprintf(__('Coupon %s activated. %s off applied on the rate.', 'dynamicpackages'), dy_utilities::get_coupon('code'), dy_utilities::get_coupon('discount').'%')).'</p>';
+					echo '<p class="minimal_success strong">'.esc_html(sprintf(__('Coupon %s activated. %s off applied on the rate.', 'dynamicpackages'), $coupon_code, $coupon_discount.'%')).'</p>';
 					
-					if($expiration)
+					if($coupon_expiration)
 					{
-						$expiration = date_i18n(get_option('date_format' ), strtotime($expiration));
-						echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('This coupon expires on %s.', 'dynamicpackages'), $expiration)).'</p>';
+						$coupon_expiration = date_i18n(get_option('date_format' ), strtotime($coupon_expiration));
+						echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('This coupon expires on %s.', 'dynamicpackages'), $coupon_expiration)).'</p>';
 					}
 					
 				}

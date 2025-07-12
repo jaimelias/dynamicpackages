@@ -60,8 +60,9 @@ class Dynamicpackages_Booking_Page {
 		
 		if(dy_validators::validate_coupon())
 		{
-			$coupon_code = dy_utilities::get_coupon('code');
-			$coupon_discount = dy_utilities::get_coupon('discount');
+			$coupon_params = dy_utilities::get_coupon();
+			$coupon_code = $coupon_params->code;
+			$coupon_discount = $coupon_params->discount;
 			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
 		}
 		
