@@ -30,7 +30,7 @@ class dy_utilities {
 		$type = (string) package_field('package_package_type', $the_id);
 
 		if(!array_key_exists($type, $all_types)) {
-			wp_die('Invalid package type "'.$type.'" found in get_package_type ');
+			return '';
 		}
 
 		$output = $all_types[$type];
