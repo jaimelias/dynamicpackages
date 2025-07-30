@@ -7,7 +7,7 @@ if ( !defined( 'WPINC' ) ) exit;
 function package_field($name, $this_id = null)
 {
     //enable this code debugs memory exaust
-    if(true)
+    if(false)
     {
         // grab the backtrace, but limit it to the top 3 stack frames so your logs stay readable
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
