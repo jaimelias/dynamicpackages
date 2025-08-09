@@ -39,6 +39,9 @@ class usdt {
 	public function get_all_networks()
 	{
 		return array(
+			'trx' => array(
+				'name' => 'Tron (TRC-20)'
+			),
 			'eth' => array(
 				'name' => 'Ethereum (ERC-20) Network'
 			), 

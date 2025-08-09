@@ -582,7 +582,7 @@ class Dynamicpackages_Metaboxes
 		<?php endif; ?>
 		
 		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
-		<p><input type="url" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url($this->disabled_dates_api); ?>" > </p>
+		<p><input type="url" class="width-100" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url($this->disabled_dates_api); ?>" > </p>
 		</fieldset>
 		
 		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 1, 20); ?></h3>

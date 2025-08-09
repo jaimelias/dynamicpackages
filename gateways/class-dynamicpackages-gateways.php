@@ -27,7 +27,6 @@ class Dynamicpackages_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdc.php';
-		require_once plugin_dir_path(__FILE__).'matrix/stablepay/busd.php';
 		require_once plugin_dir_path(__FILE__).'matrix/pay-later/pay-later.php';
 	}	
 	
@@ -47,7 +46,6 @@ class Dynamicpackages_Gateways
 		$this->wire_transfer = new wire_transfer($this->plugin_id);
 		$this->usdt = new usdt($this->plugin_id);
 		$this->usdc = new usdc($this->plugin_id);
-		$this->busd = new busd($this->plugin_id);
 	}
 	public function init()
 	{
