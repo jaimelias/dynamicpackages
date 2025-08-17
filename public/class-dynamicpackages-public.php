@@ -1483,7 +1483,12 @@ class Dynamicpackages_Public {
 		
 		if(isset($post) && dy_validators::is_child())
 		{
-			$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox" href="'.esc_url(get_the_permalink($post->post_parent)).'"><span class="dashicons dashicons-arrow-left"></span> <strong>'.esc_html($this->count_child($post->post_parent)).'</strong> '.esc_html(__('Similar packages', 'dynamicpackages')).'</a></div>';			
+			$similar_packages_label = isset($this->current_language)
+				&& package_field('package_child_title_'.$this->current_language, $post->post_parent)
+				? package_field('package_child_title_'.$this->current_language, $post->post_parent)
+				: __('Similar packages', 'dynamicpackages');
+
+			$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox strong" href="'.esc_url(get_the_permalink($post->post_parent)).'"><span class="dashicons dashicons-arrow-left"></span>'.esc_html($this->count_child($post->post_parent)).' '.esc_html($similar_packages_label).'</a></div>';			
 		}
 
         //store output in $cache

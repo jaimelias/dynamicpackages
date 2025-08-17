@@ -620,14 +620,17 @@ class Dynamicpackages_Metaboxes
 			if ($this->is_child || $this->has_children)
 			{
 
+
 				for($x = 0; $x < $this->count_languages; $x++)
 				{
 					$lang = $this->languages[$x];
 					$id = 'child_title_'.$lang;
 					$name = 'package_'.$id;
+					$prefix = ($this->is_child) ? __('Subpackage Short Title', 'dynamicpackages') : __('Parent Category Title', 'dynamicpackages'); 
+
 					?>
 						<p>
-							<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html(__('Subpackage Short Title', 'dynamicpackages')); ?> - <?php echo esc_html($lang); ?></label></br>
+							<label for="<?php echo esc_attr($name); ?>"><?php echo esc_html($prefix); ?> - <?php echo esc_html($lang); ?></label></br>
 							<input type="text" value="<?php echo esc_attr($this->$id); ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>">
 						</p>			
 					<?php
