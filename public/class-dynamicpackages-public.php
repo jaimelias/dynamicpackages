@@ -65,6 +65,7 @@ class Dynamicpackages_Public {
 		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
 		add_action('dy_show_badge', array(&$this, 'show_badge'));
 		add_action('dy_show_event_date', array(&$this, 'show_event_date'));
+		add_action('dy_edit_link', array(&$this, 'edit_link'));
 	}
 
 	public function init()
@@ -1658,5 +1659,32 @@ class Dynamicpackages_Public {
 
 
 		return $url;
+	}
+
+	public function edit_link() {
+
+		$the_id = get_dy_id();
+		$cache_key = 'dy_edit_link' . '_' . $the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		$url = get_edit_post_link( $the_id );
+
+		$is_logged = false;
+
+		if(is_user_logged_in() && array_intersect(array('editor', 'administrator', 'author', 'contributor'), wp_get_current_user()->roles))
+		{
+			$is_logged = true;
+		}
+
+		$link = ($is_logged) 
+			? '<a target="_blank" class="pure-button text-muted rounded dy-edit-link small pure-button-bordered width-100" href="'.esc_url($url).'">'.__('Edit').' <span class="dashicons dashicons-edit"></span></a>'
+			: '';
+
+		self::$cache[$cache_key] = $link;
+
+		echo $link;
 	}
 }

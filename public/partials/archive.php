@@ -298,6 +298,7 @@ else
 							</div>
 							
 							
+							
 							<div class="dy_reviews small bottom-10">
 								<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
 							</div>
@@ -324,6 +325,8 @@ else
 									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>
+
+							<?php do_action('dy_edit_link'); ?>
 							
 						</div>	
 					</div>	
