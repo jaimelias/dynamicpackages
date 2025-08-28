@@ -46,13 +46,14 @@ class Dynamicpackages_Export_Post_Types{
         unset($post['post_excerpt']);
 
         $package_type = dy_utilities::get_package_type();
-        $duration_unit = intval(package_field('package_length_unit'));
-        $min_duration = intval(package_field('package_duration'));
-		$min_hour = intval(package_field('package_min_hour'));
-		$max_hour = intval(package_field('package_max_hour'));
-		$auto_booking = intval(package_field('package_auto_booking'));
-		$payment_type = intval(package_field('package_payment'));
-		$deposit = intval(package_field('package_deposit'));
+        $duration_unit = (int) package_field('package_length_unit');
+        $min_duration = (int) package_field('package_duration');
+        $by_hour = (int) package_field('package_by_hour');
+		$min_hour = package_field('package_min_hour');
+		$max_hour = package_field('package_max_hour');
+		$auto_booking = (int) package_field('package_auto_booking');
+		$payment_type = (int) package_field('package_payment');
+		$deposit = (int) package_field('package_deposit');
 
 
         $package = [
@@ -64,7 +65,7 @@ class Dynamicpackages_Export_Post_Types{
             'package_type' => $this->package_type_label($package_type, $duration_unit)
         ];
 
-        if($min_hour && $max_hour)
+        if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
         {
             $package['booking_schedule'] = $min_hour . ' - '. $max_hour;
         }
