@@ -112,7 +112,7 @@ class Dynamicpackages_Metaboxes
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
-		$this->is_transport = package_field('package_package_type') === 'transport';
+		$this->is_transport = ((int) package_field('package_package_type') === 4);
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_utilities::get_week_days_abbr();

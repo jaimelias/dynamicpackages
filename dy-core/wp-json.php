@@ -90,10 +90,15 @@ class Dynamic_Core_WP_JSON
 
                 $query->the_post();
                 $post = get_post();
-
                 $current_language = current_language($post->post_name);
 
-                $this_post = array(
+                if($current_language !== $default_language) continue;
+
+                $redirect_url = package_field('package_redirect_url_' . $current_language);
+
+                if(!empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children()) continue;
+
+                $this_post = (object) array(
                     'ID' => $post->ID,
                     'title' => $post->post_title,
                     'post_name' => $post->post_name,
@@ -106,8 +111,7 @@ class Dynamic_Core_WP_JSON
                     'type' => $post->post_type,
                     'current_language' => $current_language,
                     'post_parent' => $post->post_parent,
-                    'links' => array(),
-                    'exclude' => false
+                    'links' => array()
                 );
 
                 if(isset($polylang))
@@ -116,23 +120,16 @@ class Dynamic_Core_WP_JSON
                         $lang_post_id = pll_get_post($post->ID, $language);
                     
                         if ($language === $default_language || $lang_post_id > 0) {
-                            $this_post['links'][$language] = get_permalink($lang_post_id);
+                            $this_post->links[$language] = get_permalink($lang_post_id);
                         }
                     }
                 }
                 else
                 {
-                    $this_post['links'][$current_language] = get_permalink($post->ID);
+                    $this_post->links[$current_language] = get_permalink($post->ID);
                 }
 
-                $parsed_post = apply_filters('dy_export_post_types', $this_post);
-
-                if(!array_key_exists('exclude', $parsed_post) || $parsed_post['exclude'] === false)
-                {
-                    unset($this_post['exclude']);
-                    $posts[] = apply_filters('dy_export_post_types', $this_post);
-                }
-                
+                $posts[] = apply_filters('dy_export_post_types', $this_post);
             }
 
             wp_reset_postdata();

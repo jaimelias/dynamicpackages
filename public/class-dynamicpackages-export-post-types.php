@@ -10,42 +10,31 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_fields($post)
     {
-
-        $current_language = current_language($post['post_name']);
-
-        $redirect_url = package_field('package_redirect_url_' . $current_language);
-        
-        if($this->filter_by_language($post['post_name']) === false || !empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
-        {
-            $post['exclude'] = true;
-            return $post;
-        }
-
         if(dy_validators::is_child())
         {
-            $parent_content = get_post_field('post_content', $post['post_parent']);
-            $post['post_content'] .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
+            $parent_content = get_post_field('post_content', $post->post_parent);
+            $post->post_content .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
 
-            if(empty($post['post_excerpt']))
+            if(empty($post->post_excerpt))
             {
-                $parent_excerpt = get_post_field('post_excerpt', $post['post_parent']);
-                $post['post_excerpt'] = $parent_excerpt;
+                $parent_excerpt = get_post_field('post_excerpt', $post->post_parent);
+                $post->post_excerpt = $parent_excerpt;
             }
         }
 
 
-        $post['itinerary'] = $post['post_content'];
-        $post['itinerary_summary'] = $post['post_excerpt'];
-        $post['booking_links'] = $post['links'];
+        $post->itinerary = $post->post_content;
+        $post->itinerary_summary = $post->post_excerpt;
+        $post->booking_links = $post->links;
 
-        unset($post['links']);
-        unset($post['date']);
-        unset($post['modified']);
-        unset($post['author']);
-        unset($post['post_parent']);
-        unset($post['type']);
-        unset($post['post_content']);
-        unset($post['post_excerpt']);
+        unset($post->links);
+        unset($post->date);
+        unset($post->modified);
+        unset($post->author);
+        unset($post->post_parent);
+        unset($post->type);
+        unset($post->post_content);
+        unset($post->post_excerpt);
 
         $package_type = dy_utilities::get_package_type();
         $duration_unit = (int) package_field('package_length_unit');
@@ -58,7 +47,7 @@ class Dynamicpackages_Export_Post_Types{
 		$deposit = (int) package_field('package_deposit');
 
 
-        $package = [
+        $package = (object) [
             'max_capacity_per_booking' => package_field('package_max_persons'),
             'duration' => dy_utilities::show_duration(true),
             'check_in_hour' => package_field('package_check_in_hour'),
@@ -69,24 +58,22 @@ class Dynamicpackages_Export_Post_Types{
 
         if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
         {
-            $package['booking_schedule'] = $min_hour . ' - '. $max_hour;
+            $package->booking_schedule = $min_hour . ' - '. $max_hour;
         }
     
         if ($package_type === 'transport') {
-            $package += [
-                'return_hour' => package_field('package_return_hour'),
-                'return_check_in_hour' => package_field('package_check_in_end_hour'),
-                'return_address' => package_field('package_return_address'),
-            ];
+            $package->return_hour = package_field('package_return_hour');
+            $package->return_check_in_hour = package_field('package_check_in_end_hour');
+            $package->return_address = package_field('package_return_address');
         }
     
-        $package['rates'] = [];
+        $package->rates = array();
     
-        $package_free = intval(package_field('package_free'));
-        $package_discount = intval(package_field('package_discount'));
+        $package_free = (int) package_field('package_free');
+        $package_discount = (int) package_field('package_discount');
     
         if ($package_free > 0) {
-            $package['rates']['free_children_until_age'] = $package_free;
+            $package->rates['free_children_until_age'] = $package_free;
         }
     
         $children_key_prefix = $package_free > 0 
@@ -103,10 +90,10 @@ class Dynamicpackages_Export_Post_Types{
         if($package_type === 'transport')
         {
             $parsed_price_chart = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix));
-            $package['rates']['prices_per_person_round_trip'] = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix), true);
+            $package->rates['prices_per_person_round_trip'] = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix), true);
         }
 
-        $package['rates'][$price_key_name] = $parsed_price_chart;
+        $package->rates[$price_key_name] = $parsed_price_chart;
 
         if($package_type === 'multi-day')
         {
@@ -114,7 +101,7 @@ class Dynamicpackages_Export_Post_Types{
             $occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
             $occupancy_price_key_name = $this->occupancy_price_key_name($package_type, $duration_unit);
 
-            $package['rates']['seasons_'.$occupancy_price_key_name] = [
+            $package->rates['seasons_'.$occupancy_price_key_name] = [
                 'season_chart_0' => [
                     'is_default_season' => true,
                     'name' => '',
@@ -129,31 +116,24 @@ class Dynamicpackages_Export_Post_Types{
             $seasons_chart = dy_utilities::get_package_hot_chart('package_seasons_chart');
             $rates_by_season = $this->get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit);
 
-            $package['rates']['seasons_'.$occupancy_price_key_name] = array_merge(
-                $package['rates']['seasons_'.$occupancy_price_key_name],
+            $package->rates['seasons_'.$occupancy_price_key_name] = array_merge(
+                $package->rates['seasons_'.$occupancy_price_key_name],
                 $rates_by_season
             );
         }
         
-        $surcharges = $this->get_surcharges($package_type);
+        $package->surcharges = $this->get_surcharges($package_type);
 
-        if(!empty($surcharges))
-        {
-            $package = array_merge($package, $surcharges);
-        }
-
-
-
-        $package['web_checkout'] = ($auto_booking === 1) ? 'available' : 'web not available';
+        $package->web_checkout = ($auto_booking === 1) ? 'available' : 'web not available';
         
 
         if($auto_booking)
         {
-            $package['payment_type'] = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
+            $package->payment_type = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
         }
         
     
-        return array_merge($post, $package);
+        return (object) array_merge((array) $post, (array) $package);
     }
 
 
@@ -195,7 +175,7 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_surcharges($package_type)
     {
-        $output = [];
+        $output = (object) array();
         $week_days = dy_utilities::get_week_days_abbr();
         $week_day_surcharges = [];
         
@@ -206,19 +186,24 @@ class Dynamicpackages_Export_Post_Types{
 
             if($surcharge > 0)
             {
-                $week_day_surcharges[$week_days[$x]] = $surcharge;
+                $week_day_surcharges[$week_days[$x]] = (string) $surcharge . '%';
             }
         }
 
         if(!empty($week_day_surcharges))
         {
-            $output['percent_surcharges_by_weekday'] = $week_day_surcharges;
+            $output->percent_surcharges_by_weekday = $week_day_surcharges;
         }
 
 
         if($package_type === 'transport')
         {
-            $one_way_surcharges = package_field('package_one_way_surcharge');
+            $one_way_surcharges = (int) package_field('package_one_way_surcharge');
+
+            if($one_way_surcharges > 0)
+            {
+                $output->one_way_surcharge = (string) $one_way_surcharges . '% surcharge if this service if booked only one-way.';
+            }
         }
 
         return $output;
@@ -371,32 +356,6 @@ class Dynamicpackages_Export_Post_Types{
             }
         }
         return $prices_chart;
-    }
-
-
-    public function filter_by_language($post_name)
-    {
-        $current_language = current_language($post_name);
-
-        if(isset($_REQUEST['language']))
-        {
-            if(!empty($_REQUEST['language']))
-            {
-                $languages = get_languages();
-
-                if(in_array($_REQUEST['language'],  $languages))
-                {
-                    if($current_language === $_REQUEST['language'])
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    throw new Error('invalid language in Dynamicpackages_Export_Post_Types::get_fields');
-                }
-            }
-        }
     }
 
 }
