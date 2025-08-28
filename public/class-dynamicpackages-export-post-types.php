@@ -10,10 +10,12 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_fields($post)
     {
-        $current_language = current_language();
+
+        $current_language = current_language($post['post_name']);
+
         $redirect_url = package_field('package_redirect_url_' . $current_language);
         
-        if($this->filter_by_language() || !empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
+        if($this->filter_by_language($post['post_name']) === false || !empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children())
         {
             $post['exclude'] = true;
             return $post;
@@ -372,9 +374,9 @@ class Dynamicpackages_Export_Post_Types{
     }
 
 
-    public function filter_by_language()
+    public function filter_by_language($post_name)
     {
-        $current_language = current_language();
+        $current_language = current_language($post_name);
 
         if(isset($_REQUEST['language']))
         {
