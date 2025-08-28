@@ -518,8 +518,8 @@ class dy_utilities {
 				{
 					$prices = array_slice($prices, ($min - 1), count($prices));
 				}
-				
-				$output = floatval(min($prices));
+
+				$output = (count($prices) > 0) ? floatval(min($prices)) : 0;
 			}
 		}
 		
