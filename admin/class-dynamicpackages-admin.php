@@ -58,6 +58,7 @@ class Dynamicpackages_Admin {
 		//package
 		register_setting('dy_settings', 'dy_breadcrump', 'intval');
 		register_setting('dy_settings', 'dy_webhook', 'esc_url');
+		register_setting('dy_settings', 'dy_kyc', 'esc_url');
 		register_setting('dy_settings', 'dy_quote_webhook', 'esc_url');
 		register_setting('dy_settings', 'dy_disabled_dates', 'esc_html');	
 		register_setting('dy_settings', 'dy_max_disabled_dates', 'intval');	
@@ -116,6 +117,7 @@ class Dynamicpackages_Admin {
 			array('name' => 'dy_webhook')
 		);
 
+
 		add_settings_field( 
 			'dy_quote_webhook', 
 			esc_html(__( 'Quote Webhook URL', 'dynamicpackages' )), 
@@ -124,6 +126,16 @@ class Dynamicpackages_Admin {
 			'dy_integrations_section',
 			array('name' => 'dy_quote_webhook')
 		);		
+
+		add_settings_field( 
+			'dy_kyc', 
+			esc_html(__( 'KYC Form URL', 'dynamicpackages' )), 
+			array(&$this, 'settings_input'), 
+			'dy_settings', 
+			'dy_integrations_section',
+			array('name' => 'dy_kyc')
+		);
+
 
 	
 

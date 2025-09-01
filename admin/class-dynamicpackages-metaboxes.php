@@ -69,23 +69,23 @@ class Dynamicpackages_Metaboxes
 		$this->disabled_dates = package_field('package_disabled_dates');
 		$this->enabled_dates = package_field('package_enabled_dates');
 		$this->seasons_chart = package_field('package_seasons_chart');
-        $this->package_type = intval(package_field('package_package_type'));
-		$this->length_unit = intval(package_field('package_length_unit'));
-		$this->fixed_price = intval(package_field('package_fixed_price'));
-        $this->show_pricing = intval(package_field('package_show_pricing'));
-        $this->auto_booking = intval(package_field('package_auto_booking'));
-        $this->payment = intval(package_field('package_payment'));
-        $this->deposit = floatval(package_field('package_deposit'));
-		$this->max_coupons = intval(package_field('package_max_coupons'));
-		$this->min_persons = intval(package_field('package_min_persons'));
-		$this->max_persons = intval(package_field('package_max_persons'));
-		$this->free = intval(package_field('package_free'));
-		$this->discount = intval(package_field('package_discount'));
-		$this->num_seasons = intval(package_field('package_num_seasons'));
-		$this->booking_from = intval(package_field('package_booking_from'));
-		$this->booking_to = intval(package_field('package_booking_to'));
-		$this->disabled_num = intval(package_field('package_disabled_num'));
-		$this->enabled_num = intval(package_field('package_enabled_num'));
+        $this->package_type = (int) package_field('package_package_type');
+		$this->length_unit = (int) package_field('package_length_unit');
+		$this->fixed_price = (int) package_field('package_fixed_price');
+        $this->show_pricing = (int) package_field('package_show_pricing');
+        $this->auto_booking = (int) package_field('package_auto_booking');
+        $this->payment = (int) package_field('package_payment');
+        $this->deposit = (float) package_field('package_deposit');
+		$this->max_coupons = (int) package_field('package_max_coupons');
+		$this->min_persons = (int) package_field('package_min_persons');
+		$this->max_persons = (int) package_field('package_max_persons');
+		$this->free = (int) package_field('package_free');
+		$this->discount = (int) package_field('package_discount');
+		$this->num_seasons = (int) package_field('package_num_seasons');
+		$this->booking_from = (int) package_field('package_booking_from');
+		$this->booking_to = (int) package_field('package_booking_to');
+		$this->disabled_num = (int) package_field('package_disabled_num');
+		$this->enabled_num = (int) package_field('package_enabled_num');
 		$this->package_check_in_end_hour = package_field('package_check_in_end_hour');
 		$this->check_in_hour = package_field('package_check_in_hour');
 		$this->one_way_surcharge = package_field('package_one_way_surcharge');
@@ -95,24 +95,24 @@ class Dynamicpackages_Metaboxes
 		$this->return_hour = package_field('package_return_hour');
 		$this->return_address = package_field('package_return_address');
 		$this->return_address_short = package_field('package_return_address_short');
-		$this->increase_persons = intval(package_field('package_increase_persons'));
+		$this->increase_persons = (int) package_field('package_increase_persons');
 		$this->event_date = package_field('package_event_date');
-		$this->by_hour = intval(package_field('package_by_hour'));
+		$this->by_hour = (int) package_field('package_by_hour');
 		$this->min_hour = package_field('package_min_hour');
 		$this->max_hour = package_field('package_max_hour');
 		$this->disabled_dates_api = package_field('package_disabled_dates_api');
-		$this->display = intval(package_field('package_display'));
+		$this->display = (int) package_field('package_display');
 		$this->code = package_field('package_trip_code');
-		$this->duration = floatval(package_field('package_duration'));
-		$this->duration_max = floatval(package_field('package_duration_max'));
-		$this->badge = intval(package_field('package_badge'));
+		$this->duration = (float) package_field('package_duration');
+		$this->duration_max = (float) package_field('package_duration_max');
+		$this->badge = (int) package_field('package_badge');
 		$this->badge_color = package_field('package_badge_color');
-		$this->schema = intval(package_field('package_schema'));
+		$this->schema = (int) package_field('package_schema');
 		$this->is_child = dy_validators::is_child();
 		$this->disable_child = ($this->is_child) ? 'disabled' : '';
 		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
 		$this->has_children = dy_validators::has_children();
-		$this->is_transport = ((int) package_field('package_package_type') === 4);
+		$this->is_transport = dy_utilities::get_package_type() === 'transport';
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_utilities::get_week_days_abbr();
@@ -120,7 +120,7 @@ class Dynamicpackages_Metaboxes
 		$this->set_lang_fields();
 		$this->set_week_day_fields();
 		$this->set_handsontable_args();
-		$this->redirect_page = intval(package_field('package_redirect_page'));
+		$this->redirect_page = (int) package_field('package_redirect_page');
 	}
 
 	public function set_week_day_fields(){
@@ -132,7 +132,7 @@ class Dynamicpackages_Metaboxes
 			{
 				$id =  $week_day_fields[$w].'_'.$this->week_days[$x];
 				$name = 'package_' . $id;
-				$this->$id = intval(package_field($name));
+				$this->$id = (int) package_field($name);
 			}
 		}
 	}

@@ -26,6 +26,7 @@ class Dynamicpackages_Export_Post_Types{
         $post->itinerary = $post->post_content;
         $post->itinerary_summary = $post->post_excerpt;
         $post->booking_links = $post->links;
+        $post->service_type = dy_utilities::get_package_type();
 
         unset($post->links);
         unset($post->date);
@@ -45,16 +46,24 @@ class Dynamicpackages_Export_Post_Types{
 		$auto_booking = (int) package_field('package_auto_booking');
 		$payment_type = (int) package_field('package_payment');
 		$deposit = (int) package_field('package_deposit');
+        $check_in_hour = (string) package_field('package_check_in_hour');
+        $start_address = (string) package_field('package_start_address');
 
 
         $package = (object) [
             'max_capacity_per_booking' => package_field('package_max_persons'),
             'duration' => dy_utilities::show_duration(true),
-            'check_in_hour' => package_field('package_check_in_hour'),
             'start_hour' => dy_utilities::hour(),
-            'start_address' => package_field('package_start_address'),
-            'package_type' => $this->package_type_label($package_type, $duration_unit)
         ];
+
+        if(!empty($check_in_hour))
+        {
+            $package->check_in_hour = $check_in_hour;
+        }
+        if(!empty($start_address))
+        {
+            $package->start_address = $start_address;
+        }
 
         if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
         {
@@ -62,9 +71,24 @@ class Dynamicpackages_Export_Post_Types{
         }
     
         if ($package_type === 'transport') {
-            $package->return_hour = package_field('package_return_hour');
-            $package->return_check_in_hour = package_field('package_check_in_end_hour');
-            $package->return_address = package_field('package_return_address');
+
+            $return_hour = (string) package_field('package_return_hour');
+            $return_check_in_hour = (string) package_field('package_check_in_end_hour');
+            $return_address = (string) package_field('package_return_address');
+
+            if(!empty($return_hour))
+            {
+                 $package->return_hour =  $return_hour;
+            }
+
+            if(!empty($return_check_in_hour)) {
+                $package->return_check_in_hour = $return_check_in_hour;
+            }
+
+            if(!empty($return_address)) {
+                $package->return_address = $return_address;
+            }
+            
         }
     
         $package->rates = array();
@@ -133,7 +157,10 @@ class Dynamicpackages_Export_Post_Types{
         }
         
     
-        return (object) array_merge((array) $post, (array) $package);
+        foreach ($package as $key => $value) {
+            $post->$key = $value;
+        }
+        return $post;
     }
 
 

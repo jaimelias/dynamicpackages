@@ -6,6 +6,8 @@ $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])));
 $intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
+$kycUrl = get_option('dy_kyc');
+$kycMessage = (!empty($kycUrl)) ? '<p><a href="'.esc_url($kycUrl).'">'.__('Click here to upload IDs/Passports!', 'dynamicpackages').'</a></p>': '';
 $estimate_confirmation_message = __('To complete your reservation with us, it is essential that we receive the payment. Our team processes payments during office hours and verifies the provided identification documents. Once we have received both the payment and the necessary documents, we proceed to send the confirmations via email. This policy ensures that we can confirm your reservation promptly and securely. We appreciate your understanding and cooperation in this process.', 'dynamicpackages');
 $confirmation_message = apply_filters('dy_confirmation_message', $estimate_confirmation_message);
 $currency_symbol = currency_symbol();
@@ -124,6 +126,7 @@ $email_template = <<<EOT
 				<p>{$intro}</p>
 				<div>{$message}</div>
 				<div>{$confirmation_message}</div>
+				<div><strong>{$kycMessage}</strong></div>
 			</div>
 		
 			<div class="doc_box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
