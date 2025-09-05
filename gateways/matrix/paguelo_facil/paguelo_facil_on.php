@@ -691,40 +691,44 @@ class paguelo_facil_on{
 	
 	public function build_request()
 	{
-		$ip = $_SERVER['REMOTE_ADDR'];
-		
-		if(array_key_exists('HTTP_CF_CONNECTING_IP ', $_SERVER))
-		{
+		// Helper para sanitizar POST
+		$secure_post = fn($key) => isset($_POST[$key]) ? sanitize_text_field($_POST[$key]) : '';
+
+		// IP con preferencia a Cloudflare si existe
+		$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+		if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
 			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
 		}
-		
-		$CCNum = sanitize_text_field($_POST['CCNum']);
-		$CVV2 = sanitize_text_field($_POST['CVV2']);
-		$email = sanitize_text_field($_POST['email']);
-		$hash = $CCNum.$CVV2.$email;
 
-		$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
-		
-		$data = array(
-			'CCLW' => $this->cclw,
-			'txType' => 'SALE',
-			'CMTN' => dy_utilities::payment_amount(),
-			'CDSC' => substr(apply_filters('dy_description', null), 0, 150),
-			'CCNum' => $CCNum,
-			'ExpMonth' => sanitize_text_field($_POST['ExpMonth']),
-			'ExpYear' => sanitize_text_field($_POST['ExpYear']),
-			'CVV2' => $CVV2,
-			'Name' => sanitize_text_field($_POST['first_name']),
-			'LastName' => sanitize_text_field($_POST['lastname']),
-			'Email' => $email,
-			'Address' => sanitize_text_field($_POST['address']),
-			'Tel' => $phone,
-			'Ip'=> $ip,
-			'SecretHash' => hash('sha512', $hash)
-		);
-				
-		return $data;
+		// Datos principales
+		$CCNum  = $secure_post('CCNum');
+		$CVV2   = $secure_post('CVV2');
+		$email  = $secure_post('email');
+		$phone  = $secure_post('country_calling_code') . $secure_post('phone');
+
+		// Hash secreto
+		$hash = $CCNum . $CVV2 . $email;
+
+		// Armar payload
+		return [
+			'CCLW'       => $this->cclw,
+			'txType'     => 'SALE',
+			'CMTN'       => (float) number_format(dy_utilities::payment_amount(), 2, '.', ''),
+			'CDSC'       => substr(apply_filters('dy_description', null), 0, 150),
+			'CCNum'      => $CCNum,
+			'ExpMonth'   => $secure_post('ExpMonth'),
+			'ExpYear'    => $secure_post('ExpYear'),
+			'CVV2'       => $CVV2,
+			'Name'       => $secure_post('first_name'),
+			'LastName'   => $secure_post('lastname'),
+			'Email'      => $email,
+			'Address'    => $secure_post('address'),
+			'Tel'        => $phone,
+			'Ip'         => $ip,
+			'SecretHash' => hash('sha512', $hash),
+		];
 	}
+
 	
 	public function process_request()
 	{
