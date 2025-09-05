@@ -713,7 +713,7 @@ class paguelo_facil_on{
 		return [
 			'CCLW'       => $this->cclw,
 			'txType'     => 'SALE',
-			'CMTN'       => (float) number_format(dy_utilities::payment_amount(), 2, '.', ''),
+			'CMTN'       => round(dy_utilities::payment_amount(), 2),
 			'CDSC'       => substr(apply_filters('dy_description', null), 0, 150),
 			'CCNum'      => $CCNum,
 			'ExpMonth'   => $secure_post('ExpMonth'),
