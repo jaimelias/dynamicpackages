@@ -36,11 +36,12 @@ class Dynamicpackages_Export_Post_Types{
             }
         }
 
+        $package_type = dy_utilities::get_package_type($post->ID);
 
         $post->itinerary = $post->post_content;
         $post->itinerary_summary = $post->post_excerpt;
         $post->booking_links = $post->links;
-        $post->service_type = dy_utilities::get_package_type($post->ID);
+        $post->service_type = $package_type;
 
         unset($post->links);
         unset($post->date);
@@ -51,7 +52,7 @@ class Dynamicpackages_Export_Post_Types{
         unset($post->post_content);
         unset($post->post_excerpt);
 
-        $package_type = dy_utilities::get_package_type();
+        
         $duration_unit = (int) package_field('package_length_unit');
         $min_duration = (int) package_field('package_duration');
         $by_hour = (int) package_field('package_by_hour');
