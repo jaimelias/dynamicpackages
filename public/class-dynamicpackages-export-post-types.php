@@ -16,8 +16,7 @@ class Dynamicpackages_Export_Post_Types{
         $redirect_url = package_field('package_redirect_url_' . $post->current_language);
 
         if(
-            $post->current_language !== $post->default_language 
-            || !empty($redirect_url)
+            !empty($redirect_url)
             || dy_validators::has_children()
         ) {
             $post->exclude = true;
