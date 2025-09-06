@@ -27,6 +27,22 @@ class dy_utilities {
 			'4' => 'transport',
 		];
 
+		if($the_id !== null)
+		{
+			$post = get_post($the_id);
+		} else {
+			
+			global $post;
+
+			if(property_exists($post, 'post_parent'))
+			{
+				if($post->post_parent > 0)
+				{
+					$the_id = $post->post_parent;
+				} 
+			}
+		}
+
 		$type = (string) package_field('package_package_type', $the_id);
 
 		if(!array_key_exists($type, $all_types)) {

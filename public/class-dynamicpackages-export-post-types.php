@@ -11,15 +11,13 @@ class Dynamicpackages_Export_Post_Types{
     public function get_fields($post)
     {
 
-        write_log($post);
         if(!isset($post) || $post->type !== 'packages') return $post;
 
         $redirect_url = package_field('package_redirect_url_' . $post->current_language);
 
         if(
             $post->current_language !== $post->default_language 
-            || !empty($redirect_url) 
-            || dy_utilities::starting_at() === 0 
+            || !empty($redirect_url)
             || dy_validators::has_children()
         ) {
             $post->exclude = true;
@@ -42,7 +40,7 @@ class Dynamicpackages_Export_Post_Types{
         $post->itinerary = $post->post_content;
         $post->itinerary_summary = $post->post_excerpt;
         $post->booking_links = $post->links;
-        $post->service_type = dy_utilities::get_package_type();
+        $post->service_type = dy_utilities::get_package_type($post->ID);
 
         unset($post->links);
         unset($post->date);
@@ -163,9 +161,7 @@ class Dynamicpackages_Export_Post_Types{
         }
         
         $package->surcharges = $this->get_surcharges($package_type);
-
-        $package->web_checkout = ($auto_booking === 1) ? 'available' : 'web not available';
-        
+        $package->web_checkout = ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available';
 
         if($auto_booking)
         {
