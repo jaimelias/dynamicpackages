@@ -33,7 +33,7 @@ class Dynamicpackages_Export_Post_Types{
 
         $post->itinerary = $post->post_content;
         $post->itinerary_summary = $post->post_excerpt;
-        $post->booking_links = $post->links;
+        $post->booking_links_by_language = $post->links;
         $post->service_type = $package_type;
 
         unset($post->links);
@@ -44,6 +44,7 @@ class Dynamicpackages_Export_Post_Types{
         unset($post->type);
         unset($post->post_content);
         unset($post->post_excerpt);
+        unset($post->post_name);
 
         
         $duration_unit = (int) package_field('package_length_unit');
