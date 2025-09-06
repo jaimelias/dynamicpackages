@@ -10,15 +10,9 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_fields($post)
     {
-
-        if(!isset($post) || $post->type !== 'packages') return $post;
-
         $redirect_url = package_field('package_redirect_url_' . $post->current_language);
 
-        if(
-            !empty($redirect_url)
-            || dy_validators::has_children()
-        ) {
+        if(!empty($redirect_url) || dy_validators::has_children()) {
             $post->exclude = true;
             return $post;
         }
@@ -65,7 +59,7 @@ class Dynamicpackages_Export_Post_Types{
 
 
         $package = (object) [
-            'max_capacity_per_booking' => package_field('package_max_persons'),
+            'max_capacity_per_booking' => sprintf(__('%s participants', 'dynamicpackages'), package_field('package_max_persons')),
             'duration' => dy_utilities::show_duration(true),
             'start_hour' => dy_utilities::hour(),
         ];
