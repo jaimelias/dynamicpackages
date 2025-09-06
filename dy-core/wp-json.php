@@ -91,13 +91,7 @@ class Dynamic_Core_WP_JSON
                 $query->the_post();
                 $post = get_post();
                 $current_language = current_language($post->post_name);
-
-                if($current_language !== $default_language) continue;
-
-                $redirect_url = package_field('package_redirect_url_' . $current_language);
-
-                if(!empty($redirect_url) || dy_utilities::starting_at() === 0 || dy_validators::has_children()) continue;
-
+ 
                 $this_post = (object) array(
                     'ID' => $post->ID,
                     'title' => $post->post_title,
@@ -110,6 +104,7 @@ class Dynamic_Core_WP_JSON
                     'status' => $post->post_status,
                     'type' => $post->post_type,
                     'current_language' => $current_language,
+                    'default_language' => $default_language,
                     'post_parent' => $post->post_parent,
                     'links' => array()
                 );
@@ -129,7 +124,11 @@ class Dynamic_Core_WP_JSON
                     $this_post->links[$current_language] = get_permalink($post->ID);
                 }
 
-                $posts[] = apply_filters('dy_export_post_types', $this_post);
+                $parsed_post = apply_filters('dy_export_post_types', $this_post);
+
+                if(property_exists($parsed_post, 'exclude') && $parsed_post->exclude === true) continue;
+
+                $posts[] = $parsed_post;
             }
 
             wp_reset_postdata();

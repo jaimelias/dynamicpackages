@@ -5,11 +5,27 @@ class Dynamicpackages_Export_Post_Types{
 
     public function __construct($version)
     {
-        add_filter('dy_export_post_types', array(&$this, 'get_fields'));
+        add_filter('dy_export_post_types', array(&$this, 'get_fields'), 1);
     }
 
     public function get_fields($post)
     {
+
+        write_log($post);
+        if(!isset($post) || $post->type !== 'packages') return $post;
+
+        $redirect_url = package_field('package_redirect_url_' . $post->current_language);
+
+        if(
+            $post->current_language !== $post->default_language 
+            || !empty($redirect_url) 
+            || dy_utilities::starting_at() === 0 
+            || dy_validators::has_children()
+        ) {
+            $post->exclude = true;
+            return $post;
+        }
+
         if(dy_validators::is_child())
         {
             $parent_content = get_post_field('post_content', $post->post_parent);
