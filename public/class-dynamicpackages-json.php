@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_JSON
 {
+	private static $cache = [];
+
 	function __construct($reviews)
 	{
 		$this->reviews = $reviews;
@@ -18,19 +20,18 @@ class Dynamicpackages_JSON
 	
 	public function is_json_request()
 	{
-		global $is_json_request;
+		$cache_key = 'is_json_request';
 		$output = false;
 		
-		if(isset($is_json_request))
-		{
-			return $is_json_request;
-		}
+       if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 		else
 		{
 			if(isset($_GET['json']) && !is_admin())
 			{
 				$output = true;
-				$GLOBALS['is_json_request'] = $output;	
+				self::$cache[$cache_key] = $output;
 			}
 		}
 		
