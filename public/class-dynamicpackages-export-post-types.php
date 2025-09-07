@@ -3,9 +3,36 @@
 //class-dynamicpackages-export-post-types.php
 class Dynamicpackages_Export_Post_Types{
 
+    private static $cache = [];
+
     public function __construct($version)
     {
         add_filter('dy_export_post_types', array(&$this, 'get_fields'), 1);
+
+        add_action('wp', array(&$this, 'export'));
+    }
+
+    public function export() {
+
+        if(is_singular('packages') && isset($_GET['training-data']))
+        {
+            global $post;
+
+            $current_language = current_language();
+
+            $post->current_language = $current_language;
+            $html = '';
+            $blocks = parse_blocks($post->post_content);
+
+            foreach ( $blocks as $block ) {
+                $html .= render_block( $block );
+            }
+
+            $post->post_content = html_to_plain_text($html);
+
+            wp_send_json($this->get_fields($post));
+        }
+
     }
 
     public function get_fields($post)
