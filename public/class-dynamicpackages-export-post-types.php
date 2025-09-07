@@ -155,7 +155,13 @@ class Dynamicpackages_Export_Post_Types{
             );
         }
         
-        $package->surcharges = $this->get_surcharges($package_type);
+        $surcharges = $this->get_surcharges($package_type);
+
+        if(count(get_object_vars($surcharges)) > 0) {
+            $package->surcharges = $surcharges;
+        }
+
+        
         $package->web_checkout = ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available';
 
         if($auto_booking)
