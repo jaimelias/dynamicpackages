@@ -35,7 +35,7 @@ class Dynamicpackages_Export_Post_Types{
 
         if(!empty($post->post_content))
         {
-            $post->itinerary = $post->post_content;
+            $post->itinerary = "\n<!-- ITINERARY START -->\n".$post->post_content."\n<!-- ITINERARY END -->";
         }
 
         
