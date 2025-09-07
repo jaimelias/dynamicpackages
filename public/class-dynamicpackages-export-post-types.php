@@ -20,7 +20,7 @@ class Dynamicpackages_Export_Post_Types{
         if(dy_validators::is_child())
         {
             $parent_content = get_post_field('post_content', $post->post_parent);
-            $post->post_content .= '\n\n---\n\n' . html_to_plain_text(apply_filters('the_content', $parent_content));
+            $post->post_content .= "\n\n---\n\n" . html_to_plain_text(apply_filters('the_content', $parent_content));
 
             if(empty($post->post_excerpt))
             {
