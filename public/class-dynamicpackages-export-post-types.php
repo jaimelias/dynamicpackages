@@ -33,7 +33,7 @@ class Dynamicpackages_Export_Post_Types{
 
         $post->itinerary = $post->post_content;
         $post->itinerary_summary = $post->post_excerpt;
-        $post->booking_links_by_language = $post->links;
+        $post->reservation_links_by_language = $post->links;
         $post->service_type = $package_type;
 
         unset($post->links);
