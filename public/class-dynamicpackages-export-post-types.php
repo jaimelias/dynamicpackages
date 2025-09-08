@@ -225,8 +225,9 @@ class Dynamicpackages_Export_Post_Types{
             $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
         }
 
-        //unset rates if only $children_key_prefix is available
-        if(array_key_exists($children_key_prefix, $package->rates) && count(get_object_vars($rates)) === 1) {
+        //unset $package->rates if only free_children_until_age is available
+
+        if(array_key_exists('free_children_until_age', $package->rates) && count($package->rates) === 1) {
             unset($package->rates);
         }
         
