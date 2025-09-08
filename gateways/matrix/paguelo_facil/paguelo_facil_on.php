@@ -366,7 +366,7 @@ class paguelo_facil_on{
 				{
 					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, currency_symbol(), dy_utilities::payment_amount()) . '</p>';
+					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, currency_symbol(), money(dy_utilities::payment_amount())) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
