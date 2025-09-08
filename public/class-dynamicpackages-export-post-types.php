@@ -7,7 +7,6 @@ class Dynamicpackages_Export_Post_Types{
 
     public function __construct($version)
     {
-        add_filter('dy_export_post_types', array(&$this, 'get_fields'), 1);
         add_action('wp', array(&$this, 'export'));
         add_filter('wp_headers', array(&$this, 'wp_headers'), 999);
     }
@@ -29,22 +28,21 @@ class Dynamicpackages_Export_Post_Types{
         {
             global $post;
 
-            $training_obj = $this->get_fields($post);
+            $training_obj = $this->get_training_obj($post);
             $description = $training_obj->description;
 
             unset($training_obj->description);
-
             $top_level_prefix = '# ';
-            $output = $this->concatenate_object($training_obj, $top_level_prefix, '- ');
+            $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
 
-            $output .= "\n{$top_level_prefix}description:" . $description;
+            $output .= "\n# DESCRIPTION:" . $description;
 
             exit($output);
         }
 
     }
 
-    public function get_fields($post)
+    public function get_training_obj($post)
     {
         $current_language = current_language();
 
@@ -80,6 +78,8 @@ class Dynamicpackages_Export_Post_Types{
 		$deposit = (int) package_field('package_deposit');
         $check_in_hour = (string) package_field('package_check_in_hour');
         $start_address = (string) package_field('package_start_address');
+        $included = (string) dy_utilities::implode_taxo_names('package_included');
+        $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
 
         $package = (object) [
             'name' => $post->post_title,
@@ -98,6 +98,14 @@ class Dynamicpackages_Export_Post_Types{
             'not_included' => dy_utilities::implode_taxo_names('package_not_included')
         ];
 
+        if(!empty($included))
+        {
+            $package->included = $included;
+        }
+        if(!empty($not_included))
+        {
+            $package->not_included = $not_included;
+        }
         if(!empty($check_in_hour))
         {
             $package->check_in_hour = $check_in_hour;
@@ -479,116 +487,6 @@ class Dynamicpackages_Export_Post_Types{
 
         return $prices_chart;
     }
-
-    public function concatenate_object($obj, $top_prefix = '', $child_prefix = '') {
-        // --- helpers ------------------------------------------------------------
-        $isAssoc = function(array $a): bool {
-            return array_keys($a) !== range(0, count($a) - 1);
-        };
-
-        $allScalars = function(array $a): bool {
-            foreach ($a as $v) {
-                if (!(is_scalar($v) || $v === null)) return false;
-            }
-            return true;
-        };
-
-        $stringify = function($v): string {
-            if (is_bool($v))  return $v ? 'true' : 'false';
-            if ($v === null)  return 'null';
-            if (is_string($v)) {
-                // keep single-line; make newlines visible
-                return str_replace(["\r\n", "\r", "\n"], '\n', $v);
-            }
-            return (string)$v;
-        };
-
-        $seen = new SplObjectStorage();
-        $lines = [];
-
-        $emit = function($key, $value, int $level) use (
-            &$emit, &$lines, $seen, $stringify, $isAssoc, $allScalars, $top_prefix, $child_prefix
-        ) {
-            $indent = str_repeat("\t", $level);
-            $prefix = $level === 0 ? $top_prefix : $child_prefix;
-            $keyStr = (string)$key;
-
-            // scalars
-            if (is_scalar($value) || $value === null) {
-                $lines[] = "{$indent}{$prefix}{$keyStr}: " . $stringify($value);
-                return;
-            }
-
-            // arrays
-            if (is_array($value)) {
-                if (empty($value)) {
-                    $lines[] = "{$indent}{$prefix}{$keyStr}: []";
-                    return;
-                }
-
-                // simple indexed array of scalars => inline
-                if (!$isAssoc($value) && $allScalars($value)) {
-                    $inline = array_map($stringify, $value);
-                    $lines[] = "{$indent}{$prefix}{$keyStr}: [" . implode(', ', $inline) . "]";
-                    return;
-                }
-
-                // complex array => block with children
-                $lines[] = "{$indent}{$prefix}{$keyStr}:";
-                foreach ($value as $k => $v) {
-                    $emit($k, $v, $level + 1);
-                }
-                return;
-            }
-
-            // objects
-            if (is_object($value)) {
-                // prevent infinite recursion
-                if ($seen->contains($value)) {
-                    $lines[] = "{$indent}{$prefix}{$keyStr}: [*RECURSION*]";
-                    return;
-                }
-                $seen->attach($value);
-
-                // prefer public properties; fallback to __toString if available
-                $props = get_object_vars($value);
-                if (!empty($props)) {
-                    $lines[] = "{$indent}{$prefix}{$keyStr}:";
-                    foreach ($props as $k => $v) {
-                        $emit($k, $v, $level + 1);
-                    }
-                } else {
-                    if (method_exists($value, '__toString')) {
-                        $lines[] = "{$indent}{$prefix}{$keyStr}: " . (string)$value;
-                    } else {
-                        $lines[] = "{$indent}{$prefix}{$keyStr}: {}";
-                    }
-                }
-                return;
-            }
-
-            // unknown type (resource, etc.)
-            $lines[] = "{$indent}{$prefix}{$keyStr}: [unprintable]";
-        };
-
-        // root handling (object or array)
-        if (is_object($obj)) {
-            foreach (get_object_vars($obj) as $k => $v) {
-                $emit($k, $v, 0);
-            }
-        } elseif (is_array($obj)) {
-            foreach ($obj as $k => $v) {
-                $emit($k, $v, 0);
-            }
-        } else {
-            // allow scalar root
-            $lines[] = ($top_prefix ?? '') . (string)$obj;
-        }
-
-        return implode("\n", $lines);
-    }
-
-
 }
 
 ?>
