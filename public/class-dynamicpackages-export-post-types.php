@@ -156,13 +156,16 @@ class Dynamicpackages_Export_Post_Types{
         $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
         $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
 
+        $package->rates[$price_key_name] = $parsed_price_chart;
+
         if($package_type === 'transport')
         {
-            $parsed_price_chart = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix));
-            $package->rates['prices_per_person_round_trip'] = $this->parse_transport_prices($this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix), true);
-        }
+            $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
 
-        $package->rates[$price_key_name] = $parsed_price_chart;
+            if(!empty($prices_per_person_round_trip)) {
+                $package->rates['prices_per_person_round_trip'] = $prices_per_person_round_trip;
+            }
+        }
 
         if($package_type === 'multi-day')
         {
