@@ -21,16 +21,9 @@ class Dynamicpackages_Export_Post_Types{
             $current_language = current_language();
 
             $post->current_language = $current_language;
-            $html = '';
-            $blocks = parse_blocks($post->post_content);
+            $post->post_content = dy_format_blocks($post->post_content, 'html');
 
-            foreach ( $blocks as $block ) {
-                $html .= render_block( $block );
-            }
-
-            $post->post_content = html_to_plain_text($html);
-
-            wp_send_json($this->get_fields($post));
+            wp_send_json($post->post_content);
         }
 
     }
