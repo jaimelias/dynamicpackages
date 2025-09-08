@@ -78,8 +78,17 @@ class Dynamicpackages_Export_Post_Types{
 		$deposit = (int) package_field('package_deposit');
         $check_in_hour = (string) package_field('package_check_in_hour');
         $start_address = (string) package_field('package_start_address');
+        $start_address_short = (string) package_field('package_start_address_short');
+        $return_hour = (string) package_field('package_return_hour');
+        $return_check_in_hour = (string) package_field('package_check_in_end_hour');
+        $return_address = (string) package_field('package_return_address');
+        $return_address_short = (string) package_field('package_return_address_short');
+
         $included = (string) dy_utilities::implode_taxo_names('package_included');
         $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
+        $is_transport = $package_type === 'transport';
+
+        $start_time = dy_utilities::hour();
 
         $package = (object) [
             'name' => $post->post_title,
@@ -87,7 +96,6 @@ class Dynamicpackages_Export_Post_Types{
             'description' => "\n\n" . $service_description,
             'max_participants_per_booking' => (int) package_field('package_max_persons'),
             'duration' => strtolower(dy_utilities::show_duration(true)),
-            'start_hour' => dy_utilities::hour(),
             'rates_currency' => currency_name(),
             'rates_currency_symbol' => currency_symbol(),
             'rates' => [],
@@ -98,6 +106,14 @@ class Dynamicpackages_Export_Post_Types{
             'not_included' => dy_utilities::implode_taxo_names('package_not_included')
         ];
 
+        if(!empty($start_time)) {
+            if($is_transport) {
+                $package->departure_time = $start_time;
+            } else {
+                $package->start_time = $start_time;
+            }
+        }
+
         if(!empty($included))
         {
             $package->included = $included;
@@ -106,13 +122,28 @@ class Dynamicpackages_Export_Post_Types{
         {
             $package->not_included = $not_included;
         }
+
         if(!empty($check_in_hour))
         {
-            $package->check_in_hour = $check_in_hour;
+            if($is_transport) {
+                $package->departure_check_in_time = $check_in_hour;
+            }
+            else {
+                $package->check_in_time = $check_in_hour;
+            }
+        }
+        if(!empty($start_address_short) && $is_transport)
+        {
+            $package->origin = $start_address_short;
         }
         if(!empty($start_address))
         {
-            $package->start_address = $start_address;
+            if($is_transport)
+            {
+                $package->origin_address = $start_address;
+            } else {
+                $package->start_address = $start_address;
+            }
         }
 
         if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
@@ -120,23 +151,26 @@ class Dynamicpackages_Export_Post_Types{
             $package->booking_schedule = $min_hour . ' - '. $max_hour;
         }
     
-        if ($package_type === 'transport') {
 
-            $return_hour = (string) package_field('package_return_hour');
-            $return_check_in_hour = (string) package_field('package_check_in_end_hour');
-            $return_address = (string) package_field('package_return_address');
+        if ($package_type === 'transport') {
 
             if(!empty($return_hour))
             {
-                $package->return_hour =  $return_hour;
+                $package->return_time =  $return_hour;
             }
 
             if(!empty($return_check_in_hour)) {
-                $package->return_check_in_hour = $return_check_in_hour;
+                $package->return_check_in_time = $return_check_in_hour;
+            }
+
+            if(!empty($return_address_short)) {
+
+                $package->destination = $return_address_short;
             }
 
             if(!empty($return_address)) {
-                $package->return_address = $return_address;
+
+                $package->destination_address = $return_address;
             }
         }
     
