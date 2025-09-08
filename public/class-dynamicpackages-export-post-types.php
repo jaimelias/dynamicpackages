@@ -15,8 +15,6 @@ class Dynamicpackages_Export_Post_Types{
     {
         if(is_singular('packages') && isset($_GET['training-data'])) {
             $headers['Content-Type'] = 'text/plain; charset=UTF-8';
-
-            write_log($headers['Content-Type']);
         }
 
         return $headers;
@@ -150,7 +148,6 @@ class Dynamicpackages_Export_Post_Types{
         {
             $package->booking_schedule = $min_hour . ' - '. $max_hour;
         }
-    
 
         if ($package_type === 'transport') {
 
