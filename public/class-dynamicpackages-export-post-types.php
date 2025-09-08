@@ -8,8 +8,19 @@ class Dynamicpackages_Export_Post_Types{
     public function __construct($version)
     {
         add_filter('dy_export_post_types', array(&$this, 'get_fields'), 1);
-
         add_action('wp', array(&$this, 'export'));
+        add_filter('wp_headers', array(&$this, 'wp_headers'), 999);
+    }
+
+    public function  wp_headers($headers)
+    {
+        if(is_singular('packages') && isset($_GET['training-data'])) {
+            $headers['Content-Type'] = 'text/plain; charset=UTF-8';
+
+            write_log($headers['Content-Type']);
+        }
+
+        return $headers;
     }
 
     public function export() {
@@ -18,66 +29,47 @@ class Dynamicpackages_Export_Post_Types{
         {
             global $post;
 
-            $current_language = current_language();
+            $training_obj = $this->get_fields($post);
+            $description = $training_obj->description;
 
-            $post->current_language = $current_language;
-            $post->post_content = dy_format_blocks($post->post_content, 'text');
+            unset($training_obj->description);
 
-            wp_send_json($post->post_content);
+            $top_level_prefix = '# ';
+            $output = $this->concatenate_object($training_obj, $top_level_prefix, '- ');
+
+            $output .= "\n{$top_level_prefix}description:" . $description;
+
+            exit($output);
         }
 
     }
 
     public function get_fields($post)
     {
-        $redirect_url = package_field('package_redirect_url_' . $post->current_language);
+        $current_language = current_language();
 
-        if(!empty($redirect_url) || dy_validators::has_children()) {
-            $post->exclude = true;
-            return $post;
+        $redirect_url = package_field('package_redirect_url_' . $current_language);
+
+        if(!empty($redirect_url)) {
+            return (object) [];
         }
+
+        global $polylang;
+
+        $service_description = dy_format_blocks($post->post_content, 'text');
 
         if(dy_validators::is_child())
         {
-            $parent_content = get_post_field('post_content', $post->post_parent);
-            $post->post_content .= (!empty($parent_content)) 
-                ? "\n\n---\n\n" . html_to_plain_text(apply_filters('the_content', $parent_content))
-                : "";
+            $parent_content = trim(get_post_field('post_content', $post->post_parent));
 
-            if(empty($post->post_excerpt))
-            {
-                $parent_excerpt = get_post_field('post_excerpt', $post->post_parent);
-                $post->post_excerpt = $parent_excerpt;
-            }
+            $service_description = (!empty($parent_content)) 
+                ? dy_format_blocks($parent_content, 'text') . "\n\n---\n\n" . $service_description
+                : $service_description;
         }
 
-        $package_type = dy_utilities::get_package_type($post->ID);
-
-        if(!empty($post->post_content))
-        {
-            $post->itinerary = "\n<!-- ITINERARY START -->\n".$post->post_content."\n<!-- ITINERARY END -->";
-        }
-
-        
-        if(!empty($post->post_excerpt)) {
-            $post->itinerary_summary = $post->post_excerpt;
-        }
-
-        
-        $post->reservation_links_by_language = $post->links;
-        $post->service_type = $package_type;
-
-        unset($post->links);
-        unset($post->date);
-        unset($post->modified);
-        unset($post->author);
-        unset($post->post_parent);
-        unset($post->type);
-        unset($post->post_content);
-        unset($post->post_excerpt);
-        unset($post->post_name);
-
-        
+        $languages = (array) get_languages();
+        $default_language = (string) default_language();
+        $package_type = (string) dy_utilities::get_package_type($post->ID);
         $duration_unit = (int) package_field('package_length_unit');
         $min_duration = (int) package_field('package_duration');
         $by_hour = (int) package_field('package_by_hour');
@@ -89,11 +81,21 @@ class Dynamicpackages_Export_Post_Types{
         $check_in_hour = (string) package_field('package_check_in_hour');
         $start_address = (string) package_field('package_start_address');
 
-
         $package = (object) [
-            'max_capacity_per_booking' => sprintf(__('%s participants', 'dynamicpackages'), package_field('package_max_persons')),
-            'duration' => dy_utilities::show_duration(true),
+            'name' => $post->post_title,
+            'type' => $package_type,
+            'description' => "\n\n" . $service_description,
+            'max_participants_per_booking' => (int) package_field('package_max_persons'),
+            'duration' => strtolower(dy_utilities::show_duration(true)),
             'start_hour' => dy_utilities::hour(),
+            'rates_currency' => currency_name(),
+            'rates_currency_symbol' => currency_symbol(),
+            'rates' => [],
+            'web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
+            'reservation_links_by_language' => [],
+            'enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
+            'included' => dy_utilities::implode_taxo_names('package_included'),
+            'not_included' => dy_utilities::implode_taxo_names('package_not_included')
         ];
 
         if(!empty($check_in_hour))
@@ -118,7 +120,7 @@ class Dynamicpackages_Export_Post_Types{
 
             if(!empty($return_hour))
             {
-                 $package->return_hour =  $return_hour;
+                $package->return_hour =  $return_hour;
             }
 
             if(!empty($return_check_in_hour)) {
@@ -128,10 +130,7 @@ class Dynamicpackages_Export_Post_Types{
             if(!empty($return_address)) {
                 $package->return_address = $return_address;
             }
-            
         }
-    
-        $package->rates = array();
     
         $package_free = (int) package_field('package_free');
         $package_discount = (int) package_field('package_discount');
@@ -143,8 +142,6 @@ class Dynamicpackages_Export_Post_Types{
         $children_key_prefix = $package_free > 0 
             ? "children_from_" . ($package_free + 1) . "_up_to_" . $package_discount . "_years_old" 
             : "children_up_to_" . $package_discount . "_years_old";
-        
-        
         
        //base prices
         $price_chart = dy_utilities::get_package_hot_chart('package_price_chart');
@@ -192,19 +189,28 @@ class Dynamicpackages_Export_Post_Types{
             $package->surcharges = $surcharges;
         }
 
-        
-        $package->web_checkout = ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available';
-
         if($auto_booking)
         {
             $package->payment_type = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
         }
-        
-    
-        foreach ($package as $key => $value) {
-            $post->$key = $value;
+
+        if(isset($polylang))
+        {
+            foreach ($languages as $language) {
+
+                $lang_post_id = pll_get_post($post->ID, $language);
+            
+                if ($language === $default_language || $lang_post_id > 0) {
+                    $package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
+                }
+            }
         }
-        return $post;
+        else
+        {
+            $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
+        }
+        
+        return $package;
     }
 
 
@@ -284,23 +290,44 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = [];
 
-        if (is_array($price_chart) && isset($price_chart[$price_chart_key])) {
-            foreach ($price_chart[$price_chart_key] as $index => $price_row) {
-                $adult_key = ($index + 1) . '_adult';
-                $child_key = ($index + 1) . '_child';
-    
-                if (!empty($price_row[0])) {
-                    $output['adults'][$adult_key] = $price_row[0];
+        if (!is_array($price_chart) || !isset($price_chart[$price_chart_key])) {
+            return $output;
+        }
+
+        $rows = $price_chart[$price_chart_key];
+
+        // Iterate only if rows are an array to avoid warnings on invalid types
+        if (is_array($rows)) {
+            foreach ($rows as $i => $price_row) {
+                $n = $i + 1;
+
+                if (!empty($price_row[0])) { // keep empty() to skip "0" like original
+                    $output['adults']["{$n}_adult"] = $price_row[0];
                 }
-    
+
                 if (!empty($price_row[1])) {
-                    $output[$children_key_prefix][$child_key] = $price_row[1];
+                    $output[$children_key_prefix]["{$n}_child"] = $price_row[1];
+                }
+            }
+        }
+
+        // Collapse buckets if first == last (same logic, minimal overhead)
+        foreach (['adults', $children_key_prefix] as $bucketKey) {
+            if (isset($output[$bucketKey]) && !empty($output[$bucketKey]) && is_array($output[$bucketKey])) {
+                $bucket = &$output[$bucketKey];
+                $first  = reset($bucket);
+                $last   = end($bucket);
+
+                if (is_numeric($first) && is_numeric($last) && (float)$first == (float)$last) {
+                    $output[$bucketKey] = 0 + $first; // cast to int/float without changing value
                 }
             }
         }
 
         return $output;
     }
+
+
 
     public function package_type_label($package_type, $duration_unit)
     {
@@ -409,25 +436,158 @@ class Dynamicpackages_Export_Post_Types{
 		return $output;      
     }
 
-    public function parse_transport_prices($prices_chart, $is_round_trip = false) {
+    public function parse_transport_prices($prices_chart, $is_round_trip = false)
+    {
+        // $prices_chart can now have category values that are either arrays OR scalars.
+        $surcharge = intval(package_field('package_one_way_surcharge')); // percent
 
-        $surcharge = intval(package_field('package_one_way_surcharge'));
+        // Helper to apply round trip and surcharge safely on any numeric-ish value
+        $applyPricing = function ($value) use ($is_round_trip, $surcharge) {
+            if (!is_numeric($value)) {
+                return $value; // leave non-numeric untouched
+            }
 
-        foreach ($prices_chart as $category => &$subCategory) {
-            foreach ($subCategory as $key => &$price) {
+            $price = floatval($value);
 
-                if($is_round_trip)
-                {
-                    $price *= 2;
+            if ($is_round_trip) {
+                $price *= 2;
+            }
+            if ($surcharge > 0) {
+                $price += ($surcharge / 100) * $price;
+            }
+
+            return $price;
+        };
+
+        // If the whole chart is just a scalar, transform and return.
+        if (!is_array($prices_chart)) {
+            return $applyPricing($prices_chart);
+        }
+
+        // Otherwise walk categories; each category can be an array or a scalar.
+        foreach ($prices_chart as $category => &$sub) {
+            if (is_array($sub)) {
+                foreach ($sub as &$price) {
+                    $price = $applyPricing($price);
                 }
-                if($surcharge > 0)
-                {
-                    $price += ($surcharge / 100) * $price;
-                }
+                unset($price); // break reference
+            } else {
+                $sub = $applyPricing($sub);
             }
         }
+        unset($sub); // break reference
+
         return $prices_chart;
     }
+
+    public function concatenate_object($obj, $top_prefix = '', $child_prefix = '') {
+        // --- helpers ------------------------------------------------------------
+        $isAssoc = function(array $a): bool {
+            return array_keys($a) !== range(0, count($a) - 1);
+        };
+
+        $allScalars = function(array $a): bool {
+            foreach ($a as $v) {
+                if (!(is_scalar($v) || $v === null)) return false;
+            }
+            return true;
+        };
+
+        $stringify = function($v): string {
+            if (is_bool($v))  return $v ? 'true' : 'false';
+            if ($v === null)  return 'null';
+            if (is_string($v)) {
+                // keep single-line; make newlines visible
+                return str_replace(["\r\n", "\r", "\n"], '\n', $v);
+            }
+            return (string)$v;
+        };
+
+        $seen = new SplObjectStorage();
+        $lines = [];
+
+        $emit = function($key, $value, int $level) use (
+            &$emit, &$lines, $seen, $stringify, $isAssoc, $allScalars, $top_prefix, $child_prefix
+        ) {
+            $indent = str_repeat("\t", $level);
+            $prefix = $level === 0 ? $top_prefix : $child_prefix;
+            $keyStr = (string)$key;
+
+            // scalars
+            if (is_scalar($value) || $value === null) {
+                $lines[] = "{$indent}{$prefix}{$keyStr}: " . $stringify($value);
+                return;
+            }
+
+            // arrays
+            if (is_array($value)) {
+                if (empty($value)) {
+                    $lines[] = "{$indent}{$prefix}{$keyStr}: []";
+                    return;
+                }
+
+                // simple indexed array of scalars => inline
+                if (!$isAssoc($value) && $allScalars($value)) {
+                    $inline = array_map($stringify, $value);
+                    $lines[] = "{$indent}{$prefix}{$keyStr}: [" . implode(', ', $inline) . "]";
+                    return;
+                }
+
+                // complex array => block with children
+                $lines[] = "{$indent}{$prefix}{$keyStr}:";
+                foreach ($value as $k => $v) {
+                    $emit($k, $v, $level + 1);
+                }
+                return;
+            }
+
+            // objects
+            if (is_object($value)) {
+                // prevent infinite recursion
+                if ($seen->contains($value)) {
+                    $lines[] = "{$indent}{$prefix}{$keyStr}: [*RECURSION*]";
+                    return;
+                }
+                $seen->attach($value);
+
+                // prefer public properties; fallback to __toString if available
+                $props = get_object_vars($value);
+                if (!empty($props)) {
+                    $lines[] = "{$indent}{$prefix}{$keyStr}:";
+                    foreach ($props as $k => $v) {
+                        $emit($k, $v, $level + 1);
+                    }
+                } else {
+                    if (method_exists($value, '__toString')) {
+                        $lines[] = "{$indent}{$prefix}{$keyStr}: " . (string)$value;
+                    } else {
+                        $lines[] = "{$indent}{$prefix}{$keyStr}: {}";
+                    }
+                }
+                return;
+            }
+
+            // unknown type (resource, etc.)
+            $lines[] = "{$indent}{$prefix}{$keyStr}: [unprintable]";
+        };
+
+        // root handling (object or array)
+        if (is_object($obj)) {
+            foreach (get_object_vars($obj) as $k => $v) {
+                $emit($k, $v, 0);
+            }
+        } elseif (is_array($obj)) {
+            foreach ($obj as $k => $v) {
+                $emit($k, $v, 0);
+            }
+        } else {
+            // allow scalar root
+            $lines[] = ($top_prefix ?? '') . (string)$obj;
+        }
+
+        return implode("\n", $lines);
+    }
+
 
 }
 

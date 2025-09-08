@@ -1602,4 +1602,50 @@ class dy_utilities {
 
 		return $output;
 	}
+
+	public static function enabled_days()
+	{
+		$output = '';
+		$days = dy_utilities::get_week_days_abbr();
+		$labels = dy_utilities::get_week_day_names_short();
+		$labels_lon = dy_utilities::get_week_day_names_long();		
+		$enabled_days = array();
+		$enabled_days_lon = array();
+		$event_date = package_field('package_event_date');
+		
+		for($x = 0; $x < count($days); $x++)
+		{
+			$day = 'package_day_'.$days[$x];
+			
+			if(package_field($day) != 1)
+			{
+				array_push($enabled_days, $labels[$x]);
+				array_push($enabled_days_lon, $labels_lon[$x]);
+			}
+		}
+		
+		if(count($enabled_days) > 0 && count($enabled_days) < 3)
+		{
+			$output = implode(', ', $enabled_days_lon);
+		}
+		else if(count($enabled_days) == 7)
+		{
+			$output = __('Everyday', 'dynamicpackages');
+		}
+		else
+		{
+			$output = implode(', ', $enabled_days);
+		}
+
+		if(!empty($event_date))
+		{
+			if(is_valid_date($event_date))
+			{
+				$output = dy_utilities::format_date(strtotime($event_date));
+			}
+			
+		}
+		
+		return $output;
+	}
 }

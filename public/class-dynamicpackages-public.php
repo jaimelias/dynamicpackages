@@ -1058,51 +1058,7 @@ class Dynamicpackages_Public {
 	
 
 
-	public function enabled_days()
-	{
-		$output = '';
-		$days = dy_utilities::get_week_days_abbr();
-		$labels = dy_utilities::get_week_day_names_short();
-		$labels_lon = dy_utilities::get_week_day_names_long();		
-		$enabled_days = array();
-		$enabled_days_lon = array();
-		$event_date = package_field('package_event_date');
-		
-		for($x = 0; $x < count($days); $x++)
-		{
-			$day = 'package_day_'.$days[$x];
-			
-			if(package_field($day) != 1)
-			{
-				array_push($enabled_days, $labels[$x]);
-				array_push($enabled_days_lon, $labels_lon[$x]);
-			}
-		}
-		
-		if(count($enabled_days) > 0 && count($enabled_days) < 3)
-		{
-			$output = implode(', ', $enabled_days_lon);
-		}
-		else if(count($enabled_days) == 7)
-		{
-			$output = __('Everyday', 'dynamicpackages');
-		}
-		else
-		{
-			$output = implode(', ', $enabled_days);
-		}
 
-		if(!empty($event_date))
-		{
-			if(is_valid_date($event_date))
-			{
-				$output = dy_utilities::format_date(strtotime($event_date));
-			}
-			
-		}
-		
-		return $output;
-	}
 	
 	public function details()
 	{
@@ -1192,7 +1148,7 @@ class Dynamicpackages_Public {
 			'label_itinerary' => [ null,            __('Itinerary',   'dynamicpackages') ],
 			'max_persons'     => [ 'admin-users',   $max_persons . ' ' . __('pers. max.', 'dynamicpackages') ],
 			'duration'        => [ 'clock',         dy_utilities::show_duration() ],
-			'enabled_days'    => [ 'calendar',      $this->enabled_days() ],
+			'enabled_days'    => [ 'calendar',      dy_utilities::enabled_days() ],
 			'schedule'        => [ 'clock',         $schedule ],
 		];
 
@@ -1228,7 +1184,7 @@ class Dynamicpackages_Public {
 
 		if($is_archive || is_page() || is_tax())
 		{
-			if($this->enabled_days()) $req[] = 'enabled_days';
+			if(dy_utilities::enabled_days()) $req[] = 'enabled_days';
 			if($schedule) $req[] = 'schedule';
 			if($show_max_persons) $req[] = 'max_persons';
 			if(dy_utilities::hour() && $is_transport_fixed === false) $req[] = 'start_hour';
@@ -1241,7 +1197,7 @@ class Dynamicpackages_Public {
 
 			$show_labels = true;
 			$req[] = 'duration';
-			if($this->enabled_days()) $req[] = 'enabled_days';
+			if(dy_utilities::enabled_days()) $req[] = 'enabled_days';
 			if($schedule && $is_transport_fixed === false) $req[] = 'schedule';
 			if($show_max_persons) $req[] = 'max_persons';
 
