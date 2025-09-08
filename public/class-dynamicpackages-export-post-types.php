@@ -21,7 +21,7 @@ class Dynamicpackages_Export_Post_Types{
             $current_language = current_language();
 
             $post->current_language = $current_language;
-            $post->post_content = dy_format_blocks($post->post_content, 'html');
+            $post->post_content = dy_format_blocks($post->post_content, 'text');
 
             wp_send_json($post->post_content);
         }
