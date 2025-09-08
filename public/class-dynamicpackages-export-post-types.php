@@ -161,6 +161,7 @@ class Dynamicpackages_Export_Post_Types{
             $package->rates[$price_key_name] = $parsed_price_chart;
         }
         
+
         if($package_type === 'transport')
         {
             $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
@@ -222,6 +223,11 @@ class Dynamicpackages_Export_Post_Types{
         else
         {
             $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
+        }
+
+        //unset rates if only $children_key_prefix is available
+        if(array_key_exists($children_key_prefix, $package->rates) && count(get_object_vars($rates)) === 1) {
+            unset($package->rates);
         }
         
         return $package;
