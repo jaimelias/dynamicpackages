@@ -52,16 +52,6 @@ class Dynamicpackages_Export_Post_Types{
         global $polylang;
 
         $service_description = dy_format_blocks($post->post_content, 'text');
-
-        if(dy_validators::is_child())
-        {
-            $parent_content = trim(get_post_field('post_content', $post->post_parent));
-
-            $service_description = (!empty($parent_content)) 
-                ? dy_format_blocks($parent_content, 'text') . "\n\n---\n\n" . $service_description
-                : $service_description;
-        }
-
         $languages = (array) get_languages();
         $default_language = (string) default_language();
         $package_type = (string) dy_utilities::get_package_type($post->ID);
