@@ -42,18 +42,25 @@ class Dynamicpackages_Export_Post_Types{
 
         $default_language = (string) default_language();
         $languages = (array) get_languages();
-
-        $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
-            ? sanitize_text_field($_GET['lang'])
-            : default_language();
-
+        
         $args = array(
-            'post_type' => 'packages',
-            'posts_per_page' => -1
+            'post_type'      => 'packages',
+            'posts_per_page' => -1,
+            'meta_query'     => array(
+                array(
+                    'key'     => 'package_training_data',
+                    'value'   => '1',
+                    'compare' => '='
+                ),
+            ),
         );
 
         if(isset($polylang))
         {
+            $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
+                ? sanitize_text_field($_GET['lang'])
+                : default_language();
+
             $args['lang'] = [$filter_lang];
         }
 
@@ -65,7 +72,12 @@ class Dynamicpackages_Export_Post_Types{
             while ($query->have_posts()) {
                 $query->the_post();
                 $post = get_post();
-                $data[] = $this->get_training_content($post);
+
+                $file_data = (object) [];
+                $file_data->file_name = sanitize_title($post->post_title) . '-' . $post->ID . '.txt';
+                $file_data->content = $this->get_training_content($post);
+
+                $data[] = $file_data;
             }
 
             wp_reset_postdata();
@@ -78,7 +90,70 @@ class Dynamicpackages_Export_Post_Types{
             'Pragma' => 'no-cache'
         ));
 
-        return $result;
+        // --- Write to temp, zip, download, cleanup ---
+        if ( empty( $data ) ) {
+            wp_die( 'No files to export.' );
+        }
+
+        if ( ! class_exists( 'ZipArchive' ) ) {
+            wp_die( 'PHP ZipArchive is not available on this server.' );
+        }
+
+        // Create a unique temp directory
+        $tmp_dir = trailingslashit( get_temp_dir() ) . 'training-export-' . wp_generate_uuid4();
+        if ( ! wp_mkdir_p( $tmp_dir ) ) {
+            wp_die( 'Could not create temp directory.' );
+        }
+
+        // Write each file
+        foreach ( $data as $f ) {
+            $path = $tmp_dir . '/' . $f->file_name;
+            // Ensure parent dir exists; should, but just in case
+            if ( ! is_dir( dirname( $path ) ) ) {
+                wp_mkdir_p( dirname( $path ) );
+            }
+            file_put_contents( $path, (string) $f->content );
+        }
+
+        // Create ZIP
+        $zip_path = $tmp_dir . '.zip';
+        $zip = new ZipArchive();
+        if ( true !== $zip->open( $zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+            // Clean temp files before bailing
+            foreach ( glob( $tmp_dir . '/*' ) as $p ) { @unlink( $p ); }
+            @rmdir( $tmp_dir );
+            wp_die( 'Could not create ZIP file.' );
+        }
+
+        // Add files to ZIP
+        foreach ( glob( $tmp_dir . '/*' ) as $p ) {
+            if ( is_file( $p ) ) {
+                $zip->addFile( $p, basename( $p ) );
+            }
+        }
+        $zip->close();
+
+        // Stream ZIP to browser
+        if ( file_exists( $zip_path ) ) {
+            // Make sure nothing was sent before headers
+            if ( ob_get_length() ) { ob_end_clean(); }
+
+            nocache_headers();
+            header( 'Content-Type: application/zip' );
+            header( 'Content-Disposition: attachment; filename="' . basename( $zip_path ) . '"' );
+            header( 'Content-Length: ' . filesize( $zip_path ) );
+            header( 'X-Robots-Tag: noindex, nofollow', true );
+
+            // Flush and read
+            flush();
+            readfile( $zip_path );
+        }
+
+        // Cleanup temp files/dirs
+        foreach ( glob( $tmp_dir . '/*' ) as $p ) { @unlink( $p ); }
+        @rmdir( $tmp_dir );
+        @unlink( $zip_path );
+        exit;
     }
 
     public function get_training_content($post) {

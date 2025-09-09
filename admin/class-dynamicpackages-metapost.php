@@ -249,6 +249,8 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_return_address_short', esc_attr($_POST['package_return_address_short']));				
 		if(isset( $_POST['package_redirect_page']))
 			update_post_meta( $post_id, 'package_redirect_page', esc_attr($_POST['package_redirect_page']));		
+		if(isset( $_POST['package_training_data']))
+			update_post_meta( $post_id, 'package_training_data', esc_attr($_POST['package_training_data']));		
 			
 		for($x = 0; $x < count($languages); $x++)
 		{
