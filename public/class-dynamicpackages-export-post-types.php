@@ -90,7 +90,7 @@ class Dynamicpackages_Export_Post_Types{
 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
         $domain = $_SERVER['HTTP_HOST'];
-        
+
         $package = (object) [
             'name' => $post->post_title,
             'type' => $package_type,
@@ -251,13 +251,13 @@ class Dynamicpackages_Export_Post_Types{
                 $lang_post_id = pll_get_post($post->ID, $language);
             
                 if ($language === $default_language || $lang_post_id > 0) {
-                    $package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
+                    //$package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
                 }
             }
         }
         else
         {
-            $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
+            //$package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
         }
 
         //unset $package->rates if only free_children_until_age is available
