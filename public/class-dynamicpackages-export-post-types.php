@@ -30,10 +30,8 @@ class Dynamicpackages_Export_Post_Types{
             $description = $training_obj->description;
 
             unset($training_obj->description);
-            $top_level_prefix = '# ';
-            $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
 
-            $output .= "\n# DESCRIPTION:" . $description;
+            $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
 
             exit($output);
         }
