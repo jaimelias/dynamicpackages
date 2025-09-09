@@ -7,11 +7,22 @@ class Dynamicpackages_Export_Post_Types{
 
     public function __construct($version)
     {
-        add_action('wp', array(&$this, 'export'));
-        add_filter('wp_headers', array(&$this, 'wp_headers'), 999);
+        add_action('wp', array(&$this, 'export_single_file'));
+        add_filter('wp_headers', array(&$this, 'single_file_headers'), 999);
+        add_action('rest_api_init', array(&$this, 'rest_api_init'));
     }
 
-    public function  wp_headers($headers)
+    public function rest_api_init() {
+
+        // Register the new endpoint for exporting post types
+        register_rest_route('dy-core', 'training-data', array(
+            'methods' => 'GET',
+            'callback' => array(&$this, 'query_training_data'),
+            'permission_callback' => '__return_true'
+        ));
+    }
+
+    public function  single_file_headers($headers)
     {
         if(is_singular('packages') && isset($_GET['training-data'])) {
             $headers['Content-Type'] = 'text/plain; charset=UTF-8';
@@ -20,23 +31,67 @@ class Dynamicpackages_Export_Post_Types{
         return $headers;
     }
 
-    public function export() {
+    public function export_single_file() {
+        if(is_singular('packages') && isset($_GET['training-data'])) {
+             global $post;
+            exit($this->get_training_content($post));
+        }
+    }
 
-        if(is_singular('packages') && isset($_GET['training-data']))
+    public function query_training_data() {
+
+        $default_language = (string) default_language();
+        $languages = (array) get_languages();
+
+        $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
+            ? sanitize_text_field($_GET['lang'])
+            : default_language();
+
+        $args = array(
+            'post_type' => 'packages',
+            'posts_per_page' => -1
+        );
+
+        if(isset($polylang))
         {
-            global $post;
-
-            $training_obj = $this->get_training_obj($post);
-            $description = $training_obj->description;
-
-            unset($training_obj->description);
-
-            $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
-            $output .= "\n\n# DESCRIPTION:" . $description;
-
-            exit($output);
+            $args['lang'] = [$filter_lang];
         }
 
+        $query = new WP_Query($args);
+        $data = [];
+
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $post = get_post();
+                $data[] = $this->get_training_content($post);
+            }
+
+            wp_reset_postdata();
+        }
+
+        $result = new WP_REST_Response($data, 200);
+
+        $result->set_headers(array(
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache'
+        ));
+
+        return $result;
+    }
+
+    public function get_training_content($post) {
+
+        $training_obj = $this->get_training_obj($post);
+        $description = $training_obj->description;
+
+        unset($training_obj->description);
+
+        $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
+        $output .= "\n\n# DESCRIPTION:" . $description;
+
+        return $output;
     }
 
     public function get_training_obj($post)
