@@ -15,7 +15,7 @@ class Dynamicpackages_Export_Post_Types{
     public function rest_api_init() {
 
         // Register the new endpoint for exporting post types
-        register_rest_route('dy-core', 'training-data', array(
+        register_rest_route('dy-core', 'training-data/packages', array(
             'methods' => 'GET',
             'callback' => array(&$this, 'query_training_data'),
             'permission_callback' => '__return_true'
