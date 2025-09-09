@@ -88,9 +88,6 @@ class Dynamicpackages_Export_Post_Types{
 
         $start_time = dy_utilities::hour();
 
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
-        $domain = $_SERVER['HTTP_HOST'];
-
         $package = (object) [
             'name' => $post->post_title,
             'type' => $package_type,
@@ -102,10 +99,7 @@ class Dynamicpackages_Export_Post_Types{
             'reservation_links_by_language' => [],
             'enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
             'included' => dy_utilities::implode_taxo_names('package_included'),
-            'not_included' => dy_utilities::implode_taxo_names('package_not_included'),
-            'protocol' => $protocol,
-            'domain' => $domain,
-            'protocol' => $protocol,
+            'not_included' => dy_utilities::implode_taxo_names('package_not_included')
         ];
 
         if(!empty($start_time)) {
@@ -251,13 +245,13 @@ class Dynamicpackages_Export_Post_Types{
                 $lang_post_id = pll_get_post($post->ID, $language);
             
                 if ($language === $default_language || $lang_post_id > 0) {
-                    //$package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
+                    $package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
                 }
             }
         }
         else
         {
-            //$package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
+            $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
         }
 
         //unset $package->rates if only free_children_until_age is available
