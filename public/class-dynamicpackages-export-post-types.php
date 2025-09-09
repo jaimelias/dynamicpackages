@@ -88,20 +88,24 @@ class Dynamicpackages_Export_Post_Types{
 
         $start_time = dy_utilities::hour();
 
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
+        $domain = $_SERVER['HTTP_HOST'];
+        
         $package = (object) [
             'name' => $post->post_title,
             'type' => $package_type,
             'description' => "\n\n" . $service_description,
             'max_participants_per_booking' => (int) package_field('package_max_persons'),
             'duration' => strtolower(dy_utilities::show_duration(true)),
-            'rates_currency' => currency_name(),
-            'rates_currency_symbol' => currency_symbol(),
             'rates' => [],
             'web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
             'reservation_links_by_language' => [],
             'enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
             'included' => dy_utilities::implode_taxo_names('package_included'),
-            'not_included' => dy_utilities::implode_taxo_names('package_not_included')
+            'not_included' => dy_utilities::implode_taxo_names('package_not_included'),
+            'protocol' => $protocol,
+            'domain' => $domain,
+            'protocol' => $protocol,
         ];
 
         if(!empty($start_time)) {
