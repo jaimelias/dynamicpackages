@@ -42,10 +42,15 @@ class Dynamicpackages_Export_Post_Types{
 
         $default_language = (string) default_language();
         $languages = (array) get_languages();
+
+        $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
+                        ? sanitize_text_field($_GET['lang'])
+                        : default_language();
         
         $args = array(
             'post_type'      => 'packages',
             'posts_per_page' => -1,
+            'lang' => $filter_lang,
             'meta_query'     => array(
                 array(
                     'key'     => 'package_training_data',
@@ -54,15 +59,6 @@ class Dynamicpackages_Export_Post_Types{
                 ),
             ),
         );
-
-        if(isset($polylang))
-        {
-            $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
-                ? sanitize_text_field($_GET['lang'])
-                : default_language();
-
-            $args['lang'] = [$filter_lang];
-        }
 
         $query = new WP_Query($args);
         $data = [];
