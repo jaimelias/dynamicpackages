@@ -79,7 +79,6 @@ class Dynamicpackages_Export_Post_Types{
 
         $package = (object) [
             'name' => $post->post_title,
-            'meta_data' => (object) [],
             'type' => $package_type,
             'max_participants_per_booking' => (int) package_field('package_max_persons'),
             'duration' => strtolower(dy_utilities::show_duration(true)),
@@ -228,13 +227,6 @@ class Dynamicpackages_Export_Post_Types{
             $package->payment_type = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
         }
 
-        $domain_parts = $this->domain_parts();
-
-        $package->meta_data->scheme = '`' . $domain_parts->scheme . '`';
-        $package->meta_data->domain = '`' . $domain_parts->domain . '`';
-        $package->meta_data->domain_sufix = '`' . $domain_parts->domain_sufix . '`';
-
-        $url_meta_data_str = '`${META_DATA["scheme"]}${META_DATA["domain"]}${META_DATA["domain_sufix"]}';
 
         if(isset($polylang))
         {
@@ -243,15 +235,13 @@ class Dynamicpackages_Export_Post_Types{
                 $lang_post_id = pll_get_post($post->ID, $language);
             
                 if ($language === $default_language || $lang_post_id > 0) {
-                    $parsed_lang_url = parse_url(get_permalink($lang_post_id));
-                    $package->reservation_links_by_language[$language] = $url_meta_data_str . $parsed_lang_url['path']. '`';
+                    $package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
                 }
             }
         }
         else
         {
-            $parsed_lang_url = parse_url(get_permalink($post->ID));
-            $package->reservation_links_by_language[$current_language] = $url_meta_data_str . $parsed_lang_url['path']. '`';
+            $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
         }
 
         //unset $package->rates if only free_children_until_age is available
@@ -528,42 +518,6 @@ class Dynamicpackages_Export_Post_Types{
         unset($sub); // break reference
 
         return $prices_chart;
-    }
-
-    public function domain_parts () {
-        $output = (object) [];
-        $home_url = get_home_url(null, '/');
-        $parts = parse_url($home_url);
-
-        $scheme = isset($parts['scheme']) ? $parts['scheme'] . '://' : 'http://';
-        $host   = $parts['host'] ?? 'localhost';
-
-        // Incluir puerto solo si existe y no es el default
-        $port = '';
-        if (isset($parts['port'])) {
-            $isDefaultHttp  = ($parts['scheme'] === 'http'  && $parts['port'] == 80);
-            $isDefaultHttps = ($parts['scheme'] === 'https' && $parts['port'] == 443);
-
-            if (!($isDefaultHttp || $isDefaultHttps)) {
-                $port = ':' . $parts['port'];
-            }
-        }
-
-        if ($host === 'localhost') {
-            $domain    = 'localhost';
-            $domain_sufix = $port;
-        } else {
-            $segments  = explode('.', $host);
-            $extension = array_pop($segments);        // Ej: "com"
-            $domain    = implode('.', $segments); // Ej: "www.ejemplo"
-            $domain_sufix = $extension . $port;
-        }
-
-        $output->scheme = $scheme;
-        $output->domain = $domain;
-        $output->domain_sufix = $domain_sufix;
-        
-        return $output;
     }
 }
 
