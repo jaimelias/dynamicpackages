@@ -155,12 +155,12 @@ class Dynamicpackages_Export_Post_Types{
     public function get_training_content($post) {
 
         $training_obj = $this->get_training_obj($post);
-        $description = $training_obj->service_description;
+        //$description = $training_obj->service_description;
 
-        unset($training_obj->service_description);
+        //unset($training_obj->service_description);
 
         $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
-        $output .= "\n\n# SERVICE_DESCRIPTION:" . $description;
+        //$output .= "\n\n# SERVICE_DESCRIPTION:" . $description;
 
         return $output;
     }
@@ -208,16 +208,16 @@ class Dynamicpackages_Export_Post_Types{
 
         $package = (object) [
             'service_id' => strtoupper(substr($hash, 0, 12)),
-            'service_name' => $post->post_title,
+            'service_name' => $this->clean_title_string($post->post_title),
             'service_type' => $package_type,
             'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
             'service_duration' => strtolower(dy_utilities::show_duration(true)),
             'service_rates' => [],
             'service_web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
             'service_links_by_language' => [],
-            'service_names_by_language' => [],
+            'service_name_translations' => [],
             'service_enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
-            'service_description' => "\n\n" . $service_description
+            //'service_description' => "\n\n" . $service_description
         ];
 
         if(!empty($start_time)) {
@@ -363,14 +363,16 @@ class Dynamicpackages_Export_Post_Types{
 
         if(isset($polylang))
         {
-            $package->service_names_by_language[$default_language] = $post->post_title;
-
             foreach ($languages as $language) {
 
                 $lang_post_id = pll_get_post($post->ID, $language);
             
                 if ($language === $default_language || $lang_post_id > 0) {
                     $package->service_links_by_language[$language] = get_permalink($lang_post_id);
+                }
+
+                if($lang_post_id > 0 && $language !== $default_language) {
+                    $package->service_name_translations[$language] = $this->clean_title_string(get_the_title($lang_post_id));
                 }
             }
         }
@@ -654,6 +656,29 @@ class Dynamicpackages_Export_Post_Types{
 
         return $prices_chart;
     }
+
+    public function clean_title_string($input) {
+        // 1. Decode HTML entities
+        $decoded = html_entity_decode($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        // 2. Normalize accents/diacritics to ASCII
+        if (class_exists('Transliterator')) {
+            $transliterator = Transliterator::create('Any-Latin; Latin-ASCII;');
+            $decoded = $transliterator->transliterate($decoded);
+        } else {
+            $decoded = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $decoded);
+        }
+
+        // 3. Keep only letters, numbers, and spaces
+        $clean = preg_replace('/[^A-Za-z0-9 ]+/', '', $decoded);
+
+        // 4. Collapse multiple spaces into a single one & trim edges
+        $clean = preg_replace('/\s+/', ' ', $clean);
+        $clean = trim($clean);
+
+        return $clean;
+    }
+
 }
 
 ?>
