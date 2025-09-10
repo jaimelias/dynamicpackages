@@ -155,12 +155,12 @@ class Dynamicpackages_Export_Post_Types{
     public function get_training_content($post) {
 
         $training_obj = $this->get_training_obj($post);
-        $description = $training_obj->description;
+        $description = $training_obj->service_description;
 
-        unset($training_obj->description);
+        unset($training_obj->service_description);
 
         $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
-        $output .= "\n\n# DESCRIPTION:" . $description;
+        $output .= "\n\n# SERVICE_DESCRIPTION:" . $description;
 
         return $output;
     }
@@ -199,88 +199,95 @@ class Dynamicpackages_Export_Post_Types{
 
         $included = (string) dy_utilities::implode_taxo_names('package_included');
         $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
+        $categories = (string) dy_utilities::implode_taxo_names('package_category');
         $is_transport = $package_type === 'transport';
 
         $start_time = dy_utilities::hour();
 
+        $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
+
         $package = (object) [
-            'name' => $post->post_title,
-            'type' => $package_type,
-            'max_participants_per_booking' => (int) package_field('package_max_persons'),
-            'duration' => strtolower(dy_utilities::show_duration(true)),
-            'rates' => [],
-            'web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
-            'reservation_links_by_language' => [],
-            'enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
-            'included' => dy_utilities::implode_taxo_names('package_included'),
-            'not_included' => dy_utilities::implode_taxo_names('package_not_included'),
-            'description' => "\n\n" . $service_description
+            'service_id' => strtoupper(substr($hash, 0, 12)),
+            'service_name' => $post->post_title,
+            'service_type' => $package_type,
+            'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
+            'service_duration' => strtolower(dy_utilities::show_duration(true)),
+            'service_rates' => [],
+            'service_web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
+            'service_links_by_language' => [],
+            'service_names_by_language' => [],
+            'service_enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
+            'service_description' => "\n\n" . $service_description
         ];
 
         if(!empty($start_time)) {
             if($is_transport) {
-                $package->departure_time = $start_time;
+                $package->service_departure_time = $start_time;
             } else {
-                $package->start_time = $start_time;
+                $package->service_start_time = $start_time;
             }
         }
 
         if(!empty($included))
         {
-            $package->included = $included;
+            $package->service_included = $included;
         }
         if(!empty($not_included))
         {
-            $package->not_included = $not_included;
+            $package->service_not_included = $not_included;
+        }
+        if(!empty($categories))
+        {
+            $package->service_categories = $categories;
         }
 
         if(!empty($check_in_hour))
         {
             if($is_transport) {
-                $package->departure_check_in_time = $check_in_hour;
+                $package->service_departure_check_in_time = $check_in_hour;
             }
             else {
-                $package->check_in_time = $check_in_hour;
+                $package->service_check_in_time = $check_in_hour;
             }
         }
         if(!empty($start_address_short) && $is_transport)
         {
-            $package->origin = $start_address_short;
+            $package->service_origin = $start_address_short;
         }
         if(!empty($start_address))
         {
             if($is_transport)
             {
-                $package->origin_address = $start_address;
+                $package->service_origin_address = $start_address;
             } else {
-                $package->start_address = $start_address;
+                $package->service_start_address = $start_address;
             }
         }
 
         if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
         {
-            $package->booking_schedule = $min_hour . ' - '. $max_hour;
+            $package->service_booking_schedule = $min_hour . ' - '. $max_hour;
         }
 
         if ($package_type === 'transport') {
 
             if(!empty($return_hour))
             {
-                $package->return_time =  $return_hour;
+                $package->service_return_time =  $return_hour;
             }
 
             if(!empty($return_check_in_hour)) {
-                $package->return_check_in_time = $return_check_in_hour;
+                $package->service_return_check_in_time = $return_check_in_hour;
             }
 
             if(!empty($return_address_short)) {
 
-                $package->destination = $return_address_short;
+                $package->service_destination = $return_address_short;
             }
 
             if(!empty($return_address)) {
 
-                $package->destination_address = $return_address;
+                $package->service_destination_address = $return_address;
             }
         }
     
@@ -288,7 +295,7 @@ class Dynamicpackages_Export_Post_Types{
         $package_discount = (int) package_field('package_discount');
     
         if ($package_free > 0) {
-            $package->rates['free_children_until_age'] = $package_free;
+            $package->service_rates['free_children_until_age'] = $package_free;
         }
     
         $children_key_prefix = $package_free > 0 
@@ -302,7 +309,7 @@ class Dynamicpackages_Export_Post_Types{
 
         if(!empty($parsed_price_chart))
         {
-            $package->rates[$price_key_name] = $parsed_price_chart;
+            $package->service_rates[$price_key_name] = $parsed_price_chart;
         }
         
 
@@ -311,7 +318,7 @@ class Dynamicpackages_Export_Post_Types{
             $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
 
             if(!empty($prices_per_person_round_trip)) {
-                $package->rates['prices_per_person_round_trip'] = $prices_per_person_round_trip;
+                $package->service_rates['prices_per_person_round_trip'] = $prices_per_person_round_trip;
             }
         }
 
@@ -321,7 +328,7 @@ class Dynamicpackages_Export_Post_Types{
             $occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
             $occupancy_price_key_name = $this->occupancy_price_key_name($package_type, $duration_unit);
 
-            $package->rates['seasons_'.$occupancy_price_key_name] = [
+            $package->service_rates['seasons_'.$occupancy_price_key_name] = [
                 'season_chart_0' => [
                     'is_default_season' => true,
                     'name' => '',
@@ -336,8 +343,8 @@ class Dynamicpackages_Export_Post_Types{
             $seasons_chart = dy_utilities::get_package_hot_chart('package_seasons_chart');
             $rates_by_season = $this->get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit);
 
-            $package->rates['seasons_'.$occupancy_price_key_name] = array_merge(
-                $package->rates['seasons_'.$occupancy_price_key_name],
+            $package->service_rates['seasons_'.$occupancy_price_key_name] = array_merge(
+                $package->service_rates['seasons_'.$occupancy_price_key_name],
                 $rates_by_season
             );
         }
@@ -345,35 +352,37 @@ class Dynamicpackages_Export_Post_Types{
         $surcharges = $this->get_surcharges($package_type);
 
         if(count(get_object_vars($surcharges)) > 0) {
-            $package->surcharges = $surcharges;
+            $package->service_surcharges = $surcharges;
         }
 
         if($auto_booking)
         {
-            $package->payment_type = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
+            $package->service_payment_type = ($payment_type === 1 && $deposit > 0) ? $deposit . '% deposit': 'full payment';
         }
 
 
         if(isset($polylang))
         {
+            $package->service_names_by_language[$default_language] = $post->post_title;
+
             foreach ($languages as $language) {
 
                 $lang_post_id = pll_get_post($post->ID, $language);
             
                 if ($language === $default_language || $lang_post_id > 0) {
-                    $package->reservation_links_by_language[$language] = get_permalink($lang_post_id);
+                    $package->service_links_by_language[$language] = get_permalink($lang_post_id);
                 }
             }
         }
         else
         {
-            $package->reservation_links_by_language[$current_language] = get_permalink($post->ID);
+            $package->service_links_by_language[$current_language] = get_permalink($post->ID);
         }
 
-        //unset $package->rates if only free_children_until_age is available
+        //unset $package->service_rates if only free_children_until_age is available
 
-        if(array_key_exists('free_children_until_age', $package->rates) && count($package->rates) === 1) {
-            unset($package->rates);
+        if(array_key_exists('free_children_until_age', $package->service_rates) && count($package->service_rates) === 1) {
+            unset($package->service_rates);
         }
         
         return $package;
