@@ -658,21 +658,13 @@ class Dynamicpackages_Export_Post_Types{
     }
 
     public function clean_title_string($input) {
-        // 1. Decode HTML entities
+        // 1. Decodificar entidades HTML
         $decoded = html_entity_decode($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        // 2. Normalize accents/diacritics to ASCII
-        if (class_exists('Transliterator')) {
-            $transliterator = Transliterator::create('Any-Latin; Latin-ASCII;');
-            $decoded = $transliterator->transliterate($decoded);
-        } else {
-            $decoded = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $decoded);
-        }
+        // 2. Mantener solo letras (incluyendo acentos), números y espacios
+        $clean = preg_replace('/[^\p{L}\p{N} ]+/u', '', $decoded);
 
-        // 3. Keep only letters, numbers, and spaces
-        $clean = preg_replace('/[^A-Za-z0-9 ]+/', '', $decoded);
-
-        // 4. Collapse multiple spaces into a single one & trim edges
+        // 3. Colapsar espacios múltiples en uno solo y recortar bordes
         $clean = preg_replace('/\s+/', ' ', $clean);
         $clean = trim($clean);
 
