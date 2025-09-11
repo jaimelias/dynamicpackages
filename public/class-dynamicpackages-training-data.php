@@ -155,12 +155,12 @@ class Dynamicpackages_Export_Post_Types{
     public function get_training_content($post) {
 
         $training_obj = $this->get_training_obj($post);
-        //$description = $training_obj->service_description;
+        $service_name = $training_obj->service_name;
 
-        //unset($training_obj->service_description);
+        unset($training_obj->service_name);
 
-        $output = concatenate_object($training_obj, "# ", "- ", "\n\n");
-        //$output .= "\n\n# SERVICE_DESCRIPTION:" . $description;
+        $output = "# {$service_name}\n";
+        $output .= concatenate_object($training_obj, "* ", "- ", "\n");
 
         return $output;
     }
