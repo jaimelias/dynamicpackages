@@ -371,7 +371,7 @@ class Dynamicpackages_Export_Post_Types{
                     $package->service_links_by_language[$language] = get_permalink($lang_post_id);
                 }
 
-                if($lang_post_id > 0 && $language !== $default_language) {
+                if($lang_post_id > 0) {
                     $package->service_name_translations[$language] = $this->clean_title_string(get_the_title($lang_post_id));
                 }
             }
