@@ -52,6 +52,9 @@ jQuery(() => {
 			}
 			else if(byHourVal === '1')
 			{
+				jQuery('#package_min_hour').val('12:00 AM')
+				jQuery('#package_max_hour').val('11:30 PM')
+
 				if(jQuery('#package_check_in_hour').length !== 0) 
 				{
 					jQuery('#package_check_in_hour').val('')

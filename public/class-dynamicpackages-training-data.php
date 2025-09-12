@@ -201,13 +201,13 @@ class Dynamicpackages_Export_Post_Types{
         $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
         $categories = (string) dy_utilities::implode_taxo_names('package_category');
         $is_transport = $package_type === 'transport';
-
         $start_time = dy_utilities::hour();
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
+        $service_id = strtoupper(substr($hash, 0, 12));
 
         $package = (object) [
-            'service_id' => strtoupper(substr($hash, 0, 12)),
+            'service_id' => $service_id,
             'service_name' => $this->clean_title_string($post->post_title),
             'service_type' => $package_type,
             'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
@@ -216,18 +216,14 @@ class Dynamicpackages_Export_Post_Types{
             'service_web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
             'service_links_by_language' => [],
             'service_name_translations' => [],
-            'service_enabled_days_of_the_week' => strtolower(dy_utilities::enabled_days()),
+            'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),
             //'service_description' => "\n\n" . $service_description
         ];
 
-        if(!empty($start_time)) {
-            if($is_transport) {
-                $package->service_departure_time = $start_time;
-            } else {
-                $package->service_start_time = $start_time;
-            }
+        if(!empty($categories))
+        {
+            $package->service_categories = $categories;
         }
-
         if(!empty($included))
         {
             $package->service_included = $included;
@@ -236,58 +232,63 @@ class Dynamicpackages_Export_Post_Types{
         {
             $package->service_not_included = $not_included;
         }
-        if(!empty($categories))
-        {
-            $package->service_categories = $categories;
-        }
 
-        if(!empty($check_in_hour))
-        {
-            if($is_transport) {
-                $package->service_departure_check_in_time = $check_in_hour;
+        if ($is_transport) {
+
+            $package->routes =  [];
+            $route_duration = $min_duration .' '.dy_utilities::duration_label($duration_unit, $min_duration);
+            
+            $origin_route = (object) array(
+                'route_origin' => $start_address_short ?? $start_address,
+                'route_destination' => $return_address_short ?? $return_address,
+                'route_check_in_time' => $start_time,
+                'route_departure_time' => $check_in_hour,
+                'route_origin_address' => $start_address,
+                'route_destination_address' => $return_address,
+                'route_duration' => $route_duration
+            );
+            
+            $destination_route =  (object) array(
+                'route_origin' => $return_address_short ?? $return_address,
+                'route_destination' => $start_address_short ?? $start_address,
+                'route_check_in_time' => $return_check_in_hour,
+                'route_departure_time' => $return_hour,
+                'route_origin_address' => $return_address,
+                'route_destination_address' => $start_address
+            );
+
+             if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
+             {
+                unset($origin_route->route_check_in_time);
+                unset($origin_route->route_departure_time);
+                unset($destination_route->route_check_in_time);
+                unset($destination_route->route_departure_time);
+
+                $hours_range = "{$min_hour} - {$max_hour}";
+
+                $origin_route->route_reservation_hours = $hours_range;
+                $destination_route->route_reservation_hours = $hours_range;
+             }
+
+             $package->routes['route_1'] = $origin_route;
+             $package->routes['route_2'] = $destination_route;
+
+        } else {
+            if(!empty($start_time)) {
+                $package->service_start_time = $start_time;
             }
-            else {
+            if(!empty($check_in_hour))
+            {
                 $package->service_check_in_time = $check_in_hour;
             }
-        }
-        if(!empty($start_address_short) && $is_transport)
-        {
-            $package->service_origin = $start_address_short;
-        }
-        if(!empty($start_address))
-        {
-            if($is_transport)
+            if(!empty($start_address))
             {
-                $package->service_origin_address = $start_address;
-            } else {
                 $package->service_start_address = $start_address;
             }
-        }
 
-        if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
-        {
-            $package->service_booking_schedule = $min_hour . ' - '. $max_hour;
-        }
-
-        if ($package_type === 'transport') {
-
-            if(!empty($return_hour))
+            if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
             {
-                $package->service_return_time =  $return_hour;
-            }
-
-            if(!empty($return_check_in_hour)) {
-                $package->service_return_check_in_time = $return_check_in_hour;
-            }
-
-            if(!empty($return_address_short)) {
-
-                $package->service_destination = $return_address_short;
-            }
-
-            if(!empty($return_address)) {
-
-                $package->service_destination_address = $return_address;
+                $package->service_booking_schedule = $min_hour . ' - '. $max_hour;
             }
         }
     
@@ -313,7 +314,7 @@ class Dynamicpackages_Export_Post_Types{
         }
         
 
-        if($package_type === 'transport')
+        if($is_transport)
         {
             $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
 
@@ -366,13 +367,14 @@ class Dynamicpackages_Export_Post_Types{
             foreach ($languages as $language) {
 
                 $lang_post_id = pll_get_post($post->ID, $language);
+                $lang_name = (class_exists('Locale')) ?  \Locale::getDisplayLanguage($language, $default_language) : $language; 
             
                 if ($language === $default_language || $lang_post_id > 0) {
-                    $package->service_links_by_language[$language] = get_permalink($lang_post_id);
+                    $package->service_links_by_language[$lang_name] = get_permalink($lang_post_id);
                 }
 
                 if($lang_post_id > 0) {
-                    $package->service_name_translations[$language] = $this->clean_title_string(get_the_title($lang_post_id));
+                    $package->service_name_translations[$lang_name] = $this->clean_title_string(get_the_title($lang_post_id));
                 }
             }
         }
@@ -382,7 +384,6 @@ class Dynamicpackages_Export_Post_Types{
         }
 
         //unset $package->service_rates if only free_children_until_age is available
-
         if(array_key_exists('free_children_until_age', $package->service_rates) && count($package->service_rates) === 1) {
             unset($package->service_rates);
         }

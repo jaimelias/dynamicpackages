@@ -1603,14 +1603,20 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function enabled_days()
+	public static function enabled_days($force_long = false)
 	{
+
+		$the_id = get_dy_id();
+		$cache_key = 'dy_enabled_days_' . $the_id . '_' . (int) $force_long;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}		
+
 		$output = '';
 		$days = dy_utilities::get_week_days_abbr();
-		$labels = dy_utilities::get_week_day_names_short();
-		$labels_lon = dy_utilities::get_week_day_names_long();		
+		$labels = ($force_long === true) ? dy_utilities::get_week_day_names_long() : dy_utilities::get_week_day_names_short();
 		$enabled_days = array();
-		$enabled_days_lon = array();
 		$event_date = package_field('package_event_date');
 		
 		for($x = 0; $x < count($days); $x++)
@@ -1620,20 +1626,14 @@ class dy_utilities {
 			if(package_field($day) != 1)
 			{
 				array_push($enabled_days, $labels[$x]);
-				array_push($enabled_days_lon, $labels_lon[$x]);
 			}
 		}
 		
-		if(count($enabled_days) > 0 && count($enabled_days) < 3)
-		{
-			$output = implode(', ', $enabled_days_lon);
-		}
-		else if(count($enabled_days) == 7)
+		if(count($enabled_days) == 7)
 		{
 			$output = __('Everyday', 'dynamicpackages');
 		}
-		else
-		{
+		else {
 			$output = implode(', ', $enabled_days);
 		}
 
@@ -1645,6 +1645,10 @@ class dy_utilities {
 			}
 			
 		}
+
+		//store output in $cache
+		self::$cache[$cache_key] = $output;
+
 		
 		return $output;
 	}
