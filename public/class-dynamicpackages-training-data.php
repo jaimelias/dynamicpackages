@@ -1,6 +1,6 @@
 <?php
 
-//class-dynamicpackages-export-post-types.php
+#[\AllowDynamicProperties]
 class Dynamicpackages_Export_Post_Types{
 
     private static $cache = [];
