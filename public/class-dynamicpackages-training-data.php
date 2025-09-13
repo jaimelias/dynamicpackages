@@ -300,6 +300,7 @@ class Dynamicpackages_Export_Post_Types{
             'service_id' => $service_id,
             'service_name' => $this->clean_title_string($post->post_title),
             'service_type' => $package_type,
+            'service_min_persons_per_booking' => (int) package_field('package_min_persons'),
             'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
             'service_duration' => strtolower(dy_utilities::show_duration(true)),
             'service_rates' => [],
@@ -592,9 +593,74 @@ class Dynamicpackages_Export_Post_Types{
             }
         }
 
-        return $output;
+        // Wrap numeric leaves with money()
+        $wrapMoneyDeep = function ($val) use (&$wrapMoneyDeep) {
+            if (is_array($val)) {
+                foreach ($val as $k => $v) {
+                    $val[$k] = $wrapMoneyDeep($v);
+                }
+                return $val;
+            }
+            return is_numeric($val) ? (string) (currency_symbol() . money(0 + $val) . ' ' . currency_name()) : $val;
+        };
+
+        return $wrapMoneyDeep($output);
     }
 
+    public function parse_transport_prices($prices_chart, $is_round_trip = false)
+    {
+        // $prices_chart can now have category values that are either arrays OR scalars.
+        $surcharge = intval(package_field('package_one_way_surcharge')); // percent
+
+        // Helper to apply round trip and surcharge safely on any numeric-ish value
+        $applyPricing = function ($value) use ($is_round_trip, $surcharge) {
+            if (!is_numeric($value)) {
+                return $value; // leave non-numeric untouched
+            }
+
+            $price = floatval($value);
+
+            if ($is_round_trip) {
+                $price *= 2;
+            }
+            if ($surcharge > 0) {
+                $price += ($surcharge / 100) * $price;
+            }
+
+            return $price;
+        };
+
+        // Compute first (keep math on numbers), then wrap numerics with money()
+        if (!is_array($prices_chart)) {
+            $result = $applyPricing($prices_chart);
+        } else {
+            foreach ($prices_chart as $category => &$sub) {
+                if (is_array($sub)) {
+                    foreach ($sub as &$price) {
+                        $price = $applyPricing($price);
+                    }
+                    unset($price); // break reference
+                } else {
+                    $sub = $applyPricing($sub);
+                }
+            }
+            unset($sub); // break reference
+            $result = $prices_chart;
+        }
+
+        // Wrap numeric leaves with money()
+        $wrapMoneyDeep = function ($val) use (&$wrapMoneyDeep) {
+            if (is_array($val)) {
+                foreach ($val as $k => $v) {
+                    $val[$k] = $wrapMoneyDeep($v);
+                }
+                return $val;
+            }
+            return is_numeric($val) ?  (string) (currency_symbol().money(0 + $val) . ' ' . currency_name())  : $val;
+        };
+
+        return $wrapMoneyDeep($result);
+    }
 
 
     public function package_type_label($package_type, $duration_unit)
@@ -704,49 +770,6 @@ class Dynamicpackages_Export_Post_Types{
 		return $output;      
     }
 
-    public function parse_transport_prices($prices_chart, $is_round_trip = false)
-    {
-        // $prices_chart can now have category values that are either arrays OR scalars.
-        $surcharge = intval(package_field('package_one_way_surcharge')); // percent
-
-        // Helper to apply round trip and surcharge safely on any numeric-ish value
-        $applyPricing = function ($value) use ($is_round_trip, $surcharge) {
-            if (!is_numeric($value)) {
-                return $value; // leave non-numeric untouched
-            }
-
-            $price = floatval($value);
-
-            if ($is_round_trip) {
-                $price *= 2;
-            }
-            if ($surcharge > 0) {
-                $price += ($surcharge / 100) * $price;
-            }
-
-            return $price;
-        };
-
-        // If the whole chart is just a scalar, transform and return.
-        if (!is_array($prices_chart)) {
-            return $applyPricing($prices_chart);
-        }
-
-        // Otherwise walk categories; each category can be an array or a scalar.
-        foreach ($prices_chart as $category => &$sub) {
-            if (is_array($sub)) {
-                foreach ($sub as &$price) {
-                    $price = $applyPricing($price);
-                }
-                unset($price); // break reference
-            } else {
-                $sub = $applyPricing($sub);
-            }
-        }
-        unset($sub); // break reference
-
-        return $prices_chart;
-    }
 
     public function clean_title_string($input) {
         // 1. Decodificar entidades HTML
