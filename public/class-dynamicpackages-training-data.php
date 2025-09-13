@@ -25,7 +25,7 @@ class Dynamicpackages_Export_Post_Types{
     public function  single_file_headers($headers)
     {
         if(is_singular('packages') && isset($_GET['training-data'])) {
-            $headers['Content-Type'] = 'text/plain; charset=UTF-8';
+            $headers['Content-Type'] = 'text/html; charset=UTF-8';
         }
 
         return $headers;
