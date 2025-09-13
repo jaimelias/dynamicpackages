@@ -233,13 +233,24 @@ class Dynamicpackages_Export_Post_Types{
 
     public function get_training_content($post) {
 
+        $output = '';
         $training_obj = $this->get_training_obj($post);
-        $service_name = $training_obj->service_name;
 
+        if($this->format === 'json') return json_encode($training_obj);
+
+        $service_name = $training_obj->service_name;
         unset($training_obj->service_name);
 
-        $output = "# {$service_name}\n";
-        $output .= concatenate_object($training_obj, "* ", "- ", "\n");
+        if(in_array($this->format, ['text', 'markdown'])) {
+            $output .= "# {$service_name}\n";
+            $output .= concatenate_object_to_text($training_obj, "* ", "- ", "\n");
+        }
+        else if($this->format === 'html') {
+            $output .= '<!DOCTYPE html><html><head><title>'.esc_html($service_name).'</title></head><body>';
+            $output .= '<h1>'.esc_html($service_name).'</h1>';
+            $output .= concatenate_object_to_html($training_obj);
+            $output .= "</body></html>";
+        }
 
         return $output;
     }
