@@ -10,6 +10,15 @@ class Dynamicpackages_Export_Post_Types{
         add_action('wp', array(&$this, 'export_single_file'));
         add_filter('wp_headers', array(&$this, 'single_file_headers'), 999);
         add_action('rest_api_init', array(&$this, 'rest_api_init'));
+        $this->all_formats = [
+            'text' => 'text/markdown; charset=UTF-8',
+            'html' => 'text/html; charset=UTF-8',
+            'json' => 'application/json',
+        ];
+        
+        $this->format = 'text';
+        $this->content_type = $this->all_formats[$this->format];
+        $this->alt_formats = ['json', 'html'];
     }
 
     public function rest_api_init() {
@@ -25,7 +34,13 @@ class Dynamicpackages_Export_Post_Types{
     public function  single_file_headers($headers)
     {
         if(is_singular('packages') && isset($_GET['training-data'])) {
-            $headers['Content-Type'] = 'text/html; charset=UTF-8';
+
+            if(isset($_GET['format']) && in_array($_GET['format'],  $this->alt_formats)) {
+                $this->format = sanitize_text_field($_GET['format']);
+                $this->content_type = $this->all_formats[$this->format];
+            }
+
+            $headers['Content-Type'] = $this->content_type;
         }
 
         return $headers;
