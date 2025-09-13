@@ -10,15 +10,26 @@ class Dynamicpackages_Export_Post_Types{
         add_action('wp', array(&$this, 'export_single_file'));
         add_filter('wp_headers', array(&$this, 'single_file_headers'), 999);
         add_action('rest_api_init', array(&$this, 'rest_api_init'));
-        $this->all_formats = [
-            'text' => 'text/markdown; charset=UTF-8',
+
+        $this->alt_formats = ['text', 'json', 'html', 'markdown'];
+
+        $this->all_content_types = [
+            'text' => 'text/plain; charset=UTF-8',
             'html' => 'text/html; charset=UTF-8',
+            'markdown' => 'text/markdown; charset=UTF-8',
             'json' => 'application/json',
+        ];
+        $this->all_extensions = [
+            'text' => 'txt',
+            'json' => 'json',
+            'html' => 'html',
+            'markdown' => 'md',
         ];
         
         $this->format = 'text';
-        $this->content_type = $this->all_formats[$this->format];
-        $this->alt_formats = ['json', 'html'];
+        $this->extension = 'txt';
+        $this->content_type = $this->all_content_types[$this->format];
+        
     }
 
     public function rest_api_init() {
@@ -37,7 +48,8 @@ class Dynamicpackages_Export_Post_Types{
 
             if(isset($_GET['format']) && in_array($_GET['format'],  $this->alt_formats)) {
                 $this->format = sanitize_text_field($_GET['format']);
-                $this->content_type = $this->all_formats[$this->format];
+                $this->content_type = $this->all_content_types[$this->format];
+                $this->extension = $this->all_extensions[$this->format];
             }
 
             $headers['Content-Type'] = $this->content_type;
@@ -55,12 +67,20 @@ class Dynamicpackages_Export_Post_Types{
 
     public function query_training_data() {
 
+        if(isset($_GET['format']) && in_array($_GET['format'],  $this->alt_formats)) {
+            $this->format = sanitize_text_field($_GET['format']);
+            $this->content_type = $this->all_content_types[$this->format];
+            $this->extension = $this->all_extensions[$this->format];
+        }
+
         $default_language = (string) default_language();
         $languages = (array) get_languages();
 
         $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
                         ? sanitize_text_field($_GET['lang'])
                         : default_language();
+
+
         
         $args = array(
             'post_type'      => 'packages',
@@ -94,13 +114,6 @@ class Dynamicpackages_Export_Post_Types{
             wp_reset_postdata();
         }
 
-        $result = new WP_REST_Response($data, 200);
-
-        $result->set_headers(array(
-            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache'
-        ));
-
         // --- Write to temp, zip, download, cleanup ---
         if ( empty( $data ) ) {
             wp_die( 'No files to export.' );
@@ -116,14 +129,61 @@ class Dynamicpackages_Export_Post_Types{
             wp_die( 'Could not create temp directory.' );
         }
 
-        // Write each file
+        // Helper: normalize file name to desired extension while preserving subdirs
+        $normalize_filename = static function( $original, $ext ) {
+            $original = ltrim((string) $original, '/'); // avoid absolute paths
+            $dir  = dirname($original);
+            $base = pathinfo($original, PATHINFO_FILENAME);
+            $base = sanitize_file_name($base);
+            $rel  = ('.' === $dir) ? $base : trailingslashit($dir) . $base;
+            return $rel . '.' . $ext;
+        };
+
+        // Helper: transform content per format
+        $transform_content = static function( $content, $format ) {
+            switch ($format) {
+                case 'json':
+                    // If already JSON-looking, keep as-is; otherwise encode
+                    if (is_array($content) || is_object($content)) {
+                        return json_encode($content, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+                    }
+                    $str = (string) $content;
+                    $trim = ltrim($str);
+                    if ($trim !== '' && ($trim[0] === '{' || $trim[0] === '[')) {
+                        return $str; // assume valid JSON provided
+                    }
+                    // Encode plain text as a JSON string
+                    return json_encode($str, JSON_UNESCAPED_UNICODE);
+
+                case 'html':
+                    $str = (string) $content;
+                    if (stripos($str, '<html') !== false) {
+                        return $str; // already a full HTML doc
+                    }
+                    // Wrap fragment in a minimal HTML document
+                    return "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Export</title>\n</head>\n<body>\n" . $str . "\n</body>\n</html>\n";
+
+                case 'text':
+                default:
+                    return (string) $content;
+            }
+        };
+
+        // Write each file with normalized extension and transformed content
         foreach ( $data as $f ) {
-            $path = $tmp_dir . '/' . $f->file_name;
-            // Ensure parent dir exists; should, but just in case
+            // Compute normalized path inside tmp dir
+            $rel = $normalize_filename( $f->file_name ?? 'export', $this->extension );
+            $path = $tmp_dir . '/' . $rel;
+
+            // Ensure parent dir exists
             if ( ! is_dir( dirname( $path ) ) ) {
                 wp_mkdir_p( dirname( $path ) );
             }
-            file_put_contents( $path, (string) $f->content );
+
+            // Transform content per selected format
+            $payload = $transform_content( $f->content ?? '', $format );
+
+            file_put_contents( $path, $payload );
         }
 
         // Create ZIP
@@ -136,17 +196,21 @@ class Dynamicpackages_Export_Post_Types{
             wp_die( 'Could not create ZIP file.' );
         }
 
-        // Add files to ZIP
-        foreach ( glob( $tmp_dir . '/*' ) as $p ) {
-            if ( is_file( $p ) ) {
-                $zip->addFile( $p, basename( $p ) );
+        // Add files to ZIP (preserve subdirs)
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($tmp_dir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+        foreach ( $iterator as $file ) {
+            if ( $file->isFile() ) {
+                $local = ltrim(str_replace($tmp_dir, '', $file->getPathname()), '/');
+                $zip->addFile( $file->getPathname(), $local );
             }
         }
         $zip->close();
 
         // Stream ZIP to browser
         if ( file_exists( $zip_path ) ) {
-            // Make sure nothing was sent before headers
             if ( ob_get_length() ) { ob_end_clean(); }
 
             nocache_headers();
@@ -155,16 +219,16 @@ class Dynamicpackages_Export_Post_Types{
             header( 'Content-Length: ' . filesize( $zip_path ) );
             header( 'X-Robots-Tag: noindex, nofollow', true );
 
-            // Flush and read
             flush();
             readfile( $zip_path );
         }
 
         // Cleanup temp files/dirs
-        foreach ( glob( $tmp_dir . '/*' ) as $p ) { @unlink( $p ); }
+        foreach ( glob( $tmp_dir . '/**/*', GLOB_BRACE ) as $p ) { @unlink( $p ); }
         @rmdir( $tmp_dir );
         @unlink( $zip_path );
         exit;
+
     }
 
     public function get_training_content($post) {
