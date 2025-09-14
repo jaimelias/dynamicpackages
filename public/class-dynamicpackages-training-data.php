@@ -301,12 +301,6 @@ class Dynamicpackages_Export_Post_Types{
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
 
-        $fixed_price = (int) package_field('package_fixed_price');
-        $service_price_display_rules = ($fixed_price === 0) 
-        ? sprintf('Always show the price %s (%s).', $price_display_format, $starting_at_display) : 
-        sprintf('Show the starting price (%s). Never show the prices per person directly to the client.',
-        $starting_at_display,
-        $starting_at_display);
 
 
         $package = (object) [
@@ -322,14 +316,22 @@ class Dynamicpackages_Export_Post_Types{
             'service_links_by_language' => [],
             'service_name_translations' => [],
             'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),
-            'service_hidden_rules' => [
-                'service_price_display_rules' => $service_price_display_rules
-            ]
+            'service_hidden_rules' => []
             //'service_description' => "\n\n" . $service_description
         ];
 
+        $fixed_price = (int) package_field('package_fixed_price');
+        $price_display_rules = ($fixed_price === 0) 
+            ? sprintf('Always show the price %s (%s).', $price_display_format, $starting_at_display) 
+            : sprintf('Show the starting price (%s). Never show the prices per person directly to the client.', $starting_at_display, $starting_at_display);
+
+
+
         if($starting_at <= 0) {
             unset($package->service_starting_at_price);
+        }
+        else {
+            $package->service_hidden_rules['price_display_rules'] = $price_display_rules;
         }
 
         if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
