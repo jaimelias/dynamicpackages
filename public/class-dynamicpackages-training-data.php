@@ -321,17 +321,14 @@ class Dynamicpackages_Export_Post_Types{
         ];
 
         $fixed_price = (int) package_field('package_fixed_price');
-        $price_display_rules = ($fixed_price === 0) 
-            ? sprintf('Always show the price %s (%s).', $price_display_format, $starting_at_display) 
-            : sprintf('Show the starting price (%s). Never show the prices per person directly to the client.', $starting_at_display, $starting_at_display);
-
-
 
         if($starting_at <= 0) {
             unset($package->service_starting_at_price);
         }
         else {
-            $package->service_hidden_rules['price_display_rules'] = $price_display_rules;
+            if($fixed_price === 1)  {
+                $package->service_hidden_rules['price_display_rules'] = sprintf('Show the {SERVICE_STARTING_AT_PRICE} (%s). Never show the prices per person directly to the client.', $starting_at_display, $starting_at_display);
+            }
         }
 
         if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
