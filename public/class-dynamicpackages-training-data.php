@@ -272,7 +272,9 @@ class Dynamicpackages_Export_Post_Types{
         $default_language = (string) default_language();
         $package_type = (string) dy_utilities::get_package_type($post->ID);
         $duration_unit = (int) package_field('package_length_unit');
-        $min_duration = (int) package_field('package_duration');
+        $min_duration = strtolower((string) dy_utilities::show_duration(false));
+        $duration_restrictions = strtolower((string) dy_utilities::show_duration(true));
+        $duration_max = (int) package_field('package_duration_max');
         $by_hour = (int) package_field('package_by_hour');
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
@@ -292,9 +294,20 @@ class Dynamicpackages_Export_Post_Types{
         $categories = (string) dy_utilities::implode_taxo_names('package_category');
         $is_transport = $package_type === 'transport';
         $start_time = dy_utilities::hour();
+        $starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;
+        $price_display_format = strtolower(apply_filters('dy_price_type', null));
+        $starting_at_display = currency_symbol() . $starting_at . ' ' . currency_name() . ' ' .$price_display_format;
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
+
+        $fixed_price = (int) package_field('package_fixed_price');
+        $service_price_display_rules = ($fixed_price === 0) 
+        ? sprintf('Always show the price %s (%s).', $price_display_format, $starting_at_display) : 
+        sprintf('Show the starting price (%s). Never show the prices per person directly to the client.',
+        $starting_at_display,
+        $starting_at_display);
+
 
         $package = (object) [
             'service_id' => $service_id,
@@ -302,14 +315,27 @@ class Dynamicpackages_Export_Post_Types{
             'service_type' => $package_type,
             'service_min_persons_per_booking' => (int) package_field('package_min_persons'),
             'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
-            'service_duration' => strtolower(dy_utilities::show_duration(true)),
+            'service_duration' => $min_duration,
+            'service_starting_at_price' => $starting_at_display,
             'service_rates' => [],
             'service_web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
             'service_links_by_language' => [],
             'service_name_translations' => [],
             'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),
+            'service_hidden_rules' => [
+                'service_price_display_rules' => $service_price_display_rules
+            ]
             //'service_description' => "\n\n" . $service_description
         ];
+
+        if($starting_at <= 0) {
+            unset($package->service_starting_at_price);
+        }
+
+        if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
+
+            $package->service_duration_restrictions = ($duration_max === 0) ? "{$duration_restrictions} minimum" : $duration_restrictions;
+        }
 
         if(!empty($categories))
         {
@@ -327,8 +353,7 @@ class Dynamicpackages_Export_Post_Types{
         if ($is_transport) {
 
             $package->routes =  [];
-            $route_duration = $min_duration .' '.dy_utilities::duration_label($duration_unit, $min_duration);
-            
+
             $origin_route = (object) array(
                 'route_origin' => $start_address_short ?? $start_address,
                 'route_destination' => $return_address_short ?? $return_address,
@@ -336,7 +361,7 @@ class Dynamicpackages_Export_Post_Types{
                 'route_departure_time' => $check_in_hour,
                 'route_origin_address' => $start_address,
                 'route_destination_address' => $return_address,
-                'route_duration' => $route_duration
+                'route_one_way_duration' => $min_duration
             );
             
             $destination_route =  (object) array(
@@ -345,7 +370,8 @@ class Dynamicpackages_Export_Post_Types{
                 'route_check_in_time' => $return_check_in_hour,
                 'route_departure_time' => $return_hour,
                 'route_origin_address' => $return_address,
-                'route_destination_address' => $start_address
+                'route_destination_address' => $start_address,
+                'route_one_way_duration' => $min_duration
             );
 
              if($by_hour === 1 && !empty($min_hour) && !empty($max_hour))
