@@ -327,7 +327,7 @@ class Dynamicpackages_Export_Post_Types{
         }
         else {
             if($fixed_price === 1)  {
-                $package->service_hidden_rules['price_display_rules'] = sprintf('Show the {SERVICE_STARTING_AT_PRICE} (%s). Never show the prices per person directly to the client.', $starting_at_display, $starting_at_display);
+                $package->service_hidden_rules[] = sprintf('Never show the prices per person directly to the client. Instead Show the starting at price (%s) or the calculated total from {SERVICE_RATES}.', $starting_at_display);
             }
         }
 
@@ -350,6 +350,11 @@ class Dynamicpackages_Export_Post_Types{
         }
 
         if ($is_transport) {
+
+            $package->service_hidden_rules[] = 'If the client does not specify whether the transport is one-way or round trip, show prices for both (one-way and round-trip).';
+            $package->service_hidden_rules[] = 'If the client requests one-way transport, show only one-way prices.';
+            $package->service_hidden_rules[] = 'If the client requests round trip transport, show only round-trip prices.';
+            $package->service_hidden_rules[] = 'Always label prices clearly as one-way or round trip.';
 
             $package->routes =  [];
 
@@ -469,6 +474,25 @@ class Dynamicpackages_Export_Post_Types{
         $surcharges = $this->get_surcharges($package_type);
 
         if(count(get_object_vars($surcharges)) > 0) {
+
+            
+
+            if(property_exists($surcharges, 'percent_surcharges_by_weekday')) {
+
+                $surcharges_str = json_encode($surcharges->percent_surcharges_by_weekday);
+
+                if($package_type === 'transport') {
+                    $package->service_hidden_rules[] = "If the departure or return date fall on a surcharge day of the week {percent_surcharges_by_weekday} ({$surcharges_str}), add the surcharge only for that trip segment.";
+                }
+                else if(in_array($package_type, ['rental-per-hour', 'one-day'])) {
+                    $package->service_hidden_rules[] = "If the booking date fall on a surcharge day of the week {percent_surcharges_by_weekday} ({$surcharges_str}), add the surcharge on that date.";
+                }
+                else if(in_array($package_type, ['multi-day', 'rental-per-day'])) {
+                    $package->service_hidden_rules[] = "Add the surcharge {percent_surcharges_by_weekday} ({$surcharges_str}) to every night that fall on a surcharge day of the week, but skip the check-out day.";
+                }
+            }
+
+
             $package->service_surcharges = $surcharges;
         }
 
