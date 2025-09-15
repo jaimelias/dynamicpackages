@@ -68,6 +68,7 @@ class Dynamicpackages_Fields
             'package_discount',
             'package_increase_persons',
             'package_disabled_dates_api',
+            'package_redirect_url'
         ];
 
         // Add day-specific excludes
