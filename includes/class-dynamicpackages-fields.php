@@ -68,6 +68,7 @@ class Dynamicpackages_Fields
             'package_discount',
             'package_increase_persons',
             'package_disabled_dates_api',
+            'package_redirect_page'
         ];
 
         // Add day-specific excludes
@@ -79,6 +80,7 @@ class Dynamicpackages_Fields
         // Add language-specific excludes
         foreach ($languages as $lang) {
             $excludes[] = "package_child_title_$lang";
+            $excludes[] = "package_redirect_url_$lang";
         }
 
         // Check if the current post has a parent and adjust $this_id
