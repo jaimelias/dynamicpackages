@@ -329,7 +329,8 @@ class Dynamicpackages_Export_Post_Types{
             if($fixed_price === 1)  {
                 $package->service_hidden_rules[] = sprintf('Never show the prices per person directly to the client. Instead show the starting at price (%s) or the calculated total from {SERVICE_RATES}.', $starting_at_display);
             } else {
-                $package->service_hidden_rules[] = sprintf('Always show the prices per person to the client.', $starting_at_display);
+                $package->service_hidden_rules[] = 'Always show the prices per person to the client.';
+                $package->service_hidden_rules[] = 'Always label prices as per person.';
             }
         }
 
