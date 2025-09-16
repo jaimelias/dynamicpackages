@@ -504,7 +504,9 @@ class Dynamicpackages_Reviews
 		if ( $rating !== null && $rating !== '' ) {
 			// Normaliza a float y acota entre 0 y 5
 			$rating = (float) $rating;
-			$rating = max( 0.0, min( 5.0, $rating ) );
+			$rating = max( 0.0, min( 5.0, $rating ) ) - 0.5;
+
+
 
 			// Cálculo de estrellas
 			$full_stars = (int) floor( $rating );
