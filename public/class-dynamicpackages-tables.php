@@ -176,6 +176,8 @@ class Dynamicpackages_Tables{
 						$td = '<td>';
 					}
 
+					write_log($price_label);
+
 					$row .= '<td>'.esc_html($price_label).'</td></tr>';
 					$rows .= $row;
 				}

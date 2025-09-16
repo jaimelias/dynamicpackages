@@ -528,10 +528,9 @@ class Dynamicpackages_Public {
 
 		if($package_type === 'multi-day')
 		{
-			if($duration === 1 && $duration_max > $duration)
-			{
-				$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
-			}
+			//if($duration === 1 && $duration_max > $duration){}
+
+			$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
 		}
 		else if($package_type === 'rental-per-hour')
 		{
