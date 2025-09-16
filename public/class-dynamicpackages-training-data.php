@@ -299,7 +299,7 @@ class Dynamicpackages_Export_Post_Types{
         $start_time = dy_utilities::hour();
         $starting_at = (float) dy_utilities::starting_at();
         $price_display_format = strtolower(apply_filters('dy_price_type', null));
-        $starting_at_display = currency_symbol() . $starting_at . ' ' . currency_name() . ' ' .$price_display_format;
+        $starting_at_display = wrapMoney($starting_at) . ' ' .$price_display_format;
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
@@ -446,18 +446,18 @@ class Dynamicpackages_Export_Post_Types{
 
         if($is_transport) {
             if(!empty($parsed_price_chart)) {
-                $package->service_rates[$price_key_name] = wrapMoney($this->parse_transport_prices($parsed_price_chart, false));
+                $package->service_rates[$price_key_name] = $this->wrapMoneyObject($this->parse_transport_prices($parsed_price_chart, false));
             }
 
             $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
 
             if(!empty($prices_per_person_round_trip)) {
-                $package->service_rates['prices_per_person_round_trip'] = wrapMoney($prices_per_person_round_trip);
+                $package->service_rates['prices_per_person_round_trip'] = $this->wrapMoneyObject($prices_per_person_round_trip);
             }
 
         } else {
             if(!empty($parsed_price_chart)) {
-                $package->service_rates[$price_key_name] = wrapMoney($parsed_price_chart);
+                $package->service_rates[$price_key_name] = $this->wrapMoneyObject($parsed_price_chart);
             }
         }
 
@@ -806,6 +806,29 @@ class Dynamicpackages_Export_Post_Types{
         $clean = trim($clean);
 
         return $clean;
+    }
+
+    public function wrapMoneyObject($data) {
+
+        $curr_symbol = currency_symbol();
+        $curr_name = currency_name();
+
+        $apply = function ($v) use ($curr_symbol, $curr_name){
+            return $curr_symbol . money($v) . ' ' . $curr_name;
+        };
+
+        foreach ($data as $key => $value) {
+            if (is_array($value) || is_object($value)) {
+                foreach ($value as $subKey => $subValue) {
+                    if (is_numeric($subValue)) {
+                        $data[$key][$subKey] = $apply($subValue);
+                    }
+                }
+            } elseif (is_numeric($value)) {
+                $data[$key] = $apply($value);
+            }
+        }
+        return $data;
     }
 
 }
