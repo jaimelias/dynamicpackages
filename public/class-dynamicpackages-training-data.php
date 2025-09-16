@@ -590,6 +590,7 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = (object) array();
         $week_days = dy_utilities::get_week_days_abbr();
+        $week_days_label = dy_utilities::get_week_day_names_long();
         $week_day_surcharges = [];
         
 
@@ -599,7 +600,7 @@ class Dynamicpackages_Export_Post_Types{
 
             if($surcharge > 0)
             {
-                $week_day_surcharges[$week_days[$x]] = (string) $surcharge . '%';
+                $week_day_surcharges[$week_days_label[$x]] = (string) $surcharge . '%';
             }
         }
 
