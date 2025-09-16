@@ -507,11 +507,12 @@ class Dynamicpackages_Reviews
 			$full_stars  = floor( $rating );
 			$half_stars  = ceil( $rating - $full_stars );
 			$empty_stars = 5 - $full_stars - $half_stars;
+
 			
 			$output  .= '<span class="star-rating">';
-			$output .= str_repeat( '<span class="star star-full" aria-hidden="true"></span>', $full_stars );
-			$output .= str_repeat( '<span class="star star-half" aria-hidden="true"></span>', $half_stars );
-			$output .= str_repeat( '<span class="star star-empty" aria-hidden="true"></span>', $empty_stars );
+			$output .= str_repeat( '<span class="star star-full" aria-hidden="true"></span>', max(0, $full_stars) );
+			$output .= str_repeat( '<span class="star star-half" aria-hidden="true"></span>', max(0, $half_stars) );
+			$output .= str_repeat( '<span class="star star-empty" aria-hidden="true"></span>', max(0, $empty_stars) );
 			$output .= '</span>';
 		}
 
