@@ -441,20 +441,39 @@ class Dynamicpackages_Export_Post_Types{
         $price_key_name = $this->fixed_price_key_name($package_type, $duration_unit);
         $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
 
-        if(!empty($parsed_price_chart))
-        {
-            $package->service_rates[$price_key_name] = $parsed_price_chart;
-        }
-        
 
-        if($is_transport)
-        {
+        function wrapMoney($data) {
+            foreach ($data as $key => $value) {
+                if (is_array($value) || is_object($value)) {
+                    foreach ($value as $subKey => $subValue) {
+                        if (is_numeric($subValue)) {
+                            $data[$key][$subKey] = money($subValue);
+                        }
+                    }
+                } elseif (is_numeric($value)) {
+                    $data[$key] = currency_symbol() . money($value) . ' ' . currency_name();
+                }
+            }
+            return $data;
+        }
+
+        if($is_transport) {
+            if(!empty($parsed_price_chart)) {
+                $package->service_rates[$price_key_name] = wrapMoney($this->parse_transport_prices($parsed_price_chart, false));
+            }
+
             $prices_per_person_round_trip = $this->parse_transport_prices($parsed_price_chart, true);
 
             if(!empty($prices_per_person_round_trip)) {
-                $package->service_rates['prices_per_person_round_trip'] = $prices_per_person_round_trip;
+                $package->service_rates['prices_per_person_round_trip'] = wrapMoney($prices_per_person_round_trip);
+            }
+
+        } else {
+            if(!empty($parsed_price_chart)) {
+                $package->service_rates[$price_key_name] = wrapMoney($parsed_price_chart);
             }
         }
+
 
         if($package_type === 'multi-day')
         {
@@ -605,7 +624,7 @@ class Dynamicpackages_Export_Post_Types{
 
         if($package_type === 'transport')
         {
-            $one_way_surcharges = (int) package_field('package_one_way_surcharge');
+            $one_way_surcharges = (float) package_field('package_one_way_surcharge');
 
             if($one_way_surcharges > 0)
             {
@@ -662,26 +681,26 @@ class Dynamicpackages_Export_Post_Types{
                 }
                 return $val;
             }
-            return is_numeric($val) ? (string) (currency_symbol() . money(0 + $val) . ' ' . currency_name()) : $val;
+            return $val;
         };
 
         return $wrapMoneyDeep($output);
     }
 
-    public function parse_transport_prices($prices_chart, $is_round_trip = false)
+    public function parse_transport_prices($prices_chart, $is_one_way = false)
     {
         // $prices_chart can now have category values that are either arrays OR scalars.
-        $surcharge = intval(package_field('package_one_way_surcharge')); // percent
+        $surcharge = (float) package_field('package_one_way_surcharge'); // percent
 
         // Helper to apply round trip and surcharge safely on any numeric-ish value
-        $applyPricing = function ($value) use ($is_round_trip, $surcharge) {
+        $applyPricing = function ($value) use ($is_one_way, $surcharge) {
             if (!is_numeric($value)) {
                 return $value; // leave non-numeric untouched
             }
 
             $price = floatval($value);
 
-            if ($is_round_trip) {
+            if ($is_one_way) {
                 $price *= 2;
             }
             if ($surcharge > 0) {
@@ -717,7 +736,7 @@ class Dynamicpackages_Export_Post_Types{
                 }
                 return $val;
             }
-            return is_numeric($val) ?  (string) (currency_symbol().money(0 + $val) . ' ' . currency_name())  : $val;
+            return $val;
         };
 
         return $wrapMoneyDeep($result);
