@@ -13,7 +13,7 @@ class estimate_request{
 		
 		add_action('init', array(&$this, 'init'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 1);
-		add_filter('list_gateways', array(&$this, 'add_gateway'), 10);
+		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 10);
 	}
 
 	public function init()
@@ -101,7 +101,7 @@ class estimate_request{
 	}
 	public function list_gateways_cb()
 	{
-		return apply_filters('list_gateways', array());
+		return apply_filters('list_gateways_as_array', array());
 	}
 	
 	public function add_gateway($array)

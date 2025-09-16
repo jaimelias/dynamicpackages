@@ -300,7 +300,7 @@ class Dynamicpackages_Forms
 				if(is_array($coupons) && array_key_exists('coupons', $coupons))
 				{
 					$coupons = $coupons['coupons'];
-					$gateways = array_map('strtolower', apply_filters('list_gateways', []));
+					$gateways = array_map('strtolower', apply_filters('list_gateways_as_array', []));
 
 					for($x = 0; $x < count($coupons); $x++)
 					{

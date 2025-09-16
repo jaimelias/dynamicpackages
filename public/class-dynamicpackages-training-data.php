@@ -294,15 +294,15 @@ class Dynamicpackages_Export_Post_Types{
         $categories = (string) dy_utilities::implode_taxo_names('package_category');
         $is_transport = $package_type === 'transport';
         $start_time = dy_utilities::hour();
-        $starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;
+        $starting_at = (float) dy_utilities::starting_at();
         $price_display_format = strtolower(apply_filters('dy_price_type', null));
         $starting_at_display = currency_symbol() . $starting_at . ' ' . currency_name() . ' ' .$price_display_format;
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
 
-
-
+        $is_web_checkout_enabled = ($auto_booking === 1 && $starting_at > 0 );
+        
         $package = (object) [
             'service_id' => $service_id,
             'service_name' => $this->clean_title_string($post->post_title),
@@ -312,7 +312,7 @@ class Dynamicpackages_Export_Post_Types{
             'service_duration' => $duration_value_label,
             'service_starting_at_price' => $starting_at_display,
             'service_rates' => [],
-            'service_web_checkout' => ($auto_booking === 0 || dy_utilities::starting_at() === 0 ) ? 'not available' : 'available',
+            'service_web_checkout' => ($is_web_checkout_enabled) ? 'available' : 'not available',
             'service_links_by_language' => [],
             'service_name_translations' => [],
             'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),

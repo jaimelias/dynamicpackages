@@ -17,7 +17,7 @@ class pay_later{
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('wp_headers', array(&$this, 'send_data'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 3);
-		add_filter('list_gateways', array(&$this, 'add_gateway'), 2);	
+		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 2);	
 	}
 	
 	public function init()
@@ -369,7 +369,7 @@ class pay_later{
 	}
 	public function list_gateways_cb()
 	{
-		return apply_filters('list_gateways', array());
+		return apply_filters('list_gateways_as_array', array());
 	}
 	
 	public function add_gateway($array)

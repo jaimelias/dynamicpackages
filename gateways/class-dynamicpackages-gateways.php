@@ -53,7 +53,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
-		add_filter('list_gateways', array(&$this, 'filter_coupon_gateway'), 9);
+		add_filter('list_gateways_as_array', array(&$this, 'filter_coupon_gateway'), 9);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);			
 		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
@@ -129,7 +129,7 @@ class Dynamicpackages_Gateways
             return self::$cache[$cache_key];
         }
 
-		$gateways = apply_filters('list_gateways', array());
+		$gateways = apply_filters('list_gateways_as_array', array());
 		
 		if(dy_validators::validate_coupon())
 		{

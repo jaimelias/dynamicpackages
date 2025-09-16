@@ -18,7 +18,7 @@ class paguelo_facil_on{
 		add_filter('dy_request_the_content', array(&$this, 'the_content'));
 		add_filter('dy_request_the_title', array(&$this, 'the_title'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 2);
-		add_filter('list_gateways', array(&$this, 'add_gateway'), 1);
+		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 1);
 		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));	
 	}
 	
@@ -643,7 +643,7 @@ class paguelo_facil_on{
 	}
 	public function list_gateways_cb()
 	{
-		return apply_filters('list_gateways', array());
+		return apply_filters('list_gateways_as_array', array());
 	}
 	public function add_gateway($array)
 	{

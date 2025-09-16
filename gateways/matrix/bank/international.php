@@ -18,7 +18,7 @@ class wire_transfer{
 		add_filter('dy_request_the_title', array(&$this, 'title'), 103);
 		add_filter('wp_headers', array(&$this, 'send_data'));
 		add_filter('gateway_buttons', array(&$this, 'button'), 5);
-		add_filter('list_gateways', array(&$this, 'add_gateway'), 5);
+		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 5);
 	}
 	
 	public function init()
@@ -549,7 +549,7 @@ class wire_transfer{
 	}
 	public function list_gateways_cb()
 	{
-		return apply_filters('list_gateways', array());
+		return apply_filters('list_gateways_as_array', array());
 	}
 
 	public function add_gateway($array)
