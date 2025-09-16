@@ -442,20 +442,7 @@ class Dynamicpackages_Export_Post_Types{
         $parsed_price_chart = $this->parse_price_chart($price_chart, 'price_chart', $children_key_prefix);
 
 
-        function wrapMoney($data) {
-            foreach ($data as $key => $value) {
-                if (is_array($value) || is_object($value)) {
-                    foreach ($value as $subKey => $subValue) {
-                        if (is_numeric($subValue)) {
-                            $data[$key][$subKey] = money($subValue);
-                        }
-                    }
-                } elseif (is_numeric($value)) {
-                    $data[$key] = currency_symbol() . money($value) . ' ' . currency_name();
-                }
-            }
-            return $data;
-        }
+
 
         if($is_transport) {
             if(!empty($parsed_price_chart)) {
@@ -639,108 +626,64 @@ class Dynamicpackages_Export_Post_Types{
     {
         $output = [];
 
-        if (!is_array($price_chart) || !isset($price_chart[$price_chart_key])) {
+        if (!is_array($price_chart) || !isset($price_chart[$price_chart_key]) || !is_array($price_chart[$price_chart_key])) {
             return $output;
         }
 
-        $rows = $price_chart[$price_chart_key];
+        foreach ($price_chart[$price_chart_key] as $i => $row) {
+            $n = $i + 1;
 
-        // Iterate only if rows are an array to avoid warnings on invalid types
-        if (is_array($rows)) {
-            foreach ($rows as $i => $price_row) {
-                $n = $i + 1;
-
-                if (!empty($price_row[0])) { // keep empty() to skip "0" like original
-                    $output['adults']["{$n}_adult"] = $price_row[0];
-                }
-
-                if (!empty($price_row[1])) {
-                    $output[$children_key_prefix]["{$n}_child"] = $price_row[1];
-                }
+            if (!empty($row[0])) { // keep empty() to skip "0" like original
+                $output['adults']["{$n}_adult"] = $row[0];
+            }
+            if (!empty($row[1])) {
+                $output[$children_key_prefix]["{$n}_child"] = $row[1];
             }
         }
 
-        // Collapse buckets if first == last (same logic, minimal overhead)
-        foreach (['adults', $children_key_prefix] as $bucketKey) {
-            if (isset($output[$bucketKey]) && !empty($output[$bucketKey]) && is_array($output[$bucketKey])) {
-                $bucket = &$output[$bucketKey];
-                $first  = reset($bucket);
-                $last   = end($bucket);
+        // Collapse buckets if first == last (numeric compare)
+        foreach (['adults', $children_key_prefix] as $key) {
+            if (!empty($output[$key]) && is_array($output[$key])) {
+                $values = array_values($output[$key]);
+                $first  = $values[0] ?? null;
+                $last   = $values[count($values) - 1] ?? null;
 
                 if (is_numeric($first) && is_numeric($last) && (float)$first == (float)$last) {
-                    $output[$bucketKey] = 0 + $first; // cast to int/float without changing value
+                    $output[$key] = 0 + $first; // cast to int/float without changing value
                 }
             }
         }
 
-        // Wrap numeric leaves with money()
-        $wrapMoneyDeep = function ($val) use (&$wrapMoneyDeep) {
-            if (is_array($val)) {
-                foreach ($val as $k => $v) {
-                    $val[$k] = $wrapMoneyDeep($v);
-                }
-                return $val;
-            }
-            return $val;
-        };
-
-        return $wrapMoneyDeep($output);
+        return $output;
     }
 
     public function parse_transport_prices($prices_chart, $is_one_way = false)
     {
-        // $prices_chart can now have category values that are either arrays OR scalars.
-        $surcharge = (float) package_field('package_one_way_surcharge'); // percent
+        // Percent surcharge; only apply if > 0 (same as original)
+        $surcharge  = (float) package_field('package_one_way_surcharge');
+        $multiplier = ($is_one_way ? 2 : 1) * (1 + ($surcharge > 0 ? $surcharge / 100 : 0));
 
-        // Helper to apply round trip and surcharge safely on any numeric-ish value
-        $applyPricing = function ($value) use ($is_one_way, $surcharge) {
-            if (!is_numeric($value)) {
-                return $value; // leave non-numeric untouched
-            }
-
-            $price = floatval($value);
-
-            if ($is_one_way) {
-                $price *= 2;
-            }
-            if ($surcharge > 0) {
-                $price += ($surcharge / 100) * $price;
-            }
-
-            return $price;
+        $apply = function ($v) use ($multiplier) {
+            return is_numeric($v) ? (float) $v * $multiplier : $v;
         };
 
-        // Compute first (keep math on numbers), then wrap numerics with money()
         if (!is_array($prices_chart)) {
-            $result = $applyPricing($prices_chart);
-        } else {
-            foreach ($prices_chart as $category => &$sub) {
-                if (is_array($sub)) {
-                    foreach ($sub as &$price) {
-                        $price = $applyPricing($price);
-                    }
-                    unset($price); // break reference
-                } else {
-                    $sub = $applyPricing($sub);
-                }
-            }
-            unset($sub); // break reference
-            $result = $prices_chart;
+            return $apply($prices_chart);
         }
 
-        // Wrap numeric leaves with money()
-        $wrapMoneyDeep = function ($val) use (&$wrapMoneyDeep) {
-            if (is_array($val)) {
-                foreach ($val as $k => $v) {
-                    $val[$k] = $wrapMoneyDeep($v);
+        foreach ($prices_chart as $category => $sub) {
+            if (is_array($sub)) {
+                foreach ($sub as $k => $v) {
+                    $prices_chart[$category][$k] = $apply($v);
                 }
-                return $val;
+            } else {
+                $prices_chart[$category] = $apply($sub);
             }
-            return $val;
-        };
+        }
 
-        return $wrapMoneyDeep($result);
+        return $prices_chart;
     }
+
 
 
     public function package_type_label($package_type, $duration_unit)
