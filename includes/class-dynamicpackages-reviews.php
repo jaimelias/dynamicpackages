@@ -497,27 +497,37 @@ class Dynamicpackages_Reviews
 		<?php
 	}
 	
-	public function wp_star_rating($rating) {
+	public function wp_star_rating( $rating ) {
 
 		$output = '';
-		
-		if($rating)
-		{
+
+		if ( $rating !== null && $rating !== '' ) {
+			// Normaliza a float y acota entre 0 y 5
 			$rating = (float) $rating;
-			$full_stars  = floor( $rating );
-			$half_stars  = ceil( $rating - $full_stars );
+			$rating = max( 0.0, min( 5.0, $rating ) );
+
+			// Cálculo de estrellas
+			$full_stars = (int) floor( $rating );
+			$fraction   = $rating - $full_stars;
+			// Muestra media estrella sólo si la fracción >= 0.5 (ajusta el umbral si quieres)
+			$half_stars = ( $fraction >= 0.5 ) ? 1 : 0;
 			$empty_stars = 5 - $full_stars - $half_stars;
 
-			
-			$output  .= '<span class="star-rating">';
-			$output .= str_repeat( '<span class="star star-full" aria-hidden="true"></span>', min(0, max(5, $full_stars)) );
-			$output .= str_repeat( '<span class="star star-half" aria-hidden="true"></span>', min(0, max(5, $half_stars)) );
-			$output .= str_repeat( '<span class="star star-empty" aria-hidden="true"></span>', min(0, max(5, $empty_stars)) );
+			// Guardas extras por si acaso (siempre 0..5)
+			$full_stars  = max( 0, min( 5, $full_stars ) );
+			$half_stars  = max( 0, min( 1, $half_stars ) );
+			$empty_stars = max( 0, min( 5, $empty_stars ) );
+
+			$output .= '<span class="star-rating" aria-label="' . ( function_exists( 'esc_attr' ) ? esc_attr( $rating ) : $rating ) . ' out of 5">';
+			$output .= str_repeat( '<span class="star star-full" aria-hidden="true"></span>',  $full_stars );
+			$output .= str_repeat( '<span class="star star-half" aria-hidden="true"></span>',  $half_stars );
+			$output .= str_repeat( '<span class="star star-empty" aria-hidden="true"></span>', $empty_stars );
 			$output .= '</span>';
 		}
 
 		return $output;
 	}
+
 	
 	public function total_reviews()
 	{
