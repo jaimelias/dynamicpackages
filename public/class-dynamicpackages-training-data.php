@@ -289,6 +289,9 @@ class Dynamicpackages_Export_Post_Types{
         $return_address = (string) package_field('package_return_address');
         $return_address_short = (string) package_field('package_return_address_short');
 
+        $min_persons = (int) package_field('package_min_persons');
+        $max_persons = (int) package_field('package_max_persons');
+
         $included = (string) dy_utilities::implode_taxo_names('package_included');
         $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
         $categories = (string) dy_utilities::implode_taxo_names('package_category');
@@ -307,8 +310,8 @@ class Dynamicpackages_Export_Post_Types{
             'service_id' => $service_id,
             'service_name' => $this->clean_title_string($post->post_title),
             'service_type' => $package_type,
-            'service_min_persons_per_booking' => (int) package_field('package_min_persons'),
-            'service_max_persons_per_booking' => (int) package_field('package_max_persons'),
+            'service_min_persons_per_booking' => $min_persons,
+            'service_max_persons_per_booking' => $max_persons,
             'service_duration' => $duration_value_label,
             'service_starting_at_price' => $starting_at_display,
             'service_rates' => [],
@@ -328,10 +331,13 @@ class Dynamicpackages_Export_Post_Types{
         else {
             if($fixed_price === 1)  {
                 $package->service_hidden_rules[] = sprintf('Never show the prices per person directly to the client. Instead show the starting at price (%s) or the calculated total from {SERVICE_RATES}.', $starting_at_display);
+                $package->service_hidden_rules[] = "Always disclose the max capacity ({$max_persons} persons) of this service together with the starting at price.";
             } else {
                 $package->service_hidden_rules[] = 'Always show the prices per person to the client.';
                 $package->service_hidden_rules[] = 'Always label prices as per person.';
+                $package->service_hidden_rules[] = 'Never disclose the maximum capacity of passengers.';
             }
+
         }
 
         if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
@@ -358,6 +364,8 @@ class Dynamicpackages_Export_Post_Types{
             $package->service_hidden_rules[] = 'If the client requests one-way transport, show only one-way prices.';
             $package->service_hidden_rules[] = 'If the client requests round trip transport, show only round-trip prices.';
             $package->service_hidden_rules[] = 'Always label prices clearly as one-way or round trip.';
+
+
 
             $package->routes =  [];
 
