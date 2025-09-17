@@ -299,7 +299,7 @@ class Dynamicpackages_Export_Post_Types{
         $start_time = dy_utilities::hour();
         $starting_at = (float) dy_utilities::starting_at();
         $price_display_format = strtolower(apply_filters('dy_price_type', null));
-        $starting_at_display = wrapMoney($starting_at) . ' ' .$price_display_format;
+        $starting_at_display = wrapMoney($starting_at) . ' ' .$price_display_format . '.';
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
@@ -429,7 +429,7 @@ class Dynamicpackages_Export_Post_Types{
         $package_discount = (int) package_field('package_discount');
     
         if ($package_free > 0) {
-            $package->service_rates['free_children_until_age'] = $package_free;
+            $package->service_rates['free_children_until_age'] = "Free of cost until {$package_free} years old.";
         }
     
         $children_key_prefix = $package_free > 0 
