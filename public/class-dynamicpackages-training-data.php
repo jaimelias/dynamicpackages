@@ -299,7 +299,7 @@ class Dynamicpackages_Export_Post_Types{
         $start_time = dy_utilities::hour();
         $starting_at = (float) dy_utilities::starting_at();
         $price_display_format = strtolower(apply_filters('dy_price_type', null));
-        $starting_at_display = wrapMoney($starting_at) . ' ' .$price_display_format . '.';
+        $starting_at_display = wrap_money($starting_at) . ' ' .$price_display_format . '.';
 
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
