@@ -61,6 +61,9 @@ class Dynamicpackages_Reviews
 					}					
 					
 					$stars = $this->wp_star_rating($this->get_rating($the_id)).' <span itemprop="reviewCount">'.esc_html(get_comments_number()).'</span> '.esc_html(__('reviews', 'dynamicpackages'));
+					
+					write_log();
+					
 					$stars .= '<meta itemprop="ratingValue" content = "'.esc_html($this->get_rating($the_id)).'">';
 					$output = '<span '.$schema.'>'.$stars.'</span>';
 				}
@@ -249,7 +252,7 @@ class Dynamicpackages_Reviews
 
 			if ( $i !== 0  )
 			{
-				$output = money($total / $i, 2);
+				$output = money($total / $i);
 			}
 		}
 
