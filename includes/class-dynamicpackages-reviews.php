@@ -60,10 +60,7 @@ class Dynamicpackages_Reviews
 						$schema = 'itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating"';
 					}					
 					
-					$stars = $this->wp_star_rating($this->get_rating($the_id)).' <span itemprop="reviewCount">'.esc_html(get_comments_number()).'</span> '.esc_html(__('reviews', 'dynamicpackages'));
-					
-					write_log();
-					
+					$stars = $this->wp_star_rating($this->get_rating($the_id)).' <span itemprop="reviewCount">'.esc_html(get_comments_number()).'</span> '.esc_html(__('reviews', 'dynamicpackages'));					
 					$stars .= '<meta itemprop="ratingValue" content = "'.esc_html($this->get_rating($the_id)).'">';
 					$output = '<span '.$schema.'>'.$stars.'</span>';
 				}
