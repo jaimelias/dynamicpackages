@@ -292,9 +292,9 @@ class Dynamicpackages_Export_Post_Types{
         $min_persons = (int) package_field('package_min_persons');
         $max_persons = (int) package_field('package_max_persons');
 
-        $included = (string) dy_utilities::implode_taxo_names('package_included');
-        $not_included = (string) dy_utilities::implode_taxo_names('package_not_included');
-        $categories = (string) dy_utilities::implode_taxo_names('package_category');
+        $included = (array) dy_utilities::get_taxo_names('package_included');
+        $not_included = (array) dy_utilities::get_taxo_names('package_not_included');
+        $categories = (array) dy_utilities::get_taxo_names('package_category');
         $is_transport = $package_type === 'transport';
         $start_time = dy_utilities::hour();
         $starting_at = (float) dy_utilities::starting_at();
@@ -348,15 +348,15 @@ class Dynamicpackages_Export_Post_Types{
 
         if(!empty($categories))
         {
-            $package->service_categories = $categories;
+            $package->service_categories = (count($categories) > 1) ? $categories: $categories[0];
         }
         if(!empty($included))
         {
-            $package->service_included = $included;
+            $package->service_included = (count($included) > 1) ? $included: $included[0];
         }
         if(!empty($not_included))
         {
-            $package->service_not_included = $not_included;
+            $package->service_not_included = (count($not_included) > 1) ? $not_included: $not_included[0];
         }
 
         if ($is_transport) {
