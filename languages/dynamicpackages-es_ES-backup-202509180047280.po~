@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2025-09-18 00:22+0000\n"
+"PO-Revision-Date: 2025-09-18 00:23+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -69,16 +69,16 @@ msgstr "%s, %s está teniendo problemas procesando tu pago."
 #: gateways/matrix/cuanto/cuanto.php:61 gateways/matrix/paypal/paypal_me.php:68
 #: gateways/matrix/stablepay/usdc.php:98 gateways/matrix/stablepay/usdt.php:99
 #: gateways/matrix/pay-later/pay-later.php:97
-#, fuzzy, php-format
+#, php-format
 #| msgid "%s, %s sent you a payment request for %s%s using %s - %s"
 msgid "%s, %s sent you a payment request for %s using %s - %s"
-msgstr "%s, %s te ha enviado una solicitud de pagos de %s%s usando %s - %s"
+msgstr "%s, %s te ha enviado una solicitud de pagos de %s usando %s - %s"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:205
-#, fuzzy, php-format
+#, php-format
 #| msgid "%s, Thank You for Your %s of %s%s: %s"
 msgid "%s, Thank You for Your %s of %s: %s"
-msgstr "%s, Gracias por tu %s de %s%s: %s"
+msgstr "%s, Gracias por tu %s de %s: %s"
 
 #: includes/class-dynamicpackages-form-actions.php:224
 #, php-format
@@ -86,10 +86,10 @@ msgid "%s, thanks for your request: %s"
 msgstr "%s, Gracias por tu solicitud: %s"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:209
-#, fuzzy, php-format
+#, php-format
 #| msgid "%s, Your Payment to %s for %s%s was Declined"
 msgid "%s, Your Payment to %s for %s was Declined"
-msgstr "%s, tu pago a %s por %s%s fue declinado"
+msgstr "%s, tu pago a %s por %s fue declinado"
 
 #: gateways/matrix/yappy/yappy_direct.php:187
 #, php-format
@@ -1866,10 +1866,10 @@ msgid "Thank You for Your %s of %s%s: %s"
 msgstr "Gracias por tu %s de %s%s: %s"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:369
-#, fuzzy, php-format
+#, php-format
 #| msgid "Thank you for your %s of %s%s."
 msgid "Thank you for your %s of %s."
-msgstr "Gracias por tu %s de %s%s."
+msgstr "Gracias por tu %s de %s."
 
 #: includes/class-dynamicpackages-form-actions.php:235
 #: includes/class-dynamicpackages-form-actions.php:255
@@ -2219,10 +2219,10 @@ msgid "You have chosen %s as your payment method!"
 msgstr "¡Haz elegido %s cómo tu método de pago!"
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:234
-#, fuzzy, php-format
+#, php-format
 #| msgid "Your Payment to %s for %s%s was Declined"
 msgid "Your Payment to %s for %s was Declined"
-msgstr "Tu pago a %s por %s%s fue declinado"
+msgstr "Tu pago a %s por %s fue declinado"
 
 #: includes/class-dynamicpackages-reviews.php:321
 msgid "Your review is awaiting moderation."
