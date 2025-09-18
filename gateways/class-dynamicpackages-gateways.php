@@ -205,33 +205,37 @@ class Dynamicpackages_Gateways
 
 	public function choose_gateway()
 	{
-		$output = '';
-		$gateways = $this->list_gateways_cb();
-		$payment_gateways = array_diff($gateways, array($this->estimate->name));
+		$payment_gateways = array_diff($this->list_gateways_cb(), [$this->estimate->name]);
 
-
-		if(count($payment_gateways) > 0)
-		{
-			$output = __('Pay', 'dynamicpackages');
-			
-			if(dy_validators::has_deposit())
-			{
-				$output .= ' '.__('the deposit', 'dynamicpackages');
-			}
-			
-			$output .= ' ('.currency_symbol().'<span class="dy_calc dy_calc_total">'.money(dy_utilities::payment_amount()).'</span>';
-			
-			$output .= ') '.__('with', 'dynamicpackages');
-			
-			$output .= ' ' . $this->join_gateways() . '.';
-		}
-		else{
-
-			$output = '🤖 ' . $this->estimate->only_estimate . ' ⬇️';
+		if (empty($payment_gateways)) {
+			return '🤖 ' . $this->estimate->only_estimate . ' ⬇️';
 		}
 
-		return $output;		
+		$parts = [__('Pay', 'dynamicpackages')];
+
+		if (dy_validators::has_deposit()) {
+			$parts[] = __('the deposit', 'dynamicpackages');
+		}
+
+		//do not use wrap_money_full here
+		$amount = sprintf(
+			' (%s<span class="dy_calc dy_calc_total">%s</span> %s)',
+			currency_symbol(), //do not use wrap_money_full here
+			money(dy_utilities::payment_amount()), //do not use wrap_money_full here
+			currency_name() //do not use wrap_money_full here
+		);
+
+		$output = sprintf(
+			'%s%s %s %s.',
+			implode(' ', $parts),
+			$amount,
+			__('with', 'dynamicpackages'),
+			$this->join_gateways()
+		);
+
+		return $output;
 	}
+
 	public function filter_coupon_gateway($gateways)
 	{
 		if(is_singular('packages') && is_array($gateways))

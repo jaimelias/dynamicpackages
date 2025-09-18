@@ -46,7 +46,6 @@ class paguelo_facil_on{
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
-		$this->currency_symbol = currency_symbol();
 		$this->website_name = get_bloginfo('name');
 	}
 	
@@ -227,7 +226,7 @@ class paguelo_facil_on{
 			if(self::$txt_status === 2)
 			{
 				$payment = (dy_validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $payment, $this->currency_symbol, $payment_amount, $title);
+				$output = '✔️ ' . sprintf(__('Thank You for Your %s of %s: %s', 'dynamicpackages'), $payment, wrap_money_full($payment_amount), $title);
 			}
 			else if(self::$txt_status === 1)
 			{

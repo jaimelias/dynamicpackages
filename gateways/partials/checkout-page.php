@@ -38,19 +38,28 @@
     }
 
     if (package_field('package_payment') == 1) {
-        $payment          = 1;
-        $deposit          = dy_utilities::get_deposit();
-        $payment_amount   = dy_utilities::total() * ($deposit * 0.01);
+        $payment            = 1;
+        $deposit            = dy_utilities::get_deposit();
+        $payment_amount     = dy_utilities::total() * ($deposit * 0.01);
         $outstanding_amount = floatval($total) - $payment_amount;
-        $outstanding_label = esc_html__('Outstanding Balance', 'dynamicpackages') 
-                           . ' $<span class="dy_calc dy_calc_outstanding">'
-                           . money($outstanding_amount)
-                           . '</span>';
-        $deposit_label     = esc_html__('Deposit', 'dynamicpackages')
-                           . ' $<span class="dy_calc dy_calc_total">'
-                           . money($payment_amount)
-                           . '</span> (' . esc_html($deposit) . '%)';
+
+        $outstanding_label = sprintf(
+            '%s %s<span class="dy_calc dy_calc_outstanding">%s</span> %s',
+            esc_html__('Outstanding Balance', 'dynamicpackages'),
+            currency_symbol(),
+            money($outstanding_amount),
+            currency_name()
+        );
+
+        $deposit_label = sprintf(
+            '%s $<span class="dy_calc dy_calc_total">%s</span> %s (%s%%)',
+            esc_html__('Deposit', 'dynamicpackages'),
+            money($payment_amount),
+            currency_name(),
+            esc_html($deposit)
+        );
     }
+
 ?>
 <hr/>
 <div class="clearfix relative small text-right">
@@ -183,14 +192,20 @@
                         <td colspan="<?php echo $colspan; ?>">
                             <?php if (dy_validators::validate_coupon()) : ?>
                                 <s class="small light text-muted">
-                                    <?php echo esc_html__('Regular Price', 'dynamicpackages'); ?>
+                                    <?php
+                                        echo sprintf(
+                                            esc_html(__('Regular Price %s', 'dynamicpackages')),
+                                            esc_html(currency_symbol())
+                                        );
+                                    ?>
                                     <span class="dy_calc dy_calc_regular">
-                                        <?php echo money(dy_utilities::total('regular')); ?>
-                                    </span>
+                                        <?php echo esc_html(money(dy_utilities::total('regular'))); ?>
+                                    </span> <?php echo esc_html(currency_name()); ?>
                                 </s><br/>
                             <?php endif; ?>
+
                             <?php echo esc_html__('Total', 'dynamicpackages'); ?>
-                            $<span class="dy_calc dy_calc_amount"><?php echo money(dy_utilities::total()); ?></span>
+                            <?php echo esc_html(currency_symbol()); ?><span class="dy_calc dy_calc_amount"><?php echo money(dy_utilities::total()); ?></span> <?php echo esc_html(currency_name()); ?>
                         </td>
                     </tr>
                     <?php if (dy_validators::has_deposit()) : ?>

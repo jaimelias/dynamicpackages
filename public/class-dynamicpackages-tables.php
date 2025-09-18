@@ -42,7 +42,6 @@ class Dynamicpackages_Tables{
 		$this->package_type = dy_utilities::get_package_type();
 		$this->price_type = intval(package_field('package_fixed_price'));
 		$this->has_children = dy_validators::has_children();
-		$this->currency_symbol = currency_symbol();
 	}
 
 	public function price_table()
@@ -209,7 +208,7 @@ class Dynamicpackages_Tables{
 							
 							if($show_rows)
 							{
-								$row .= $td . esc_html($this->currency_symbol . money($price)).'</td>';
+								$row .= $td . esc_html(wrap_money_full($price)).'</td>';
 								$row .= '</tr>';
 								$rows .= $row;	
 							}
