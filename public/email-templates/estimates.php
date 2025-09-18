@@ -10,8 +10,7 @@ $kycUrl = get_option('dy_kyc');
 $kycMessage = (!empty($kycUrl)) ? '<p><a href="'.esc_url($kycUrl).'">'.__('Click here to upload IDs/Passports!', 'dynamicpackages').'</a></p>': '';
 $estimate_confirmation_message = __('To complete your reservation with us, it is essential that we receive the payment. Our team processes payments during office hours and verifies the provided identification documents. Once we have received both the payment and the necessary documents, we proceed to send the confirmations via email. This policy ensures that we can confirm your reservation promptly and securely. We appreciate your understanding and cooperation in this process.', 'dynamicpackages');
 $confirmation_message = apply_filters('dy_confirmation_message', $estimate_confirmation_message);
-$currency_symbol = currency_symbol();
-$total = apply_filters('dy_email_total', money(dy_utilities::total()));
+$total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
 $company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = sanitize_email(get_option('dy_email'));
@@ -39,7 +38,7 @@ $footer = $company_address;
 $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
-$totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
+$totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>' . $total);
 $add_ons = apply_filters('dy_included_add_ons_list', null);
 
 $label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
@@ -180,7 +179,7 @@ $email_template = <<<EOT
 							<strong style="color:#666666;">{$label_not_included}:</strong> {$not_included}
 						</td>
 						<td style="width: 100px; padding: 5px;vertical-align: top; text-align: right; ">
-							{$currency_symbol}{$total}
+							{$total}
 						</td>
 					</tr>			
 					

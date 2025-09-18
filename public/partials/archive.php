@@ -321,7 +321,7 @@ else
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_attr(currency_name()); ?>" />
-									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <?php esc_html_e(currency_symbol()); ?><span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(money($starting_at));?></span>
+									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(wrap_money_full($starting_at));?></span>
 									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', null));?></small>
 								</div>
 							<?php endif;?>

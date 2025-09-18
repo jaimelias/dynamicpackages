@@ -202,11 +202,11 @@ class paguelo_facil_on{
 			if(self::$txt_status === 2)
 			{
 				$payment = (dy_validators::has_deposit()) ? __('Deposit', 'dynamicpackages') : __('Payment', 'dynamicpackages');
-				$output = '✔️ ' . sprintf(__('%s, Thank You for Your %s of %s%s: %s', 'dynamicpackages'), $first_name, $payment, $this->currency_symbol, $payment_amount, $title);
+				$output = '✔️ ' . sprintf(__('%s, Thank You for Your %s of %s: %s', 'dynamicpackages'), $first_name, $payment, wrap_money_full($payment_amount), $title);
 			}
 			else if(self::$txt_status === 1)
 			{
-				$output = '⚠️ ' . sprintf(__('%s, Your Payment to %s for %s%s was Declined', 'dynamicpackages'), $first_name, $this->website_name, $this->currency_symbol, $payment_amount) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('%s, Your Payment to %s for %s was Declined', 'dynamicpackages'), $first_name, $this->website_name, wrap_money_full($payment_amount)) . ' ⚠️';
 			}
 			else if(self::$txt_status === 0)
 			{
@@ -231,7 +231,7 @@ class paguelo_facil_on{
 			}
 			else if(self::$txt_status === 1)
 			{
-				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s%s was Declined', 'dynamicpackages'), $this->website_name, $this->currency_symbol, $payment_amount) . ' ⚠️';
+				$output = '⚠️ ' . sprintf(__('Your Payment to %s for %s was Declined', 'dynamicpackages'), $this->website_name, wrap_money_full($payment_amount)) . ' ⚠️';
 			}
 			else if(self::$txt_status === 0)
 			{
@@ -366,7 +366,7 @@ class paguelo_facil_on{
 				{
 					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
 					
-					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s%s.', 'dynamicpackages'), $payment, currency_symbol(), money(dy_utilities::payment_amount())) . '</p>';
+					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s.', 'dynamicpackages'), $payment, wrap_money_full(dy_utilities::payment_amount())) . '</p>';
 					
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
@@ -678,8 +678,8 @@ class paguelo_facil_on{
 	{
 		if(dy_validators::has_deposit())
 		{
-			$outstanding = currency_symbol().money(dy_utilities::outstanding_amount());
-			$total =  currency_symbol().money(dy_utilities::payment_amount());
+			$outstanding = wrap_money_full(dy_utilities::outstanding_amount());
+			$total =  wrap_money_full(dy_utilities::payment_amount());
 			$date = sanitize_text_field($_POST['booking_date']);
 			
 			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').'<br/><span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;

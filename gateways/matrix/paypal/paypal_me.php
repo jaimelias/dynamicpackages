@@ -65,7 +65,7 @@ class paypal_me {
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
@@ -401,7 +401,7 @@ class paypal_me {
 	{
 		$amount = money(dy_utilities::payment_amount($this->service_fee));
 		$url = 'https://'.$this->domain.'/'.$this->username.'/'.$amount;
-		$amount = currency_symbol().''.money($amount);
+		$amount = wrap_money_full($amount);
 		
 		$label = __('full payment of', 'dynamicpackages');
 		

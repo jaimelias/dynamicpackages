@@ -163,12 +163,12 @@ class Dynamicpackages_Tables{
 				if($this->price_type === 1)
 				{
 					$row = '';
-					$price_label = $this->currency_symbol . money(intval($min_price));
+					$price_label = wrap_money_full($min_price);
 					$td = '<td colspan="2">';
 					if($diff_percentage > 5) 
 					{
 						$person_label = $this->min_persons . ' - ' . $this->max_persons;
-						$price_label .= ' - ' . $this->currency_symbol . money(intval($max_price));
+						$price_label .= ' - ' . wrap_money_full($max_price);
 						$row .= '<tr><td><span class="dashicons dashicons-admin-users"></span> '.esc_html($person_label).'</td>';
 					}
 					else

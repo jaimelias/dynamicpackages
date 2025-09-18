@@ -123,7 +123,7 @@ class Dynamicpackages_Booking_Page {
 			$deposit = dy_utilities::payment_amount();
 			$total = dy_utilities::total();
 			$outstanding = $total-$deposit;
-			$output .= ' - '.__('deposit', 'dynamicpackages').' '.currency_symbol().money($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.currency_symbol().money($outstanding);					
+			$output .= ' - '.__('deposit', 'dynamicpackages').' '.wrap_money_full($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.wrap_money_full($outstanding);					
 		}
 		return $output;
 	}

@@ -2,8 +2,7 @@
 
 $post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
 $today = dy_utilities::format_date(strtotime('today UTC'));
-$currency_symbol = currency_symbol();
-$total = apply_filters('dy_email_total', money(dy_utilities::total()));
+$total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
 $company_name = get_bloginfo('name');
 $company_phone = get_option('dy_phone');
 $company_email = get_option('dy_email');
@@ -30,7 +29,7 @@ $notes = apply_filters('dy_email_notes', $notes_content);
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
 
-$totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>'.$currency_symbol.$total);
+$totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>' . $total);
 $add_ons = apply_filters('dy_included_add_ons_list', null);
 
 $label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
@@ -102,7 +101,7 @@ $email_pdf = <<<EOT
 					<strong style="color: #666666;">{$label_not_included}:</strong> {$not_included}
 				</td>
 				<td style="width: 30%;">
-					<div style="text-align: right;">{$currency_symbol}{$total}</div>
+					<div style="text-align: right;">{$total}</div>
 				</td>
 			</tr>
 			

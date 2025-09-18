@@ -214,7 +214,7 @@ class Dynamicpackages_Actions{
 	{
 		if(dy_validators::validate_quote())
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s%s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money(dy_utilities::total()), sanitize_text_field($_POST['title']));			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($_POST['title']));			
 		}
 		else
 		{

@@ -60,7 +60,7 @@ class yappy_direct {
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s%s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), currency_symbol(), money(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
 	}
 	
 	public function label_notes($notes)
@@ -150,8 +150,7 @@ class yappy_direct {
 				if(!empty($this->qrcode))
 				{
 					$payment_amount = money(dy_utilities::payment_amount());
-					$currency_symbol = currency_symbol();
-					$amount = $currency_symbol . $payment_amount;
+					$amount = wrap_money_full($payment_amount);
 
 					$label = __('payment', 'dynamicpackages');
 		
@@ -179,10 +178,9 @@ class yappy_direct {
 	public function message($message)
 	{
 		$payment_amount = money(dy_utilities::payment_amount());
-		$currency_symbol = currency_symbol();
 		$destination = (!empty($this->business)) ? '@'.strtoupper($this->business) : $this->number;
 		$destination = '<strong>'.esc_html($destination).'</strong>';
-		$amount = $currency_symbol . $payment_amount;
+		$amount = wrap_money_full($payment_amount);
 		$label = (dy_validators::has_deposit()) ? esc_html(__('deposit', 'dynamicpackages')) : esc_html(__('payment', 'dynamicpackages'));
 		
 		$text = (!empty($this->business)) 
