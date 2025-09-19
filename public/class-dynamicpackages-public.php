@@ -473,61 +473,54 @@ class Dynamicpackages_Public {
 	
 	public function modify_tax_title($title)
 	{
-		if(is_tax('package_terms_conditions') && in_the_loop())
-		{
-			$title = '<span class="linkcolor">'.$title.'</span>';
+		if ( is_tax('package_terms_conditions') && in_the_loop() ) {
+			$title = sprintf('<span class="linkcolor">%s</span>', $title);
 		}
+
 		return $title;
 	}
+
 
 	
 	public static function price_type()
 	{
-		$name = 'dy_price_type';
-		$the_id = get_dy_id();
-		$cache_key = $name.'_'.$the_id;
+		$name      = 'dy_price_type';
+		$the_id    = get_dy_id();
+		$cache_key = sprintf('%s_%s', $name, $the_id);
 
-        if (isset(self::$cache[$cache_key])) {
-            return self::$cache[$cache_key];
-        }
-
-		$price_type = intval(package_field('package_fixed_price'));
-		$package_type = dy_utilities::get_package_type($the_id);
-		$duration = intval(package_field('package_duration'));
-		$duration_unit = intval(package_field('package_length_unit'));
-		$duration_max = intval(package_field('package_duration_max'));
-		$output = '';
-		
-		if($price_type === 0)
-		{
-			$output = __('Per Person', 'dynamicpackages').' ';
+		if ( isset(self::$cache[$cache_key]) ) {
+			return self::$cache[$cache_key];
 		}
 
+		$price_type    = (int) package_field('package_fixed_price');
+		$package_type  = dy_utilities::get_package_type($the_id);
+		$duration_unit = (int) package_field('package_length_unit');
+		$output        = '';
 
-		if($package_type === 'multi-day')
-		{
-			//if($duration === 1 && $duration_max > $duration){}
-
-			$output .= __(' / ', 'dynamicpackages').dy_utilities::duration_label($duration_unit, 1);
+		if ( $price_type === 0 ) {
+			$output = sprintf('%s ', __('Per Person', 'dynamicpackages'));
 		}
-		else if($package_type === 'rental-per-hour')
-		{
+
+		if ( $package_type === 'multi-day' ) {
+			$output .= sprintf(
+				'%s%s',
+				__(' / ', 'dynamicpackages'),
+				dy_utilities::duration_label($duration_unit, 1)
+			);
+		} elseif ( $package_type === 'rental-per-hour' ) {
 			$output .= __('Per Hour', 'dynamicpackages');
-		}
-		else if($package_type === 'rental-per-day')
-		{
-			$output .=__('Per Day', 'dynamicpackages');
-		}
-		else if($package_type === 'transport')
-		{
-			$output .=__('One-way', 'dynamicpackages');
+		} elseif ( $package_type === 'rental-per-day' ) {
+			$output .= __('Per Day', 'dynamicpackages');
+		} elseif ( $package_type === 'transport' ) {
+			$output .= __('One-way', 'dynamicpackages');
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		// store output in cache
+		self::$cache[$cache_key] = $output;
 
 		return $output;
 	}
+
 
 	public function get_location_list()
 	{
@@ -769,18 +762,33 @@ class Dynamicpackages_Public {
 	public function show_badge()
 	{
 		$output = '';
-		$code = package_field('package_badge');
-		
-		if($code > 0)
-		{
-			$color = package_field('package_badge_color');
-			$messages = array(null, __('Best Seller', 'dynamicpackages'), __('New', 'dynamicpackages'), __('Offer', 'dynamicpackages'), __('Featured', 'dynamicpackages'), __('Last Minute Deal', 'dynamicpackages') );
+		$code   = (int) package_field('package_badge');
+
+		if ( $code > 0 ) {
 			
-			$output = '<small class="dy_badge_class '.esc_html($color).'">'.esc_html($messages[$code]).'</small>';
+			$color    = (string) package_field('package_badge_color');
+
+			$messages = [
+				null,
+				__('Best Seller', 'dynamicpackages'),
+				__('New', 'dynamicpackages'),
+				__('Offer', 'dynamicpackages'),
+				__('Featured', 'dynamicpackages'),
+				__('Last Minute Deal', 'dynamicpackages'),
+			];
+
+			if ( isset($messages[$code]) ) {
+				$output = sprintf(
+					'<small class="dy_badge_class %s">%s</small>',
+					esc_html($color),
+					esc_html($messages[$code])
+				);
+			}
 		}
-		
+
 		echo $output;
 	}
+
 	
 	public function children_package()
 	{

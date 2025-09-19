@@ -7,28 +7,36 @@ if ( !defined( 'WPINC' ) ) exit;
 function package_field($name, $this_id = null)
 {
     //enable this code debugs memory exaust
-    if(false)
-    {
-        // grab the backtrace, but limit it to the top 3 stack frames so your logs stay readable
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-
-        // log just the immediate caller (frame #1) plus its file/line,
-        // or dump the whole trace if you need more context
-        if (isset($trace[1])) {
-            $caller = $trace[1];
-            write_log(sprintf(
-                'package_field('.$name.', '.$this_id.') called by %s() in %s on line %d',
-                $caller['function'] ?? '[global]',
-                $caller['file'] ?? '[unknown file]',
-                $caller['line'] ?? 0
-            ));
-        } else {
-            // fallback: dump the whole trace array
-            write_log($trace);
-        }
+    if ( !defined('WP_DEBUG') || !WP_DEBUG ) {
+        $val = Dynamicpackages_Fields::get($name, $this_id);
+        return is_string($val) ? $val : (string) $val;
     }
 
-    return Dynamicpackages_Fields::get($name, $this_id);
+    try {
+
+        $val = Dynamicpackages_Fields::get($name, $this_id);
+        return is_string($val) ? $val : (string) $val;
+
+    } catch (Throwable $e) {
+
+        // Keep backtrace tiny: ignore args & cap to 2 frames (self + caller).
+        $t = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+
+        if (!empty($t[1])) {
+            $c = $t[1];
+            // Build the log message with simple concatenation to avoid sprintf allocations.
+            $msg  = 'package_field(' . $name . ', ' . (string) $this_id . ') ';
+            $msg .= 'called by ' . ($c['function'] ?? '[global]');
+            $msg .= ' in ' . ($c['file'] ?? '[unknown file]');
+            $msg .= ' on line ' . (isset($c['line']) ? (int) $c['line'] : 0);
+            $msg .= ' — ' . $e->getMessage();
+            if (function_exists('write_log')) write_log($msg);
+        } else {
+            if (function_exists('write_log')) write_log($e->getMessage());
+        }
+
+        return '';
+    }
 }
 
 class Dynamicpackages_Fields
@@ -147,24 +155,6 @@ class Dynamicpackages_Fields
         self::$cache[$cache_key] = $this_field;
 
         return $this_field;
-    }
-
-    /**
-     * Clear the cache for specific fields or all fields.
-     *
-     * @param string|null $name Specific field name to clear or null to clear all.
-     */
-    public static function clearCache($name = null)
-    {
-        if ($name === null) {
-            self::$cache = [];
-        } else {
-            foreach (self::$cache as $key => $value) {
-                if (strpos($key, $name . '_') === 0) {
-                    unset(self::$cache[$key]);
-                }
-            }
-        }
     }
 }
 
