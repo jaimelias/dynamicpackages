@@ -149,28 +149,6 @@ class Dynamicpackages_Public {
 		{
 			if(!is_booking_page())
 			{
-				if(dy_validators::is_child())
-				{
-					
-					$subpackage_name = 'package_child_title';
-					
-					if(isset($polylang))
-					{
-						$subpackage_name .= '_'.pll_get_post_language($post->ID);
-					}
-					
-					$subpackage = package_field($subpackage_name);
-
-					if(!empty($subpackage))
-					{
-						$content = '<h2>'.esc_html($subpackage).'</h2>' . $content;
-					}
-					
-					$parent_content = do_blocks(get_post($post->post_parent)->post_content);
-					
-					$content .= $parent_content;
-				}
-				
 				$partial_content = $content;
 				
 				ob_start();
@@ -1287,69 +1265,25 @@ class Dynamicpackages_Public {
 	}
 	
 
-	public function show_event_date()
-	{
-		$output = '';
-		
-		if(!empty(package_field('package_event_date')))
-		{
-			$date = strtotime(package_field('package_date'));
-			$today = strtotime('today');
-			$tomorrow = strtotime('tomorrow');
-			
-			if($date == $today)
-			{
-				$output = '<small class="dy_event_date_class">';	
-				$output .= __('today', 'dynamicpackages');
-				$output .= '</small>';
-			}
-			elseif($date == $tomorrow)
-			{
-				$output = '<small class="dy_event_date_class">';	
-				$output .= __('tomorrow', 'dynamicpackages');
-				$output .= '</small>';
-			}
-			else
-			{
-				$date = date_i18n('M d', $date);
-				$output = '<small class="dy_event_date_class">';	
-				$output .= esc_html($date);	
-				$output .= '</small>';				
-			}
+	public function show_event_date() {
+		$sort = isset($_GET['sort']) ? sanitize_text_field( $_GET['sort'] ) : '';
+
+		// Map valid keys to translated labels
+		$labels = [
+			'today'    => __( 'today', 'dynamicpackages' ),
+			'tomorrow' => __( 'tomorrow', 'dynamicpackages' ),
+			'week'     => __( 'next 7 days', 'dynamicpackages' ),
+			'month'    => __( 'next 30 days', 'dynamicpackages' ),
+		];
+
+		if ( ! isset( $labels[ $sort ] ) ) {
+			return; // Nothing to render for invalid/missing sort
 		}
-		else
-		{
-			if(isset($_GET['sort']))
-			{
-				if($_GET['sort'] == 'today' || $_GET['sort'] == 'tomorrow' || $_GET['sort'] == 'week' || $_GET['sort'] == 'month')
-				{
-					$date = strtotime(package_field('package_date'));
-					
-					if($_GET['sort'] == 'today')
-					{
-						$label = __('today', 'dynamicpackages');
-					}
-					elseif($_GET['sort'] == 'tomorrow')
-					{
-						$label = __('tomorrow', 'dynamicpackages');
-					}
-					elseif($_GET['sort'] == 'week')
-					{
-						$label = __('next 7 days', 'dynamicpackages');
-					}
-					elseif($_GET['sort'] == 'month')
-					{
-						$label = __('next 30 days', 'dynamicpackages');
-					}
-					
-					
-					$output = '<small class="dy_event_date_class">';	
-					$output .= esc_html($label);
-					$output .= '</small>';	
-				}
-			}
-		}
-		echo $output;
+
+		printf(
+			'<small class="dy_event_date_class">%s</small>',
+			esc_html( $labels[ $sort ] )
+		);
 	}
 	
 	public function show_coupons()
@@ -1483,52 +1417,37 @@ class Dynamicpackages_Public {
 
 		if(!empty($package_start_address) && !empty($package_start_hour))
 		{
-			$package_event_date = package_field('package_event_date');
-			
-			if(!empty($package_event_date))
-			{
-				$today = strtotime(dy_date('Y-m-d'));
-				$event_date = strtotime(dy_date($package_event_date));
-				
-				if($event_date > $today)
-				{
-					array_push($output, $event_date);
-				}
-			}
-			else
-			{
-				$from = intval(package_field('package_booking_from'));
-				$to = intval(package_field('package_booking_to'));
+			$from = intval(package_field('package_booking_from'));
+			$to = intval(package_field('package_booking_to'));
 
-				if($from >= 0 && $to > $from)
+			if($from >= 0 && $to > $from)
+			{
+				$new_range = array();
+				$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
+				$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
+				$range = dy_utilities::get_date_range($today, $last_day);
+				$disabled_range = dy_utilities::get_disabled_range();
+				$week_days = dy_utilities::get_week_days_list();
+				$count_range = 	(count($range) <= 30) ? count($range) : 30;
+										
+				for($x = 0; $x < $count_range; $x++)
 				{
-					$new_range = array();
-					$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
-					$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
-					$range = dy_utilities::get_date_range($today, $last_day);
-					$disabled_range = dy_utilities::get_disabled_range();
-					$week_days = dy_utilities::get_week_days_list();
-					$count_range = 	(count($range) <= 30) ? count($range) : 30;
-											
-					for($x = 0; $x < $count_range; $x++)
+					if(!in_array($range[$x], $disabled_range))
 					{
-						if(!in_array($range[$x], $disabled_range))
+						$day = dy_date('N', dy_strtotime($range[$x]));
+						
+						if(!in_array($day, $week_days))
 						{
-							$day = dy_date('N', dy_strtotime($range[$x]));
-							
-							if(!in_array($day, $week_days))
-							{
-								array_push($new_range, $range[$x]);
-							}
+							array_push($new_range, $range[$x]);
 						}
 					}
-					
-					if(is_array($new_range))
+				}
+				
+				if(is_array($new_range))
+				{
+					if(count($new_range) > 0)
 					{
-						if(count($new_range) > 0)
-						{
-							$output = $new_range;
-						}
+						$output = $new_range;
 					}
 				}
 			}

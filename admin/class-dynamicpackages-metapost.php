@@ -23,6 +23,8 @@ class Dynamicpackages_Metapost{
 		if(! current_user_can( 'edit_post', $post_id ) ) return;
 
 		$languages = get_languages();
+
+		dy_utilities::update_package_date_in_db($post_id);
 		
 		if(isset( $_POST['package_fixed_price']))
 			update_post_meta( $post_id, 'package_fixed_price', esc_attr($_POST['package_fixed_price']));
@@ -94,23 +96,6 @@ class Dynamicpackages_Metapost{
 			update_post_meta( $post_id, 'package_enabled_num', esc_attr($_POST['package_enabled_num']));
 		if(isset( $_POST['package_enabled_dates']))
 			update_post_meta( $post_id, 'package_enabled_dates', esc_attr($_POST['package_enabled_dates']));	
-
-		//package_event_date
-		if(isset( $_POST['package_event_date']))
-		{
-			update_post_meta( $post_id, 'package_event_date', esc_attr($_POST['package_event_date']));
-			
-			if(!empty($_POST['package_event_date']))
-			{
-				update_post_meta($post_id, 'package_date', esc_attr($_POST['package_event_date']));
-			}
-			else
-			{
-				dy_utilities::event_date_update($post_id);
-			}
-			
-		}
-		
 						
 		if(isset( $_POST['package_booking_from']))
 		{

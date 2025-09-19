@@ -17,30 +17,6 @@
 		'meta_query' => array(),
 		'paged' => $paged
 	);
-	
-	//yesterday exclude
-	$filter_yesterday = array(
-		'key' => 'package_event_date',
-		'type' => 'DATE',
-		'value' => date("Y-m-d", strtotime('yesterday')),
-		'compare' => '>'
-	);
-
-	//troubleshoot if null
-	$filter_null = array(
-		'value' => '',
-		'key' => 'package_event_date',
-		'compare' => '='
-	);
-
-	//troubleshoot if not exist in old versions
-	$filter_not_exist = array(
-		'value' => '',
-		'key' => 'package_event_date',
-		'key' => 'NOT EXISTS'
-	);	
-	
-	array_push($args['meta_query'], array('relation' => 'OR', $filter_yesterday, $filter_null, $filter_not_exist));	
 		
 	if(is_tax('package_location') || is_tax('package_category'))
 	{
@@ -254,14 +230,10 @@ else
 	<?php if ( $archive_query->have_posts() ) :?>
 				
 		<?php $count=0; ?>
-		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>		
-
-
+		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>
 
 		<?php
-			//DO NOT DELETE
-			// IT UPDATES THE EVENT DATE FOR QUERY PURPOSES
-			dy_utilities::event_date_update($post->ID);
+			dy_utilities::update_package_date_in_db($post->ID);
 			$package_code = package_field('package_trip_code');
 			$package_code = (!empty($package_code)) ? $package_code : 'ID'.$post->ID;
 			$starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;

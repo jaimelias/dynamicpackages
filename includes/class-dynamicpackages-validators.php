@@ -73,23 +73,12 @@ class dy_validators
 			$booking_date = dy_utilities::booking_date();
 			$min_range = dy_utilities::min_range($the_id);
 			$max_range = dy_utilities::max_range($the_id);
-			$event_date = strtotime(package_field('package_event_date', $the_id));
-			
+						
 			if($booking_date)
 			{
-				if(empty($event_date))
+				if($booking_date >= $min_range && $booking_date <= $max_range)
 				{
-					if($booking_date >= $min_range && $booking_date <= $max_range)
-					{
-						$output = true;
-					}				
-				}
-				else
-				{
-					if($booking_date == $event_date)
-					{
-						$output = true;
-					}				
+					$output = true;
 				}
 			}
 		}

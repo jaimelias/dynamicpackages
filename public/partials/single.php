@@ -1,4 +1,4 @@
-<?php global $post; dy_utilities::event_date_update($post->ID); ?>
+<?php global $post; dy_utilities::update_package_date_in_db($post->ID); ?>
 
 <div class="pure-g gutters">
 

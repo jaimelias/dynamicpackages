@@ -96,7 +96,6 @@ class Dynamicpackages_Metaboxes
 		$this->return_address = package_field('package_return_address');
 		$this->return_address_short = package_field('package_return_address_short');
 		$this->increase_persons = (int) package_field('package_increase_persons');
-		$this->event_date = package_field('package_event_date');
 		$this->by_hour = (int) package_field('package_by_hour');
 		$this->min_hour = package_field('package_min_hour');
 		$this->max_hour = package_field('package_max_hour');
@@ -548,10 +547,6 @@ class Dynamicpackages_Metaboxes
 		?>
 		
 		<?php if (!$this->is_child): ?>
-			<h4><?php echo esc_html(__('Event Date', 'dynamicpackages')); ?></h4>
-				<p>
-					<input type="text" name="package_event_date" id="package_event_date" class="datepicker" value="<?php echo esc_attr($this->event_date); ?>">
-				</p>
 			<h4><?php echo esc_html(__('Accept Bookings', 'dynamicpackages')); ?></h4>
 			<p>
 				<label for="package_booking_from"><?php echo esc_html(__('Between', 'dynamicpackages')); ?> 
