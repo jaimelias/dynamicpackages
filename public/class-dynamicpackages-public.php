@@ -1516,15 +1516,16 @@ class Dynamicpackages_Public {
 	public function post_type_link($url, $post)
 	{
 
-		if (empty($post) || is_404() || is_customize_preview() || is_admin() || get_post_type($post) !== 'packages' || is_category() || is_tag()) {
+		if (
+			! $post instanceof WP_Post         // ensures object & has ->ID
+			|| is_admin()
+			|| is_customize_preview()
+			|| is_404()
+			|| ! is_singular( 'packages' )     // replaces get_post_type() !== 'packages', is_category(), is_tag()
+			|| ! ( in_the_loop() && is_main_query() )
+		) {
 			return $url;
 		}
-
-		if(in_the_loop() === false && is_main_query() === false) return $url;
-
-		$lang = current_language();
-		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
-		$redirect_page = package_field('package_redirect_page', $post->ID);
 
 		if(empty($redirect))
 		{
