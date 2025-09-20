@@ -1497,9 +1497,6 @@ class Dynamicpackages_Public {
 		}
 
 		$lang = current_language();
-		$is_booking_page = 
-
-		
 		$redirect_page = (string) package_field('package_redirect_page');
 		$redirect_url = (string) package_field('package_redirect_url_' . $lang);
 
