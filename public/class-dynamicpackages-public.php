@@ -1488,29 +1488,37 @@ class Dynamicpackages_Public {
 
 	public function redirect($headers)
 	{
-		if(!is_singular('packages') || is_404())
-		{
+		if(
+			is_singular('packages') === false 
+			|| is_404()
+			|| is_main_query() === false
+		) {
 			return $headers;
 		}
 
 		$lang = current_language();
+		$is_booking_page = 
 
-		$url = package_field('package_redirect_url_' . $lang);
-		$redirect_page = package_field('package_redirect_page');
+		
+		$redirect_page = (string) package_field('package_redirect_page');
+		$redirect_url = (string) package_field('package_redirect_url_' . $lang);
+
+		if($redirect_url === '' || filter_var($redirect_url, FILTER_VALIDATE_URL) === false) {
+			return $headers;
+		}
+
 		$valid_redirect_page = (
-			(!is_booking_page() && (empty($redirect_page) || intval($redirect_page) === 0)
+			(!is_booking_page() && ($redirect_page === '' || $redirect_page === '0')
 			||
-			(is_booking_page() && intval($redirect_page) === 1)
+			(is_booking_page() && $redirect_page === '1')
 		)) ? true : false;
 
-		if(!empty($url) && $valid_redirect_page)
-		{
-			if( filter_var($url, FILTER_VALIDATE_URL) !== false)
-			{
-				wp_redirect( $url, 301 );
-				exit;
-			}
+		if($valid_redirect_page) {
+			wp_redirect( $redirect_url, 301 );
+			exit;
 		}
+
+		return $headers;
 	}
 
 	public function post_type_link($url, $post)
@@ -1521,24 +1529,18 @@ class Dynamicpackages_Public {
 		}
 
 		$lang = current_language();
-		$redirect = package_field('package_redirect_url_' . $lang, $post->ID);
-		$redirect_page = package_field('package_redirect_page',  $post->ID);
+		$redirect_page = (string) package_field('package_redirect_page',  $post->ID);
+		$redirect_url = (string) package_field('package_redirect_url_' . $lang, $post->ID);
 
-		if(empty($redirect))
+		if($redirect_url === '' || filter_var($redirect_url, FILTER_VALIDATE_URL) === false)
 		{
 			return $url;
 		}
-
-		$valid_redirect_page = (empty($redirect_page) || intval($redirect_page) === 0) ? true : false;
 		
-		if(in_the_loop() || isset($_GET['minimal-sitemap']))
+		if($redirect_page === '' || $redirect_page === '0')
 		{
-			if( filter_var($redirect, FILTER_VALIDATE_URL) !== false && $valid_redirect_page)
-			{
-				$url = $redirect;
-			}
+			$url = $redirect_url;
 		}
-
 
 		return $url;
 	}
