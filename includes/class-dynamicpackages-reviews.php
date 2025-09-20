@@ -57,7 +57,7 @@ class Dynamicpackages_Reviews
 					
 					if(dy_validators::is_valid_schema())
 					{
-						$schema = 'itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating"';
+						$schema = 'itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"';
 					}					
 					
 					$stars = $this->wp_star_rating($this->get_rating($the_id)).' <span itemprop="reviewCount">'.esc_html(get_comments_number()).'</span> '.esc_html(__('reviews', 'dynamicpackages'));					

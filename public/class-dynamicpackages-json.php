@@ -70,7 +70,7 @@ class Dynamicpackages_JSON
 					$offers['priceCurrency'] = 'USD';
 					$offers['price'] = $starting_at;				
 					$offers['url'] = esc_url(get_the_permalink());
-					$offers['availability'] = 'http://schema.org/InStock';		
+					$offers['availability'] = 'https://schema.org/InStock';		
 					$offers['validFrom'] = esc_html(date('Y-m-d', dy_strtotime('now')));
 					
 					//aggregateRating

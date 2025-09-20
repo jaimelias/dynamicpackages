@@ -239,7 +239,7 @@ else
 			$starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;
 		?>
 
-			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="http://schema.org/Product" <?php endif; ?>>
+			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="https://schema.org/Product" <?php endif; ?>>
 				
 				
 				<?php if(dy_validators::is_valid_schema($post->ID)): ?>
@@ -288,8 +288,8 @@ else
 							
 							<?php if($starting_at): ?>
 								<div class="dy_pad bottom-10">
-									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-									<link itemprop="availability" href="http://schema.org/InStock" />
+									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+									<link itemprop="availability" href="https://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
 									<meta itemprop="priceCurrency" content="<?php echo esc_attr(currency_name()); ?>" />

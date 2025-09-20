@@ -1585,13 +1585,14 @@ class dy_utilities {
 		$cache_key = 'dy_update_package_date_in_db_' . (string) $the_id;
 
 		if (isset(self::$cache[$cache_key])) {
-			return self::$cache[$cache_key];
+			
+			return self::$cache[$cache_key]; // Retorna el valor cacheado sin recalcular desde cache
 		}	
 
 		// ✅ Verificamos si ya hay un transient válido (1 hora)
 		$cached_output = get_transient($cache_key);
 		if ($cached_output !== false) {
-			return $cached_output; // Retorna el valor cacheado sin recalcular
+			return $cached_output; // Retorna el valor cacheado sin recalcular desde get_transient
 		}
 
 		$today = strtotime('today');
@@ -1633,7 +1634,7 @@ class dy_utilities {
 		}
 
 		// ✅ Guardamos en transient por 1 hora (3600 segundos)
-		set_transient($cache_key, $output, HOUR_IN_SECONDS);
+		set_transient($cache_key, $output, 3600);
 
 		self::$cache[$cache_key] = $output;
 
