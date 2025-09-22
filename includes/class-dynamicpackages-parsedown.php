@@ -1378,6 +1378,7 @@ class Parsedown
                 'attributes' => array(
                     'src' => $Link['element']['attributes']['href'],
                     'alt' => $Link['element']['handler']['argument'],
+                    'class' => 'img-responsive'
                 ),
                 'autobreak' => true,
             ),
