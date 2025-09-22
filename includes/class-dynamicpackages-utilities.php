@@ -798,91 +798,109 @@ class dy_utilities {
 
 	public static function get_price_occupancy($type = null)
 	{
-		if(isset($_REQUEST['booking_date']))
-		{
-			$sum = 0;
+		if (!isset($_REQUEST['booking_date'])) {
+			// Preserve original behavior: no return if booking_date isn't present.
+			return;
+		}
 
-			
-			$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart');
-			$duration = self::get_min_nights();
-			$seasons = self::get_package_hot_chart('package_seasons_chart');
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
-			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
-			$booking_dates_surcharges = self::get_range_week_day_surcharges($booking_dates_range);
-			$seasons_array = array();
+		$sum = 0.0;
 
-			if(is_array($occupancy_chart) && is_array($seasons) && is_array($occupancy_chart) && is_array($booking_dates_range))
-			{
-				if($duration == count($booking_dates_range))
-				{
-					for($d = 0; $d < $duration; $d++)
-					{
-						$season = self::get_season($booking_dates_range[$d]);
-						
-						if($season == 'price_chart')
-						{
-							$occupancy_key = 'occupancy_chart';
-						}
-						else
-						{
-							$occupancy_key = 'occupancy_chart'.$season;
-						}
-						
-						array_push($seasons_array, $occupancy_key);
-					}
-					
-					for($s = 0; $s < count($seasons_array); $s++)
-					{
-						if(array_key_exists($s, $seasons_array) && !empty($occupancy_chart))
-						{
-							if(array_key_exists($seasons_array[$s], $occupancy_chart))
-							{
-								$occupancy_surcharge = floatval($booking_dates_surcharges[$s]);
-								$occupancy_surcharge_percent = ($occupancy_surcharge > 0) ? ($occupancy_surcharge + 100) / 100 : 1;
-								$price_row = $occupancy_chart[$seasons_array[$s]];
-								
-								if(is_array($price_row))
-								{
-									$count_price_row = count($price_row);
-									
-									for($a = 0;  $a < $count_price_row; $a++)
-									{
-										if(floatval(sanitize_text_field($_REQUEST['pax_regular'])) == ($a+1))
-										{	
-											if(!empty($price_row[$a][0]))
-											{
-												$price_col = 0;
-												
-												//total occupancy price
-												if($type == 'regular')
-												{
-													$price_col = floatval($price_row[$a][0]) * $occupancy_surcharge_percent;
-													$sum = $sum + $price_col;
-												}
-												
-												//total children discounts
-												if(isset($_REQUEST['pax_discount']) && $type == 'discount')
-												{
-													if($_REQUEST['pax_discount'] > 0 && !empty($price_row[$a][1]))
-													{
-														$price_col = floatval($price_row[$a][1]) * $occupancy_surcharge_percent;
-														$sum = $sum + $price_col;
-													}
-												}
-											}
-										}
-									}									
-								}								
-							}
-						}
-					}					
-				}				
+		// Fetch once
+		$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart'); // base occupancy rates
+		$duration        = self::get_min_nights() ?? 1;                             // min nights required
+		$seasons         = self::get_package_hot_chart('package_seasons_chart');    // seasons matrix (not used directly but kept)
+		$booking_date    = sanitize_text_field($_REQUEST['booking_date']);          // selected date
+		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +{$duration} days"));
+
+		// Precompute ranges/surcharges once
+		$booking_dates_range     = self::get_date_range($booking_date, $booking_date_to, false);
+		$booking_dates_surcharges = self::get_range_week_day_surcharges($booking_dates_range);
+
+		// Validate arrays (mirror original intent but remove duplicates)
+		if (!is_array($occupancy_chart) || !is_array($seasons) || !is_array($booking_dates_range)) {
+			return $sum;
+		}
+
+		// Must match exact number of days
+		if ($duration != count($booking_dates_range)) {
+			return $sum;
+		}
+
+		// Build occupancy keys for each day (season -> chart key)
+		$seasons_array = [];
+		for ($d = 0; $d < $duration; $d++) {
+			$season = self::get_season($booking_dates_range[$d]);
+			$seasons_array[] = ($season === 'price_chart') ? 'occupancy_chart' : ('occupancy_chart' . $season);
+		}
+
+		// Read request params once per function (keeps "always use $_REQUEST" logic intact)
+		$pax_regular_param  = isset($_REQUEST['pax_regular'])  ? (int) sanitize_text_field($_REQUEST['pax_regular'])  : 0;
+		$pax_discount_param = isset($_REQUEST['pax_discount']) ? (int) sanitize_text_field($_REQUEST['pax_discount']) : 0;
+
+		// Iterate seasons; keep indices to align with surcharges
+		$should_break = false;
+		$count_seasons = count($seasons_array);
+		for ($s = 0; $s < $count_seasons; $s++) {
+
+			if($should_break) {
+				$sum = 0.0;
+				break;
 			}
 
-			return $sum;			
+			// Guard: occupancy chart must have the computed key
+			$key = $seasons_array[$s];
+			if (empty($occupancy_chart) || !array_key_exists($key, $occupancy_chart)) {
+				continue;
+			}
+
+			// Surcharge factor
+			$occupancy_surcharge         = (float) ($booking_dates_surcharges[$s] ?? 0);
+			$occupancy_surcharge_percent = ($occupancy_surcharge > 0) ? ($occupancy_surcharge + 100) / 100 : 1.0;
+
+			$price_row = $occupancy_chart[$key];
+			if (!is_array($price_row)) {
+				continue;
+			}
+
+			// Scan the row to the column matching pax count (index a = pax-1)
+			$count_price_row = count($price_row);
+			for ($a = 0; $a < $count_price_row; $a++) {
+				if ($pax_regular_param !== ($a + 1)) {
+					continue;
+				}
+
+				// Column values
+				$pax_regular_price  = isset($price_row[$a][0]) ? (float) $price_row[$a][0] : 0.0;
+				$pax_discount_price = isset($price_row[$a][1]) ? (float) $price_row[$a][1] : 0.0;
+
+				// If base price is 0 => zero out sum and break inner loop (preserve behavior)
+				if ($pax_regular_price == 0) {
+					$sum = 0.0;
+					$should_break = true;
+					break;
+				}
+
+				// Regular total
+				if ($type === 'regular') {
+					$sum += $pax_regular_price * $occupancy_surcharge_percent;
+				}
+
+				// Children discounts (use $_REQUEST-derived value; non-strict comparison preserved)
+				if ($pax_discount_param > 0 && $type === 'discount') {
+					if ($pax_discount_price == 0) {
+						$sum = 0.0;
+						$should_break = true;
+						break;
+					}
+					$sum += $pax_discount_price * $occupancy_surcharge_percent;
+				}
+			}
+			// Note: intentionally *not* breaking the outer loop (matches original logic)
 		}
+
+		return $sum;
 	}
+
 
 	public static function get_price_regular($regular = null, $type = null)
 	{

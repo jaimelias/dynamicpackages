@@ -186,19 +186,29 @@ class Dynamicpackages_Gateways
 	public function has_gateway()
 	{
 		$output = false;
-		$gateways = $this->list_gateways_cb();
-		$pax_num = intval(dy_utilities::pax_num());
-		$max_persons = intval(package_field('package_max_persons'));
-		$auto_booking = intval(package_field('package_auto_booking'));
 
-		if(is_array($gateways) && $pax_num <= $max_persons && $auto_booking > 0)
-		{
-			if(count($gateways) > 0)
-			{
-				$GLOBALS['has_gateway'] = true;
-				$output = true;
-			}
+		$cache_key = 'dy_has_gateway_' . ((string) get_dy_id());
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$gateways = $this->list_gateways_cb();
+		$total = (float) dy_utilities::total();
+		$pax_num = (int) dy_utilities::pax_num();
+		$max_persons = (int) package_field('package_max_persons');
+		$auto_booking = (int) package_field('package_auto_booking');
+
+		if(!is_array($gateways) || count($gateways) === 0) {
+			$output = false;
 		}
+		else if($pax_num > $max_persons || $auto_booking === 0 || $total == 0.0) {
+			$output = false;
+		} else {
+			$output = true;
+		}
+
+		self::$cache[$cache_key] = $output;
 		
 		return $output;
 	}
