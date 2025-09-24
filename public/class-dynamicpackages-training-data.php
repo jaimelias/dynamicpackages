@@ -513,7 +513,7 @@ class Dynamicpackages_Export_Post_Types{
             foreach ($languages as $language) {
 
                 $lang_post_id = pll_get_post($post->ID, $language);
-                $lang_name = (class_exists('Locale')) ?  \Locale::getDisplayLanguage($language, $default_language) : $language; 
+                $lang_name = (class_exists('Locale')) ?  \Locale::getDisplayLanguage($language, 'en') : $language; 
             
                 if ($language === $default_language || $lang_post_id > 0) {
                     $package->service_links_by_language[$lang_name] = get_permalink($lang_post_id);
