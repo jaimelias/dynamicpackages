@@ -327,8 +327,8 @@ class dy_utilities {
 	{
 		//duration_label(unit number, duration value, $translate);
 		
-		$singular = array(__('Minute', 'dynamicpackages'), __('Hour', 'dynamicpackages'), __('Day', 'dynamicpackages'), __('Night', 'dynamicpackages'), __('Week', 'dynamicpackages'));
-		$plural = array(__('Minutes', 'dynamicpackages'), __('Hours', 'dynamicpackages'), __('Days', 'dynamicpackages'), __('Nights', 'dynamicpackages'), __('Weeks', 'dynamicpackages'));
+		$singular = array(__('minute', 'dynamicpackages'), __('hour', 'dynamicpackages'), __('day', 'dynamicpackages'), __('night', 'dynamicpackages'), __('week', 'dynamicpackages'));
+		$plural = array(__('minutes', 'dynamicpackages'), __('hours', 'dynamicpackages'), __('days', 'dynamicpackages'), __('nights', 'dynamicpackages'), __('weeks', 'dynamicpackages'));
 		
 		$output = '';
 		$label = $singular;

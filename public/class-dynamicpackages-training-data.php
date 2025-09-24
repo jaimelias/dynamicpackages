@@ -298,12 +298,9 @@ class Dynamicpackages_Export_Post_Types{
         $is_transport = $package_type === 'transport';
         $start_time = dy_utilities::hour();
         $starting_at = (float) dy_utilities::starting_at();
-        $price_display_format = strtolower(apply_filters('dy_price_type', null));
-        $starting_at_display = wrap_money($starting_at) . ' ' .$price_display_format . '.';
-
+        
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
         $service_id = strtoupper(substr($hash, 0, 12));
-
         $is_web_checkout_enabled = ($auto_booking === 1 && $starting_at > 0 );
         
         $package = (object) [
@@ -313,7 +310,6 @@ class Dynamicpackages_Export_Post_Types{
             'service_min_persons_per_booking' => $min_persons,
             'service_max_persons_per_booking' => $max_persons,
             'service_duration' => $duration_value_label,
-            'service_starting_at_price' => $starting_at_display,
             'service_rates' => [],
             'service_web_checkout' => ($is_web_checkout_enabled) ? 'available' : 'not available',
             'service_links_by_language' => [],
@@ -322,30 +318,6 @@ class Dynamicpackages_Export_Post_Types{
             'service_hidden_rules' => []
             //'service_description' => "\n\n" . $service_description
         ];
-
-        $fixed_price = (int) package_field('package_fixed_price');
-
-        if($starting_at <= 0) {
-            unset($package->service_starting_at_price);
-        }
-        else {
-            if($fixed_price === 1)  {
-                $package->service_hidden_rules[] = 'Always ask the client for the number of persons in order to calculate the total price.';
-                $package->service_hidden_rules[] = sprintf(
-                    'If the client has not specified the number of persons, disclose the maximum capacity (%s persons) and the starting price (%s), making it clear that the final price depends on the number of persons.',
-                    $max_persons,
-                    $starting_at_display
-                );
-                $package->service_hidden_rules[] = 'Never display prices on a per-person basis. Always calculate and present the total price in advance.';
-
-
-            } else {
-                $package->service_hidden_rules[] = 'Always show the prices per person to the client.';
-                $package->service_hidden_rules[] = 'Always label prices as per person.';
-                $package->service_hidden_rules[] = 'Never disclose the maximum capacity of passengers.';
-            }
-
-        }
 
         if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
 
@@ -836,9 +808,10 @@ class Dynamicpackages_Export_Post_Types{
 
         $curr_symbol = currency_symbol();
         $curr_name = currency_name();
+        $price_display_format = apply_filters('dy_price_type', true);
 
-        $apply = function ($v) use ($curr_symbol, $curr_name){
-            return $curr_symbol . money($v) . ' ' . $curr_name;
+        $apply = function ($v) use ($curr_symbol, $curr_name, $price_display_format){
+            return $curr_symbol . money($v) . ' ' . $curr_name . ' ' . $price_display_format;
         };
 
         foreach ($data as $key => $value) {

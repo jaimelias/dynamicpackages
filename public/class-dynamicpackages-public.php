@@ -482,7 +482,7 @@ class Dynamicpackages_Public {
 
 
 	
-	public static function price_type()
+	public static function price_type($force_per_person = false)
 	{
 		$name      = 'dy_price_type';
 		$the_id    = get_dy_id();
@@ -497,22 +497,22 @@ class Dynamicpackages_Public {
 		$duration_unit = (int) package_field('package_length_unit');
 		$output        = '';
 
-		if ( $price_type === 0 ) {
-			$output = sprintf('%s ', __('Per Person', 'dynamicpackages'));
+		if ( $price_type === 0 || $force_per_person === true) {
+			$output = sprintf('%s ', __('per person', 'dynamicpackages'));
 		}
 
 		if ( $package_type === 'multi-day' ) {
 			$output .= sprintf(
-				'%s%s',
-				__(' / ', 'dynamicpackages'),
+				'%s %s',
+				__('per', 'dynamicpackages'),
 				dy_utilities::duration_label($duration_unit, 1)
 			);
 		} elseif ( $package_type === 'rental-per-hour' ) {
-			$output .= __('Per Hour', 'dynamicpackages');
+			$output .= __('per hour', 'dynamicpackages');
 		} elseif ( $package_type === 'rental-per-day' ) {
-			$output .= __('Per Day', 'dynamicpackages');
+			$output .= __('per day', 'dynamicpackages');
 		} elseif ( $package_type === 'transport' ) {
-			$output .= __('One-way', 'dynamicpackages');
+			$output .= __('one-way', 'dynamicpackages');
 		}
 
 		// store output in cache
@@ -915,7 +915,7 @@ class Dynamicpackages_Public {
 					
 					if(intval(dy_utilities::starting_at()) > 0)
 					{
-						$excerpt .= ' '.wrap_money_full(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', null).'. ';
+						$excerpt .= ' '.wrap_money_full(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', false).'. ';
 						
 						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
 						{
@@ -1404,7 +1404,7 @@ class Dynamicpackages_Public {
 			if($starting_at > 0)
 			{
 				$description = (empty($description)) ? get_the_title() : $description;
-				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . wrap_money_full($starting_at) . ' '.apply_filters('dy_price_type', null) . '.';
+				$description = rtrim(trim($description), '.') . '. ' . __('From', 'dynamicpackages') . ' ' . wrap_money_full($starting_at) . ' '.apply_filters('dy_price_type', false) . '.';
 			}			
 		}
 		
