@@ -330,8 +330,14 @@ class Dynamicpackages_Export_Post_Types{
         }
         else {
             if($fixed_price === 1)  {
-                $package->service_hidden_rules[] = sprintf('Never show the prices per person directly to the client. Instead show the starting at price (%s) or the calculated total from {SERVICE_RATES}.', $starting_at_display);
-                $package->service_hidden_rules[] = sprintf("Always disclose the maximum capacity (%s persons) of this service together with the starting at price.", $max_persons);
+                $package->service_hidden_rules[] = 'Always ask the client for the number of persons in order to calculate the total price.';
+                $package->service_hidden_rules[] = sprintf(
+                    'If the client has not specified the number of persons, disclose the maximum capacity (%s persons) and the starting price (%s), making it clear that the final price depends on the number of persons.',
+                    $max_persons,
+                    $starting_at_display
+                );
+                $package->service_hidden_rules[] = 'Never display prices on a per-person basis. Always calculate and present the total price in advance.';
+
 
             } else {
                 $package->service_hidden_rules[] = 'Always show the prices per person to the client.';
@@ -462,32 +468,42 @@ class Dynamicpackages_Export_Post_Types{
         }
 
 
-        if($package_type === 'multi-day')
-        {
-            
-            $occupancy_chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
-            $occupancy_price_key_name = $this->occupancy_price_key_name($package_type, $duration_unit);
+    if ($package_type === 'multi-day') {
 
-            $package->service_rates['seasons_'.$occupancy_price_key_name] = [
-                'season_chart_0' => [
-                    'is_default_season' => true,
-                    'name' => '',
-                    'date_from' => '',
-                    'date_to' => '',
-                    'min_duration' => $duration_value_label .' '. $this->occupancy_duration_label($package_type, $duration_unit),
-                    'prices' => $this->parse_price_chart($occupancy_chart, 'occupancy_chart', $children_key_prefix)
-                ]
+        $occupancy_chart         = dy_utilities::get_package_hot_chart('package_occupancy_chart');
+        $seasons_chart           = dy_utilities::get_package_hot_chart('package_seasons_chart');
+        $occupancy_price_key     = $this->occupancy_price_key_name($package_type, $duration_unit);
+
+        $seasonal_rates          = $this->get_seasonal_rates(
+            $seasons_chart,
+            $children_key_prefix,
+            $package_type,
+            $duration_unit,
+            $occupancy_price_key
+        );
+        $has_seasonal_rates      = is_array($seasonal_rates) && !empty($seasonal_rates);
+
+        $min_duration_label      = $duration_value_label . ' ' . $this->occupancy_duration_label($package_type, $duration_unit);
+        $prices_key              = "prices_{$occupancy_price_key}";
+        $wrapped_prices          = $this->wrapMoneyObject(
+            $this->parse_price_chart($occupancy_chart, 'occupancy_chart', $children_key_prefix)
+        );
+
+        if ($has_seasonal_rates) {
+            $package->service_rates['fallback_rates'] = [
+                'min_duration' => $min_duration_label,
+                $prices_key    => $wrapped_prices,
             ];
-
-
-            $seasons_chart = dy_utilities::get_package_hot_chart('package_seasons_chart');
-            $rates_by_season = $this->get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit);
-
-            $package->service_rates['seasons_'.$occupancy_price_key_name] = array_merge(
-                $package->service_rates['seasons_'.$occupancy_price_key_name],
-                $rates_by_season
-            );
+        } else {
+            $package->service_rates['min_duration'] = $min_duration_label;
+            $package->service_rates[$prices_key]    = $wrapped_prices;
         }
+
+        if ($has_seasonal_rates) {
+            $package->service_rates['seasonal_rates'] = $seasonal_rates;
+        }
+    }
+
         
         $surcharges = $this->get_surcharges($package_type);
 
@@ -550,7 +566,7 @@ class Dynamicpackages_Export_Post_Types{
     }
 
 
-    public function get_seasons_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit)
+    public function get_seasonal_rates($seasons_chart, $children_key_prefix, $package_type, $duration_unit, $occupancy_price_key_name)
     {
         if(!is_array($seasons_chart)){
             return [];
@@ -562,15 +578,15 @@ class Dynamicpackages_Export_Post_Types{
         }
 
         $output = [];
+        $count = 0;
 
         for($x = 0; $x < count($seasons_chart['seasons_chart']); $x++)
         {
-
             $this_season = $seasons_chart['seasons_chart'][$x];
-
             $season_id = $this_season[4];
 
             $season = [
+                'season_id' => $season_id,
                 'is_default_season' => false,
                 'name' => $this_season[0],
                 'date_from' => $this_season[1],
@@ -579,8 +595,15 @@ class Dynamicpackages_Export_Post_Types{
             ];
 
             $chart = dy_utilities::get_package_hot_chart('package_occupancy_chart');
-            $season['prices'] = $this->parse_price_chart($chart, 'occupancy_chart'.$season_id, $children_key_prefix);
-            $output[$season_id] = $season;
+            $season_prices = $this->parse_price_chart($chart, 'occupancy_chart'.$season_id, $children_key_prefix);
+
+            if(!is_array($season_prices) || count($season_prices) === 0) continue;
+
+            $season["prices_{$occupancy_price_key_name}"] = $this->wrapMoneyObject($season_prices);
+
+            $season_idx = 'season_' . (string) ($count + 1);
+            $output[$season_idx] = $season;
+            $count++;
         }
         
         return $output;
