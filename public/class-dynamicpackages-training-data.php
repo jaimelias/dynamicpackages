@@ -320,7 +320,7 @@ class Dynamicpackages_Export_Post_Types{
         ];
 
         if(!empty($post->post_excerpt)) {
-            $package['service_summary'] = $post->post_excerpt;
+            $package->service_summary = $post->post_excerpt;
         }
         
 
