@@ -315,9 +315,14 @@ class Dynamicpackages_Export_Post_Types{
             'service_links_by_language' => [],
             'service_name_translations' => [],
             'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),
-            'service_hidden_rules' => []
+            'service_hidden_rules' => [],
             //'service_description' => "\n\n" . $service_description
         ];
+
+        if(!empty($post->post_excerpt)) {
+            $package['service_summary'] = $post->post_excerpt;
+        }
+        
 
         if(in_array($package_type, ['multi-day', 'rental-per-day', 'rental-per-hour'])) {
 
