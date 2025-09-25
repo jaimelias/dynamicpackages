@@ -16,8 +16,7 @@ class pay_later{
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('wp_headers', array(&$this, 'send_data'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 3);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 2);	
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
 	}
 	
 	public function init()
@@ -36,6 +35,8 @@ class pay_later{
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 		$this->current_language = current_language();
 		$this->languages = get_languages();
+		$this->icon = '😃';
+		$this->gateway_coupon = '';
 
 		for($x = 0; $x < count($this->languages); $x++)
 		{
@@ -360,19 +361,7 @@ class pay_later{
 		
 		<?php
 	}	
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button">😃 '.esc_html($this->name).'</button>';
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
-	
+
 	public function add_gateway($array)
 	{
 		
@@ -395,7 +384,9 @@ class pay_later{
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+'branding' => $this->branding(),
+'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

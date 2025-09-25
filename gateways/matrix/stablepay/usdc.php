@@ -17,8 +17,8 @@ class usdc {
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 		add_filter('wp_headers', array(&$this, 'send_data'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 3);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 2);
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
+
 	}
 
 
@@ -37,6 +37,8 @@ class usdc {
 		$this->color = '#fff';
 		$this->background_color = '#2775CA';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
+		$this->icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
+		$this->gateway_coupon = 'USDC';
 	}
 
 	public function get_all_networks()
@@ -380,21 +382,7 @@ class usdc {
 		
 		<?php
 	}	
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
 
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" data-networks="'.esc_attr(json_encode($this->enabled_networks)).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button">'.$icon.' '.esc_html($this->name).'</button>';
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
-	
 	public function add_gateway($array)
 	{
 		
@@ -425,7 +413,9 @@ class usdc {
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+'branding' => $this->branding(),
+'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

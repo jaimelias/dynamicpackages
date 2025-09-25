@@ -17,8 +17,7 @@ class paguelo_facil_on{
 		add_action('init', array(&$this, 'checkout'), 50);
 		add_filter('dy_request_the_content', array(&$this, 'the_content'));
 		add_filter('dy_request_the_title', array(&$this, 'the_title'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 2);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 1);
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 1);
 		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));	
 	}
 	
@@ -31,8 +30,8 @@ class paguelo_facil_on{
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
-		$this->methods_o = __('Mastercard or Visa', 'dynamicpackages');
 		$this->brands = ['Mastercard', 'Visa'];
+		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
 		$this->cclw = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
 		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
@@ -47,6 +46,8 @@ class paguelo_facil_on{
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 		$this->website_name = get_bloginfo('name');
+		$this->icon = '<span class="dashicons dashicons-cart"></span>';
+		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
 	
 	public function checkout()
@@ -632,18 +633,7 @@ class paguelo_facil_on{
 		
 		<?php
 	}
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';			
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
+
 	public function add_gateway($array)
 	{
 		
@@ -674,7 +664,9 @@ class paguelo_facil_on{
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+'branding' => $this->branding(),
+'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		
@@ -841,7 +833,7 @@ class paguelo_facil_on{
 	public function branding()
 	{
 		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
-		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
+		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->short_name).'</p>';
 		return $output;
 	}
 	

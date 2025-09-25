@@ -16,8 +16,7 @@ class cuanto{
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('wp_headers', array(&$this, 'send_data'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 3);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 2);	
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
 	}
 	
 	public function init()
@@ -25,8 +24,8 @@ class cuanto{
 		$this->order_status = 'pending';
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = 'Cuanto.app';
-		$this->methods_o = __('Mastercard or Visa', 'dynamicpackages');
 		$this->brands = ['Mastercard', 'Visa'];
+		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
 		$this->type = 'card-off-site';
 		$this->domain = 'cuanto.app';		
 		$this->username = get_option($this->id);
@@ -35,6 +34,8 @@ class cuanto{
 		$this->color = '#000';
 		$this->background_color = '#8CD0C5';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
+		$this->icon = '<span class="dashicons dashicons-cart"></span>';
+		$this->gateway_coupon = 'CUANTO';
 	}
 
 	public function send_data()
@@ -307,19 +308,7 @@ class cuanto{
 		
 		<?php
 	}	
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
-	
+
 	public function add_gateway($array)
 	{
 		
@@ -351,7 +340,9 @@ class cuanto{
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+				'branding' => $this->branding(),
+				'icon' => $this->icon,
+				'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		
@@ -362,7 +353,7 @@ class cuanto{
 	public function branding()
 	{
 		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
-		$output .= '<p class="large text-muted">'.esc_html(sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->name)).'</p>';
+		$output .= '<p class="large text-muted">'.esc_html(sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->name)).'</p>';
 		return $output;
 	}
 	
@@ -382,7 +373,7 @@ class cuanto{
 		
 		$message .= '<p class="large">'.esc_html(__('To complete the booking please click on the following link. We are also going to send you this same information by email.', 'dynamicpackages')).'</p>';
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';		
-		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><span class="dashicons dashicons-cart"></span> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->methods_o)).'</a></p>';
+		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><span class="dashicons dashicons-cart"></span> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->cards_accepted)).'</a></p>';
 
 		return $message;  
 	}	

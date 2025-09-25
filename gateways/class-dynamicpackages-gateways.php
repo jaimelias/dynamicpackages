@@ -56,7 +56,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
 		add_action('admin_init', array(&$this, 'load_gateways'));
 		add_action('init', array(&$this, 'load_gateways'));
-		add_filter('list_gateways_as_array', array(&$this, 'filter_coupon_gateway'), 9);
+		add_filter('dy_list_gateways', array(&$this, 'list_gateways'), 99);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);			
 		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
@@ -117,22 +117,32 @@ class Dynamicpackages_Gateways
 
 	public function gateway_buttons()
 	{
-		return $this->gateway_buttons_cb();
-	}	
-	public function gateway_buttons_cb()
-	{
-		return apply_filters('gateway_buttons', '');
+		$buttons  = [];
+		$gateways = (array) apply_filters('dy_list_gateways', array());
+
+		foreach ($gateways as $gateway_id => $obj) {
+			$buttons[] = sprintf(
+				'<button data-type="%s" data-id="%s" data-branding="%s" style="color: %s; background-color: %s;" class="pure-button bottom-20 rounded" type="button">%s %s</button>',
+				esc_attr($obj['type']),
+				esc_attr($gateway_id),
+				esc_attr($obj['branding']),
+				esc_html($obj['color']),
+				esc_html($obj['background_color']),
+				$obj['icon'],
+				esc_html(implode_last($obj['brands'], __('or', 'dynamicpackages')))
+			);
+		}
+
+		return implode(' ', $buttons);
 	}
 		
-	public function list_gateways_cb()
+	public function list_gateways($gateways)
 	{
-		$cache_key = 'dy_list_gateways_cb';
+		$cache_key = 'dy_list_gateways';
 
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
-
-		$gateways = apply_filters('list_gateways_as_array', array());
 		
 		if(dy_validators::validate_coupon())
 		{
@@ -141,20 +151,13 @@ class Dynamicpackages_Gateways
 
 			if(!empty($coupon_code))
 			{
-				$coupon_gateways = array_filter($gateways, function ($gateway) use ($coupon_code) {
-					
-					if(!empty($gateway))
-					{
-						return strcasecmp($gateway, $coupon_code) === 0;
-					}
+				$coupon_gateways = array_filter($gateways, function ($obj) use ($coupon_code) {
+					return strcasecmp($obj['gateway_coupon'], $coupon_code) === 0;
 				});
 
-				if(is_array($coupon_gateways))
+				if(is_array($coupon_gateways) && count($coupon_gateways) === 1)
 				{
-					if(count($coupon_gateways) === 1)
-					{
-						$gateway = $coupon_gateways;
-					}
+					$gateways = $coupon_gateways;
 				}
 			}
 		}
@@ -179,10 +182,7 @@ class Dynamicpackages_Gateways
 			return $arr[0];
 		}
 	
-		$lastSeparator = __('or', 'dynamicpackages');
-		$lastItem = array_pop($arr);
-	
-		return implode(', ', $arr) . ' ' . $lastSeparator . ' ' . $lastItem;
+		return implode_last($arr, __('or', 'dynamicpackages'));
 	}
 	
 	
@@ -196,7 +196,7 @@ class Dynamicpackages_Gateways
             return self::$cache[$cache_key];
         }
 
-		$gateways = $this->list_gateways_cb();
+		$gateways = (array) apply_filters('dy_list_gateways', array());
 		$total = (float) dy_utilities::total();
 		$pax_num = (int) dy_utilities::pax_num();
 		$max_persons = (int) package_field('package_max_persons');
@@ -218,7 +218,7 @@ class Dynamicpackages_Gateways
 
 	public function get_brands_as_array() {
 		$brands = [];
-		$gateways = $this->list_gateways_cb();
+		$gateways = (array) apply_filters('dy_list_gateways', array());
 
 		foreach($gateways as $gateway_id => $obj) {
 			for($x = 0; $x < count($obj['brands']); $x++)
@@ -267,37 +267,6 @@ class Dynamicpackages_Gateways
 		return $output;
 	}
 
-	public function filter_coupon_gateway($gateways)
-	{
-		if(is_singular('packages') && is_array($gateways))
-		{	
-			if(is_booking_page() && dy_validators::validate_coupon() && count($gateways) > 0)
-			{
-				$coupon_params = dy_utilities::get_active_coupon_params();
-				$coupon_code = $coupon_params->code;
-				
-				if(!empty($coupon_code))
-				{
-					$coupon_gateways = array_filter($gateways, function ($gateway) use ($coupon_code) {
-						if(!empty($gateway))
-						{
-							return strcasecmp($gateway, $coupon_code) === 0;
-						}
-					});
-
-					if(is_array($coupon_gateways))
-					{
-						if(count($coupon_gateways) === 1)
-						{
-							return $coupon_gateways;
-						}
-					}
-				}
-			}
-		}
-		return $gateways;
-	}
-	
 	public function checkout_area()
 	{
 		$output = '';

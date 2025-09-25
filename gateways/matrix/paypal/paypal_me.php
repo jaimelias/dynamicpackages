@@ -17,8 +17,7 @@ class paypal_me {
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 		add_filter('wp_headers', array(&$this, 'send_data'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 3);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 2);	
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
 	}
 	
 	public function init()
@@ -37,6 +36,8 @@ class paypal_me {
 		$this->color = '#000';
 		$this->background_color = '#FFD700';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
+		$this->icon = '<span class="dashicons dashicons-cart"></span>';
+		$this->gateway_coupon = 'PAYPAL';
 
 		//service fee
 		$this->service_fee = get_option($this->id . '_service_fee');
@@ -344,18 +345,6 @@ class paypal_me {
 		</form>
 		
 		<?php
-	}	
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button">'.esc_html($this->name).'</button>';
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
 	}
 	
 	public function add_gateway($array)
@@ -389,7 +378,9 @@ class paypal_me {
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+'branding' => $this->branding(),
+'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

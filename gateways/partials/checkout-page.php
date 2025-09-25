@@ -161,7 +161,7 @@
                         <td colspan="<?php echo $colspan; ?>">
                             <p class="small text-left">
                                 <strong><?php echo esc_html__('Included', 'dynamicpackages'); ?>:</strong>
-                                <?php echo esc_html(dy_utilities::implode_taxo_names('package_included')); ?>
+                                <?php echo esc_html(dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'))); ?>
                             </p>
                         </td>
                     </tr>
@@ -169,7 +169,7 @@
                         <td colspan="<?php echo $colspan; ?>">
                             <p class="small text-left">
                                 <strong><?php echo esc_html__('Not Included', 'dynamicpackages'); ?>:</strong>
-                                <?php echo esc_html(dy_utilities::implode_taxo_names('package_not_included')); ?>
+                                <?php echo esc_html(dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'))); ?>
                             </p>
                         </td>
                     </tr>

@@ -12,8 +12,7 @@ class estimate_request{
 		$this->plugin_id = $plugin_id;
 		
 		add_action('init', array(&$this, 'init'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 1);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 10);
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 10);
 	}
 
 	public function init()
@@ -27,6 +26,8 @@ class estimate_request{
 		$this->color = '#444';
 		$this->background_color = '#ccc';
 		$this->only_estimate = __('Get a quote in seconds! Quick, easy, and hassle-free. Just ask, and your estimate will be in your inbox in no time.', 'dynamicpackages');
+		$this->icon = '<span class="dashicons dashicons-email"></span>';
+		$this->gateway_coupon = '';
 	}
 	
 	
@@ -92,19 +93,6 @@ class estimate_request{
 		return $output;
 	}
 	
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()) && !dy_validators::validate_coupon())
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><span class="dashicons dashicons-email"></span> '.esc_html($this->name_button).'</button>';
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
-	
 	public function add_gateway($array)
 	{
 		
@@ -127,7 +115,9 @@ class estimate_request{
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-				'branding' => $this->branding()
+				'branding' => $this->branding(),
+			'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

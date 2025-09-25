@@ -13,8 +13,7 @@ class stripe_gateway {
         add_action('admin_menu', array($this, 'add_settings_page'), 100);
 
         // Render / flow integration (follow patterns in cuanto.php & yappy_direct.php)
-        add_filter('gateway_buttons', array($this, 'button'), 3);
-        add_filter('list_gateways_as_array', array($this, 'add_gateway'), 3);
+        add_filter('dy_list_gateways', array($this, 'add_gateway'), 3);
 
         // For content replacement or redirects if needed:
         add_filter('dy_request_the_content', array($this, 'filter_content'), 100);
@@ -35,6 +34,7 @@ class stripe_gateway {
         $this->id             = 'stripe_gateway';
         $this->name           = 'Stripe';
         $this->brands = ['Visa', 'Mastercard'];
+        $this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
         // Allow admin to choose: 'card-on-site' (Elements) or 'card-off-site' (Checkout)
         $this->type           = get_option($this->id . '_type') ?: 'card-on-site';
 
@@ -53,6 +53,9 @@ class stripe_gateway {
 
         $this->pubkey = ($this->mode === 'live') ? $this->pubkey_live : $this->pubkey_test;
         $this->seckey = ($this->mode === 'live') ? $this->seckey_live : $this->seckey_test;
+        $this->plugin_dir_url = plugin_dir_url(__DIR__);
+        $this->icon = '<span class="dashicons dashicons-cart"></span>';
+        $this->gateway_coupon = 'STRIPE';
     }
 
     /* ---------- Admin settings ---------- */
@@ -154,16 +157,12 @@ class stripe_gateway {
                 'color' => $this->color,
                 'background_color' => $this->background_color,
                 'brands' => $this->brands,
-'branding' => $this->branding()
+                'branding' => $this->branding(),
+                'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
         }
         return $array;
-    }
-
-    public function button($buttons) {
-        if (!$this->show()) return $buttons;
-        $buttons .= '<button type="button" class="button button-primary dy-gateway" data-gateway="'.esc_attr($this->id).'">'.esc_html__('Pay with Stripe','dynamicpackages').'</button>';
-        return $buttons;
     }
 
     /* ---------- Render / Flow ---------- */
@@ -308,7 +307,7 @@ class stripe_gateway {
 	public function branding()
 	{
 		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
-		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->methods_o, $this->short_name).'</p>';
+		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->name).'</p>';
 		return $output;
 	}
 }

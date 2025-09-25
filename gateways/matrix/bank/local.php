@@ -17,8 +17,7 @@ class bank_transfer{
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 102);
 		add_filter('wp_headers', array(&$this, 'send_data'));
-		add_filter('gateway_buttons', array(&$this, 'button'), 4);
-		add_filter('list_gateways_as_array', array(&$this, 'add_gateway'), 4);
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 4);
 	}
 	
 
@@ -37,6 +36,8 @@ class bank_transfer{
 		$this->show = get_option($this->id . '_show');
 		$this->color = '#fff';
 		$this->background_color = '#262626';
+		$this->icon = '<span class="dashicons dashicons-money-alt"></span>';
+		$this->gateway_coupon = $this->bank;
 	}	
 
 	public function send_data()
@@ -408,18 +409,7 @@ class bank_transfer{
 		
 		<?php
 	}
-	public function button($output)
-	{
-		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
-		{
-			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 rounded" type="button"><span class="dashicons dashicons-money-alt"></span> '.esc_html($this->name).'</button>';			
-		}
-		return $output;
-	}
-	public function list_gateways_cb()
-	{
-		return apply_filters('list_gateways_as_array', array());
-	}
+
 	public function add_gateway($array)
 	{
 		$add = false;
@@ -451,7 +441,9 @@ class bank_transfer{
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding()
+'branding' => $this->branding(),
+'icon' => $this->icon,
+'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		
