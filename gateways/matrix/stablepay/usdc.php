@@ -411,11 +411,12 @@ class usdc {
                 'name' => $this->name,
                 'type' => $this->type,
                 'color' => $this->color,
+				'networks' => $this->enabled_networks,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding(),
-'icon' => $this->icon,
-'gateway_coupon' => $this->gateway_coupon
+				'branding' => $this->branding(),
+				'icon' => $this->icon,
+				'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

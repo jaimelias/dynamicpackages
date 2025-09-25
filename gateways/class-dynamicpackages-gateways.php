@@ -121,8 +121,13 @@ class Dynamicpackages_Gateways
 		$gateways = (array) apply_filters('dy_list_gateways', array());
 
 		foreach ($gateways as $gateway_id => $obj) {
+
+			$networks = (array_key_exists('networks', $obj)) ?  json_encode($obj['networks']) : '';
+			$networks_atr = (empty($networks)) ? '' : sprintf('data-networks="%s"', esc_attr($networks));
+
 			$buttons[] = sprintf(
-				'<button data-type="%s" data-id="%s" data-branding="%s" style="color: %s; background-color: %s;" class="pure-button bottom-20 rounded" type="button">%s %s</button>',
+				'<button %s data-type="%s" data-id="%s" data-branding="%s" style="color: %s; background-color: %s;" class="pure-button bottom-20 rounded" type="button">%s %s</button>',
+				$networks_atr,
 				esc_attr($obj['type']),
 				esc_attr($gateway_id),
 				esc_attr($obj['branding']),
