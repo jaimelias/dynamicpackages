@@ -26,6 +26,7 @@ class pay_later{
 		$this->site_name = get_bloginfo('name');
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->name = __('Buy Now & Pay Later', 'dynamicpackages');
+		$this->brands = [$this->name];
 		$this->type = 'financial';
 		$this->user_name = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
@@ -361,7 +362,7 @@ class pay_later{
 	}	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
+		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" class="pure-button bottom-20 rounded" type="button">😃 '.esc_html($this->name).'</button>';
 		}
@@ -387,7 +388,15 @@ class pay_later{
 		
 		if($add)
 		{
-			$array[] = $this->name;
+			$array[$this->id] = array(
+                'id' => $this->id,
+                'name' => $this->name,
+                'type' => $this->type,
+                'color' => $this->color,
+                'background_color' => $this->background_color,
+				'brands' => $this->brands,
+'branding' => $this->branding()
+            );
 		}
 		
 		return $array;	

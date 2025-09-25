@@ -26,6 +26,7 @@ class usdt {
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'usdt';
 		$this->name = 'Tether (USDT)';
+		$this->brands = [$this->name];
 		$this->type = 'crypto';
 		$this->all_networks = $this->get_all_networks();
 		$this->enabled_networks = $this->get_enabled_networks();
@@ -380,7 +381,7 @@ class usdt {
 	}	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
+		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
 		{
 			$icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
 
@@ -416,7 +417,15 @@ class usdt {
 		
 		if($add)
 		{
-			$array[] = $this->name;
+			$array[$this->id] = array(
+                'id' => $this->id,
+                'name' => $this->name,
+                'type' => $this->type,
+                'color' => $this->color,
+                'background_color' => $this->background_color,
+				'brands' => $this->brands,
+'branding' => $this->branding()
+            );
 		}
 		
 		return $array;	

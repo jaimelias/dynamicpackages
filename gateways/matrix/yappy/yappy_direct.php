@@ -26,6 +26,7 @@ class yappy_direct {
 	{
 		$this->order_status = 'pending';
 		$this->name = 'Yappy';
+		$this->brands = [$this->name];
 		$this->id = 'yappy_direct';		
 		$this->gateway_short_name = 'yappy';
 		$this->type = 'alt';	
@@ -382,7 +383,7 @@ class yappy_direct {
 	}
 	public function button($output)
 	{
-		if($this->show() && in_array($this->name, $this->list_gateways_cb()))
+		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';"  class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><img alt="yappy" width="21" height="12" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" /> '.esc_html($this->name).'</button>';			
 		}
@@ -416,7 +417,15 @@ class yappy_direct {
 		
 		if($add)
 		{
-			$array[] = $this->name;
+			$array[$this->id] = array(
+                'id' => $this->id,
+                'name' => $this->name,
+                'type' => $this->type,
+                'color' => $this->color,
+                'background_color' => $this->background_color,
+				'brands' => $this->brands,
+'branding' => $this->branding()
+            );
 		}
 		
 		return $array;	

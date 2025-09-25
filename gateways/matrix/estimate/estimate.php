@@ -21,6 +21,7 @@ class estimate_request{
 		$this->valid_recaptcha = validate_recaptcha();
 		$this->id = 'estimate_request';
 		$this->name = __('request an estimate', 'dynamicpackages');
+		$this->brands = [$this->name];
 		$this->type = 'alt';
 		$this->name_button = __('Get estimate', 'dynamicpackages');
 		$this->color = '#444';
@@ -93,7 +94,7 @@ class estimate_request{
 	
 	public function button($output)
 	{
-		if($this->show() && in_array($this->name, $this->list_gateways_cb()) && !dy_validators::validate_coupon())
+		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()) && !dy_validators::validate_coupon())
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_'.esc_html($this->id).' rounded" type="button"><span class="dashicons dashicons-email"></span> '.esc_html($this->name_button).'</button>';
 		}
@@ -119,7 +120,15 @@ class estimate_request{
 		
 		if($add)
 		{
-			$array[] = $this->name;
+			$array[$this->id] = array(
+                'id' => $this->id,
+                'name' => $this->name,
+                'type' => $this->type,
+                'color' => $this->color,
+                'background_color' => $this->background_color,
+				'brands' => $this->brands,
+				'branding' => $this->branding()
+            );
 		}
 		
 		return $array;	

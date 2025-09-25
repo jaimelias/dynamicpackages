@@ -32,7 +32,7 @@ class paguelo_facil_on{
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
 		$this->methods_o = __('Mastercard or Visa', 'dynamicpackages');
-		$this->methods_arr = ['Mastercard', 'Visa'];
+		$this->brands = ['Mastercard', 'Visa'];
 		$this->cclw = get_option($this->id);
 		$this->show = get_option($this->id . '_show');
 		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
@@ -634,7 +634,7 @@ class paguelo_facil_on{
 	}
 	public function button($output)
 	{
-		if($this->show() && array_intersect($this->list_gateways_cb(), $this->methods_arr))
+		if($this->show() && array_key_exists($this->id, $this->list_gateways_cb()))
 		{
 			$output .= ' <button data-type="'.esc_attr($this->type).'"  data-id="'.esc_attr($this->id).'" data-branding="'.esc_attr($this->branding()).'" style="color: '.esc_html($this->color).'; background-color: '.esc_html($this->background_color).';" class="pure-button bottom-20 with_cc  rounded" type="button"><span class="dashicons dashicons-cart"></span> '.esc_html($this->methods_o).'</button>';			
 		}
@@ -667,7 +667,15 @@ class paguelo_facil_on{
 		
 		if($add)
 		{
-			array_push($array, ...$this->methods_arr);
+            $array[$this->id] = array(
+                'id' => $this->id,
+                'name' => $this->name,
+                'type' => $this->type,
+                'color' => $this->color,
+                'background_color' => $this->background_color,
+				'brands' => $this->brands,
+'branding' => $this->branding()
+            );
 		}
 		
 		return $array;	

@@ -18,6 +18,7 @@ class Dynamicpackages_Gateways
 	
 	public function load_gateways()
 	{
+		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe.php';
 		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
@@ -28,6 +29,7 @@ class Dynamicpackages_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
 		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdc.php';
 		require_once plugin_dir_path(__FILE__).'matrix/pay-later/pay-later.php';
+		
 	}	
 	
 	public function load_classes()
@@ -38,6 +40,7 @@ class Dynamicpackages_Gateways
 
 		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
+		$this->stripe_gateway = new stripe_gateway($this->plugin_id);
 		$this->cuanto = new cuanto($this->plugin_id);
 		$this->paypal_me = new paypal_me($this->plugin_id);
 		$this->yappy_direct = new yappy_direct($this->plugin_id);
@@ -163,7 +166,7 @@ class Dynamicpackages_Gateways
 	
 	public function join_gateways()
 	{
-		$arr = $this->list_gateways_cb();
+		$arr = $this->get_brands_as_array();
 	
 		// Ensure $arr is an array before applying array_unique
 		if (!is_array($arr) || empty($arr)) {
@@ -213,9 +216,27 @@ class Dynamicpackages_Gateways
 		return $output;
 	}
 
+	public function get_brands_as_array() {
+		$brands = [];
+		$gateways = $this->list_gateways_cb();
+
+		foreach($gateways as $gateway_id => $obj) {
+			for($x = 0; $x < count($obj['brands']); $x++)
+			{
+				if(in_array($obj['brands'][$x], $brands)) continue;
+				$brands[] = $obj['brands'][$x];
+			}
+		}
+
+		return $brands;
+	}
+
 	public function choose_gateway()
 	{
-		$payment_gateways = array_diff($this->list_gateways_cb(), [$this->estimate->name]);
+		
+		$brands = $this->get_brands_as_array();
+
+		$payment_gateways = array_diff($brands, [$this->estimate->name]);
 
 		if (empty($payment_gateways)) {
 			return '🤖 ' . $this->estimate->only_estimate . ' ⬇️';
