@@ -1,0 +1,12 @@
+# wp-content/plugins/my-plugin/vendor/.htaccess
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>
+
+# Optional: still allow the autoloader to run when included by PHP, but block direct hits
+<Files "autoload.php">
+  Require all denied
+</Files>
