@@ -177,10 +177,9 @@ class yappy_direct {
 	
 	public function message($message)
 	{
-		$payment_amount = money(dy_utilities::payment_amount());
 		$destination = (!empty($this->business)) ? '@'.strtoupper($this->business) : $this->number;
 		$destination = '<strong>'.esc_html($destination).'</strong>';
-		$amount = wrap_money_full($payment_amount);
+		$amount = wrap_money_full(dy_utilities::payment_amount());
 		$label = (dy_validators::has_deposit()) ? esc_html(__('deposit', 'dynamicpackages')) : esc_html(__('payment', 'dynamicpackages'));
 		
 		$text = (!empty($this->business)) 
