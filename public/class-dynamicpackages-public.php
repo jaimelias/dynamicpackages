@@ -796,7 +796,8 @@ class Dynamicpackages_Public {
 		$output = '';
 
         if (isset(self::$cache[$cache_key])) {
-            return self::$cache[$cache_key];
+            echo self::$cache[$cache_key];
+			return;
         }
 
 		global $post;
@@ -807,7 +808,7 @@ class Dynamicpackages_Public {
 			$duration_unit = package_field('package_length_unit');
 			$header_name = 'package_child_title_'.$this->current_language;
 			$header_title = package_field($header_name, $post->ID);
-			$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : $header_title;
+			$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : sprintf(__('%s available %s', 'dynamicpackages'), $this->count_child(), $header_title);
 			
 			$args = array(
 				'post_parent' => $post->ID,
@@ -883,7 +884,7 @@ class Dynamicpackages_Public {
 
 						}
 
-						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100"><thead class="text-center"><tr><th colspan="3"><strong>'.esc_html($this->count_child()).'</strong> '.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100"><thead class="text-center"><tr><th colspan="3">'.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
 					}		
 				}
 			}			
@@ -893,6 +894,7 @@ class Dynamicpackages_Public {
         self::$cache[$cache_key] = $output;
 
 		echo $output;
+		return;
 	}
 	
 	public function modify_excerpt($excerpt)

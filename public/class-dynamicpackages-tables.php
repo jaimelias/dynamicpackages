@@ -20,7 +20,7 @@ class Dynamicpackages_Tables{
 	public function init()
 	{
 		add_action('wp', array(&$this, 'args'));
-		add_action('dy_price_table', array(&$this, 'price_table'), 100);
+		add_action('dy_price_table', array(&$this, 'price_table'));
 	}
 
 	public function args()
@@ -35,12 +35,12 @@ class Dynamicpackages_Tables{
 
 		$this->price_chart = dy_utilities::get_price_chart($the_id);
 		$this->occupancy_chart = dy_utilities::get_occupancy_chart($the_id);
-		$this->show_pricing = intval(package_field('package_show_pricing'));
-		$this->min_persons = intval(package_field( 'package_min_persons' ));
-		$this->max_persons = intval(package_field('package_max_persons'));
-		$this->duration = intval(package_field('package_duration'));
-		$this->package_type = dy_utilities::get_package_type();
-		$this->price_type = intval(package_field('package_fixed_price'));
+		$this->show_pricing = (int) package_field('package_show_pricing');
+		$this->min_persons = (int) package_field( 'package_min_persons' );
+		$this->max_persons = (int) package_field('package_max_persons');
+		$this->duration = (int) package_field('package_duration');
+		$this->package_type = (string) dy_utilities::get_package_type();
+		$this->price_type = (int) package_field('package_fixed_price');
 		$this->has_children = dy_validators::has_children();
 	}
 

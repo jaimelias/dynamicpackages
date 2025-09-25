@@ -27,6 +27,7 @@
 	
 	<?php  echo  $partial_content ?>
 	
+	<?php do_action('dy_children_package'); ?>
 	<?php do_action('dy_similar_packages_link'); ?>
 
 	<hr />
