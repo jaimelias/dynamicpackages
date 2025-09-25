@@ -58,7 +58,7 @@ class Dynamicpackages_Public {
 		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
 		add_action('dy_children_package', array(&$this, 'children_package'));
 		add_action('dy_similar_packages_link', array(&$this, 'similar_packages_link'));
-		add_action('dy_get_taxonomies_list', array(&$this, 'get_taxonomies_list'));
+		add_action('dy_get_terms_conditions_list', array(&$this, 'get_terms_conditions_list'));
 		add_action('dy_get_included_list', array(&$this, 'get_included_list'));
 		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
 		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
@@ -558,10 +558,10 @@ class Dynamicpackages_Public {
 	}
 
 
-	public function get_taxonomies_list()
+	public function get_terms_conditions_list()
 	{
 		$output = '';
-		$cache_key = 'dy_get_taxonomies_list';
+		$cache_key = 'dy_get_terms_conditions_list';
 
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];

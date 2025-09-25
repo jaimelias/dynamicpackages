@@ -1221,13 +1221,11 @@ class dy_utilities {
 	public static function get_taxonomies($term_name)
 	{
 		global $post;
-		$terms_conditions = array();
+		
 
-		if(!isset($post))
-		{
-			return $terms_conditions;
-		}
+		if(!isset($post)) return [];
 
+		$output = array();
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
 
         if (isset(self::$cache[$cache_key])) {
@@ -1251,43 +1249,52 @@ class dy_utilities {
 			{
 				for($x = 0; $x < count($terms); $x++)
 				{
-					array_push($terms_conditions, $terms[$x]);
+					array_push($output, $terms[$x]);
 				}			
 			}		
 		}
 
         //store output in $cache
-        self::$cache[$cache_key] = $terms_conditions;
+        self::$cache[$cache_key] = $output;
 
-		return $terms_conditions;
+		return $output;
 	}
 
-	public static function get_taxo_names($tax)
+	public static function get_taxo_names($term_name)
 	{
 		global $post;
+		$output = [];
 
-		if(isset($post))
+		if(!isset($post)) return [];
+
+		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		$parent_terms = array();
+		$current_terms = get_the_terms($post->ID, $term_name);
+		$current_terms = (is_array($current_terms)) ? $current_terms : array();
+
+		if(property_exists($post, 'post_parent'))
 		{
-			$termid = $post->ID;
-			$output = array();
-			
-			if(property_exists($post, 'post_parent') && !has_term('', $tax, $termid))
-			{
-				$termid = $post->post_parent;
-			}
-			
-			$terms = get_the_terms($termid, $tax);	
-
-			if($terms)
-			{					
-				for($x = 0; $x < count($terms); $x++)
-				{
-					array_push($output, $terms[$x]->name);
-				}
-			}	
+			$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
+			$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
 		}
-	
+		
+		$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
 
+		if($terms)
+		{
+			for($x = 0; $x < count($terms); $x++)
+			{
+				array_push($output, $terms[$x]->name);
+			}
+		}	
+		
+		self::$cache[$cache_key] = $output;
+	
 		return $output;
 	}
 	
