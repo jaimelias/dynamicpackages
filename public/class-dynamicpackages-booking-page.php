@@ -98,6 +98,7 @@ class Dynamicpackages_Booking_Page {
 			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'))),
 			'TERMS_CONDITIONS' => $this->accept(),
 			'package_url' => esc_url(get_permalink()),
+			'booking_url' => esc_url(current_url_full()),
 			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),

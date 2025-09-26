@@ -173,6 +173,7 @@ class stripe_gateway {
         foreach($_POST as $key => $val) {
 
             if($key === 'g-recaptcha-response') continue;
+            if($key === 'hash') continue;
 
             $metadata[$key] = $secure_post($key);
         }
@@ -183,26 +184,56 @@ class stripe_gateway {
 
         $customer = \Stripe\Customer::create([
             'email' => $secure_post('email'),
-            'name'  => $secure_post('first_name') . ' ' . $secure_post('lastname')
+            'name'  => trim($secure_post('first_name') . ' ' . $secure_post('lastname'))
         ]);
+
+        $title = get_the_title();
+        $booking_url = html_entity_decode($secure_post('booking_url'));
+        $description = (string) apply_filters('dy_description', '');
+        $package_id = (int) $secure_post('dy_id');
+        $payment_type = (int) package_field('package_payment', $package_id);
+        $deposit_amount = ($payment_type === 0) ? 0 : (float) package_field('package_deposit', $package_id);
+        $add_ons = (array) apply_filters('dy_included_add_ons_arr', []);
+
+        if($payment_type === 1 && $deposit_amount > 0) {
+            $title = sprintf(__('%s deposit : %s', 'dynamicpackages'), "{$deposit_amount}%", $title);
+        }
+
+
+        if(is_array($add_ons) && count($add_ons) > 0) {
+
+            $description .= sprintf(__("👉 %s: "), __('Add-ons', 'dynamicpackages'));
+            $add_ons_arr = [];
+
+
+			foreach ($add_ons as $add_on_item) {
+
+                $add_ons_arr [] = sprintf(
+                    " ✅ %s", 
+                    esc_html($add_on_item['name'])
+                );
+			}
+
+            $description .= implode_last($add_ons_arr);
+        }
 
         $session = \Stripe\Checkout\Session::create([
             'mode'      => 'payment',
             'customer'  => $customer->id,
-            'line_items'=> [[
-                'price_data' => [
-                'currency'     => $currency, // e.g. 'usd', 'pab'
-                'product_data' => [
-                    'name'        => mb_strimwidth(get_the_title(), 0, 127, ''),
-                    'description' => mb_strimwidth((string) apply_filters('dy_description', ''), 0, 2000, ''), // Stripe allows longer here
-                ],
-                'unit_amount'  => (int) round($amount * 100),
-                ],
-                'quantity' => 1,
-            ]],
-            'success_url' => add_query_arg(['gateway' => $this->id, 'status' => 'stripe_success'], get_permalink()),
-            'cancel_url'  => add_query_arg(['gateway' => $this->id, 'status' => 'stripe_cancel'], get_permalink()),
+            'success_url' => add_query_arg(['stripe_status' => 'success'], $booking_url),
+            'cancel_url'  => add_query_arg(['stripe_status' => 'cancel'], $booking_url),
             'metadata'    => $metadata,
+            'line_items'=> [[
+                'quantity' => 1,
+                'price_data' => [
+                    'currency'     => $currency, // e.g. 'usd', 'pab'
+                    'unit_amount'  => (int) round($amount * 100),
+                    'product_data' => [
+                        'name'        => mb_strimwidth($title, 0, 127, ''),
+                        'description' => mb_strimwidth($description, 0, 2000, ''), // Stripe allows longer here
+                    ]
+                ]
+            ]]
         ]);
 
         wp_redirect($session->url, 303);
