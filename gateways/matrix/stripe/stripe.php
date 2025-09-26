@@ -15,40 +15,32 @@ class stripe_gateway {
         // Render / flow integration (follow patterns in cuanto.php & yappy_direct.php)
         add_filter('dy_list_gateways', array($this, 'add_gateway'), 3);
 
-        // For content replacement or redirects if needed:
-        add_filter('dy_request_the_content', array($this, 'filter_content'), 100);
-        add_filter('wp_headers', array($this, 'maybe_redirect'));
-
-        // AJAX endpoints to create intents / sessions securely:
-        add_action('wp_ajax_dy_stripe_create_pi', array($this, 'ajax_create_payment_intent'));
-        add_action('wp_ajax_nopriv_dy_stripe_create_pi', array($this, 'ajax_create_payment_intent'));
-        add_action('wp_ajax_dy_stripe_create_checkout', array($this, 'ajax_create_checkout_session'));
-        add_action('wp_ajax_nopriv_dy_stripe_create_checkout', array($this, 'ajax_create_checkout_session'));
+        add_filter('template_redirect', array($this, 'create_session_and_redirect'));
 
         // Webhook endpoint (map to a page or custom rewrite); can also use a dedicated URL:
         add_action('init', array($this, 'maybe_handle_webhook'));
+
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
     }
 
     public function init() {
-        $this->order_status   = 'pending';
-        $this->id             = 'stripe_gateway';
-        $this->name           = 'Stripe';
+        $this->valid_recaptcha = validate_recaptcha();
+        $this->order_status = 'pending';
+        $this->id = 'stripe_gateway';
+        $this->name = 'Stripe';
         $this->brands = ['Visa', 'Mastercard'];
         $this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
-        // Allow admin to choose: 'card-on-site' (Elements) or 'card-off-site' (Checkout)
-        $this->type           = get_option($this->id . '_type') ?: 'card-on-site';
-
-        $this->mode           = get_option($this->id . '_mode') ?: 'test';
-        $this->pubkey_live    = get_option($this->id . '_live_publishable');
-        $this->seckey_live    = get_option($this->id . '_live_secret');
-        $this->pubkey_test    = get_option($this->id . '_test_publishable');
-        $this->seckey_test    = get_option($this->id . '_test_secret');
+        $this->type = 'card-off-site';
+        $this->mode = get_option($this->id . '_mode') ?: 'test';
+        $this->pubkey_live = get_option($this->id . '_live_publishable');
+        $this->seckey_live = get_option($this->id . '_live_secret');
+        $this->pubkey_test = get_option($this->id . '_test_publishable');
+        $this->seckey_test = get_option($this->id . '_test_secret');
         $this->webhook_secret = get_option($this->id . '_webhook_secret');
-
-        $this->min            = (float)(get_option($this->id . '_min') ?: 5);
-        $this->max            = (float)(get_option($this->id . '_max') ?: 99999);
-        $this->show           = (int) get_option($this->id . '_show'); // follow your other gateways
-        $this->color          = '#fff';
+        $this->min = (float)(get_option($this->id . '_min') ?: 5);
+        $this->max = (float)(get_option($this->id . '_max') ?: 99999);
+        $this->show = (int) get_option($this->id . '_show'); // follow your other gateways
+        $this->color = '#fff';
         $this->background_color = '#635bff'; // Stripe purple
 
         $this->pubkey = ($this->mode === 'live') ? $this->pubkey_live : $this->pubkey_test;
@@ -62,7 +54,6 @@ class stripe_gateway {
 
     public function settings_init() {
         register_setting($this->id . '_settings', $this->id . '_mode', 'esc_html');
-        register_setting($this->id . '_settings', $this->id . '_type', 'esc_html');
 
         register_setting($this->id . '_settings', $this->id . '_live_publishable', 'esc_html');
         register_setting($this->id . '_settings', $this->id . '_live_secret', 'esc_html');
@@ -83,7 +74,6 @@ class stripe_gateway {
 
         // Add fields similar to Yappy/Cuanto style (re-use your input helpers if you have them)
         add_settings_field($this->id . '_mode', __('Mode', 'dynamicpackages'), array($this, 'input_mode'), $this->id . '_settings', $this->id . '_settings_section');
-        add_settings_field($this->id . '_type', __('Checkout Type', 'dynamicpackages'), array($this, 'input_type'), $this->id . '_settings', $this->id . '_settings_section');
 
         add_settings_field($this->id . '_test_publishable', 'Test Publishable Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_test_publishable']);
         add_settings_field($this->id . '_test_secret', 'Test Secret Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_test_secret']);
@@ -159,79 +149,89 @@ class stripe_gateway {
                 'brands' => $this->brands,
                 'branding' => $this->branding(),
                 'icon' => $this->icon,
-'gateway_coupon' => $this->gateway_coupon
+                'gateway_coupon' => $this->gateway_coupon
             );
         }
         return $array;
     }
 
     /* ---------- Render / Flow ---------- */
-
-    public function filter_content($content) {
-        // On-site: inject Elements container + JS when this gateway selected
-        // Off-site: maybe show a “Continue to Stripe” with a small recap
-        return $content;
-    }
-
-    public function maybe_redirect($headers) {
-        // For off-site redirections if you copy Cuanto’s pattern
-        return $headers;
-    }
-
-    /* ---------- AJAX: create intent / checkout session ---------- */
-
-    public function ajax_create_payment_intent() {
-        check_ajax_referer('dy_checkout', 'nonce');
-        if (!$this->is_active()) wp_send_json_error(['message' => 'Stripe inactive']);
-
-        // calculate amount using your helpers
-        $amount = dy_utilities::total(); // in major units; Stripe needs cents for most currencies
-        $currency = strtolower(get_option('dy_currency') ?: 'usd');
-
-        // Init Stripe SDK
-        if (!class_exists('\\Stripe\\Stripe')) {
-            // require_once path to vendor if you embed the SDK
+    public function create_session_and_redirect() {
+        
+        if(
+            $_SERVER['REQUEST_METHOD'] !== 'POST'
+            || dy_validators::validate_request() === false 
+            || $this->is_request_submitted() === false 
+            || $this->valid_recaptcha === false
+        ) {
+            return;
         }
+
+        $secure_post = fn($key) => isset($_POST[$key]) ? sanitize_text_field(wp_unslash($_POST[$key])) : '';
+        $metadata = [];
+
+        foreach($_POST as $key => $val) {
+
+            if($key === 'g-recaptcha-response') continue;
+
+            $metadata[$key] = $secure_post($key);
+        }
+
+        $amount = dy_utilities::payment_amount();
+        $currency = strtolower(currency_name());
         \Stripe\Stripe::setApiKey($this->seckey);
 
-        $pi = \Stripe\PaymentIntent::create([
-            'amount' => round($amount * 100),
-            'currency' => $currency,
-            'automatic_payment_methods' => ['enabled' => true],
-            'metadata' => [
-                'package_id' => get_the_ID(),
-                'order_ref'  => uniqid('dy_'),
-            ],
+        $customer = \Stripe\Customer::create([
+            'email' => $secure_post('email'),
+            'name'  => $secure_post('first_name') . ' ' . $secure_post('lastname')
         ]);
 
-        wp_send_json_success(['clientSecret' => $pi->client_secret]);
-    }
-
-    public function ajax_create_checkout_session() {
-        check_ajax_referer('dy_checkout', 'nonce');
-        if (!$this->is_active()) wp_send_json_error(['message' => 'Stripe inactive']);
-
-        $amount = dy_utilities::total();
-        $currency = strtolower(get_option('dy_currency') ?: 'usd');
-
-        \Stripe\Stripe::setApiKey($this->seckey);
         $session = \Stripe\Checkout\Session::create([
-            'mode' => 'payment',
-            'line_items' => [[
+            'mode'      => 'payment',
+            'customer'  => $customer->id,
+            'line_items'=> [[
                 'price_data' => [
-                    'currency' => $currency,
-                    'product_data' => ['name' => get_the_title()],
-                    'unit_amount' => round($amount * 100),
+                'currency'     => $currency, // e.g. 'usd', 'pab'
+                'product_data' => [
+                    'name'        => mb_strimwidth(get_the_title(), 0, 127, ''),
+                    'description' => mb_strimwidth((string) apply_filters('dy_description', ''), 0, 2000, ''), // Stripe allows longer here
+                ],
+                'unit_amount'  => (int) round($amount * 100),
                 ],
                 'quantity' => 1,
             ]],
-            'success_url' => add_query_arg(['gateway' => $this->id, 'status' => 'success'], get_permalink()),
-            'cancel_url'  => add_query_arg(['gateway' => $this->id, 'status' => 'cancel'], get_permalink()),
-            'metadata'    => ['package_id' => get_the_ID()],
+            'success_url' => add_query_arg(['gateway' => $this->id, 'status' => 'stripe_success'], get_permalink()),
+            'cancel_url'  => add_query_arg(['gateway' => $this->id, 'status' => 'stripe_cancel'], get_permalink()),
+            'metadata'    => $metadata,
         ]);
 
-        wp_send_json_success(['url' => $session->url]);
+        wp_redirect($session->url, 303);
+        exit;
     }
+
+	public function is_request_submitted()
+	{
+		$output = false;
+		$cache_key = $this->id . '_is_valid_request';
+		global $dy_request_invalids;
+		
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+		if(is_checkout_page() && !isset($dy_request_invalids))
+		{
+			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
+			{
+				$output = true;
+			}
+		}
+		
+        //store output in $cache
+        self::$cache[$cache_key] = $output;
+		
+		return $output;
+	}
 
     /* ---------- Webhook ---------- */
 
@@ -310,6 +310,27 @@ class stripe_gateway {
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->name).'</p>';
 		return $output;
 	}
+
+    public function enqueue_frontend_assets() {
+        // Only when this gateway could be shown on this view
+        if (!$this->show()) return;
+
+        // Stripe.js (loads once, safe to enqueue)
+        wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', array(), null, true);
+
+        // A tiny runtime for both flows (inline below)
+        $args = array(
+            'publishableKey' => $this->pubkey,
+            'type' => $this->type,          // 'card-on-site' | 'card-off-site'
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('dy_checkout'),
+            'gatewayId' => $this->id,
+        );
+        wp_register_script($this->id . '-runtime', '', array('jquery', 'stripe-js'), null, true);
+        wp_enqueue_script($this->id . '-runtime');
+        wp_add_inline_script($this->id . '-runtime', 'window.dyStripeArgs = ' . wp_json_encode($args) . ';');
+    }
+
 }
 
 ?>

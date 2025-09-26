@@ -50,8 +50,6 @@ class paypal_me {
 	{		
 		if(dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			
-
 			if($this->valid_recaptcha)
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
