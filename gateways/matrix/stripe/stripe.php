@@ -14,16 +14,13 @@ class stripe_gateway {
 
         // Render / flow integration (follow patterns in cuanto.php & yappy_direct.php)
         add_filter('dy_list_gateways', array($this, 'add_gateway'), 3);
-
         add_filter('template_redirect', array($this, 'create_session_and_redirect'));
 
-        // Webhook endpoint (map to a page or custom rewrite); can also use a dedicated URL:
-        add_action('rest_api_init', array($this, 'register_webhook_route'));
-
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
+        
     }
 
     public function init() {
+        $this->is_paid = false;
         $this->valid_recaptcha = validate_recaptcha();
         $this->order_status = 'pending';
         $this->id = 'stripe_gateway';
@@ -32,10 +29,8 @@ class stripe_gateway {
         $this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
         $this->type = 'card-off-site';
         $this->mode = get_option($this->id . '_mode') ?: 'test';
-        $this->pubkey_live = get_option($this->id . '_live_publishable');
-        $this->seckey_live = get_option($this->id . '_live_secret');
-        $this->pubkey_test = get_option($this->id . '_test_publishable');
-        $this->seckey_test = get_option($this->id . '_test_secret');
+        $this->sec_key_live = get_option($this->id . '_live_secret');
+        $this->sec_key_test = get_option($this->id . '_test_secret');
         $this->webhook_secret = get_option($this->id . '_webhook_secret');
         $this->min = (float)(get_option($this->id . '_min') ?: 5);
         $this->max = (float)(get_option($this->id . '_max') ?: 99999);
@@ -43,11 +38,13 @@ class stripe_gateway {
         $this->color = '#fff';
         $this->background_color = '#635bff'; // Stripe purple
 
-        $this->pubkey = ($this->mode === 'live') ? $this->pubkey_live : $this->pubkey_test;
-        $this->seckey = ($this->mode === 'live') ? $this->seckey_live : $this->seckey_test;
+        $this->sec_key = ($this->mode === 'live') ? $this->sec_key_live : $this->sec_key_test;
         $this->plugin_dir_url = plugin_dir_url(__DIR__);
         $this->icon = '<span class="dashicons dashicons-cart"></span>';
         $this->gateway_coupon = 'STRIPE';
+
+        new stripe_gateway_webhook($this->id, $this->mode, $this->sec_key, $this->webhook_secret);
+        new stripe_gateway_confirmation_page($this->id, $this->mode, $this->sec_key);
     }
 
     /* ---------- Admin settings ---------- */
@@ -55,9 +52,7 @@ class stripe_gateway {
     public function settings_init() {
         register_setting($this->id . '_settings', $this->id . '_mode', 'esc_html');
 
-        register_setting($this->id . '_settings', $this->id . '_live_publishable', 'esc_html');
         register_setting($this->id . '_settings', $this->id . '_live_secret', 'esc_html');
-        register_setting($this->id . '_settings', $this->id . '_test_publishable', 'esc_html');
         register_setting($this->id . '_settings', $this->id . '_test_secret', 'esc_html');
         register_setting($this->id . '_settings', $this->id . '_webhook_secret', 'esc_html');
 
@@ -75,9 +70,7 @@ class stripe_gateway {
         // Add fields similar to Yappy/Cuanto style (re-use your input helpers if you have them)
         add_settings_field($this->id . '_mode', __('Mode', 'dynamicpackages'), array($this, 'input_mode'), $this->id . '_settings', $this->id . '_settings_section');
 
-        add_settings_field($this->id . '_test_publishable', 'Test Publishable Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_test_publishable']);
         add_settings_field($this->id . '_test_secret', 'Test Secret Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_test_secret']);
-        add_settings_field($this->id . '_live_publishable', 'Live Publishable Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_live_publishable']);
         add_settings_field($this->id . '_live_secret', 'Live Secret Key', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_live_secret']);
         add_settings_field($this->id . '_webhook_secret', 'Webhook Signing Secret', array($this, 'input_text'), $this->id . '_settings', $this->id . '_settings_section', ['name' => $this->id . '_webhook_secret']);
 
@@ -100,7 +93,7 @@ class stripe_gateway {
 
     /* ---------- Visibility like other gateways ---------- */
 
-    public function is_active() { return !empty($this->pubkey) && !empty($this->seckey); }
+    public function is_active() { return !empty($this->sec_key); }
 
     public function show() {
         $cache_key = $this->id . '_show';
@@ -170,7 +163,7 @@ class stripe_gateway {
         $metadata = $this->get_stipe_session_metadata();
         $amount = dy_utilities::payment_amount();
         $currency = strtolower(currency_name());
-        \Stripe\Stripe::setApiKey($this->seckey);
+        \Stripe\Stripe::setApiKey($this->sec_key);
 
         $customer = \Stripe\Customer::create([
             'email' => secure_post('email'),
@@ -180,7 +173,7 @@ class stripe_gateway {
         
         $booking_url = html_entity_decode(secure_post('booking_url'));
         $package_id = (int) secure_post('dy_id');
-
+        
         $session = \Stripe\Checkout\Session::create([
             'mode' => 'payment',
             'adaptive_pricing' => [
@@ -203,8 +196,20 @@ class stripe_gateway {
             ]]
         ]);
 
+        $this->save_session_id_cookie($session->id);
+
         wp_redirect($session->url, 303);
         exit;
+    }
+
+    public function save_session_id_cookie($session_id) {
+        $package_hash = (string) secure_post('hash');
+
+        $md5_package_hash = md5($package_hash);
+
+        $cookie_exp = time() + 6 * 3600;
+        setcookie("stripe_session_id_{$md5_package_hash}", $session_id, $cookie_exp, '/', '', true, true);
+        return;
     }
 
     public function get_stipe_session_metadata() {
@@ -288,105 +293,6 @@ class stripe_gateway {
 		return $output;
 	}
 
-    /* ---------- Webhook ---------- */
-    public function register_webhook_route() {
-        register_rest_route('dy-core', '/stripe-webhook', array(
-            'methods'             => \WP_REST_Server::CREATABLE, // POST
-            'callback'            => array($this, 'handle_webhook'),
-            'permission_callback' => '__return_true', // Signature handles auth
-        ));
-    }
-
-    public function handle_webhook(\WP_REST_Request $request) {
-        if ($request->get_method() !== 'POST') {
-            return new \WP_REST_Response(array('error' => 'Method Not Allowed'), 405);
-        }
-
-        $payload = $request->get_body();
-        $sig     = $request->get_header('stripe-signature') ?: '';
-        // If you keep separate secrets per mode, prefer that. Fallback to single option.
-        $secret  = get_option($this->id . '_webhook_secret_' . $this->mode)
-                ?: $this->webhook_secret;
-
-        try {
-            \Stripe\Stripe::setApiKey($this->seckey);
-            if (!class_exists('\\Stripe\\Webhook')) {
-                // require vendor if needed
-            }
-            $event = \Stripe\Webhook::constructEvent($payload, $sig, $secret);
-
-            // Idempotency guard (optional but recommended)
-            $evt_key = 'stripe_evt_' . $event->id;
-            if (get_transient($evt_key)) {
-                return new \WP_REST_Response(array('received' => true, 'duplicate' => true), 200);
-            }
-            set_transient($evt_key, 1, HOUR_IN_SECONDS);
-
-            switch ($event->type) {
-                case 'checkout.session.completed': {
-                    /** @var \Stripe\Checkout\Session $sessionObj */
-                    $sessionObj  = $event->data->object;
-
-                    // Session-level metadata (you set this in Session::create([... 'metadata' => $metadata ]))
-                    $sessionMeta = (array) ($sessionObj->metadata ?? array());
-
-                    // Retrieve with expansions for amounts, PI, and line_items
-                    $session = \Stripe\Checkout\Session::retrieve($sessionObj->id, [
-                        'expand' => ['line_items', 'payment_intent']
-                    ]);
-
-                    $isPaid     = ($session->payment_status === 'paid');
-                    $amountTotal= $session->amount_total;   // in minor units
-                    $currency   = $session->currency;       // e.g. 'usd'
-                    $piMeta     = (array) ($session->payment_intent->metadata ?? array());
-
-                    // TODO: finalize your booking here (mark paid exactly once)
-                    // Use $sessionMeta / $piMeta to map back to your order.
-                    // Example:
-                    // dy_orders::mark_paid($sessionMeta['order_id'] ?? null, $session->id, $amountTotal, $currency);
-
-                    break;
-                }
-
-                case 'checkout.session.async_payment_succeeded':
-                case 'payment_intent.succeeded': {
-                    // If you also rely on PI events:
-                    /** @var \Stripe\PaymentIntent $pi */
-                    $pi     = $event->data->object;
-                    $piMeta = (array) ($pi->metadata ?? array());
-                    // TODO: optional: mark paid by PI
-                    break;
-                }
-
-                case 'checkout.session.async_payment_failed':
-                case 'payment_intent.payment_failed': {
-                    // TODO: mark failed / notify
-                    break;
-                }
-
-                // Optional post-purchase lifecycle sync
-                case 'charge.refunded':
-                case 'charge.dispute.created':
-                    // TODO: reflect refunds/disputes
-                    break;
-
-                default:
-                    // Ignore other events or log them
-                    break;
-            }
-
-            return new \WP_REST_Response(array('received' => true), 200);
-
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            error_log('Stripe webhook signature invalid: ' . $e->getMessage());
-            return new \WP_REST_Response(array('error' => 'Invalid signature'), 400);
-        } catch (\Exception $e) {
-            error_log('Stripe webhook error: ' . $e->getMessage());
-            return new \WP_REST_Response(array('error' => 'Webhook processing error'), 500);
-        }
-    }
-
-
 
     /* ---------- Small input helpers (reuse your existing ones if available) ---------- */
 
@@ -433,26 +339,6 @@ class stripe_gateway {
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->name).'</p>';
 		return $output;
 	}
-
-    public function enqueue_frontend_assets() {
-        // Only when this gateway could be shown on this view
-        if (!$this->show()) return;
-
-        // Stripe.js (loads once, safe to enqueue)
-        wp_enqueue_script('stripe-js', 'https://js.stripe.com/v3/', array(), null, true);
-
-        // A tiny runtime for both flows (inline below)
-        $args = array(
-            'publishableKey' => $this->pubkey,
-            'type' => $this->type,          // 'card-on-site' | 'card-off-site'
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('dy_checkout'),
-            'gatewayId' => $this->id,
-        );
-        wp_register_script($this->id . '-runtime', '', array('jquery', 'stripe-js'), null, true);
-        wp_enqueue_script($this->id . '-runtime');
-        wp_add_inline_script($this->id . '-runtime', 'window.dyStripeArgs = ' . wp_json_encode($args) . ';');
-    }
 
 }
 

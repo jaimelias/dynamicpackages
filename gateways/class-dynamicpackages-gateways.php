@@ -19,6 +19,8 @@ class Dynamicpackages_Gateways
 	public function load_gateways()
 	{
 		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe.php';
+		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe-webhook.php';
+		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe-confirmation-page.php';
 		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
