@@ -18,7 +18,7 @@ class stripe_gateway {
         add_filter('template_redirect', array($this, 'create_session_and_redirect'));
 
         // Webhook endpoint (map to a page or custom rewrite); can also use a dedicated URL:
-        add_action('init', array($this, 'maybe_handle_webhook'));
+        add_action('rest_api_init', array($this, 'register_webhook_route'));
 
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
     }
@@ -167,16 +167,7 @@ class stripe_gateway {
             return;
         }
 
-        $metadata = [];
-
-        foreach($_POST as $key => $val) {
-
-            if($key === 'g-recaptcha-response') continue;
-            if($key === 'hash') continue;
-
-            $metadata[$key] = secure_post($key);
-        }
-
+        $metadata = $this->get_stipe_session_metadata();
         $amount = dy_utilities::payment_amount();
         $currency = strtolower(currency_name());
         \Stripe\Stripe::setApiKey($this->seckey);
@@ -192,6 +183,9 @@ class stripe_gateway {
 
         $session = \Stripe\Checkout\Session::create([
             'mode' => 'payment',
+            'adaptive_pricing' => [
+                'enabled' => false//this options removes the pab and local currencies
+            ],
             'customer' => $customer->id,
             'success_url' => add_query_arg(['stripe_status' => 'success'], $booking_url),
             'cancel_url' => add_query_arg(['stripe_status' => 'cancel'], $booking_url),
@@ -199,7 +193,7 @@ class stripe_gateway {
             'line_items'=> [[
                 'quantity' => 1,
                 'price_data' => [
-                    'currency' => $currency, // e.g. 'usd', 'pab'
+                    'currency' => $currency,
                     'unit_amount' => (int) round($amount * 100),
                     'product_data' => [
                         'name' => mb_strimwidth($this->get_stripe_item_title($package_id), 0, 127, ''),
@@ -211,6 +205,21 @@ class stripe_gateway {
 
         wp_redirect($session->url, 303);
         exit;
+    }
+
+    public function get_stipe_session_metadata() {
+
+        $metadata = [];
+
+        foreach($_POST as $key => $val) {
+
+            if($key === 'g-recaptcha-response') continue;
+            if($key === 'hash') continue;
+
+            $metadata[$key] = secure_post($key);
+        }
+
+        return $metadata;
     }
 
     public function get_stripe_item_title($package_id) {
@@ -280,36 +289,104 @@ class stripe_gateway {
 	}
 
     /* ---------- Webhook ---------- */
+    public function register_webhook_route() {
+        register_rest_route('dy-core', '/stripe-webhook', array(
+            'methods'             => \WP_REST_Server::CREATABLE, // POST
+            'callback'            => array($this, 'handle_webhook'),
+            'permission_callback' => '__return_true', // Signature handles auth
+        ));
+    }
 
-    public function maybe_handle_webhook() {
-        // If you map /?dy_stripe_webhook=1
-        if (isset($_GET['dy_stripe_webhook'])) {
-            $payload = file_get_contents('php://input');
-            $sig = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-            $secret = $this->webhook_secret;
+    public function handle_webhook(\WP_REST_Request $request) {
+        if ($request->get_method() !== 'POST') {
+            return new \WP_REST_Response(array('error' => 'Method Not Allowed'), 405);
+        }
 
-            try {
-                if (!class_exists('\\Stripe\\Webhook')) {
-                    // require vendor
-                }
-                $event = \Stripe\Webhook::constructEvent($payload, $sig, $secret);
-            } catch (\Exception $e) {
-                status_header(400); echo 'Invalid'; exit;
+        $payload = $request->get_body();
+        $sig     = $request->get_header('stripe-signature') ?: '';
+        // If you keep separate secrets per mode, prefer that. Fallback to single option.
+        $secret  = get_option($this->id . '_webhook_secret_' . $this->mode)
+                ?: $this->webhook_secret;
+
+        try {
+            \Stripe\Stripe::setApiKey($this->seckey);
+            if (!class_exists('\\Stripe\\Webhook')) {
+                // require vendor if needed
             }
+            $event = \Stripe\Webhook::constructEvent($payload, $sig, $secret);
+
+            // Idempotency guard (optional but recommended)
+            $evt_key = 'stripe_evt_' . $event->id;
+            if (get_transient($evt_key)) {
+                return new \WP_REST_Response(array('received' => true, 'duplicate' => true), 200);
+            }
+            set_transient($evt_key, 1, HOUR_IN_SECONDS);
 
             switch ($event->type) {
-                case 'payment_intent.succeeded':
-                case 'checkout.session.completed':
-                    // Mark booking paid, email, etc. Use your existing helpers (like others do).
-                    // dy_form_actions / mailers you already use in other gateways.
+                case 'checkout.session.completed': {
+                    /** @var \Stripe\Checkout\Session $sessionObj */
+                    $sessionObj  = $event->data->object;
+
+                    // Session-level metadata (you set this in Session::create([... 'metadata' => $metadata ]))
+                    $sessionMeta = (array) ($sessionObj->metadata ?? array());
+
+                    // Retrieve with expansions for amounts, PI, and line_items
+                    $session = \Stripe\Checkout\Session::retrieve($sessionObj->id, [
+                        'expand' => ['line_items', 'payment_intent']
+                    ]);
+
+                    $isPaid     = ($session->payment_status === 'paid');
+                    $amountTotal= $session->amount_total;   // in minor units
+                    $currency   = $session->currency;       // e.g. 'usd'
+                    $piMeta     = (array) ($session->payment_intent->metadata ?? array());
+
+                    // TODO: finalize your booking here (mark paid exactly once)
+                    // Use $sessionMeta / $piMeta to map back to your order.
+                    // Example:
+                    // dy_orders::mark_paid($sessionMeta['order_id'] ?? null, $session->id, $amountTotal, $currency);
+
                     break;
-                case 'payment_intent.payment_failed':
-                    // Handle failure if needed
+                }
+
+                case 'checkout.session.async_payment_succeeded':
+                case 'payment_intent.succeeded': {
+                    // If you also rely on PI events:
+                    /** @var \Stripe\PaymentIntent $pi */
+                    $pi     = $event->data->object;
+                    $piMeta = (array) ($pi->metadata ?? array());
+                    // TODO: optional: mark paid by PI
+                    break;
+                }
+
+                case 'checkout.session.async_payment_failed':
+                case 'payment_intent.payment_failed': {
+                    // TODO: mark failed / notify
+                    break;
+                }
+
+                // Optional post-purchase lifecycle sync
+                case 'charge.refunded':
+                case 'charge.dispute.created':
+                    // TODO: reflect refunds/disputes
+                    break;
+
+                default:
+                    // Ignore other events or log them
                     break;
             }
-            status_header(200); echo 'OK'; exit;
+
+            return new \WP_REST_Response(array('received' => true), 200);
+
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            error_log('Stripe webhook signature invalid: ' . $e->getMessage());
+            return new \WP_REST_Response(array('error' => 'Invalid signature'), 400);
+        } catch (\Exception $e) {
+            error_log('Stripe webhook error: ' . $e->getMessage());
+            return new \WP_REST_Response(array('error' => 'Webhook processing error'), 500);
         }
     }
+
+
 
     /* ---------- Small input helpers (reuse your existing ones if available) ---------- */
 
