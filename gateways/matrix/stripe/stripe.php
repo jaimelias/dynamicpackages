@@ -167,7 +167,6 @@ class stripe_gateway {
             return;
         }
 
-        $secure_post = fn($key) => isset($_POST[$key]) ? sanitize_text_field(wp_unslash($_POST[$key])) : '';
         $metadata = [];
 
         foreach($_POST as $key => $val) {
@@ -175,7 +174,7 @@ class stripe_gateway {
             if($key === 'g-recaptcha-response') continue;
             if($key === 'hash') continue;
 
-            $metadata[$key] = $secure_post($key);
+            $metadata[$key] = secure_post($key);
         }
 
         $amount = dy_utilities::payment_amount();
@@ -183,13 +182,13 @@ class stripe_gateway {
         \Stripe\Stripe::setApiKey($this->seckey);
 
         $customer = \Stripe\Customer::create([
-            'email' => $secure_post('email'),
-            'name' => trim($secure_post('first_name') . ' ' . $secure_post('lastname'))
+            'email' => secure_post('email'),
+            'name' => trim(secure_post('first_name') . ' ' . secure_post('lastname'))
         ]);
 
         
-        $booking_url = html_entity_decode($secure_post('booking_url'));
-        $package_id = (int) $secure_post('dy_id');
+        $booking_url = html_entity_decode(secure_post('booking_url'));
+        $package_id = (int) secure_post('dy_id');
 
         $session = \Stripe\Checkout\Session::create([
             'mode' => 'payment',
