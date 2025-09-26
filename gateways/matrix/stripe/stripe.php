@@ -184,53 +184,27 @@ class stripe_gateway {
 
         $customer = \Stripe\Customer::create([
             'email' => $secure_post('email'),
-            'name'  => trim($secure_post('first_name') . ' ' . $secure_post('lastname'))
+            'name' => trim($secure_post('first_name') . ' ' . $secure_post('lastname'))
         ]);
 
-        $title = get_the_title();
+        
         $booking_url = html_entity_decode($secure_post('booking_url'));
-        $description = (string) apply_filters('dy_description', '');
         $package_id = (int) $secure_post('dy_id');
-        $payment_type = (int) package_field('package_payment', $package_id);
-        $deposit_amount = ($payment_type === 0) ? 0 : (float) package_field('package_deposit', $package_id);
-        $add_ons = (array) apply_filters('dy_included_add_ons_arr', []);
-
-        if($payment_type === 1 && $deposit_amount > 0) {
-            $title = sprintf(__('%s deposit : %s', 'dynamicpackages'), "{$deposit_amount}%", $title);
-        }
-
-
-        if(is_array($add_ons) && count($add_ons) > 0) {
-
-            $description .= sprintf(__("👉 %s: "), __('Add-ons', 'dynamicpackages'));
-            $add_ons_arr = [];
-
-
-			foreach ($add_ons as $add_on_item) {
-
-                $add_ons_arr [] = sprintf(
-                    " ✅ %s", 
-                    esc_html($add_on_item['name'])
-                );
-			}
-
-            $description .= implode_last($add_ons_arr);
-        }
 
         $session = \Stripe\Checkout\Session::create([
-            'mode'      => 'payment',
-            'customer'  => $customer->id,
+            'mode' => 'payment',
+            'customer' => $customer->id,
             'success_url' => add_query_arg(['stripe_status' => 'success'], $booking_url),
-            'cancel_url'  => add_query_arg(['stripe_status' => 'cancel'], $booking_url),
-            'metadata'    => $metadata,
+            'cancel_url' => add_query_arg(['stripe_status' => 'cancel'], $booking_url),
+            'metadata' => $metadata,
             'line_items'=> [[
                 'quantity' => 1,
                 'price_data' => [
-                    'currency'     => $currency, // e.g. 'usd', 'pab'
-                    'unit_amount'  => (int) round($amount * 100),
+                    'currency' => $currency, // e.g. 'usd', 'pab'
+                    'unit_amount' => (int) round($amount * 100),
                     'product_data' => [
-                        'name'        => mb_strimwidth($title, 0, 127, ''),
-                        'description' => mb_strimwidth($description, 0, 2000, ''), // Stripe allows longer here
+                        'name' => mb_strimwidth($this->get_stripe_item_title($package_id), 0, 127, ''),
+                        'description' => mb_strimwidth($this->get_stripe_item_description(), 0, 2000, ''), // Stripe allows longer here
                     ]
                 ]
             ]]
@@ -238,6 +212,48 @@ class stripe_gateway {
 
         wp_redirect($session->url, 303);
         exit;
+    }
+
+    public function get_stripe_item_title($package_id) {
+        $title = get_the_title();
+        
+        $payment_type = (int) package_field('package_payment', $package_id);
+        $deposit_amount = ($payment_type === 0) ? 0 : (float) package_field('package_deposit', $package_id);
+
+        if($payment_type === 1 && $deposit_amount > 0) {
+            $title = sprintf(__('%s deposit : %s', 'dynamicpackages'), "{$deposit_amount}%", $title);
+        }
+
+        return $title;
+    }
+
+    public function get_stripe_item_description() {
+        $description = (string) apply_filters('dy_description', '');
+        $add_ons = (array) apply_filters('dy_included_add_ons_arr', []);
+        $not_included = (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌');
+        $included = (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅');
+
+        if(is_array($add_ons) && count($add_ons) > 0) {
+
+            $description .= sprintf(__(". ➡️ %s: "), __('Add-ons', 'dynamicpackages'));
+            $add_ons_arr = array_map(function($add_on_item) {
+                return $add_on_item['name'];
+            }, $add_ons);
+
+            $description .= implode_last($add_ons_arr, __('and', 'dynamicpackages'), '👍');
+        }
+
+        if(!empty($included)) {
+            $description .= sprintf(__(". ➡️ %s: "), __('Included', 'dynamicpackages'));
+            $description .= $included;
+        }
+
+        if(!empty($not_included)) {
+            $description .= sprintf(__(". ➡️ %s: "), __('Not Included', 'dynamicpackages'));
+            $description .= $not_included;
+        }
+
+        return $description;
     }
 
 	public function is_request_submitted()

@@ -1298,14 +1298,14 @@ class dy_utilities {
 		return $output;
 	}
 	
-	public static function implode_taxo_names($tax, $last_separator = ',')
+	public static function implode_taxo_names($tax, $last_separator = ',', $item_separator = '')
 	{
 		$output = '';
 		$items_arr = self::get_taxo_names($tax);
 
 		if(is_array($items_arr) && count($items_arr) > 0)
 		{
-			$output = implode_last($items_arr, $last_separator);
+			$output = implode_last($items_arr, $last_separator, $item_separator);
 		}
 
 		return $output;
