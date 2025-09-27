@@ -8,6 +8,7 @@ class stripe_gateway_webhook {
 
     function __construct($id, $mode, $sec_key, $webhook_secret) {
 
+        //stripe listen --forward-to localhost:8888/wordpress/wp-json/dy-core/stripe-webhook
         $this->id = $id;
         $this->mode = $mode;
         $this->sec_key = $sec_key;

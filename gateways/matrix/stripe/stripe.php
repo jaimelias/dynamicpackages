@@ -170,9 +170,9 @@ class stripe_gateway {
             'name' => trim(secure_post('first_name') . ' ' . secure_post('lastname'))
         ]);
 
-        
         $booking_url = html_entity_decode(secure_post('booking_url'));
         $package_id = (int) secure_post('dy_id');
+        $checkout_id = $this->generate_checkout_key($package_id, $customer->id);
         
         $session = \Stripe\Checkout\Session::create([
             'mode' => 'payment',
@@ -180,7 +180,7 @@ class stripe_gateway {
                 'enabled' => false//this options removes the pab and local currencies
             ],
             'customer' => $customer->id,
-            'success_url' => add_query_arg(['stripe_status' => 'success'], $booking_url),
+            'success_url' => add_query_arg(['stripe_status' => 'success', 'stripe_checkout_id' => $checkout_id], $booking_url),
             'cancel_url' => add_query_arg(['stripe_status' => 'cancel'], $booking_url),
             'metadata' => $metadata,
             'line_items'=> [[
@@ -189,27 +189,28 @@ class stripe_gateway {
                     'currency' => $currency,
                     'unit_amount' => (int) round($amount * 100),
                     'product_data' => [
-                        'name' => mb_strimwidth($this->get_stripe_item_title($package_id), 0, 127, ''),
-                        'description' => mb_strimwidth($this->get_stripe_item_description(), 0, 2000, ''), // Stripe allows longer here
+                        'name' => $this->get_stripe_item_title($package_id),
+                        'description' => $this->get_stripe_item_description(), // Stripe allows longer here
                     ]
                 ]
             ]]
         ]);
 
-        $this->save_session_id_cookie($session->id);
+        // stripe listen --forward-to localhost:8888/wordpress/wp-json/dy-core/stripe-webhook
+
+        set_transient("stripe_checkout_id_{$checkout_id}", $session->id, (6 * HOUR_IN_SECONDS) );
 
         wp_redirect($session->url, 303);
         exit;
     }
 
-    public function save_session_id_cookie($session_id) {
+    public function generate_checkout_key($package_id, $customer_id) {
         $package_hash = (string) secure_post('hash');
+        $amount = dy_utilities::payment_amount();
+        $title = $this->get_stripe_item_title($package_id);
+        $description = $this->get_stripe_item_description();
 
-        $md5_package_hash = md5($package_hash);
-
-        $cookie_exp = time() + 6 * 3600;
-        setcookie("stripe_session_id_{$md5_package_hash}", $session_id, $cookie_exp, '/', '', true, true);
-        return;
+        return md5($package_hash . $amount . $title . $description . $customer_id);    
     }
 
     public function get_stipe_session_metadata() {
@@ -228,6 +229,13 @@ class stripe_gateway {
     }
 
     public function get_stripe_item_title($package_id) {
+
+        $cache_key = 'dy_get_stripe_item_title';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
         $title = get_the_title();
         
         $payment_type = (int) package_field('package_payment', $package_id);
@@ -237,10 +245,21 @@ class stripe_gateway {
             $title = sprintf(__('%s deposit : %s', 'dynamicpackages'), "{$deposit_amount}%", $title);
         }
 
+        $title = mb_strimwidth($title, 0, 127, '');
+
+        self::$cache[$cache_key] = $title;
+        
         return $title;
     }
 
     public function get_stripe_item_description() {
+
+        $cache_key = 'dy_get_stripe_item_description';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
         $description = (string) apply_filters('dy_description', '');
         $add_ons = (array) apply_filters('dy_included_add_ons_arr', []);
         $not_included = (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌');
@@ -266,6 +285,10 @@ class stripe_gateway {
             $description .= $not_included;
         }
 
+        $description = mb_strimwidth($description, 0, 2000, '');
+
+        self::$cache[$cache_key] = $description;
+        
         return $description;
     }
 

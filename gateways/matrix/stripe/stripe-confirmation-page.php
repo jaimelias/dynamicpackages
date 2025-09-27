@@ -13,75 +13,118 @@ class stripe_gateway_confirmation_page {
         $this->sec_key = $sec_key;
         $this->order_status = 'pending';
 
-        add_action('init', [$this, 'catch_redirect_success'], 99);
-        add_filter('the_content', [$this, 'the_content'], 99);
-        add_filter('the_title', [$this, 'the_title'], 99);
-        add_filter('wp_title', [$this, 'wp_title'], 99);
-        add_filter('get_the_excerpt', [$this, 'the_excerpt'], 99);
+        add_action('init', [$this, 'catch_redirect_success'], PHP_INT_MAX);
+        add_filter('the_content', [$this, 'the_content'], PHP_INT_MAX);
+        add_filter('the_title', [$this, 'the_title'], PHP_INT_MAX);
+        add_filter('pre_get_document_title', [$this, 'wp_title'], PHP_INT_MAX);
+        add_filter('get_the_excerpt', [$this, 'the_excerpt'], PHP_INT_MAX);
     }
 
-    public function catch_redirect_success() {
+    public function is_confirmation_page() {
 
         //function secure_get($key) === $_GET[$key]
-        //function secure_cookie($key) === $_COOKIE[$key]
 
         if(
             $_SERVER['REQUEST_METHOD'] !== 'GET' 
             || !is_booking_page()
+            || !secure_get('hash')
             || secure_get('stripe_status') !== 'success'
             || empty($this->sec_key)
-        ) return;
+            || empty(secure_get('stripe_checkout_id'))
+        ) return false;
 
-        if(!secure_get('hash')) return;
+        return true;
+    }
 
-        $package_hash = (string) secure_get('hash');
-        $md5_package_hash = md5($package_hash);
-        $session_key = "stripe_session_id_{$md5_package_hash}";
+    public function get_session_id() {
 
-        if(empty(secure_cookie($session_key))) return;
+        if($this->is_confirmation_page() === false) return '';
 
-        $session_id = secure_cookie($session_key);
+        $checkout_id = secure_get('stripe_checkout_id');
+        $session_id = (string) get_transient("stripe_checkout_id_{$checkout_id}");
+        
+        return $session_id;
+    }
 
-       
-        write_log($session_id);
+    public function catch_redirect_success() {
 
-        //Stripe::setApiKey($this->sec_key);
+        if($this->is_confirmation_page() === false) return;
+        
+        $session_id = $this->get_session_id();
 
+        if(empty($session_id)) return;
+    
+        \Stripe\Stripe::setApiKey($this->sec_key);
 
-        //$this->order_status = 'paid';
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($session_id);
+
+            if ($session && $session->payment_status === 'paid') {
+                // Payment was confirmed
+                $this->order_status = 'paid';
+            } else {
+                $this->order_status = 'pending'; // fallback
+            }
+        } catch (\Exception $e) {
+            write_log('Stripe verify error: ' . $e->getMessage());
+            $this->order_status = 'error';
+        }
+
     }
 
     public function the_content($content) {
 
-        if($this->order_status === 'paid') {
+        if($this->order_status !== 'paid' || $this->is_confirmation_page() === false) return $content;
 
+
+        $lines = [];
+
+        $lines[] = esc_html( __('Payment successful', 'dynamicpackages') );
+        $lines[] = esc_html( __('Thanks! Your payment has been received.', 'dynamicpackages') );
+
+        $session_id = $this->get_session_id();
+
+        if ($session_id) {
+            $lines[] = esc_html( sprintf(
+                __('Reference: %s', 'dynamicpackages'),
+                $session_id
+            ));
         }
 
-        return $content;
+        $home_url = esc_url( home_url('/') );
+        $continue_label = esc_html( __('Continue', 'dynamicpackages') );
+
+        //stripe listen --forward-to localhost:8888/wordpress/wp-json/dy-core/stripe-webhook
+
+        // Simple, unstyled markup
+        return sprintf(
+            "<div>%s</div><div>%s</div>%s<div><a href=\"%s\">%s</a></div>",
+            $lines[0],
+            $lines[1],
+            isset($lines[2]) ? sprintf('<div>%s</div>', $lines[2]) : '',
+            $home_url,
+            $continue_label
+        );
+
     }
     public function the_title($title) {
 
-        if($this->order_status === 'paid') {
-            
-        }
+        if(!in_the_loop()) return $title;
+        if($this->order_status !== 'paid' || $this->is_confirmation_page() === false) return $title;
 
-        return $title;
+        return __('Payment successful', 'dynamicpackages');
     }
     public function wp_title($title) {
 
-        if($this->order_status === 'paid') {
-            
-        }
+        if($this->order_status !== 'paid' || $this->is_confirmation_page() === false) return $title;
 
-        return $title;
+        return __('Payment successful', 'dynamicpackages');;
     }
     public function the_excerpt($excerpt) {
 
-        if($this->order_status === 'paid') {
-            
-        }
+        if($this->order_status !== 'paid' || $this->is_confirmation_page() === false) return $excerpt;
 
-        return $excerpt;
+        return __('Your payment was processed successfully.', 'dynamicpackages');
     }
 
 }
