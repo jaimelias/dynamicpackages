@@ -14,9 +14,7 @@ class stripe_gateway {
 
         // Render / flow integration (follow patterns in cuanto.php & yappy_direct.php)
         add_filter('dy_list_gateways', array($this, 'add_gateway'), 3);
-        add_filter('template_redirect', array($this, 'create_session_and_redirect'));
-
-        
+        add_action('template_redirect', array($this, 'create_session_and_redirect'));
     }
 
     public function init() {
@@ -103,7 +101,7 @@ class stripe_gateway {
         if (is_singular('packages') && $this->is_active()) {
             if ($this->is_valid()) $out = true;
         }
-        if (is_checkout_page() && $this->is_active() && dy_validators::validate_request()) {
+        if (is_confirmation_page() && $this->is_active() && dy_validators::validate_request()) {
             $out = true;
         }
         return self::$cache[$cache_key] = $out;
@@ -302,7 +300,7 @@ class stripe_gateway {
             return self::$cache[$cache_key];
         }
 
-		if(is_checkout_page() && !isset($dy_request_invalids))
+		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
 			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 			{

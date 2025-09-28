@@ -30,6 +30,10 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+define('DY_IS_PACKAGE_PAGE_PRIORITY', 100);
+define('DY_IS_BOOKING_PAGE_PRIORITY', 200);
+define('DY_IS_CONFIRMATION_PAGE_PRIORITY', 300);
+
 function activate_dynamicpackages() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages-activator.php';
 	dynamicpackages_Activator::activate();

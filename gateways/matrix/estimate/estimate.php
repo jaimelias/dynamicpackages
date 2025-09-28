@@ -100,7 +100,7 @@ class estimate_request{
 		
 		if($this->show())
 		{
-			if(is_singular('packages') && !is_checkout_page())
+			if(is_singular('packages') && !is_confirmation_page())
 			{
 				$add = true;
 			}

@@ -171,7 +171,7 @@ class pay_later{
 
 		global $dy_request_invalids;
 
-		if(is_checkout_page() && !isset($dy_request_invalids))
+		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
 			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -200,7 +200,7 @@ class pay_later{
 			$min = floatval($this->min);
 			$show = intval($this->show);
 			
-			if(is_booking_page() || is_checkout_page())
+			if(is_booking_page() || is_confirmation_page())
 			{
 				$total = dy_utilities::total();
 			}
@@ -369,7 +369,7 @@ class pay_later{
 
 		if($this->show())
 		{
-			if(is_singular('packages') && !is_checkout_page())
+			if(is_singular('packages') && !is_confirmation_page())
 			{
 				$add = true;
 			}

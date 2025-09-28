@@ -23,18 +23,18 @@ class Dynamicpackages_Public {
 
 		//scripts
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), 11);
+		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), DY_IS_PACKAGE_PAGE_PRIORITY);
 
 		//redirect
-		add_filter('wp_headers', array(&$this, 'redirect'));
-		add_filter('post_type_link', array(&$this, 'post_type_link'), 10, 2);
+		add_action('template_redirect', array(&$this, 'redirect'));
+		add_filter('post_type_link', array(&$this, 'post_type_link'), DY_IS_PACKAGE_PAGE_PRIORITY, 2);
 
 		//template
-		add_filter('template_include', array(&$this, 'package_template'), 99);
-		add_filter('the_content', array(&$this, 'the_content'), 100);
-		add_filter('pre_get_document_title', array(&$this, 'wp_title'), 100);
-		add_filter('wp_title', array(&$this, 'wp_title'), 100);
-		add_filter('the_title', array(&$this, 'modify_title'), 100);
+		add_filter('template_include', array(&$this, 'package_template'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('the_content', array(&$this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('pre_get_document_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('wp_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('the_title', array(&$this, 'modify_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
@@ -96,7 +96,7 @@ class Dynamicpackages_Public {
 
 		if(is_singular('packages'))
 		{		
-			if(is_booking_page() || isset($dy_request_invalids) || is_checkout_page())
+			if(is_booking_page() || isset($dy_request_invalids) || is_confirmation_page())
 			{	
 				echo '<meta name="robots" content="noindex, nofollow" />';
 			}
@@ -1064,7 +1064,7 @@ class Dynamicpackages_Public {
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
-		$is_checkout_page = is_checkout_page();
+		$is_confirmation_page = is_confirmation_page();
 		$is_booking_page = is_booking_page();
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
@@ -1179,7 +1179,7 @@ class Dynamicpackages_Public {
 			if(!get_option('dy_archive_hide_enabled_days')) $req[] = 'enabled_days';
 
 		}
-		else if(is_singular('packages') && !$is_booking_page && !$is_checkout_page)
+		else if(is_singular('packages') && !$is_booking_page && !$is_confirmation_page)
 		{
 
 			$show_labels = true;
@@ -1207,7 +1207,7 @@ class Dynamicpackages_Public {
 				if($return_address)$req[] = 'return_address';				
 			}
 		}
-		else if($is_booking_page || $is_checkout_page)
+		else if($is_booking_page || $is_confirmation_page)
 		{
 			$show_labels = true;
 
@@ -1490,12 +1490,20 @@ class Dynamicpackages_Public {
 
 	public function redirect($headers)
 	{
+		// Only front end, only GET (avoid breaking form submits/previews/AJAX/REST/cron).
+		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
+			return;
+		}
+		if ( isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'GET' ) {
+			return;
+		}
+
 		if(
 			is_singular('packages') === false 
 			|| is_404()
 			|| is_main_query() === false
 		) {
-			return $headers;
+			return;
 		}
 
 		$lang = current_language();
@@ -1503,7 +1511,7 @@ class Dynamicpackages_Public {
 		$redirect_url = (string) package_field('package_redirect_url_' . $lang);
 
 		if($redirect_url === '' || filter_var($redirect_url, FILTER_VALIDATE_URL) === false) {
-			return $headers;
+			return;
 		}
 
 		$valid_redirect_page = (
@@ -1517,7 +1525,7 @@ class Dynamicpackages_Public {
 			exit;
 		}
 
-		return $headers;
+		return;
 	}
 
 	public function post_type_link($url, $post)

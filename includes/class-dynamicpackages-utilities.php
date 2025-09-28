@@ -285,7 +285,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		if(is_booking_page() || is_checkout_page())
+		if(is_booking_page() || is_confirmation_page())
 		{	
 			$total = self::subtotal($regular, $the_id) + self::get_add_ons_total();
 		}
@@ -679,7 +679,7 @@ class dy_utilities {
 
 	public static function get_min_nights()
 	{
-		if(is_booking_page() || is_checkout_page())
+		if(is_booking_page() || is_confirmation_page())
 		{
 			$duration = intval(package_field('package_duration'));
 			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
@@ -745,7 +745,7 @@ class dy_utilities {
 	}	
 	public static function get_season($booking_date)
 	{
-		if(is_booking_page() || is_checkout_page())
+		if(is_booking_page() || is_confirmation_page())
 		{
 			$season = 'price_chart';
 			$seasons = self::get_season_chart();
@@ -906,7 +906,7 @@ class dy_utilities {
 	{
 		$sum = 0;
 		
-		if(is_booking_page() || is_checkout_page())
+		if(is_booking_page() || is_confirmation_page())
 		{		
 			$base_price = 0;
 			$price_chart = self::get_price_chart();
@@ -942,7 +942,7 @@ class dy_utilities {
 	{
 		$sum = 0;
 		
-		if((is_booking_page() || is_checkout_page()) && isset($_REQUEST['pax_discount']))
+		if((is_booking_page() || is_confirmation_page()) && isset($_REQUEST['pax_discount']))
 		{
 
 			$pax_discount = intval(sanitize_text_field($_REQUEST['pax_discount']));

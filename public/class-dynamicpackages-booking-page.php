@@ -17,7 +17,7 @@ class Dynamicpackages_Booking_Page {
     {
         $output = false;
 
-        if(is_singular('packages') && is_booking_page() && !is_checkout_page())
+        if(is_singular('packages') && is_booking_page() && !is_confirmation_page())
         {
             $output = true;
         }

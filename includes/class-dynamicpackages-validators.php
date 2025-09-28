@@ -7,9 +7,9 @@ function is_booking_page()
 	return dy_validators::is_booking_page();
 }
 
-function is_checkout_page()
+function is_confirmation_page()
 {
-	return dy_validators::is_checkout_page();
+	return dy_validators::is_confirmation_page();
 }
 
 function has_package()
@@ -163,7 +163,7 @@ class dy_validators
 	}	
 	
 
-	public static function is_checkout_page()
+	public static function is_confirmation_page()
 	{
 		$output = false;
 		$cache_key = 'dy_is_checkout_page';
@@ -192,7 +192,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(self::is_checkout_page())
+		if(self::is_confirmation_page())
 		{
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
@@ -220,7 +220,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(self::is_checkout_page())
+		if(self::is_confirmation_page())
 		{
 			if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['country_calling_code']) && isset($_POST['email']) && isset($_POST['repeat_email']))
 			{
@@ -299,7 +299,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(self::is_checkout_page() && self::validate_contact_details() && self::validate_booking_details())
+		if(self::is_confirmation_page() && self::validate_contact_details() && self::validate_booking_details())
 		{
 			if($gateway_name == $_POST['dy_request'] && self::validate_card())
 			{

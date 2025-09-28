@@ -33,7 +33,7 @@ class Dynamicpackages_Actions{
 		global $post;
 		$output = false;
 		
-        if(is_checkout_page())
+        if(is_confirmation_page())
         {
 			if($this->valid_recaptcha)
 			{

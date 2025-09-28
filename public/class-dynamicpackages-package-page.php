@@ -17,7 +17,7 @@ class Dynamicpackages_Package_Page {
 
 	public function is_valid()
 	{
-		if(is_singular('packages') && !is_booking_page() && !is_checkout_page())
+		if(is_singular('packages') && !is_booking_page() && !is_confirmation_page())
 		{
 			return true;
 		}
@@ -76,7 +76,7 @@ class Dynamicpackages_Package_Page {
 		{
 			if($query->query_vars['packages'])
 			{
-				if(!is_booking_page() && !is_checkout_page())
+				if(!is_booking_page() && !is_confirmation_page())
 				{
 					$GLOBALS['dy_load_picker_scripts'] = true;
 				}

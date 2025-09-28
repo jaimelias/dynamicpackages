@@ -21,7 +21,7 @@ class Dynamicpackages_Confirmation_Page {
 	{
 		global $post;
 		
-		if(is_checkout_page() && !isset($post))
+		if(is_confirmation_page() && !isset($post))
 		{
 			$GLOBALS['post'] = get_post(get_dy_id());
 		}
@@ -29,7 +29,7 @@ class Dynamicpackages_Confirmation_Page {
 
     public function enqueue_scripts()
     {
-        if(is_checkout_page())
+        if(is_confirmation_page())
         {
 			$strings = array(
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages')

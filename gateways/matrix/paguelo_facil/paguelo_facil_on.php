@@ -339,7 +339,7 @@ class paguelo_facil_on{
 		global $dy_request_invalids;
 		
 
-		if(is_checkout_page() && !isset($dy_request_invalids))
+		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
 			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -463,7 +463,7 @@ class paguelo_facil_on{
 			$payment = package_field('package_payment');
 			$deposit = floatval(dy_utilities::get_deposit());
 			
-			if(is_booking_page() || is_checkout_page())
+			if(is_booking_page() || is_confirmation_page())
 			{
 				$total = dy_utilities::payment_amount();
 			}
@@ -646,7 +646,7 @@ class paguelo_facil_on{
 				$add = true;
 			}
 			
-			if($this->valid_recaptcha && is_checkout_page() && dy_validators::validate_request())
+			if($this->valid_recaptcha && is_confirmation_page() && dy_validators::validate_request())
 			{			
 				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
 				{
