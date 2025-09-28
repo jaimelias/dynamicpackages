@@ -84,6 +84,7 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-package-page.php';
 		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
 		require_once $dir . 'public/class-dynamicpackages-confirmation-page.php';
+		require_once $dir . 'public/class-dynamicpackages-errors-page.php';
 		require_once $dir . 'public/class-dynamicpackages-training-data.php';
 		
 		//admin
@@ -123,6 +124,7 @@ class dynamicpackages {
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
 		new Dynamicpackages_Confirmation_Page($this->version);
+		new Dynamicpackages_Errors_Page($this->version);
 		new Dynamicpackages_Export_Post_Types($this->version);
 	}
 

@@ -34,7 +34,7 @@ class Dynamicpackages_Public {
 		add_filter('the_content', array(&$this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('pre_get_document_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('wp_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('the_title', array(&$this, 'modify_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('the_title', array(&$this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
@@ -42,7 +42,7 @@ class Dynamicpackages_Public {
 
 		//meta tags
 		add_action('wp', array(&$this, 'remove_canonicals'));
-		add_action('wp_head', array(&$this, 'meta_tags'));
+		
 		add_action('wp_head', array(&$this, 'location_category_canonical'));
 		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
@@ -89,19 +89,7 @@ class Dynamicpackages_Public {
 		
 	}
 		
-	public function meta_tags()
-	{
-		global $post;
-		global $dy_request_invalids;
 
-		if(is_singular('packages'))
-		{		
-			if(is_booking_page() || isset($dy_request_invalids) || is_confirmation_page())
-			{	
-				echo '<meta name="robots" content="noindex, nofollow" />';
-			}
-		}
-	}
 	
 	public function package_template($template)
 	{
@@ -125,12 +113,6 @@ class Dynamicpackages_Public {
 	{
 		global $post;
 		global $polylang;
-		global $dy_request_invalids;
-		
-		if(isset($dy_request_invalids))
-		{
-			return '<p class="minimal_alert">'.json_encode($dy_request_invalids).'</p>';
-		}
 
 		if(is_tax('package_location') || is_tax('package_category'))
 		{
@@ -166,12 +148,7 @@ class Dynamicpackages_Public {
 	{
 		global $polylang;
 		global $post;		
-		global $dy_request_invalids;
-		
-		if(isset($dy_request_invalids))
-		{
-			return __('Error', 'dynamicpackages');
-		}
+
 
 		if(is_tax())
 		{
@@ -323,9 +300,9 @@ class Dynamicpackages_Public {
 		return $title;
 	}
 	
-	public function modify_title($title)
+	public function the_title($title)
 	{
-		global $dy_request_invalids;
+		
 		global $post;
 
 		if(!in_the_loop())
@@ -333,10 +310,6 @@ class Dynamicpackages_Public {
 			return $title;
 		}
 
-		if(isset($dy_request_invalids))
-		{
-			return __('Error', 'dynamicpackages');
-		}
 
 		if(is_tax('package_location') || is_tax('package_category'))
 		{
