@@ -17,7 +17,7 @@ class Dynamicpackages_Errors_Page {
 		add_filter('pre_get_document_title', array(&$this, 'wp_title'), $priority);
 		add_filter('wp_title', array(&$this, 'wp_title'), $priority);
 		add_filter('the_title', array(&$this, 'the_title'), $priority);
-        add_filter('get_the_excerpt', array(&$this, 'get_the_excerpt'));
+        add_filter('get_the_excerpt', array(&$this, 'get_the_excerpt'), $priority);
     }
 
 	public function meta_tags()
