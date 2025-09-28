@@ -24,9 +24,12 @@ class stripe_gateway_confirmation_page {
 
         //function secure_get($key) === $_GET[$key]
 
+        if ( isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'GET' ) {
+			return false;
+		}
+
         if(
-            $_SERVER['REQUEST_METHOD'] !== 'GET'
-            || !is_booking_page()
+            !is_booking_page()
             || !secure_get('hash')
             || secure_get('stripe_status') !== 'success'
             || empty($this->sec_key)

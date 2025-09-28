@@ -148,10 +148,17 @@ class stripe_gateway {
 
     /* ---------- Render / Flow ---------- */
     public function create_session_and_redirect() {
-        
+
+		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
+			return;
+		}
+
+		if ( isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
+			return;
+		}
+
         if(
-            $_SERVER['REQUEST_METHOD'] !== 'POST'
-            || dy_validators::validate_request() === false 
+            dy_validators::validate_request() === false 
             || $this->is_request_submitted() === false 
             || $this->valid_recaptcha === false
         ) {

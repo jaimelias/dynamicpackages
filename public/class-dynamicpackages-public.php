@@ -26,7 +26,7 @@ class Dynamicpackages_Public {
 		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), DY_IS_PACKAGE_PAGE_PRIORITY);
 
 		//redirect
-		add_action('template_redirect', array(&$this, 'redirect'));
+		add_action('template_redirect', array(&$this, 'template_redirect'));
 		add_filter('post_type_link', array(&$this, 'post_type_link'), DY_IS_PACKAGE_PAGE_PRIORITY, 2);
 
 		//template
@@ -1461,7 +1461,7 @@ class Dynamicpackages_Public {
 
 	}
 
-	public function redirect($headers)
+	public function template_redirect()
 	{
 		// Only front end, only GET (avoid breaking form submits/previews/AJAX/REST/cron).
 		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
