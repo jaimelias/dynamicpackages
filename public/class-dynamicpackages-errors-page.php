@@ -11,7 +11,7 @@ class Dynamicpackages_Errors_Page {
         //the_content, wp_title, pre_get_document_title, the_title
         $priority = DY_IS_ERROR_PAGE_PRIORITY;
 
-        add_action('wp_head', array(&$this, 'meta_tags'), $priority );
+        add_action('wp_head', array(&$this, 'meta_tags'), $priority);
         add_filter('the_content', array(&$this, 'the_content'), $priority);
 		add_filter('the_content', array(&$this, 'the_content'), $priority);
 		add_filter('pre_get_document_title', array(&$this, 'wp_title'), $priority);

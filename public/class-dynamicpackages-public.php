@@ -35,16 +35,10 @@ class Dynamicpackages_Public {
 		add_filter('pre_get_document_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('wp_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('the_title', array(&$this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('single_term_title', array(&$this, 'modify_tax_title'));
-		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
+		add_filter('single_term_title', array(&$this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('term_description', array(&$this, 'modify_term_description'));
 		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
-
-		//meta tags
-		add_action('wp', array(&$this, 'remove_canonicals'));
-		
-		add_action('wp_head', array(&$this, 'location_category_canonical'));
-		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
 		add_filter('term_description', array(&$this, 'modify_term_description'));
 
 
@@ -149,39 +143,6 @@ class Dynamicpackages_Public {
 		global $polylang;
 		global $post;		
 
-
-		if(is_tax())
-		{
-			$title = single_term_title( '', false );
-						
-			if(is_tax('package_location') || is_tax('package_category'))
-			{
-				$tax = get_taxonomy( get_queried_object()->taxonomy );	
-				
-				$tax_title_modifier = null;
-				$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
-				
-				if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
-				{
-					$title = $tax_title_modifier;
-				}				
-				
-				if(is_tax('package_location'))
-				{
-					if($tax_title_modifier == null)
-					{
-						$packages_in = __('Packages in', 'dynamicpackages');
-						$title = $packages_in.' '.$title;
-						
-						if(get_queried_object()->parent > 0)
-						{
-							$title .= ', '.get_term(get_queried_object()->parent)->name;
-						}						
-					}
-				}
-			}
-			$title .= ' | '. get_bloginfo( 'name' );
-		}
 		if(is_singular('packages'))
 		{
 			if(is_booking_page())
@@ -209,239 +170,20 @@ class Dynamicpackages_Public {
 				}
 			}				
 		}
-		elseif(is_page())
-		{
-			if(dy_validators::validate_category_location())
-			{
-				$location = '';
-				$category = '';
-				$title = __('Find Packages', 'dynamicpackages').': ';
-				
-				if(isset($_GET['keywords']))
-				{
-					$keywords_param = sanitize_text_field($_GET['keywords']);
-
-					if(!empty($keywords_param))
-					{
-						$keywords = strtolower($keywords_param);
-						$keywords = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $keywords);
-						$keywords =  preg_replace('/\s+/', ' ', $keywords);
-						$keywords =  substr($keywords, 0, 25);
-						$title .= '"'.$keywords.'" ';						
-					}
-				}					
-				
-				if(isset($_GET['category']))
-				{
-					$category_param = sanitize_text_field($_GET['category']);
-
-					if($category_param !== 'any' && !empty($category_param))
-					{
-						$category = get_term_by('slug', $category_param, 'package_category');
-						
-						if(is_object($category))
-						{
-							$title .= $category->name;							
-						}
-					}
-				}				
-				
-				if(isset($_GET['location']))
-				{
-					$location_param = sanitize_text_field($_GET['location']);
-
-					if($location_param !== 'any' && !empty($location_param))
-					{
-						$location = get_term_by('slug', $location_param, 'package_location');
-						
-						if(is_object($location))
-						{
-							$location_name = $location->name;
-							
-							if(intval($location->parent) > 0)
-							{
-								$location_parent = get_term_by('id', $location->parent, 'package_location');
-								$location_name .= ', '.$location_parent->name;
-							}
-							
-							if(is_object($category))
-							{
-								$title .= ' ';
-							}
-
-							$title .= $location_name;							
-						}
-					}
-				}
-
-				if(isset($_GET['sort']))
-				{
-					$sort_param = sanitize_text_field($_GET['sort']);
-					$sort_title_labels = $this->get_sort_title_labels();
-
-					if(array_key_exists($sort_param, $sort_title_labels))
-					{
-						$title .= ' ('.$sort_title_labels[$sort_param].')';
-					}					
-				}
-				
-				$paged = current_page_number();
-				
-				if($paged > 1)
-				{
-					$title .= ' | '.__('Page', 'dynamicpackages').' '.$paged;
-				}
-				
-				
-				$title .= ' | '.get_bloginfo( 'name');
-			}
-		}
 
 		return $title;
 	}
 	
 	public function the_title($title)
 	{
+		if(!in_the_loop()) return $title;
 		
-		global $post;
-
-		if(!in_the_loop())
-		{
-			return $title;
-		}
-
-
-		if(is_tax('package_location') || is_tax('package_category'))
-		{
-			$tax = get_taxonomy( get_queried_object()->taxonomy );
-			$tax_title_modifier = null;
-			$tax_title_modifier = get_term_meta( get_queried_object()->term_id, 'tax_title_modifier', true);
-			$title = single_term_title( '', false );
-			
-			if(strlen($tax_title_modifier) > strlen(single_term_title( '', false )))
-			{
-				$title = $tax_title_modifier;
-			}				
-			
-			if(is_tax('package_location'))
-			{
-				if($tax_title_modifier == null)
-				{
-					$packages_in = __('Packages in', 'dynamicpackages');
-					$title = $packages_in.' <span class="linkcolor">'. $title .'</span>';
-					
-					if(get_queried_object()->parent > 0)
-					{
-						$title .= ', '. get_term(get_queried_object()->parent)->name;
-					}						
-				}
-			}
-		}
-		
-		if(is_singular('packages'))
+		if(is_singular('packages') && is_booking_page())
 		{				
-			if(is_booking_page())
-			{
-				$title = sprintf(__('Booking Page: %s', 'dynamicpackages'), $title);
-			}			
+			$title = sprintf(__('Booking Page: %s', 'dynamicpackages'), $title);
 		}
-		elseif(is_page())
-		{
-			if(dy_validators::validate_category_location())
-			{
-				$location = '';
-				$category = '';
-				$title = __('Find Packages', 'dynamicpackages') . ': ';
-
-				if(isset($_GET['keywords']))
-				{
-					$keywords_param = sanitize_text_field($_GET['keywords']);
-
-					if(!empty($keywords_param))
-					{
-						$keywords = strtolower($keywords_param);
-						$keywords = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $keywords);
-						$keywords =  preg_replace('/\s+/', ' ', $keywords);
-						$keywords =  substr($keywords, 0, 25);
-						$title .= '"'.$keywords.'" ';							
-					}
-				}						
-						
-				if(isset($_GET['category']))
-				{
-					$category_param = sanitize_text_field($_GET['category']);
-
-					if($category_param !== 'any' && !empty($category_param))
-					{
-						$category = get_term_by('slug', $category_param, 'package_category');
-						
-						if(is_object($category))
-						{
-							$title .= $category->name;
-						}
-					}
-				}					
-				
-				if(isset($_GET['location']))
-				{
-					$location_param = sanitize_text_field($_GET['location']);
-
-					if($location_param !== 'any' && !empty($location_param))
-					{
-						$location = get_term_by('slug', $location_param, 'package_location');
-						
-						if(is_object($location))
-						{
-							if(is_object($category))
-							{
-								$title .= ' ';
-							}
-							
-							$title .= $location->name;
-
-							if($location->parent > 0)
-							{
-								$location_parent = get_term_by('id', $location->parent, 'package_location');
-								$title .= ', '.$location_parent->name;
-							}								
-						}
-					}	
-				}	
-				
-				if(isset($_GET['sort']))
-				{
-					$sort_param = sanitize_text_field($_GET['sort']);
-					$sort_title_labels = $this->get_sort_title_labels();
-
-					if(array_key_exists($sort_param, $sort_title_labels))
-					{
-						$title .= ' ('.$sort_title_labels[$sort_param].')';
-					}					
-				}
-			}
-			
-			$paged = current_page_number();
-			
-			if($paged > 1)
-			{
-				$title .= ' | '.__('Page', 'dynamicpackages').' '.$paged;
-			}			
-		}
-
 
 		return $title;
-	}
-
-	public function get_sort_title_labels(){
-		return array(
-			'new' => __('Newest', 'dynamicpackages'),
-			'low' => __('low to high', 'dynamicpackages'),
-			'high' => __('high to low', 'dynamicpackages'),
-			'today' => __('today', 'dynamicpackages'),
-			'tomorrow' => __('tomorrow', 'dynamicpackages'),
-			'week' => __('next 7 days', 'dynamicpackages'),
-			'month' => __('next 30 days', 'dynamicpackages'),
-		);
 	}
 	
 	public function modify_tax_title($title)
@@ -908,99 +650,13 @@ class Dynamicpackages_Public {
 
 			}
 		}
-		elseif(is_page())
-		{
-			if(is_object($post))
-			{
-				if(dy_validators::validate_category_location() && has_shortcode($post->post_content, 'packages'))
-				{
-					$excerpt = null;
-				}				
-			}
-		}
 		
 		return $excerpt;
 	}
 	
 
-	public function location_category_canonical()
-	{
-		if(dy_validators::validate_category_location())
-		{
-			$paged = current_page_number();
-			$url = get_the_permalink();
-			$url_var = array();
-			
-			if($paged > 1)
-			{
-				$slug = 'page/' . $paged;
 
-				if(!is_front_page())
-				{
-					$slug = '/' . $slug;
-				}
 
-				$url = $url . $slug;
-			}
-		
-			if(isset($_GET['location']))
-			{
-				$url_var['location'] = sanitize_text_field($_GET['location']);
-			}
-			if(isset($_GET['category']))
-			{
-				$url_var['category'] = sanitize_text_field($_GET['category']);
-			}
-			if(isset($_GET['sort']))
-			{
-				$sort_by_value = sanitize_text_field($_GET['sort']);
-
-				if(!empty($sort_by_value) || $sort_by_value !== 'any')
-				{
-					$sort_by_arr = dy_utilities::sort_by_arr();
-
-					if(in_array($sort_by_value, $sort_by_arr))
-					{
-						$url_var['sort'] = $sort_by_value;
-					}
-				}
-
-			}
-			if(isset($_GET['keywords']))
-			{
-				if(!empty($_GET['keywords']))
-				{
-					$search = strtolower(sanitize_text_field($_GET['keywords']));
-					$search = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $search);
-					$search =  preg_replace('/\s+/', ' ', $search);				
-					$search =  substr($search, 0, 25);
-					$url_var['keywords'] = $search;
-				}
-			}			
-
-			$url = $url.'?';
-
-			$url_var = http_build_query($url_var);
-			
-			echo '<link rel="canonical" href="'.esc_url($url.$url_var).'" />';
-		}
-		else
-		{
-			if(current_page_number() > 1)
-			{
-				$paged = current_page_number();
-				$url = get_the_permalink();
-				$slug = 'page/' . $paged;
-
-				if(!is_front_page())
-				{
-					$slug = '/' . $slug;
-				}
-
-				echo '<link rel="canonical" href="'.esc_url($url. $slug).'" />';
-			}
-		}
-	}
 	
 	public function modify_term_description($description)
 	{
@@ -1014,11 +670,6 @@ class Dynamicpackages_Public {
 		return $description;
 	}
 	
-
-	
-
-
-
 	
 	public function details()
 	{
@@ -1442,24 +1093,7 @@ class Dynamicpackages_Public {
 		return $output;
 	}
 
-	public static function remove_canonicals()
-	{
 
-		if(dy_validators::validate_category_location())
-		{
-			remove_action('wp_head', 'rel_canonical');
-		}
-		else
-		{
-			$paged = current_page_number();
-
-			if($paged > 1)
-			{
-				remove_action('wp_head', 'rel_canonical');
-			}
-		}
-
-	}
 
 	public function template_redirect()
 	{
