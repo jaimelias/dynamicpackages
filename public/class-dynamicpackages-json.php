@@ -43,189 +43,184 @@ class Dynamicpackages_JSON
 		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
 	}
 
-	public function ld_json($arr = array())
+	public function ld_json($arr = [])
 	{
-		global $dy_ld_json;
-		global $polylang;
-		
-		if(isset($ld_json))
-		{
-			$arr = $dy_ld_json;
+		// cache hit?
+		if (isset($GLOBALS['dy_ld_json'])) {
+			return $GLOBALS['dy_ld_json'];
 		}
-		else
-		{
-			if(is_singular('packages'))
-			{
-				global $post;
-				$starting_at = floatval(money(dy_utilities::starting_at($post->ID)));
-				
-				if(dy_validators::is_valid_schema())
-				{
-					global $post;
-					$schema = intval(package_field('package_schema'));
-					
-					//offers
-					$offers = array();
-					$offers['@type'] = 'Offer';
-					$offers['priceCurrency'] = 'USD';
-					$offers['price'] = $starting_at;				
-					$offers['url'] = esc_url(get_the_permalink());
-					$offers['availability'] = 'https://schema.org/InStock';		
-					$offers['validFrom'] = esc_html(date('Y-m-d', dy_strtotime('now')));
-					
-					//aggregateRating
-					$aggregateRating = array();
-					$aggregateRating['@type'] = 'aggregateRating';
-					$aggregateRating['ratingValue'] = esc_html($this->reviews->get_rating(get_dy_id()));
-					$aggregateRating['reviewCount'] = esc_html(get_comments_number());
 
-					//reviews
-					$reviews = array();
-					$comments = $this->reviews->get_comments($post->ID);
-
-					foreach($comments as $comment)
-					{
-						$review = array(
-							'@type' => 'Review',
-							'datePublished' => esc_html(date('Y-m-d', strtotime($comment->comment_date))),
-							'description' => esc_html($comment->comment_content)
-						);
-
-						$author = array(
-							'@type' => 'Person',
-							'name' => esc_html($comment->comment_author)
-						);
-
-						$review['author'] = $author;		
-						
-						$reviewRating = array(
-							'@type' => 'Rating',
-							'bestRating' => '5',
-							'ratingValue' => get_comment_meta($comment->comment_ID, 'dy_rating', true)
-						);
-
-						$review['reviewRating'] = $reviewRating;						
-						
-						array_push($reviews, $review);
-					}				
-
-					if($schema === 1)
-					{
-						//is product
-						$arr['@context'] = 'https://www.schema.org';
-						$arr['@type'] = 'Product';
-						$arr['brand'] = array();
-						$arr['brand']['@type'] = 'Brand';
-						$arr['brand']['name'] = esc_html(get_bloginfo('name'));
-						$arr['name'] = esc_html(get_the_title());
-						$arr['sku'] = md5(package_field('package_trip_code'));
-						
-						if(has_post_thumbnail())
-						{
-							$arr['image'] = get_the_post_thumbnail_url();
-						}
-						
-						$arr['description'] = $post->post_excerpt;
-						
-						if($this->reviews->get_rating(get_dy_id()) > 0)
-						{
-							$arr['aggregateRating'] = $aggregateRating;
-						}
-
-						$offers['priceValidUntil'] = esc_html(date('Y-m-d', strtotime('+1 year')));	
-						$arr['offers'] = $offers;
-						
-						if(is_array($reviews))
-						{
-							if(count($reviews) > 0)
-							{
-								$arr['review'] = $reviews;
-							}
-						}
-					}
-					else
-					{
-						// is event
-						$events = apply_filters('dy_event_arr', array());
-						$event_arr = array();
-						$event_max = count($events);
-						
-						if($event_max > 30)
-						{
-							$event_max = 30;
-						}
-						
-						for($x = 0; $x < $event_max; $x++)
-						{
-							$duration = intval(package_field('package_duration'));
-							$unit = package_field('package_length_unit');
-							$event_date = $events[$x].' '.package_field('package_start_hour');
-							$event_date_name = date_i18n('M d', strtotime($event_date));
-							$event_date_format = date_i18n('Y-m-d\TH:i', strtotime($event_date));						
-							
-							if($unit == 0)
-							{
-								$event_date_end = date('Y-m-d\TH:i', strtotime($event_date)+(60 * $duration));
-							}
-							else if($unit == 1)
-							{
-								$event_date_end = date('Y-m-d\TH:i', strtotime($event_date) + (3600 * $duration));
-							}
-							else if($unit == 4)
-							{
-								$event_date_end = date('Y-m-d\TH:i', strtotime($event_date) + (7 * 24 * 3600 * $duration));
-							}
-							else
-							{
-								$event_date_end = date('Y-m-d\TH:i', strtotime("+ {$duration} days", strtotime($event_date)));
-							}
-							
-							$event = array();
-							$event['@context'] = 'https://www.schema.org';
-							$event['@type'] = 'Event';
-							$event['name'] = esc_html(get_the_title().' - '.$event_date_name);				
-							$event['startDate'] = esc_html($event_date_format);
-							$event['endDate'] = esc_html($event_date_end);
-							$event['description'] = $post->post_excerpt;
-							$event['organizer'] = array(
-								'name' => esc_html(get_bloginfo('name')),
-								'url' => esc_url(get_bloginfo('url'))
-							);
-							$event['performer'] = esc_html(get_bloginfo('name'));
-							$event['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
-							$event['eventStatus'] = 'https://schema.org/EventScheduled';
-							
-							if($this->reviews->get_rating(get_dy_id()) > 0)
-							{
-								$event['aggregateRating'] = $aggregateRating;
-							}							
-							if(has_post_thumbnail())
-							{
-								$event['image'] = get_the_post_thumbnail_url();
-							}						
-							
-							$offers['priceValidUntil'] = esc_html($events[$x]);
-							$event['offers'] = $offers;
-
-							$event['location'] = array(
-								'@type' => 'Place',
-								'name' => esc_html(get_bloginfo('name')),
-								'address' => esc_html(package_field('package_start_address'))
-							);
-							
-							array_push($event_arr, $event);
-						}
-
-						$arr = $event_arr;
-					}					
-				}
-			}
-			
+		// only build on single "packages"
+		if (!is_singular('packages')) {
 			$GLOBALS['dy_ld_json'] = $arr;
+			return $arr;
 		}
-		
+
+		global $post;
+
+		// precompute commonly used values
+		$site_name   = get_bloginfo('name');
+		$url         = get_the_permalink();
+		$title       = get_the_title();
+		$has_thumb   = has_post_thumbnail();
+		$thumb_url   = $has_thumb ? get_the_post_thumbnail_url() : null;
+		$dy_id       = get_dy_id();
+		$rating_val  = (float) $this->reviews->get_rating($dy_id);
+		$review_cnt  = (int) get_comments_number();
+		$starting_at = (float) money(dy_utilities::starting_at($post->ID));
+		$schema      = (int) package_field('package_schema');
+		$is_valid    = dy_validators::is_valid_schema();
+
+		if (!$is_valid) {
+			$GLOBALS['dy_ld_json'] = $arr;
+			return $arr;
+		}
+
+		// base offers (mutated per context)
+		$offers = [
+			'@type'                   => 'Offer',
+			'priceCurrency'           => 'USD',
+			'price'                   => $starting_at,
+			'url'                     => $url,
+			'availability'            => 'https://schema.org/InStock',
+			'validFrom'               => esc_html(date('Y-m-d', dy_strtotime('now'))),
+			'hasMerchantReturnPolicy' => [
+				'@type'                 => 'MerchantReturnPolicy',
+				'returnPolicyCategory'  => 'https://schema.org/MerchantReturnNotPermitted',
+			],
+		];
+
+		// aggregate rating (conditionally attached below)
+		$aggregateRating = [
+			'@type'       => 'aggregateRating',
+			'ratingValue' => esc_html($rating_val),
+			'reviewCount' => esc_html($review_cnt),
+		];
+
+		// build reviews
+		$reviews = [];
+		$comments = $this->reviews->get_comments($post->ID);
+		foreach ($comments as $comment) {
+			$reviews[] = [
+				'@type'         => 'Review',
+				'datePublished' => esc_html(date('Y-m-d', strtotime($comment->comment_date))),
+				'description'   => esc_html($comment->comment_content),
+				'author'        => [
+					'@type' => 'Person',
+					'name'  => esc_html($comment->comment_author),
+				],
+				'reviewRating'  => [
+					'@type'      => 'Rating',
+					'bestRating' => '5',
+					'ratingValue'=> get_comment_meta($comment->comment_ID, 'dy_rating', true),
+				],
+			];
+		}
+
+		if ($schema === 1) {
+			// Product
+			$arr = [
+				'@context' => 'https://www.schema.org',
+				'@type'    => 'Product',
+				'brand'    => [
+					'@type' => 'Brand',
+					'name'  => $site_name,
+				],
+				'name'     => $title,
+				'sku'      => md5(package_field('package_trip_code')),
+				'url'      => $url,
+			];
+
+			if (!empty($post->post_excerpt)) {
+				$arr['description'] = $post->post_excerpt;
+			}
+			if ($has_thumb) {
+				$arr['image'] = $thumb_url;
+			}
+			if ($rating_val > 0) {
+				$arr['aggregateRating'] = $aggregateRating;
+			}
+
+			// product-specific price validity
+			$offers_product = $offers;
+			$offers_product['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
+			$arr['offers'] = $offers_product;
+
+			if (!empty($reviews)) {
+				$arr['review'] = $reviews;
+			}
+		} else {
+			// Events
+			$events = apply_filters('dy_event_arr', []);
+			$event_max = min(30, count($events));
+			$event_arr = [];
+
+			$duration = (int) package_field('package_duration');
+			$unit     = package_field('package_length_unit');
+			$start_hr = package_field('package_start_hour');
+			$start_address = package_field('package_start_address');
+			$site_url = get_bloginfo('url');
+
+			for ($x = 0; $x < $event_max; $x++) {
+				$event_date        = $events[$x] . ' ' . $start_hr;
+				$event_ts          = strtotime($event_date);
+				$event_date_name   = date_i18n('M d', $event_ts);
+				$event_date_format = date_i18n('Y-m-d\TH:i', $event_ts);
+
+				// compute end date by unit
+				if ($unit == 0) {                // minutes
+					$end_ts = $event_ts + (60 * $duration);
+				} elseif ($unit == 1) {          // hours
+					$end_ts = $event_ts + (3600 * $duration);
+				} elseif ($unit == 4) {          // weeks
+					$end_ts = $event_ts + (7 * 24 * 3600 * $duration);
+				} else {                          // days (default)
+					$end_ts = strtotime("+ {$duration} days", $event_ts);
+				}
+
+				$event = [
+					'@context'             => 'https://www.schema.org',
+					'@type'                => 'Event',
+					'name'                 => esc_html($title . ' - ' . $event_date_name),
+					'startDate'            => esc_html($event_date_format),
+					'endDate'              => esc_html(date('Y-m-d\TH:i', $end_ts)),
+					'description'          => $post->post_excerpt,
+					'organizer'            => [
+						'name' => $site_name,
+						'url'  => $site_url,
+					],
+					'performer'            => $site_name,
+					'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
+					'eventStatus'          => 'https://schema.org/EventScheduled',
+				];
+
+				if ($rating_val > 0) {
+					$event['aggregateRating'] = $aggregateRating;
+				}
+				if ($has_thumb) {
+					$event['image'] = $thumb_url;
+				}
+
+				$event_offers = $offers;
+				$event_offers['priceValidUntil'] = esc_html($events[$x]);
+				$event['offers'] = $event_offers;
+
+				$event['location'] = [
+					'@type'   => 'Place',
+					'name'    => $site_name,
+					'address' => esc_html($start_address),
+				];
+
+				$event_arr[] = $event;
+			}
+
+			$arr = $event_arr;
+		}
+
+		$GLOBALS['dy_ld_json'] = $arr;
 		return $arr;
-	}	
+	}
+
 	
 	public function export()
 	{
