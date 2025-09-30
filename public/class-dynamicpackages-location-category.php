@@ -19,7 +19,7 @@ class Dynamicpackages_Location_Category {
 		add_filter('pre_get_document_title', [$this, 'wp_title'],  $priority);
 		add_filter('wp_title',               [$this, 'wp_title'],  $priority);
 		add_filter('the_title',              [$this, 'the_title'], $priority);
-		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'), $priority);
+		add_filter('get_the_excerpt', [$this, 'modify_excerpt'], $priority);
 	}
 
 
@@ -46,6 +46,9 @@ class Dynamicpackages_Location_Category {
 	}
 
 	public function the_title( $title ) {
+
+		if(!in_the_loop()) return $title;
+
 		$q = get_queried_object();
 
 		// --- Taxonomy archives: package_location / package_category ---
