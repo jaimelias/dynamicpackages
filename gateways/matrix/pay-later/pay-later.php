@@ -74,17 +74,17 @@ class pay_later{
 
 				$total = money(dy_utilities::total());
 				$link = '<a href="'.esc_html($_POST['package_url']).'">'.esc_html($_POST['title']).'</a>';
-				$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
+				$phone = secure_post('country_calling_code').secure_post('phone');
 
-				$subject = $this->name . __(' in ', 'dynamicpackages') .$this->site_name.': ' . sanitize_text_field($_POST['first_name']) . ' ($' . $total . ')';
+				$subject = $this->name . __(' in ', 'dynamicpackages') .$this->site_name.': ' . secure_post('first_name') . ' ($' . $total . ')';
 				$message = '<p>'.sprintf(__('Hello %s,', 'dynamicpackages'), $this->user_name).'</p>';
 				$message .= '<p>'.sprintf(__('There is a new request for the program %s in %s.', 'dynamicpackages'), $this->name, $this->site_name).'</p>';
 				$message .= '<p>'.sprintf(__('The requested package is %s for a total amount of %s (USD).', 'dynamicpackages'), $link, $total).'</p>';
 
 				$message .= '<hr/><ul>';
-				$message .= '<li>'.esc_html(sprintf(__('Name: %s %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), sanitize_text_field($_POST['lastname']))).'</li>';
+				$message .= '<li>'.esc_html(sprintf(__('Name: %s %s', 'dynamicpackages'), secure_post('first_name'), sanitize_text_field($_POST['lastname']))).'</li>';
 				$message .= '<li>'.esc_html(sprintf(__('Phone: %s', 'dynamicpackages'), $phone)).'</li>';
-				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</li>';
+				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), sanitize_email($_POST['email']))).'</li>';
 				$message .= '</ul>';
 				$headers = array('Content-Type: text/html; charset=UTF-8');
 
@@ -96,7 +96,7 @@ class pay_later{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
 	public function label_notes($notes)
@@ -173,7 +173,7 @@ class pay_later{
 
 		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
-			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
+			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
 				$output = true;
 

@@ -243,41 +243,11 @@ class dy_utilities {
 		self::$cache[$cache_key] = $output;
 		return $output;
 
-	}	
-
-
-	public static function checkout_package_ID()
-	{
-		$cache_key = 'checkout_package_ID';
-		$the_id = 0;
-
-		if (isset(self::$cache[$cache_key])) {
-			return self::$cache[$cache_key];
-		}
-
-		if(isset($_POST['post_id']))
-		{
-			if(intval($_POST['post_id']) > 0)
-			{
-				$the_id = sanitize_text_field($_POST['post_id']);
-			}
-		}
-
-		if(!isset($the_id))
-		{
-			$the_id = get_dy_id();
-		}
-
-		//store output in $cache
-		self::$cache[$cache_key] = $the_id;
-
-		return $the_id;
 	}
-
 
 	public static function total($regular = null)
 	{
-		$the_id = self::checkout_package_ID();
+		$the_id = get_dy_id();
 		$cache_key = 'dy_total_'.$regular.'_'.$the_id;
 		$total = 0;
 		
@@ -1341,7 +1311,7 @@ class dy_utilities {
 	
 	public static function payment_amount($service_fee = 0)
 	{
-		$the_id = self::checkout_package_ID();
+		$the_id = get_dy_id();
 		$total = floatval(self::subtotal(null, $the_id));
 		
 		if(dy_validators::has_deposit())

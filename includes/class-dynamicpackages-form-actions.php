@@ -132,7 +132,7 @@ class Dynamicpackages_Actions{
         {               
             if(dy_validators::validate_request())
             {				
-				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == 'contact')
+				if(in_array(secure_post('dy_request'), ['estimate_request', 'contact']))
 				{
 					$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
 				}              
@@ -187,8 +187,8 @@ class Dynamicpackages_Actions{
 		}
 		else
 		{			
-			$request = (isset($_POST['inquiry'])) ?  sanitize_text_field($_POST['inquiry']) : apply_filters('dy_description', null);
-			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), sanitize_text_field($_POST['first_name'])))).'</p>';
+			$request = (!empty(secure_post('inquiry'))) ?  secure_post('inquiry') : apply_filters('dy_description', null);
+			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), secure_post('first_name')))).'</p>';
 			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
 			
 			if(get_option('dy_phone') && get_option('dy_email'))
@@ -197,12 +197,12 @@ class Dynamicpackages_Actions{
 			}
 
 
-			$phone = sanitize_text_field($_POST['country_calling_code']).sanitize_text_field($_POST['phone']);
+			$phone = secure_post('country_calling_code').secure_post('phone');
 			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), $phone)).'</p>';			
 		}
 	
 
-		$to = sanitize_text_field($_POST['email']);
+		$to = sanitize_email($_POST['email']);
 		$subject = $this->subject();
 		$body = $message;
 		$headers = array('Content-Type: text/html; charset=UTF-8');
@@ -214,14 +214,14 @@ class Dynamicpackages_Actions{
 	{
 		if(dy_validators::validate_quote())
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($_POST['title']));			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), secure_post('title'));			
 		}
 		else
 		{
 			global $post;
 			
 			$request = (isset($post->post_title)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
-			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), $request);	
+			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), secure_post('first_name'), $request);	
 		}
 
 			

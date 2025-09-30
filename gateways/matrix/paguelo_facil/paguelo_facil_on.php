@@ -195,8 +195,8 @@ class paguelo_facil_on{
 	{		
 		if(self::$txt_status !== null)
 		{
-			$first_name = sanitize_text_field($_POST['first_name']);
-			$title = sanitize_text_field($_POST['title']);
+			$first_name = secure_post('first_name');
+			$title = secure_post('title');
 			$payment_amount = money(dy_utilities::payment_amount());
 			
 			if(self::$txt_status === 2)
@@ -221,7 +221,7 @@ class paguelo_facil_on{
 	{		
 		if(self::$txt_status !== null)
 		{
-			$title = sanitize_text_field($_POST['title']);
+			$title = secure_post('title');
 			$payment_amount = money(dy_utilities::payment_amount());
 			
 			if(self::$txt_status === 2)
@@ -341,7 +341,7 @@ class paguelo_facil_on{
 
 		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
-			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
+			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
 				$output = true;
 			}
@@ -371,7 +371,7 @@ class paguelo_facil_on{
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
-					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_text_field($_POST['email']))).'</p>';
+					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_email($_POST['email']))).'</p>';
 					
 					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 					
@@ -648,7 +648,7 @@ class paguelo_facil_on{
 			
 			if($this->valid_recaptcha && is_confirmation_page() && dy_validators::validate_request())
 			{			
-				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{
 					$add = true;
 				}	

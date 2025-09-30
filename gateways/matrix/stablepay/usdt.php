@@ -98,7 +98,7 @@ class usdt {
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), sanitize_text_field($_POST['first_name']), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), sanitize_text_field($_POST['title']));
+		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
 	public function label_notes($notes)
@@ -198,7 +198,7 @@ class usdt {
 		{
 			$network = sanitize_text_field($_POST['dy_network']);
 
-			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
+			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
 			{
 				$output = true;
 			}
@@ -396,7 +396,7 @@ class usdt {
 			
 			if($this->valid_recaptcha && is_confirmation_page() && dy_validators::validate_request())
 			{
-				if($_POST['dy_request'] == 'estimate_request' || $_POST['dy_request'] == apply_filters('dy_fail_checkout_gateway_name', null))
+				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{
 					$add = true;
 				}	

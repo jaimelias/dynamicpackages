@@ -172,7 +172,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(isset($_POST['dy_request']) && isset($_POST['post_id']))
+		if(!empty(secure_post('dy_request')) && !empty(secure_post('post_id')))
 		{
 			$output = true;
 		}
@@ -301,7 +301,7 @@ class dy_validators
 
 		if(self::is_confirmation_page() && self::validate_contact_details() && self::validate_booking_details())
 		{
-			if($gateway_name == $_POST['dy_request'] && self::validate_card())
+			if($gateway_name === secure_post('dy_request') && self::validate_card())
 			{
 				$output = true;
 			}

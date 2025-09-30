@@ -309,7 +309,7 @@ class stripe_gateway {
 
 		if(is_confirmation_page() && !isset($dy_request_invalids))
 		{
-			if($_POST['dy_request'] === $this->id && dy_utilities::payment_amount() > 1)
+			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
 				$output = true;
 			}
