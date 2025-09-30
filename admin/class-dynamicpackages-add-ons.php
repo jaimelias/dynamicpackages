@@ -85,28 +85,29 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			}
 		}		
 		
-		if(isset($_POST['tax_title_modifier']))
+		if(!empty(secure_post('tax_title_modifier')))
 		{
-			update_term_meta($term_id, 'tax_title_modifier', sanitize_text_field($_POST['tax_title_modifier']));
+			update_term_meta($term_id, 'tax_title_modifier', secure_post('tax_title_modifier'));
 		}
 		
-		if(isset($_POST['tax_add_ons']))
+		if(!empty(secure_post('tax_add_ons')))
 		{	
-			update_term_meta($def_lang_term_id, 'tax_add_ons', sanitize_text_field($_POST['tax_add_ons']));
+			update_term_meta($def_lang_term_id, 'tax_add_ons', secure_post('tax_add_ons'));
 		}	
-		if(isset($_POST['tax_add_ons_max']))
+		if(!empty(secure_post('tax_add_ons_max')))
 		{
-			$tax_add_ons_max = intval(sanitize_text_field($_POST['tax_add_ons_max']));
+			$tax_add_ons_max = (int) secure_post('tax_add_ons_max');
 			
 			if($tax_add_ons_max < 1)
 			{
 				$tax_add_ons_max = 1;
 			}
+
 			update_term_meta($def_lang_term_id, 'tax_add_ons_max', $tax_add_ons_max);
 		}
-		if(isset($_POST['tax_add_ons_type']))
+		if(!empty(secure_post('tax_add_ons_type')))
 		{
-			$tax_add_ons_type = intval(sanitize_text_field($_POST['tax_add_ons_type']));
+			$tax_add_ons_type = (int) secure_post('tax_add_ons_type');
 			update_term_meta($def_lang_term_id, 'tax_add_ons_type', $tax_add_ons_type);
 		}	
 	}
@@ -493,9 +494,9 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 	public function included_add_ons_arr($output = [])
 	{
-		if ($this->has_add_ons() && isset($_POST['add_ons'])) {
+		if ($this->has_add_ons() && !empty(secure_post('add_ons'))) {
 			$add_ons = $this->get_add_ons();
-			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
+			$add_ons_included = explode(',', secure_post('add_ons'));
 			$add_ons_count = count($add_ons);
 			
 			if (is_array($add_ons) && is_array($add_ons_included)) {
