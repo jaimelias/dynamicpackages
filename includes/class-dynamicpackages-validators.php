@@ -213,7 +213,7 @@ class dy_validators
 	public static function validate_contact_details()
 	{
 		$output = false;
-		$invalids = array();
+		$invalids = [];
 		$cache_key = 'dy_validate_contact_details';
 		
         if (isset(self::$cache[$cache_key])) {
@@ -390,7 +390,7 @@ class dy_validators
 	}
 	public static function validate_card()
 	{
-		$invalids = array();
+		$invalids = [];
 		$output = false;
 		$cache_key = 'dy_validate_card';
 		
@@ -587,7 +587,7 @@ class dy_validators
 					{
 						if($package_type !== 'transport' && $package_type !== 'one-day')
 						{
-							$arr_valid_expiration = array();
+							$arr_valid_expiration = [];
 
 							for ($x = 0; $x < count($booking_dates_range); $x++) {
 								$range_date = new DateTime($booking_dates_range[$x]);

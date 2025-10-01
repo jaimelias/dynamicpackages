@@ -243,8 +243,8 @@ class Dynamicpackages_JSON
 
 	public function disabled_dates()
 	{
-		$disable = array();
-		$disable['disable'] = array();
+		$disable = [];
+		$disable['disable'] = [];
 		$days = dy_utilities::get_week_days_abbr();
 		$error_fallback = array(
 			'disable' => [0, 1, 2, 3, 4, 5, 6],
@@ -272,7 +272,7 @@ class Dynamicpackages_JSON
 		
 		$disable['min'] = $from;
 		$disable['max'] = $to;	
-		$disabled_dates = array();
+		$disabled_dates = [];
 
 		
 
@@ -325,8 +325,8 @@ class Dynamicpackages_JSON
 					new DateTime(date('Y-m-d H:i:s', strtotime($disabled_dates[$x][1] . ' +1 day')))
 				);
 				
-				$range = array();
-				$range_fix = array();
+				$range = [];
+				$range_fix = [];
 				
 				foreach ($period as $key => $value)
 				{
@@ -384,7 +384,7 @@ class Dynamicpackages_JSON
 			}
 		}
 		
-		$enabled_dates = array();
+		$enabled_dates = [];
 		
 		if(is_array($get_enabled_dates))
 		{
@@ -419,8 +419,8 @@ class Dynamicpackages_JSON
 					new DateTime(date('Y-m-d H:i:s', strtotime($enabled_dates[$x][1] . ' +1 day')))
 				);
 				
-				$range = array();
-				$range_fix = array();
+				$range = [];
+				$range_fix = [];
 				
 				foreach ($period as $key => $value)
 				{

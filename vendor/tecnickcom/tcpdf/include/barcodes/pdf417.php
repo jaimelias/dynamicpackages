@@ -96,7 +96,7 @@ class PDF417 {
 	 * Barcode array to be returned which is readable by TCPDF.
 	 * @protected
 	 */
-	protected $barcode_array = array();
+	protected $barcode_array = [];
 
 	/**
 	 * Start pattern.
@@ -530,13 +530,13 @@ class PDF417 {
 	 * @public
 	 */
 	public function __construct($code, $ecl=-1, $aspectratio=2, $macro=array()) {
-		$barcode_array = array();
+		$barcode_array = [];
 		if ((is_null($code)) OR ($code == '\0') OR ($code == '')) {
 			return false;
 		}
 		// get the input sequence array
 		$sequence = $this->getInputSequences($code);
-		$codewords = array(); // array of code-words
+		$codewords = []; // array of code-words
 		foreach($sequence as $seq) {
 			$cw = $this->getCompaction($seq[0], $seq[1], true);
 			$codewords = array_merge($codewords, $cw);
@@ -553,7 +553,7 @@ class PDF417 {
 		}
 		// build macro control block codewords
 		if (!empty($macro)) {
-			$macrocw = array();
+			$macrocw = [];
 			// beginning of macro control block
 			$macrocw[] = 928;
 			// segment index
@@ -649,7 +649,7 @@ class PDF417 {
 		$pstop = $this->stop_pattern.str_repeat('0', QUIETH);
 		$barcode_array['num_rows'] = ($rows * ROWHEIGHT) + (2 * QUIETV);
 		$barcode_array['num_cols'] = (($cols + 2) * 17) + 35 + (2 * QUIETH);
-		$barcode_array['bcode'] = array();
+		$barcode_array['bcode'] = [];
 		// build rows for vertical quiet zone
 		if (QUIETV > 0) {
 			$empty_row = array_fill(0, $barcode_array['num_cols'], 0);
@@ -814,8 +814,8 @@ class PDF417 {
 	 * @protected
 	 */
 	protected function getInputSequences($code) {
-		$sequence_array = array(); // array to be returned
-		$numseq = array();
+		$sequence_array = []; // array to be returned
+		$numseq = [];
 		// get numeric sequences
 		preg_match_all('/([0-9]{13,44})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		$numseq[1][] = array('', strlen($code));
@@ -825,7 +825,7 @@ class PDF417 {
 			if ($seq[1] > 0) {
 				// extract text sequence before the number sequence
 				$prevseq = substr($code, $offset, ($seq[1] - $offset));
-				$textseq = array();
+				$textseq = [];
 				// get text sequences
 				preg_match_all('/([\x09\x0a\x0d\x20-\x7e]{5,})/', $prevseq, $textseq, PREG_OFFSET_CAPTURE);
 				$textseq[1][] = array('', strlen($prevseq));
@@ -871,11 +871,11 @@ class PDF417 {
 	 * @protected
 	 */
 	protected function getCompaction($mode, $code, $addmode=true) {
-		$cw = array(); // array of codewords to return
+		$cw = []; // array of codewords to return
 		switch($mode) {
 			case 900: { // Text Compaction mode latch
 				$submode = 0; // default Alpha sub-mode
-				$txtarr = array(); // array of characters and sub-mode switching characters
+				$txtarr = []; // array of characters and sub-mode switching characters
 				$codelen = strlen($code);
 				for ($i = 0; $i < $codelen; ++$i) {
 					$chval = ord($code[$i]);
@@ -941,7 +941,7 @@ class PDF417 {
 						$t = bcadd($t, bcmul(''.ord($code[4]), '256'));
 						$t = bcadd($t, ''.ord($code[5]));
 						// tmp array for the 6 bytes block
-						$cw6 = array();
+						$cw6 = [];
 						do {
 							$d = bcmod($t, '900', 0);
 							$t = bcdiv($t, '900', 0);

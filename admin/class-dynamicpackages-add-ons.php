@@ -119,7 +119,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		global $polylang;
 		$form = '';
 		$term_id = $term->term_id;
-		$args = array();
+		$args = [];
 		
 		$args['tax_add_ons_type'] = array(
 			'tag' => 'select', 
@@ -321,7 +321,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$output = '';
 			$pax = intval(dy_utilities::pax_num()) - 1;
 			$terms = $this->get_add_ons();
-			$add_ons_arr = array();
+			$add_ons_arr = [];
 			$addon_colspan  = (!wp_is_mobile()) ? 2 : 1;
 			
 			if(is_array($terms))
@@ -367,7 +367,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	}
 	public function get_add_ons()
 	{
-		$output = array();
+		$output = [];
 		global $dy_get_add_ons;
 
 		if(isset($dy_get_add_ons))
@@ -380,7 +380,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			global $post;
 			$package_type = dy_utilities::get_package_type($post->ID);
 			$package_unit = (int) package_field('package_length_unit');
-			$parent_terms = array();
+			$parent_terms = [];
 
 			$def_lang = true;
 			$pax = intval(dy_utilities::pax_num()) - 1;

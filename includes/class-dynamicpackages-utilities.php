@@ -110,7 +110,7 @@ class dy_utilities {
 					$args['min'] = $args['max'];
 				}
 				
-				$default = array();
+				$default = [];
 				
 				for($x = 0; $x < count($args['headers']); $x++)
 				{
@@ -388,7 +388,7 @@ class dy_utilities {
 		
 		if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
 		{
-			$prices = array();
+			$prices = [];
 			$children = dy_validators::has_children();
 	
 			foreach ( $children as $child )
@@ -426,7 +426,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 	
-		$prices = array();
+		$prices = [];
 		$max = intval(package_field('package_max_persons', $the_id));
 		$min = intval(package_field('package_min_persons', $the_id));
 		
@@ -587,7 +587,7 @@ class dy_utilities {
 
 	public static function get_date_range($from, $to, $add_extra = true)
 	{
-		$output = array();
+		$output = [];
 
 		if(!empty($from) && !empty($to))
 		{
@@ -612,7 +612,7 @@ class dy_utilities {
 
 	public static function get_disabled_range()
 	{
-		$output = array();
+		$output = [];
 		$disabled = self::get_package_hot_chart('package_disabled_dates');
 		
 		if(is_array($disabled))
@@ -634,7 +634,7 @@ class dy_utilities {
 	}	
 
 	static function arrayFlatten($array) { 
-		$output = array();
+		$output = [];
 		
 		for($x = 0; $x < count($array); $x++)
 		{
@@ -748,7 +748,7 @@ class dy_utilities {
 	
 	public static function get_range_week_day_surcharges($days) {
 		
-		$output = array();
+		$output = [];
 		$surcharges = self::get_week_day_surcharges();
 
 		if(is_array($days))
@@ -1097,7 +1097,7 @@ class dy_utilities {
 
 	public static function get_week_days_list()
 	{
-		$output = array();
+		$output = [];
 		$days = self::get_week_days_abbr();
 		
 		for($x = 0; $x < count($days); $x++)
@@ -1195,7 +1195,7 @@ class dy_utilities {
 
 		if(!isset($post)) return [];
 
-		$output = array();
+		$output = [];
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
 
         if (isset(self::$cache[$cache_key])) {
@@ -1243,7 +1243,7 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
-		$parent_terms = array();
+		$parent_terms = [];
 		$current_terms = get_the_terms($post->ID, $term_name);
 		$current_terms = (is_array($current_terms)) ? $current_terms : array();
 
@@ -1397,13 +1397,13 @@ class dy_utilities {
 		}
 
 
-		$terms_array = array();
+		$terms_array = [];
 
 		if(in_the_loop())
 		{
 			global $post;
 
-			$parent_terms = array();
+			$parent_terms = [];
 			$current_terms = get_the_terms($post->ID, $term_name);
 			$current_terms = (is_array($current_terms)) ? $current_terms : array();
 
@@ -1538,7 +1538,7 @@ class dy_utilities {
 		$output = '';
 		$days = dy_utilities::get_week_days_abbr();
 		$labels = ($force_long === true) ? dy_utilities::get_week_day_names_long() : dy_utilities::get_week_day_names_short();
-		$enabled_days = array();
+		$enabled_days = [];
 		
 		for($x = 0; $x < count($days); $x++)
 		{
@@ -1606,7 +1606,7 @@ class dy_utilities {
 		$today = date('Y-m-d', $today);
 		$last_day = date('Y-m-d', $last_day);
 
-		$new_range = array();
+		$new_range = [];
 		$range = (array) self::get_date_range($today, $last_day);
 		$disabled_range = (array) self::get_disabled_range();
 

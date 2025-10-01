@@ -32,7 +32,7 @@
 	}
 	else
 	{
-		$args['tax_query'] = array();
+		$args['tax_query'] = [];
 			
 		if(isset($_GET['keywords']))
 		{

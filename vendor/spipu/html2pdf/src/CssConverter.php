@@ -16,7 +16,7 @@ namespace Spipu\Html2Pdf;
  */
 class CssConverter
 {
-    private $htmlColor   = array(); // list of the HTML colors
+    private $htmlColor   = []; // list of the HTML colors
 
     /**
      * fontsize ratios

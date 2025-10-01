@@ -538,7 +538,7 @@ class Dynamicpackages_Public {
 				if(count($children_array) > 0)
 				{
 					$has_rows = false;
-					$rows_arr = array();
+					$rows_arr = [];
 					
 					foreach($children_array as $item)
 					{
@@ -1039,7 +1039,7 @@ class Dynamicpackages_Public {
 
 	public function event_arr()
 	{
-		$output = array();
+		$output = [];
 		$cache_key = 'event_arr';
 		
         if (isset(self::$cache[$cache_key])) {
@@ -1056,7 +1056,7 @@ class Dynamicpackages_Public {
 
 			if($from >= 0 && $to > $from)
 			{
-				$new_range = array();
+				$new_range = [];
 				$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
 				$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
 				$range = dy_utilities::get_date_range($today, $last_day);

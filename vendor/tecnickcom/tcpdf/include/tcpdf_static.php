@@ -213,7 +213,7 @@ class TCPDF_STATIC {
 		if (is_string($brd)) {
 			// convert string to array
 			$slen = strlen($brd);
-			$newbrd = array();
+			$newbrd = [];
 			for ($i = 0; $i < $slen; ++$i) {
 				$newbrd[$brd[$i]] = array('cap' => 'square', 'join' => 'miter');
 			}
@@ -661,7 +661,7 @@ class TCPDF_STATIC {
 			// the annotation options are already defined
 			return $prop['aopt'];
 		}
-		$opt = array(); // value to be returned
+		$opt = []; // value to be returned
 		// alignment: Controls how the text is laid out within the text field.
 		if (isset($prop['alignment'])) {
 			switch ($prop['alignment']) {
@@ -731,10 +731,10 @@ class TCPDF_STATIC {
 			$opt['border'] = $prop['border'];
 		}
 		if (!isset($opt['mk'])) {
-			$opt['mk'] = array();
+			$opt['mk'] = [];
 		}
 		if (!isset($opt['mk']['if'])) {
-			$opt['mk']['if'] = array();
+			$opt['mk']['if'] = [];
 		}
 		$opt['mk']['if']['a'] = array(0.5, 0.5);
 		// buttonAlignX: Controls how space is distributed from the left of the button face with respect to the icon.
@@ -950,7 +950,7 @@ class TCPDF_STATIC {
 		// value: The value of the field data that the user has entered.
 		if (isset($prop['value'])) {
 			if (is_array($prop['value'])) {
-				$opt['opt'] = array();
+				$opt['opt'] = [];
 				foreach ($prop['value'] AS $key => $optval) {
 					// exportValues: An array of strings representing the export values for the field.
 					if (isset($prop['exportValues'][$key])) {
@@ -1064,8 +1064,8 @@ class TCPDF_STATIC {
 		// trim string
 		$cssdata = trim($cssdata);
 		// find media blocks (all, braille, embossed, handheld, print, projection, screen, speech, tty, tv)
-		$cssblocks = array();
-		$matches = array();
+		$cssblocks = [];
+		$matches = [];
 		if (preg_match_all('/@media[\s]+([^\§]*)§([^§]*)§/i', $cssdata, $matches) > 0) {
 			foreach ($matches[1] as $key => $type) {
 				$cssblocks[$type] = $matches[2][$key];
@@ -1081,8 +1081,8 @@ class TCPDF_STATIC {
 			$cssdata .= $cssblocks['print'];
 		}
 		// reset css blocks array
-		$cssblocks = array();
-		$matches = array();
+		$cssblocks = [];
+		$matches = [];
 		// explode css data string into array
 		if (substr($cssdata, -1) == '}') {
 			// remove last parethesis
@@ -1108,11 +1108,11 @@ class TCPDF_STATIC {
 			}
 		}
 		// covert array to selector => properties
-		$cssdata = array();
+		$cssdata = [];
 		foreach ($cssblocks as $block) {
 			$selector = $block[0];
 			// calculate selector's specificity
-			$matches = array();
+			$matches = [];
 			$a = 0; // the declaration is not from is a 'style' attribute
 			$b = intval(preg_match_all('/[\#]/', $selector, $matches)); // number of ID attributes
 			$c = intval(preg_match_all('/[\[\.]/', $selector, $matches)); // number of other attributes
@@ -1211,7 +1211,7 @@ class TCPDF_STATIC {
 	public static function isValidCSSSelectorForTag($dom, $key, $selector) {
 		$valid = false; // value to be returned
 		$tag = $dom[$key]['value'];
-		$class = array();
+		$class = [];
 		if (isset($dom[$key]['attribute']['class']) AND !empty($dom[$key]['attribute']['class'])) {
 			$class = explode(' ', strtolower($dom[$key]['attribute']['class']));
 		}
@@ -1220,7 +1220,7 @@ class TCPDF_STATIC {
 			$id = strtolower($dom[$key]['attribute']['id']);
 		}
 		$selector = preg_replace('/([\>\+\~\s]{1})([\.]{1})([^\>\+\~\s]*)/si', '\\1*.\\3', $selector);
-		$matches = array();
+		$matches = [];
 		if (preg_match_all('/([\>\+\~\s]{1})([a-zA-Z0-9\*]+)([^\>\+\~\s]*)/si', $selector, $matches, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE) > 0) {
 			$parentop = array_pop($matches[1]);
 			$operator = $parentop[0];
@@ -1247,7 +1247,7 @@ class TCPDF_STATIC {
 							break;
 						}
 						case '[': { // attribute
-							$attrmatch = array();
+							$attrmatch = [];
 							if (preg_match('/\[([a-zA-Z0-9]*)[\s]*([\~\^\$\*\|\=]*)[\s]*["]?([^"\]]*)["]?\]/i', $attrib, $attrmatch) > 0) {
 								$att = strtolower($attrmatch[1]);
 								$val = $attrmatch[3];
@@ -1369,9 +1369,9 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function getCSSdataArray($dom, $key, $css) {
-		$cssarray = array(); // style to be returned
+		$cssarray = []; // style to be returned
 		// get parent CSS selectors
-		$selectors = array();
+		$selectors = [];
 		if (isset($dom[($dom[$key]['parent'])]['csssel'])) {
 			$selectors = $dom[($dom[$key]['parent'])]['csssel'];
 		}
@@ -1396,7 +1396,7 @@ class TCPDF_STATIC {
 			$cssarray[] = array('k' => '', 's' => '1000', 'c' => $dom[$key]['attribute']['style']);
 		}
 		// order the css array to account for specificity
-		$cssordered = array();
+		$cssordered = [];
 		foreach ($cssarray as $key => $val) {
 			$skey = sprintf('%04d', $key);
 			$cssordered[$val['s'].'_'.$skey] = $val;
@@ -1533,7 +1533,7 @@ class TCPDF_STATIC {
 		// TEX patterns are available at:
 		// http://www.ctan.org/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/
 		$data = file_get_contents($file);
-		$patterns = array();
+		$patterns = [];
 		// remove comments
 		$data = preg_replace('/\%[^\n]*/', '', $data);
 		// extract the patterns part
@@ -1542,7 +1542,7 @@ class TCPDF_STATIC {
 		// extract each pattern
 		$patterns_array = preg_split('/[\s]+/', $data);
 		// create new language array of patterns
-		$patterns = array();
+		$patterns = [];
 		foreach($patterns_array as $val) {
 			if (!TCPDF_STATIC::empty_string($val)) {
 				$val = trim($val);
@@ -1656,7 +1656,7 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function getTransformationMatrixProduct($ta, $tb) {
-		$tm = array();
+		$tm = [];
 		$tm[0] = ($ta[0] * $tb[0]) + ($ta[2] * $tb[1]);
 		$tm[1] = ($ta[1] * $tb[0]) + ($ta[3] * $tb[1]);
 		$tm[2] = ($ta[0] * $tb[2]) + ($ta[2] * $tb[3]);
@@ -1677,7 +1677,7 @@ class TCPDF_STATIC {
 	public static function getSVGTransformMatrix($attribute) {
 		// identity matrix
 		$tm = array(1, 0, 0, 1, 0, 0);
-		$transform = array();
+		$transform = [];
 		if (preg_match_all('/(matrix|translate|scale|rotate|skewX|skewY)[\s]*\(([^\)]+)\)/si', $attribute, $transform, PREG_SET_ORDER) > 0) {
 			foreach ($transform as $key => $data) {
 				if (!empty($data[2])) {
@@ -1687,7 +1687,7 @@ class TCPDF_STATIC {
 					$d = 1;
 					$e = 0;
 					$f = 0;
-					$regs = array();
+					$regs = [];
 					switch ($data[1]) {
 						case 'matrix': {
 							if (preg_match('/([a-z0-9\-\.]+)[\,\s]+([a-z0-9\-\.]+)[\,\s]+([a-z0-9\-\.]+)[\,\s]+([a-z0-9\-\.]+)[\,\s]+([a-z0-9\-\.]+)[\,\s]+([a-z0-9\-\.]+)/si', $data[2], $regs)) {
@@ -1811,7 +1811,7 @@ class TCPDF_STATIC {
 			return is_array($ret) ? $ret : array();
 		}
 		// preg_split is bugged - try alternative solution
-		$ret = array();
+		$ret = [];
 		while (($nl = strpos($subject, "\n")) !== FALSE) {
 			$ret = array_merge($ret, preg_split($pattern.$modifiers, substr($subject, 0, $nl), $limit, $flags));
 			$ret[] = "\n";
@@ -1878,7 +1878,7 @@ class TCPDF_STATIC {
 	public static function encodeUrlQuery($url) {
 		$urlData = parse_url($url);
 		if (isset($urlData['query']) && $urlData['query']) {
-			$urlQueryData = array();
+			$urlQueryData = [];
 			parse_str(urldecode($urlData['query']), $urlQueryData);
 			$port = isset($urlData['port']) ? ':'.$urlData['port'] : '';
 			$updatedUrl = $urlData['scheme'].'://'.$urlData['host'].$port.$urlData['path'].'?'.http_build_query($urlQueryData);
@@ -2532,7 +2532,7 @@ class TCPDF_STATIC {
 	public static function setPageBoxes($page, $type, $llx, $lly, $urx, $ury, $points, $k, $pagedim=array()) {
 		if (!isset($pagedim[$page])) {
 			// initialize array
-			$pagedim[$page] = array();
+			$pagedim[$page] = [];
 		}
 		if (!in_array($type, self::$pageboxes)) {
 			return;

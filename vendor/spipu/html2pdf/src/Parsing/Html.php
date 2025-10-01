@@ -40,7 +40,7 @@ class Html
      * parsed HTML code
      * @var Node[]
      */
-    public $code = array();
+    public $code = [];
 
     /**
      * main constructor
@@ -51,7 +51,7 @@ class Html
     {
         $this->textParser = $textParser;
         $this->tagParser = new TagParser($this->textParser);
-        $this->code  = array();
+        $this->code  = [];
     }
 
     /**
@@ -61,7 +61,7 @@ class Html
      */
     public function getCloneCodes()
     {
-        $codes = array();
+        $codes = [];
         foreach ($this->code as $key => $code) {
             $codes[$key] = clone $code;
         }
@@ -77,7 +77,7 @@ class Html
      */
     public function parse($tokens)
     {
-        $parents = array();
+        $parents = [];
 
         // flag : are we in a <pre> Tag ?
         $this->tagPreIn = false;
@@ -86,7 +86,7 @@ class Html
          * all the actions to do
          * @var Node[] $actions
          */
-        $actions = array();
+        $actions = [];
 
         // get the actions from the html tokens
         foreach ($tokens as $token) {
@@ -247,7 +247,7 @@ class Html
         // save the current position in the HTML code
         $node->setLine($token->getLine());
 
-        $actions = array();
+        $actions = [];
         // if the tag must be closed
         if (!in_array($node->getName(), $tagsNotClosed)) {
             // if it is a closure tag
@@ -306,7 +306,7 @@ class Html
         // action to use for each line of the content of a <pre> Tag
         $tagPreBr = new Node('br', array('style' => array(), 'num' => 0), false);
 
-        $actions = array();
+        $actions = [];
 
         // if we are not in a <pre> tag
         if (!$this->tagPreIn) {
@@ -359,7 +359,7 @@ class Html
         //
         $level = 0;      // depth level
         $end = false;    // end of the search
-        $code = array(); // extract code
+        $code = []; // extract code
 
         // while it's not ended
         while (!$end) {

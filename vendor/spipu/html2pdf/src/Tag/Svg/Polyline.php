@@ -51,7 +51,7 @@ class Polyline extends AbstractSvgTag
 
             $amountPath = count($path);
 
-            $actions = array();
+            $actions = [];
             for ($k=0; $k<$amountPath; $k+=2) {
                 $actions[] = array(
                     ($k ? 'L' : 'M') ,

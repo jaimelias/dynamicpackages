@@ -26,7 +26,7 @@ class Locale
      * texts of the current used locale
      * @var array
      */
-    static protected $list = array();
+    static protected $list = [];
 
     /**
      * directory where locale files are
@@ -78,7 +78,7 @@ class Locale
         }
 
         // load the file
-        self::$list = array();
+        self::$list = [];
         $handle = fopen($file, 'r');
         while (!feof($handle)) {
             $line = fgetcsv($handle, null, ',', '"', '\\');
@@ -98,7 +98,7 @@ class Locale
     public static function clean()
     {
         self::$code = null;
-        self::$list = array();
+        self::$list = [];
     }
 
     /**

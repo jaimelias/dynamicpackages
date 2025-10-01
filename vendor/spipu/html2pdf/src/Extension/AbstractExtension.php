@@ -21,7 +21,7 @@ abstract class AbstractExtension implements ExtensionInterface
     /**
      * @var array
      */
-    protected $tagDefinitions = array();
+    protected $tagDefinitions = [];
 
     /**
      * {@inheritDoc}

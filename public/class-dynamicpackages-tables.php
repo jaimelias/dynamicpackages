@@ -66,7 +66,7 @@ class Dynamicpackages_Tables{
 
 		$show_rows = ($this->price_type === 0) ? true : false;
 		$valid_table = false;
-		$price_table = array();
+		$price_table = [];
 		$rows = '';			
 		$occupancy_chart = (is_array($this->occupancy_chart)) 
 			? (array_key_exists('occupancy_chart', $this->occupancy_chart)) 

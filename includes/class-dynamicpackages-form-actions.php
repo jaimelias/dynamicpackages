@@ -158,7 +158,7 @@ class Dynamicpackages_Actions{
     public function send_email()
     {
 
-		$attachments = array();
+		$attachments = [];
 
 		if(dy_validators::validate_quote())
 		{
@@ -260,7 +260,7 @@ class Dynamicpackages_Actions{
 	
 	public function get_term_condition_as_html()
 	{		
-		$output = array();
+		$output = [];
 		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
 		$Parsedown = new Parsedown();
 		

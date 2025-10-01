@@ -26,7 +26,7 @@ class HtmlLexer
     public function tokenize($html)
     {
         // initialise the array
-        $tokens = array();
+        $tokens = [];
 
         // regexp to separate the tags from the texts
         $reg = '/(<\/?\w[^<>]*>)|([^<]+|<)/is';

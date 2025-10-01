@@ -64,7 +64,7 @@ class usdc {
 
 	public function get_enabled_networks()
 	{
-		$output = array();
+		$output = [];
 
 		foreach($this->all_networks as $key => $value)
 		{

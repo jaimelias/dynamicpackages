@@ -17,8 +17,8 @@ use TCPDF;
 
 class MyPdf extends TCPDF
 {
-    protected $_footerParam = array();
-    protected $_transf      = array();
+    protected $_footerParam = [];
+    protected $_transf      = [];
     protected $_myLastPageGroup = null;
     protected $_myLastPageGroupNb = 0;
 
@@ -1159,7 +1159,7 @@ class MyPdf extends TCPDF
     protected function _Arc2($x1, $y1, $x2, $y2, $rx, $ry, $angle = 0., $l = 0, $s = 0, $trans = false)
     {
         // array to stock the parameters
-        $v = array();
+        $v = [];
 
         // the original values
         $v['x1'] = $x1;
@@ -1191,7 +1191,7 @@ class MyPdf extends TCPDF
         }
 
         // convert paramters for make a arc with Center, Radius, from angleBegin to angleEnd
-        $v['s1'] = array();
+        $v['s1'] = [];
         $v['s1']['t'] = sqrt((4.-$v['D'])/$v['D']);
         $v['s1']['Xr'] = ($v['Xr1']+$v['Xr2'])/2. + $v['s1']['t']*($v['Yr2']-$v['Yr1'])/2.;
         $v['s1']['Yr'] = ($v['Yr1']+$v['Yr2'])/2. + $v['s1']['t']*($v['Xr1']-$v['Xr2'])/2.;
@@ -1205,7 +1205,7 @@ class MyPdf extends TCPDF
             $v['s1']['a1']-=2*M_PI;
         }
 
-        $v['s2'] = array();
+        $v['s2'] = [];
         $v['s2']['t'] = -$v['s1']['t'];
         $v['s2']['Xr'] = ($v['Xr1']+$v['Xr2'])/2. + $v['s2']['t']*($v['Yr2']-$v['Yr1'])/2.;
         $v['s2']['Yr'] = ($v['Yr1']+$v['Yr2'])/2. + $v['s2']['t']*($v['Xr1']-$v['Xr2'])/2.;

@@ -203,7 +203,7 @@ class TCPDF_IMAGES {
 		// get file content
 		$data = file_get_contents($file);
 		// check for embedded ICC profile
-		$icc = array();
+		$icc = [];
 		$offset = 0;
 		while (($pos = strpos($data, "ICC_PROFILE\0", $offset)) !== false) {
 			// get ICC sequence length
@@ -308,7 +308,7 @@ class TCPDF_IMAGES {
 					$trns = array(ord($t[1]), ord($t[3]), ord($t[5]));
 				} else { // Indexed
 					if ($n > 0) {
-						$trns = array();
+						$trns = [];
 						for ($i = 0; $i < $n; ++ $i) {
 							$trns[] = ord($t[$i]);
 						}

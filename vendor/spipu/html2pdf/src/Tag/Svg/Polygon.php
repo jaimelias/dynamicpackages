@@ -50,7 +50,7 @@ class Polygon extends AbstractSvgTag
             $path = array_values($path);
 
             $amountPath = count($path);
-            $actions = array();
+            $actions = [];
             for ($k=0; $k<$amountPath; $k+=2) {
                 $actions[] = array(
                     ($k ? 'L' : 'M') ,

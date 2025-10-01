@@ -86,7 +86,7 @@ td    { vertical-align: top; }
         <tbody>
 <?php
     $nb = rand(5, 11);
-    $produits = array();
+    $produits = [];
     $total = 0;
     for ($k=0; $k<$nb; $k++) {
         $num = rand(100000, 999999);

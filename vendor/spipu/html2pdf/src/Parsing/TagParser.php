@@ -50,7 +50,7 @@ class TagParser
         $name      = strtolower($match[2]);
 
         // required parameters (depends on the tag name)
-        $defaultParams = array();
+        $defaultParams = [];
         $defaultParams['style'] = '';
         if ($name === 'img') {
             $defaultParams['alt'] = '';
@@ -152,7 +152,7 @@ class TagParser
 
         // reading styles: decomposition and standardization
         $styles = explode(';', $param['style']);
-        $param['style'] = array();
+        $param['style'] = [];
         foreach ($styles as $style) {
             $tmp = explode(':', $style);
             if (count($tmp) > 1) {
@@ -207,7 +207,7 @@ class TagParser
      */
     public function extractTagAttributes($code)
     {
-        $param = array();
+        $param = [];
         $regexes = array(
             '([a-zA-Z0-9_]+)=([^"\'\s>]+)',  // read the parameters : name=value
             '([a-zA-Z0-9_]+)=\s*["]([^"]*)["]', // read the parameters : name="value"

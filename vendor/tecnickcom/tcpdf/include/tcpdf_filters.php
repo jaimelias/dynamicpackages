@@ -288,7 +288,7 @@ class TCPDF_FILTERS {
 		// initialize dictionary index
 		$dix = 258;
 		// initialize the dictionary (with the first 256 entries).
-		$dictionary = array();
+		$dictionary = [];
 		for ($i = 0; $i < 256; ++$i) {
 			$dictionary[$i] = chr($i);
 		}
@@ -307,7 +307,7 @@ class TCPDF_FILTERS {
 				$dix = 258;
 				$prev_index = 256;
 				// reset the dictionary (with the first 256 entries).
-				$dictionary = array();
+				$dictionary = [];
 				for ($i = 0; $i < 256; ++$i) {
 					$dictionary[$i] = chr($i);
 				}

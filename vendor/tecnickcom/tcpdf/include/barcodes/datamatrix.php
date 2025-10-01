@@ -113,7 +113,7 @@ class Datamatrix {
 	 * Barcode array to be returned which is readable by TCPDF.
 	 * @protected
 	 */
-	protected $barcode_array = array();
+	protected $barcode_array = [];
 
 	/**
 	 * Store last used encoding for data codewords.
@@ -233,7 +233,7 @@ class Datamatrix {
 	 * @public
 	 */
 	public function __construct($code) {
-		$barcode_array = array();
+		$barcode_array = [];
 		if ((is_null($code)) OR ($code == '\0') OR ($code == '')) {
 			return false;
 		}
@@ -284,7 +284,7 @@ class Datamatrix {
 		// get placement map
 		$places = $this->getPlacementMap($params[2], $params[3]);
 		// fill the grid with data
-		$grid = array();
+		$grid = [];
 		$i = 0;
 		// region data row max index
 		$rdri = ($params[4] - 1);
@@ -411,7 +411,7 @@ class Datamatrix {
 		// for each block
 		for ($b = 0; $b < $nb; ++$b) {
 			// create interleaved data block
-			$block = array();
+			$block = [];
 			for ($n = $b; $n < $num_wd; $n += $nb) {
 				$block[] = $wd[$n];
 			}
@@ -708,7 +708,7 @@ class Datamatrix {
 		// STEP A. Start in ASCII encodation.
 		$enc = ENC_ASCII; // current encoding mode
 		$pos = 0; // current position
-		$cw = array(); // array of codewords to be returned
+		$cw = []; // array of codewords to be returned
 		$cw_num = 0; // number of data codewords
 		$data_length = strlen($data); // number of chars
 		while ($pos < $data_length) {
@@ -750,7 +750,7 @@ class Datamatrix {
 				case ENC_C40 :   // Upper-case alphanumeric
 				case ENC_TXT :   // Lower-case alphanumeric
 				case ENC_X12 : { // ANSI X12
-					$temp_cw = array();
+					$temp_cw = [];
 					$p = 0;
 					$epos = $pos;
 					// get charset ID
@@ -871,7 +871,7 @@ class Datamatrix {
 				}
 				case ENC_EDF: { // F. While in EDIFACT (EDF) encodation
 					// initialize temporary array with 0 length
-					$temp_cw = array();
+					$temp_cw = [];
 					$epos = $pos;
 					$field_length = 0;
 					$newenc = $enc;
@@ -917,7 +917,7 @@ class Datamatrix {
 								$cw[] = $tcw;
 								$cw_num++;
 							}
-							$temp_cw = array();
+							$temp_cw = [];
 							$pos = $epos;
 							$field_length = 0;
 							if ($enc == ENC_ASCII) {
@@ -929,7 +929,7 @@ class Datamatrix {
 				}
 				case ENC_BASE256: { // G. While in Base 256 (B256) encodation
 					// initialize temporary array with 0 length
-					$temp_cw = array();
+					$temp_cw = [];
 					$field_length = 0;
 					while (($pos < $data_length) AND ($field_length <= 1555)) {
 						$newenc = $this->lookAheadTest($data, $pos, $enc);

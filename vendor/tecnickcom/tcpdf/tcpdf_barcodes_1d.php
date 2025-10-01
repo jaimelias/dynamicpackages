@@ -53,7 +53,7 @@ class TCPDFBarcode {
 	 * Array representation of barcode.
 	 * @protected
 	 */
-	protected $barcode_array = array();
+	protected $barcode_array = [];
 
 	/**
 	 * This is the class constructor.
@@ -373,7 +373,7 @@ class TCPDFBarcode {
 				break;
 			}
 			default: {
-				$this->barcode_array = array();
+				$this->barcode_array = [];
 				$arrcode = false;
 				break;
 			}
@@ -1077,7 +1077,7 @@ class TCPDFBarcode {
 		$fnc_a = array(241 => 102, 242 => 97, 243 => 96, 244 => 101);
 		$fnc_b = array(241 => 102, 242 => 97, 243 => 96, 244 => 100);
 		// array of symbols
-		$code_data = array();
+		$code_data = [];
 		// length of the code
 		$len = strlen($code);
 		switch(strtoupper($type)) {
@@ -1134,9 +1134,9 @@ class TCPDFBarcode {
 			}
 			default: { // MODE AUTO
 				// split code into sequences
-				$sequence = array();
+				$sequence = [];
 				// get numeric sequences (if any)
-				$numseq = array();
+				$numseq = [];
 				preg_match_all('/([0-9]{4,})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 				if (isset($numseq[1]) AND !empty($numseq[1])) {
 					$end_offset = 0;
@@ -1286,9 +1286,9 @@ class TCPDFBarcode {
 	 */
 	protected function get128ABsequence($code) {
 		$len = strlen($code);
-		$sequence = array();
+		$sequence = [];
 		// get A sequences (if any)
-		$numseq = array();
+		$numseq = [];
 		preg_match_all('/([\0-\31])/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		if (isset($numseq[1]) AND !empty($numseq[1])) {
 			$end_offset = 0;
@@ -1435,7 +1435,7 @@ class TCPDFBarcode {
 			'8'=>array('A','B','A','B','B','A'),
 			'9'=>array('A','B','B','A','B','A')
 		);
-		$upce_parities = array();
+		$upce_parities = [];
 		$upce_parities[0] = array(
 			'0'=>array('B','B','B','A','A','A'),
 			'1'=>array('B','B','A','B','A','A'),
@@ -1553,7 +1553,7 @@ class TCPDFBarcode {
 				'8'=>'0001001',
 				'9'=>'0010111')
 		);
-		$parities = array();
+		$parities = [];
 		$parities[2] = array(
 			'0'=>array('A','A'),
 			'1'=>array('A','B'),
@@ -2104,7 +2104,7 @@ class TCPDFBarcode {
 		$first_byte = sprintf('%2s', dechex((hexdec($binary_code_arr[0]) << 2) >> 2));
 		$binary_code_102bit = $first_byte.substr($binary_code, 2);
 		// convert binary data to codewords
-		$codewords = array();
+		$codewords = [];
 		$data = $this->hex_to_dec($binary_code_102bit);
 		$codewords[0] = bcmod($data, 636) * 2;
 		$data = bcdiv($data, 636);
@@ -2120,7 +2120,7 @@ class TCPDFBarcode {
 		$table2of13 = $this->imb_tables(2, 78);
 		$table5of13 = $this->imb_tables(5, 1287);
 		// convert codewords to characters
-		$characters = array();
+		$characters = [];
 		$bitmask = 512;
 		foreach($codewords as $k => $val) {
 			if ($val <= 1286) {
@@ -2227,7 +2227,7 @@ class TCPDFBarcode {
 	 */
 	public function dec_to_hex($number) {
 		$i = 0;
-		$hex = array();
+		$hex = [];
 		if($number == 0) {
 			return '00';
 		}
@@ -2320,7 +2320,7 @@ class TCPDFBarcode {
 	 * @protected
 	 */
 	protected function imb_tables($n, $size) {
-		$table = array();
+		$table = [];
 		$lli = 0; // LUT lower index
 		$lui = $size - 1; // LUT upper index
 		for ($count = 0; $count < 8192; ++$count) {

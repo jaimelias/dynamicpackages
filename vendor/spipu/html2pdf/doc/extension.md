@@ -92,7 +92,7 @@ class MyExtension implements ExtensionInterface
     /**
      * @var array
      */
-    private $tagDefinitions = array();
+    private $tagDefinitions = [];
 
     /**
      * {@inheritDoc}

@@ -121,7 +121,7 @@ class SvgDrawer
         }
 
         // prepare the list of the actions
-        $actions = array();
+        $actions = [];
 
         // for actions
         $amountMatches = count($match[0]);

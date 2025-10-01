@@ -183,7 +183,7 @@ class Dynamicpackages_Reviews
 
 	public function get_comments($id)
 	{
-		$comments = array();
+		$comments = [];
 		$cache_key = 'dy_get_comments_' . $id;
 
         if (isset(self::$cache[$cache_key])) {
@@ -374,7 +374,7 @@ class Dynamicpackages_Reviews
 	
 	public function array_sort($comments)
 	{
-		$output = array();
+		$output = [];
 		
 		for($x = 0; $x < count($comments); $x++)
 		{
@@ -534,7 +534,7 @@ class Dynamicpackages_Reviews
 	public function total_reviews()
 	{
 		global $dy_total_reviews;
-		$output = array();
+		$output = [];
 		
 		if(isset($dy_total_reviews))
 		{
@@ -543,9 +543,9 @@ class Dynamicpackages_Reviews
 		else
 		{
 			$languages = get_languages();
-			$language_list = array();
-			$merged_comments = array();
-			$rating = array();
+			$language_list = [];
+			$merged_comments = [];
+			$rating = [];
 			$count = 0;
 			$args = array(
 				'post_parent' => 0,

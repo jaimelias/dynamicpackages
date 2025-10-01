@@ -41,10 +41,10 @@ class Css
     protected $onlyLeft    = false; // flag if we are in a sub html => only "text-align:left" is used
     protected $defaultFont = null;  // default font to use if the asked font does not exist
 
-    public $value        = array(); // current values
-    public $css          = array(); // css values
-    public $cssKeys      = array(); // css key, for the execution order
-    public $table        = array(); // level history
+    public $value        = []; // current values
+    public $css          = []; // css values
+    public $cssKeys      = []; // css key, for the execution order
+    public $table        = []; // level history
 
     /**
      * @param MyPdf $pdf
@@ -129,8 +129,8 @@ class Css
     protected function init()
     {
         // init the Style
-        $this->table = array();
-        $this->value = array();
+        $this->table = [];
+        $this->value = [];
         $this->initStyle();
 
         // Init the styles without legacy
@@ -185,9 +185,9 @@ class Css
             'position' => null,
             'repeat'   => null
         );
-        $this->value['border']           = array();
-        $this->value['padding']          = array();
-        $this->value['margin']           = array();
+        $this->value['border']           = [];
+        $this->value['padding']          = [];
+        $this->value['margin']           = [];
         $this->value['margin-auto']      = false;
 
         $this->value['list-style-type']  = '';
@@ -547,7 +547,7 @@ class Css
         }
 
         // read the class attribute
-        $class = array();
+        $class = [];
         $tmp = isset($param['class']) ? strtolower(trim($param['class'])) : '';
         $tmp = explode(' ', $tmp);
         foreach ($tmp as $v) {
@@ -562,7 +562,7 @@ class Css
         $this->value['id_name']   = $name;
         $this->value['id_id']     = $id;
         $this->value['id_class']  = $class;
-        $this->value['id_lst']    = array();
+        $this->value['id_lst']    = [];
         $this->value['id_lst'][] = '*';
         $this->value['id_lst'][] = $tagName;
         if (!isset($this->value['svg'])) {
@@ -632,7 +632,7 @@ class Css
         }
 
         // get the class names to use
-        $class = array();
+        $class = [];
         $tmp = isset($param['class']) ? strtolower(trim($param['class'])) : '';
         $tmp = explode(' ', $tmp);
         
@@ -656,7 +656,7 @@ class Css
         $this->value['id_name']  = $name;
         $this->value['id_id']    = $id;
         $this->value['id_class'] = $class;
-        $this->value['id_lst']   = array();
+        $this->value['id_lst']   = [];
         $this->value['id_lst'][] = '*';
         $this->value['id_lst'][] = $tagName;
         if (count($class)) {
@@ -1441,13 +1441,13 @@ class Css
     protected function getFromCSS()
     {
         // styles to apply
-        $styles = array();
+        $styles = [];
 
         // list of the selectors to get in the CSS files
-        $getit  = array();
+        $getit  = [];
 
         // get the list of the selectors of each tags
-        $lst = array();
+        $lst = [];
         $lst[] = $this->value['id_lst'];
         for ($i=count($this->table)-1; $i>=0; $i--) {
             $lst[] = $this->table[$i]['id_lst'];
@@ -1641,7 +1641,7 @@ class Css
             $styles = explode(';', $styles);
 
             // parse each value
-            $css = array();
+            $css = [];
             foreach ($styles as $style) {
                 $tmp = explode(':', $style);
                 if (count($tmp) > 1) {

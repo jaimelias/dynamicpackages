@@ -188,7 +188,7 @@ class Dynamic_Core_Providers {
 
 	public function email_str_row_to_array($str)
 	{
-		$output = array();
+		$output = [];
 
 		if($str)
 		{

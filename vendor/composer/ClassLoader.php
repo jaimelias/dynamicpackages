@@ -52,15 +52,15 @@ class ClassLoader
     /**
      * @var array<string, array<string, int>>
      */
-    private $prefixLengthsPsr4 = array();
+    private $prefixLengthsPsr4 = [];
     /**
      * @var array<string, list<string>>
      */
-    private $prefixDirsPsr4 = array();
+    private $prefixDirsPsr4 = [];
     /**
      * @var list<string>
      */
-    private $fallbackDirsPsr4 = array();
+    private $fallbackDirsPsr4 = [];
 
     // PSR-0
     /**
@@ -70,11 +70,11 @@ class ClassLoader
      *
      * @var array<string, array<string, list<string>>>
      */
-    private $prefixesPsr0 = array();
+    private $prefixesPsr0 = [];
     /**
      * @var list<string>
      */
-    private $fallbackDirsPsr0 = array();
+    private $fallbackDirsPsr0 = [];
 
     /** @var bool */
     private $useIncludePath = false;
@@ -82,7 +82,7 @@ class ClassLoader
     /**
      * @var array<string, string>
      */
-    private $classMap = array();
+    private $classMap = [];
 
     /** @var bool */
     private $classMapAuthoritative = false;
@@ -90,7 +90,7 @@ class ClassLoader
     /**
      * @var array<string, bool>
      */
-    private $missingClasses = array();
+    private $missingClasses = [];
 
     /** @var string|null */
     private $apcuPrefix;
@@ -98,7 +98,7 @@ class ClassLoader
     /**
      * @var array<string, self>
      */
-    private static $registeredLoaders = array();
+    private static $registeredLoaders = [];
 
     /**
      * @param string|null $vendorDir

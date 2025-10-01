@@ -57,7 +57,7 @@ class Path extends AbstractSvgTag
             $amountPath = count($path);
 
             // read each actions in the path
-            $actions = array();
+            $actions = [];
             $lastAction = null; // last action found
             for ($k=0; $k<$amountPath; true) {
                 // for this actions, we can not have multi coordinate
@@ -72,7 +72,7 @@ class Path extends AbstractSvgTag
                 }
 
                 // current action
-                $action = array();
+                $action = [];
                 $action[] = $lastAction;
                 switch ($lastAction) {
                     case 'C':

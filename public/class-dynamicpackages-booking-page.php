@@ -59,8 +59,8 @@ class Dynamicpackages_Booking_Page {
 		$coupon_discount = 0;
 		
 		if (dy_validators::validate_coupon()) {
-			$coupon_params   = dy_utilities::get_active_coupon_params();
-			$coupon_code     = $coupon_params->code;
+			$coupon_params = dy_utilities::get_active_coupon_params();
+			$coupon_code = $coupon_params->code;
 			$coupon_discount = (float) $coupon_params->discount;
 
 			$description .= sprintf(
@@ -116,47 +116,53 @@ class Dynamicpackages_Booking_Page {
 			'add_ons' => $add_ons
 		);
 
-		return 'const defaultCheckoutArgs = '.json_encode($data).';';			
+		return 'const defaultCheckoutArgs = '.wp_json_encode($data).';';			
 	}
 
 
 	
 	public function get_description()
 	{
-		$output = apply_filters('dy_description', null);
-		
-		if(dy_validators::has_deposit())
-		{
-			$deposit = dy_utilities::payment_amount();
-			$total = dy_utilities::total();
-			$outstanding = $total-$deposit;
-			$output .= ' - '.__('deposit', 'dynamicpackages').' '.wrap_money_full($deposit).' - '.__('outstanding balance', 'dynamicpackages').' '.wrap_money_full($outstanding);					
+		$output = (string) apply_filters('dy_description', null);
+
+		if (dy_validators::has_deposit()) {
+			$deposit = (float) dy_utilities::payment_amount();
+			$total = (float) dy_utilities::total();
+			$outstanding = $total - $deposit;
+
+			$output .= sprintf(
+				' - %s %s - %s %s',
+				__('deposit', 'dynamicpackages'),
+				wrap_money_full($deposit),
+				__('outstanding balance', 'dynamicpackages'),
+				wrap_money_full($outstanding)
+			);
 		}
+
 		return $output;
 	}
+
 	
 	public function accept()
 	{
-		$output = array();
-		$terms = dy_utilities::get_taxonomies('package_terms_conditions');
+		$output = [];
+		$terms = (array) dy_utilities::get_taxonomies('package_terms_conditions');
 		
-		if(is_array($terms))
+		if(is_array($terms) && count($terms) > 0)
 		{
-			if(count($terms) > 0)
-			{
-				$terms_conditions = $terms;
-				$terms_conditions_clean = array();
+			$terms_conditions = $terms;
+			$terms_conditions_clean = [];
 
-				for($x = 0; $x < count($terms_conditions); $x++ )
-				{
-					$terms_conditions_item = array();
-					$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
-					$terms_conditions_item['name'] = $terms_conditions[$x]->name;
-					$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
-					array_push($terms_conditions_clean, $terms_conditions_item);
-				}
-				$output = $terms_conditions_clean;
-			}			
+			for($x = 0; $x < count($terms_conditions); $x++ )
+			{
+				$terms_conditions_item = [];
+				$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
+				$terms_conditions_item['name'] = $terms_conditions[$x]->name;
+				$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
+				array_push($terms_conditions_clean, $terms_conditions_item);
+			}
+			
+			$output = $terms_conditions_clean;		
 		}
 
 		return $output;
@@ -173,20 +179,18 @@ class Dynamicpackages_Booking_Page {
 		}
 		else
 		{
-			//outstanding balance
-			$total = dy_utilities::total();
-			$amount = $total;
-			
-			
-			if(package_field('package_payment' ) == 1)
-			{
-				$deposit = floatval(dy_utilities::get_deposit());
-				
-				if($deposit > 0)
-				{
-					$amount = floatval(dy_utilities::total())*(floatval($deposit)*0.01);
-					$output = floatval($total)-$amount;					
-				}					
+			$total = (float) dy_utilities::total();
+			$payment_type = (int) package_field('package_payment');
+			$amount = $total; // igual que antes, por si no aplica depósito
+
+			if ($payment_type === 1) {
+				$deposit = (float) dy_utilities::get_deposit();
+
+				if ($deposit > 0) {
+					// mismo cálculo: $amount = $total * ($deposit * 0.01)
+					$amount = $total * ($deposit / 100);
+					$output = $total - $amount;
+				}
 			}
 
 			$GLOBALS['dy_outstanding'] = $output;

@@ -276,7 +276,7 @@ class TCPDF_COLORS {
 		// check for javascript color array syntax
 		if (strpos($color, '[') !== false) {
 			if (preg_match('/[\[][\"\'](t|g|rgba|rgb|cmyk)[\"\'][\,]?([0-9\.]*+)[\,]?([0-9\.]*+)[\,]?([0-9\.]*+)[\,]?([0-9\.]*+)[\]]/', $color, $m) > 0) {
-				$returncolor = array();
+				$returncolor = [];
 				switch ($m[1]) {
 					case 'cmyk': {
 						// RGB
@@ -394,7 +394,7 @@ class TCPDF_COLORS {
 				$r = substr($color_code, 0, 1);
 				$g = substr($color_code, 1, 1);
 				$b = substr($color_code, 2, 1);
-				$returncolor = array();
+				$returncolor = [];
 				$returncolor['R'] = max(0, min(255, hexdec($r.$r)));
 				$returncolor['G'] = max(0, min(255, hexdec($g.$g)));
 				$returncolor['B'] = max(0, min(255, hexdec($b.$b)));
@@ -402,7 +402,7 @@ class TCPDF_COLORS {
 			}
 			case 6: {
 				// 6-digit RGB hexadecimal representation
-				$returncolor = array();
+				$returncolor = [];
 				$returncolor['R'] = max(0, min(255, hexdec(substr($color_code, 0, 2))));
 				$returncolor['G'] = max(0, min(255, hexdec(substr($color_code, 2, 2))));
 				$returncolor['B'] = max(0, min(255, hexdec(substr($color_code, 4, 2))));
@@ -410,7 +410,7 @@ class TCPDF_COLORS {
 			}
 			case 8: {
 				// 8-digit CMYK hexadecimal representation
-				$returncolor = array();
+				$returncolor = [];
 				$returncolor['C'] = max(0, min(100, round(hexdec(substr($color_code, 0, 2)) / 2.55)));
 				$returncolor['M'] = max(0, min(100, round(hexdec(substr($color_code, 2, 2)) / 2.55)));
 				$returncolor['Y'] = max(0, min(100, round(hexdec(substr($color_code, 4, 2)) / 2.55)));

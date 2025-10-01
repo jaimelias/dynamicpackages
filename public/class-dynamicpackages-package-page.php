@@ -39,7 +39,7 @@ class Dynamicpackages_Package_Page {
 	public function enabled_times()
 	{	
 
-		$output = array();
+		$output = [];
 
 		if(is_singular('packages'))
 		{

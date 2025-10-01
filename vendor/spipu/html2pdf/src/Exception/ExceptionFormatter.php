@@ -73,7 +73,7 @@ class ExceptionFormatter
      */
     protected function getAdditionalData(Html2PdfException $e)
     {
-        $data = array();
+        $data = [];
 
         // read the error
         switch ($e->getCode()) {

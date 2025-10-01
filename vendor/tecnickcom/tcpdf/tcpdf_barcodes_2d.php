@@ -53,7 +53,7 @@ class TCPDF2DBarcode {
 	 * Array representation of barcode.
 	 * @protected
 	 */
-	protected $barcode_array = array();
+	protected $barcode_array = [];
 
 	/**
 	 * This is the class constructor.
@@ -273,7 +273,7 @@ class TCPDF2DBarcode {
 					$ecl = intval($mode[2]);
 				}
 				// set macro block
-				$macro = array();
+				$macro = [];
 				if (isset($mode[3]) AND ($mode[3] !== '') AND isset($mode[4]) AND ($mode[4] !== '') AND isset($mode[5]) AND ($mode[5] !== '')) {
 					$macro['segment_total'] = intval($mode[3]);
 					$macro['segment_index'] = intval($mode[4]);
@@ -318,7 +318,7 @@ class TCPDF2DBarcode {
 				}
 				$this->barcode_array['num_rows'] = count($rows);
 				$this->barcode_array['num_cols'] = strlen($rows[0]);
-				$this->barcode_array['bcode'] = array();
+				$this->barcode_array['bcode'] = [];
 				foreach ($rows as $r) {
 					$this->barcode_array['bcode'][] = str_split($r, 1);
 				}
@@ -338,7 +338,7 @@ class TCPDF2DBarcode {
 				break;
 			}
 			default: {
-				$this->barcode_array = array();
+				$this->barcode_array = [];
 			}
 		}
 	}
