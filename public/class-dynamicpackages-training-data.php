@@ -44,10 +44,10 @@ class Dynamicpackages_Export_Post_Types{
 
     public function  single_file_headers($headers)
     {
-        if(is_singular('packages') && isset($_GET['training-data'])) {
+        if(is_singular('packages') && secure_get('training-data', false, 'exists')) {
 
-            if(isset($_GET['format']) && in_array($_GET['format'],  $this->alt_formats)) {
-                $this->format = sanitize_text_field($_GET['format']);
+            if(in_array(secure_get('format'),  $this->alt_formats)) {
+                $this->format = secure_get('format');
                 $this->content_type = $this->all_content_types[$this->format];
                 $this->extension = $this->all_extensions[$this->format];
             }
@@ -59,7 +59,7 @@ class Dynamicpackages_Export_Post_Types{
     }
 
     public function export_single_file() {
-        if(is_singular('packages') && isset($_GET['training-data'])) {
+        if(is_singular('packages') && secure_get('training-data', false, 'exists')) {
              global $post;
             exit($this->get_training_content($post));
         }
@@ -67,20 +67,15 @@ class Dynamicpackages_Export_Post_Types{
 
     public function query_training_data() {
 
-        if(isset($_GET['format']) && in_array($_GET['format'],  $this->alt_formats)) {
-            $this->format = sanitize_text_field($_GET['format']);
+        if(in_array(secure_get('format'),  $this->alt_formats)) {
+            $this->format = secure_get('format');
             $this->content_type = $this->all_content_types[$this->format];
             $this->extension = $this->all_extensions[$this->format];
         }
 
         $default_language = (string) default_language();
         $languages = (array) get_languages();
-
-        $filter_lang = (string) ( isset($_GET['lang']) &&  in_array(sanitize_text_field($_GET['lang']), $languages)) 
-                        ? sanitize_text_field($_GET['lang'])
-                        : default_language();
-
-
+        $filter_lang = (string) (in_array(secure_get('lang'), $languages)) ? secure_get('lang') : default_language();
         
         $args = array(
             'post_type'      => 'packages',
@@ -181,7 +176,7 @@ class Dynamicpackages_Export_Post_Types{
             }
 
             // Transform content per selected format
-            $payload = $transform_content( $f->content ?? '', $format );
+            $payload = $transform_content( $f->content ?? '', $this->format );
 
             file_put_contents( $path, $payload );
         }
