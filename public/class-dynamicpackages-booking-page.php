@@ -98,8 +98,8 @@ class Dynamicpackages_Booking_Page {
 			'package_code' => (string) package_field('package_trip_code'),
 			'title' => (string) $post->post_title,
 			'package_type' => (string) dy_utilities::get_package_type($post->ID),
-			'categories' => (array) dy_utilities::get_taxo_names('package_category'),
-			'locations' => (array) dy_utilities::get_taxo_names('package_location'),
+			'categories' => (array) dy_utilities::get_taxo_names('package_category', $post->ID),
+			'locations' => (array) dy_utilities::get_taxo_names('package_location', $post->ID),
 			'package_not_included' => (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌'),
 			'package_included' => (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅'),
 			'TERMS_CONDITIONS' => (array) $this->accept(),
@@ -204,7 +204,7 @@ class Dynamicpackages_Booking_Page {
 		$load_recaptcha = false;
 		$load_request_form_utilities = false;
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
 			{

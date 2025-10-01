@@ -371,7 +371,7 @@ class paguelo_facil_on{
 					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
 					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 					
-					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), sanitize_email($_POST['email']))).'</p>';
+					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</p>';
 					
 					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 					
@@ -802,7 +802,7 @@ class paguelo_facil_on{
 		global $post;
 		$output = '';
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			$the_id = $post->ID;
 			

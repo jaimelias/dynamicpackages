@@ -202,7 +202,7 @@ class Dynamicpackages_Actions{
 		}
 	
 
-		$to = sanitize_email($_POST['email']);
+		$to = secure_post('email', '', 'sanitize_email');
 		$subject = $this->subject();
 		$body = $message;
 		$headers = array('Content-Type: text/html; charset=UTF-8');

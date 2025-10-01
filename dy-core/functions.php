@@ -23,7 +23,7 @@ if(! function_exists('get_dy_id'))
 			}
 		}
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			$post_id = $post->ID;
 		}

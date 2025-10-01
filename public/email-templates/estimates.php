@@ -1,6 +1,6 @@
 <?php
 
-$post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
+$post_id = secure_post('post_id', 0);
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), secure_post('first_name')));
@@ -18,16 +18,16 @@ $company_contact = ($company_phone) ?  $company_phone . ' / ' . $company_email :
 $company_address = get_option('dy_address');
 $company_tax_id = get_option('dy_tax_id');
 $label_client = __('Client', 'dynamicpackages');
-$client_name = secure_post('first_name') . ' ' . sanitize_text_field($_POST['lastname']);
-$client_email = sanitize_email($_POST['email']);
+$client_name = secure_post('first_name') . ' ' . secure_post('lastname');
+$client_email = secure_post('email', '', 'sanitize_email');
 $client_phone = secure_post('country_calling_code').secure_post('phone');
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = apply_filters('dy_description', null);
-$included = sanitize_text_field($_POST['package_included']);
+$included = (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅');
 $label_included = __('Included', 'dynamicpackages');
-$not_included = sanitize_text_field($_POST['package_not_included']);
+$not_included = (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌');
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
 $details = '<strong style="color: #666666">'.esc_html(__('Itinerary', 'dynamicpackages')).':</strong><br/>' . apply_filters('dy_details', false);
@@ -39,7 +39,7 @@ $whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlenc
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>' . $total);
-$add_ons = apply_filters('dy_included_add_ons_list', null);
+$add_ons = apply_filters('dy_included_add_ons_list', '☑️');
 
 $label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
 $package_url = get_the_permalink($post_id);

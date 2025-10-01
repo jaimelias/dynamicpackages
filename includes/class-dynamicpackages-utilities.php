@@ -1191,9 +1191,8 @@ class dy_utilities {
 	public static function get_taxonomies($term_name)
 	{
 		global $post;
-		
-
-		if(!isset($post)) return [];
+	
+		if(!($post instanceof WP_Post)) return [];
 
 		$output = [];
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
@@ -1203,7 +1202,7 @@ class dy_utilities {
         }
 
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			$the_id = $post->ID;
 			
@@ -1230,12 +1229,13 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function get_taxo_names($term_name)
+	public static function get_taxo_names($term_name, $the_id = null)
 	{
-		global $post;
+		$the_id = (!$the_id) ? get_dy_id() : $the_id;
+		$post = get_post($the_id);
 		$output = [];
 
-		if(!isset($post)) return [];
+		if(!($post instanceof WP_Post)) return [];
 
 		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
 
@@ -1271,7 +1271,7 @@ class dy_utilities {
 	public static function implode_taxo_names($tax, $last_separator = ',', $item_separator = '')
 	{
 		$output = '';
-		$items_arr = self::get_taxo_names($tax);
+		$items_arr = self::get_taxo_names($tax, get_dy_id());
 
 		if(is_array($items_arr) && count($items_arr) > 0)
 		{

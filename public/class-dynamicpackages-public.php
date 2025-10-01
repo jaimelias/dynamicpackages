@@ -517,7 +517,7 @@ class Dynamicpackages_Public {
 
 		global $post;
 		
-		if(!dy_validators::is_child() && isset($post))
+		if(!dy_validators::is_child() && ($post instanceof WP_Post))
 		{
 			$duration = package_field('package_duration');
 			$duration_unit = package_field('package_length_unit');
@@ -1005,7 +1005,7 @@ class Dynamicpackages_Public {
 
 		global $post;
 		
-		if(isset($post) && dy_validators::is_child())
+		if(($post instanceof WP_Post) && dy_validators::is_child())
 		{
 			$similar_packages_label = isset($this->current_language)
 				&& package_field('package_child_title_'.$this->current_language, $post->post_parent)

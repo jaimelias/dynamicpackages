@@ -21,7 +21,7 @@ class Dynamicpackages_Confirmation_Page {
 	{
 		global $post;
 		
-		if(is_confirmation_page() && !isset($post))
+		if(is_confirmation_page() && !($post instanceof WP_Post))
 		{
 			$GLOBALS['post'] = get_post(get_dy_id());
 		}

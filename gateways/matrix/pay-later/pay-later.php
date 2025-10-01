@@ -84,7 +84,7 @@ class pay_later{
 				$message .= '<hr/><ul>';
 				$message .= '<li>'.esc_html(sprintf(__('Name: %s %s', 'dynamicpackages'), secure_post('first_name'), sanitize_text_field($_POST['lastname']))).'</li>';
 				$message .= '<li>'.esc_html(sprintf(__('Phone: %s', 'dynamicpackages'), $phone)).'</li>';
-				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), sanitize_email($_POST['email']))).'</li>';
+				$message .= '<li>'.esc_html(sprintf(__('Email: %s', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</li>';
 				$message .= '</ul>';
 				$headers = array('Content-Type: text/html; charset=UTF-8');
 

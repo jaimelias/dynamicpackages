@@ -1,6 +1,6 @@
 <?php
 
-$post_id = (isset($_POST['post_id'])) ? intval($_POST['post_id']) : 0;
+$post_id = secure_post('post_id', 0);
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
 $company_name = get_bloginfo('name');
@@ -11,17 +11,17 @@ $company_address = get_option('dy_address');
 $company_tax_id = get_option('dy_tax_id');
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $label_client = __('Client', 'dynamicpackages');
-$client_name = secure_post('first_name') . ' ' . sanitize_text_field($_POST['lastname']);
-$client_email = sanitize_email($_POST['email']);
-$client_phone = secure_post('country_calling_code').secure_post('phone');
+$client_name = secure_post('first_name') . ' ' . secure_post('lastname');
+$client_email = secure_post('email', '', 'sanitize_email');
+$client_phone = secure_post('country_calling_code') . secure_post('phone');
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
 $description = apply_filters('dy_description', null);
 $details = '<strong style="color: #666666">'.esc_html(__('Itinerary', 'dynamicpackages')).':</strong><br/>' . apply_filters('dy_details', false);
-$included = sanitize_text_field($_POST['package_included']);
+$included = (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'));
 $label_included = __('Included', 'dynamicpackages');
-$not_included = sanitize_text_field($_POST['package_not_included']);
+$not_included = (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'));
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
 $notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '.<br/><br/>' : null;

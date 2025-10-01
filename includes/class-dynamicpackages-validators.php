@@ -742,7 +742,7 @@ class dy_validators
 			global $post;
 		}
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			if(property_exists($post, 'ID'))
 			{
@@ -780,7 +780,7 @@ class dy_validators
 			global $post;
 		}
 
-		if(isset($post))
+		if($post instanceof WP_Post)
 		{
 			if(property_exists($post, 'ID'))
 			{

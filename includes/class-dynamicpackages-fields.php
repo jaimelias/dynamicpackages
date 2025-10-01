@@ -92,7 +92,7 @@ class Dynamicpackages_Fields
         }
 
         // Check if the current post has a parent and adjust $this_id
-        if (isset($post) && property_exists($post, 'post_parent') && $post->post_parent > 0) {
+        if (($post instanceof WP_Post) && property_exists($post, 'post_parent') && $post->post_parent > 0) {
             if (!in_array($name, $excludes)) {
                 $this_id = $post->post_parent;
             }

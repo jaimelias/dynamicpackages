@@ -58,34 +58,52 @@ class dy_Add_To_Calendar
 	
 	public function show()
 	{
-		if($this->is_valid())
-		{
-			global $post;
-			
-			if(isset($post))
-			{
-
-				$text = __('Add to calendar', 'dynamicpackages');
-
-				ob_start();
-				?>
-					<div class="bottom-20 addevent_container">
-						<div title="<?php echo esc_attr($text); ?>" class="addeventatc">
-							<?php esc_html_e($text); ?>
-							<span class="start"><?php esc_html_e(sanitize_text_field($_REQUEST['booking_date']).' '.dy_utilities::hour()); ?></span>
-							<span class="timezone"><?php esc_html_e(get_option('timezone_string')); ?></span>
-							<span class="title"><?php esc_html_e($post->post_title); ?></span>
-							<span class="description"><?php esc_html_e(apply_filters('dy_description', null)); ?></span>
-							<span class="location"><?php esc_html_e(package_field('package_start_address')); ?></span>
-						</div>
-					</div>
-				<?php
-				$output = ob_get_contents();
-				ob_end_clean();
-				return $output;	
-			}
+		if ( ! $this->is_valid() ) {
+			return '';
 		}
+
+		global $post;
+
+		if ( ! ($post instanceof WP_Post) ) {
+			return '';
+		}
+
+		$label        = __('Add to calendar', 'dynamicpackages'); // translatable
+		$label_attr   = esc_attr($label);
+		$label_html   = esc_html($label);
+
+		$booking_date = sanitize_text_field($_REQUEST['booking_date'] ?? '');
+		$start_text   = esc_html($booking_date . ' ' . dy_utilities::hour());
+
+		$timezone     = esc_html(get_option('timezone_string'));
+		$title        = esc_html($post->post_title);
+		$description  = esc_html(apply_filters('dy_description', null));
+		$location     = esc_html(package_field('package_start_address'));
+
+		$html = sprintf(
+			'<div class="bottom-20 addevent_container">
+				<div title="%s" class="addeventatc">
+					%s
+					<span class="start">%s</span>
+					<span class="timezone">%s</span>
+					<span class="title">%s</span>
+					<span class="description">%s</span>
+					<span class="location">%s</span>
+				</div>
+			</div>',
+			$label_attr,
+			$label_html,
+			$start_text,
+			$timezone,
+			$title,
+			$description,
+			$location
+		);
+
+		// Match the original behavior of returning buffered HTML (without extra output)
+		return $html;
 	}
+
 	
 	public function css()
 	{

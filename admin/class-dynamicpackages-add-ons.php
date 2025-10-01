@@ -510,16 +510,19 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		return $output;
 	}
 	
-	public function included_add_ons_list($output = '')
+	public function included_add_ons_list($separator = null)
 	{
 		// Use included_add_ons_arr to get the filtered add-ons
+		$output = '';
 		$included_add_ons = $this->included_add_ons_arr();
+
+		$sep = (!empty($separator)) ? "{$separator} " : '';
 		
 		if (!empty($included_add_ons)) {
 			foreach ($included_add_ons as $add_on) {
 				$separator = ($add_on['description']) ? ': ' : null;
 				$output .= '<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">'
-						 . $add_on['name'] . $separator . '</strong>' . $add_on['description'];
+						 . $sep . $add_on['name'] . $separator . '</strong>' . $add_on['description'];
 			}
 		}
 	
