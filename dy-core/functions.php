@@ -81,7 +81,7 @@ if ( ! function_exists('write_log')) {
 		}
 	}
 	
-	function write_log ( $log )  {
+	function write_log ( $log = '')  {
 		
 		$separator = "**************************";
 		$separator_start = "\n\n" .$separator . 'WRITE_LOG_START' . $separator . "\n";
