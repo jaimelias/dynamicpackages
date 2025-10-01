@@ -85,16 +85,16 @@ class Dynamicpackages_Location_Category {
 			$locStr = '';
 
 			// keywords → “term”
-			if ( isset( $_GET['keywords'] ) ) {
-				$kw = $this->sanitize_keywords( (string) $_GET['keywords'] );
+			if ( secure_get('keywords', false, 'exists') ) {
+				$kw = $this->sanitize_keywords( secure_get('keywords') );
 				if ( $kw !== '' ) {
 					$bits[] = sprintf( '“%s”', $kw );
 				}
 			}
 
 			// category name
-			if ( isset( $_GET['category'] ) ) {
-				$slug = sanitize_text_field( wp_unslash( (string) $_GET['category'] ) );
+			if ( secure_get('category', false, 'exists') ) {
+				$slug = secure_get('category');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$cat = $this->get_term_by_slug_cached( $slug, 'package_category' );
 					if ( $cat ) {
@@ -107,8 +107,8 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// location name (with parent)
-			if ( isset( $_GET['location'] ) ) {
-				$slug = sanitize_text_field( wp_unslash( (string) $_GET['location'] ) );
+			if ( secure_get('location', false, 'exists') ) {
+				$slug = secure_get('location');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$loc = $this->get_term_by_slug_cached( $slug, 'package_location' );
 					if ( $loc ) {
@@ -125,8 +125,8 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// sort label
-			if ( isset( $_GET['sort'] ) ) {
-				$sort   = sanitize_text_field( wp_unslash( (string) $_GET['sort'] ) );
+			if ( secure_get('sort', false, 'exists') ) {
+				$sort   = secure_get('sort');
 				$labels = $this->get_sort_title_labels();
 				if ( isset( $labels[ $sort ] ) ) {
 					$bits[] = sprintf( '(%s)', $labels[ $sort ] );
@@ -176,15 +176,15 @@ class Dynamicpackages_Location_Category {
 			$catStr = '';
 			$locStr = '';
 
-			if ( isset( $_GET['keywords'] ) ) {
-				$kw = $this->sanitize_keywords( (string) $_GET['keywords'] );
+			if ( secure_get('keywords', false, 'exists') ) {
+				$kw = $this->sanitize_keywords( secure_get('keywords') );
 				if ( $kw !== '' ) {
 					$bits[] = sprintf( '“%s”', $kw );
 				}
 			}
 
-			if ( isset( $_GET['category'] ) ) {
-				$slug = sanitize_text_field( wp_unslash( (string) $_GET['category'] ) );
+			if ( secure_get('category', false, 'exists') ) {
+				$slug = secure_get('category');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$cat = $this->get_term_by_slug_cached( $slug, 'package_category' );
 					if ( $cat ) {
@@ -196,8 +196,8 @@ class Dynamicpackages_Location_Category {
 				$bits[] = $catStr;
 			}
 
-			if ( isset( $_GET['location'] ) ) {
-				$slug = sanitize_text_field( wp_unslash( (string) $_GET['location'] ) );
+			if ( secure_get('location', false, 'exists') ) {
+				$slug = secure_get('location');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$loc = $this->get_term_by_slug_cached( $slug, 'package_location' );
 					if ( $loc ) {
@@ -213,8 +213,8 @@ class Dynamicpackages_Location_Category {
 				}
 			}
 
-			if ( isset( $_GET['sort'] ) ) {
-				$sort   = sanitize_text_field( wp_unslash( (string) $_GET['sort'] ) );
+			if ( secure_get('sort', false, 'exists') ) {
+				$sort   = secure_get('sort');
 				$labels = $this->get_sort_title_labels();
 				if ( isset( $labels[ $sort ] ) ) {
 					$bits[] = sprintf( '(%s)', $labels[ $sort ] );
@@ -318,7 +318,7 @@ class Dynamicpackages_Location_Category {
 	}
 
 	/**
-	 * Collect & sanitize query args from $_GET.
+	 * Collect & sanitize query args from $_GET = secure_get.
 	 * Options:
 	 *  - translate (bool) : translate taxonomy terms to $lang slugs via Polylang
 	 *  - lang      (string|null)
@@ -330,8 +330,8 @@ class Dynamicpackages_Location_Category {
 		$args = [];
 
 		// location
-		if ( isset( $_GET['location'] ) ) {
-			$raw = sanitize_text_field( wp_unslash( $_GET['location'] ) );
+		if ( secure_get('location', false, 'exists') ) {
+			$raw = secure_get('location');
 			if ( $raw !== '' ) {
 				$args['location'] = $translate
 					? ( $this->translate_term_to_lang_slug( $raw, 'location', (string) $lang ) ?? '' )
@@ -342,8 +342,8 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// category
-		if ( isset( $_GET['category'] ) ) {
-			$raw = sanitize_text_field( wp_unslash( $_GET['category'] ) );
+		if ( secure_get('category', false, 'exists') ) {
+			$raw = secure_get('category');
 			if ( $raw !== '' ) {
 				$args['category'] = $translate
 					? ( $this->translate_term_to_lang_slug( $raw, 'category', (string) $lang ) ?? '' )
@@ -354,8 +354,8 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// sort
-		if ( isset( $_GET['sort'] ) ) {
-			$sort = sanitize_text_field( wp_unslash( $_GET['sort'] ) );
+		if ( secure_get('sort', false, 'exists') ) {
+			$sort = secure_get('sort');
 			$sort = $this->sanitize_sort( $sort );
 			if ( $sort !== null ) {
 				$args['sort'] = $sort;
@@ -363,8 +363,8 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// keywords
-		if ( isset( $_GET['keywords'] ) ) {
-			$kw = $this->sanitize_keywords( (string) $_GET['keywords'] );
+		if ( secure_get('keywords', false, 'exists') ) {
+			$kw = secure_get('keywords');
 			if ( $kw !== '' ) {
 				$args['keywords'] = $kw;
 			}
