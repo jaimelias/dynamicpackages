@@ -44,7 +44,7 @@ class Dynamicpackages_Export_Post_Types{
 
     public function  single_file_headers($headers)
     {
-        if(is_singular('packages') && secure_get('training-data', false, 'exists')) {
+        if(is_singular('packages') && get_has('training-data')) {
 
             if(in_array(secure_get('format'),  $this->alt_formats)) {
                 $this->format = secure_get('format');
@@ -59,7 +59,7 @@ class Dynamicpackages_Export_Post_Types{
     }
 
     public function export_single_file() {
-        if(is_singular('packages') && secure_get('training-data', false, 'exists')) {
+        if(is_singular('packages') && get_has('training-data')) {
              global $post;
             exit($this->get_training_content($post));
         }

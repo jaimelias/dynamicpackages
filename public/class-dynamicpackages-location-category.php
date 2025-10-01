@@ -85,7 +85,7 @@ class Dynamicpackages_Location_Category {
 			$locStr = '';
 
 			// keywords → “term”
-			if ( secure_get('keywords', false, 'exists') ) {
+			if ( get_has('keywords') ) {
 				$kw = $this->sanitize_keywords( secure_get('keywords') );
 				if ( $kw !== '' ) {
 					$bits[] = sprintf( '“%s”', $kw );
@@ -93,7 +93,7 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// category name
-			if ( secure_get('category', false, 'exists') ) {
+			if ( get_has('category') ) {
 				$slug = secure_get('category');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$cat = $this->get_term_by_slug_cached( $slug, 'package_category' );
@@ -107,7 +107,7 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// location name (with parent)
-			if ( secure_get('location', false, 'exists') ) {
+			if ( get_has('location') ) {
 				$slug = secure_get('location');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$loc = $this->get_term_by_slug_cached( $slug, 'package_location' );
@@ -125,7 +125,7 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// sort label
-			if ( secure_get('sort', false, 'exists') ) {
+			if ( get_has('sort') ) {
 				$sort   = secure_get('sort');
 				$labels = $this->get_sort_title_labels();
 				if ( isset( $labels[ $sort ] ) ) {
@@ -176,14 +176,14 @@ class Dynamicpackages_Location_Category {
 			$catStr = '';
 			$locStr = '';
 
-			if ( secure_get('keywords', false, 'exists') ) {
+			if ( get_has('keywords') ) {
 				$kw = $this->sanitize_keywords( secure_get('keywords') );
 				if ( $kw !== '' ) {
 					$bits[] = sprintf( '“%s”', $kw );
 				}
 			}
 
-			if ( secure_get('category', false, 'exists') ) {
+			if ( get_has('category') ) {
 				$slug = secure_get('category');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$cat = $this->get_term_by_slug_cached( $slug, 'package_category' );
@@ -196,7 +196,7 @@ class Dynamicpackages_Location_Category {
 				$bits[] = $catStr;
 			}
 
-			if ( secure_get('location', false, 'exists') ) {
+			if ( get_has('location') ) {
 				$slug = secure_get('location');
 				if ( $slug !== '' && $slug !== 'any' ) {
 					$loc = $this->get_term_by_slug_cached( $slug, 'package_location' );
@@ -213,7 +213,7 @@ class Dynamicpackages_Location_Category {
 				}
 			}
 
-			if ( secure_get('sort', false, 'exists') ) {
+			if ( get_has('sort') ) {
 				$sort   = secure_get('sort');
 				$labels = $this->get_sort_title_labels();
 				if ( isset( $labels[ $sort ] ) ) {
@@ -330,7 +330,7 @@ class Dynamicpackages_Location_Category {
 		$args = [];
 
 		// location
-		if ( secure_get('location', false, 'exists') ) {
+		if ( get_has('location') ) {
 			$raw = secure_get('location');
 			if ( $raw !== '' ) {
 				$args['location'] = $translate
@@ -342,7 +342,7 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// category
-		if ( secure_get('category', false, 'exists') ) {
+		if ( get_has('category') ) {
 			$raw = secure_get('category');
 			if ( $raw !== '' ) {
 				$args['category'] = $translate
@@ -354,7 +354,7 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// sort
-		if ( secure_get('sort', false, 'exists') ) {
+		if ( get_has('sort') ) {
 			$sort = secure_get('sort');
 			$sort = $this->sanitize_sort( $sort );
 			if ( $sort !== null ) {
@@ -363,7 +363,7 @@ class Dynamicpackages_Location_Category {
 		}
 
 		// keywords
-		if ( secure_get('keywords', false, 'exists') ) {
+		if ( get_has('keywords') ) {
 			$kw = secure_get('keywords');
 			if ( $kw !== '' ) {
 				$args['keywords'] = $kw;
