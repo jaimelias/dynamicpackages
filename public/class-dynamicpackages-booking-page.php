@@ -56,57 +56,63 @@ class Dynamicpackages_Booking_Page {
 
 		$description = $this->get_description();
 		$coupon_code = null;
-		$coupon_discount = null;
+		$coupon_discount = 0;
 		
-		if(dy_validators::validate_coupon())
-		{
-			$coupon_params = dy_utilities::get_active_coupon_params();
-			$coupon_code = $coupon_params->code;
-			$coupon_discount = $coupon_params->discount;
-			$description = $description.'. '.__('Coupon', 'dynamicpackages').' '.$coupon_code.' '.'. '.$coupon_discount.'% '.__('off', 'dynamicpackages');
+		if (dy_validators::validate_coupon()) {
+			$coupon_params   = dy_utilities::get_active_coupon_params();
+			$coupon_code     = $coupon_params->code;
+			$coupon_discount = (float) $coupon_params->discount;
+
+			$description .= sprintf(
+				'. %s %s . %s%% %s',
+				__('Coupon', 'dynamicpackages'),
+				$coupon_code,
+				$coupon_discount,
+				__('off', 'dynamicpackages')
+			);
 		}
+
 		
-		$add_ons = apply_filters('dy_get_add_ons', null);
-		
-		$regular_amount = floatval(dy_utilities::total('regular'));
-		$amount = floatval(dy_utilities::total());
-		$payment_amount = floatval(dy_utilities::payment_amount());
+		$add_ons = (array) apply_filters('dy_get_add_ons', null);
+		$regular_amount = (float) dy_utilities::total('regular');
+		$amount = (float) dy_utilities::total();
+		$payment_amount = (float) dy_utilities::payment_amount();
 
 		$data = array(
-			'post_id' => intval($post->ID),
-			'description' => esc_html($description),
-			'coupon_code' => esc_html($coupon_code),
-			'coupon_discount' => floatval($coupon_discount),
-			'coupon_discount_amount' => (floatval($coupon_discount) > 0 ) ? ($regular_amount - $amount) : 0,
+			'post_id' => (int) $post->ID,
+			'description' => $description,
+			'coupon_code' => $coupon_code,
+			'coupon_discount' => $coupon_discount,
+			'coupon_discount_amount' => ($coupon_discount > 0 ) ? ($regular_amount - $amount) : 0,
 			'total' => $payment_amount,
-			'booking_date' => (isset($_GET['booking_date'])) ? sanitize_text_field($_GET['booking_date']) : null,
-			'booking_extra' => (isset($_GET['booking_extra'])) ? sanitize_text_field($_GET['booking_extra']) : null,
+			'booking_date' => secure_get('booking_date', null),
+			'booking_extra' => secure_get('booking_extra', null),
 			'booking_hour' => esc_html(dy_utilities::hour()),
-			'end_date' => (isset($_GET['end_date'])) ? $_GET['end_date'] : null,
-			'return_hour' => esc_html(dy_utilities::return_hour()),
-			'duration' => esc_html(dy_utilities::show_duration()),
-			'pax_num' => intval(dy_utilities::pax_num()),
-			'pax_regular' => (isset($_GET['pax_regular'])) ? intval($_GET['pax_regular']) : 0,
-			'pax_discount' => (isset($_GET['pax_discount'])) ? intval($_GET['pax_discount']) : 0,
-			'pax_free' => (isset($_GET['pax_free']) ? intval($_GET['pax_free']) : 0),
-			'package_code' => esc_html(package_field('package_trip_code')),
-			'title' => esc_html($post->post_title),
-			'package_type' => esc_html(dy_utilities::get_package_type($post->ID)),
-			'categories' => dy_utilities::get_taxo_names('package_category'),
-			'locations' => dy_utilities::get_taxo_names('package_location'),
-			'package_not_included' => esc_html(dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌')),
-			'package_included' => esc_html(dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅')),
-			'TERMS_CONDITIONS' => $this->accept(),
-			'package_url' => esc_url(get_permalink()),
-			'booking_url' => esc_url(current_url_full()),
-			'hash' => (isset($_GET['hash'])) ? sanitize_text_field($_GET['hash']) : null,
+			'end_date' => secure_get('end_date', null),
+			'return_hour' => (string) dy_utilities::return_hour(),
+			'duration' => (string) dy_utilities::show_duration(),
+			'pax_num' => (int) dy_utilities::pax_num(),
+			'pax_regular' => secure_get('pax_regular', 0, 'intval'),
+			'pax_discount' => secure_get('pax_discount', 0, 'intval'),
+			'pax_free' => secure_get('pax_free', 0, 'intval'),
+			'package_code' => (string) package_field('package_trip_code'),
+			'title' => (string) $post->post_title,
+			'package_type' => (string) dy_utilities::get_package_type($post->ID),
+			'categories' => (array) dy_utilities::get_taxo_names('package_category'),
+			'locations' => (array) dy_utilities::get_taxo_names('package_location'),
+			'package_not_included' => (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌'),
+			'package_included' => (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅'),
+			'TERMS_CONDITIONS' => (array) $this->accept(),
+			'package_url' => get_permalink(),
+			'booking_url' => current_url_full(),
+			'hash' => secure_get('hash', null),
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),
-			'outstanding' => floatval($this->outstanding()),
+			'outstanding' => (float) $this->outstanding(),
 			'amount' => $amount,
 			'regular_amount' => $regular_amount,
-			'payment_type' => esc_html(dy_utilities::payment_type()),
-			'deposit' => floatval(dy_utilities::get_deposit()),
+			'payment_type' => dy_utilities::payment_type(),
+			'deposit' => (float) dy_utilities::get_deposit(),
 			'add_ons' => $add_ons
 		);
 
