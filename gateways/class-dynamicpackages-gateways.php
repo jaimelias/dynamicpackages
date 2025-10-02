@@ -410,8 +410,8 @@ class Dynamicpackages_Gateways
 					<hr/>
 					
 					<h3><?php echo (esc_html__('Before Booking', 'dynamicpackages')); ?></h3>
-					<p class="minimal_warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e('The cardholder must be the person making and using the purchase or reservation. Third-party bookings are not permitted. Non-compliant transactions may be canceled without notice and access may be denied.', 'dynamicpackages'); ?></p>
-					<p class="minimal_warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e('To complete this reservation we require images of the passports (foreigners) or valid Identity Documents (nationals) of each participant. The documents you send will be compared against the originals at the meeting point.', 'dynamicpackages'); ?></p>
+					<p class="minimal_warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e('The cardholder must be the person who makes the purchase or reservation and must participate in its use, either individually or as part of a group. Third-party transactions are not permitted. Transactions that do not meet these conditions may be canceled without notice and use may be denied.', 'dynamicpackages'); ?></p>
+					<p class="minimal_warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e('To complete your reservation, we require a clear image of each participant’s passport (for foreign nationals) or valid national ID (for citizens). These documents are necessary for the safety of all participants. The copies provided will be verified against the originals at the meeting point, either by the company or by the competent local authorities.', 'dynamicpackages'); ?></p>
 			<?php
 			$output = ob_get_contents();
 			ob_end_clean();

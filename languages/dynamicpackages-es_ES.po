@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2025-10-02 00:07+0000\n"
+"PO-Revision-Date: 2025-10-02 00:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -1954,14 +1954,16 @@ msgstr ""
 
 #: gateways/class-dynamicpackages-gateways.php:413
 msgid ""
-"The cardholder must be the person making and using the purchase or "
-"reservation. Third-party bookings are not permitted. Non-compliant "
-"transactions may be canceled without notice and access may be denied."
+"The cardholder must be the person who makes the purchase or reservation and "
+"must participate in its use, either individually or as part of a group. "
+"Third-party transactions are not permitted. Transactions that do not meet "
+"these conditions may be canceled without notice and use may be denied."
 msgstr ""
-"El titular de la tarjeta (tarjetahabiente) debe ser la persona que realiza y "
-"utiliza la compra o reserva. No se permiten operaciones en nombre de "
-"terceros. Las transacciones que no cumplan estas condiciones podrán "
-"cancelarse sin previo aviso y se podrá denegar el acceso."
+"El titular de la tarjeta debe ser quien realiza la compra o reserva y "
+"participar en su uso, ya sea individualmente o como parte de un grupo. No se "
+"permiten operaciones en nombre de terceros. Las transacciones que no cumplan "
+"estas condiciones podrán cancelarse sin previo aviso y se podrá denegar el "
+"uso."
 
 #: gateways/class-dynamicpackages-gateways.php:255
 msgid "the deposit"
@@ -2054,7 +2056,6 @@ msgstr ""
 msgid "To complete the booking please send us the"
 msgstr "Para completar la reservación envíanos el"
 
-#: gateways/class-dynamicpackages-gateways.php:414
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:272
 msgid ""
 "To complete this reservation we require images of the passports (foreigners) "
@@ -2082,6 +2083,21 @@ msgstr ""
 "las confirmaciones por correo electrónico. Esta política garantiza que "
 "podamos confirmar su reserva de manera rápida y segura. Agradecemos su "
 "comprensión y cooperación en este proceso."
+
+#: gateways/class-dynamicpackages-gateways.php:414
+msgid ""
+"To complete your reservation, we require a clear image of each participant’s "
+"passport (for foreign nationals) or valid national ID (for citizens). These "
+"documents are necessary for the safety of all participants. The copies "
+"provided will be verified against the originals at the meeting point, either "
+"by the company or by the competent local authorities."
+msgstr ""
+"Para completar su reserva, requerimos una imagen clara del pasaporte (para "
+"extranjeros) o del documento de identidad válido (para nacionales) de cada "
+"participante. Estos documentos son necesarios para la seguridad de todos los "
+"participantes. Las copias enviadas serán verificadas contra los originales "
+"en el punto de encuentro, ya sea por la empresa o por las autoridades "
+"locales competentes."
 
 #: gateways/matrix/bank/local.php:175
 #: gateways/matrix/bank/international.php:186
