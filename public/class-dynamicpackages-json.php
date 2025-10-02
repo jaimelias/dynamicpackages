@@ -83,12 +83,17 @@ class Dynamicpackages_JSON
 			'price'                   => $starting_at,
 			'url'                     => $url,
 			'availability'            => 'https://schema.org/InStock',
-			'validFrom'               => esc_html(date('Y-m-d', dy_strtotime('now'))),
-			'hasMerchantReturnPolicy' => [
-				'@type'                 => 'MerchantReturnPolicy',
-				'returnPolicyCategory'  => 'https://schema.org/MerchantReturnNotPermitted',
-			],
+			'validFrom'               => esc_html(date('Y-m-d', dy_strtotime('now')))
 		];
+
+		$merchant_return_link = get_option('dy_merchant_return_link');
+
+		if(!empty($merchant_return_link)) {
+			$offers['hasMerchantReturnPolicy'] = [
+				'@type'                 => 'MerchantReturnPolicy',
+				'merchantReturnLink' => $merchant_return_link
+			];
+		}
 
 		// aggregate rating (conditionally attached below)
 		$aggregateRating = [
