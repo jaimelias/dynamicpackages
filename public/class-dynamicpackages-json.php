@@ -86,14 +86,11 @@ class Dynamicpackages_JSON
 			'validFrom'               => esc_html(date('Y-m-d', dy_strtotime('now')))
 		];
 
-		$merchant_return_link = get_option('dy_merchant_return_link');
-
-		if(!empty($merchant_return_link)) {
-			$offers['hasMerchantReturnPolicy'] = [
-				'@type'                 => 'MerchantReturnPolicy',
-				'merchantReturnLink' => $merchant_return_link
-			];
-		}
+		$offers['hasMerchantReturnPolicy'] = [
+			'@type'                 => 'MerchantReturnPolicy',
+			'merchantReturnLink' => "{$url}#package_terms_conditions_list",
+			'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow'
+		];
 
 		// aggregate rating (conditionally attached below)
 		$aggregateRating = [

@@ -1439,18 +1439,21 @@ class dy_utilities {
 		}
 		
 		
-		if(count($terms_array) > 0)
-		{
-			if($label)
-			{
-				$output .= '<p class="strong">'.esc_html($label).'</p>';
+		if (!empty($terms_array)) {
+			if ($label) {
+				$output .= sprintf('<p class="strong">%s</p>', esc_html($label));
 			}
-			
-			$icon = ($icon_class) ? '<span class="'.esc_attr($icon_class).'" ></span>' : '';
-			$output .= '<ul class="dy-list-'.esc_attr($term_name).' bottom-20 dy-list"><li>'.$icon.' ';
-			$output .= implode('</li><li>'.$icon.' ', $terms_array);
-			$output .= '</li></ul>';
-		}	
+
+			$icon = $icon_class ? sprintf('<span class="%s"></span>', esc_attr($icon_class)) : '';
+
+			$output .= sprintf(
+				'<ul id="%1$s_list" class="dy-list-%1$s bottom-20 dy-list"><li>%2$s %3$s</li></ul>',
+				esc_attr($term_name),
+				$icon,
+				implode(sprintf('</li><li>%s ', $icon), $terms_array)
+			);
+		}
+	
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $output;
