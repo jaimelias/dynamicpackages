@@ -23,13 +23,17 @@ class Dynamicpackages_Shortcodes {
 
 	public function contact($content = null)
 	{
+		global $post;
+			
+        if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact')) {
 
-		$GLOBALS['dy_has_form'] = true;
+			ob_start();
+			require_once $this->plugin_dir_path.'public/partials/quote-form.php';
+			$output = ob_get_contents();
+			ob_end_clean();
+			
+		}
 
-		ob_start();
-		require_once $this->plugin_dir_path.'public/partials/quote-form.php';
-		$output = ob_get_contents();
-		ob_end_clean();	
 		
 		return $output;		
 	}

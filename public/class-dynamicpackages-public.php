@@ -76,7 +76,7 @@ class Dynamicpackages_Public {
  
 		global $post;
 
-		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'packages')))
+		if(is_tax('package_category') || is_tax('package_location') || is_post_type_archive('packages') || (($post instanceof WP_Post) && has_shortcode( $post->post_content, 'packages')))
 		{
 			wp_enqueue_script('dynamicpackages-archive', $this->plugin_dir_url_file . 'js/dynamicpackages-archives.js', array('jquery', 'dy-core-utilities'), $this->version, true );
 		}

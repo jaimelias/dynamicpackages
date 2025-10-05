@@ -181,7 +181,7 @@ class dy_validators
 		{
 			$post = get_post($post_id);
 
-			if($post instanceof WP_Post && $post->post_type === 'packages') {
+			if(($post instanceof WP_Post) && ($post->post_type === 'packages' || has_shortcode( $post->post_content, 'package_contact'))) {
 				$output = true;
 			}
 		}

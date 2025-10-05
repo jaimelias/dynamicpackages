@@ -43,7 +43,7 @@ class Dynamicpackages_Actions{
 				}
 				else
 				{
-					if(is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'package_contact'))
+					if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
 					{
 						$output = true;
 					}

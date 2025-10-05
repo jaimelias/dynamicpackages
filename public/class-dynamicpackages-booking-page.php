@@ -26,7 +26,7 @@ class Dynamicpackages_Booking_Page {
         {
 			global $post;
 			
-            if(is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'package_contact'))
+            if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
             {
                 $output = true;
             }
@@ -206,7 +206,7 @@ class Dynamicpackages_Booking_Page {
 
 		if($post instanceof WP_Post)
 		{
-			if(is_a($post, 'WP_Post') && has_shortcode( $post->post_content, 'package_contact'))
+			if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
 			{
 				$load_recaptcha = true;
 				$load_request_form_utilities = true;
