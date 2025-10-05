@@ -78,23 +78,26 @@ class Dynamicpackages_JSON
 
 		// base offers (mutated per context)
 		$offers = [
-			'@type'                   => 'Offer',
-			'priceCurrency'           => 'USD',
-			'price'                   => $starting_at,
-			'url'                     => $url,
-			'availability'            => 'https://schema.org/InStock',
-			'validFrom'               => esc_html(date('Y-m-d', dy_strtotime('now')))
+			'@type' => 'Offer',
+			'priceCurrency' => 'USD',
+			'price' => $starting_at,
+			'url' => $url,
+			'availability' => 'https://schema.org/InStock',
+			'validFrom' => esc_html(date('Y-m-d', dy_strtotime('now')))
 		];
 
 		$offers['hasMerchantReturnPolicy'] = [
-			'@type'                 => 'MerchantReturnPolicy',
+			'@type' => 'MerchantReturnPolicy',
 			'merchantReturnLink' => "{$url}#package_terms_conditions_list",
-			'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow'
+			'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+			'returnMethod' => 'https://schema.org/ReturnByMail',
+			'returnFees' => 'https://schema.org/FreeReturn',
+			'merchantReturnDays' => 30,
 		];
 
 		// aggregate rating (conditionally attached below)
 		$aggregateRating = [
-			'@type'       => 'aggregateRating',
+			'@type' => 'aggregateRating',
 			'ratingValue' => esc_html($rating_val),
 			'reviewCount' => esc_html($review_cnt),
 		];
@@ -104,15 +107,15 @@ class Dynamicpackages_JSON
 		$comments = $this->reviews->get_comments($post->ID);
 		foreach ($comments as $comment) {
 			$reviews[] = [
-				'@type'         => 'Review',
+				'@type' => 'Review',
 				'datePublished' => esc_html(date('Y-m-d', strtotime($comment->comment_date))),
-				'description'   => esc_html($comment->comment_content),
-				'author'        => [
+				'description' => esc_html($comment->comment_content),
+				'author' => [
 					'@type' => 'Person',
-					'name'  => esc_html($comment->comment_author),
+					'name' => esc_html($comment->comment_author),
 				],
-				'reviewRating'  => [
-					'@type'      => 'Rating',
+				'reviewRating' => [
+					'@type' => 'Rating',
 					'bestRating' => '5',
 					'ratingValue'=> get_comment_meta($comment->comment_ID, 'dy_rating', true),
 				],
@@ -123,14 +126,14 @@ class Dynamicpackages_JSON
 			// Product
 			$arr = [
 				'@context' => 'https://www.schema.org',
-				'@type'    => 'Product',
-				'brand'    => [
+				'@type' => 'Product',
+				'brand' => [
 					'@type' => 'Brand',
-					'name'  => $site_name,
+					'name' => $site_name,
 				],
-				'name'     => $title,
-				'sku'      => md5(package_field('package_trip_code')),
-				'url'      => $url,
+				'name' => $title,
+				'sku' => md5(package_field('package_trip_code')),
+				'url' => $url,
 			];
 
 			if (!empty($post->post_excerpt)) {
@@ -181,19 +184,19 @@ class Dynamicpackages_JSON
 				}
 
 				$event = [
-					'@context'             => 'https://www.schema.org',
-					'@type'                => 'Event',
-					'name'                 => esc_html($title . ' - ' . $event_date_name),
-					'startDate'            => esc_html($event_date_format),
-					'endDate'              => esc_html(date('Y-m-d\TH:i', $end_ts)),
-					'description'          => $post->post_excerpt,
-					'organizer'            => [
+					'@context' => 'https://www.schema.org',
+					'@type' => 'Event',
+					'name' => esc_html($title . ' - ' . $event_date_name),
+					'startDate' => esc_html($event_date_format),
+					'endDate' => esc_html(date('Y-m-d\TH:i', $end_ts)),
+					'description' => $post->post_excerpt,
+					'organizer' => [
 						'name' => $site_name,
-						'url'  => $site_url,
+						'url' => $site_url,
 					],
-					'performer'            => $site_name,
-					'eventAttendanceMode'  => 'https://schema.org/OfflineEventAttendanceMode',
-					'eventStatus'          => 'https://schema.org/EventScheduled',
+					'performer' => $site_name,
+					'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+					'eventStatus' => 'https://schema.org/EventScheduled',
 				];
 
 				if ($rating_val > 0) {
@@ -208,8 +211,8 @@ class Dynamicpackages_JSON
 				$event['offers'] = $event_offers;
 
 				$event['location'] = [
-					'@type'   => 'Place',
-					'name'    => $site_name,
+					'@type' => 'Place',
+					'name' => $site_name,
 					'address' => esc_html($start_address),
 				];
 
