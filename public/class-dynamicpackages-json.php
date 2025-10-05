@@ -43,18 +43,46 @@ class Dynamicpackages_JSON
 		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
 	}
 
-	public function ld_json($arr = [])
-	{
-		// cache hit?
-		if (isset($GLOBALS['dy_ld_json'])) {
-			return $GLOBALS['dy_ld_json'];
+	public function website_ld_json($arr = []) {
+		global $polylang;
+
+		$current_language = current_language();
+		$default_language = default_language();
+		$package_main = (int) get_option('dy_breadcrump') ?? get_option('page_on_front');
+
+		
+		if(isset($polylang))
+		{	
+			if($current_language !== $default_language)
+			{
+				$package_main = pll_get_post($package_main, $current_language);
+
+			}
 		}
 
+		$package_url = get_permalink($package_main);
+
+		$website = [
+			'@context' => 'http://schema.org',
+			'@type' => 'WebSite',
+			'url' => home_lang(),
+			'name' => get_bloginfo('name'),
+			'potentialAction' => [
+				'@type' => 'SearchAction',
+				'target' => "{$package_url}?keywords={search_term}",
+				'query-input' => 'required name=search_term',
+			],
+		];
+
+		$arr[] = $website;
+
+		return $arr;
+	}
+
+	public function ld_json($arr = [])
+	{
 		// only build on single "packages"
-		if (!is_singular('packages')) {
-			$GLOBALS['dy_ld_json'] = $arr;
-			return $arr;
-		}
+		if (!is_singular('packages')) return $arr;
 
 		global $post;
 
@@ -71,10 +99,7 @@ class Dynamicpackages_JSON
 		$schema      = (int) package_field('package_schema');
 		$is_valid    = dy_validators::is_valid_schema();
 
-		if (!$is_valid) {
-			$GLOBALS['dy_ld_json'] = $arr;
-			return $arr;
-		}
+		if (!$is_valid) return $arr;
 
 		// base offers (mutated per context)
 		$offers = [
@@ -124,7 +149,7 @@ class Dynamicpackages_JSON
 
 		if ($schema === 1) {
 			// Product
-			$arr = [
+			$product = [
 				'@context' => 'https://www.schema.org',
 				'@type' => 'Product',
 				'brand' => [
@@ -137,23 +162,26 @@ class Dynamicpackages_JSON
 			];
 
 			if (!empty($post->post_excerpt)) {
-				$arr['description'] = $post->post_excerpt;
+				$product['description'] = $post->post_excerpt;
 			}
 			if ($has_thumb) {
-				$arr['image'] = $thumb_url;
+				$product['image'] = $thumb_url;
 			}
 			if ($rating_val > 0) {
-				$arr['aggregateRating'] = $aggregateRating;
+				$product['aggregateRating'] = $aggregateRating;
 			}
 
 			// product-specific price validity
 			$offers_product = $offers;
 			$offers_product['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
-			$arr['offers'] = $offers_product;
+			$product['offers'] = $offers_product;
 
 			if (!empty($reviews)) {
-				$arr['review'] = $reviews;
+				$product['review'] = $reviews;
 			}
+
+			$arr[] = $product;
+
 		} else {
 			// Events
 			$events = apply_filters('dy_event_arr', []);
@@ -219,10 +247,10 @@ class Dynamicpackages_JSON
 				$event_arr[] = $event;
 			}
 
-			$arr = $event_arr;
+			$arr[] = $event_arr;
 		}
 
-		$GLOBALS['dy_ld_json'] = $arr;
+
 		return $arr;
 	}
 
