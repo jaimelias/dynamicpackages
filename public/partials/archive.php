@@ -289,6 +289,17 @@ else
 							<?php if($starting_at): ?>
 								<div class="dy_pad bottom-10">
 									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+
+									<!-- MerchantReturnPolicy (matches your JSON-LD) -->
+									<div itemprop="hasMerchantReturnPolicy" itemscope itemtype="https://schema.org/MerchantReturnPolicy">
+										<link itemprop="merchantReturnLink" href="<?php echo esc_url( get_permalink() . '#package_terms_conditions_list' ); ?>" />
+										<link itemprop="returnPolicyCategory" href="https://schema.org/MerchantReturnFiniteReturnWindow" />
+										<link itemprop="returnMethod" href="https://schema.org/ReturnByMail" />
+										<link itemprop="returnFees" href="https://schema.org/FreeReturn" />
+										<meta itemprop="merchantReturnDays" content="30" />
+									</div>
+									<!-- /MerchantReturnPolicy -->
+
 									<link itemprop="availability" href="https://schema.org/InStock" />
 									<link itemprop="url" href="<?php the_permalink(); ?>" />
 									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
