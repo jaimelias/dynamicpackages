@@ -71,7 +71,7 @@ class Dynamicpackages_JSON
 			'potentialAction' => [
 				'@type' => 'SearchAction',
 				'target' => "{$package_url}?keywords={search_term}",
-				'query-input' => 'required name=search_term',
+				'query' => 'required name=search_term',
 			],
 		];
 
