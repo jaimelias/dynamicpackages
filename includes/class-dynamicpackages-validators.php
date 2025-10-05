@@ -123,7 +123,8 @@ class dy_validators
         self::$cache[$cache_key] = $output;
 
 		return $output;
-	}	
+	}
+
 	public static function is_booking_page()
 	{
 		$output = false;
@@ -137,7 +138,9 @@ class dy_validators
 
 		if($the_id !== null)
 		{
-			if(self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
+			$post = get_post($the_id);
+
+			if($post->post_type === 'packages' && self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
 			{
 				$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
 				
@@ -172,9 +175,15 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		if(!empty(secure_post('dy_request')) && !empty(secure_post('post_id')))
+		$post_id = secure_post('post_id', 0);
+
+		if(!empty(secure_post('dy_request')) && !empty($post_id))
 		{
-			$output = true;
+			$post = get_post($post_id);
+
+			if($post instanceof WP_Post && $post->post_type === 'packages') {
+				$output = true;
+			}
 		}
 
         //store output in $cache
