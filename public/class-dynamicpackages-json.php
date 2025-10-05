@@ -40,7 +40,8 @@ class Dynamicpackages_JSON
 	
 	public function get_header()
 	{
-		add_filter('minimal_ld_json', array(&$this, 'ld_json'), 100);
+		add_filter('minimal_ld_json', array(&$this, 'product_ld_json'));
+		add_filter('minimal_ld_json', array(&$this, 'website_ld_json'));
 	}
 
 	public function website_ld_json($arr = []) {
@@ -79,7 +80,7 @@ class Dynamicpackages_JSON
 		return $arr;
 	}
 
-	public function ld_json($arr = [])
+	public function product_ld_json($arr = [])
 	{
 		// only build on single "packages"
 		if (!is_singular('packages')) return $arr;
