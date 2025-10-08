@@ -37,38 +37,32 @@ class Dynamicpackages_Reviews
 	
 	public function stars($the_id)
 	{
-		$output = ''; 
-
-		if(has_package())
-		{
-			if(get_comments_number() > 0)
-			{
-				require_once(ABSPATH . 'wp-admin/includes/template.php');
-
-				if(is_singular('packages'))
-				{
-					$stars = $this->wp_star_rating($this->get_rating($the_id)).' '.esc_html(get_comments_number()).' '.esc_html(__('reviews', 'dynamicpackages'));
-					$output .= '<a href="#dy_reviews">'.$stars.'</a>';
-				}
-				else
-				{
-
-					$schema = '';
-					
-					if(dy_validators::is_valid_schema())
-					{
-						$schema = 'itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"';
-					}					
-					
-					$stars = $this->wp_star_rating($this->get_rating($the_id)).' <span itemprop="reviewCount">'.esc_html(get_comments_number()).'</span> '.esc_html(__('reviews', 'dynamicpackages'));					
-					$stars .= '<meta itemprop="ratingValue" content = "'.esc_html($this->get_rating($the_id)).'">';
-					$output = '<span '.$schema.'>'.$stars.'</span>';
-				}
-			}			
+		if (!has_package()) {
+			return '';
 		}
 
-		return $output;
+		$count = get_comments_number();
+		if ($count <= 0) {
+			return '';
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/template.php';
+
+		$rating_html = $this->wp_star_rating($this->get_rating($the_id));
+		$reviews_txt = esc_html(__('reviews', 'dynamicpackages'));
+		$count_txt   = esc_html($count);
+
+		if (is_singular('packages')) {
+			// e.g. <a href="#dy_reviews">[stars] 12 reviews</a>
+			$stars = sprintf('%s %s %s', $rating_html, $count_txt, $reviews_txt);
+			return sprintf('<a href="#dy_reviews">%s</a>', $stars);
+		}
+
+		// e.g. <span>[stars] <span>12</span> reviews</span>
+		$stars = sprintf('%s <span>%s</span> %s', $rating_html, $count_txt, $reviews_txt);
+		return sprintf('<span>%s</span>', $stars);
 	}
+
 	
 	public function template($template)
 	{		
