@@ -75,7 +75,7 @@ class Dynamicpackages_JSON
 			],
 		];
 
-		$arr[] = $website;
+		$arr['website'] = $website;
 
 		return $arr;
 	}
@@ -181,7 +181,7 @@ class Dynamicpackages_JSON
 				$product['review'] = $reviews;
 			}
 
-			$arr[] = $product;
+			$arr['product'] = $product;
 
 		} else {
 			// Events
@@ -248,7 +248,7 @@ class Dynamicpackages_JSON
 				$event_arr[] = $event;
 			}
 
-			$arr[] = $event_arr;
+			$arr['event'] = $event_arr;
 		}
 
 

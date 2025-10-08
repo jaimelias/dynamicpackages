@@ -29,12 +29,30 @@ class Dynamicpackages_Reviews
 		add_action('wp', array(&$this, 'ppl_remove_comments_filter'));
 		add_filter('comment_form_defaults', array(&$this, 'comment_defaults'));
 		add_action('wp_head', array(&$this, 'css'));
-		add_filter('minimal_ld_json', array(&$this, 'add_reviews'), 10);
 		add_filter('dy_reviews_stars', array(&$this, 'stars'), 10);
 		add_filter('dy_reviews_get_rating', array(&$this, 'get_rating'), 10);
 		add_filter('dy_reviews_wp_star_rating', array(&$this, 'get_stars'), 10);
+		add_filter('dy_package_aggregate_rating', [$this, 'total_reviews']);
+		add_filter('minimal_ld_json', array(&$this, 'ratings_ld_json'), 10);
 	}
 	
+
+	public function ratings_ld_json($arr = []) {
+
+		if(is_array($arr) && array_key_exists('organization', $arr)) {
+
+			$rating = apply_filters('dy_package_aggregate_rating', []);
+
+			if(is_array($rating) && array_key_exists('reviewCount', $rating) && intval($rating['reviewCount']) > 0) {
+				$arr['organization']['aggregateRating'] = $rating;
+			}
+			
+		}
+
+		return $arr;
+
+	}
+
 	public function stars($the_id)
 	{
 		if (!has_package()) {
@@ -525,11 +543,10 @@ class Dynamicpackages_Reviews
 	}
 
 	
-	public function total_reviews()
+	public function total_reviews($output = [])
 	{
 		global $dy_total_reviews;
-		$output = [];
-		
+
 		if(isset($dy_total_reviews))
 		{
 			$output = $dy_total_reviews;
@@ -600,19 +617,6 @@ class Dynamicpackages_Reviews
 		}
 		
 		return $output;
-	}
-	public function add_reviews($json)
-	{
-		if(is_front_page())
-		{
-			$reviews = $this->total_reviews();
-			
-			if(is_array($reviews))
-			{
-				$json['aggregateRating'] = $reviews;
-			}
-		}
-		return $json;
 	}
 	
 
