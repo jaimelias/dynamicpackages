@@ -229,92 +229,95 @@ else
 	<link itemprop="url" href="<?php the_permalink(); ?>" />
 	<?php if ( $archive_query->have_posts() ) :?>
 				
-		<?php $count=0; ?>
-		<?php while ( $archive_query->have_posts() ) : $archive_query->the_post(); global $post; ?>
+		<?php 
+			$count=0;
+			$itemlist_elements = [];
+			$position_counter = 1;
+		?>
+
+		<?php while ( $archive_query->have_posts() ) : ?>
 
 		<?php
+			$archive_query->the_post(); 
+			global $post;
+
 			dy_utilities::update_package_date_in_db($post->ID);
 			$package_code = package_field('package_trip_code');
 			$package_code = (!empty($package_code)) ? $package_code : 'ID'.$post->ID;
 			$starting_at = (dy_utilities::starting_at_archive() > 0) ? dy_utilities::starting_at_archive() : 0;
+
+			$itemlist_elements[] = array(
+				'@type'   => 'ListItem',
+				'position'=> $position_counter++,
+				'url'     => get_permalink(),
+				'name'    => $post->post_title,
+			);
 		?>
 
-			<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>" <?php if(dy_validators::is_valid_schema($post->ID)): ?> itemscope itemtype="https://schema.org/Product" <?php endif; ?>>
-				
-				
-				<?php if(dy_validators::is_valid_schema($post->ID)): ?>
-					<link itemprop="url" href="<?php the_permalink(); ?>" />
-					<meta itemprop="sku" content="<?php echo esc_attr(md5(package_field( 'package_trip_code' ))); ?>" />
-				<?php endif; ?>
-				
-				<div class="padding-10 dy_package">
-					<div class="pure-g gutters">
-						<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
-							<?php if(has_post_thumbnail()): ?>
-							<div class="dy_thumbnail relative text-center">
-								<a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive', 'itemprop' => 'image')); ?></a>
-								<?php do_action('dy_show_event_date'); ?>
-								<?php do_action('dy_show_badge'); ?>
-							</div>
-							<?php endif;?>
-						</div>	
-							
-						<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
-						
-							<?php if(!empty($package_code)): ?>
-								<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html($package_code); ?></div>
-							<?php endif; ?>								
-						
-							<div class="dy_title_h3">
-								<h3 class="small"><a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" itemprop="url" href="<?php the_permalink(); ?>"><span itemprop="name"><?php esc_html_e($post->post_title); ?></span></a></h3>
-							</div>
-							
-							
-							
-							<div class="dy_reviews small bottom-10">
-								<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
-							</div>
 
-							<div class="dy_pad bottom-10 semibold">
-									<?php esc_html_e(dy_utilities::show_duration(true)); ?>
+
+		<div class="bottom-40 pure-u-1 pure-u-sm-1-1 pure-u-md-1-<?php echo $cols_md; ?> pure-u-lg-1-<?php echo $cols; ?>">
+			<div class="padding-10 dy_package">
+				<div class="pure-g gutters">
+					<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
+						<?php if (has_post_thumbnail()): ?>
+						<div class="dy_thumbnail relative text-center">
+							<a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>">
+								<?php the_post_thumbnail('thumbnail', array('class' => 'img-responsive')); ?>
+							</a>
+							<?php do_action('dy_show_event_date'); ?>
+							<?php do_action('dy_show_badge'); ?>
+						</div>
+						<?php endif; ?>
+					</div>
+
+					<div class="pure-u-1 pure-u-md-<?php esc_html_e($break_md); ?> pure-u-lg-<?php esc_html_e($break_lg); ?>">
+
+						<?php if (!empty($package_code)): ?>
+							<div class="hide-sm bottom-10 text-right uppercase light small text-muted"><?php echo esc_html($package_code); ?></div>
+						<?php endif; ?>
+
+						<div class="dy_title_h3">
+							<h3 class="small">
+								<a data-starting-at="<?php echo esc_attr($starting_at); ?>" title="<?php echo esc_attr($post->post_title); ?>" href="<?php the_permalink(); ?>">
+									<span><?php esc_html_e($post->post_title); ?></span>
+								</a>
+							</h3>
+						</div>
+
+						<div class="dy_reviews small bottom-10">
+							<?php echo apply_filters('dy_reviews_stars', $post->ID); ?>
+						</div>
+
+						<div class="dy_pad bottom-10 semibold">
+							<?php esc_html_e(dy_utilities::show_duration(true)); ?>
+						</div>
+
+						<?php if (has_excerpt()): ?>
+							<p class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden' : 'hide-sm'; ?>">
+								<?php echo get_the_excerpt(); ?>
+							</p>
+						<?php endif; ?>
+
+						<div class="small"><?php echo apply_filters('dy_details', false); ?></div>
+
+						<?php if ($starting_at): ?>
+							<div class="dy_pad bottom-10">
+								<?php echo esc_html__('Starting at', 'dynamicpackages'); ?>
+								<span class="strong">
+									<?php echo esc_html(wrap_money_rounded(round($starting_at))); ?>
+								</span>
+								<small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', false)); ?></small>
 							</div>
+						<?php endif; ?>
 
-							<?php if(has_excerpt()): ?>
-								<p itemprop="description" class="bottom-10 small <?php echo (get_option('dy_archive_hide_excerpt')) ? 'hidden': 'hide-sm' ?>"><?php echo (get_the_excerpt()); ?></p>
-							<?php endif; ?>
-							
-							<div class="small"><?php echo apply_filters('dy_details', false); ?></div>
-							
-							
-							<?php if($starting_at): ?>
-								<div class="dy_pad bottom-10">
-									<span class="tp_starting_at semibold" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-									<!-- MerchantReturnPolicy -->
-									<div itemprop="hasMerchantReturnPolicy" itemscope itemtype="https://schema.org/MerchantReturnPolicy">
-										<link itemprop="merchantReturnLink" href="<?php echo esc_url( get_permalink() . '#package_terms_conditions_list' ); ?>" />
-										<link itemprop="returnPolicyCategory" href="https://schema.org/MerchantReturnFiniteReturnWindow" />
-										<link itemprop="returnMethod" href="https://schema.org/ReturnByMail" />
-										<link itemprop="returnFees" href="https://schema.org/FreeReturn" />
-										<meta itemprop="merchantReturnDays" content="30" />
-									</div>
-									<!-- /MerchantReturnPolicy -->
+						<?php do_action('dy_edit_link'); ?>
 
-									<link itemprop="availability" href="https://schema.org/InStock" />
-									<link itemprop="url" href="<?php the_permalink(); ?>" />
-									<meta itemprop="priceValidUntil" content="<?php echo esc_attr(date('Y-m-d', strtotime('+1 year'))); ?>" />
-									<meta itemprop="priceCurrency" content="<?php echo esc_attr(currency_name()); ?>" />
-									<?php echo (esc_html__('Starting at', 'dynamicpackages')); ?> <span itemprop="price" class="strong" content="<?php echo esc_attr($starting_at);?>"><?php echo esc_html(wrap_money_rounded(round($starting_at)));?></span>
-									</span> <small class="text-muted"> <?php esc_html_e(apply_filters('dy_price_type', false));?></small>
-								</div>
-							<?php endif;?>
+					</div>
+				</div>
+			</div><!-- .padding-10 -->
+		</div><!-- .col -->
 
-							<?php do_action('dy_edit_link'); ?>
-							
-						</div>	
-					</div>	
-					
-				</div>	<!-- .padding-10 -->
-			</div><!-- .col -->
 			
 			<?php $count++; ?>
 			
@@ -331,7 +334,21 @@ else
 		
 	<?php endif; ?>
 	</div><!-- .tp_grid -->
+
+
 	
 <?php if(isset($pagination_imp) || is_tax('package_location') || is_tax('package_category')): ?>	
 	<?php do_action('dy_archive_pagination', array('archive_query' => $archive_query, 'posts_per_page' => $posts_per_page)); ?>
 <?php endif; ?>
+
+
+<?php if (!empty($itemlist_elements)) :
+    $ld = [
+        '@context' => 'https://schema.org',
+        '@type' => 'ItemList',
+        'name' => 'Product listing',
+        'numberOfItems' => count($itemlist_elements),
+        'itemListElement' => $itemlist_elements,
+    ];
+    printf('<script type="application/ld+json" id="json_ld_item_list">%s</script>', wp_json_encode($ld, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+endif; ?>
