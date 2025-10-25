@@ -151,8 +151,7 @@ class yappy_direct {
 
 				if(!empty($this->qrcode))
 				{
-					$payment_amount = money(dy_utilities::payment_amount());
-					$amount = wrap_money_full($payment_amount);
+					$amount = wrap_money_full(dy_utilities::payment_amount());
 
 					$label = __('payment', 'dynamicpackages');
 		
