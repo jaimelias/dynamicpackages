@@ -220,7 +220,7 @@ class paguelo_facil_on{
 		if(self::$txt_status !== null)
 		{
 			$title = secure_post('title');
-			$payment_amount = money(dy_utilities::payment_amount());
+			$payment_amount = dy_utilities::payment_amount();
 			
 			if(self::$txt_status === 2)
 			{
