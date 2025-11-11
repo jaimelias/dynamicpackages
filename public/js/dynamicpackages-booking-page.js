@@ -560,7 +560,7 @@ const copyPaymentLink = () => {
         });
 
         // Change the dashicon to "dashicons dashicons-media-text"
-        $(this).find('span').attr('class', 'dashicons dashicons-media-text');
+        jQuery(this).find('span').attr('class', 'dashicons dashicons-media-text');
     });
 
 }
