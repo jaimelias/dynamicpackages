@@ -7,7 +7,9 @@ $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicp
 $intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
 $kycUrl = get_option('dy_kyc');
-$kycMessage = (!empty($kycUrl)) ? '<p><a href="'.esc_url($kycUrl).'">'.__('Click here to upload IDs/Passports!', 'dynamicpackages').'</a></p>': '';
+$kycMessage = (!empty($kycUrl) && in_array(segure_get('dy_request'), ['estimate_request', 'contact']) )
+	? sprintf('<p class="strong"><a href="%s">%s</a></p>', esc_url($kycUrl), esc_html(__('Click here to upload IDs/Passports!', 'dynamicpackages'))) 
+	: '';
 $estimate_confirmation_message = __('To complete your reservation with us, it is essential that we receive the payment. Our team processes payments during office hours and verifies the provided identification documents. Once we have received both the payment and the necessary documents, we proceed to send the confirmations via email. This policy ensures that we can confirm your reservation promptly and securely. We appreciate your understanding and cooperation in this process.', 'dynamicpackages');
 $confirmation_message = apply_filters('dy_confirmation_message', $estimate_confirmation_message);
 $total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
@@ -35,7 +37,7 @@ $notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_requ
 $notes = apply_filters('dy_email_notes', $notes_content);
 $label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
 $footer = $company_address;
-$whatsapp_url = 'https://wa.me/' . get_option('dy_whatsapp') . '?text=' . urlencode($description);
+$whatsapp_url = sprintf('https://wa.me/%s?text=%s', get_option('dy_whatsapp'), urlencode($description));
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
 $action_button = apply_filters('dy_email_action_button', $whatsapp);
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>' . $total);
@@ -125,7 +127,7 @@ $email_template = <<<EOT
 				<p>{$intro}</p>
 				<div>{$message}</div>
 				<div>{$confirmation_message}</div>
-				<div><strong>{$kycMessage}</strong></div>
+				<div>{$kycMessage}</div>
 			</div>
 		
 			<div class="doc_box" style="margin-bottom: 40px; padding: 20px; border: 1px solid #eee; box-sizing: border-box">
