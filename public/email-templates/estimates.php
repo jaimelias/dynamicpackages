@@ -7,9 +7,12 @@ $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicp
 $intro = apply_filters('dy_email_intro', __('Thank You for Your Request', 'dynamicpackages'). '!');
 $message = apply_filters('dy_email_message', '<p>' . sprintf(__('Please find a detailed copy of your %s this email. Remember to check our Terms & Conditions (attached) before booking.', 'dynamicpackages'), $label_doc) . '</p>');
 $kycUrl = get_option('dy_kyc');
-$kycMessage = (!empty($kycUrl) && in_array(segure_get('dy_request'), ['estimate_request', 'contact']) )
-	? sprintf('<p class="strong"><a href="%s">%s</a></p>', esc_url($kycUrl), esc_html(__('Click here to upload IDs/Passports!', 'dynamicpackages'))) 
-	: '';
+
+$kycMessage = (!empty($kycUrl) && !in_array(secure_post('dy_request'), ['estimate_request', 'contact']))
+    ? sprintf('<p class="strong"><a href="%s">%s</a></p>', esc_url($kycUrl), esc_html(__('Click here to upload IDs/Passports!', 'dynamicpackages')))
+    : '';
+
+
 $estimate_confirmation_message = __('To complete your reservation with us, it is essential that we receive the payment. Our team processes payments during office hours and verifies the provided identification documents. Once we have received both the payment and the necessary documents, we proceed to send the confirmations via email. This policy ensures that we can confirm your reservation promptly and securely. We appreciate your understanding and cooperation in this process.', 'dynamicpackages');
 $confirmation_message = apply_filters('dy_confirmation_message', $estimate_confirmation_message);
 $total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
