@@ -561,7 +561,7 @@ class Dynamicpackages_Public {
 								$row .= '<tr>';
 								$row .= '<td>'.esc_html($subpackage_name).'</td>';
 								$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
-								$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name.'/').'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
+								$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(normalize_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name)).'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
 								$row .= '</tr>';
 								
 								$rows_arr[] = array('price' => $starting_at, 'row' => $row);
