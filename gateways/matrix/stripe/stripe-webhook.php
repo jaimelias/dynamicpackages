@@ -99,7 +99,9 @@ class stripe_gateway_webhook {
                         }
 
                         // Retrieve the session to reliably access expanded fields
-                        $session = \Stripe\Checkout\Session::retrieve($sessionObj->id);
+                        $session = \Stripe\Checkout\Session::retrieve($sessionObj->id, array(
+                            'expand' => array('line_items', 'payment_intent'),
+                        ));
 
                         $payment_status = $session->payment_status ?? null; // paid | unpaid | no_payment_required
                         $isPaid = in_array($payment_status, array('paid', 'no_payment_required'), true);

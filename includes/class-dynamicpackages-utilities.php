@@ -322,10 +322,10 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$duration = intval(package_field('package_duration'));
-		$duration_label = floatval(package_field('package_duration'));
-		$duration_unit = intval(package_field('package_length_unit'));
-		$duration_max = floatval(package_field('package_duration_max'));
+		$duration = (float) package_field('package_duration');
+		$duration_label = (string) $duration;
+		$duration_unit = (int) package_field('package_length_unit');
+		$duration_max = (float) package_field('package_duration_max');
 		$package_type = self::get_package_type($the_id);
 		
 		if(!empty($duration))
@@ -340,11 +340,11 @@ class dy_utilities {
 				}
 			}
 				
-			if(!is_booking_page())
+			if(!is_booking_page() && !is_confirmation_page())
 			{
 				if($duration_max > $duration)
 				{
-					$duration_label = $duration;
+					$duration_label = (string) $duration;
 					
 					if($max === true)
 					{
@@ -355,12 +355,13 @@ class dy_utilities {
 			else
 			{
 				$duration = $min_nights;
-				$duration_label = $duration;
+				$duration_label = (string) $duration;
 			}
 			
 			
 			$duration_label_max = ($duration_max > $duration) ? $duration_max : $duration;
 			$duration_label .= ' '.self::duration_label($duration_unit, $duration_label_max);
+
 		}
 		
 		//store output in $cache
