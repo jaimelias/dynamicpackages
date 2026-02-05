@@ -43,7 +43,9 @@ class Dynamicpackages_Admin {
 	
 	public function enqueue_scripts() {
 
-		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', array('jquery', 'hot', 'picker-js'), time(), true );
+		$admin_dep = ['jquery']; //'hot', 'picker-js'
+
+		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', $admin_dep, time(), true );
 	}
 
 	
