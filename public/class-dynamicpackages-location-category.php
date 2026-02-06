@@ -138,6 +138,7 @@ class Dynamicpackages_Location_Category {
 
 		// pagination suffix
 		$paged = $this->current_page_number();
+		
 		if ( $paged > 1 ) {
 			$title = sprintf( '%s | %s %d', $title, esc_html__( 'Page', 'dynamicpackages' ), $paged );
 		}
@@ -170,6 +171,15 @@ class Dynamicpackages_Location_Category {
 			}
 
 			$parts[] = $base;
+
+			// Pagination and site name
+			$paged = $this->current_page_number();
+			if ( $paged > 1 ) {
+				$parts[] = sprintf( __( 'Page %d', 'dynamicpackages' ), $paged );
+			}
+			$parts[] = get_bloginfo( 'name' );
+
+			return implode( ' | ', $parts );
 
 		} elseif ( is_page() && dy_validators::validate_category_location() ) {
 			$bits   = [ __( 'Find Packages', 'dynamicpackages' ) . ':' ];
@@ -222,16 +232,18 @@ class Dynamicpackages_Location_Category {
 			}
 
 			$parts[] = trim( implode( ' ', $bits ) );
+
+			// Pagination and site name
+			$paged = $this->current_page_number();
+			if ( $paged > 1 ) {
+				$parts[] = sprintf( __( 'Page %d', 'dynamicpackages' ), $paged );
+			}
+			$parts[] = get_bloginfo( 'name' );
+
+			return implode( ' | ', $parts );
 		}
 
-		// Pagination and site name
-		$paged = $this->current_page_number();
-		if ( $paged > 1 ) {
-			$parts[] = sprintf( __( 'Page %d', 'dynamicpackages' ), $paged );
-		}
-		$parts[] = get_bloginfo( 'name' );
-
-		return implode( ' | ', $parts );
+		return $title;
 	}
 
 	public static function remove_default_canonicals() {
