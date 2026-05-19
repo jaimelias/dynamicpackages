@@ -74,7 +74,7 @@ const datePicker = async () => {
 					endpoint.searchParams.set(jQuery(this).attr('name'), jQuery(this).val())
 				});
 
-				fetch(endpoint.href)
+				fetch(endpoint)
 				.then(response => (response.ok ? response : Promise.reject(new Error(`Error ${response.status}: ${response.statusText}`))))
 				.then(response => response.json())
 				.then(data => {

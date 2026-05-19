@@ -80,7 +80,7 @@ const reValidateDate = async () => {
 			endDate = new Date(endDateStr)
 		}
 
-        const response = await fetch(endpoint.href);
+        const response = await fetch(endpoint);
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
 
         const data = await response.json();
