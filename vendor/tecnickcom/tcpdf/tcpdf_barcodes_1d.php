@@ -5,9 +5,9 @@
 // Begin       : 2008-06-09
 // Last Update : 2014-10-20
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2008-2014 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2008-2026 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -22,7 +22,7 @@
 // See the GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with TCPDF.  If not, see <http://www.gnu.org/licenses/>.
+// along with TCPDF.  If not, see <https://www.gnu.org/licenses/>.
 //
 // See LICENSE.TXT file for more information.
 // -------------------------------------------------------------------
@@ -53,7 +53,7 @@ class TCPDFBarcode {
 	 * Array representation of barcode.
 	 * @protected
 	 */
-	protected $barcode_array = [];
+	protected $barcode_array = array();
 
 	/**
 	 * This is the class constructor.
@@ -234,7 +234,9 @@ class TCPDFBarcode {
 			ob_start();
 			imagepng($png);
 			$imagedata = ob_get_clean();
-			imagedestroy($png);
+			if (PHP_VERSION_ID < 80000) {
+				imagedestroy($png);
+			}
 			return $imagedata;
 		}
 	}
@@ -373,7 +375,7 @@ class TCPDFBarcode {
 				break;
 			}
 			default: {
-				$this->barcode_array = [];
+				$this->barcode_array = array();
 				$arrcode = false;
 				break;
 			}
@@ -1077,7 +1079,7 @@ class TCPDFBarcode {
 		$fnc_a = array(241 => 102, 242 => 97, 243 => 96, 244 => 101);
 		$fnc_b = array(241 => 102, 242 => 97, 243 => 96, 244 => 100);
 		// array of symbols
-		$code_data = [];
+		$code_data = array();
 		// length of the code
 		$len = strlen($code);
 		switch(strtoupper($type)) {
@@ -1134,9 +1136,9 @@ class TCPDFBarcode {
 			}
 			default: { // MODE AUTO
 				// split code into sequences
-				$sequence = [];
+				$sequence = array();
 				// get numeric sequences (if any)
-				$numseq = [];
+				$numseq = array();
 				preg_match_all('/([0-9]{4,})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 				if (isset($numseq[1]) AND !empty($numseq[1])) {
 					$end_offset = 0;
@@ -1286,9 +1288,9 @@ class TCPDFBarcode {
 	 */
 	protected function get128ABsequence($code) {
 		$len = strlen($code);
-		$sequence = [];
+		$sequence = array();
 		// get A sequences (if any)
-		$numseq = [];
+		$numseq = array();
 		preg_match_all('/([\0-\31])/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		if (isset($numseq[1]) AND !empty($numseq[1])) {
 			$end_offset = 0;
@@ -1435,7 +1437,7 @@ class TCPDFBarcode {
 			'8'=>array('A','B','A','B','B','A'),
 			'9'=>array('A','B','B','A','B','A')
 		);
-		$upce_parities = [];
+		$upce_parities = array();
 		$upce_parities[0] = array(
 			'0'=>array('B','B','B','A','A','A'),
 			'1'=>array('B','B','A','B','A','A'),
@@ -1553,7 +1555,7 @@ class TCPDFBarcode {
 				'8'=>'0001001',
 				'9'=>'0010111')
 		);
-		$parities = [];
+		$parities = array();
 		$parities[2] = array(
 			'0'=>array('A','A'),
 			'1'=>array('A','B'),
@@ -2104,7 +2106,7 @@ class TCPDFBarcode {
 		$first_byte = sprintf('%2s', dechex((hexdec($binary_code_arr[0]) << 2) >> 2));
 		$binary_code_102bit = $first_byte.substr($binary_code, 2);
 		// convert binary data to codewords
-		$codewords = [];
+		$codewords = array();
 		$data = $this->hex_to_dec($binary_code_102bit);
 		$codewords[0] = bcmod($data, 636) * 2;
 		$data = bcdiv($data, 636);
@@ -2120,7 +2122,7 @@ class TCPDFBarcode {
 		$table2of13 = $this->imb_tables(2, 78);
 		$table5of13 = $this->imb_tables(5, 1287);
 		// convert codewords to characters
-		$characters = [];
+		$characters = array();
 		$bitmask = 512;
 		foreach($codewords as $k => $val) {
 			if ($val <= 1286) {
@@ -2227,7 +2229,7 @@ class TCPDFBarcode {
 	 */
 	public function dec_to_hex($number) {
 		$i = 0;
-		$hex = [];
+		$hex = array();
 		if($number == 0) {
 			return '00';
 		}
@@ -2320,7 +2322,7 @@ class TCPDFBarcode {
 	 * @protected
 	 */
 	protected function imb_tables($n, $size) {
-		$table = [];
+		$table = array();
 		$lli = 0; // LUT lower index
 		$lui = $size - 1; // LUT upper index
 		for ($count = 0; $count < 8192; ++$count) {

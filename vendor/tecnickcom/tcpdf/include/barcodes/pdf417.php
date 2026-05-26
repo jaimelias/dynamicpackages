@@ -5,9 +5,9 @@
 // Begin       : 2010-06-03
 // Last Update : 2014-04-25
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2010-2013  Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2010-2013 2026 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -22,7 +22,7 @@
 // See the GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with TCPDF.  If not, see <http://www.gnu.org/licenses/>.
+// along with TCPDF.  If not, see <https://www.gnu.org/licenses/>.
 //
 // See LICENSE.TXT file for more information.
 // -------------------------------------------------------------------
@@ -96,7 +96,7 @@ class PDF417 {
 	 * Barcode array to be returned which is readable by TCPDF.
 	 * @protected
 	 */
-	protected $barcode_array = [];
+	protected $barcode_array = array();
 
 	/**
 	 * Start pattern.
@@ -530,13 +530,13 @@ class PDF417 {
 	 * @public
 	 */
 	public function __construct($code, $ecl=-1, $aspectratio=2, $macro=array()) {
-		$barcode_array = [];
+		$barcode_array = array();
 		if ((is_null($code)) OR ($code == '\0') OR ($code == '')) {
 			return false;
 		}
 		// get the input sequence array
 		$sequence = $this->getInputSequences($code);
-		$codewords = []; // array of code-words
+		$codewords = array(); // array of code-words
 		foreach($sequence as $seq) {
 			$cw = $this->getCompaction($seq[0], $seq[1], true);
 			$codewords = array_merge($codewords, $cw);
@@ -553,7 +553,7 @@ class PDF417 {
 		}
 		// build macro control block codewords
 		if (!empty($macro)) {
-			$macrocw = [];
+			$macrocw = array();
 			// beginning of macro control block
 			$macrocw[] = 928;
 			// segment index
@@ -649,7 +649,7 @@ class PDF417 {
 		$pstop = $this->stop_pattern.str_repeat('0', QUIETH);
 		$barcode_array['num_rows'] = ($rows * ROWHEIGHT) + (2 * QUIETV);
 		$barcode_array['num_cols'] = (($cols + 2) * 17) + 35 + (2 * QUIETH);
-		$barcode_array['bcode'] = [];
+		$barcode_array['bcode'] = array();
 		// build rows for vertical quiet zone
 		if (QUIETV > 0) {
 			$empty_row = array_fill(0, $barcode_array['num_cols'], 0);
@@ -814,8 +814,8 @@ class PDF417 {
 	 * @protected
 	 */
 	protected function getInputSequences($code) {
-		$sequence_array = []; // array to be returned
-		$numseq = [];
+		$sequence_array = array(); // array to be returned
+		$numseq = array();
 		// get numeric sequences
 		preg_match_all('/([0-9]{13,44})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		$numseq[1][] = array('', strlen($code));
@@ -825,7 +825,7 @@ class PDF417 {
 			if ($seq[1] > 0) {
 				// extract text sequence before the number sequence
 				$prevseq = substr($code, $offset, ($seq[1] - $offset));
-				$textseq = [];
+				$textseq = array();
 				// get text sequences
 				preg_match_all('/([\x09\x0a\x0d\x20-\x7e]{5,})/', $prevseq, $textseq, PREG_OFFSET_CAPTURE);
 				$textseq[1][] = array('', strlen($prevseq));
@@ -871,11 +871,11 @@ class PDF417 {
 	 * @protected
 	 */
 	protected function getCompaction($mode, $code, $addmode=true) {
-		$cw = []; // array of codewords to return
+		$cw = array(); // array of codewords to return
 		switch($mode) {
 			case 900: { // Text Compaction mode latch
 				$submode = 0; // default Alpha sub-mode
-				$txtarr = []; // array of characters and sub-mode switching characters
+				$txtarr = array(); // array of characters and sub-mode switching characters
 				$codelen = strlen($code);
 				for ($i = 0; $i < $codelen; ++$i) {
 					$chval = ord($code[$i]);
@@ -941,7 +941,7 @@ class PDF417 {
 						$t = bcadd($t, bcmul(''.ord($code[4]), '256'));
 						$t = bcadd($t, ''.ord($code[5]));
 						// tmp array for the 6 bytes block
-						$cw6 = [];
+						$cw6 = array();
 						do {
 							$d = bcmod($t, '900', 0);
 							$t = bcdiv($t, '900', 0);

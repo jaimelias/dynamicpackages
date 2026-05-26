@@ -5,9 +5,9 @@
 // Begin       : 2011-05-23
 // Last Update : 2014-04-25
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2011-2013 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2011-2026 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -288,7 +288,7 @@ class TCPDF_FILTERS {
 		// initialize dictionary index
 		$dix = 258;
 		// initialize the dictionary (with the first 256 entries).
-		$dictionary = [];
+		$dictionary = array();
 		for ($i = 0; $i < 256; ++$i) {
 			$dictionary[$i] = chr($i);
 		}
@@ -307,7 +307,7 @@ class TCPDF_FILTERS {
 				$dix = 258;
 				$prev_index = 256;
 				// reset the dictionary (with the first 256 entries).
-				$dictionary = [];
+				$dictionary = array();
 				for ($i = 0; $i < 256; ++$i) {
 					$dictionary[$i] = chr($i);
 				}
