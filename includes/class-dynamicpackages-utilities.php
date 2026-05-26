@@ -285,7 +285,15 @@ class dy_utilities {
 
 		//sums discount price
 		$discount = self::get_price_discount($regular, 'total');
-		$subtotal += $discount;
+
+		if(!empty(secure_request('pax_discount'))){
+			if($discount > 0 ) {
+				$subtotal += $discount;
+			}
+			else {
+				$subtotal = 0;
+			}
+		}
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $subtotal;
