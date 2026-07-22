@@ -43,7 +43,7 @@ class Dynamicpackages_Booking_Page {
 				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')
 			);
 
-			wp_enqueue_script('dynamicpackages-booking', $this->plugin_dir_url_file . 'js/dynamicpackages-booking-page.js', array( 'jquery', 'dy-core-utilities', 'recaptcha-v3'), $this->version, true );
+			wp_enqueue_script('dynamicpackages-booking', $this->plugin_dir_url_file . 'js/dynamicpackages-booking-page.js', array( 'jquery', 'dy-core-utilities', 'turnstile-compat'), $this->version, true );
             wp_add_inline_script('dynamicpackages-booking', $this->checkout_args(), 'before');
             wp_localize_script('dynamicpackages-booking', 'dyPackageBookingArgs', $strings);
         }
@@ -201,33 +201,33 @@ class Dynamicpackages_Booking_Page {
 	public function load_scripts($query)
 	{
 		global $post;
-		$load_recaptcha = false;
+
+		$load_turnstile = false;
 		$load_request_form_utilities = false;
 
 		if($post instanceof WP_Post)
 		{
-			if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
+			if(has_shortcode($post->post_content, 'package_contact'))
 			{
-				$load_recaptcha = true;
+				$load_turnstile = true;
 				$load_request_form_utilities = true;
 			}
 		}
-		if(isset($query->query_vars['packages']))
+
+		if(isset($query->query_vars['packages']) && $query->query_vars['packages'])
 		{
-			if($query->query_vars['packages'])
+			if(is_booking_page())
 			{
-				if(is_booking_page())
-				{
-					$load_recaptcha = true;
-					$load_request_form_utilities = true;
-				}
+				$load_turnstile = true;
+				$load_request_form_utilities = true;
 			}
 		}
 
-		if($load_recaptcha)
+		if($load_turnstile)
 		{
-			$GLOBALS['dy_load_recaptcha_scripts'] = true;
+			$GLOBALS['dy_load_turnstile_scripts'] = true;
 		}
+
 		if($load_request_form_utilities)
 		{
 			$GLOBALS['dy_load_request_form_utilities_scripts'] = true;

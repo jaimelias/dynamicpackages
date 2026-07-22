@@ -25,7 +25,7 @@ class paguelo_facil_on{
 	public function init()
 	{
 		$this->order_status = 'paid';
-		$this->valid_recaptcha = validate_recaptcha();
+		$this->valid_turnstile = validate_turnstile();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
@@ -52,7 +52,7 @@ class paguelo_facil_on{
 	
 	public function checkout()
 	{
-		if(dy_validators::validate_checkout($this->id) === false || $this->valid_recaptcha === false || self::$txt_status !== null) {
+		if(dy_validators::validate_checkout($this->id) === false || $this->valid_turnstile === false || self::$txt_status !== null) {
 			return true;
 		}
 
@@ -155,7 +155,7 @@ class paguelo_facil_on{
 
 	public function send_data()
 	{
-		if(dy_validators::validate_request() && $this->is_request_submitted() && $this->valid_recaptcha && self::$txt_status !== null)
+		if(dy_validators::validate_request() && $this->is_request_submitted() && $this->valid_turnstile && self::$txt_status !== null)
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
@@ -358,7 +358,7 @@ class paguelo_facil_on{
 		
 		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			if($this->valid_recaptcha)
+			if($this->valid_turnstile)
 			{
 				if(self::$txt_status === 2)
 				{
@@ -644,7 +644,7 @@ class paguelo_facil_on{
 				$add = true;
 			}
 			
-			if($this->valid_recaptcha && is_confirmation_page() && dy_validators::validate_request())
+			if($this->valid_turnstile && is_confirmation_page() && dy_validators::validate_request())
 			{			
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

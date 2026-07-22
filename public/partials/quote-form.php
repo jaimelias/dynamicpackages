@@ -102,15 +102,19 @@
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
-		<?php if(get_option('dy_recaptcha_site_key')): ?>
+		<?php if(get_option('dy_cf_turnstile_site_key')): ?>
 			<p>
-				<button 
-					type="button" 
-					data-badge="bottomleft" 
-					data-callback="checkoutFormSubmit"
-					data-sitekey="<?php echo esc_attr(get_option('dy_recaptcha_site_key')); ?>"
-					data-action='checkout'
-					class="g-recaptcha pure-button pure-button-primary strong large"><?php esc_html_e($submit_form); ?></button>
-			</p>	
+				<div
+					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>"
+					class="cf-turnstile">
+				</div>
+
+				<button
+					onClick="checkoutFormSubmit(); return false;"
+					type="button"
+					class="pure-button pure-button-primary strong large">
+					<?php esc_html_e($submit_form); ?>
+				</button>
+			</p>
 		<?php endif; ?>
 </form>

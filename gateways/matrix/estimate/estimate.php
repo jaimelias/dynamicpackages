@@ -17,7 +17,7 @@ class estimate_request{
 
 	public function init()
 	{
-		$this->valid_recaptcha = validate_recaptcha();
+		$this->valid_turnstile = validate_turnstile();
 		$this->id = 'estimate_request';
 		$this->name = __('request an estimate', 'dynamicpackages');
 		$this->brands = [$this->name];

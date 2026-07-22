@@ -467,7 +467,11 @@ function checkoutFormSubmit(token){
 	}
 	else
 	{
-		grecaptcha.reset();
+		if(typeof turnstile !== 'undefined')
+		{
+			turnstile.reset();
+		}
+		
 		alert(`${submit_error}: ${invalids.join(', ')}`);
 	}
 

@@ -127,7 +127,7 @@ ul.tax_list > li.cat-item  > ul.children
 {
 	background-color: rgba(0,0,0,0.02);
 }
-.grecaptcha-badge
+.cf-turnstile
 {
 	margin: 0 0 20px 0;
 }

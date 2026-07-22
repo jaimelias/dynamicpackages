@@ -19,7 +19,7 @@ class stripe_gateway {
 
     public function init() {
         $this->is_paid = false;
-        $this->valid_recaptcha = validate_recaptcha();
+        $this->valid_turnstile = validate_turnstile();
         $this->order_status = 'pending';
         $this->id = 'stripe_gateway';
         $this->name = 'Stripe';
@@ -160,7 +160,7 @@ class stripe_gateway {
         if(
             dy_validators::validate_request() === false 
             || $this->is_request_submitted() === false 
-            || $this->valid_recaptcha === false
+            || $this->valid_turnstile === false
         ) {
             return;
         }
@@ -224,7 +224,7 @@ class stripe_gateway {
 
         foreach($_POST as $key => $val) {
 
-            if($key === 'g-recaptcha-response') continue;
+            if($key === 'cf-turnstile-response') continue;
             if($key === 'hash') continue;
 
             $metadata[$key] = secure_post($key);
