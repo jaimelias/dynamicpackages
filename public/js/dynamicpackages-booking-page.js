@@ -386,7 +386,7 @@ const checkoutFormSubmit = () => {
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
 
-	//Because the widget is inside #dy_package_request_form, Turnstile creates ""
+	//Because the widget is inside #dy_package_request_form, Turnstile creates "cf-turnstile-response" field
 	const turnstileToken = thisForm
 		.find('[name="cf-turnstile-response"]')
 		.val();
@@ -479,12 +479,7 @@ const checkoutFormSubmit = () => {
 		createFormSubmit(thisForm);
 	}
 	else
-	{
-		if(typeof turnstile !== 'undefined')
-		{
-			turnstile.reset();
-		}
-		
+	{		
 		alert(`${submit_error}: ${invalids.join(', ')}`);
 	}
 

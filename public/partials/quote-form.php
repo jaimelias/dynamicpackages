@@ -107,7 +107,6 @@
 				<div
 					class="cf-turnstile"
 					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>"
-					data-action="checkout"
 					data-retry="auto"
 					data-refresh-expired="auto">
 				</div>
