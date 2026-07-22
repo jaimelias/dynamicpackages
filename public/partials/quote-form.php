@@ -103,18 +103,18 @@
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
 		<?php if(get_option('dy_cf_turnstile_site_key')): ?>
-			<p>
+			<div class="dy-turnstile-submit">
 				<div
-					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>"
-					class="cf-turnstile">
+					id="dy_checkout_turnstile"
+					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>">
 				</div>
 
 				<button
-					onClick="checkoutFormSubmit(); return false;"
+					id="dy_checkout_submit"
 					type="button"
 					class="pure-button pure-button-primary strong large">
 					<?php esc_html_e($submit_form); ?>
 				</button>
-			</p>
+			</div>
 		<?php endif; ?>
 </form>
