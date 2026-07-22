@@ -1,22 +1,10 @@
 
 
-let checkoutTurnstileWidgetId = null;
-
 jQuery(() => {
 	selectGateway();
 	addOnsCalc();
 	reValidateDate();
 	copyPaymentLink();
-
-	if(typeof turnstile !== 'undefined')
-	{
-		turnstile.ready(() => {
-			initializeCheckoutTurnstile();
-		});
-	}
-
-	jQuery('#dy_checkout_submit').on('click', checkoutFormSubmit);
-
 });
 
 const localRegex = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?$/;
@@ -392,52 +380,24 @@ const addOnsCalc = () => {
 }
 
 
-const initializeCheckoutTurnstile = () => {
-	const container = document.querySelector('#dy_checkout_turnstile');
 
-	if(!container)
-	{
-		return false;
-	}
-
-	if(typeof turnstile === 'undefined')
-	{
-		console.error('Cloudflare Turnstile is not available.');
-		return false;
-	}
-
-	checkoutTurnstileWidgetId = turnstile.render(container, {
-		sitekey: container.dataset.sitekey,
-		action: 'checkout',
-
-		callback: token => {
-			/*
-			 * Do not submit here.
-			 *
-			 * The callback only indicates that Turnstile generated
-			 * a token. The visitor must still press the submit button.
-			 */
-			console.log('Turnstile token generated.');
-		},
-
-		'expired-callback': () => {
-			console.warn('Turnstile token expired.');
-		},
-
-		'error-callback': errorCode => {
-			console.error('Turnstile error:', errorCode);
-			return true;
-		}
-	});
-
-	return checkoutTurnstileWidgetId;
-};
-
-
-const checkoutFormSubmit = token => {
+const checkoutFormSubmit = () => {
 
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
+
+	//Because the widget is inside #dy_package_request_form, Turnstile creates ""
+	const turnstileToken = thisForm
+		.find('[name="cf-turnstile-response"]')
+		.val();
+
+	if(!turnstileToken)
+	{
+		console.warn('Turnstile token is missing or expired.');
+		return false;
+	}
+
+
 	const checkoutArgs = getUpdatedCheckoutArgs();
 	const {amount} = checkoutArgs;
 	let invalids = [];

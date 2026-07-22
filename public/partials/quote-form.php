@@ -105,16 +105,19 @@
 		<?php if(get_option('dy_cf_turnstile_site_key')): ?>
 			<div class="dy-turnstile-submit">
 				<div
-					id="dy_checkout_turnstile"
-					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>">
+					class="cf-turnstile"
+					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>"
+					data-action="checkout"
+					data-retry="auto"
+					data-refresh-expired="auto">
 				</div>
 
 				<button
-					id="dy_checkout_submit"
 					type="button"
+					onClick="checkoutFormSubmit(); return false;"
 					class="pure-button pure-button-primary strong large">
 					<?php esc_html_e($submit_form); ?>
 				</button>
 			</div>
-		<?php endif; ?>
+<?php endif; ?>
 </form>
