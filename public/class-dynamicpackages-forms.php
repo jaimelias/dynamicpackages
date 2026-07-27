@@ -62,7 +62,7 @@ class Dynamicpackages_Forms
 					<div class="pure-g">
 						<div class="pure-u-1 pure-u-md-4-5">
 							<div class="bottom-20">
-								<input placeholder="<?php echo esc_attr('Search Keyword', 'dynamicpackages'); ?>" type="text" name="keywords" value="<?php if(isset($_GET['keywords'])) {echo sanitize_text_field(strtolower(substr($_GET['keywords'], 0, 25))); } ?>" />	
+								<input placeholder="<?php echo esc_attr(__('Search Keyword', 'dynamicpackages')); ?>" type="text" name="keywords" value="<?php if(isset($_GET['keywords'])) {echo sanitize_text_field(strtolower(substr($_GET['keywords'], 0, 25))); } ?>" />	
 							</div>
 						</div>
 						<div class="pure-u-1 pure-u-md-1-5 small">
