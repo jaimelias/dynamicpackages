@@ -1,8 +1,15 @@
 jQuery(() => {
 	'use strict';
 	
-	jQuery('.timepicker').pickatime({interval: 15});
-	jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
+
+	if(jQuery('.timepicker').length > 0) {
+		jQuery('.timepicker').pickatime({interval: 15});
+	}
+	
+	if(jQuery('.datepicker').length > 0) {
+		jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
+	}
+
 	handleParentAttr();
 	handlePackageType();
 	handlePackageSchema();
