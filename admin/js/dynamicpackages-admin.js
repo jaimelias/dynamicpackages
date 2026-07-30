@@ -2,11 +2,11 @@ jQuery(() => {
 	'use strict';
 	
 
-	if(jQuery('.timepicker').length > 0) {
+	if(jQuery('.timepicker').length > 0 && typeof jQuery.fn.pickatime === 'function') {
 		jQuery('.timepicker').pickatime({interval: 15});
 	}
 	
-	if(jQuery('.datepicker').length > 0) {
+	if(jQuery('.datepicker').length > 0 &&  typeof jQuery.fn.pickadate === 'function') {
 		jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
 	}
 
