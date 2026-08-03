@@ -598,7 +598,7 @@ class dy_utilities {
 	{
 		$output = [];
 
-		if(!empty($from) && !empty($to))
+		if(is_valid_date($from) && is_valid_date($to))
 		{
 			$from = new DateTime($from);
 			$to = new DateTime($to);
