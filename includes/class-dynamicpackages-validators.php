@@ -22,51 +22,72 @@ class dy_validators
 {
 	private static $cache = [];
 
-	public static function validate_quote()
+public static function validate_quote($the_id = 0)
 	{
+
 		$output = false;
-		$cache_key = 'dy_validate_quote';
+		$cache_key = 'dy_validate_quote_' . $the_id;
 
-        if (isset(self::$cache[$cache_key])) {
-            return self::$cache[$cache_key];
-        }
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
 
-		$total = dy_utilities::total();
-		$min_persons = intval(package_field('package_min_persons'));
-		$max_persons = intval(package_field('package_max_persons'));
-		$pax_regular = intval(sanitize_text_field($_REQUEST['pax_regular']));
-		$sum_people = $pax_regular;	
-		
-		if(isset($_REQUEST['pax_discount']))
-		{
-			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_discount']));
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
 		}
-		if(isset($_REQUEST['pax_free']))
-		{
-			$sum_people = $sum_people + intval(sanitize_text_field($_REQUEST['pax_free']));
+
+		$total        = (float) dy_utilities::total();
+		$min_persons  = (int) package_field('package_min_persons', $the_id);
+		$max_persons  = (int) package_field('package_max_persons', $the_id);
+		$pax_regular  = (int) secure_request('pax_regular', 0, 'absint');
+		$pax_discount = (int) secure_request('pax_discount', 0, 'absint');
+		$pax_free     = (int) secure_request('pax_free', 0, 'absint');
+
+		// Enforce documented constraints on package config
+		if ($min_persons <= 0 || $max_persons <= 0 || $max_persons <= $min_persons) {
+			return self::$cache[$cache_key] = false;
 		}
-		
-		if($total > 0 && $pax_regular >= $min_persons && $sum_people <= $max_persons)
-		{
+
+		// Enforce documented constraint: pax_regular must be > 0
+		if ($pax_regular <= 0) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$sum_people = $pax_regular;
+
+		if ($pax_discount > 0) {
+			$sum_people += $pax_discount;
+		}
+		if ($pax_free > 0) {
+			$sum_people += $pax_free;
+		}
+
+		if (
+			$total > 0
+			&& $pax_regular >= $min_persons
+			&& $sum_people <= $max_persons
+		) {
 			$output = true;
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		self::$cache[$cache_key] = $output;
 
 		return $output;
-		
 	}
 	
 	public static function validate_booking_date($the_id = null)
 	{
 		$output = false;
-		$cache_key = 'dy_validate_booking_date';
+		$cache_key = 'dy_validate_booking_date_' . $the_id;
 		
 
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
+
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
+		}
 
 		if(isset($_GET['booking_date']))
 		{
@@ -100,7 +121,6 @@ class dy_validators
 		if(is_singular('packages'))
 		{
 			$output = true;
-			
 		}
 		else if(is_tax('package_category') ||is_tax('package_location') || is_post_type_archive('packages'))
 		{
@@ -125,6 +145,21 @@ class dy_validators
 		return $output;
 	}
 
+	public static function validate_the_id($the_id = 0) {
+
+		$cache_key = 'validate_the_id_' . $the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		if (!is_numeric($the_id) || (int) $the_id <= 0 || (int) $the_id != $the_id) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		return self::$cache[$cache_key] = true;
+	}
+
 	public static function is_booking_page()
 	{
 		$output = false;
@@ -134,37 +169,72 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
+		if (
+			is_admin()
+			|| wp_doing_ajax()
+			|| wp_doing_cron()
+			|| (defined('REST_REQUEST') && REST_REQUEST)
+		) {
+			return self::$cache[$cache_key] = false;
+		}
+
 		$the_id = get_dy_id();
 
-		if($the_id !== null)
-		{
-			$post = get_post($the_id);
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
+		}
 
-			if($post->post_type === 'packages' && self::validate_booking_date($the_id) && isset($_GET['pax_regular']) && self::validate_hash())
-			{
-				$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
-				
-				if($pax_regular >= package_field('package_min_persons', $the_id))
-				{
-					$output = true;
-				}
-				else
-				{
-					$output = false;
-				}
-			}
-			else
-			{
-				$output = false;
-			}
+		$post   = $the_id ? get_post($the_id) : null;
+
+		if (!($post instanceof WP_Post) || $post->post_type !== 'packages') {
+			return self::$cache[$cache_key] = false;
+		}
+
+		if(self::validate_booking_date($the_id) && self::validate_pax_regular($the_id) && self::validate_hash())
+		{
+			$output = true;
+		}
+		else
+		{
+			$output = false;
 		}
 
         //store output in $cache
-        self::$cache[$cache_key] = $output;
+        
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}	
 	
+	public static function validate_pax_regular($the_id = 0) {
+
+
+		$cache_key = 'dy_validate_pax_regular_' . $the_id;
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$pax_regular_request = secure_request('pax_regular', 0, 'absint');
+
+		if (!is_int($pax_regular_request) || $pax_regular_request <= 0) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$min_persons = (int) package_field('package_min_persons', $the_id);
+
+		if (!is_int($min_persons) || $min_persons <= 0) {
+			// No valid minimum configured — treat as invalid rather than auto-passing
+			return self::$cache[$cache_key] = false;
+		}
+
+		$output = $pax_regular_request >= $min_persons;
+
+		return self::$cache[$cache_key] = $output;
+	}
 
 	public static function is_confirmation_page()
 	{
@@ -174,6 +244,15 @@ class dy_validators
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
+
+		if (
+			is_admin()
+			|| wp_doing_ajax()
+			|| wp_doing_cron()
+			|| (defined('REST_REQUEST') && REST_REQUEST)
+		) {
+			return self::$cache[$cache_key] = false;
+		}
 
 		$post_id = secure_post('post_id', 0);
 
@@ -301,7 +380,7 @@ class dy_validators
 	public static function validate_checkout($gateway_name)
 	{
 		$output = false;
-		$cache_key = 'dy_validate_checkout';
+		$cache_key = 'dy_validate_checkout_' . sanitize_key($gateway_name);
 
 
         if (isset(self::$cache[$cache_key])) {
@@ -331,7 +410,9 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		$auto_booking = intval(package_field('package_auto_booking'));
+		write_log($fields);
+
+		$auto_booking = (int) package_field('package_auto_booking') ?? 0;
 
 		if(is_array($fields) && $auto_booking === 1)
 		{
@@ -847,20 +928,18 @@ class dy_validators
 		return $output;
 	}
 	
-	public static function is_valid_schema($the_id = '')
+	public static function is_valid_schema($the_id = 0)
 	{
 		$output = false;
-
-		if($the_id === '')
-		{
-			$the_id = get_dy_id();
-		}
-
-		$cache_key = $the_id.'_is_valid_schema';
+		$cache_key = 'dy_is_valid_schema_' . $the_id;
 		
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
+
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
+		}
 
 		if(get_comments_number() > 0)
 		{

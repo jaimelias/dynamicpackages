@@ -93,12 +93,11 @@ class Dynamicpackages_JSON
 		$title       = get_the_title();
 		$has_thumb   = has_post_thumbnail();
 		$thumb_url   = $has_thumb ? get_the_post_thumbnail_url() : null;
-		$dy_id       = get_dy_id();
-		$rating_val  = (float) $this->reviews->get_rating($dy_id);
+		$rating_val  = (float) $this->reviews->get_rating($post->ID);
 		$review_cnt  = (int) get_comments_number();
 		$starting_at = (float) money(dy_utilities::starting_at($post->ID));
 		$schema      = (int) package_field('package_schema');
-		$is_valid    = dy_validators::is_valid_schema();
+		$is_valid    = dy_validators::is_valid_schema($post->ID);
 
 		if (!$is_valid) return $arr;
 
