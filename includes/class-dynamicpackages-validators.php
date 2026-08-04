@@ -22,10 +22,11 @@ class dy_validators
 {
 	private static $cache = [];
 
-public static function validate_quote($the_id = 0)
+public static function validate_quote()
 	{
 
 		$output = false;
+		$the_id = get_dy_id();
 		$cache_key = 'dy_validate_quote_' . $the_id;
 
 		if (isset(self::$cache[$cache_key])) {
@@ -33,6 +34,7 @@ public static function validate_quote($the_id = 0)
 		}
 
 		if(!self::validate_the_id($the_id)) {
+			write_log('invalid the_id');
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -401,61 +403,38 @@ public static function validate_quote($the_id = 0)
 		return $output;
 	}
 	
-	public static function validate_terms_conditions($fields)
+public static function validate_terms_conditions()
 	{
 		$output = true;
 		$cache_key = 'dy_validate_terms_conditions';
 
-        if (isset(self::$cache[$cache_key])) {
-            return self::$cache[$cache_key];
-        }
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
 
-		write_log($fields);
+		$auto_booking = intval(package_field('package_auto_booking'));
 
-		$auto_booking = (int) package_field('package_auto_booking') ?? 0;
+		if ($auto_booking === 1) {
+			$terms = dy_utilities::get_taxonomies('package_terms_conditions');
 
-		if(is_array($fields) && $auto_booking === 1)
-		{
-			if(count($fields) > 0)
-			{
-				$terms = dy_utilities::get_taxonomies('package_terms_conditions');
-				
-				if(is_array($terms))
-				{
-					$count_terms = count($terms);
+			if (is_array($terms) && count($terms) > 0) {
+				foreach ($terms as $term) {
+					$term_name = 'terms_conditions_' . $term->term_id;
+					$accepted = secure_post($term_name, false);
 
-					for($x = 0; $x < $count_terms; $x++)
-					{
-						$term_id = $terms[$x]->term_id;
-						$term_name = 'terms_conditions_'.$term_id;
-
-						if(array_key_exists($term_name, $fields))
-						{
-							$value = $fields[$term_name];
-
-							if(filter_var($value, FILTER_VALIDATE_BOOLEAN) === false)
-							{
-								$output = false;
-							}
-						}
-						else
-						{
-							$output = false;
-						}
+					if (filter_var($accepted, FILTER_VALIDATE_BOOLEAN) === false) {
+						$output = false;
+						break;
 					}
 				}
 			}
 		}
-		
-		if($output === false)
-		{
+
+		if ($output === false) {
 			$GLOBALS['dy_request_invalids'] = array(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-		
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	public static function validate_booking_details()
@@ -468,7 +447,7 @@ public static function validate_quote($the_id = 0)
             return self::$cache[$cache_key];
         }
 
-		if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']) && self::validate_terms_conditions($_POST))
+		if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']) && self::validate_terms_conditions())
 		{	
 			$output = true;
 		}
@@ -630,99 +609,98 @@ public static function validate_quote($the_id = 0)
             return self::$cache[$cache_key];
         }
 
-		if(self::has_coupon() && isset($_REQUEST['coupon_code']))
-		{
-			if(!empty($_REQUEST['coupon_code']))
-			{
-				$coupon_params = (object) dy_utilities::get_active_coupon_params();
-				$stored_coupon_code = (string) $coupon_params->code;
-				$package_type = (string) dy_utilities::get_package_type();
-				$coupon_code = (string) strtolower(sanitize_text_field($_REQUEST['coupon_code']));
-				$coupon_code = (string) preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
-				$duration = (int) dy_utilities::get_min_nights();
-				$booking_date = (string) sanitize_text_field($_REQUEST['booking_date']);
-				$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-				$booking_dates_range = (array) dy_utilities::get_date_range($booking_date, $booking_date_to, false);
-				
-				if($stored_coupon_code === $coupon_code)
-				{
-					$coupon_expiration = (string) $coupon_params->expiration;
-					$coupon_min_duration = (int) $coupon_params->min_duration;
-					$coupon_max_duration = (int) $coupon_params->max_duration;
-					$coupon_bookings_after_expires = (bool) $coupon_params->bookings_after_expires;
-					$valid_expiration = false;
-
-					if(($duration < $coupon_min_duration && $coupon_min_duration > 0) || ($duration > $coupon_max_duration && $coupon_max_duration > 0) )
-					{
-						self::$cache[$cache_key] = false;
-						return false;
-					}
-					if(empty($coupon_expiration))
-					{
-						self::$cache[$cache_key] = true;
-						return true;
-					}
-
-					//expiration
-					$expiration_stamp = new DateTime($coupon_expiration);
-					$expiration_stamp->setTime(0,0,0);
-					$expiration_stamp = $expiration_stamp->getTimestamp();
-
-					//booking
-					$booking_date_stamp = new DateTime($booking_date);
-					$booking_date_stamp->setTime(0,0,0);
-					$booking_date_stamp = $booking_date_stamp->getTimestamp();
-
-					if($expiration_stamp > dy_strtotime('today midnight'))
-					{
-						if($package_type !== 'transport' && $package_type !== 'one-day')
-						{
-							$arr_valid_expiration = [];
-
-							for ($x = 0; $x < count($booking_dates_range); $x++) {
-								$range_date = new DateTime($booking_dates_range[$x]);
-								$range_date->setTime(0, 0, 0);
-								$range_date = $range_date->getTimestamp();
-								
-								if ($range_date > $expiration_stamp && $coupon_bookings_after_expires === false) 
-								{
-									$arr_valid_expiration[] = false;
-								} 
-								else
-								{
-									$arr_valid_expiration[] = true;
-								}
-							}
-
-							if (!in_array(false, $arr_valid_expiration)) {
-								$valid_expiration = true;
-							}
-						}
-						else
-						{
-							if($booking_date_stamp >= $expiration_stamp)
-							{
-								if($coupon_bookings_after_expires === true)
-								{
-									$valid_expiration = true;
-								}
-							}
-							else
-							{
-								$valid_expiration = true;
-							}									
-						}	
-					}	
-											
-					$output = $valid_expiration;
-				}				
-			}
-			
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
+		$coupon_code = secure_request('coupon_code');
+		
+		if(!self::has_coupon() || empty($coupon_code)) {
+			return self::$cache[$cache_key] = false;
 		}
 
-		return $output;
+		$coupon_code = (string) strtolower(sanitize_text_field($_REQUEST['coupon_code']));
+		$coupon_code = (string) preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
+
+		$coupon_params = (object) dy_utilities::get_active_coupon_params();
+		$stored_coupon_code = (string) $coupon_params->code;
+		$package_type = (string) dy_utilities::get_package_type();
+
+		$duration = (int) dy_utilities::get_min_nights();
+		$booking_date = secure_request('booking_date');
+		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
+		$booking_dates_range = (array) dy_utilities::get_date_range($booking_date, $booking_date_to, false);
+		
+		if($stored_coupon_code === $coupon_code)
+		{
+			$coupon_expiration = (string) $coupon_params->expiration;
+			$coupon_min_duration = (int) $coupon_params->min_duration;
+			$coupon_max_duration = (int) $coupon_params->max_duration;
+			$coupon_bookings_after_expires = (bool) $coupon_params->bookings_after_expires;
+			$valid_expiration = false;
+
+			if(($duration < $coupon_min_duration && $coupon_min_duration > 0) || ($duration > $coupon_max_duration && $coupon_max_duration > 0) )
+			{
+				self::$cache[$cache_key] = false;
+				return false;
+			}
+			if(empty($coupon_expiration))
+			{
+				self::$cache[$cache_key] = true;
+				return true;
+			}
+
+			//expiration
+			$expiration_stamp = new DateTime($coupon_expiration);
+			$expiration_stamp->setTime(0,0,0);
+			$expiration_stamp = $expiration_stamp->getTimestamp();
+
+			//booking
+			$booking_date_stamp = new DateTime($booking_date);
+			$booking_date_stamp->setTime(0,0,0);
+			$booking_date_stamp = $booking_date_stamp->getTimestamp();
+
+			if($expiration_stamp > dy_strtotime('today midnight'))
+			{
+				if($package_type !== 'transport' && $package_type !== 'one-day')
+				{
+					$arr_valid_expiration = [];
+
+					for ($x = 0; $x < count($booking_dates_range); $x++) {
+						$range_date = new DateTime($booking_dates_range[$x]);
+						$range_date->setTime(0, 0, 0);
+						$range_date = $range_date->getTimestamp();
+						
+						if ($range_date > $expiration_stamp && $coupon_bookings_after_expires === false) 
+						{
+							$arr_valid_expiration[] = false;
+						} 
+						else
+						{
+							$arr_valid_expiration[] = true;
+						}
+					}
+
+					if (!in_array(false, $arr_valid_expiration)) {
+						$valid_expiration = true;
+					}
+				}
+				else
+				{
+					if($booking_date_stamp >= $expiration_stamp)
+					{
+						if($coupon_bookings_after_expires === true)
+						{
+							$valid_expiration = true;
+						}
+					}
+					else
+					{
+						$valid_expiration = true;
+					}									
+				}	
+			}	
+									
+			$output = $valid_expiration;
+		}
+
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	
@@ -819,13 +797,13 @@ public static function validate_quote($the_id = 0)
 		return $output;
 	}
 	
-	public static function is_child($post_id = null)
+	public static function is_child($the_id = null)
 	{
 		$output = false;
 
-		if($post_id)
+		if($the_id)
 		{
-			$post = get_post($post_id);
+			$post = get_post($the_id);
 		}
 		else
 		{
@@ -834,7 +812,7 @@ public static function validate_quote($the_id = 0)
 
 		if($post instanceof WP_Post)
 		{
-			if(property_exists($post, 'ID'))
+			if(property_exists($post, 'ID') && self::validate_the_id($post->ID))
 			{
 				$cache_key = $post->ID.'_is_child';
 
@@ -857,13 +835,13 @@ public static function validate_quote($the_id = 0)
 		
 		return $output;
 	}
-	public static function has_children($post_id = null) {
+	public static function has_children($the_id = 0) {
 		
 		$output = false;
 
-		if($post_id)
+		if($the_id)
 		{
-			$post = get_post($post_id);
+			$post = get_post($the_id);
 		}
 		else
 		{
@@ -872,9 +850,9 @@ public static function validate_quote($the_id = 0)
 
 		if($post instanceof WP_Post)
 		{
-			if(property_exists($post, 'ID'))
+			if(property_exists($post, 'ID') && self::validate_the_id($post->ID))
 			{
-				$cache_key = $post->ID.'_has_children';
+				$cache_key = 'dy_has_children_' . $post->ID;
 				
 				if (isset(self::$cache[$cache_key])) {
 					return self::$cache[$cache_key];
@@ -905,27 +883,26 @@ public static function validate_quote($the_id = 0)
 		return $output;
 	}
 
-	public static function is_parent_with_no_child($post_id = null)
+	public static function is_parent_with_no_child()
 	{
 		$output = false;
-		$cache_key = 'dy_is_parent_with_no_child';
+		$the_id = get_dy_id();
+		$cache_key = 'dy_is_parent_with_no_child_' . $the_id;
 		
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
 
-		$has_children = ($post_id) ? self::has_children($post_id) : self::has_children();
-		$is_child = ($post_id) ? self::is_child($post_id) : self::is_child();
-
-		if(!$has_children && !$is_child)
+		if(!self::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = false;
+		}
+		
+		if(!self::has_children($the_id) && !self::is_child($the_id))
 		{
 			$output = true;
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		}        
 		
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	public static function is_valid_schema($the_id = 0)
@@ -943,7 +920,7 @@ public static function validate_quote($the_id = 0)
 
 		if(get_comments_number() > 0)
 		{
-			if(is_singular('package'))
+			if(is_singular('packages'))
 			{
 				if(dy_utilities::starting_at() > 0)
 				{
