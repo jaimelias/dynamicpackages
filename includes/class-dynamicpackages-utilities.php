@@ -431,7 +431,7 @@ class dy_utilities {
 		{
 			$the_id = get_dy_id();
 		}
-		
+
 		$output = 0;
 		$cache_key = 'dy_starting_at_'. $the_id;
 
@@ -456,7 +456,7 @@ class dy_utilities {
 		$max = (int) package_field('package_max_persons', $the_id);
 		$min = (int) package_field('package_min_persons', $the_id);
 
-		if($min <= 0 || $max <= 0 || $max < $min) {
+		if($min <= 0 || $max <= 0 || $max < $min || $max > 500) {
 			return self::$cache[$cache_key] = 0;
 		}
 		
@@ -467,7 +467,7 @@ class dy_utilities {
 			? (array_key_exists('occupancy_chart', $occupancy_chart)) 
 			? $occupancy_chart['occupancy_chart'] 
 			: null 
-			: null;
+			: null; // can be null
 
 		if(!is_array($price_chart) || count($price_chart) < $min)
 		{
@@ -475,10 +475,25 @@ class dy_utilities {
 		}
 
 		//configuration vars
-		$price_type = $is_child ? package_field('package_fixed_price', $post->post_parent) : package_field('package_fixed_price', $the_id);
-		$duration = $is_child ? floatval(package_field('package_duration', $post->post_parent)) : floatval(package_field('package_duration', $the_id));
-		$duration_max = $is_child ?  intval(package_field('package_duration_max', $post->post_parent)): intval(package_field('package_duration_max', $the_id));
-		$package_type = $is_child ? self::get_package_type($post->post_parent) : self::get_package_type($the_id);
+		$price_type = $is_child 
+			? intval(package_field('package_fixed_price', $post->post_parent)) 
+			: intval(package_field('package_fixed_price', $the_id));
+
+		$duration = $is_child 
+			? floatval(package_field('package_duration', $post->post_parent)) 
+			: floatval(package_field('package_duration', $the_id));
+
+		if($duration <= 0) {
+			return self::$cache[$cache_key] = 0;
+		}
+			
+		$duration_max = $is_child 
+			? intval(package_field('package_duration_max', $post->post_parent))
+			: intval(package_field('package_duration_max', $the_id));
+			
+		$package_type = $is_child 
+			? self::get_package_type($post->post_parent) 
+			: self::get_package_type($the_id);
 				
 		for($t = 0; $t < $max; $t++)
 		{
@@ -525,18 +540,9 @@ class dy_utilities {
 				$price = $base_price + $occupancy_price;
 			}
 
-			if($price_type == 1)
+			if($price_type === 1)
 			{
-				if($is_child) {
-					write_log("before:: price={$price}, pax_row_number={$pax_row_number}");
-				}
-
 				$price = $price * $pax_row_number;
-
-				if($is_child) {
-					write_log("after:: price={$price}, pax_row_number={$pax_row_number}");
-				}
-				
 			}
 
 			array_push($prices, $price);	
@@ -549,11 +555,8 @@ class dy_utilities {
 				$output = min($prices);
 			}
 		}
-		
-		//store output in $cache
-		self::$cache[$cache_key] = $output;
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
 
