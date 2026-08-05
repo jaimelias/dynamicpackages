@@ -399,11 +399,19 @@ class dy_utilities {
 		{
 			$prices = [];
 			$children = dy_validators::has_children();
+
+			
 	
 			foreach ( $children as $child )
 			{
-				array_push($prices, self::starting_at($child->ID, $the_id));
+				$child_starting_at = (float) self::starting_at($child->ID, $the_id);
+
+				if($child_starting_at > 0) {
+					array_push($prices, $child_starting_at);
+				}
+				
 			}
+
 
 			if(is_array($prices))
 				{
@@ -413,6 +421,8 @@ class dy_utilities {
 				}
 			}
 		}
+
+		write_log($output);
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $output;
@@ -428,16 +438,15 @@ class dy_utilities {
 		}
 		
 		$output = 0;
-		$name = 'dy_starting_at';
-		$cache_key = $name.'_'.$the_id;
+		$cache_key = 'dy_starting_at_'. $the_id . '_'.  ($parent_id ?: 0);
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
 		}
 	
 		$prices = [];
-		$max = intval(package_field('package_max_persons', $the_id));
-		$min = intval(package_field('package_min_persons', $the_id));
+		$max = (int) package_field('package_max_persons', $the_id);
+		$min = (int) package_field('package_min_persons', $the_id);
 		
 		$price_chart = self::get_price_chart($the_id);
 		$occupancy_chart = self::get_occupancy_chart($the_id);	
@@ -448,7 +457,6 @@ class dy_utilities {
 			: null;
 		$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
 		$duration = ($parent_id) ? floatval(package_field('package_duration', $parent_id)) : floatval(package_field('package_duration', $the_id));
-		$duration_unit = ($parent_id) ? intval(package_field('package_length_unit', $parent_id)) : intval(package_field('package_length_unit', $the_id));
 		$duration_max = ($parent_id) ?  intval(package_field('package_duration_max', $parent_id)): intval(package_field('package_duration_max', $the_id));
 		$package_type = ($parent_id) ? self::get_package_type($parent_id) : self::get_package_type($the_id);
 				
@@ -465,7 +473,7 @@ class dy_utilities {
 					{
 						if(!empty($price_chart[$t][0]))
 						{
-							$base_price = floatval($price_chart[$t][0]);
+							$base_price = (float) $price_chart[$t][0];
 						}
 					}
 				}
@@ -476,7 +484,7 @@ class dy_utilities {
 						if(!empty($occupancy_chart[$t][0]))
 						{
 							
-							$occupancy_price = floatval($occupancy_chart[$t][0]);
+							$occupancy_price = (float) $occupancy_chart[$t][0];
 							
 							if($duration_max === 0 && $package_type !== 'multi-day')
 							{
@@ -498,7 +506,7 @@ class dy_utilities {
 				
 				if($price_type == 1)
 				{
-					$price = $price * intval($t+1);
+					$price = $price * ( $t + 1 );
 				}
 							
 				array_push($prices, $price);				
@@ -509,12 +517,7 @@ class dy_utilities {
 		{
 			if(count($prices) > 0)
 			{
-				if($min > 1)
-				{
-					$prices = array_slice($prices, ($min - 1), count($prices));
-				}
-
-				$output = (count($prices) > 0) ? floatval(min($prices)) : 0;
+				$output = (float) min($prices);
 			}
 		}
 		

@@ -549,7 +549,7 @@ class Dynamicpackages_Public {
 							if(!empty($item->post_name))
 							{
 								$row = '';
-								$starting_at = intval(dy_utilities::starting_at($item->ID));
+								$starting_at = (int) dy_utilities::starting_at($item->ID);
 								$subpackage_name = 'package_child_title_'.$this->current_language;
 								$button_label = ($starting_at > 0 && $hide_prices === false) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
 								
