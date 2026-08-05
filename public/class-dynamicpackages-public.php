@@ -522,6 +522,8 @@ class Dynamicpackages_Public {
 			$duration = package_field('package_duration');
 			$duration_unit = package_field('package_length_unit');
 			$header_name = 'package_child_title_'.$this->current_language;
+			$hide_prices = intval(package_field('package_show_pricing', $post->ID)) === 1;
+
 			$header_title = package_field($header_name, $post->ID);
 			$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : sprintf(__('%s available %s', 'dynamicpackages'), $this->count_child(), $header_title);
 			
@@ -549,7 +551,7 @@ class Dynamicpackages_Public {
 								$row = '';
 								$starting_at = intval(dy_utilities::starting_at($item->ID));
 								$subpackage_name = 'package_child_title_'.$this->current_language;
-								$button_label = ($starting_at > 0) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
+								$button_label = ($starting_at > 0 && $hide_prices === false) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
 								
 								$subpackage_name = package_field($subpackage_name, $item->ID);
 								
