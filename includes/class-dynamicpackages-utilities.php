@@ -439,14 +439,26 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
+		if(!dy_validators::validate_the_id($the_id)) {
+			return self::$cache[$cache_key] = 0;
+		}
+
 		$post = get_post($the_id);
+
+		if(!$post instanceof WP_Post || $post->post_status === 'trash')
+		{
+			return self::$cache[$cache_key] = 0;
+		}
+
 		$is_child = $post->post_parent > 0;
 	
 		$prices = [];
 		$max = (int) package_field('package_max_persons', $the_id);
 		$min = (int) package_field('package_min_persons', $the_id);
 
-		if($min <= 0 || $max <= 0 || $max < $min) return (float) 0;
+		if($min <= 0 || $max <= 0 || $max < $min) {
+			return self::$cache[$cache_key] = 0;
+		}
 		
 		$price_chart = self::get_price_chart($the_id);
 		$occupancy_chart = self::get_occupancy_chart($the_id);
@@ -457,7 +469,10 @@ class dy_utilities {
 			: null 
 			: null;
 
-		if(count($price_chart) < $min) return 0;
+		if(!is_array($price_chart) || count($price_chart) < $min)
+		{
+			return self::$cache[$cache_key] = 0;
+		}
 
 		//configuration vars
 		$price_type = $is_child ? package_field('package_fixed_price', $post->post_parent) : package_field('package_fixed_price', $the_id);
@@ -531,7 +546,7 @@ class dy_utilities {
 		{
 			if(count($prices) > 0)
 			{
-				$output = (float) min($prices);
+				$output = min($prices);
 			}
 		}
 		
