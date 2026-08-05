@@ -601,7 +601,12 @@ class Dynamicpackages_Public {
 
 						}
 
-						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100"><thead class="text-center"><tr><th colspan="3">'.esc_html($label).':</th></tr></thead><tbody class="small">'.$rows.'</tbody></table>';
+						$price_type_label = sprintf(__('Prices %s', 'dynamicpackages'), apply_filters('dy_price_type', false));
+
+						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100">'
+							. '<thead class="text-center"><tr><th colspan="3">'.esc_html($label).' - <small class="semibold text-muted">'.esc_html($price_type_label).'</small></th></tr></thead>'
+							. '<tbody class="small">'.$rows.'</tbody>'
+							. '</table>';
 					}		
 				}
 			}			
