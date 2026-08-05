@@ -393,25 +393,22 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}		
 
-		$output = self::starting_at();
+		$output = self::starting_at($the_id);
 		
 		if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
 		{
 			$prices = [];
 			$children = dy_validators::has_children();
-
-			
 	
 			foreach ( $children as $child )
 			{
-				$child_starting_at = (float) self::starting_at($child->ID, $the_id);
+				$child_starting_at = (float) self::starting_at($child->ID);
 
 				if($child_starting_at > 0) {
 					array_push($prices, $child_starting_at);
 				}
 				
 			}
-
 
 			if(is_array($prices))
 				{
@@ -421,8 +418,6 @@ class dy_utilities {
 				}
 			}
 		}
-
-		write_log($output);
 		
 		//store output in $cache
 		self::$cache[$cache_key] = $output;
@@ -430,7 +425,7 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function starting_at($the_id = null, $parent_id = null)
+	public static function starting_at($the_id = null)
 	{		
 		if(!$the_id)
 		{
@@ -438,80 +433,99 @@ class dy_utilities {
 		}
 		
 		$output = 0;
-		$cache_key = 'dy_starting_at_'. $the_id . '_'.  ($parent_id ?: 0);
+		$cache_key = 'dy_starting_at_'. $the_id;
 
 		if (isset(self::$cache[$cache_key])) {
 			return self::$cache[$cache_key];
 		}
+
+		$post = get_post($the_id);
+		$is_child = $post->post_parent > 0;
 	
 		$prices = [];
 		$max = (int) package_field('package_max_persons', $the_id);
 		$min = (int) package_field('package_min_persons', $the_id);
+
+		if($min <= 0 || $max <= 0 || $max < $min) return (float) 0;
 		
 		$price_chart = self::get_price_chart($the_id);
-		$occupancy_chart = self::get_occupancy_chart($the_id);	
+		$occupancy_chart = self::get_occupancy_chart($the_id);
+
 		$occupancy_chart = (is_array($occupancy_chart)) 
 			? (array_key_exists('occupancy_chart', $occupancy_chart)) 
 			? $occupancy_chart['occupancy_chart'] 
 			: null 
 			: null;
-		$price_type = ($parent_id) ? package_field('package_fixed_price', $parent_id) : package_field('package_fixed_price', $the_id);
-		$duration = ($parent_id) ? floatval(package_field('package_duration', $parent_id)) : floatval(package_field('package_duration', $the_id));
-		$duration_max = ($parent_id) ?  intval(package_field('package_duration_max', $parent_id)): intval(package_field('package_duration_max', $the_id));
-		$package_type = ($parent_id) ? self::get_package_type($parent_id) : self::get_package_type($the_id);
+
+		if(count($price_chart) < $min) return 0;
+
+		//configuration vars
+		$price_type = $is_child ? package_field('package_fixed_price', $post->post_parent) : package_field('package_fixed_price', $the_id);
+		$duration = $is_child ? floatval(package_field('package_duration', $post->post_parent)) : floatval(package_field('package_duration', $the_id));
+		$duration_max = $is_child ?  intval(package_field('package_duration_max', $post->post_parent)): intval(package_field('package_duration_max', $the_id));
+		$package_type = $is_child ? self::get_package_type($post->post_parent) : self::get_package_type($the_id);
 				
 		for($t = 0; $t < $max; $t++)
 		{
-			if($t >= ($min-1))
+			$pax_row_number = $t + 1;
+
+			if($pax_row_number < $min || $pax_row_number > $max) continue;
+
+			$base_price = 0;
+			$occupancy_price = 0;
+			
+			if(is_array($price_chart))
 			{
-				$base_price = 0;
-				$occupancy_price = 0;
-				
-				if(is_array($price_chart))
+				if(isset($price_chart[$t][0]))
 				{
-					if(isset($price_chart[$t][0]))
+					if(!empty($price_chart[$t][0]))
 					{
-						if(!empty($price_chart[$t][0]))
-						{
-							$base_price = (float) $price_chart[$t][0];
-						}
+						$base_price = (float) $price_chart[$t][0];
 					}
 				}
-				if(is_array($occupancy_chart))
-				{
-					if(isset($occupancy_chart[$t][0]))
-					{
-						if(!empty($occupancy_chart[$t][0]))
-						{
-							
-							$occupancy_price = (float) $occupancy_chart[$t][0];
-							
-							if($duration_max === 0 && $package_type !== 'multi-day')
-							{
-								$occupancy_price = $occupancy_price * $duration;
-							}
-						}
-					}
-				}
-				
-				if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 'multi-day')
-				{
-					$price = ($base_price + ($occupancy_price * $duration)) / $duration;
-				}
-				else
-				{
-					$price = $base_price + $occupancy_price;
-				}
-				
-				
-				if($price_type == 1)
-				{
-					$price = $price * ( $t + 1 );
-				}
-							
-				array_push($prices, $price);				
 			}
-		}
+			if(is_array($occupancy_chart))
+			{
+				if(isset($occupancy_chart[$t][0]))
+				{
+					if(!empty($occupancy_chart[$t][0]))
+					{
+						
+						$occupancy_price = (float) $occupancy_chart[$t][0];
+						
+						if($duration_max === 0 && $package_type !== 'multi-day')
+						{
+							$occupancy_price = $occupancy_price * $duration;
+						}
+					}
+				}
+			}
+			
+			if($base_price > 0 && $occupancy_price > 0 && $duration > 1 && $package_type === 'multi-day')
+			{
+				$price = ($base_price + ($occupancy_price * $duration)) / $duration;
+			}
+			else
+			{
+				$price = $base_price + $occupancy_price;
+			}
+
+			if($price_type == 1)
+			{
+				if($is_child) {
+					write_log("before:: price={$price}, pax_row_number={$pax_row_number}");
+				}
+
+				$price = $price * $pax_row_number;
+
+				if($is_child) {
+					write_log("after:: price={$price}, pax_row_number={$pax_row_number}");
+				}
+				
+			}
+
+			array_push($prices, $price);	
+	}
 						
 		if(is_array($prices))
 		{

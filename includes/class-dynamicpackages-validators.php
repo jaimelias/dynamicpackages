@@ -883,10 +883,14 @@ public static function validate_terms_conditions()
 		return $output;
 	}
 
-	public static function is_parent_with_no_child()
+	public static function is_parent_with_no_child($the_id = null)
 	{
 		$output = false;
-		$the_id = get_dy_id();
+
+		if(!$the_id) {
+			$the_id = get_dy_id();
+		}
+		
 		$cache_key = 'dy_is_parent_with_no_child_' . $the_id;
 		
         if (isset(self::$cache[$cache_key])) {
