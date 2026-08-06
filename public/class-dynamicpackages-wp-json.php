@@ -11,12 +11,12 @@ class Dynamicpackages_WP_JSON
 	{
 		add_action('rest_api_init', array($this, 'register_rest_routes'));
 	}
-	
+
 	public function register_rest_routes()
 	{
 		register_rest_route(
 			'dy-core',
-			'/dynamicpackages/disabled-dates/(?P<post_id>\d+)',
+			'/dynamicpackages/disabled-dates/(?P<package_id>\d+)',
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array(
@@ -25,7 +25,7 @@ class Dynamicpackages_WP_JSON
 				),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'post_id' => array(
+					'package_id' => array(
 						'required'          => true,
 						'sanitize_callback' => 'absint',
 						'validate_callback' => static function($value) {
@@ -40,14 +40,26 @@ class Dynamicpackages_WP_JSON
 
 	public function disabled_dates_endpoint($request)
 	{
-		$post_id = absint($request['post_id']);
-		$package = get_post($post_id);
+		$package_id = absint($request['package_id']);
 
-		$is_readable = $package instanceof WP_Post
-			&& 'packages' === $package->post_type
+		if(!dy_validators::validate_the_id($package_id)) {
+			return $this->rest_response(
+				array(
+					'code'    => 'dynamicpackages_invalid_post_id',
+					'message' => 'Invalid package ID.',
+					'data'    => array('status' => 404),
+				),
+				404
+			);			
+		}
+
+		$post = get_post($package_id);
+
+		$is_readable = $post instanceof WP_Post
+			&& 'packages' === $post->post_type
 			&& (
-				is_post_publicly_viewable($package)
-				|| current_user_can('read_post', $post_id)
+				is_post_publicly_viewable($post)
+				|| current_user_can('read_post', $package_id)
 			);
 
 		if (!$is_readable) {
@@ -61,18 +73,7 @@ class Dynamicpackages_WP_JSON
 			);
 		}
 
-		/*
-		* Preserve the singular-package context expected by package_field()
-		* and get_dy_id(), including parent-package inheritance.
-		*/
-		$previous_post = $GLOBALS['post'] ?? null;
-
-		try {
-			$GLOBALS['post'] = $package;
-			$data = $this->disabled_dates();
-		} finally {
-			$GLOBALS['post'] = $previous_post;
-		}
+		$data = $this->disabled_dates($post);
 
 		return $this->rest_response($data);
 	}
@@ -93,20 +94,9 @@ class Dynamicpackages_WP_JSON
 	}
 
 
-	public function disabled_dates()
+	public function disabled_dates($post)
 	{
-
-		$the_id = get_dy_id();
-
-		if(!$the_id) {
-			$the_id = secure_get('dy_id', 0, 'absint'); //equals absint(sanitize_text_field($_GET['dy_id'])), dy_id === post->ID
-		}
-
-		if(!dy_validators::validate_the_id($the_id)) {
-			wp_die('Invalid post_id in disabled_dates route.');
-		}
-
-
+		$the_id = $post->ID;
 		$disable = [];
 		$disable['disable'] = [];
 		$days = dy_utilities::get_week_days_abbr();
@@ -169,7 +159,7 @@ class Dynamicpackages_WP_JSON
 					$disabled_dates[] = $get_disabled_dates[$x];
 				}
 			}
-		}				
+		}
 		
 		if(is_array($disabled_dates))
 		{
