@@ -39,7 +39,7 @@ const datePicker = async () => {
 
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
-	const buildPicker = () => {
+	const buildPicker = async () => {
 
 
 		const windowLocationUrl = new URL(window.location);
@@ -162,7 +162,7 @@ const datePicker = async () => {
 		});
 	};
 
-	buildPicker();
+	await buildPicker();
 
 	jQuery(formContainer).each(function(){
 		const thisForm = jQuery(this).find('.dy_package_booking_form');
