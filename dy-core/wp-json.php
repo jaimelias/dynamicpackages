@@ -100,10 +100,24 @@ class Dynamic_Core_WP_JSON
 
         $response = rest_ensure_response($countries);
 
+        // Long browser cache + edge cache (Cloudflare respects s-maxage)
         $response->header(
             'Cache-Control',
-            'public, max-age=86400'
+            'public, max-age=86400, s-maxage=2592000, immutable'
         );
+
+        // ETag based on file content — lets clients/CDN revalidate cheaply
+        $etag = '"' . md5_file($file_path) . '"';
+        $response->header('ETag', $etag);
+
+        // Last-Modified based on file mtime
+        $response->header(
+            'Last-Modified',
+            gmdate('D, d M Y H:i:s', filemtime($file_path)) . ' GMT'
+        );
+
+        // Prevent Cloudflare from skipping cache due to a stray Set-Cookie
+        header_remove('Set-Cookie');
 
         return $response;
     }
