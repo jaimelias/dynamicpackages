@@ -79,7 +79,8 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-forms.php';
 		require_once $dir . 'public/class-dynamicpackages-shortcodes.php'; //optimized
 		require_once $dir . 'public/class-dynamicpackages-tables.php'; //optimized	
-		require_once $dir . 'public/class-dynamicpackages-json.php';
+		require_once $dir . 'public/class-dynamicpackages-wp-json.php';
+		require_once $dir . 'public/class-dynamicpackages-ld-json.php';
 		require_once $dir . 'public/class-dynamicpackages-add-calendar.php';
 		require_once $dir . 'public/class-dynamicpackages-package-page.php';
 		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
@@ -103,6 +104,7 @@ class dynamicpackages {
 	public function define_utility_hooks()
 	{
 		$this->reviews = new Dynamicpackages_Reviews();
+		new Dynamicpackages_LD_JSON($this->reviews);
 	}
 
 	private function define_admin_hooks() 
@@ -120,7 +122,6 @@ class dynamicpackages {
 		new Dynamicpackages_Tables();
 		new Dynamicpackages_Shortcodes();
 		new Dynamicpackages_Forms();
-		new Dynamicpackages_JSON($this->reviews);
 		new Dynamicpackages_Actions();
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
@@ -128,6 +129,7 @@ class dynamicpackages {
 		new Dynamicpackages_Errors_Page($this->version);
 		new Dynamicpackages_Location_Category($this->version);
 		new Dynamicpackages_Export_Post_Types($this->version);
+		new Dynamicpackages_WP_JSON();
 	}
 
 	private function define_gateteways_hooks()
