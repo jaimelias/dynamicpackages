@@ -27,7 +27,7 @@ const forceAvailability = () => {
 const datePicker = async () => {
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
-	const {permalink, post_id} = dyCoreArgs;
+	const {wpJsonUrl, post_id} = dyCoreArgs;
 	const {site_timestamp} = await getNonce() || undefined;
 	
 	if(formContainer.length === 0 && !site_timestamp)
@@ -43,11 +43,8 @@ const datePicker = async () => {
 
 
 		const windowLocationUrl = new URL(window.location);
-		const d = new Date();	
-		const endpoint = new URL(permalink);
-		endpoint.searchParams.set('json', 'disabled_dates');
-		endpoint.searchParams.set('dy_id', post_id);
-		endpoint.searchParams.set('stamp', d.getTime());
+		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
+		endpoint.searchParams.set('stamp', Date.now());
 	
 
 		jQuery(formContainer).each(function () {

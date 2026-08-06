@@ -56,14 +56,12 @@ const reValidateDate = async () => {
 
     try {
 
-        const { permalink, post_id } = dyCoreArgs;
+        const {wpJsonUrl, post_id} = dyCoreArgs;
         const { site_timestamp } = await getNonce() || {};
         const today = site_timestamp ? new Date(site_timestamp) : new Date();
 
-		const endpoint = new URL(permalink)
-		endpoint.searchParams.set('json', 'disabled_dates')
-		endpoint.searchParams.set('dy_id', post_id)
-		endpoint.searchParams.set('stamp', today.getTime())
+		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
+		endpoint.searchParams.set('stamp', Date.now());
 
         const url = new URL(window.location.href);
         let bookingDateStr = url.searchParams.get('booking_date') + ' 00:00:00';
