@@ -57,10 +57,11 @@ const reValidateDate = async () => {
     try {
 
         const {wpJsonUrl, post_id} = dyCoreArgs;
-        const { site_timestamp } = await getNonce() || {};
+        const { site_timestamp, dy_nonce } = await getNonce() || {};
         const today = site_timestamp ? new Date(site_timestamp) : new Date();
 
 		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
+		endpoint.searchParams.set('dy_nonce', dy_nonce);
 		endpoint.searchParams.set('stamp', Date.now());
 
         const url = new URL(window.location.href);

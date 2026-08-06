@@ -43,7 +43,9 @@ const datePicker = async () => {
 
 
 		const windowLocationUrl = new URL(window.location);
+		const { dy_nonce } = await getNonce() || {};
 		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
+		endpoint.searchParams.set('dy_nonce', dy_nonce);
 		endpoint.searchParams.set('stamp', Date.now());
 	
 
