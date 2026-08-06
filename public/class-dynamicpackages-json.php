@@ -276,6 +276,18 @@ class Dynamicpackages_JSON
 
 	public function disabled_dates()
 	{
+
+		$the_id = get_dy_id();
+
+		if(!$the_id) {
+			$the_id = secure_get('dy_id', 0, 'absint'); //equals absint(sanitize_text_field($_GET['dy_id'])), dy_id === post->ID
+		}
+
+		if(!dy_validators::validate_the_id($the_id)) {
+			wp_die('Invalid post_id in disabled_dates route.');
+		}
+
+
 		$disable = [];
 		$disable['disable'] = [];
 		$days = dy_utilities::get_week_days_abbr();
@@ -287,21 +299,23 @@ class Dynamicpackages_JSON
 		
 		for($x = 0; $x < count($days); $x++)
 		{
-			if(intval(package_field('package_day_'.$days[$x] )) == 1)
+			$day_of_the_week = (int) package_field('package_day_'.$days[$x], $the_id );
+
+			if($day_of_the_week == 1)
 			{
 				array_push($disable['disable'], $x+1);
 			}
 		}
 
 		$time = date('Y-m-d');
-		$from = intval(package_field('package_booking_from'));
+		$from = (int) package_field('package_booking_from', $the_id );
 		
 		if($from == 0)
 		{
 			$from = true;
 		}
 		
-		$to = intval(package_field('package_booking_to'));
+		$to = (int) package_field('package_booking_to', $the_id );
 		
 		$disable['min'] = $from;
 		$disable['max'] = $to;	
@@ -309,9 +323,9 @@ class Dynamicpackages_JSON
 
 		
 
-		$global_disabled_dates = dy_utilities::get_option_hot_chart('dy_disabled_dates');
-		$get_disabled_dates = dy_utilities::get_package_hot_chart('package_disabled_dates');
-		$get_enabled_dates = dy_utilities::get_package_hot_chart('package_enabled_dates');
+		$global_disabled_dates = dy_utilities::get_option_hot_chart('dy_disabled_dates'); //uses get_option
+		$get_disabled_dates = dy_utilities::get_package_hot_chart('package_disabled_dates', $the_id );
+		$get_enabled_dates = dy_utilities::get_package_hot_chart('package_enabled_dates', $the_id );
 		
 		if(is_array($global_disabled_dates))
 		{
@@ -379,7 +393,7 @@ class Dynamicpackages_JSON
 			}			
 		}
 	
-		$api_disabled_endpoint = package_field('package_disabled_dates_api');
+		$api_disabled_endpoint = package_field('package_disabled_dates_api', $the_id );
 		
 		if (filter_var($api_disabled_endpoint, FILTER_VALIDATE_URL) !== false)
 		{
