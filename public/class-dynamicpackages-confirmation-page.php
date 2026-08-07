@@ -35,7 +35,7 @@ class Dynamicpackages_Confirmation_Page {
 				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages')
 			);
 
-            wp_enqueue_script('dynamicpackages-confirmation', $this->plugin_dir_url_file . 'js/dynamicpackages-confirmation-page.js', array( 'jquery'), $this->version, true );
+            wp_enqueue_script('dynamicpackages-confirmation', $this->plugin_dir_url_file . 'js/dynamicpackages-confirmation-page.js', array( 'jquery'), time(), true );
 			wp_localize_script('dynamicpackages-confirmation', 'dyPackageConfirmationArgs', $strings);
         }
     }

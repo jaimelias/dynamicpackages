@@ -40,122 +40,134 @@ const datePicker = async () => {
 	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
 
 	const buildPicker = async () => {
-
-
+		
 		const windowLocationUrl = new URL(window.location);
 		const { dy_nonce } = await getNonce() || {};
 		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
 		endpoint.searchParams.set('dy_nonce', dy_nonce);
 		endpoint.searchParams.set('stamp', Date.now());
-	
+
+		const datePickerState = {
+			booking_date: null,
+			end_date: null
+		};
+
+		const hasEndDate = jQuery(formContainer)
+			.find('.dy_package_booking_form input.dy_date_picker[name="end_date"]')
+			.length > 0;
+
+		const requests = ['booking_date'];
+
+		if(hasEndDate)
+		{
+			requests.push('end_date');
+		}
+
+		await Promise.all(
+			requests.map(async name => {
+
+				const url = new URL(endpoint.href);
+
+				if(name === 'end_date')
+				{
+					url.searchParams.set('return', 'true');
+				}
+
+				const response = await fetch(url);
+
+				if(!response.ok)
+				{
+					throw new Error(`Error ${response.status}: ${response.statusText}`);
+				}
+
+				datePickerState[name] = await response.json();
+
+			})
+		);
 
 		jQuery(formContainer).each(function () {
 			const thisForm = jQuery(this).find('.dy_package_booking_form');
 			const fields = jQuery(thisForm).find('input.dy_date_picker');
 
-			let args = {
-				container: '#availability_calendar',
-				format: 'yyyy-mm-dd',
-				firstDay: 1
-			};
-			
 			jQuery(fields).each(function(){
 				
 				const field = jQuery(this);
 				const name = jQuery(field).attr('name');
 
+				let args = {
+					container: '#availability_calendar',
+					format: 'yyyy-mm-dd',
+					firstDay: 1,
+					...datePickerState[name === 'end_date' ? 'end_date' : 'booking_date']
+				};
+
+				const today = new Date(site_timestamp);
+
+				const hour = today.getHours();
+				const weekDay = today.getDay();
+				let officeClose = 17;
+
+				console.log({weekDay, hour, today});
+
+				//by default 0 0 today is converted into a true boolean
+				if((typeof args.min !== 'boolean') && args.min === 1)
+				{
+					if(weekDay === 0 || weekDay === 6)
+					{
+						officeClose = 16;
+					}
+					
+					if(hour >= officeClose)
+					{
+						args.min++;
+					}
+				}
+
+				if(windowLocationUrl.searchParams.has('force_availability'))
+				{
+					args = {...args, min: true, max: 365, disable: []};
+				}
+
 				if(name === 'end_date')
 				{
-					endpoint.searchParams.set('return', 'true');
+					args.onOpen = () => {
+
+						const bookingDatePicker = jQuery(thisForm)
+							.find('input.dy_date_picker[name="booking_date"]')
+							.pickadate('picker');
+
+						const bookingDateVal = bookingDatePicker.get('select');
+						const endDate = jQuery(thisForm)
+							.find('input.dy_date_picker[name="end_date"]');
+
+						if(bookingDateVal && endDate.length !== 0)
+						{
+							const endDatePicker = endDate.pickadate('picker');
+
+							endDatePicker.set({min: bookingDateVal}, { muted: true });
+							endDatePicker.set('clear');
+							endDatePicker.render();
+						}
+
+					}; 
+				}
+
+				if(jQuery(field).attr('type') == 'text')
+				{
+					jQuery(field).pickadate(args);
+				}
+				else if(jQuery(field).attr('type') == 'date')
+				{
+					jQuery(field).attr({
+						'type': 'text'
+					});
+
+					jQuery(field).pickadate(args);
 				}
 				
-				jQuery(thisForm).find('select.booking_select').each(function(){
-					endpoint.searchParams.set(jQuery(this).attr('name'), jQuery(this).val())
+				jQuery(field).removeAttr('disabled').attr({
+					'placeholder': null
 				});
-
-				fetch(endpoint)
-				.then(response => (response.ok ? response : Promise.reject(new Error(`Error ${response.status}: ${response.statusText}`))))
-				.then(response => response.json())
-				.then(data => {
-					
-					args = {...args, ...data}
-
-					const today = new Date(site_timestamp)
-
-					
-
-					const hour = today.getHours()
-					const weekDay = today.getDay()
-					let officeClose = 17
-
-					console.log({weekDay, hour, today})
-
-					//by default 0 0 today is converted into a true boolean
-					if((typeof args.min !== 'boolean') && args.min === 1)
-					{
-						if(weekDay === 0 || weekDay === 6)
-						{
-							officeClose = 16
-						}
-						
-						if(hour >= officeClose)
-						{
-							args.min++
-						}
-					}
-
-					if(windowLocationUrl.searchParams.has('force_availability'))
-					{
-						args = {...args, min: true, max: 365, disable: []}
-					}
-
-					
-					if(name === 'end_date')
-					{
-						args.onOpen = () => {
-
-							const bookingDatePicker = jQuery(thisForm)
-								.find('input.dy_date_picker[name="booking_date"]')
-								.pickadate('picker');
-
-							const bookingDateVal = bookingDatePicker.get('select');
-							const endDate = jQuery(thisForm)
-								.find('input.dy_date_picker[name="end_date"]');
-
-							if(bookingDateVal && endDate.length !== 0)
-							{
-								const endDatePicker = endDate.pickadate('picker');
-
-								endDatePicker.set({min: bookingDateVal}, { muted: true });
-								endDatePicker.set('clear');
-								endDatePicker.render();
-							}
-
-						}; 
-					}
-
-
-
-					if(jQuery(field).attr('type') == 'text')
-					{
-						jQuery(field).pickadate(args);
-					}
-					else if(jQuery(field).attr('type') == 'date')
-					{
-						jQuery(field).attr({
-							'type': 'text'
-						});
-						jQuery(field).pickadate(args);
-					}
-					
-					jQuery(field).removeAttr('disabled').attr({
-						'placeholder': null
-					});
-				
-				})
-				.catch(error => {
-					throw error;
-				});	
 
 			});		
 
