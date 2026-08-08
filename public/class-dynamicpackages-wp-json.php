@@ -14,6 +14,23 @@ class Dynamicpackages_WP_JSON
 
 	public function register_rest_routes()
 	{
+
+		$package_id_args = array(
+			'required'          => true,
+			'sanitize_callback' => 'absint',
+			'validate_callback' => static function($value) {
+				return dy_validators::validate_the_id($value);
+			},
+		);
+
+		$dy_nonce_args = array(
+			'required'          => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value) && wp_verify_nonce($value, 'dy_nonce');
+			},
+		);
+
 		register_rest_route(
 			'dy-core',
 			'/dynamicpackages/disabled-dates/(?P<package_id>\d+)',
@@ -25,13 +42,8 @@ class Dynamicpackages_WP_JSON
 				),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'package_id' => array(
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => static function($value) {
-							return absint($value) > 0;
-						},
-					),
+					'package_id' => $package_id_args,
+					'dy_nonce' => $dy_nonce_args,
 				),
 			)
 		);
@@ -40,19 +52,7 @@ class Dynamicpackages_WP_JSON
 
 	public function disabled_dates_endpoint($request)
 	{
-		$package_id = absint($request['package_id']);
-
-		if(!dy_validators::validate_the_id($package_id)) {
-			return $this->rest_response(
-				array(
-					'code'    => 'dynamicpackages_invalid_post_id',
-					'message' => 'Invalid package ID.',
-					'data'    => array('status' => 404),
-				),
-				404
-			);			
-		}
-
+		$package_id = $request['package_id'];
 		$post = get_post($package_id);
 
 		$is_readable = $post instanceof WP_Post
