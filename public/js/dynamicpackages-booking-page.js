@@ -478,9 +478,15 @@ const checkoutFormSubmit = () => {
 		createFormSubmit(thisForm);
 	}
 	else
-	{		
+	{	
+		if(invalids.includes('country') || invalids.includes('country_calling_code')) {
+			countryDropdown();
+		}
+
 		alert(`${submit_error}: ${invalids.join(', ')}`);
 	}
+
+	
 
 	return false;
 }
