@@ -1,5 +1,7 @@
 <?php
 
+	if ( !defined( 'WPINC' ) ) exit;
+	
 	$GLOBALS['dy_is_archive'] = true;
 	$posts_per_page = isset($dis_imp) ? $dis_imp : 12;
 	$paged = current_page_number();

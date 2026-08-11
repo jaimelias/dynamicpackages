@@ -1,3 +1,5 @@
+<?php if ( !defined( 'WPINC' ) ) exit; ?>
+
 
 <div id="dy_cc_form">
 

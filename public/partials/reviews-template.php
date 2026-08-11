@@ -1,3 +1,5 @@
+<?php if ( !defined( 'WPINC' ) ) exit; ?>
+
 <?php if(have_comments()): ?>
 
 	<div id="dy_reviews">

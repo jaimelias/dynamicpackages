@@ -1,4 +1,5 @@
 <?php
+    if ( !defined( 'WPINC' ) ) exit;
     $add_to_calendar   = apply_filters('dy_add_to_calendar', null);
     $discount          = 0;
     $pax_discount      = 0;

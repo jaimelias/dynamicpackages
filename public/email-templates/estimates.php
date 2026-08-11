@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 $post_id = secure_post('post_id', 0);
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));

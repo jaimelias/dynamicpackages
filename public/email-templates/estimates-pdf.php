@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 $post_id = secure_post('post_id', 0);
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));

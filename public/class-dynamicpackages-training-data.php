@@ -1,5 +1,7 @@
 <?php
 
+if ( !defined( 'WPINC' ) ) exit;
+
 #[AllowDynamicProperties]
 class Dynamicpackages_Export_Post_Types{
 
