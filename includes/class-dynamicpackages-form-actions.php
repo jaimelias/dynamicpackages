@@ -85,6 +85,7 @@ class Dynamicpackages_Actions{
 				unset($data['CVV2']);
 				unset($data['cf-turnstile-response']);
 				unset($data['dy_nonce']);
+				unset($data['transaction_signature']);
 
 				//only in development
 				//global $dy_orders;
@@ -120,6 +121,23 @@ class Dynamicpackages_Actions{
 
 				dy_utilities::webhook($webhook_option, $payload);
 				$this->send_email();
+
+
+				$request_type = secure_post('dy_request');
+
+				if(in_array($request_type, array('estimate_request', 'contact'), true))
+				{
+					$value = ($request_type === 'estimate_request')
+						? (float) dy_utilities::total()
+						: 0.0;
+
+					dy_gtag_queue_server_event(
+						'generate_lead',
+						secure_post('transaction_id'),
+						$value,
+						currency_name()
+					);
+				}
 
 				//store output in $cache
 				self::$cache[$cache_key] = true;

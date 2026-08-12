@@ -456,12 +456,6 @@ const checkoutFormSubmit = () => {
 		//google analytics
 		if(typeof gtag !== 'undefined')
 		{	
-			//send to call	
-			gtag('event', 'generate_lead', {
-				value: amount,
-				currency: 'USD'
-			});
-
 			if(!excludedPurchase.includes(dyRequestVal))
 			{
 				let checkoutEventArgs = getCheckoutEventArgs({...checkoutArgs});
@@ -524,7 +518,6 @@ const getCheckoutEventArgs = checkoutArgs => {
 	let output = {
 		value : amount,
 		currency: 'USD',
-		transaction_id: Date.now().toString(),
 		items: [item1],
 	};
 

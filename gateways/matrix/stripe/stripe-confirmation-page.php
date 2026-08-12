@@ -65,6 +65,77 @@ class stripe_gateway_confirmation_page {
             if ($session && $session->payment_status === 'paid') {
                 // Payment was confirmed
                 $this->order_status = 'paid';
+
+
+                if($this->mode === 'live')
+                {
+                    $metadata = array();
+
+                    if(isset($session->metadata))
+                    {
+                        $metadata = (
+                            is_object($session->metadata)
+                            && method_exists($session->metadata, 'toArray')
+                        )
+                            ? $session->metadata->toArray()
+                            : (array) $session->metadata;
+                    }
+
+                    $transaction_id = isset($metadata['transaction_id'])
+                        ? sanitize_text_field($metadata['transaction_id'])
+                        : '';
+
+                    /*
+                    * Compatibilidad con sesiones creadas antes de desplegar
+                    * el transaction_id canónico.
+                    */
+                    if(1 !== preg_match('/^[A-Za-z0-9_-]{1,64}$/', $transaction_id))
+                    {
+                        $transaction_id = 'stripe-' . substr(
+                            hash('sha256', 'stripe|' . (string) $session->id),
+                            0,
+                            40
+                        );
+                    }
+
+                    $value = isset($session->amount_total)
+                        ? round(((float) $session->amount_total) / 100, 2)
+                        : 0.0;
+
+                    $currency = !empty($session->currency)
+                        ? strtoupper((string) $session->currency)
+                        : currency_name();
+
+                    $post_id = absint(
+                        isset($metadata['dy_id'])
+                            ? $metadata['dy_id']
+                            : (isset($metadata['post_id']) ? $metadata['post_id'] : 0)
+                    );
+
+                    $item_name = isset($metadata['title'])
+                        ? $metadata['title']
+                        : get_the_title($post_id);
+
+                    $quantity = isset($metadata['pax_num'])
+                        ? absint($metadata['pax_num'])
+                        : 1;
+
+                    $item = dy_gtag_build_item(
+                        $post_id,
+                        $item_name,
+                        $quantity,
+                        $value
+                    );
+
+                    dy_gtag_queue_server_event(
+                        'purchase',
+                        $transaction_id,
+                        $value,
+                        $currency,
+                        array($item)
+                    );
+                }
+
             } else {
                 $this->order_status = 'pending'; // fallback
             }

@@ -179,6 +179,27 @@ class paguelo_facil_on{
 				add_filter('dy_email_label_doc', function(){
 					return esc_html(__('Invoice', 'dynamicpackages'));
 				});
+
+
+				if(!isset($this->debug_mode))
+				{
+					$value = (float) dy_utilities::payment_amount();
+
+					$item = dy_gtag_build_item(
+						secure_post('dy_id', 0, 'absint'),
+						secure_post('title'),
+						secure_post('pax_num', 1, 'absint'),
+						$value
+					);
+
+					dy_gtag_queue_server_event(
+						'purchase',
+						secure_post('transaction_id'),
+						$value,
+						currency_name(),
+						array($item)
+					);
+				}
 			}
 			else
 			{

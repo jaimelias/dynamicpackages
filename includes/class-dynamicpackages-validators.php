@@ -312,8 +312,26 @@ public static function validate_quote()
 
 		if(self::is_confirmation_page())
 		{
-			if(isset($_POST['first_name']) && isset($_POST['lastname']) && isset($_POST['phone']) && isset($_POST['country_calling_code']) && isset($_POST['email']) && isset($_POST['repeat_email']))
+			if(
+				isset($_POST['first_name'])
+				&& isset($_POST['lastname'])
+				&& isset($_POST['phone'])
+				&& isset($_POST['country_calling_code'])
+				&& isset($_POST['email'])
+				&& isset($_POST['repeat_email'])
+				&& isset($_POST['transaction_id'])
+				&& isset($_POST['transaction_signature'])
+			)
 			{
+				if(
+					!dy_gtag_is_valid_transaction_id(
+						secure_post('transaction_id'),
+						secure_post('transaction_signature')
+					)
+				)
+				{
+					$invalids[] = __('Invalid transaction ID.', 'dynamicpackages');
+				}
 				if(!is_email($_POST['email']))
 				{
 					$invalids[] = __('Invalid email.', 'dynamicpackages');

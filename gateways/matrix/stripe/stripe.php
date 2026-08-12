@@ -226,6 +226,7 @@ class stripe_gateway {
 
             if($key === 'cf-turnstile-response') continue;
             if($key === 'hash') continue;
+            if($key === 'transaction_signature') continue;
 
             $metadata[$key] = secure_post($key);
         }
