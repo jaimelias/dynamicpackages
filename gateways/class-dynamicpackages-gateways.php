@@ -18,9 +18,6 @@ class Dynamicpackages_Gateways
 	
 	public function load_gateways()
 	{
-		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe.php';
-		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe-webhook.php';
-		require_once plugin_dir_path(__FILE__).'matrix/stripe/stripe-confirmation-page.php';
 		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
@@ -41,7 +38,6 @@ class Dynamicpackages_Gateways
 
 		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
-		$this->stripe_gateway = new stripe_gateway($this->plugin_id);
 		$this->cuanto = new cuanto($this->plugin_id);
 		$this->paypal_me = new paypal_me($this->plugin_id);
 		$this->yappy_direct = new yappy_direct($this->plugin_id);
