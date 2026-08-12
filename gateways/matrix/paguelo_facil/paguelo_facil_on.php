@@ -49,14 +49,33 @@ class paguelo_facil_on{
 		$this->icon = '<span class="dashicons dashicons-cart"></span>';
 		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
+
+	public function concat_transient_key_binding() {
+
+		$arr = [
+			(string) secure_post('unique_tx_id'),
+			(string) secure_post('dy_id'),
+			strtolower((string) secure_post('email', '', 'sanitize_email')),
+			(string) secure_post('booking_date'),
+			(string) secure_post('cf-turnstile-response')
+		];
+
+		$text = implode('|', $arr);
+
+		return hash_hmac(
+			'sha256',
+			$text,
+			wp_salt('auth')
+		);
+	}
 	
 	public function checkout()
 	{
 		$unique_tx_id = secure_post('unique_tx_id');
 
-		if(!empty($unique_tx_id))
+		if(dy_validators::validate_unique_tx_id($unique_tx_id))
 		{
-			$transient_key = 'unique_tx_id_' . sha1($unique_tx_id);
+			$transient_key = 'unique_tx_id_' . $this->concat_transient_key_binding();
 
 			$cached_purchase = get_transient(
 				'gtag_purchase_' . $transient_key
@@ -89,7 +108,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transient_key = 'unique_tx_id_' . sha1($unique_tx_id);
+		$transient_key = 'unique_tx_id_' . $this->concat_transient_key_binding();
 
 		//keys
 		$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found

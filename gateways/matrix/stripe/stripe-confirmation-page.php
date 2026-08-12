@@ -81,18 +81,13 @@ class stripe_gateway_confirmation_page {
                             : (array) $session->metadata;
                     }
                     
-                    $transaction_id = isset($metadata['unique_tx_id'])
+                    $unique_tx_id = isset($metadata['unique_tx_id'])
                         ? sanitize_text_field($metadata['unique_tx_id'])
                         : '';
 
-                    if(
-                        1 !== preg_match(
-                            '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
-                            $transaction_id
-                        )
-                    )
+                    if(!dy_validators::validate_unique_tx_id($unique_tx_id))
                     {
-                        $transaction_id = 'stripe-' . substr(
+                        $unique_tx_id = 'stripe-' . substr(
                             hash('sha256', 'stripe|' . (string) $session->id),
                             0,
                             40
@@ -130,7 +125,7 @@ class stripe_gateway_confirmation_page {
 
                     dy_gtag_queue_server_event(
                         'purchase',
-                        $transaction_id,
+                        $unique_tx_id,
                         $value,
                         $currency,
                         array($item)

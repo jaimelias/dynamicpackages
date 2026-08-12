@@ -300,6 +300,15 @@ public static function validate_quote()
 		return $output;
 	}
 	
+	public static function validate_unique_tx_id($txt = '') {
+		if (!is_string($txt) || $txt === '') return false;
+
+		return (bool) preg_match(
+			'/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+			$txt
+		);
+	}
+
 	public static function validate_contact_details()
 	{
 		$output = false;
@@ -323,12 +332,9 @@ public static function validate_quote()
 				
 			)
 			{
-				if(
-					1 !== preg_match(
-						'/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
-						secure_post('unique_tx_id')
-					)
-				)
+				$unique_tx_id = secure_post('unique_tx_id');
+
+				if(!self::validate_unique_tx_id($unique_tx_id))
 				{
 					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
 					$invalids[] = $invalid_transaction_id_message;

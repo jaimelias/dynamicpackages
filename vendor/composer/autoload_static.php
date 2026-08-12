@@ -6,23 +6,14 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitefa4f9d2242590a5d7b1dda344648502
 {
-    public static $files = array (
-        'd92f49fe138fde4e7a3ec6f988960524' => __DIR__ . '/..' . '/stripe/stripe-php/lib/version_check.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
-            'Stripe\\' => 7,
             'Spipu\\Html2Pdf\\' => 15,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Stripe\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
-        ),
         'Spipu\\Html2Pdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/spipu/html2pdf/src',

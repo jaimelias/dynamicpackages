@@ -124,6 +124,7 @@ class Dynamicpackages_Actions{
 
 
 				$request_type = secure_post('dy_request');
+				$unique_tx_id = secure_post('unique_tx_id');
 
 				if(in_array($request_type, array('estimate_request', 'contact'), true))
 				{
@@ -133,7 +134,7 @@ class Dynamicpackages_Actions{
 
 					dy_gtag_queue_server_event(
 						'generate_lead',
-						secure_post('unique_tx_id'),
+						$unique_tx_id,
 						$value,
 						currency_name()
 					);
