@@ -313,24 +313,26 @@ public static function validate_quote()
 		if(self::is_confirmation_page())
 		{
 			if(
-				isset($_POST['first_name'])
+				isset($_POST['unique_tx_id'])
+				&& isset($_POST['first_name'])
 				&& isset($_POST['lastname'])
 				&& isset($_POST['phone'])
 				&& isset($_POST['country_calling_code'])
 				&& isset($_POST['email'])
 				&& isset($_POST['repeat_email'])
-				&& isset($_POST['transaction_id'])
-				&& isset($_POST['transaction_signature'])
+				
 			)
 			{
 				if(
-					!dy_gtag_is_valid_transaction_id(
-						secure_post('transaction_id'),
-						secure_post('transaction_signature')
+					1 !== preg_match(
+						'/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+						secure_post('unique_tx_id')
 					)
 				)
 				{
-					$invalids[] = __('Invalid transaction ID.', 'dynamicpackages');
+					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
+					$invalids[] = $invalid_transaction_id_message;
+					cloudflare_ban_ip_address($invalid_transaction_id_message);
 				}
 				if(!is_email($_POST['email']))
 				{
@@ -485,7 +487,7 @@ public static function validate_terms_conditions()
             return self::$cache[$cache_key];
         }
 
-		$required_params = ['CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'country', 'address', 'city', 'unique_tx_id'];
+		$required_params = ['CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'country', 'address', 'city'];
 
 		for($x = 0; $x < count($required_params); $x++)
 		{
@@ -527,11 +529,6 @@ public static function validate_terms_conditions()
 			if(empty($_POST['address']))
 			{
 				$invalids[] = __('Invalid address.', 'dynamicpackages');
-			}
-			if(empty($_POST['unique_tx_id']) || strlen($_POST['unique_tx_id']) !== 13)
-			{
-				$invalids[] = __('Invalid unique_tx_id.', 'dynamicpackages');
-				cloudflare_ban_ip_address(json_encode($invalids));
 			}
 		}
 		

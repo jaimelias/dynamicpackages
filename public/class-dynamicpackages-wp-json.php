@@ -10,7 +10,7 @@ class Dynamicpackages_WP_JSON
 	function __construct()
 	{
 		add_action('rest_api_init', array($this, 'register_rest_routes'));
-		add_filter('dy_core_wp_json_args', array(&$this, 'hook_transaction_id'));
+		add_filter('dy_core_wp_json_args', array(&$this, 'hook_unique_tx_id'));
 	}
 
 	public function register_rest_routes()
@@ -322,17 +322,12 @@ class Dynamicpackages_WP_JSON
 	
 	}
 
-
-	public function hook_transaction_id($output = array()) {
-
-		$transaction_id = wp_generate_uuid4();
-
-		$output['transaction_id'] = $transaction_id;
-		$output['transaction_signature'] = hash_hmac('sha256', $transaction_id, wp_salt('nonce'));
+	public function hook_unique_tx_id($output = array())
+	{
+		$output['unique_tx_id'] = wp_generate_uuid4();
 
 		return $output;
 	}
-
 }
 
 ?>

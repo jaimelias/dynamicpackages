@@ -133,7 +133,7 @@ class Dynamicpackages_Actions{
 
 					dy_gtag_queue_server_event(
 						'generate_lead',
-						secure_post('transaction_id'),
+						secure_post('unique_tx_id'),
 						$value,
 						currency_name()
 					);

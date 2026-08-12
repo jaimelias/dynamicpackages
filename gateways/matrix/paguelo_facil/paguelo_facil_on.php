@@ -52,11 +52,44 @@ class paguelo_facil_on{
 	
 	public function checkout()
 	{
+		$unique_tx_id = secure_post('unique_tx_id');
+
+		if(!empty($unique_tx_id))
+		{
+			$transient_key = 'unique_tx_id_' . sha1($unique_tx_id);
+
+			$cached_purchase = get_transient(
+				'gtag_purchase_' . $transient_key
+			);
+
+			if(
+				is_array($cached_purchase)
+				&& isset($cached_purchase['transaction_id'])
+				&& isset($cached_purchase['value'])
+				&& isset($cached_purchase['currency'])
+				&& isset($cached_purchase['items'])
+				&& is_array($cached_purchase['items'])
+			)
+			{
+				self::$txt_status = 2;
+
+				dy_gtag_queue_server_event(
+					'purchase',
+					$cached_purchase['transaction_id'],
+					$cached_purchase['value'],
+					$cached_purchase['currency'],
+					$cached_purchase['items']
+				);
+
+				return true;
+			}
+		}
+
 		if(dy_validators::validate_checkout($this->id) === false || $this->valid_turnstile === false || self::$txt_status !== null) {
 			return true;
 		}
 
-		$transient_key = 'unique_tx_id_' . sha1(secure_post('unique_tx_id'));
+		$transient_key = 'unique_tx_id_' . sha1($unique_tx_id);
 
 		//keys
 		$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found
@@ -146,6 +179,39 @@ class paguelo_facil_on{
 		
 		self::$txt_status = $number;
 
+		if(self::$txt_status === 2 && !isset($this->debug_mode))
+		{
+			$value = (float) dy_utilities::payment_amount();
+
+			$item = dy_gtag_build_item(
+				secure_post('dy_id', 0, 'absint'),
+				secure_post('title'),
+				secure_post('pax_num', 1, 'absint'),
+				$value
+			);
+
+			$purchase_tracking = array(
+				'transaction_id' => $unique_tx_id,
+				'value' => $value,
+				'currency' => currency_name(),
+				'items' => array($item)
+			);
+
+			set_transient(
+				'gtag_purchase_' . $transient_key,
+				$purchase_tracking,
+				DAY_IN_SECONDS
+			);
+
+			dy_gtag_queue_server_event(
+				'purchase',
+				$purchase_tracking['transaction_id'],
+				$purchase_tracking['value'],
+				$purchase_tracking['currency'],
+				$purchase_tracking['items']
+			);
+		}
+
 		set_transient('success_' . $transient_key, strval(self::$txt_status), 60);
 		delete_transient('is_processing_' . $transient_key);
 
@@ -179,27 +245,6 @@ class paguelo_facil_on{
 				add_filter('dy_email_label_doc', function(){
 					return esc_html(__('Invoice', 'dynamicpackages'));
 				});
-
-
-				if(!isset($this->debug_mode))
-				{
-					$value = (float) dy_utilities::payment_amount();
-
-					$item = dy_gtag_build_item(
-						secure_post('dy_id', 0, 'absint'),
-						secure_post('title'),
-						secure_post('pax_num', 1, 'absint'),
-						$value
-					);
-
-					dy_gtag_queue_server_event(
-						'purchase',
-						secure_post('transaction_id'),
-						$value,
-						currency_name(),
-						array($item)
-					);
-				}
 			}
 			else
 			{

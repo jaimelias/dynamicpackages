@@ -462,8 +462,8 @@ const checkoutFormSubmit = () => {
 
 				//console.log(checkoutEventArgs);
 
-				gtag('event', 'begin_checkout', checkoutEventArgs);
-				gtag('event', 'add_payment_info', {...checkoutEventArgs, payment_type: dyRequestVal});
+				sendGa4Event( 'begin_checkout', checkoutEventArgs);
+				sendGa4Event( 'add_payment_info', {...checkoutEventArgs, payment_type: dyRequestVal});
 			}
 		}
 		

@@ -14,7 +14,7 @@ const more_details_event = () => {
 		if(typeof gtag !== 'undefined' && startingAt)
 		{
 			//send to analytics only
-			gtag('event', 'view_item', {
+			sendGa4Event( 'view_item', {
 				currency: 'USD',
 				value: startingAt,
 				items : [title]
@@ -62,7 +62,7 @@ const booking_filter = () => {
 			{
 				if(typeof gtag !== 'undefined')
 				{
-					gtag('event', 'search', {search_term: `${thisName}-${thisValue}`});
+					sendGa4Event( 'search', {search_term: `${thisName}-${thisValue}`});
 				}
 
 				if(typeof fbq !== 'undefined')

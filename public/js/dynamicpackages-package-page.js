@@ -434,14 +434,14 @@ const validateCheckPricesForm = () => {
 				{
 
 					//send to all
-					gtag('event', 'add_to_cart', {
+					sendGa4Event( 'add_to_cart', {
 						currency: 'USD',
 						value: startingAt,
 						items : [title]
 					});
 
 					//send to analytics only
-					gtag('event', 'package_pax_num', {
+					sendGa4Event( 'package_pax_num', {
 						value: paxNum
 					});
 				}

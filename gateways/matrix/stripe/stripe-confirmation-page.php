@@ -80,16 +80,17 @@ class stripe_gateway_confirmation_page {
                             ? $session->metadata->toArray()
                             : (array) $session->metadata;
                     }
-
-                    $transaction_id = isset($metadata['transaction_id'])
-                        ? sanitize_text_field($metadata['transaction_id'])
+                    
+                    $transaction_id = isset($metadata['unique_tx_id'])
+                        ? sanitize_text_field($metadata['unique_tx_id'])
                         : '';
 
-                    /*
-                    * Compatibilidad con sesiones creadas antes de desplegar
-                    * el transaction_id canónico.
-                    */
-                    if(1 !== preg_match('/^[A-Za-z0-9_-]{1,64}$/', $transaction_id))
+                    if(
+                        1 !== preg_match(
+                            '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
+                            $transaction_id
+                        )
+                    )
                     {
                         $transaction_id = 'stripe-' . substr(
                             hash('sha256', 'stripe|' . (string) $session->id),
