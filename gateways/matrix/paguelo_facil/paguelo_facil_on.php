@@ -37,14 +37,16 @@ class paguelo_facil_on{
 		$this->brands = ['Mastercard', 'Visa'];
 		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
 		$this->cclw = get_option($this->id);
-		$this->show = get_option($this->id . '_show');
-		$this->min = (get_option($this->id . '_min')) ? get_option($this->id . '_min') : 5;
-		$this->max = (get_option($this->id . '_max')) ? get_option($this->id . '_max') : 500;
+		$this->show = (int) get_option($this->id . '_show');
+		$this->min = (float) get_option($this->id . '_min', '5');
+		$this->max = (float) get_option($this->id . '_max', '500');
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
-		$this->debug_email = (get_option($this->id . '_debug_email')) ? get_option($this->id . '_debug_email') : get_option('admin_email');
-		$this->debug($this->dummy_cc, $this->debug_email);		
+		$this->debug_email = is_email(get_option($this->id . '_debug_email')) 
+			? sanitize_email(get_option($this->id . '_debug_email')) 
+			: sanitize_email(get_option('admin_email'));
+		$this->debug($this->dummy_cc, $this->debug_email);
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
@@ -129,6 +131,21 @@ class paguelo_facil_on{
 			{
 				write_log('Gateway: cached transaction signature mismatch.');
 			}
+
+			return true;
+		}
+
+		if(!$this->is_payment_amount_allowed())
+		{
+			$GLOBALS['dy_request_invalids'] = array(
+				__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages')
+			);
+
+			add_filter(
+				'dy_skip_generic_form_submission',
+				'__return_true',
+				PHP_INT_MAX
+			);
 
 			return true;
 		}
@@ -460,7 +477,7 @@ class paguelo_facil_on{
 
 		if(is_confirmation_page() && ($this->restored_from_cache || !isset($dy_request_invalids)))
 		{
-			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
+			if( secure_post('dy_request') === $this->id && ($this->restored_from_cache || self::$txt_status !== null))
 			{
 				$output = true;
 			}
@@ -564,6 +581,7 @@ class paguelo_facil_on{
 		return $output;
 	}
 
+	
 
 	public function is_valid()
 	{
@@ -619,8 +637,8 @@ class paguelo_facil_on{
 	public function settings_init()
 	{
 		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
-		register_setting($this->id . '_settings', $this->id . '_min', 'intval');
-		register_setting($this->id . '_settings', $this->id . '_max', 'intval');
+		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
+		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_show', 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_debug_email', 'sanitize_email');
 		
@@ -948,6 +966,14 @@ class paguelo_facil_on{
 		$output = '<p><img src="'.esc_url($this->plugin_dir_url.'assets/visa-mastercard.svg').'" width="250" height="50" /></p>';
 		$output .= '<p class="large text-muted">'.sprintf(__('Pay with %s thanks to %s', 'dynamicpackages'), $this->cards_accepted, $this->short_name).'</p>';
 		return $output;
+	}
+
+	private function is_payment_amount_allowed() {
+		$amount = round((float) dy_utilities::payment_amount(), 2);
+		$min    = round((float) $this->min, 2);
+		$max    = round((float) $this->max, 2);
+
+		return $amount >= $min && $amount <= $max;
 	}
 	
 }

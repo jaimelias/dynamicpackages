@@ -338,7 +338,6 @@ public static function validate_quote()
 				{
 					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
 					$invalids[] = $invalid_transaction_id_message;
-					cloudflare_ban_ip_address($invalid_transaction_id_message);
 				}
 				if(!is_email($_POST['email']))
 				{
@@ -378,7 +377,6 @@ public static function validate_quote()
 					{
 						if(self::is_spam($_POST['inquiry']))
 						{
-							//cloudflare_ban_ip_address();
 							$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
 						}
 					}
@@ -503,11 +501,8 @@ public static function validate_terms_conditions()
 			}
 		}
 
-		if(count($invalids) !== 0)
-		{
-			cloudflare_ban_ip_address(json_encode($invalids));
-		}
-		else {
+		if(count($invalids) === 0) {
+			
 			if(!self::luhn_check($_POST['CCNum']))
 			{
 				$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
