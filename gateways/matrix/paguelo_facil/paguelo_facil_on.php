@@ -11,6 +11,10 @@ class paguelo_facil_on{
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
+		$this->id = 'paguelo_facil_on';
+
+
+		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
 		add_action('init', array(&$this, 'init'));
 		add_action('admin_init', array(&$this, 'settings_init'), 1);
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);
@@ -26,7 +30,7 @@ class paguelo_facil_on{
 	{
 		$this->order_status = 'paid';
 		$this->restored_from_cache = false;
-		$this->id = 'paguelo_facil_on';
+		
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
@@ -50,6 +54,20 @@ class paguelo_facil_on{
 		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
 
+	public function is_valid_cached_success($cached)
+	{
+		return (
+			is_array($cached)
+			&& isset($cached['sign'], $cached['status'])
+			&& $cached['status'] === 2
+			&& is_string($cached['sign'])
+			&& hash_equals(
+				$cached['sign'],
+				$this->checkout_request_sign()
+			)
+		);
+	}
+
 	public function checkout_request_sign() {
 
 		$arr = [
@@ -62,12 +80,14 @@ class paguelo_facil_on{
 			(string) secure_post('pax_regular'),
 			(string) secure_post('pax_discount'),
 			(string) secure_post('pax_free'),
+			(string) secure_post('pax_num'),
 			(string) secure_post('transport_type'),
 			(string) secure_post('route'),
 			(string) secure_post('end_date'),
 			(string) secure_post('return_hour'),
 			(string) secure_post('coupon_code'),
-			(string) dy_utilities::payment_amount(),
+			(string) secure_post('add_ons'),
+			(string) secure_post('duration'),
 			(string) currency_name(),
 			(string) secure_post('cf-turnstile-response')
 		];
@@ -94,21 +114,23 @@ class paguelo_facil_on{
 		
 		if($transient_success_value !== false)
 		{
-			if(
-					isset($transient_success_value['sign']) 
-					&& isset($transient_success_value['status'])
-					&& $transient_success_value['sign'] === $this->checkout_request_sign()
-					&& $transient_success_value['status'] === 2
-				)
+			add_filter(
+				'dy_skip_generic_form_submission',
+				'__return_true',
+				PHP_INT_MAX
+			);
+
+			if($this->is_valid_cached_success($transient_success_value))
 			{
 				self::$txt_status = 2;
 				$this->restored_from_cache = true;
-				return true;
-			} else {
+			}
+			else
+			{
 				write_log('Gateway: cached transaction signature mismatch.');
-				return true;
 			}
 
+			return true;
 		}
 
 		if(dy_validators::validate_checkout($this->id) === false || validate_turnstile() === false || self::$txt_status !== null) {
@@ -119,6 +141,13 @@ class paguelo_facil_on{
 
 		if($transient_is_processing_value === 'is_processing')
 		{
+
+			add_filter(
+				'dy_skip_generic_form_submission',
+				'__return_true',
+				PHP_INT_MAX
+			);
+
 			$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
 
 			if($transient_success_value === false)
@@ -126,12 +155,8 @@ class paguelo_facil_on{
 				self::$txt_status = 0;
 			}
 			else {
-				if(
-						isset($transient_success_value['sign']) 
-						&& isset($transient_success_value['status'])
-						&& $transient_success_value['sign'] === $this->checkout_request_sign()
-						&& $transient_success_value['status'] === 2
-					)
+
+				if($this->is_valid_cached_success($transient_success_value))
 				{
 					self::$txt_status = 2;
 					$this->restored_from_cache = true;
@@ -243,43 +268,45 @@ class paguelo_facil_on{
 
 		delete_transient('is_processing_' . $unique_tx_id);
 
-		$this->send_data();
 		return true;
 	}	
 
-	public function send_data()
+	public function prepare_submission($submission_context)
 	{
-		if(dy_validators::validate_request() && $this->is_request_submitted() && validate_turnstile() && self::$txt_status !== null)
+		if(!$this->is_request_submitted() || self::$txt_status === null)
 		{
-			add_filter('dy_email_message', array(&$this, 'message'));
-			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
-			add_filter('dy_email_subject', array(&$this, 'subject'));
-			add_filter('dy_email_intro', array(&$this, 'intro'));
-			add_filter('dy_email_notes', array(&$this, 'email_notes'));
-			add_filter('dy_order_status', function(){
-				return $this->order_status;
+			return;
+		}
+
+		$submission_context->accepted = true;
+
+		add_filter('dy_email_message', array(&$this, 'message'));
+		add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
+		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_intro', array(&$this, 'intro'));
+		add_filter('dy_email_notes', array(&$this, 'email_notes'));
+		add_filter('dy_order_status', function(){
+			return $this->order_status;
+		});
+
+		if(self::$txt_status == 2)
+		{
+			add_filter('dy_totals_area', array(&$this, 'totals_area'));
+
+			add_filter('dy_webhook_option', function(){
+				return 'dy_webhook';
 			});
 
-			
-			if(self::$txt_status == 2)
-			{
-				add_filter('dy_totals_area', array(&$this, 'totals_area'));
-
-				add_filter('dy_webhook_option', function(){
-					return 'dy_webhook';
-				});
-
-				add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
-				add_filter('dy_email_label_doc', function(){
-					return esc_html(__('Invoice', 'dynamicpackages'));
-				});
-			}
-			else
-			{
-				add_filter('dy_fail_checkout_gateway_name', function(){
-					return $this->id;
-				});
-			}
+			add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
+			add_filter('dy_email_label_doc', function(){
+				return esc_html(__('Invoice', 'dynamicpackages'));
+			});
+		}
+		else
+		{
+			add_filter('dy_fail_checkout_gateway_name', function(){
+				return $this->id;
+			});
 		}
 	}
 	

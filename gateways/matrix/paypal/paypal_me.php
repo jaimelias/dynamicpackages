@@ -10,20 +10,19 @@ class paypal_me {
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		
+		$this->id = 'paypal_me';
+		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
 		add_action('init', array(&$this, 'init'));
 		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-		add_filter('wp_headers', array(&$this, 'send_data'));
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
 	}
 	
 	public function init()
 	{
 		$this->order_status = 'pending';
-		$this->id = 'paypal_me';
 		$this->name = 'Paypal';
 		$this->brands = [$this->name];
 		$this->domain = 'paypal.me';
@@ -45,21 +44,22 @@ class paypal_me {
 		$this->service_fee_confirmation = (floatval($this->service_fee) > 0) ? '<p class="large"><strong>'.esc_html(sprintf(__('This price already includes an additional %s%s Paypal payment service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' : '';
 	}
 
-	public function send_data()
-	{		
-		if(dy_validators::validate_request() && $this->is_request_submitted())
+	public function prepare_submission($submission_context)
+	{
+		if(!$this->is_request_submitted())
 		{
-			if(validate_turnstile())
-			{
-				add_filter('dy_email_notes', array(&$this, 'message'));
-				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-				add_filter('dy_email_intro', array(&$this, 'subject'));
-				add_filter('dy_email_subject', array(&$this, 'subject'));
-				add_filter('dy_order_status', function(){
-					return $this->order_status;
-				});
-			}
+			return;
 		}
+
+		$submission_context->accepted = true;
+
+		add_filter('dy_email_notes', array(&$this, 'message'));
+		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
+		add_filter('dy_email_intro', array(&$this, 'subject'));
+		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_order_status', function(){
+			return $this->order_status;
+		});
 	}
 
 	public function subject()

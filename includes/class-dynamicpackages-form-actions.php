@@ -8,153 +8,180 @@ use Spipu\Html2Pdf\Html2Pdf;
 #[AllowDynamicProperties]
 class Dynamicpackages_Actions{
 
-	private static $cache = [];
+	private $submission_is_valid = null;
+	private $data_sent = false;
+	private $plugin_dir_path_dir;
 
-    public function __construct()
-    {
-		add_action('wp', array(&$this, 'args'));
-        add_filter('wp', array(&$this, 'send_data'), 100);
-        add_filter('the_content', array(&$this, 'the_content'), 101);
-        add_filter( 'pre_get_document_title', array(&$this, 'wp_title'), 101);
-        add_filter( 'the_title', array(&$this, 'the_title'), 101);
-		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'));
-    }
-
-	public function args()
+	public function __construct()
 	{
-		$this->current_language = current_language();
 		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
-		
+
+		add_action('template_redirect', array($this, 'send_data'), 20);
+		add_filter('the_content', array($this, 'the_content'), 101);
+		add_filter('pre_get_document_title', array($this, 'wp_title'), 101);
+		add_filter('the_title', array($this, 'the_title'), 101);
+		add_filter('get_the_excerpt', array($this, 'modify_excerpt'));
 	}
 
 	public function is_request_submitted()
 	{
-		global $post;
-		$output = false;
-		
-        if(is_confirmation_page())
-        {
-			if(validate_turnstile())
-			{
-				if(is_singular('packages'))
-				{
-					$output = true;
-				}
-				else
-				{
-					if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
-					{
-						$output = true;
-					}
-				}
-			}
-        }
+		if(apply_filters('dy_skip_generic_form_submission', false))
+		{
+			return false;
+		}
 
-        return $output;
+		if(
+			strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'
+			|| !is_confirmation_page()
+		)
+		{
+			return false;
+		}
+
+		global $post;
+
+		if(is_singular('packages'))
+		{
+			return true;
+		}
+
+		return (
+			$post instanceof WP_Post
+			&& has_shortcode($post->post_content, 'package_contact')
+		);
+	}
+
+	public function is_valid_submission()
+	{
+		if($this->submission_is_valid !== null)
+		{
+			return $this->submission_is_valid;
+		}
+
+		/*
+		* Cheap/local checks run before the remote Turnstile request.
+		*/
+		$this->submission_is_valid = (
+			$this->is_request_submitted()
+			&& dy_validators::validate_request()
+			&& validate_turnstile()
+		);
+
+		return $this->submission_is_valid;
 	}
 
     public function send_data()
     {
-		$cache_key = 'dy_send_data';
-
-        if (isset(self::$cache[$cache_key])) {
-            return self::$cache[$cache_key];
-        }
-
-		if($this->is_request_submitted())
+		if(!$this->is_valid_submission())
 		{
-			if(dy_validators::validate_request())
+			return false;
+		}
+
+
+		$request_type = secure_post('dy_request', '', 'sanitize_key');
+
+		$submission_context = (object) array(
+			'accepted' => in_array(
+				$request_type,
+				array('estimate_request', 'contact'),
+				true
+			)
+		);
+
+		if($request_type !== '')
+		{
+			do_action(
+				'dy_prepare_gateway_submission_' . $request_type,
+				$submission_context
+			);
+		}
+
+		if(!$submission_context->accepted)
+		{
+			return false;
+		}
+
+		$this->data_sent = true;
+
+		$the_id = get_dy_id();
+
+		if(isset($_REQUEST['add_ons']))
+		{
+			$add_ons_package_id = sanitize_key('dy_add_ons_' . $the_id);
+			$add_ons = sanitize_text_field($_REQUEST['add_ons']);
+			setcookie($add_ons_package_id, $add_ons, time() + 3600);
+		}
+		
+		$data = $_POST;
+		unset($data['CCNum']);
+		unset($data['ExpMonth']);
+		unset($data['ExpYear']);
+		unset($data['CVV2']);
+		unset($data['cf-turnstile-response']);
+		unset($data['dy_nonce']);
+
+		//only in development
+		//global $dy_orders;
+		//$dy_orders->save_order($data);
+
+		//write_log(json_encode($data));
+
+		$by_hour = package_field('package_by_hour');
+		$start_hour = package_field('package_start_hour');
+		$return_hour = package_field('package_return_hour');
+		$invertHours = $by_hour === '0' && $start_hour !== '' && $return_hour !== '';
+
+		if($invertHours && array_key_exists('package_type', $data) && array_key_exists('route', $data))
+		{
+			if($data['package_type'] === 'transport' && $data['route'] === '1')
 			{
-
-				$the_id = get_dy_id();
-
-				if(isset($_REQUEST['add_ons']))
+				if(array_key_exists('booking_hour', $data) && array_key_exists('return_hour', $data))
 				{
-					$add_ons_package_id = sanitize_key('dy_add_ons_' . $the_id);
-					$add_ons = sanitize_text_field($_REQUEST['add_ons']);
-					setcookie($add_ons_package_id, $add_ons, time() + 3600);
+					list($data['booking_hour'], $data['return_hour']) = [$data['return_hour'], $data['booking_hour']];
 				}
 				
-				
-
-				$data = $_POST;
-				unset($data['CCNum']);
-				unset($data['ExpMonth']);
-				unset($data['ExpYear']);
-				unset($data['CVV2']);
-				unset($data['cf-turnstile-response']);
-				unset($data['dy_nonce']);
-				unset($data['transaction_signature']);
-
-				//only in development
-				//global $dy_orders;
-				//$dy_orders->save_order($data);
-
-				//write_log(json_encode($data));
-
-				$by_hour = package_field('package_by_hour');
-				$start_hour = package_field('package_start_hour');
-				$return_hour = package_field('package_return_hour');
-				$invertHours = $by_hour === '0' && $start_hour !== '' && $return_hour !== '';
-
-				if($invertHours && array_key_exists('package_type', $data) && array_key_exists('route', $data))
-				{
-					if($data['package_type'] === 'transport' && $data['route'] === '1')
-					{
-						if(array_key_exists('booking_hour', $data) && array_key_exists('return_hour', $data))
-						{
-							list($data['booking_hour'], $data['return_hour']) = [$data['return_hour'], $data['booking_hour']];
-						}
-						
-					}
-				}
-
-				$data['disabled_dates_api'] = package_field('package_disabled_dates_api', $the_id);
-
-				$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
-				$webhook_args = $data;
-				$webhook_args['providers'] = apply_filters('dy_list_providers', array());
-				$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', array());
-
-				$payload = json_encode($webhook_args);
-
-				dy_utilities::webhook($webhook_option, $payload);
-				$this->send_email();
-
-
-				$request_type = secure_post('dy_request');
-				$unique_tx_id = secure_post('unique_tx_id');
-
-				if(in_array($request_type, array('estimate_request', 'contact'), true))
-				{
-					$value = ($request_type === 'estimate_request')
-						? (float) dy_utilities::total()
-						: 0.0;
-
-					dy_gtag_queue_server_event(
-						'generate_lead',
-						$unique_tx_id,
-						$value,
-						currency_name()
-					);
-				}
-
-				//store output in $cache
-				self::$cache[$cache_key] = true;
 			}
 		}
+
+		$data['disabled_dates_api'] = package_field('package_disabled_dates_api', $the_id);
+
+		$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
+		$webhook_args = $data;
+		$webhook_args['providers'] = apply_filters('dy_list_providers', array());
+		$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', array());
+
+		$payload = json_encode($webhook_args);
+
+		dy_utilities::webhook($webhook_option, $payload);
+		$this->send_email();
+
+
+		$request_type = secure_post('dy_request');
+		$unique_tx_id = secure_post('unique_tx_id');
+
+		if(in_array($request_type, array('estimate_request', 'contact'), true))
+		{
+			$value = ($request_type === 'estimate_request')
+				? (float) dy_utilities::total()
+				: 0.0;
+
+			dy_gtag_queue_server_event(
+				'generate_lead',
+				$unique_tx_id,
+				$value,
+				currency_name()
+			);
+		}
+
+		return true;
     }
+
+
     public function the_content($content)
     {
-        if($this->is_request_submitted())
+        if($this->is_valid_submission() && in_array(secure_post('dy_request'), ['estimate_request', 'contact']))
         {               
-            if(dy_validators::validate_request())
-            {				
-				if(in_array(secure_post('dy_request'), ['estimate_request', 'contact']))
-				{
-					$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
-				}              
-            }
+			$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
         }
 
         return apply_filters('dy_request_the_content', $content);
