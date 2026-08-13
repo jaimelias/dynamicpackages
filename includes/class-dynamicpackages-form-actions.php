@@ -183,7 +183,9 @@ class Dynamicpackages_Actions{
 
     public function the_content($content)
     {
-        if($this->is_valid_submission() && in_array(secure_post('dy_request'), ['estimate_request', 'contact']))
+		$request_type = secure_post('dy_request', '', 'sanitize_key');
+	
+        if($this->data_sent && in_array($request_type, array('estimate_request', 'contact'), true))
         {               
 			$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
         }

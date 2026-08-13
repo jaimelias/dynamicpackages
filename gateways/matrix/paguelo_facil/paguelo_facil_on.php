@@ -303,7 +303,7 @@ class paguelo_facil_on{
 
 	public function prepare_submission($submission_context)
 	{
-		if(!$this->is_request_submitted() || self::$txt_status === null)
+		if(self::$txt_status === null)
 		{
 			return;
 		}
@@ -506,36 +506,33 @@ class paguelo_facil_on{
 	{
 		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			if($this->restored_from_cache || validate_turnstile())
+			if(self::$txt_status === 2)
 			{
-				if(self::$txt_status === 2)
+				$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
+				
+				$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s.', 'dynamicpackages'), $payment, wrap_money_full(dy_utilities::payment_amount())) . '</p>';
+				
+				$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
+				$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
+				
+				$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</p>';
+				
+				$add_to_calendar = apply_filters('dy_add_to_calendar', null);
+				
+				if($add_to_calendar)
 				{
-					$payment = (dy_validators::has_deposit()) ? __('deposit', 'dynamicpackages') : __('payment', 'dynamicpackages');
-					
-					$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s.', 'dynamicpackages'), $payment, wrap_money_full(dy_utilities::payment_amount())) . '</p>';
-					
-					$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
-					$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
-					
-					$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</p>';
-					
-					$add_to_calendar = apply_filters('dy_add_to_calendar', null);
-					
-					if($add_to_calendar)
-					{
-						$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
-					}					
-				}
-				else if(self::$txt_status === 1)
-				{
-					$output = '<p class="minimal_alert strong">' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . '</p>';
-					$output .= $this->get_errors();
-				}
-				else
-				{
-					$output = '<p class="minimal_alert strong">' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
-					$output .= $this->get_errors();
-				}				
+					$output .= '<div class="text-center">'. $add_to_calendar .'</div>';
+				}					
+			}
+			else if(self::$txt_status === 1)
+			{
+				$output = '<p class="minimal_alert strong">' . esc_html(__('Please contact your bank to authorize the transaction.', 'dynamicpackages')) . '</p>';
+				$output .= $this->get_errors();
+			}
+			else
+			{
+				$output = '<p class="minimal_alert strong">' . esc_html(__('Please try again in a few minutes. Our staff will be in touch with you very soon.', 'dynamicpackages')) . '</p>';
+				$output .= $this->get_errors();
 			}
 		}
 		return $output;
@@ -793,7 +790,7 @@ class paguelo_facil_on{
 				$add = true;
 			}
 			
-			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
+			if( is_confirmation_page() && dy_validators::validate_request() && validate_turnstile())
 			{			
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{
