@@ -194,9 +194,9 @@ class usdc {
 		
 		if(is_confirmation_page() && isset($_POST['dy_network']) && !isset($dy_request_invalids))
 		{
-			$network = sanitize_text_field($_POST['dy_network']);
+			$network = secure_post('dy_network', '', 'sanitize_key');
 
-			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->all_networks))
+			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->enabled_networks))
 			{
 				$output = true;
 					
@@ -429,7 +429,7 @@ class usdc {
 	public function message($message)
 	{
 		$amount = wrap_money_full(dy_utilities::payment_amount());
-		$network = sanitize_text_field($_POST['dy_network']);
+		$network = secure_post('dy_network', '', 'sanitize_key');
 		$address = get_option($this->id . '_' . $network);
 		$network_name = $this->enabled_networks[$network]['name'];
 

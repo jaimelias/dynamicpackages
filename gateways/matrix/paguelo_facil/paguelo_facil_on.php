@@ -38,8 +38,15 @@ class paguelo_facil_on{
 		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
 		$this->cclw = get_option($this->id);
 		$this->show = (int) get_option($this->id . '_show');
-		$this->min = (float) get_option($this->id . '_min', '5');
-		$this->max = (float) get_option($this->id . '_max', '500');
+
+		$min_option = get_option($this->id . '_min', 5);
+		$max_option = get_option($this->id . '_max', 500);
+
+		$this->min = is_numeric($min_option) ? (float) $min_option : 5.0;
+		$this->max = is_numeric($max_option) && (float) $max_option > 0
+			? (float) $max_option
+			: 500.0;
+
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
@@ -105,6 +112,12 @@ class paguelo_facil_on{
 	
 	public function checkout()
 	{
+
+		if(secure_post('dy_request', '', 'sanitize_key') !== $this->id)
+		{
+			return true;
+		}
+
 		$unique_tx_id = secure_post('unique_tx_id');
 
 		if(!dy_validators::validate_unique_tx_id($unique_tx_id))
@@ -721,7 +734,7 @@ class paguelo_facil_on{
 	public function input_number($name){
 		$option = get_option($name);
 		?>
-		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
+		<input type="number" step="0.01" min="0" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
 		<?php
 	}	
 		
