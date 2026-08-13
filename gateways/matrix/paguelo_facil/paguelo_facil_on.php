@@ -117,7 +117,7 @@ class paguelo_facil_on{
 
 		$transient_is_processing_value = get_transient('is_processing_' . $unique_tx_id); //returns false if not found
 
-		if($transient_is_processing_value === 'is_processing' && self::$txt_status === null)
+		if($transient_is_processing_value === 'is_processing')
 		{
 			$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
 
