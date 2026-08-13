@@ -25,6 +25,7 @@ class paguelo_facil_on{
 	public function init()
 	{
 		$this->order_status = 'paid';
+		$this->restored_from_cache = false;
 		$this->valid_turnstile = validate_turnstile();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
@@ -50,13 +51,25 @@ class paguelo_facil_on{
 		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
 
-	public function concat_transient_key_binding() {
+	public function checkout_request_sign() {
 
 		$arr = [
 			(string) secure_post('unique_tx_id'),
 			(string) secure_post('dy_id'),
 			strtolower((string) secure_post('email', '', 'sanitize_email')),
 			(string) secure_post('booking_date'),
+			(string) secure_post('booking_hour'),
+			(string) secure_post('booking_extra'),
+			(string) secure_post('pax_regular'),
+			(string) secure_post('pax_discount'),
+			(string) secure_post('pax_free'),
+			(string) secure_post('transport_type'),
+			(string) secure_post('route'),
+			(string) secure_post('end_date'),
+			(string) secure_post('return_hour'),
+			(string) secure_post('coupon_code'),
+			(string) dy_utilities::payment_amount(),
+			(string) currency_name(),
 			(string) secure_post('cf-turnstile-response')
 		];
 
@@ -73,70 +86,69 @@ class paguelo_facil_on{
 	{
 		$unique_tx_id = secure_post('unique_tx_id');
 
-		if(dy_validators::validate_unique_tx_id($unique_tx_id))
+		if(!dy_validators::validate_unique_tx_id($unique_tx_id))
 		{
-			$transient_key = 'unique_tx_id_' . $this->concat_transient_key_binding();
+			return true;
+		}
 
-			$cached_purchase = get_transient(
-				'gtag_purchase_' . $transient_key
-			);
-
+		$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
+		
+		if($transient_success_value !== false)
+		{
 			if(
-				is_array($cached_purchase)
-				&& isset($cached_purchase['transaction_id'])
-				&& isset($cached_purchase['value'])
-				&& isset($cached_purchase['currency'])
-				&& isset($cached_purchase['items'])
-				&& is_array($cached_purchase['items'])
-			)
+					isset($transient_success_value['sign']) 
+					&& isset($transient_success_value['status'])
+					&& $transient_success_value['sign'] === $this->checkout_request_sign()
+					&& $transient_success_value['status'] === 2
+				)
 			{
 				self::$txt_status = 2;
-
-				dy_gtag_queue_server_event(
-					'purchase',
-					$cached_purchase['transaction_id'],
-					$cached_purchase['value'],
-					$cached_purchase['currency'],
-					$cached_purchase['items']
-				);
-
+				$this->restored_from_cache = true;
+				return true;
+			} else {
+				$banned_user_message = 'Someone is trying to force a purchase.';
+				cloudflare_ban_ip_address($banned_user_message);
 				return true;
 			}
+
 		}
 
 		if(dy_validators::validate_checkout($this->id) === false || $this->valid_turnstile === false || self::$txt_status !== null) {
 			return true;
 		}
 
-		$transient_key = 'unique_tx_id_' . $this->concat_transient_key_binding();
-
-		//keys
-		$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found
-		
-		if($transient_success_value !== false)
-		{
-			self::$txt_status = intval($transient_success_value);
-			return true;
-		}
-
-		$transient_is_processing_value = get_transient('is_processing_' . $transient_key); //returns false if not found
+		$transient_is_processing_value = get_transient('is_processing_' . $unique_tx_id); //returns false if not found
 
 		if($transient_is_processing_value === 'is_processing' && self::$txt_status === null)
 		{
-			$transient_success_value = get_transient('success_' . $transient_key); //returns false if not found
+			$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
 
 			if($transient_success_value === false)
 			{
 				self::$txt_status = 0;
 			}
 			else {
-				self::$txt_status = intval($transient_success_value);	
+				if(
+						isset($transient_success_value['sign']) 
+						&& isset($transient_success_value['status'])
+						&& $transient_success_value['sign'] === $this->checkout_request_sign()
+						&& $transient_success_value['status'] === 2
+					)
+				{
+					self::$txt_status = 2;
+					$this->restored_from_cache = true;
+					return true;
+				} else {
+					$banned_user_message = 'Someone is trying to force a purchase.';
+					cloudflare_ban_ip_address($banned_user_message);
+					return true;
+				}
 			}
 
 			return true;
 		}
 
-		set_transient('is_processing_' . $transient_key, 'is_processing', 60);
+		set_transient('is_processing_' . $unique_tx_id, 'is_processing', 300);
 
 		$force_status = false;
 	
@@ -216,12 +228,6 @@ class paguelo_facil_on{
 				'items' => array($item)
 			);
 
-			set_transient(
-				'gtag_purchase_' . $transient_key,
-				$purchase_tracking,
-				DAY_IN_SECONDS
-			);
-
 			dy_gtag_queue_server_event(
 				'purchase',
 				$purchase_tracking['transaction_id'],
@@ -229,10 +235,16 @@ class paguelo_facil_on{
 				$purchase_tracking['currency'],
 				$purchase_tracking['items']
 			);
+
+			$success_args = [
+				'sign' => $this->checkout_request_sign(),
+				'status' => 2
+			];
+
+			set_transient('success_' . $unique_tx_id, $success_args, DAY_IN_SECONDS);
 		}
 
-		set_transient('success_' . $transient_key, strval(self::$txt_status), 60);
-		delete_transient('is_processing_' . $transient_key);
+		delete_transient('is_processing_' . $unique_tx_id);
 
 		$this->send_data();
 		return true;
@@ -422,7 +434,7 @@ class paguelo_facil_on{
 		global $dy_request_invalids;
 		
 
-		if(is_confirmation_page() && !isset($dy_request_invalids))
+		if(is_confirmation_page() && (!isset($dy_request_invalids) || $this->restored_from_cache))
 		{
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -438,12 +450,9 @@ class paguelo_facil_on{
 	
 	public function the_content($output)
 	{
-		
-		
-		
 		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			if($this->valid_turnstile)
+			if($this->valid_turnstile || $this->restored_from_cache)
 			{
 				if(self::$txt_status === 2)
 				{
