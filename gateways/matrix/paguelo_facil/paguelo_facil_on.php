@@ -504,7 +504,7 @@ class paguelo_facil_on{
 	
 	public function the_content($output)
 	{
-		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
+		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
 			{
@@ -556,7 +556,7 @@ class paguelo_facil_on{
 		
 	public function the_title($output)
 	{
-		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
+		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
 			{
@@ -789,13 +789,22 @@ class paguelo_facil_on{
 			{
 				$add = true;
 			}
+
+			$request_type = secure_post('dy_request', '', 'sanitize_key');
+			$failed_gateway = apply_filters('dy_fail_checkout_gateway_name', null);
 			
-			if( is_confirmation_page() && dy_validators::validate_request() && validate_turnstile())
-			{			
-				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
-				{
-					$add = true;
-				}	
+			if(
+				in_array(
+					$request_type,
+					array('estimate_request', $failed_gateway),
+					true
+				)
+				&& is_confirmation_page()
+				&& dy_validators::validate_request()
+				&& validate_turnstile()
+			)
+			{
+				$add = true;
 			}	
 		}
 		
