@@ -22,7 +22,6 @@ class usdt {
 	public function init()
 	{
 		$this->order_status = 'pending';
-		$this->valid_turnstile = validate_turnstile();
 		$this->id = 'usdt';
 		$this->name = 'Tether (USDT)';
 		$this->brands = [$this->name];
@@ -83,7 +82,7 @@ class usdt {
 		{
 			
 
-			if($this->valid_turnstile)
+			if(validate_turnstile())
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
@@ -112,7 +111,7 @@ class usdt {
 		{
 			
 
-			if($this->valid_turnstile)
+			if(validate_turnstile())
 			{
 				$content = $this->message(null);
 			}			
@@ -394,7 +393,7 @@ class usdt {
 				$add = true;
 			}
 			
-			if($this->valid_turnstile && is_confirmation_page() && dy_validators::validate_request())
+			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

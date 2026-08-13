@@ -10,7 +10,6 @@ class yappy_direct {
 	function __construct($plugin_id)
 	{
 		$this->plugin_id = $plugin_id;
-		$this->valid_turnstile = validate_turnstile();
 		add_action('init', array(&$this, 'init'));
 		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
@@ -47,7 +46,7 @@ class yappy_direct {
 		{
 			
 
-			if($this->valid_turnstile)
+			if(validate_turnstile())
 			{
 				add_filter('dy_email_notes', array(&$this, 'message'));
 				add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
@@ -145,7 +144,7 @@ class yappy_direct {
 		{
 			
 
-			if($this->valid_turnstile)
+			if(validate_turnstile())
 			{
 				$content = $this->message(null);
 
@@ -394,7 +393,7 @@ class yappy_direct {
 				$add = true;
 			}
 			
-			if($this->valid_turnstile && is_confirmation_page() && dy_validators::validate_request())
+			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

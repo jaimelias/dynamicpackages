@@ -26,7 +26,6 @@ class paguelo_facil_on{
 	{
 		$this->order_status = 'paid';
 		$this->restored_from_cache = false;
-		$this->valid_turnstile = validate_turnstile();
 		$this->id = 'paguelo_facil_on';
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
@@ -106,14 +105,13 @@ class paguelo_facil_on{
 				$this->restored_from_cache = true;
 				return true;
 			} else {
-				$banned_user_message = 'Someone is trying to force a purchase.';
-				cloudflare_ban_ip_address($banned_user_message);
+				write_log('Gateway: cached transaction signature mismatch.');
 				return true;
 			}
 
 		}
 
-		if(dy_validators::validate_checkout($this->id) === false || $this->valid_turnstile === false || self::$txt_status !== null) {
+		if(dy_validators::validate_checkout($this->id) === false || validate_turnstile() === false || self::$txt_status !== null) {
 			return true;
 		}
 
@@ -139,8 +137,7 @@ class paguelo_facil_on{
 					$this->restored_from_cache = true;
 					return true;
 				} else {
-					$banned_user_message = 'Someone is trying to force a purchase.';
-					cloudflare_ban_ip_address($banned_user_message);
+					write_log('Gateway: cached transaction signature mismatch.');
 					return true;
 				}
 			}
@@ -252,7 +249,7 @@ class paguelo_facil_on{
 
 	public function send_data()
 	{
-		if(dy_validators::validate_request() && $this->is_request_submitted() && $this->valid_turnstile && self::$txt_status !== null)
+		if(dy_validators::validate_request() && $this->is_request_submitted() && validate_turnstile() && self::$txt_status !== null)
 		{
 			add_filter('dy_email_message', array(&$this, 'message'));
 			add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
@@ -434,7 +431,7 @@ class paguelo_facil_on{
 		global $dy_request_invalids;
 		
 
-		if(is_confirmation_page() && (!isset($dy_request_invalids) || $this->restored_from_cache))
+		if(is_confirmation_page() && ($this->restored_from_cache || !isset($dy_request_invalids)))
 		{
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -452,7 +449,7 @@ class paguelo_facil_on{
 	{
 		if(self::$txt_status !== null && in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
 		{
-			if($this->valid_turnstile || $this->restored_from_cache)
+			if($this->restored_from_cache || validate_turnstile())
 			{
 				if(self::$txt_status === 2)
 				{
@@ -738,7 +735,7 @@ class paguelo_facil_on{
 				$add = true;
 			}
 			
-			if($this->valid_turnstile && is_confirmation_page() && dy_validators::validate_request())
+			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
 			{			
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

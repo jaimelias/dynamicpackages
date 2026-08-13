@@ -12,7 +12,6 @@ class Dynamicpackages_Actions{
 
     public function __construct()
     {
-		$this->valid_turnstile = validate_turnstile();
 		add_action('wp', array(&$this, 'args'));
         add_filter('wp', array(&$this, 'send_data'), 100);
         add_filter('the_content', array(&$this, 'the_content'), 101);
@@ -35,7 +34,7 @@ class Dynamicpackages_Actions{
 		
         if(is_confirmation_page())
         {
-			if($this->valid_turnstile)
+			if(validate_turnstile())
 			{
 				if(is_singular('packages'))
 				{
