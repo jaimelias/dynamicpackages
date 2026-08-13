@@ -72,11 +72,15 @@ class Dynamicpackages_Actions{
 
     public function send_data()
     {
+		if($this->data_sent)
+		{
+			return true;
+		}
+
 		if(!$this->is_valid_submission())
 		{
 			return false;
 		}
-
 
 		$request_type = secure_post('dy_request', '', 'sanitize_key');
 
