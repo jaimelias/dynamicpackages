@@ -174,12 +174,12 @@ class Dynamic_Core_Public {
             trim((string) get_option('dy_google_ads_id'))
         );
 
-        if(1 !== preg_match('/^G-[A-Z0-9]+$/', $analytics))
+        if (1 !== preg_match('/^(AW|G|GT|GTM)-[0-9A-Z]+$/', $analytics))
         {
             $analytics = '';
         }
 
-        if(1 !== preg_match('/^AW-[0-9]+$/', $google_ads_id))
+        if (1 !== preg_match('/^(AW|G|GT|GTM)-[0-9A-Z]+$/', $google_ads_id))
         {
             $google_ads_id = '';
         }
