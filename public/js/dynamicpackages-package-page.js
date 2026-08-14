@@ -345,7 +345,7 @@ const validateCheckPricesForm = () => {
 		}
 
 
-		jQuery(submitButton).click(() => {
+		jQuery(submitButton).click(async () => {
 			let invalids = [];
 			let required = ['booking_date', 'booking_hour', 'route', 'transport_type'];
 			const data = formToArray(thisForm);
@@ -412,10 +412,13 @@ const validateCheckPricesForm = () => {
 					}
 				});
 
+				const hashMessage = `${paxNum}${bookingDate.value}`
+				const hash = await sha512(hashMessage);
+
 				jQuery(thisForm).append(jQuery('<input />').attr({
 					name: 'hash',
 					type: 'hidden',
-					value: sha512(paxNum + bookingDate.value)
+					value: hash
 				}));
 
 				formToArray(thisForm).forEach(v => {

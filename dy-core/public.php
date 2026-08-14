@@ -7,7 +7,7 @@ class Dynamic_Core_Public {
     
     public function __construct()
     {
-        $this->version = '0.1.95';
+        $this->version = '0.1.96';
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
         $this->dirname_file = dirname( __FILE__ );
 
@@ -66,11 +66,9 @@ class Dynamic_Core_Public {
         wp_enqueue_script('landing-cookies', $this->plugin_dir_url_file . 'js/cookies.js', array('jquery'), $this->version, true);
         wp_add_inline_script('landing-cookies', $this->cookies(), 'before');
 
-        wp_enqueue_script('sha512', $this->plugin_dir_url_file . 'js/sha512.js', '', 'async_defer', true);
-
         wp_enqueue_script('dy-qrcode', $this->plugin_dir_url_file . 'js/qrcode.min.js', array('jquery'), $this->version, true);
 
-        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('sha512', 'jquery', 'landing-cookies'), $this->version, true);
+        wp_enqueue_script('dy-core-utilities', $this->plugin_dir_url_file . 'js/utilities.js', array('jquery', 'landing-cookies'), $this->version, true);
         wp_add_inline_script('dy-core-utilities', $this->args(), 'before');
         
 
