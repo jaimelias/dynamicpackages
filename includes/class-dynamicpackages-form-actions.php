@@ -70,59 +70,6 @@ class Dynamicpackages_Actions{
 		return $this->submission_is_valid;
 	}
 
-	public function trigger_lead_event() {
-		$request_type = secure_post('dy_request');
-		$unique_tx_id = secure_post('unique_tx_id');
-		$value = (float) dy_utilities::payment_amount();
-
-		$lead_event_gateways = array_unique(apply_filters('dy_lead_event_gateways', array('estimate_request', 'contact')));
-
-		if(in_array($request_type, $lead_event_gateways, true))
-		{
-			
-
-			dy_gtag_queue_server_event(
-				'generate_lead',
-				$unique_tx_id,
-				($value <= 0) ? 1 : $value,
-				currency_name()
-			);
-		}		
-	}
-
-	public function trigger_purchase_event() {
-		$request_type = secure_post('dy_request');
-		$unique_tx_id = secure_post('unique_tx_id');
-		$value = (float) dy_utilities::payment_amount();
-		
-		$purchase_event_gateways = array_unique(apply_filters('dy_purchase_event_gateways', array()));
-
-		if(in_array($request_type, $purchase_event_gateways, true))
-		{
-			$item = dy_gtag_build_item(
-				secure_post('dy_id', 0, 'absint'),
-				secure_post('title'),
-				secure_post('pax_num', 1, 'absint'),
-				$value
-			);
-
-			$purchase_tracking = array(
-				'transaction_id' => $unique_tx_id,
-				'value' => $value,
-				'currency' => currency_name(),
-				'items' => array($item)
-			);
-
-			dy_gtag_queue_server_event(
-				'purchase',
-				$purchase_tracking['transaction_id'],
-				$purchase_tracking['value'],
-				$purchase_tracking['currency'],
-				$purchase_tracking['items']
-			);
-		}
-	}
-
     public function send_data()
     {
 		if($this->data_sent)
@@ -215,11 +162,12 @@ class Dynamicpackages_Actions{
 		$webhook_args['providers'] = apply_filters('dy_list_providers', array());
 		$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', array());
 
-		$payload = json_encode($webhook_args);
+		$payload = wp_json_encode($webhook_args);
 
-
-		$this->trigger_lead_event();
-		$this->trigger_purchase_event();
+		$this->queue_conversion_events(
+			$request_type,
+			$unique_tx_id
+		);
 
 		dy_utilities::webhook($webhook_option, $payload);
 		$this->send_email();
@@ -228,6 +176,51 @@ class Dynamicpackages_Actions{
 
 		return true;
     }
+
+	private function queue_conversion_events($request_type, $unique_tx_id)
+	{
+		$value = (float) dy_utilities::payment_amount();
+		$currency = currency_name();
+
+		$lead_gateways = array_unique(
+			apply_filters(
+				'dy_lead_event_gateways',
+				array('estimate_request', 'contact')
+			)
+		);
+
+		if(in_array($request_type, $lead_gateways, true))
+		{
+			dy_gtag_queue_server_event(
+				'generate_lead',
+				$unique_tx_id,
+				($value <= 0) ? 1 : $value,
+				$currency
+			);
+		}
+
+		$purchase_gateways = array_unique(
+			apply_filters('dy_purchase_event_gateways', array())
+		);
+
+		if(in_array($request_type, $purchase_gateways, true))
+		{
+			$item = dy_gtag_build_item(
+				secure_post('dy_id', 0, 'absint'),
+				secure_post('title'),
+				secure_post('pax_num', 1, 'absint'),
+				$value
+			);
+
+			dy_gtag_queue_server_event(
+				'purchase',
+				$unique_tx_id,
+				$value,
+				$currency,
+				array($item)
+			);
+		}
+	}
 
 
     public function the_content($content)

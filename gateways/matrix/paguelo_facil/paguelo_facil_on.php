@@ -21,7 +21,8 @@ class paguelo_facil_on{
 		add_filter('dy_request_the_content', array(&$this, 'the_content'));
 		add_filter('dy_request_the_title', array(&$this, 'the_title'));
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 1);
-		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));	
+		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
+		add_filter('dy_purchase_event_gateways', array($this, 'purchase_event_gateways'));
 	}
 	
 
@@ -52,7 +53,9 @@ class paguelo_facil_on{
 		$this->debug_email = is_email(get_option($this->id . '_debug_email')) 
 			? sanitize_email(get_option($this->id . '_debug_email')) 
 			: sanitize_email(get_option('admin_email'));
-		$this->debug($this->dummy_cc, $this->debug_email);
+
+		$this->debug();
+
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
 		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
@@ -124,25 +127,12 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
-		
-		if($transient_success_value !== false)
-		{
-			add_filter(
-				'dy_skip_generic_form_submission',
-				'__return_true',
-				PHP_INT_MAX
-			);
+		$cached_success = get_transient('success_' . $unique_tx_id);
 
-			if($this->is_valid_cached_success($transient_success_value))
-			{
-				self::$txt_status = 2;
-				$this->restored_from_cache = true;
-			}
-			else
-			{
-				write_log('Gateway: cached transaction signature mismatch.');
-			}
+		if($cached_success !== false)
+		{
+			$this->skip_generic_submission();
+			$this->restore_cached_success($cached_success);
 
 			return true;
 		}
@@ -153,16 +143,12 @@ class paguelo_facil_on{
 				__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages')
 			);
 
-			add_filter(
-				'dy_skip_generic_form_submission',
-				'__return_true',
-				PHP_INT_MAX
-			);
+			$this->skip_generic_submission();
 
 			return true;
 		}
 
-		if(dy_validators::validate_checkout($this->id) === false || validate_turnstile() === false || self::$txt_status !== null) {
+		if(dy_validators::validate_checkout($this->id) === false || validate_turnstile() === false) {
 			return true;
 		}
 
@@ -170,31 +156,17 @@ class paguelo_facil_on{
 
 		if($transient_is_processing_value === 'is_processing')
 		{
+			$this->skip_generic_submission();
 
-			add_filter(
-				'dy_skip_generic_form_submission',
-				'__return_true',
-				PHP_INT_MAX
-			);
+			$cached_success = get_transient('success_' . $unique_tx_id);
 
-			$transient_success_value = get_transient('success_' . $unique_tx_id); //returns false if not found
-
-			if($transient_success_value === false)
+			if($cached_success === false)
 			{
 				self::$txt_status = 0;
 			}
-			else {
-
-				if($this->is_valid_cached_success($transient_success_value))
-				{
-					self::$txt_status = 2;
-					$this->restored_from_cache = true;
-
-					return true;
-				} else {
-					write_log('Gateway: cached transaction signature mismatch.');
-					return true;
-				}
+			else
+			{
+				$this->restore_cached_success($cached_success);
 			}
 
 			return true;
@@ -202,73 +174,16 @@ class paguelo_facil_on{
 
 		set_transient('is_processing_' . $unique_tx_id, 'is_processing', 300);
 
-		$force_status = false;
-	
-		if(isset($this->debug_mode))
+
+		self::$txt_status = $this->resolve_checkout_status();
+
+		if(isset($this->error_codes))
 		{
-			if($this->debug_mode !== 3)
-			{
-				$force_status = true;
-			}
+			write_log($this->error_codes);
 		}
-		
-		if($force_status === false)
-		{
-			$response = $this->process_request();
-			$number = 0;
-			
-			if(is_array($response))
-			{
-				if(array_key_exists('error', $response))
-				{
-					$number = 0;
-					$this->error_codes = array(
-						'error' => $response['error']
-					);
-				}
-				else if(array_key_exists('Status', $response))
-				{
-					if($response['Status'] == 'Declined')
-					{
-						$number = 1;
-						$this->error_codes = array(
-							'RespText' => $response['RespText'],
-							'RespCode' => $response['RespCode']
-						);								
-					}
-					else if($response['Status'] == 'Approved')
-					{
-						$number = 2;
-					}
-				}
-			}
-			else
-			{
-				$number = 0;
-				$this->error_codes = array(
-					'error' => 'invalid_response_format'
-				);	
-			}
-			
-			if(isset($this->error_codes))
-			{
-				write_log($this->error_codes);
-			}						
-		}
-		else
-		{
-			$number = $this->debug_mode;
-		}
-		
-		self::$txt_status = $number;
 
 		if(self::$txt_status === 2 && !isset($this->debug_mode))
 		{
-
-			add_filter('dy_purchase_event_gateways', function($arr = array()) {
-				$arr[] = $this->id;
-				return $arr;
-			});
 
 			$success_args = [
 				'sign' => $this->checkout_request_sign(),
@@ -281,7 +196,97 @@ class paguelo_facil_on{
 		delete_transient('is_processing_' . $unique_tx_id);
 
 		return true;
-	}	
+	}
+
+	public function purchase_event_gateways($gateways = array())
+	{
+		if(
+			self::$txt_status === 2
+			&& !isset($this->debug_mode)
+			&& !$this->restored_from_cache
+		)
+		{
+			$gateways[] = $this->id;
+		}
+
+		return $gateways;
+	}
+
+
+	private function skip_generic_submission()
+	{
+		add_filter(
+			'dy_skip_generic_form_submission',
+			'__return_true',
+			PHP_INT_MAX
+		);
+	}
+
+	private function restore_cached_success($cached)
+	{
+		if(!$this->is_valid_cached_success($cached))
+		{
+			write_log('Gateway: cached transaction signature mismatch.');
+			return false;
+		}
+
+		self::$txt_status = 2;
+		$this->restored_from_cache = true;
+
+	}
+
+	private function resolve_checkout_status()
+	{
+		if(isset($this->debug_mode) && $this->debug_mode !== 3)
+		{
+			return (int) $this->debug_mode;
+		}
+
+		$response = $this->process_request();
+
+		if(!is_array($response))
+		{
+			$this->error_codes = array(
+				'error' => 'invalid_response_format'
+			);
+
+			return 0;
+		}
+
+		if(array_key_exists('error', $response))
+		{
+			$this->error_codes = array(
+				'error' => (string) $response['error']
+			);
+
+			return 0;
+		}
+
+		$status = isset($response['Status'])
+			? (string) $response['Status']
+			: '';
+
+		if($status === 'Approved')
+		{
+			return 2;
+		}
+
+		if($status === 'Declined')
+		{
+			$this->error_codes = array(
+				'RespText' => (string) ($response['RespText'] ?? ''),
+				'RespCode' => (string) ($response['RespCode'] ?? '')
+			);
+
+			return 1;
+		}
+
+		$this->error_codes = array(
+			'error' => 'unexpected_gateway_status'
+		);
+
+		return 0;
+	}
 
 	public function prepare_submission($submission_context)
 	{
@@ -882,14 +887,17 @@ class paguelo_facil_on{
 			return array("error" => 'curl_error: ' . $curl_error);
 		}
 
-		return json_decode($result, true);
+		$decoded_result = json_decode($result, true);
+		curl_close($ch);
+
+		return $decoded_result;
 	}
 
-	public function debug($dummy_cc)
+	public function debug()
 	{	
 		if(post_has('CCNum') && post_has('CVV2') && post_has('email'))
 		{			
-			if(secure_post('CCNum') === $dummy_cc && $this->user_can_debug() && secure_post('email') === $this->debug_email)
+			if(secure_post('CCNum') === $this->dummy_cc && $this->user_can_debug() && secure_post('email') === $this->debug_email)
 			{
 				if(secure_post('CVV2') === '222')
 				{
