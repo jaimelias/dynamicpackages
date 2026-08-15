@@ -16,7 +16,8 @@ class cuanto{
 		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -375,5 +376,11 @@ class cuanto{
 		$message .= '<p style="margin-bottom: 40px;"><a target="_blank" style="border: 16px solid #8CD0C5; text-align: center; background-color: '.esc_html($this->background_color).'; color: '.esc_html($this->color).'; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($url).'"><span class="dashicons dashicons-cart"></span> '.esc_html(sprintf(__('Pay with %s', 'dynamicpackages'), $this->cards_accepted)).'</a></p>';
 
 		return $message;  
-	}	
+	}
+
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
+	}
 }

@@ -20,6 +20,7 @@ class wire_transfer{
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 103);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 103);
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 5);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -586,5 +587,11 @@ class wire_transfer{
 	public function branding()
 	{
 		return '<p class="text-muted large"><span class="dashicons dashicons-admin-site"></span> '.$this->name.'</p>';
-	}	
+	}
+
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
+	}
 }

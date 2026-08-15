@@ -19,6 +19,7 @@ class usdt {
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 
 	public function init()
@@ -449,5 +450,10 @@ class usdt {
 		$message .= '<p class="large copyToClipboard pointer" '.$styleAttr.'><strong '.$styleAttr.'>'.esc_html($address).'</strong> <span class="dashicons dashicons-clipboard"></span></p>';
 		
 		return $message;
-	}	
+	}
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
+	}
 }

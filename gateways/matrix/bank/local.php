@@ -18,6 +18,7 @@ class bank_transfer{
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 102);
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 4);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 	
 
@@ -455,5 +456,11 @@ class bank_transfer{
 	public function branding()
 	{
 		return '<p class="large text-muted">'.$this->name.' <strong>'.$this->bank.'</strong></p>';
+	}
+
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
 	}
 }

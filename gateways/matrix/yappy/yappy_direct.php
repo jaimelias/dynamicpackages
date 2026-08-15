@@ -12,7 +12,6 @@ class yappy_direct {
 		$this->plugin_id = $plugin_id;
 		$this->id = 'yappy_direct';	
 
-
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
 		add_action('init', array(&$this, 'init'));
 		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
@@ -21,6 +20,7 @@ class yappy_direct {
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 3);
 		add_filter('coupon_gateway', array(&$this, 'single_coupon'), 10, 3);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -438,5 +438,11 @@ class yappy_direct {
 		}
 		
 		return $str;
+	}
+
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
 	}
 }

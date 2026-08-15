@@ -17,7 +17,8 @@ class paypal_me {
 		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);	
+		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -414,4 +415,10 @@ class paypal_me {
 
 		return $message;
 	}	
+
+	public function lead_event_gateways($arr = array()) {
+		$arr[] = $this->id;
+
+		return $arr;
+	}
 }

@@ -13,7 +13,6 @@ class paguelo_facil_on{
 		$this->plugin_id = $plugin_id;
 		$this->id = 'paguelo_facil_on';
 
-
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
 		add_action('init', array(&$this, 'init'));
 		add_action('admin_init', array(&$this, 'settings_init'), 1);
@@ -190,6 +189,7 @@ class paguelo_facil_on{
 				{
 					self::$txt_status = 2;
 					$this->restored_from_cache = true;
+
 					return true;
 				} else {
 					write_log('Gateway: cached transaction signature mismatch.');
@@ -246,7 +246,7 @@ class paguelo_facil_on{
 			{
 				$number = 0;
 				$this->error_codes = array(
-					'error' => 'connection_timeout'
+					'error' => 'invalid_response_format'
 				);	
 			}
 			
@@ -264,29 +264,11 @@ class paguelo_facil_on{
 
 		if(self::$txt_status === 2 && !isset($this->debug_mode))
 		{
-			$value = (float) dy_utilities::payment_amount();
 
-			$item = dy_gtag_build_item(
-				secure_post('dy_id', 0, 'absint'),
-				secure_post('title'),
-				secure_post('pax_num', 1, 'absint'),
-				$value
-			);
-
-			$purchase_tracking = array(
-				'transaction_id' => $unique_tx_id,
-				'value' => $value,
-				'currency' => currency_name(),
-				'items' => array($item)
-			);
-
-			dy_gtag_queue_server_event(
-				'purchase',
-				$purchase_tracking['transaction_id'],
-				$purchase_tracking['value'],
-				$purchase_tracking['currency'],
-				$purchase_tracking['items']
-			);
+			add_filter('dy_purchase_event_gateways', function($arr = array()) {
+				$arr[] = $this->id;
+				return $arr;
+			});
 
 			$success_args = [
 				'sign' => $this->checkout_request_sign(),
@@ -891,7 +873,15 @@ class paguelo_facil_on{
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded', 'Accept: */*'));
 		curl_setopt($ch,CURLOPT_POSTFIELDS, $params);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 		$result = curl_exec($ch);
+
+		if($result === false) {
+			$curl_error = curl_error($ch);
+			curl_close($ch);
+			return array("error" => 'curl_error: ' . $curl_error);
+		}
+
 		return json_decode($result, true);
 	}
 
