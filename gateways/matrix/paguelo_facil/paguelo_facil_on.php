@@ -227,7 +227,7 @@ class paguelo_facil_on{
 		if(!$this->is_valid_cached_success($cached))
 		{
 			write_log('Gateway: cached transaction signature mismatch.');
-			return false;
+			return;
 		}
 
 		self::$txt_status = 2;
