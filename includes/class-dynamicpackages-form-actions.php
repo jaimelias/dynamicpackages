@@ -177,9 +177,19 @@ class Dynamicpackages_Actions{
 		return true;
     }
 
+	private function get_conversion_amount()
+	{
+		$value      = (float) dy_utilities::total();
+		$raw        = get_option('dy_bidding_conversion_percentage', 15); // default 15
+		$percentage = is_numeric($raw) ? max(1, min(100, (float) $raw)) : 15;
+
+		return $value * ($percentage / 100);
+	}
+
 	private function queue_conversion_events($request_type, $unique_tx_id)
 	{
-		$value = (float) dy_utilities::payment_amount();
+		$value = $this->get_conversion_amount();
+
 		$currency = currency_name();
 
 		$lead_gateways = array_unique(
@@ -194,7 +204,7 @@ class Dynamicpackages_Actions{
 			dy_gtag_queue_server_event(
 				'generate_lead',
 				$unique_tx_id,
-				($value <= 0) ? 1 : $value,
+				$value,
 				$currency
 			);
 		}
