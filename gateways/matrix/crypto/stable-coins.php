@@ -3,66 +3,85 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 #[AllowDynamicProperties]
-class usdt {
-	
-	private static $cache = [];
+class stable_coins {
 
-	function __construct($plugin_id)
-	{
-		$this->plugin_id = $plugin_id;
-		$this->id = 'usdt';
+    private static $cache = [];
+
+	private const NETWORKS = array(
+		'trx' => array('name' => 'Tron (TRC-20)'),
+		'eth' => array('name' => 'Ethereum (ERC-20) Network'),
+		'bsc' => array('name' => 'Binance Smart Chain (BEP-20)'),
+		'matic' => array('name' => 'Poligon (MATIC) Network'),
+		'sol' => array('name' => 'Solana Network'),
+		'avax' => array('name' => 'Avalanche Network'),
+	);
+
+	private const ASSETS = array(
+		'usdt' => array(
+			'name' => 'Tether (USDT)',
+			'background_color' => '#50AF95',
+			'networks' => array('trx', 'eth', 'bsc', 'matic', 'sol', 'avax'),
+		),
+		'usdc' => array(
+			'name' => 'USD Coin (USDC)',
+			'background_color' => '#2775CA',
+			'networks' => array('eth', 'bsc', 'matic', 'sol', 'avax'),
+		),
+	);
+
+    public function __construct($plugin_id, $id)
+    {
+        if (!isset(self::ASSETS[$id])) {
+            throw new InvalidArgumentException('Unsupported stable USD gateway.');
+        }
+
+        $this->plugin_id = $plugin_id;
+        $this->id = $id;
 
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
 		add_action('init', array(&$this, 'init'));
 		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);
+		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
 		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
 		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
 		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
-	}
+    }
 
-	public function init()
-	{
-		$this->order_status = 'pending';
-		
-		$this->name = 'Tether (USDT)';
-		$this->brands = [$this->name];
-		$this->type = 'crypto';
-		$this->all_networks = $this->get_all_networks();
-		$this->enabled_networks = $this->get_enabled_networks();
-		$this->show = get_option($this->id . '_show');
-		$this->max = get_option($this->id . '_max');
-		$this->color = '#fff';
-		$this->background_color = '#50AF95';
-		$this->plugin_dir_url = plugin_dir_url(__DIR__);
-		$this->icon = '<img width="15" height="15" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" alt="'.esc_attr($this->name).'" />';
-		$this->gateway_coupon = 'USDT';
-	}
+    public function init()
+    {
+        $config = self::ASSETS[$this->id];
 
-	public function get_all_networks()
-	{
-		return array(
-			'trx' => array(
-				'name' => 'Tron (TRC-20)'
-			),
-			'eth' => array(
-				'name' => 'Ethereum (ERC-20) Network'
-			), 
-			'bsc' => array(
-				'name' => 'Binance Smart Chain (BEP-20)'
-			), 
-			'matic' => array(
-				'name' => 'Poligon (MATIC) Network'
-			), 
-			'sol' => array(
-				'name' => 'Solana Network'
-			), 
-			'avax' => array(
-				'name' => 'Avalanche Network'
-			)
-		);
-	}
+        $this->order_status = 'pending';
+        $this->name = $config['name'];
+        $this->brands = array($this->name);
+        $this->type = 'crypto';
+        $this->all_networks = $this->get_all_networks();
+        $this->enabled_networks = $this->get_enabled_networks();
+        $this->show = get_option($this->id . '_show');
+        $this->max = get_option($this->id . '_max');
+        $this->color = '#fff';
+        $this->background_color = $config['background_color'];
+        $this->plugin_dir_url = plugin_dir_url(__DIR__);
+        $this->gateway_coupon = strtoupper($this->id);
+
+        $this->icon = sprintf(
+            '<img width="15" height="15" src="%s" alt="%s" />',
+            esc_url($this->plugin_dir_url . 'assets/' . $this->id . '_icon.svg'),
+            esc_attr($this->name)
+        );
+    }
+
+    public function get_all_networks()
+    {
+        $networks = array();
+
+        foreach (self::ASSETS[$this->id]['networks'] as $network_id) {
+            $networks[$network_id] = self::NETWORKS[$network_id];
+        }
+
+        return $networks;
+    }
 
 	public function get_enabled_networks()
 	{
@@ -135,6 +154,7 @@ class usdt {
 	{
 		$output = false;
 		$cache_key = $this->id.'_is_active';
+
 		
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
@@ -164,7 +184,6 @@ class usdt {
 	public function show()
 	{
 		$output = false;
-
 		$cache_key = $this->id.'_show';
 
         if (isset(self::$cache[$cache_key])) {
@@ -202,12 +221,13 @@ class usdt {
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1 && array_key_exists($network, $this->enabled_networks))
 			{
 				$output = true;
+					
 			}
 		}
 		
         //store output in $cache
         self::$cache[$cache_key] = $output;
-
+		
 		return $output;
 	}
 	
@@ -216,10 +236,11 @@ class usdt {
 		$output = false;
 		$cache_key = $this->id . '_is_valid';
 
-		
+
         if (isset(self::$cache[$cache_key])) {
             return self::$cache[$cache_key];
         }
+
 
 		if($this->is_active() )
 		{
@@ -339,7 +360,7 @@ class usdt {
 		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
 		<?php
 	}
-	
+
 	public function select($args) {
 		
 		$name = $args['name'];
@@ -382,7 +403,6 @@ class usdt {
 		<?php
 	}	
 
-	
 	public function add_gateway($array)
 	{
 		
@@ -441,7 +461,7 @@ class usdt {
 		{
 			$label = __('deposit of', 'dynamicpackages');
 		}
-
+		
 		$styleAttr = ' style="padding: 10px 0; color: '.esc_attr($this->color).'; background-color: '.esc_attr($this->background_color).';" ';
 
 		$message .= '<p class="large">'.esc_html(sprintf(__('Please send us the %s %s to complete these booking.', 'dynamicpackages'), $label, $amount)).'</p>';
@@ -450,10 +470,12 @@ class usdt {
 		$message .= '<p class="large copyToClipboard pointer" '.$styleAttr.'><strong '.$styleAttr.'>'.esc_html($address).'</strong> <span class="dashicons dashicons-clipboard"></span></p>';
 		
 		return $message;
-	}
+	}	
 	public function lead_event_gateways($arr = array()) {
 		$arr[] = $this->id;
 
 		return $arr;
 	}
+
 }
+

@@ -25,8 +25,7 @@ class Dynamicpackages_Gateways
 		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
 		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
-		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdt.php';
-		require_once plugin_dir_path(__FILE__).'matrix/stablepay/usdc.php';
+		require_once plugin_dir_path(__FILE__).'matrix/crypto/stable-coins.php';
 		
 	}	
 	
@@ -34,8 +33,6 @@ class Dynamicpackages_Gateways
 	{
 
 		$this->estimate = new estimate_request($this->plugin_id);
-
-
 		$this->add_to_calendar = new dy_Add_To_Calendar();
 		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
 		$this->cuanto = new cuanto($this->plugin_id);
@@ -43,8 +40,8 @@ class Dynamicpackages_Gateways
 		$this->yappy_direct = new yappy_direct($this->plugin_id);
 		$this->bank_transfer = new bank_transfer($this->plugin_id);
 		$this->wire_transfer = new wire_transfer($this->plugin_id);
-		$this->usdt = new usdt($this->plugin_id);
-		$this->usdc = new usdc($this->plugin_id);
+		$this->usdt = new stable_coins($this->plugin_id, 'usdt');
+		$this->usdc = new stable_coins($this->plugin_id, 'usdc');
 	}
 	public function init()
 	{
