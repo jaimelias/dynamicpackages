@@ -8,7 +8,7 @@ class Dynamicpackages_Metaboxes
 
     public function __construct()
     {
-		add_action('add_meta_boxes', array(&$this, 'package_add_meta_box'));
+		add_action('add_meta_boxes', array($this, 'package_add_meta_box'));
     }
 
     public function package_add_meta_box()
@@ -16,45 +16,45 @@ class Dynamicpackages_Metaboxes
 
 		$this->set_args();
 
-        add_meta_box('package-a', __('Description', 'dynamicpackages') , array(&$this,
+        add_meta_box('package-a', __('Description', 'dynamicpackages') , array($this,
             'package_description_html'
         ) , 'packages', 'normal', 'default');
-        add_meta_box('package-b', __('Pricing Controls', 'dynamicpackages') , array(&$this,
+        add_meta_box('package-b', __('Pricing Controls', 'dynamicpackages') , array($this,
             'package_pricing_html'
         ) , 'packages', 'normal', 'default');
 
         if (!$this->has_children)
         {
-            add_meta_box('package-c', __('Rates', 'dynamicpackages') , array(&$this,
+            add_meta_box('package-c', __('Rates', 'dynamicpackages') , array($this,
                 'package_rates_html'
             ) , 'packages', 'normal', 'default');
         }
 
-        add_meta_box('package-d', __('Availability', 'dynamicpackages') , array(&$this,
+        add_meta_box('package-d', __('Availability', 'dynamicpackages') , array($this,
             'package_availability_html'
         ) , 'packages', 'normal', 'default');
 
         if (!$this->is_child)
         {
 
-            add_meta_box('package-f', __('Messages', 'dynamicpackages') , array(&$this,
+            add_meta_box('package-f', __('Messages', 'dynamicpackages') , array($this,
                 'package_messages_html'
             ) , 'packages', 'normal', 'default');
         }
 
 		if(!$this->is_child || ($this->is_transport && $this->is_child))
 		{
-            add_meta_box('package-e', __('Departure', 'dynamicpackages') , array(&$this,
+            add_meta_box('package-e', __('Departure', 'dynamicpackages') , array($this,
                 'package_departure_html'
             ) , 'packages', 'normal', 'default');
 		}
 
-		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , array(&$this,
+		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , array($this,
 			'package_coupon_html'
 		) , 'packages', 'normal', 'default');
 
 
-	add_meta_box('package-h', __('Controls', 'dynamicpackages') , array(&$this,
+	add_meta_box('package-h', __('Controls', 'dynamicpackages') , array($this,
 		'package_controls_html'
 	) , 'packages', 'normal', 'default');
 

@@ -11,10 +11,10 @@ class Dynamicpackages_Confirmation_Page {
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
         //fix bug
-        add_action('init', array(&$this, 'set_post_on_checkout_page'));
+        add_action('init', array($this, 'set_post_on_checkout_page'));
 
         //scripts
-        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
 	public function set_post_on_checkout_page()

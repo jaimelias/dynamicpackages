@@ -14,14 +14,14 @@ class paguelo_facil_on{
 		$this->id = 'paguelo_facil_on';
 
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action('admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);
-		add_action('init', array(&$this, 'checkout'), 50);
-		add_filter('dy_request_the_content', array(&$this, 'the_content'));
-		add_filter('dy_request_the_title', array(&$this, 'the_title'));
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 1);
-		add_filter('dy_debug_instructions', array(&$this, 'debug_instructions'));
+		add_action('init', array($this, 'init'));
+		add_action('admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 100);
+		add_action('init', array($this, 'checkout'), 50);
+		add_filter('dy_request_the_content', array($this, 'the_content'));
+		add_filter('dy_request_the_title', array($this, 'the_title'));
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 1);
+		add_filter('dy_debug_instructions', array($this, 'debug_instructions'));
 		add_filter('dy_purchase_event_gateways', array($this, 'purchase_event_gateways'));
 	}
 	
@@ -36,29 +36,32 @@ class paguelo_facil_on{
 		$this->type = 'card-on-site';
 		$this->brands = ['Mastercard', 'Visa'];
 		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
-		$this->cclw = get_option($this->id);
-		$this->show = (int) get_option($this->id . '_show');
-
-		$min_option = get_option($this->id . '_min', 5);
-		$max_option = get_option($this->id . '_max', 500);
-
-		$this->min = is_numeric($min_option) ? (float) $min_option : 5.0;
-		$this->max = is_numeric($max_option) && (float) $max_option > 0
-			? (float) $max_option
-			: 500.0;
+		$this->cclw = (string) get_option($this->id, '');
+		$this->show = (int) get_option($this->id . '_show', 0);
+		$this->min = (float) get_option($this->id . '_min', 0.0);
+		$this->max = (float) get_option($this->id . '_max', 0.0);
 
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
-		$this->debug_email = is_email(get_option($this->id . '_debug_email')) 
-			? sanitize_email(get_option($this->id . '_debug_email')) 
-			: sanitize_email(get_option('admin_email'));
 
-		$this->debug();
+		$debug_email = sanitize_email(
+			(string) get_option($this->id . '_debug_email', '')
+		);
+
+		$this->debug_email = is_email($debug_email)
+			? $debug_email
+			: sanitize_email((string) get_option('admin_email', ''));
+
+
+		$this->debug_mode = $this->debug();
 
 		$this->production_url = 'https://secure.paguelofacil.com/rest/ccprocessing/';
 		$this->sandbox_url = 'https://sandbox.paguelofacil.com/rest/ccprocessing/';
-		$this->endpoint = (isset($this->debug_mode)) ? $this->sandbox_url : $this->production_url;
+		$this->endpoint = ($this->debug_mode === -1)
+			? $this->production_url
+			: $this->sandbox_url;
+
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
 		$this->website_name = get_bloginfo('name');
 		$this->icon = '<span class="dashicons dashicons-cart"></span>';
@@ -145,7 +148,9 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		if(!$this->is_payment_amount_allowed())
+		$amount = (float) dy_utilities::payment_amount();
+
+		if(!$this->is_payment_amount_allowed($amount))
 		{
 			$GLOBALS['dy_request_invalids'] = array(
 				__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages')
@@ -190,7 +195,7 @@ class paguelo_facil_on{
 			write_log($this->error_codes);
 		}
 
-		if(self::$txt_status === 2 && !isset($this->debug_mode))
+		if(self::$txt_status === 2 && $this->debug_mode === -1)
 		{
 
 			$success_args = [
@@ -210,7 +215,7 @@ class paguelo_facil_on{
 	{
 		if(
 			self::$txt_status === 2
-			&& !isset($this->debug_mode)
+			&& $this->debug_mode === -1
 			&& !$this->restored_from_cache
 		)
 		{
@@ -245,9 +250,9 @@ class paguelo_facil_on{
 
 	private function resolve_checkout_status()
 	{
-		if(isset($this->debug_mode) && $this->debug_mode !== 3)
+		if($this->debug_mode >= 0 && $this->debug_mode !== 3)
 		{
-			return (int) $this->debug_mode;
+			return $this->debug_mode;
 		}
 
 		$response = $this->process_request();
@@ -305,24 +310,24 @@ class paguelo_facil_on{
 
 		$submission_context->accepted = true;
 
-		add_filter('dy_email_message', array(&$this, 'message'));
-		add_filter('dy_email_message', array(&$this, 'email_message_bottom'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
-		add_filter('dy_email_intro', array(&$this, 'intro'));
-		add_filter('dy_email_notes', array(&$this, 'email_notes'));
+		add_filter('dy_email_message', array($this, 'message'));
+		add_filter('dy_email_message', array($this, 'email_message_bottom'));
+		add_filter('dy_email_subject', array($this, 'subject'));
+		add_filter('dy_email_intro', array($this, 'intro'));
+		add_filter('dy_email_notes', array($this, 'email_notes'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
 
-		if(self::$txt_status == 2)
+		if(self::$txt_status === 2)
 		{
-			add_filter('dy_totals_area', array(&$this, 'totals_area'));
+			add_filter('dy_totals_area', array($this, 'totals_area'));
 
 			add_filter('dy_webhook_option', function(){
 				return 'dy_webhook';
 			});
 
-			add_filter('dy_confirmation_message', array(&$this, 'confirmation_message'));
+			add_filter('dy_confirmation_message', array($this, 'confirmation_message'));
 			add_filter('dy_email_label_doc', function(){
 				return esc_html(__('Invoice', 'dynamicpackages'));
 			});
@@ -600,26 +605,27 @@ class paguelo_facil_on{
 
 		if($this->is_active() )
 		{
-			$payment = package_field('package_payment');
+			$payment = (int) package_field('package_payment');
 			
 			if(is_booking_page() || is_confirmation_page())
 			{
-				$total = dy_utilities::payment_amount();
+				$total = (float) dy_utilities::payment_amount();
 			}
 			else
 			{
-				$total = floatval(dy_utilities::starting_at());
+				$total = (float) dy_utilities::starting_at();
+				$fixed_price = (int) package_field('package_fixed_price');
+				$max_persons = (int) package_field('package_max_persons');
 				
-				if(package_field('package_fixed_price') == 0)
+				if($fixed_price === 0)
 				{
-					$total = $total * intval(package_field('package_max_persons'));
+					$total = $total * $max_persons;
 				}
-				
 			}
 			
-			if($total >= $this->min && $total <= $this->max)
+			if($this->is_payment_amount_allowed($total))
 			{
-				if($payment == $this->show && $payment == 0)
+				if($payment === $this->show && $payment === 0)
 				{
 					$output = true;
 				}
@@ -644,7 +650,7 @@ class paguelo_facil_on{
 		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
-		register_setting($this->id . '_settings', $this->id . '_show', 'sanitize_text_field');
+		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_debug_email', 'sanitize_email');
 		
 		add_settings_section(
@@ -664,25 +670,27 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'CCLW', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id
+			$this->id . '_settings_section', 
+			$this->id
 		);
+
 		add_settings_field( 
 			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
+
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_max'
 		);
-
 
 		$show_args = array(
 			'name' => $this->id . '_show',
@@ -701,7 +709,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section',
 			$show_args
@@ -710,7 +718,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id . '_debug_email', 
 			esc_html(__( 'Debug Email', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_debug_email'
 		);
@@ -754,7 +762,7 @@ class paguelo_facil_on{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->short_name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->short_name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
@@ -902,29 +910,35 @@ class paguelo_facil_on{
 	}
 
 	public function debug()
-	{	
-		if(post_has('CCNum') && post_has('CVV2') && post_has('email'))
-		{			
-			if(secure_post('CCNum') === $this->dummy_cc && $this->user_can_debug() && secure_post('email') === $this->debug_email)
+	{
+		if(
+			post_has('CCNum')
+			&& post_has('CVV2')
+			&& post_has('email')
+			&& secure_post('CCNum') === $this->dummy_cc
+			&& $this->user_can_debug()
+			&& secure_post('email') === $this->debug_email
+		)
+		{
+			if(secure_post('CVV2') === '222')
 			{
-				if(secure_post('CVV2') === '222')
-				{
-					$this->debug_mode = 2;
-				}
-				else if(secure_post('CVV2') === '111')
-				{
-					$this->debug_mode = 1;
-				}
-				else if(secure_post('CVV2') === '000')
-				{
-					$this->debug_mode = 0;
-				}
-				else
-				{
-					$this->debug_mode = 3;
-				}
+				return 2;
 			}
+
+			if(secure_post('CVV2') === '111')
+			{
+				return 1;
+			}
+
+			if(secure_post('CVV2') === '000')
+			{
+				return 0;
+			}
+
+			return 3;
 		}
+
+		return -1;
 	}
 	
 	public function user_can_debug()
@@ -993,8 +1007,22 @@ class paguelo_facil_on{
 		return $output;
 	}
 
-	private function is_payment_amount_allowed() {
-		$amount = round((float) dy_utilities::payment_amount(), 2);
+	private function has_valid_limits()
+	{
+		return (
+			$this->min > 0.0
+			&& $this->max > 0.0
+			&& $this->max >= $this->min
+		);
+	}
+
+	private function is_payment_amount_allowed($amount) {
+
+		if (!$this->has_valid_limits()) {
+			return false;
+		}
+
+		$amount = round((float) $amount, 2);
 		$min    = round((float) $this->min, 2);
 		$max    = round((float) $this->max, 2);
 

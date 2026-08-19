@@ -11,12 +11,12 @@ class Dynamicpackages_Post_Types
 	function __construct()
 	{
 		$this->plugin_dir_file = plugin_dir_url( __FILE__ );
-		add_action('init', array(&$this, 'package_post_type'));
-		add_action('init', array(&$this, 'register_taxonomies'), 10);
+		add_action('init', array($this, 'package_post_type'));
+		add_action('init', array($this, 'register_taxonomies'), 10);
 
 		//forces custom taxonomies to polylang. 
 		//Strings inside add_tax_to_pll or get_taxonomies_arr must must not be translated to avoid _load_textdomain_just_in_time error
-		add_filter( 'pll_get_taxonomies', array(&$this, 'add_tax_to_pll'), 10, 2 );
+		add_filter( 'pll_get_taxonomies', array($this, 'add_tax_to_pll'), 10, 2 );
 	}
 	
 	public function get_taxonomies_arr()

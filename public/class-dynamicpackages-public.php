@@ -19,47 +19,47 @@ class Dynamicpackages_Public {
 		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
 		$this->dirname_file = dirname( __FILE__ );
 
-		add_action('init', array(&$this, 'init'));
+		add_action('init', array($this, 'init'));
 
 		//scripts
-		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), DY_IS_PACKAGE_PAGE_PRIORITY);
 
 		//redirect
-		add_action('template_redirect', array(&$this, 'template_redirect'));
-		add_filter('post_type_link', array(&$this, 'post_type_link'), DY_IS_PACKAGE_PAGE_PRIORITY, 2);
+		add_action('template_redirect', array($this, 'template_redirect'));
+		add_filter('post_type_link', array($this, 'post_type_link'), DY_IS_PACKAGE_PAGE_PRIORITY, 2);
 
 		//template
-		add_filter('template_include', array(&$this, 'package_template'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('the_content', array(&$this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('pre_get_document_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('wp_title', array(&$this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('the_title', array(&$this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('single_term_title', array(&$this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('get_the_excerpt', array(&$this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('term_description', array(&$this, 'modify_term_description'));
-		add_action('pre_get_posts', array(&$this, 'set_one_tax_per_page'));
-		add_filter('term_description', array(&$this, 'modify_term_description'));
+		add_filter('template_include', array($this, 'package_template'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('the_content', array($this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('pre_get_document_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('wp_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('the_title', array($this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('single_term_title', array($this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('get_the_excerpt', array($this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('term_description', array($this, 'modify_term_description'));
+		add_action('pre_get_posts', array($this, 'set_one_tax_per_page'));
+		add_filter('term_description', array($this, 'modify_term_description'));
 
 
 		//packages
-		add_filter('dy_details', array(&$this, 'details'));
-		add_action('dy_description', array(&$this, 'description'));
-		add_action('dy_show_coupons', array(&$this, 'show_coupons'));
-		add_filter('minimal_description', array(&$this, 'meta_description'));
-		add_filter('dy_event_arr', array(&$this, 'event_arr'));
-		add_filter('dy_price_type', array(&$this, 'price_type'));
-		add_filter('dy_booking_sidebar', array(&$this, 'booking_sidebar'));
-		add_action('dy_children_package', array(&$this, 'children_package'));
-		add_action('dy_similar_packages_link', array(&$this, 'similar_packages_link'));
-		add_action('dy_get_terms_conditions_list', array(&$this, 'get_terms_conditions_list'));
-		add_action('dy_get_included_list', array(&$this, 'get_included_list'));
-		add_action('dy_get_not_included_list', array(&$this, 'get_not_included_list'));
-		add_action('dy_get_category_list', array(&$this, 'get_category_list'));
-		add_action('dy_get_location_list', array(&$this, 'get_location_list'));
-		add_action('dy_show_badge', array(&$this, 'show_badge'));
-		add_action('dy_show_event_date', array(&$this, 'show_event_date'));
-		add_action('dy_edit_link', array(&$this, 'edit_link'));
+		add_filter('dy_details', array($this, 'details'));
+		add_action('dy_description', array($this, 'description'));
+		add_action('dy_show_coupons', array($this, 'show_coupons'));
+		add_filter('minimal_description', array($this, 'meta_description'));
+		add_filter('dy_event_arr', array($this, 'event_arr'));
+		add_filter('dy_price_type', array($this, 'price_type'));
+		add_filter('dy_booking_sidebar', array($this, 'booking_sidebar'));
+		add_action('dy_children_package', array($this, 'children_package'));
+		add_action('dy_similar_packages_link', array($this, 'similar_packages_link'));
+		add_action('dy_get_terms_conditions_list', array($this, 'get_terms_conditions_list'));
+		add_action('dy_get_included_list', array($this, 'get_included_list'));
+		add_action('dy_get_not_included_list', array($this, 'get_not_included_list'));
+		add_action('dy_get_category_list', array($this, 'get_category_list'));
+		add_action('dy_get_location_list', array($this, 'get_location_list'));
+		add_action('dy_show_badge', array($this, 'show_badge'));
+		add_action('dy_show_event_date', array($this, 'show_event_date'));
+		add_action('dy_edit_link', array($this, 'edit_link'));
 	}
 
 	public function init()

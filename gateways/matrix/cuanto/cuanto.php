@@ -12,12 +12,12 @@ class cuanto{
 		$this->plugin_id = $plugin_id;
 		$this->id = 'cuanto';
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
-		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
-		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
+		add_action('init', array($this, 'init'));
+		add_action( 'admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 100);	
+		add_filter('dy_request_the_content', array($this, 'filter_content'), 101);
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -29,8 +29,8 @@ class cuanto{
 		$this->type = 'card-off-site';
 		$this->domain = 'cuanto.app';		
 		$this->username = get_option($this->id);
-		$this->show = get_option($this->id . '_show');
-		$this->max = get_option($this->id . '_max');
+		$this->show = (int) get_option($this->id . '_show', 0);
+		$this->max  = (float) get_option($this->id . '_max', 0.0);
 		$this->color = '#000';
 		$this->background_color = '#8CD0C5';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
@@ -48,10 +48,10 @@ class cuanto{
 
 		$submission_context->accepted = true;
 		
-		add_filter('dy_email_notes', array(&$this, 'message'));
-		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-		add_filter('dy_email_intro', array(&$this, 'subject'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_notes', array($this, 'message'));
+		add_filter('dy_email_label_notes', array($this, 'label_notes'));
+		add_filter('dy_email_intro', array($this, 'subject'));
+		add_filter('dy_email_subject', array($this, 'subject'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
@@ -222,14 +222,14 @@ class cuanto{
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id
 		);	
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
@@ -251,7 +251,7 @@ class cuanto{
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
 			$show_args
@@ -296,7 +296,7 @@ class cuanto{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '.$this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '.$this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 

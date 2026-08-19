@@ -9,8 +9,8 @@ class estimate_request{
 
 	function __construct($plugin_id)
 	{
-		add_action('init', array(&$this, 'init'));
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 10);
+		add_action('init', array($this, 'init'));
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 10);
 	}
 
 	public function init()

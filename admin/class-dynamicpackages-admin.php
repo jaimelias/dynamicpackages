@@ -13,12 +13,12 @@ class Dynamicpackages_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->plugin_id = $plugin_id;
 		$this->version = $version;
-		add_action('admin_menu', array(&$this, 'add_settings_page'));
-		add_action('admin_init', array(&$this, 'settings_init'));
-		add_action('admin_init', array(&$this, 'load_scripts'));
+		add_action('admin_menu', array($this, 'add_settings_page'));
+		add_action('admin_init', array($this, 'settings_init'));
+		add_action('admin_init', array($this, 'load_scripts'));
 		add_editor_style($this->plugin_dir_file . 'css/dynamicpackages-admin.css');
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_styles'));
-		add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_styles'));
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
 	}
 
 	public function load_scripts()
@@ -52,7 +52,7 @@ class Dynamicpackages_Admin {
 	public  function add_settings_page()
 	{
 		$icon_url = $this->plugin_dir_file . 'assets/rocket.svg';
-		add_menu_page($this->plugin_name, $this->plugin_name, 'manage_options',  $this->plugin_id, array(&$this, 'settings_page'), $icon_url);
+		add_menu_page($this->plugin_name, $this->plugin_name, 'manage_options',  $this->plugin_id, array($this, 'settings_page'), $icon_url);
 	}
 
 	public function settings_init(  ) { 
@@ -105,7 +105,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_breadcrump', 
 			esc_html(__( 'Package Archive Page', 'dynamicpackages' )), 
-			array(&$this, 'dy_breadcrump_render'), 
+			array($this, 'dy_breadcrump_render'), 
 			'dy_settings', 
 			'dy_settings_section' 
 		);
@@ -113,7 +113,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_webhook', 
 			esc_html(__( 'Checkout Webhook URL', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
 			array('name' => 'dy_webhook')
@@ -123,7 +123,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_quote_webhook', 
 			esc_html(__( 'Quote Webhook URL', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
 			array('name' => 'dy_quote_webhook')
@@ -132,7 +132,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_kyc', 
 			esc_html(__( 'KYC Form URL', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_integrations_section',
 			array('name' => 'dy_kyc')
@@ -144,7 +144,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_max_disabled_dates', 
 			esc_html(__( 'Max. Disabled Dates', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_settings_section',
 			array('name' => 'dy_max_disabled_dates', 'type' => 'number')
@@ -153,7 +153,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_disabled_dates', 
 			esc_html(__( 'Global Disabled Dates', 'dynamicpackages' )), 
-			array(&$this, 'settings_hot'), 
+			array($this, 'settings_hot'), 
 			'dy_settings', 
 			'dy_settings_section',
 			array(
@@ -171,7 +171,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_excerpt', 
 			esc_html(__( 'Hide Package Description (Excerpt)', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_list_section',
 			array('name' => 'dy_archive_hide_excerpt', 'type' => 'checkbox')
@@ -180,7 +180,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_enabled_days', 
 			esc_html(__( 'Hide Enabled Days', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_list_section',
 			array('name' => 'dy_archive_hide_enabled_days', 'type' => 'checkbox')
@@ -189,7 +189,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_start_address', 
 			esc_html(__( 'Hide Start Address', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_list_section',
 			array('name' => 'dy_archive_hide_start_address', 'type' => 'checkbox')
@@ -198,7 +198,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_max_persons', 
 			esc_html(__( 'Hide Max. Persons', 'dynamicpackages' )), 
-			array(&$this, 'settings_input'), 
+			array($this, 'settings_input'), 
 			'dy_settings', 
 			'dy_list_section',
 			array('name' => 'dy_archive_hide_max_persons', 'type' => 'checkbox')

@@ -9,9 +9,9 @@ class Dynamicpackages_Export_Post_Types{
 
     public function __construct($version)
     {
-        add_action('wp', array(&$this, 'export_single_file'));
-        add_filter('wp_headers', array(&$this, 'single_file_headers'), 999);
-        add_action('rest_api_init', array(&$this, 'rest_api_init'));
+        add_action('wp', array($this, 'export_single_file'));
+        add_filter('wp_headers', array($this, 'single_file_headers'), 999);
+        add_action('rest_api_init', array($this, 'rest_api_init'));
 
         $this->alt_formats = ['text', 'json', 'html', 'markdown'];
 
@@ -39,7 +39,7 @@ class Dynamicpackages_Export_Post_Types{
         // Register the new endpoint for exporting post types
         register_rest_route('dy-core', 'training-data/packages', array(
             'methods' => 'GET',
-            'callback' => array(&$this, 'query_training_data'),
+            'callback' => array($this, 'query_training_data'),
             'permission_callback' => '__return_true'
         ));
     }

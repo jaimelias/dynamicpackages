@@ -45,21 +45,21 @@ class Dynamicpackages_Gateways
 	}
 	public function init()
 	{
-		add_filter('wp', array(&$this, 'modify_headers'), 100);
-		add_action('dy_cc_form', array(&$this, 'cc_form'));
-		add_filter('dy_list_gateways', array(&$this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
-		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
-		add_filter('the_content', array(&$this, 'the_content'), 102);			
-		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
-		add_filter('dy_has_gateway', array(&$this, 'has_gateway'));
-		add_filter('dy_join_gateways', array(&$this, 'join_gateways'));
-		add_action('dy_invalid_min_duration', array(&$this, 'invalid_min_duration'));
-		add_action('dy_coupon_confirmation', array(&$this, 'coupon_confirmation'));
-		add_action('dy_cc_warning', array(&$this, 'cc_warning'));
-		add_action('dy_crypto_form', array(&$this, 'crypto_form'));		
-		add_action('dy_whatsapp_button', array(&$this, 'whatsapp_button'));
-		add_action('dy_copy_payment_link', array(&$this, 'copy_payment_link'));
-		add_action('dy_force_availability_link', array(&$this, 'force_availability_link'));
+		add_filter('wp', array($this, 'modify_headers'), 100);
+		add_action('dy_cc_form', array($this, 'cc_form'));
+		add_filter('dy_list_gateways', array($this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
+		add_action('dy_checkout_area', array($this, 'checkout_area'), 1);
+		add_filter('the_content', array($this, 'the_content'), 102);			
+		add_action('dy_terms_conditions', array($this, 'terms_conditions'));
+		add_filter('dy_has_gateway', array($this, 'has_gateway'));
+		add_filter('dy_join_gateways', array($this, 'join_gateways'));
+		add_action('dy_invalid_min_duration', array($this, 'invalid_min_duration'));
+		add_action('dy_coupon_confirmation', array($this, 'coupon_confirmation'));
+		add_action('dy_cc_warning', array($this, 'cc_warning'));
+		add_action('dy_crypto_form', array($this, 'crypto_form'));		
+		add_action('dy_whatsapp_button', array($this, 'whatsapp_button'));
+		add_action('dy_copy_payment_link', array($this, 'copy_payment_link'));
+		add_action('dy_force_availability_link', array($this, 'force_availability_link'));
 	}
 	
 

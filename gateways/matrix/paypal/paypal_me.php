@@ -12,13 +12,13 @@ class paypal_me {
 		$this->plugin_id = $plugin_id;
 		$this->id = 'paypal_me';
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
-		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
-		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
-		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
+		add_action('init', array($this, 'init'));
+		add_action( 'admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 100);	
+		add_filter('dy_request_the_content', array($this, 'filter_content'), 101);
+		add_filter('dy_request_the_title', array($this, 'title'), 101);
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -28,10 +28,10 @@ class paypal_me {
 		$this->brands = [$this->name];
 		$this->domain = 'paypal.me';
 		$this->type = 'alt';	
-		$this->username = get_option($this->id);
-		$this->show = get_option($this->id . '_show');
-		$this->min = get_option($this->id . '_min');
-		$this->max = get_option($this->id . '_max');
+		$this->username    = (string) get_option($this->id, '');
+		$this->show = (int) get_option($this->id . '_show', 0);
+		$this->min = (float) get_option($this->id . '_min', 0.0);
+		$this->max  = (float) get_option($this->id . '_max', 0.0);
 		$this->color = '#000';
 		$this->background_color = '#FFD700';
 		$this->plugin_dir_url = plugin_dir_url(__DIR__);
@@ -39,10 +39,16 @@ class paypal_me {
 		$this->gateway_coupon = 'PAYPAL';
 
 		//service fee
-		$this->service_fee = get_option($this->id . '_service_fee');
+		$this->service_fee = (float) get_option($this->id . '_service_fee', 0.0);
+		$has_service_fee = $this->service_fee > 0.0;
+
 		$this->percent_symbol = '%';
-		$this->service_fee_notification = (floatval($this->service_fee) > 0) ? '<p class="large"><strong>'.esc_html(sprintf(__('All payments made with PayPal are subject to a an additional %s%s service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' : '';
-		$this->service_fee_confirmation = (floatval($this->service_fee) > 0) ? '<p class="large"><strong>'.esc_html(sprintf(__('This price already includes an additional %s%s Paypal payment service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' : '';
+		$this->service_fee_notification = $has_service_fee 
+			? '<p class="large"><strong>'.esc_html(sprintf(__('All payments made with PayPal are subject to a an additional %s%s service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' 
+			: '';
+		$this->service_fee_confirmation = $has_service_fee 
+			? '<p class="large"><strong>'.esc_html(sprintf(__('This price already includes an additional %s%s Paypal payment service fee.', 'dynamicpackages'), $this->service_fee, $this->percent_symbol)).'</strong></p>' 
+			: '';
 	}
 
 	public function prepare_submission($submission_context)
@@ -54,10 +60,10 @@ class paypal_me {
 
 		$submission_context->accepted = true;
 
-		add_filter('dy_email_notes', array(&$this, 'message'));
-		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-		add_filter('dy_email_intro', array(&$this, 'subject'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_notes', array($this, 'message'));
+		add_filter('dy_email_label_notes', array($this, 'label_notes'));
+		add_filter('dy_email_intro', array($this, 'subject'));
+		add_filter('dy_email_subject', array($this, 'subject'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
@@ -241,7 +247,7 @@ class paypal_me {
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id
 		);	
@@ -249,7 +255,7 @@ class paypal_me {
 		add_settings_field( 
 			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_min'
 		);
@@ -257,7 +263,7 @@ class paypal_me {
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
@@ -265,7 +271,7 @@ class paypal_me {
 		add_settings_field( 
 			$this->id . '_service_fee', 
 			esc_html(__( 'Service Fee', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_service_fee'
 		);
@@ -287,7 +293,7 @@ class paypal_me {
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			$show_args
@@ -332,7 +338,7 @@ class paypal_me {
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
@@ -381,9 +387,9 @@ class paypal_me {
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding(),
-'icon' => $this->icon,
-'gateway_coupon' => $this->gateway_coupon
+				'branding' => $this->branding(),
+				'icon' => $this->icon,
+				'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

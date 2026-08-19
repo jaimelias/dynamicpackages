@@ -10,10 +10,10 @@ class Dynamicpackages_Forms
 
 	public function __construct()
 	{
-		add_filter('dy_package_filter_form_cb', array(&$this, 'package_filter_form'));
-		add_action('dy_package_filter_form', array(&$this, 'package_filter_form_cb'));
-		add_action('dy_check_prices_form', array(&$this, 'check_prices_form'));
-		add_action('dy_archive_pagination', array(&$this, 'pagination'));
+		add_filter('dy_package_filter_form_cb', array($this, 'package_filter_form'));
+		add_action('dy_package_filter_form', array($this, 'package_filter_form_cb'));
+		add_action('dy_check_prices_form', array($this, 'check_prices_form'));
+		add_action('dy_archive_pagination', array($this, 'pagination'));
 	}
 
 	public function package_filter_form_cb()

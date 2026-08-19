@@ -43,7 +43,7 @@ class dynamicpackages {
 
 		new Dynamicpackages_Post_Types();
 		
-		add_action('init', array(&$this, 'load_dynamicpackage_textdomain'), PHP_INT_MAX);
+		add_action('init', array($this, 'load_dynamicpackage_textdomain'), PHP_INT_MAX);
 
 		
 

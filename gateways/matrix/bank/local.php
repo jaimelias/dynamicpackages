@@ -12,13 +12,13 @@ class bank_transfer{
 		$this->plugin_id = $plugin_id;
 		$this->id = 'bank_transfer';
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 101);	
-		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 102);
-		add_filter('dy_request_the_title', array(&$this, 'title'), 102);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 4);
-		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
+		add_action('init', array($this, 'init'));
+		add_action( 'admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 101);	
+		add_filter('dy_request_the_content', array($this, 'filter_content'), 102);
+		add_filter('dy_request_the_title', array($this, 'title'), 102);
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 4);
+		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
 	}
 	
 
@@ -30,10 +30,10 @@ class bank_transfer{
 		$this->type = 'bank';
 		$this->bank = get_option($this->id . '_bank');
 		$this->number = get_option($this->id);
-		$this->type = get_option($this->id . '_type');
+		$this->account_type = (int) get_option($this->id . '_type', 0);
 		$this->beneficiary = get_option($this->id . '_beneficiary');
-		$this->min = get_option($this->id . '_min');
-		$this->show = get_option($this->id . '_show');
+		$this->min = (float) get_option($this->id . '_min', 0.0);
+		$this->show = (int) get_option($this->id . '_show', 0);
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->icon = '<span class="dashicons dashicons-money-alt"></span>';
@@ -50,10 +50,10 @@ class bank_transfer{
 
 		$submission_context->accepted = true;
 
-		add_filter('dy_email_notes', array(&$this, 'message'));
-		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-		add_filter('dy_email_intro', array(&$this, 'subject'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_notes', array($this, 'message'));
+		add_filter('dy_email_label_notes', array($this, 'label_notes'));
+		add_filter('dy_email_intro', array($this, 'subject'));
+		add_filter('dy_email_subject', array($this, 'subject'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
@@ -197,7 +197,7 @@ class bank_transfer{
 
 		$type = __('Saving Account', 'dynamicpackages');
 		
-		if($this->type == 1)
+		if ($this->account_type === 1)
 		{
 			$type = __('Checking Account', 'dynamicpackages');
 		}
@@ -290,7 +290,7 @@ class bank_transfer{
 		add_settings_field( 
 			$this->id . '_bank', 
 			esc_html(__( 'Bank Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_bank'
 		);
@@ -312,7 +312,7 @@ class bank_transfer{
 		add_settings_field( 
 			$this->id . '_type', 
 			esc_html(__( 'Account Type', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			$type_args
@@ -321,7 +321,7 @@ class bank_transfer{
 		add_settings_field( 
 			$this->id . '_beneficiary', 
 			esc_html(__( 'Account Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_beneficiary'
 		);			
@@ -329,14 +329,14 @@ class bank_transfer{
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'Account Number', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id
 		);	
 		add_settings_field( 
 			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
@@ -359,7 +359,7 @@ class bank_transfer{
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
 			$show_args
@@ -405,7 +405,7 @@ class bank_transfer{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 

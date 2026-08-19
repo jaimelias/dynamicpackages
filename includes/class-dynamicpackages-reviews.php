@@ -13,27 +13,27 @@ class Dynamicpackages_Reviews
 	}
 	public function init()
 	{
-		add_shortcode('package_reviews', array(&$this, 'get_total_reviews'));
-		add_action('comment_form_logged_in_after', array(&$this, 'field'));
-		add_action('comment_form_after_fields', array(&$this, 'field'));
-		add_action('comment_post', array(&$this, 'save_comment'), 10);
-		add_action('edit_comment', array(&$this, 'edit_comment'), 10);
-		add_filter('preprocess_comment', array(&$this, 'require_comment'));
-		add_action('admin_init', array(&$this, 'run'));
-		add_filter('comments_template', array(&$this, 'template'));
-		add_filter('comment_reply_link', array(&$this, 'reply_link'));
-		add_filter('wp_list_comments_args', array(&$this, 'add_callback'));
-		add_filter('comments_array', array(&$this, 'ppl_merge_comments'), 10, 2);
-		add_filter('comments_array', array(&$this, 'order_by_date'), 200, 2);
-		add_filter('get_comments_number', array(&$this, 'ppl_merge_comment_count'), 100, 2);
-		add_action('wp', array(&$this, 'ppl_remove_comments_filter'));
-		add_filter('comment_form_defaults', array(&$this, 'comment_defaults'));
-		add_action('wp_head', array(&$this, 'css'));
-		add_filter('dy_reviews_stars', array(&$this, 'stars'), 10);
-		add_filter('dy_reviews_get_rating', array(&$this, 'get_rating'), 10);
-		add_filter('dy_reviews_wp_star_rating', array(&$this, 'get_stars'), 10);
+		add_shortcode('package_reviews', array($this, 'get_total_reviews'));
+		add_action('comment_form_logged_in_after', array($this, 'field'));
+		add_action('comment_form_after_fields', array($this, 'field'));
+		add_action('comment_post', array($this, 'save_comment'), 10);
+		add_action('edit_comment', array($this, 'edit_comment'), 10);
+		add_filter('preprocess_comment', array($this, 'require_comment'));
+		add_action('admin_init', array($this, 'run'));
+		add_filter('comments_template', array($this, 'template'));
+		add_filter('comment_reply_link', array($this, 'reply_link'));
+		add_filter('wp_list_comments_args', array($this, 'add_callback'));
+		add_filter('comments_array', array($this, 'ppl_merge_comments'), 10, 2);
+		add_filter('comments_array', array($this, 'order_by_date'), 200, 2);
+		add_filter('get_comments_number', array($this, 'ppl_merge_comment_count'), 100, 2);
+		add_action('wp', array($this, 'ppl_remove_comments_filter'));
+		add_filter('comment_form_defaults', array($this, 'comment_defaults'));
+		add_action('wp_head', array($this, 'css'));
+		add_filter('dy_reviews_stars', array($this, 'stars'), 10);
+		add_filter('dy_reviews_get_rating', array($this, 'get_rating'), 10);
+		add_filter('dy_reviews_wp_star_rating', array($this, 'get_stars'), 10);
 		add_filter('dy_package_aggregate_rating', [$this, 'total_reviews']);
-		add_filter('minimal_ld_json', array(&$this, 'ratings_ld_json'), 10);
+		add_filter('minimal_ld_json', array($this, 'ratings_ld_json'), 10);
 	}
 	
 
@@ -94,7 +94,7 @@ class Dynamicpackages_Reviews
 	
 	public function run()
 	{
-		add_meta_box('dy_rating', __('Dynamic Packages'), array(&$this, 'field'), 'comment', 'normal');
+		add_meta_box('dy_rating', __('Dynamic Packages'), array($this, 'field'), 'comment', 'normal');
 	}
 	
 	public function field($field) {
@@ -280,7 +280,7 @@ class Dynamicpackages_Reviews
 	{
 		if(has_package())
 		{
-			$args['callback'] = array(&$this, 'review_callback');
+			$args['callback'] = array($this, 'review_callback');
 		}
 		return $args;
 	}
@@ -423,7 +423,7 @@ class Dynamicpackages_Reviews
 			}
 			
 			if ( count($translationIds) >1 ) {
-				usort($comments, array(&$this, 'ppl_sort_merged_comments'));
+				usort($comments, array($this, 'ppl_sort_merged_comments'));
 			}
 		}
 		return $comments;

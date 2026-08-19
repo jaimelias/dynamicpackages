@@ -14,13 +14,13 @@ class wire_transfer{
 
 
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 102);	
-		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 103);
-		add_filter('dy_request_the_title', array(&$this, 'title'), 103);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 5);
-		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
+		add_action('init', array($this, 'init'));
+		add_action( 'admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 102);	
+		add_filter('dy_request_the_content', array($this, 'filter_content'), 103);
+		add_filter('dy_request_the_title', array($this, 'title'), 103);
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 5);
+		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
 	}
 	
 	public function init()
@@ -47,8 +47,8 @@ class wire_transfer{
 		$this->i_bank_iban = get_option($this->id . '_i_bank_iban');		
 		
 		//controls
-		$this->show = get_option($this->id . '_show');
-		$this->min = get_option($this->id . '_min');
+		$this->show = (int) get_option($this->id . '_show', 0);
+		$this->min = (float) get_option($this->id . '_min', 0.0);
 		$this->color = '#fff';
 		$this->background_color = '#262626';
 		$this->icon = '<span class="dashicons dashicons-admin-site"></span>';
@@ -65,10 +65,10 @@ class wire_transfer{
 
 		$submission_context->accepted = true;
 		
-		add_filter('dy_email_notes', array(&$this, 'message'));
-		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-		add_filter('dy_email_intro', array(&$this, 'subject'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_notes', array($this, 'message'));
+		add_filter('dy_email_label_notes', array($this, 'label_notes'));
+		add_filter('dy_email_intro', array($this, 'subject'));
+		add_filter('dy_email_subject', array($this, 'subject'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
@@ -380,28 +380,28 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id . '_b_bank', 
 			esc_html(__( 'Beneficiary Bank Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id . '_b_bank'
 		);
 		add_settings_field( 
 			$this->id . '_b_bank_address', 
 			esc_html(__( 'Beneficiary Bank Address', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id . '_b_bank_address'
 		);
 		add_settings_field( 
 			$this->id . '_b_bank_swift', 
 			esc_html(__( 'Beneficiary Bank Swift', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id . '_b_bank_swift'
 		);				
 		add_settings_field( 
 			$this->id . '_b_account_name', 
 			esc_html(__( 'Beneficiary Account Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id . '_b_account_name'
 		);			
@@ -409,14 +409,14 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'Beneficiary Account Number', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id
 		);
 		add_settings_field( 
 			$this->id . '_b_bank_iban', 
 			esc_html(__( 'Beneficiary Account IBAN', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_b_section', $this->id . '_b_bank_iban'
 		);	
@@ -425,28 +425,28 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id . '_i_bank', 
 			esc_html(__( 'Intermediary Bank Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_bank'
 		);
 		add_settings_field( 
 			$this->id . '_i_bank_address', 
 			esc_html(__( 'Intermediary Bank Address', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_bank_address'
 		);
 		add_settings_field( 
 			$this->id . '_i_bank_swift', 
 			esc_html(__( 'Intermediary Bank Swift', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_bank_swift'
 		);		
 		add_settings_field( 
 			$this->id . '_i_account_name', 
 			esc_html(__( 'Intermediary Account Name', 'dynamicpackages' )), 
-			array(&$this, 'input_text'), 
+			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_account_name'
 		);			
@@ -454,14 +454,14 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id . '_i_account_number', 
 			esc_html(__( 'Intermediary Account Number', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_account_number'
 		);
 		add_settings_field( 
 			$this->id . '_i_bank_iban', 
 			esc_html(__( 'Intermediary Account IBAN', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_i_section', $this->id . '_i_bank_iban'
 		);			
@@ -470,7 +470,7 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
@@ -492,7 +492,7 @@ class wire_transfer{
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
 			$show_args
@@ -538,7 +538,7 @@ class wire_transfer{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 

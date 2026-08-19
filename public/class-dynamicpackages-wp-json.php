@@ -10,7 +10,7 @@ class Dynamicpackages_WP_JSON
 	function __construct()
 	{
 		add_action('rest_api_init', array($this, 'register_rest_routes'));
-		add_filter('dy_core_wp_json_args', array(&$this, 'hook_unique_tx_id'));
+		add_filter('dy_core_wp_json_args', array($this, 'hook_unique_tx_id'));
 	}
 
 	public function register_rest_routes()

@@ -19,8 +19,8 @@ class Dynamicpackages_Tables{
 
 	public function init()
 	{
-		add_action('wp', array(&$this, 'args'));
-		add_action('dy_price_table', array(&$this, 'price_table'));
+		add_action('wp', array($this, 'args'));
+		add_action('dy_price_table', array($this, 'price_table'));
 	}
 
 	public function args()

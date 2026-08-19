@@ -10,13 +10,13 @@ class Dynamicpackages_LD_JSON
 	function __construct($reviews)
 	{
 		$this->reviews = $reviews;
-		add_action('get_header', array(&$this, 'get_header'));
+		add_action('get_header', array($this, 'get_header'));
 	}
 	
 	public function get_header()
 	{
-		add_filter('minimal_ld_json', array(&$this, 'product_ld_json'));
-		add_filter('minimal_ld_json', array(&$this, 'website_ld_json'));
+		add_filter('minimal_ld_json', array($this, 'product_ld_json'));
+		add_filter('minimal_ld_json', array($this, 'website_ld_json'));
 	}
 
 	public function website_ld_json($arr = []) {

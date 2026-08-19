@@ -13,7 +13,7 @@ class Dynamicpackages_Metapost{
 	}
 	public function init()
 	{
-		add_action('save_post', array(&$this, 'package_save') , 10, 3);
+		add_action('save_post', array($this, 'package_save') , 10, 3);
 	}	
 	
 	public static function package_save($post_id) 

@@ -9,8 +9,8 @@ class Dynamicpackages_Booking_Page {
     {
 		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
-		add_action('wp', array(&$this, 'load_scripts'));
-        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+		add_action('wp', array($this, 'load_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
     public function is_valid()

@@ -39,13 +39,13 @@ class stable_coins {
         $this->id = $id;
 
 		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array(&$this, 'init'));
-		add_action( 'admin_init', array(&$this, 'settings_init'), 1);
-		add_action('admin_menu', array(&$this, 'add_settings_page'), 100);	
-		add_filter('dy_request_the_content', array(&$this, 'filter_content'), 101);
-		add_filter('dy_request_the_title', array(&$this, 'title'), 101);
-		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 2);
-		add_filter('dy_lead_event_gateways', array(&$this, 'lead_event_gateways'));
+		add_action('init', array($this, 'init'));
+		add_action( 'admin_init', array($this, 'settings_init'), 1);
+		add_action('admin_menu', array($this, 'add_settings_page'), 100);	
+		add_filter('dy_request_the_content', array($this, 'filter_content'), 101);
+		add_filter('dy_request_the_title', array($this, 'title'), 101);
+		add_filter('dy_list_gateways', array($this, 'add_gateway'), 2);
+		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
     }
 
     public function init()
@@ -58,8 +58,8 @@ class stable_coins {
         $this->type = 'crypto';
         $this->all_networks = $this->get_all_networks();
         $this->enabled_networks = $this->get_enabled_networks();
-        $this->show = get_option($this->id . '_show');
-        $this->max = get_option($this->id . '_max');
+        $this->show = (int) get_option($this->id . '_show', 0);
+        $this->max  = (float) get_option($this->id . '_max', 0.0);
         $this->color = '#fff';
         $this->background_color = $config['background_color'];
         $this->plugin_dir_url = plugin_dir_url(__DIR__);
@@ -107,10 +107,10 @@ class stable_coins {
 
 		$submission_context->accepted = true;
 
-		add_filter('dy_email_notes', array(&$this, 'message'));
-		add_filter('dy_email_label_notes', array(&$this, 'label_notes'));
-		add_filter('dy_email_intro', array(&$this, 'subject'));
-		add_filter('dy_email_subject', array(&$this, 'subject'));
+		add_filter('dy_email_notes', array($this, 'message'));
+		add_filter('dy_email_label_notes', array($this, 'label_notes'));
+		add_filter('dy_email_intro', array($this, 'subject'));
+		add_filter('dy_email_subject', array($this, 'subject'));
 		add_filter('dy_order_status', function(){
 			return $this->order_status;
 		});
@@ -309,7 +309,7 @@ class stable_coins {
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array(&$this, 'input_number'), 
+			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
 		);
@@ -331,7 +331,7 @@ class stable_coins {
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array(&$this, 'select'), 
+			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			$show_args
@@ -342,7 +342,7 @@ class stable_coins {
 			add_settings_field( 
 				$this->id . '_' . $key , 
 				esc_html(sprintf(__("%s Contract Address", 'dynamicpackages'), $value['name'])), 
-				array(&$this, 'input_text'), 
+				array($this, 'input_text'), 
 				$this->id . '_settings', 
 				$this->id . '_settings_section', $this->id . '_' . $key
 			);
@@ -388,7 +388,7 @@ class stable_coins {
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array(&$this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
 	public function settings_page()
 		 { 
