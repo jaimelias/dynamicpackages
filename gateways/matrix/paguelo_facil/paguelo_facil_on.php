@@ -647,6 +647,30 @@ class paguelo_facil_on{
 
 	public function settings_init()
 	{
+
+		$text_input = 'build_option_input';
+
+		$amount_input = static function($name) {
+			build_option_input(
+				$name,
+				array(
+					'type' => 'number',
+					'step' => '0.01',
+					'min'  => '0.01',
+				)
+			);
+		};
+
+		$email_input = static function($name) {
+			build_option_input(
+				$name,
+				array(
+					'type' => 'email',
+					'autocomplete' => 'email',
+				)
+			);
+		};
+
 		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
@@ -655,22 +679,22 @@ class paguelo_facil_on{
 		
 		add_settings_section(
 			$this->id . '_control_section', 
-			esc_html(__( 'General Settings', 'dynamicpackages' )), 
+			__( 'General Settings', 'dynamicpackages' ), 
 			'', 
 			$this->id . '_settings'
 		);		
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
-			esc_html(sprintf(__( '%s Settings', 'dynamicpackages' ), $this->name)), 
+			sprintf(__( '%s Settings', 'dynamicpackages' ), $this->name), 
 			'', 
 			$this->id . '_settings'
 		);
 				
 		add_settings_field( 
 			$this->id, 
-			esc_html(__( 'CCLW', 'dynamicpackages' )), 
-			array($this, 'input_text'), 
+			__( 'CCLW', 'dynamicpackages' ), 
+			$text_input, 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
 			$this->id
@@ -678,16 +702,16 @@ class paguelo_facil_on{
 
 		add_settings_field( 
 			$this->id . '_min', 
-			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
+			__( 'Min. Amount', 'dynamicpackages' ), 
+			$amount_input, 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
 
 		add_settings_field( 
 			$this->id . '_max', 
-			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
+			__( 'Max. Amount', 'dynamicpackages' ), 
+			$amount_input, 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_max'
 		);
@@ -708,7 +732,7 @@ class paguelo_facil_on{
 
 		add_settings_field( 
 			$this->id . '_show', 
-			esc_html(__( 'Show', 'dynamicpackages' )), 
+			__( 'Show', 'dynamicpackages' ), 
 			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_control_section',
@@ -717,26 +741,12 @@ class paguelo_facil_on{
 		
 		add_settings_field( 
 			$this->id . '_debug_email', 
-			esc_html(__( 'Debug Email', 'dynamicpackages' )), 
-			array($this, 'input_text'), 
+			__( 'Debug Email', 'dynamicpackages' ), 
+			$email_input, 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_debug_email'
 		);
 	}
-	
-	public function input_text($name){
-		$option = get_option($name);
-		?>
-		<input type="text" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
-		<?php
-	}
-	
-	public function input_number($name){
-		$option = get_option($name);
-		?>
-		<input type="number" step="0.01" min="0" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
-		<?php
-	}	
 		
 	public function select($args) {
 		
