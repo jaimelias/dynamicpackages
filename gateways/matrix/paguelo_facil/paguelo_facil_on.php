@@ -648,29 +648,6 @@ class paguelo_facil_on{
 	public function settings_init()
 	{
 
-		$text_input = 'build_option_input';
-
-		$amount_input = static function($name) {
-			build_option_input(
-				$name,
-				array(
-					'type' => 'number',
-					'step' => '0.01',
-					'min'  => '0.01',
-				)
-			);
-		};
-
-		$email_input = static function($name) {
-			build_option_input(
-				$name,
-				array(
-					'type' => 'email',
-					'autocomplete' => 'email',
-				)
-			);
-		};
-
 		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
@@ -694,7 +671,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id, 
 			__( 'CCLW', 'dynamicpackages' ), 
-			$text_input, 
+			['dy_build_option_input', 'text'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
 			$this->id
@@ -703,7 +680,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id . '_min', 
 			__( 'Min. Amount', 'dynamicpackages' ), 
-			$amount_input, 
+			['dy_build_option_input', 'price'], 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_min'
 		);
@@ -711,7 +688,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id . '_max', 
 			__( 'Max. Amount', 'dynamicpackages' ), 
-			$amount_input, 
+			['dy_build_option_input', 'price']	, 
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_max'
 		);
@@ -742,7 +719,7 @@ class paguelo_facil_on{
 		add_settings_field( 
 			$this->id . '_debug_email', 
 			__( 'Debug Email', 'dynamicpackages' ), 
-			$email_input, 
+			['dy_build_option_input', 'email'],
 			$this->id . '_settings', 
 			$this->id . '_control_section', $this->id . '_debug_email'
 		);
