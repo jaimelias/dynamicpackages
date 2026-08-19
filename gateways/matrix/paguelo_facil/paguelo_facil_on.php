@@ -694,27 +694,27 @@ class paguelo_facil_on{
 			$this->id . '_max'
 		);
 
-		$show_args = array(
-			'name' => $this->id . '_show',
-			'options' => array(
-				array(
-					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
-					'value' => 0
-				),
-				array(
-					'text' => esc_html('Only Deposits', 'dynamicpackages'),
-					'value' => 1
-				),
-			)
-		);
+		$show_field = function() {
+			return dy_build_option_select::custom(
+				$this->id . '_show',
+				[
+					0 => __('Full Payments and Deposits', 'dynamicpackages'),
+					1 => __('Only Deposits', 'dynamicpackages'),
+				],
+				[
+					'name' => $this->id . '_show',
+					'id' => $this->id . '_show',
+				]
+			);
+		};
 
 		add_settings_field( 
 			$this->id . '_show', 
 			__( 'Show', 'dynamicpackages' ), 
-			array($this, 'select'), 
+			$show_field, 
 			$this->id . '_settings', 
 			$this->id . '_control_section',
-			$show_args
+			$this->id . '_show',
 		);
 		
 		add_settings_field( 
@@ -725,28 +725,6 @@ class paguelo_facil_on{
 			$this->id . '_control_section', 
 			$this->id . '_debug_email'
 		);
-	}
-		
-	public function select($args) {
-		
-		$name = $args['name'];
-		$options = $args['options'];
-		$value = intval(get_option($name));
-		$render_options = '';
-		
-		for($x = 0; $x < count($options); $x++)
-		{
-			$this_value = intval($options[$x]['value']);
-			$this_text = $options[$x]['text'];
-			$selected = ($value === $this_value) ? ' selected ' : '';
-			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
-		}
-
-		?>
-			<select name="<?php echo esc_attr($name); ?>">
-				<?php echo $render_options; ?>
-			</select>
-		<?php 
 	}
 
 	public function add_settings_page()
