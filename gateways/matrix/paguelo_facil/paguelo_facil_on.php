@@ -647,7 +647,6 @@ class paguelo_facil_on{
 
 	public function settings_init()
 	{
-
 		register_setting($this->id . '_settings', $this->id, 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_min', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
@@ -682,7 +681,8 @@ class paguelo_facil_on{
 			__( 'Min. Amount', 'dynamicpackages' ), 
 			['dy_build_option_input', 'price'], 
 			$this->id . '_settings', 
-			$this->id . '_control_section', $this->id . '_min'
+			$this->id . '_control_section', 
+			$this->id . '_min'
 		);
 
 		add_settings_field( 
@@ -690,7 +690,8 @@ class paguelo_facil_on{
 			__( 'Max. Amount', 'dynamicpackages' ), 
 			['dy_build_option_input', 'price']	, 
 			$this->id . '_settings', 
-			$this->id . '_control_section', $this->id . '_max'
+			$this->id . '_control_section', 
+			$this->id . '_max'
 		);
 
 		$show_args = array(
@@ -721,7 +722,8 @@ class paguelo_facil_on{
 			__( 'Debug Email', 'dynamicpackages' ), 
 			['dy_build_option_input', 'email'],
 			$this->id . '_settings', 
-			$this->id . '_control_section', $this->id . '_debug_email'
+			$this->id . '_control_section', 
+			$this->id . '_debug_email'
 		);
 	}
 		
