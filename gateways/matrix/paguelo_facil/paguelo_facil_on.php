@@ -81,6 +81,12 @@ class paguelo_facil_on{
 
 	public function checkout_request_sign() {
 
+		$cache_key = $this->id . '_checkout_request_sign_' . secure_post('unique_tx_id');
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
 		$arr = [
 			(string) secure_post('unique_tx_id'),
 			(string) secure_post('dy_id'),
@@ -104,12 +110,14 @@ class paguelo_facil_on{
 		];
 
 		$text = implode('|', $arr);
-
-		return hash_hmac(
+		
+		$hash = hash_hmac(
 			'sha256',
 			$text,
 			wp_salt('auth')
 		);
+
+		return self::$cache[$cache_key] = $hash;
 	}
 	
 	public function checkout()
@@ -449,6 +457,10 @@ class paguelo_facil_on{
 	{
 		$output = false;
 		$cache_key = $this->id . '_show';
+
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
 		
 		if(is_singular('packages') && $this->is_active())
 		{
@@ -473,7 +485,6 @@ class paguelo_facil_on{
         }
 
 		global $dy_request_invalids;
-		
 
 		if(is_confirmation_page() && ($this->restored_from_cache || !isset($dy_request_invalids)))
 		{
@@ -482,11 +493,9 @@ class paguelo_facil_on{
 				$output = true;
 			}
 		}
-		
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
 
-		return $output;
+
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	public function the_content($output)

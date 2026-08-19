@@ -76,7 +76,13 @@ class wire_transfer{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
+		$cache_key = $this->id . '_subject_' . secure_post('unique_tx_id');
+		
+		if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+        
+		return self::$cache[$cache_key] = sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
 	public function label_notes()
@@ -193,6 +199,13 @@ class wire_transfer{
 	
 	public function account()
 	{
+
+		$cache_key = $this->id . '_account';
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
 		$output = '<p><strong>'.esc_html(__('Beneficiary Bank', 'dynamicpackages')).'</strong><br/>';
 		
 		if(!empty($this->b_bank))
@@ -259,7 +272,7 @@ class wire_transfer{
 		
 		$output .= '</p>';
 		
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
 	public function is_valid()

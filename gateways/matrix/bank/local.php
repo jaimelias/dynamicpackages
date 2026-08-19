@@ -61,7 +61,13 @@ class bank_transfer{
 
 	public function subject()
 	{
-		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
+		$cache_key = $this->id . '_subject_' . secure_post('unique_tx_id');
+		
+		if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+        
+		return self::$cache[$cache_key] = sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
 	public function label_notes()
@@ -183,6 +189,12 @@ class bank_transfer{
 	public function account()
 	{
 		
+		$cache_key = $this->id . '_account';
+
+		if (isset(self::$cache[$cache_key])) {
+			return self::$cache[$cache_key];
+		}
+
 		$type = __('Saving Account', 'dynamicpackages');
 		
 		if($this->type == 1)
@@ -195,7 +207,7 @@ class bank_transfer{
 		$bank .= esc_html(__('Account Number', 'dynamicpackages')).': <strong>'.esc_html($this->number).'</strong><br/>';
 		$bank .= esc_html(__('Account Name', 'dynamicpackages')).': <strong>'.esc_html($this->beneficiary).'</strong>';
 
-		return $bank;
+		return self::$cache[$cache_key] = $bank;
 	}
 
 	public function is_valid()

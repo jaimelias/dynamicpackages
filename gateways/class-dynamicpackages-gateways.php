@@ -47,7 +47,7 @@ class Dynamicpackages_Gateways
 	{
 		add_filter('wp', array(&$this, 'modify_headers'), 100);
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
-		add_filter('dy_list_gateways', array(&$this, 'list_gateways'), 99);
+		add_filter('dy_list_gateways', array(&$this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);			
 		add_action('dy_terms_conditions', array(&$this, 'terms_conditions'));
@@ -109,7 +109,7 @@ class Dynamicpackages_Gateways
 	public function gateway_buttons()
 	{
 		$buttons  = [];
-		$gateways = (array) apply_filters('dy_list_gateways', array());
+		$gateways = (array) apply_filters('dy_list_gateways', []);
 
 		foreach ($gateways as $gateway_id => $obj) {
 
@@ -158,9 +158,7 @@ class Dynamicpackages_Gateways
 			}
 		}
 
-		self::$cache[$cache_key] = $gateways;
-
-		return $gateways;
+		return self::$cache[$cache_key] = $gateways;
 	}
 	
 	public function join_gateways()
@@ -192,7 +190,7 @@ class Dynamicpackages_Gateways
             return self::$cache[$cache_key];
         }
 
-		$gateways = (array) apply_filters('dy_list_gateways', array());
+		$gateways = (array) apply_filters('dy_list_gateways', []);
 		$total = (float) dy_utilities::total();
 		$pax_num = (int) dy_utilities::pax_num();
 		$max_persons = (int) package_field('package_max_persons');

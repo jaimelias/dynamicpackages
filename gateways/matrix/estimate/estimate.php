@@ -57,14 +57,11 @@ class estimate_request{
 			if($this->is_valid())
 			{
 				$output = true;
-			}
-
-			//store output in $cache
-			self::$cache[$cache_key] = $output;
+			}			
 		}
 
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	public function is_valid()
