@@ -10,9 +10,7 @@
     $price_regular     = dy_utilities::get_price_regular();
     $price_discount    = dy_utilities::get_price_discount();
     $payment           = 0;
-    $deposit           = 25;
     $total             = dy_utilities::total();
-    $payment_amount    = $total;
     $pax_regular       = intval(sanitize_text_field($_GET['pax_regular']));
     $participants      = $pax_regular;
     $deposit_label     = '';

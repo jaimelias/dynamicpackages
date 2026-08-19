@@ -9,8 +9,6 @@ class estimate_request{
 
 	function __construct($plugin_id)
 	{
-		$this->plugin_id = $plugin_id;
-		
 		add_action('init', array(&$this, 'init'));
 		add_filter('dy_list_gateways', array(&$this, 'add_gateway'), 10);
 	}
@@ -21,7 +19,6 @@ class estimate_request{
 		$this->name = __('request an estimate', 'dynamicpackages');
 		$this->brands = [$this->name];
 		$this->type = 'alt';
-		$this->name_button = __('Get estimate', 'dynamicpackages');
 		$this->color = '#444';
 		$this->background_color = '#ccc';
 		$this->only_estimate = __('Get a quote in seconds! Quick, easy, and hassle-free. Just ask, and your estimate will be in your inbox in no time.', 'dynamicpackages');

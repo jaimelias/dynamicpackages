@@ -592,7 +592,6 @@ class paguelo_facil_on{
 		if($this->is_active() )
 		{
 			$payment = package_field('package_payment');
-			$deposit = floatval(dy_utilities::get_deposit());
 			
 			if(is_booking_page() || is_confirmation_page())
 			{

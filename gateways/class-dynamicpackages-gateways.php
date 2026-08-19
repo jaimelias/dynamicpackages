@@ -33,22 +33,20 @@ class Dynamicpackages_Gateways
 	{
 
 		$this->estimate = new estimate_request($this->plugin_id);
-		$this->add_to_calendar = new dy_Add_To_Calendar();
-		$this->paguelo_facil_on = new paguelo_facil_on($this->plugin_id);
-		$this->cuanto = new cuanto($this->plugin_id);
-		$this->paypal_me = new paypal_me($this->plugin_id);
-		$this->yappy_direct = new yappy_direct($this->plugin_id);
-		$this->bank_transfer = new bank_transfer($this->plugin_id);
-		$this->wire_transfer = new wire_transfer($this->plugin_id);
-		$this->usdt = new stable_coins($this->plugin_id, 'usdt');
-		$this->usdc = new stable_coins($this->plugin_id, 'usdc');
+		new dy_Add_To_Calendar();
+		new paguelo_facil_on($this->plugin_id);
+		new cuanto($this->plugin_id);
+		new paypal_me($this->plugin_id);
+		new yappy_direct($this->plugin_id);
+		new bank_transfer($this->plugin_id);
+		new wire_transfer($this->plugin_id);
+		new stable_coins($this->plugin_id, 'usdt');
+		new stable_coins($this->plugin_id, 'usdc');
 	}
 	public function init()
 	{
 		add_filter('wp', array(&$this, 'modify_headers'), 100);
 		add_action('dy_cc_form', array(&$this, 'cc_form'));
-		add_action('admin_init', array(&$this, 'load_gateways'));
-		add_action('init', array(&$this, 'load_gateways'));
 		add_filter('dy_list_gateways', array(&$this, 'list_gateways'), 99);
 		add_action('dy_checkout_area', array(&$this, 'checkout_area'), 1);
 		add_filter('the_content', array(&$this, 'the_content'), 102);			
@@ -216,17 +214,15 @@ class Dynamicpackages_Gateways
 
 	public function get_brands_as_array() {
 		$brands = [];
-		$gateways = (array) apply_filters('dy_list_gateways', array());
+		$gateways = (array) apply_filters('dy_list_gateways', []);
 
-		foreach($gateways as $gateway_id => $obj) {
-			for($x = 0; $x < count($obj['brands']); $x++)
-			{
-				if(in_array($obj['brands'][$x], $brands)) continue;
-				$brands[] = $obj['brands'][$x];
+		foreach ($gateways as $gateway) {
+			foreach ($gateway['brands'] ?? [] as $brand) {
+				$brands[$brand] = true;
 			}
 		}
 
-		return $brands;
+		return array_keys($brands);
 	}
 
 	public function choose_gateway()
@@ -311,7 +307,7 @@ class Dynamicpackages_Gateways
 		
 	}
 	
-	public function cc_form($output)
+	public function cc_form()
 	{
 		ob_start();
 		require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/cc-form.php');
@@ -435,9 +431,6 @@ class Dynamicpackages_Gateways
 
 	public function copy_payment_link(): void
 	{
-
-		$show_button = true;
-
 		if(!isset($_COOKIE['has_user_logged_in']) && !is_user_logged_in())
 		{
 			return;
@@ -459,7 +452,6 @@ class Dynamicpackages_Gateways
 
 	public function force_availability_link()
 	{
-		$show_button = true;
 
 		if(!isset($_COOKIE['has_user_logged_in']) && !is_user_logged_in())
 		{

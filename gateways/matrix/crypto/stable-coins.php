@@ -121,7 +121,7 @@ class stable_coins {
 		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
-	public function label_notes($notes)
+	public function label_notes()
 	{
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
@@ -162,10 +162,8 @@ class stable_coins {
 
 		$active_networks = false;
 
-		foreach($this->all_networks as $key => $value)
-		{
-			if(!empty(get_option($this->id . '_' . $key)))
-			{
+		foreach (array_keys($this->all_networks) as $key) {
+			if (!empty(get_option("{$this->id}_{$key}"))) {
 				$active_networks = true;
 				break;
 			}
@@ -247,7 +245,6 @@ class stable_coins {
 			$max = floatval($this->max);
 			$show = intval($this->show);
 			$payment = package_field('package_payment');
-			$deposit = floatval(dy_utilities::get_deposit());
 			
 			if(is_booking_page() || is_confirmation_page())
 			{

@@ -62,7 +62,7 @@ class cuanto{
 		return sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
-	public function label_notes($notes)
+	public function label_notes()
 	{
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
@@ -163,7 +163,6 @@ class cuanto{
 			$max = floatval($this->max);
 			$show = intval($this->show);
 			$payment = package_field('package_payment');
-			$deposit = floatval(dy_utilities::get_deposit());
 			
 			if(is_booking_page() || is_confirmation_page())
 			{
