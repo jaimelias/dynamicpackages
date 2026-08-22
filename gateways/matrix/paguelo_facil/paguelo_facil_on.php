@@ -86,7 +86,7 @@ class paguelo_facil_on{
 
 		$cache_key = $this->id . '_checkout_request_sign_' . secure_post('unique_tx_id');
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -444,7 +444,7 @@ class paguelo_facil_on{
 		$output = false;
 		$cache_key = $this->id . '_is_active';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -463,7 +463,7 @@ class paguelo_facil_on{
 		$output = false;
 		$cache_key = $this->id . '_show';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 		
@@ -485,7 +485,7 @@ class paguelo_facil_on{
 		$output = false;
 		$cache_key = $this->id . '_is_valid_request';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -599,7 +599,7 @@ class paguelo_facil_on{
 		$output = false;
 		$cache_key = $this->id . '_is_valid';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

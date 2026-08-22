@@ -136,7 +136,7 @@ class Dynamicpackages_Gateways
 	{
 		$cache_key = 'dy_list_gateways';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 		
@@ -186,7 +186,7 @@ class Dynamicpackages_Gateways
 
 		$cache_key = 'dy_has_gateway_' . ((string) get_dy_id());
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

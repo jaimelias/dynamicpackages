@@ -116,7 +116,7 @@ class Dynamicpackages_Fields
         $cache_key = $name . '_' . $this_id;
 
         // Use cached value if available
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

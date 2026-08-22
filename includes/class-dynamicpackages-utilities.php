@@ -15,7 +15,7 @@ class dy_utilities {
 		$cache_key = $the_id.'_get_package_type';
 		$output = '';
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -194,7 +194,7 @@ class dy_utilities {
 		$cache_key = 'dy_get_coupon';
 
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -251,7 +251,7 @@ class dy_utilities {
 		$cache_key = 'dy_total_'.$regular.'_'.$the_id;
 		$total = 0;
 		
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -275,7 +275,7 @@ class dy_utilities {
 		$cache_key = 'dy_subtotal_'.$regular.'_'.$the_id;
 		$subtotal = 0;
 		
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -326,7 +326,7 @@ class dy_utilities {
 		$the_id = get_dy_id();
 		$cache_key = 'dy_show_duration_'.$the_id.'_'.$max;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -389,7 +389,7 @@ class dy_utilities {
 		$name = 'dy_start_archive';
 		$cache_key = $name.'_'.$the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}		
 
@@ -435,7 +435,7 @@ class dy_utilities {
 		$output = 0;
 		$cache_key = 'dy_starting_at_'. $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -570,7 +570,7 @@ class dy_utilities {
 		$output = [];
 		$cache_key = 'price_chart_'.$the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 		
@@ -599,7 +599,7 @@ class dy_utilities {
 		
 		$cache_key = 'occupancy_chart_'.$the_id;
 		
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -616,7 +616,7 @@ class dy_utilities {
 		$output = [];
 		$cache_key = 'seasons_chart_'.get_dy_id();
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -1000,7 +1000,7 @@ class dy_utilities {
 
 		$cache_key ='get_price_calc_'.$sum.'_'.$regular.'_'.$type.'_'.get_dy_id();
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1241,7 +1241,7 @@ class dy_utilities {
 		$output = [];
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1283,7 +1283,7 @@ class dy_utilities {
 
 		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1436,7 +1436,7 @@ class dy_utilities {
 		$icon_class_str = (!empty($icon_class)) ? 1 : 0;
 		$cache_key = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -1510,7 +1510,7 @@ class dy_utilities {
 
 		$cache_key = 'dy_get_option_hot_chart' . $key_name;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -1546,7 +1546,7 @@ class dy_utilities {
 
 		$cache_key = 'dy_get_package_hot_chart' . $key_name . '_' . $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -1578,7 +1578,7 @@ class dy_utilities {
 		$the_id = get_dy_id();
 		$cache_key = 'dy_enabled_days_' . $the_id . '_' . (int) $force_long;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}		
 
@@ -1626,7 +1626,7 @@ class dy_utilities {
 
 		$cache_key = 'dy_update_package_date_in_db_' . (string) $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			
 			return self::$cache[$cache_key]; // Retorna el valor cacheado sin recalcular desde cache
 		}	

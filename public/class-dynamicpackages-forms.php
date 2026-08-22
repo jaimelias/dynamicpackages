@@ -116,7 +116,7 @@ class Dynamicpackages_Forms
 		$the_id = get_dy_id();
 		$cache_key = $name.'_'.$the_id;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             echo self::$cache[$cache_key];
 			return true;
         }

@@ -203,7 +203,7 @@ class Dynamicpackages_Public {
 		$the_id    = get_dy_id();
 		$cache_key = sprintf('%s_%s', $name, $the_id);
 
-		if ( isset(self::$cache[$cache_key]) ) {
+		if ( array_key_exists($cache_key, self::$cache) ) {
 			return self::$cache[$cache_key];
 		}
 
@@ -243,7 +243,7 @@ class Dynamicpackages_Public {
 		$cache_key = 'dy_get_location_list';
 
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -260,7 +260,7 @@ class Dynamicpackages_Public {
 		$cache_key = 'dy_get_category_list';
 
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -278,7 +278,7 @@ class Dynamicpackages_Public {
 		$output = '';
 		$cache_key = 'dy_get_terms_conditions_list';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -295,7 +295,7 @@ class Dynamicpackages_Public {
 		$cache_key = 'dy_get_included_list';
 
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
         
@@ -314,7 +314,7 @@ class Dynamicpackages_Public {
 		$cache_key = 'dy_get_not_included_list';
 
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -351,7 +351,7 @@ class Dynamicpackages_Public {
 		$the_id = get_dy_id();
 		$cache_key = $name.'_'.$the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 	
@@ -510,7 +510,7 @@ class Dynamicpackages_Public {
 		$cache_key = 'dy_children_package';
 		$output = '';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             echo self::$cache[$cache_key];
 			return;
         }
@@ -685,7 +685,7 @@ class Dynamicpackages_Public {
 		$the_id = get_dy_id();
 		$cache_key = $name.'_'.$the_id;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1006,7 +1006,7 @@ class Dynamicpackages_Public {
 		$output = '';
 		$cache_key = 'dy_similar_packages_link';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1049,7 +1049,7 @@ class Dynamicpackages_Public {
 		$output = [];
 		$cache_key = 'event_arr';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -1171,7 +1171,7 @@ class Dynamicpackages_Public {
 		$the_id = get_dy_id();
 		$cache_key = 'dy_edit_link' . '_' . $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 

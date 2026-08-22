@@ -61,7 +61,7 @@ class cuanto{
 	{
 		$cache_key = $this->id . '_subject_' . secure_post('unique_tx_id');
 		
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
         
@@ -92,7 +92,7 @@ class cuanto{
 		$output = false;
 		$cache_key = $this->id.'_is_active';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -111,7 +111,7 @@ class cuanto{
 		$output = false;
 		$cache_key = $this->id.'_show';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -136,7 +136,7 @@ class cuanto{
 		$cache_key = $this->id . '_is_valid_request';
 		global $dy_request_invalids;
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -160,7 +160,7 @@ class cuanto{
 		$output = false;
 		$cache_key = $this->id . '_is_valid';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

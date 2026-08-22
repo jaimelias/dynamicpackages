@@ -198,7 +198,7 @@ class Dynamicpackages_Reviews
 		$comments = [];
 		$cache_key = 'dy_get_comments_' . $id;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -237,7 +237,7 @@ class Dynamicpackages_Reviews
 		$output = false;
 		$cache_key = 'dy_get_rating_' . $id;
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

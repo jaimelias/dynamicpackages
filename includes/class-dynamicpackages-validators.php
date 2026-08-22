@@ -29,7 +29,7 @@ public static function validate_quote()
 		$the_id = get_dy_id();
 		$cache_key = 'dy_validate_quote_' . $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -83,7 +83,7 @@ public static function validate_quote()
 		$cache_key = 'dy_validate_booking_date_' . $the_id;
 		
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -116,7 +116,7 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_has_package';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -151,7 +151,7 @@ public static function validate_quote()
 
 		$cache_key = 'validate_the_id_' . $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -167,7 +167,7 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_is_booking_page';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -212,7 +212,7 @@ public static function validate_quote()
 
 		$cache_key = 'dy_validate_pax_regular_' . $the_id;
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -243,7 +243,7 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_is_checkout_page';
 	
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -278,7 +278,7 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_validate_request';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -315,7 +315,7 @@ public static function validate_quote()
 		$invalids = [];
 		$cache_key = 'dy_validate_contact_details';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -409,7 +409,7 @@ public static function validate_quote()
 		$cache_key = 'dy_validate_checkout_' . sanitize_key($gateway_name);
 
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -432,7 +432,7 @@ public static function validate_terms_conditions()
 		$output = true;
 		$cache_key = 'dy_validate_terms_conditions';
 
-		if (isset(self::$cache[$cache_key])) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
@@ -467,7 +467,7 @@ public static function validate_terms_conditions()
 		$cache_key = 'dy_validate_booking_details';		
 		
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -487,7 +487,7 @@ public static function validate_terms_conditions()
 		$output = false;
 		$cache_key = 'dy_validate_card';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -557,7 +557,7 @@ public static function validate_terms_conditions()
 		$output = false;
 		$cache_key = 'dy_validate_hash';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -582,7 +582,7 @@ public static function validate_terms_conditions()
 		$output = false;
 		$cache_key = 'dy_has_coupon';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -621,7 +621,7 @@ public static function validate_terms_conditions()
 		$cache_key = 'dy_validate_coupon';
 
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -725,7 +725,7 @@ public static function validate_terms_conditions()
 		
 		$cache_key = 'dy_validate_category_location';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -795,7 +795,7 @@ public static function validate_terms_conditions()
 		$output = false;
 		$cache_key = 'dy_has_deposit';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -832,7 +832,7 @@ public static function validate_terms_conditions()
 			{
 				$cache_key = $post->ID.'_is_child';
 
-				if (isset(self::$cache[$cache_key])) {
+				if (array_key_exists($cache_key, self::$cache)) {
 					return self::$cache[$cache_key];
 				}
 
@@ -870,7 +870,7 @@ public static function validate_terms_conditions()
 			{
 				$cache_key = 'dy_has_children_' . $post->ID;
 				
-				if (isset(self::$cache[$cache_key])) {
+				if (array_key_exists($cache_key, self::$cache)) {
 					return self::$cache[$cache_key];
 				}
 
@@ -909,7 +909,7 @@ public static function validate_terms_conditions()
 		
 		$cache_key = 'dy_is_parent_with_no_child_' . $the_id;
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -930,7 +930,7 @@ public static function validate_terms_conditions()
 		$output = false;
 		$cache_key = 'dy_is_valid_schema_' . $the_id;
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 

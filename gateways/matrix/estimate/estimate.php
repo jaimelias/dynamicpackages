@@ -32,7 +32,7 @@ class estimate_request{
 		$output = false;
 		$cache_key = $this->id.'_is_active';
 		
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -48,7 +48,7 @@ class estimate_request{
 		$output = false;
 		$cache_key = $this->id.'_show';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
@@ -69,7 +69,7 @@ class estimate_request{
 		$output = false;
 		$cache_key = $this->id . '_is_valid';
 
-        if (isset(self::$cache[$cache_key])) {
+        if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
 
