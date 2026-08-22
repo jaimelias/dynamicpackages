@@ -673,7 +673,9 @@ class paguelo_facil_on{
 			['dy_input_controller', 'text'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
-			$this->id
+			[
+				'key' => $this->id
+			]
 		);
 
 		add_settings_field( 
@@ -682,7 +684,9 @@ class paguelo_facil_on{
 			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
-			$this->id . '_min'
+			[
+				'key' => $this->id . '_min'
+			]
 		);
 
 		add_settings_field( 
@@ -691,20 +695,18 @@ class paguelo_facil_on{
 			['dy_input_controller', 'price']	, 
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
-			$this->id . '_max'
+			[
+				'key' => $this->id . '_max'
+			]
 		);
-
-		$show_field = function() {
-			return dy_select_controller::custom(
-				$this->id . '_show',
+		
+		$show_field = function($args) {
+			dy_select_controller::custom(
 				[
 					0 => __('Full Payments and Deposits', 'dynamicpackages'),
 					1 => __('Only Deposits', 'dynamicpackages'),
 				],
-				[
-					'name' => $this->id . '_show',
-					'id' => $this->id . '_show',
-				]
+				$args
 			);
 		};
 
@@ -714,7 +716,9 @@ class paguelo_facil_on{
 			$show_field, 
 			$this->id . '_settings', 
 			$this->id . '_control_section',
-			$this->id . '_show',
+			[
+				'key' => $this->id . '_show'
+			]
 		);
 		
 		add_settings_field( 
@@ -723,7 +727,9 @@ class paguelo_facil_on{
 			['dy_input_controller', 'email'],
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
-			$this->id . '_debug_email'
+			[
+				'key' => $this->id . '_debug_email'
+			]
 		);
 	}
 
