@@ -18,14 +18,14 @@ class Dynamicpackages_Gateways
 	
 	public function load_gateways()
 	{
-		require_once plugin_dir_path(__FILE__).'matrix/cuanto/cuanto.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/paguelo_facil/paguelo_facil_on.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/paypal/paypal_me.php';		
-		require_once plugin_dir_path(__FILE__).'matrix/yappy/yappy_direct.php';
-		require_once plugin_dir_path(__FILE__).'matrix/bank/local.php';	
-		require_once plugin_dir_path(__FILE__).'matrix/bank/international.php';	
-		require_once plugin_dir_path(__FILE__).'matrix/estimate/estimate.php';
-		require_once plugin_dir_path(__FILE__).'matrix/crypto/stable-coins.php';
+		$plugin_dir_path = plugin_dir_path(__FILE__);
+
+		require_once $plugin_dir_path . 'matrix/cuanto/cuanto.php';		
+		require_once $plugin_dir_path . 'matrix/paguelo_facil/paguelo_facil_on.php';		
+		require_once $plugin_dir_path . 'matrix/paypal/paypal_me.php';		
+		require_once $plugin_dir_path . 'matrix/yappy/yappy_direct.php';
+		require_once $plugin_dir_path . 'matrix/estimate/estimate.php';
+		require_once $plugin_dir_path . 'matrix/crypto/stable-coins.php';
 		
 	}	
 	
@@ -38,8 +38,6 @@ class Dynamicpackages_Gateways
 		new cuanto($this->plugin_id);
 		new paypal_me($this->plugin_id);
 		new yappy_direct($this->plugin_id);
-		new bank_transfer($this->plugin_id);
-		new wire_transfer($this->plugin_id);
 		new stable_coins($this->plugin_id, 'usdt');
 		new stable_coins($this->plugin_id, 'usdc');
 	}
