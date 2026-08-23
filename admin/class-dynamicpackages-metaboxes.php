@@ -308,7 +308,7 @@ class Dynamicpackages_Metaboxes
 		?>
 		<p><label><?php echo esc_html(__('Number of coupons', 'dynamicpackages')); ?> <?php $this->select_number('max_coupons', 1, 10, $this->disable_child); ?></label></p>
 		
-		<?php echo dy_utilities::handsontable($this->coupon_args); ?>
+		<?php echo handsontable($this->coupon_args); ?>
 		
 		<?php
     }
@@ -495,7 +495,7 @@ class Dynamicpackages_Metaboxes
 
 			<h3><?php echo esc_html(__('Number of Special Seasons', 'dynamicpackages')); ?> <?php $this->select_number('num_seasons', 0, 10, $this->disable_child); ?></h3>
 		
-			<?php echo dy_utilities::handsontable($this->seasons_args); ?>			
+			<?php echo handsontable($this->seasons_args); ?>			
 	
 		</fieldset>
 		
@@ -526,7 +526,7 @@ class Dynamicpackages_Metaboxes
 
 		<fieldset>
 			<?php echo '<h3>'.esc_html(__('Base Prices - Per Person', 'dynamicpackages')).'</h3>'; ?>
-			<?php echo dy_utilities::handsontable($this->price_chart_args); ?>
+			<?php echo handsontable($this->price_chart_args); ?>
 		</fieldset>
 		
 
@@ -583,7 +583,7 @@ class Dynamicpackages_Metaboxes
 
 			<h3><?php esc_html_e('Disabled Dates', 'dynamicpackages'); ?> <?php $this->select_number('disabled_num', 1, 30); ?></h3>
 			
-			<?php echo dy_utilities::handsontable($this->disabled_dates_args); ?>
+			<?php echo handsontable($this->disabled_dates_args); ?>
 		<?php endif; ?>
 		
 		<h3><?php esc_html_e('Disabled Dates API Endpoint', 'dynamicpackages'); ?></h3>
@@ -592,7 +592,7 @@ class Dynamicpackages_Metaboxes
 		
 		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 1, 20); ?></h3>
 		
-		<?php echo dy_utilities::handsontable($this->enabled_dates_args); ?>	
+		<?php echo handsontable($this->enabled_dates_args); ?>	
 	
 		<?php
     }

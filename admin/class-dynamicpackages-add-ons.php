@@ -234,7 +234,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					{
 						if($args[$k]['handsontable'] == true)
 						{							
-							$field = dy_utilities::handsontable(array(
+							$field = handsontable(array(
 								'container' => $k.'_c',
 								'textarea' => $k,
 								'headers' => array(__('Prices', 'dynamicpackages')),

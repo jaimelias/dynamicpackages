@@ -236,7 +236,7 @@ class Dynamicpackages_Admin {
 			'value' => get_option($arr['name'])
 		];
 		
-		echo dy_utilities::handsontable($args);
+		echo handsontable($args);
 	}
 	
 	
