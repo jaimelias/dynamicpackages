@@ -268,14 +268,14 @@ class yappy_direct {
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
-			esc_html(__( 'General Settings', 'dynamicpackages' )), 
+			__( 'General Settings', 'dynamicpackages' ), 
 			'', 
 			$this->id . '_settings'
 		);
 		
 		add_settings_field( 
 			$this->id, 
-			esc_html(__( 'Yappy Cell Phone Number', 'dynamicpackages' )), 
+			__( 'Yappy Cell Phone Number', 'dynamicpackages' ), 
 			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id
@@ -283,14 +283,14 @@ class yappy_direct {
 		
 		add_settings_field( 
 			$this->id . '_business', 
-			esc_html(__( 'Yappy Business Name', 'dynamicpackages' )), 
+			__( 'Yappy Business Name', 'dynamicpackages' ), 
 			array($this, 'input_text'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_business'
 		);			
 		add_settings_field( 
 			$this->id . '_max', 
-			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
+			__( 'Max. Amount', 'dynamicpackages' ), 
 			array($this, 'input_number'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_max'
@@ -304,7 +304,7 @@ class yappy_direct {
 					'value' => 0
 				),
 				array(
-					'text' => esc_html('Only Deposits', 'dynamicpackages'),
+					'text' => __('Only Deposits', 'dynamicpackages'),
 					'value' => 1
 				),
 			)
@@ -312,7 +312,7 @@ class yappy_direct {
 
 		add_settings_field( 
 			$this->id . '_show', 
-			esc_html(__( 'Show', 'dynamicpackages' )), 
+			__( 'Show', 'dynamicpackages' ), 
 			array($this, 'select'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
@@ -321,7 +321,7 @@ class yappy_direct {
 		
 		add_settings_field( 
 			$this->id . '_qrcode', 
-			esc_html(__( 'QR Code Url', 'dynamicpackages' )), 
+			__( 'QR Code Url', 'dynamicpackages' ), 
 			array($this, 'input_url'), 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', $this->id . '_qrcode'

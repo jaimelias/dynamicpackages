@@ -239,14 +239,14 @@ class paypal_me {
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
-			esc_html(__( 'General Settings', 'dynamicpackages' )), 
+			__( 'General Settings', 'dynamicpackages' ), 
 			'', 
 			$this->id . '_settings'
 		);
 		
 		add_settings_field( 
 			$this->id, 
-			esc_html(__( 'Username', 'dynamicpackages' )), 
+			__( 'Username', 'dynamicpackages' ), 
 			['dy_input_controller', 'text'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
@@ -257,7 +257,7 @@ class paypal_me {
 
 		add_settings_field( 
 			$this->id . '_min', 
-			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
+			__( 'Min. Amount', 'dynamicpackages' ), 
 			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
@@ -269,7 +269,7 @@ class paypal_me {
 
 		add_settings_field( 
 			$this->id . '_max', 
-			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
+			__( 'Max. Amount', 'dynamicpackages' ), 
 			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
@@ -281,7 +281,7 @@ class paypal_me {
 
 		add_settings_field( 
 			$this->id . '_service_fee', 
-			esc_html(__( 'Service Fee', 'dynamicpackages' )), 
+			__( 'Service Fee', 'dynamicpackages' ), 
 			['dy_input_controller', 'percentage'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
@@ -293,7 +293,7 @@ class paypal_me {
 
 		add_settings_field( 
 			$this->id . '_show', 
-			esc_html(__( 'Show', 'dynamicpackages' )), 
+			__( 'Show', 'dynamicpackages' ), 
 			['dy_select_controller', 'custom'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
