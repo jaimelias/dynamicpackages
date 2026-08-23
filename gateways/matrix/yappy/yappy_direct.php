@@ -261,7 +261,7 @@ class yappy_direct {
 		//Yappy
 		
 		register_setting($this->id . '_settings', $this->id, 'intval');
-		register_setting($this->id . '_settings', $this->id . '_business', 'esc_html');
+		register_setting($this->id . '_settings', $this->id . '_business', 'sanitize_text_field');
 		register_setting($this->id . '_settings', $this->id . '_show', 'intval');
 		register_setting($this->id . '_settings', $this->id . '_max', 'floatval');
 		register_setting($this->id . '_settings', $this->id . '_qrcode', 'esc_url');
