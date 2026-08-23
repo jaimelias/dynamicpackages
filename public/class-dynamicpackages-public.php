@@ -802,7 +802,6 @@ class Dynamicpackages_Public {
 
 		if($is_archive || is_page() || is_tax())
 		{
-			if(dy_utilities::enabled_days()) $req[] = 'enabled_days';
 			if($schedule) $req[] = 'schedule';
 			if($show_max_persons) $req[] = 'max_persons';
 			if(dy_utilities::hour() && $is_transport_fixed === false) $req[] = 'start_hour';

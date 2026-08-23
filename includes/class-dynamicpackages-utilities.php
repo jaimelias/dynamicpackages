@@ -104,35 +104,50 @@ class dy_utilities {
 		if(is_array($args))
 		{
 			if(array_key_exists('container', $args) && array_key_exists('textarea', $args) && array_key_exists('headers', $args) && array_key_exists('type', $args) && array_key_exists('max', $args) && array_key_exists('value', $args))
-			{				
+			{
 				if(!array_key_exists('min', $args))
 				{
 					$args['min'] = $args['max'];
 				}
 				
-				$default = [];
+				$default_arr = array_fill( 0, count( $args['headers'] ), null );
+				$default_val = wp_json_encode([ 
+						$args['container'] => $default_arr
+				]);
 				
-				for($x = 0; $x < count($args['headers']); $x++)
-				{
-					$default[] = 'null';
-				}
+				$content_is_valid = json_decode(html_entity_decode($args['value']), true);
+
+				$args['value'] = ($content_is_valid) ? $args['value'] : $default_val;
 				
-				$decoded_value = json_decode(html_entity_decode($args['value']), true);
-				$args['value'] = (is_array($decoded_value)) ? $args['value'] : '["'.$args['container'].'":[['.implode(',', $default).']]]';
 				$dropdown = (array_key_exists('dropdown', $args)) ? 'data-sensei-dropdown="'.implode(',', $args['dropdown']).'"' : null;
 				$disabled = (array_key_exists('disabled', $args)) ? $args['disabled'] : null;
+
 				
-				ob_start();
-				?>
-					<div class="hot-container">
-						<div id="<?php echo esc_attr($args['container']); ?>" class="hot" data-sensei-max="<?php echo esc_attr($args['max']); ?>" data-sensei-container="<?php echo esc_attr($args['container']); ?>" data-sensei-textarea="<?php echo esc_attr($args['textarea']); ?>" data-sensei-headers="<?php echo esc_attr(implode(',', $args['headers'])); ?>" data-sensei-type="<?php echo esc_attr(implode(',', $args['type'])); ?>" <?php echo $dropdown; ?> data-sensei-disabled="<?php echo esc_attr($disabled); ?>"></div>
+				$output = sprintf(
+					'<div class="hot-container">
+						<div 
+							id="%1$s" 
+							class="hot" 
+							data-sensei-max="%2$s" 
+							data-sensei-container="%1$s" 
+							data-sensei-textarea="%3$s" 
+							data-sensei-headers="%4$s" 
+							data-sensei-type="%5$s" 
+							%6$s 
+							data-sensei-disabled="%7$s"></div>
 					</div>
 					<div class="hidden">
-						<textarea cols="100" rows="20" name="<?php echo esc_attr($args['textarea']); ?>" id="<?php echo esc_attr($args['textarea']); ?>"><?php echo esc_textarea($args['value']); ?></textarea>
-					</div>
-				<?php
-				$output = ob_get_contents();
-				ob_end_clean();
+						<textarea cols="100" rows="20" name="%3$s" id="%3$s">%8$s</textarea>
+					</div>',
+					esc_attr( $args['container'] ),
+					esc_attr( $args['max'] ),
+					esc_attr( $args['textarea'] ),
+					esc_attr( implode( ',', $args['headers'] ) ),
+					esc_attr( implode( ',', $args['type'] ) ),
+					$dropdown,
+					esc_attr( $disabled ),
+					esc_textarea( $args['value'] )
+				);
 			}
 		}
 		

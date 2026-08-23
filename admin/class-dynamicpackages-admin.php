@@ -74,14 +74,14 @@ class Dynamicpackages_Admin {
 
 		add_settings_section(
 			'dy_settings_section', 
-			esc_html(__( 'General Settings', 'dynamicpackages' )), 
+			__( 'General Settings', 'dynamicpackages' ), 
 			'', 
 			'dy_settings'
 		);
 		
 		add_settings_section(
 			'dy_list_section', 
-			esc_html(__( 'Package List Settings', 'dynamicpackages' )), 
+			__( 'Package List Settings', 'dynamicpackages' ), 
 			'', 
 			'dy_settings'
 		);
@@ -90,52 +90,58 @@ class Dynamicpackages_Admin {
 		
 		add_settings_section(
 			'dy_gateways_section', 
-			esc_html(__( 'Gateway Settings', 'dynamicpackages' )), 
+			__( 'Gateway Settings', 'dynamicpackages' ), 
 			'', 
 			'dy_settings'
 		);
 
 		add_settings_section(
 			'dy_integrations_section', 
-			esc_html(__( 'Integrations Settings', 'dynamicpackages' )), 
+			__( 'Integrations Settings', 'dynamicpackages' ), 
 			'', 
 			'dy_settings'
 		);
 
 		add_settings_field( 
 			'dy_breadcrump', 
-			esc_html(__( 'Package Archive Page', 'dynamicpackages' )), 
-			array($this, 'dy_breadcrump_render'), 
+			__( 'Package Archive Page', 'dynamicpackages' ), 
+			[$this, 'dy_breadcrump_render'], 
 			'dy_settings', 
 			'dy_settings_section' 
 		);
 
 		add_settings_field( 
 			'dy_webhook', 
-			esc_html(__( 'Checkout Webhook URL', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Checkout Webhook URL', 'dynamicpackages' ), 
+			['dy_input_controller', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
-			array('name' => 'dy_webhook')
+			[
+				'key' => 'dy_webhook'
+			]
 		);
 
 
 		add_settings_field( 
 			'dy_quote_webhook', 
-			esc_html(__( 'Quote Webhook URL', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Quote Webhook URL', 'dynamicpackages' ), 
+			['dy_input_controller', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
-			array('name' => 'dy_quote_webhook')
+			[
+				'key' => 'dy_quote_webhook'
+			]
 		);		
 
 		add_settings_field( 
 			'dy_kyc', 
-			esc_html(__( 'KYC Form URL', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'KYC Form URL', 'dynamicpackages' ), 
+			['dy_input_controller', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
-			array('name' => 'dy_kyc')
+			[
+				'key' => 'dy_kyc'
+			]
 		);
 
 
@@ -143,65 +149,76 @@ class Dynamicpackages_Admin {
 
 		add_settings_field( 
 			'dy_max_disabled_dates', 
-			esc_html(__( 'Max. Disabled Dates', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Max. Disabled Dates', 'dynamicpackages' ), 
+			['dy_input_controller', 'int'], 
 			'dy_settings', 
 			'dy_settings_section',
-			array('name' => 'dy_max_disabled_dates', 'type' => 'number')
+			[
+				'key' => 'dy_max_disabled_dates',
+				'min' => 1
+			]
 		);		
 		
 		add_settings_field( 
 			'dy_disabled_dates', 
-			esc_html(__( 'Global Disabled Dates', 'dynamicpackages' )), 
-			array($this, 'settings_hot'), 
+			__( 'Global Disabled Dates', 'dynamicpackages' ), 
+			[$this, 'settings_hot'], 
 			'dy_settings', 
 			'dy_settings_section',
-			array(
+			[
 				'name' => 'dy_disabled_dates', 
 				'value' => null,
 				'max' => 'dy_max_disabled_dates', 
 				'container' => 'disabled_dates',
 				'headers' => array(__('From', 'dynamicpackages'), __('To', 'dynamicpackages')),
 				'type' => array('date', 'date'),
-			) 
+			]
 		);	
 		
 		//dy list/archive settings
 		
 		add_settings_field( 
 			'dy_archive_hide_excerpt', 
-			esc_html(__( 'Hide Package Description (Excerpt)', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Hide Package Description (Excerpt)', 'dynamicpackages' ), 
+			['dy_input_controller', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
-			array('name' => 'dy_archive_hide_excerpt', 'type' => 'checkbox')
+			[
+				'key' => 'dy_archive_hide_excerpt'
+			]
 		);
 		
 		add_settings_field( 
 			'dy_archive_hide_enabled_days', 
-			esc_html(__( 'Hide Enabled Days', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Hide Enabled Days', 'dynamicpackages' ), 
+			['dy_input_controller', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
-			array('name' => 'dy_archive_hide_enabled_days', 'type' => 'checkbox')
+			[
+				'key' => 'dy_archive_hide_enabled_days'
+			]
 		);
 		
 		add_settings_field( 
 			'dy_archive_hide_start_address', 
-			esc_html(__( 'Hide Start Address', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Hide Start Address', 'dynamicpackages' ), 
+			['dy_input_controller', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
-			array('name' => 'dy_archive_hide_start_address', 'type' => 'checkbox')
+			[
+				'key' => 'dy_archive_hide_start_address'
+			]
 		);
 
 		add_settings_field( 
 			'dy_archive_hide_max_persons', 
-			esc_html(__( 'Hide Max. Persons', 'dynamicpackages' )), 
-			array($this, 'settings_input'), 
+			__( 'Hide Max. Persons', 'dynamicpackages' ), 
+			['dy_input_controller', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
-			array('name' => 'dy_archive_hide_max_persons', 'type' => 'checkbox')
+			[
+				'key' => 'dy_archive_hide_max_persons'
+			]
 		);
 		
 	}
@@ -209,7 +226,7 @@ class Dynamicpackages_Admin {
 
 	public function settings_hot($arr)
 	{		
-		$args = array(
+		$args = [
 			'container' => $arr['container'],
 			'textarea' => $arr['name'],
 			'headers' => $arr['headers'],
@@ -217,20 +234,10 @@ class Dynamicpackages_Admin {
 			'min' => $arr['max'],
 			'max' => $arr['max'],
 			'value' => get_option($arr['name'])
-		);
+		];
 		
 		echo dy_utilities::handsontable($args);
 	}
-
-	public function settings_input($arr){
-			$name = $arr['name'];
-			$url = (array_key_exists('url', $arr)) ? '<a target="_blank" rel="noopener noreferrer" href="'.esc_url($arr['url']).'">?</a>' : null;
-			$type = (array_key_exists('type', $arr)) ? $arr['type'] : 'text';
-			$value = ($type == 'checkbox') ? 1 : get_option($name);
-		?>
-		<input type="<?php echo esc_attr($type); ?>" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($value); ?>" <?php echo ($type == 'checkbox') ? checked( 1, get_option($name), false ) : null; ?> /> <span><?php echo $url; ?></span>
-
-	<?php }	
 	
 	
 	public function dy_breadcrump_render() { 
