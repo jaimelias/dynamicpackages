@@ -109,8 +109,8 @@ class estimate_request{
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
 				'branding' => $this->branding(),
-			'icon' => $this->icon,
-'gateway_coupon' => $this->gateway_coupon
+				'icon' => $this->icon,
+				'gateway_coupon' => $this->gateway_coupon
             );
 		}
 		

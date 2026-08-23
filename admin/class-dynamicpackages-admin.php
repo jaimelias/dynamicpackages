@@ -240,35 +240,47 @@ class Dynamicpackages_Admin {
 	}
 	
 	
-	public function dy_breadcrump_render() { 
+	public function dy_breadcrump_render()
+	{
 		global $polylang;
-		$options = get_option('dy_breadcrump');
 
-		$args = array(
-			'post_parent' => 0,
-			'post_type' => 'page',
+		$front_page = (int) get_option('page_on_front');
+
+		$options = [
+			$front_page => sprintf(
+				'%s: %s',
+				__('Home', 'dynamicpackages'),
+				get_the_title($front_page)
+			),
+		];
+
+		$query_args = [
+			'post_parent'    => 0,
+			'post_type'      => 'page',
 			'posts_per_page' => 500,
-			'orderby' => 'title',
-			'order' => 'ASC',
-			'post__not_in' => array('-'.get_option('page_on_front'))
-		);
-		
-		if(isset($polylang))
-		{
-			$args['lang'] = array(pll_default_language());
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+			'post__not_in'   => [$front_page],
+		];
+
+		if (isset($polylang)) {
+			$query_args['lang'] = [pll_default_language()];
 		}
-		
-		$wp_query = new WP_Query($args);
-		?>
-		<select name='dy_breadcrump'>
-			<option value="<?php echo esc_attr(get_option('page_on_front')); ?>" <?php selected($options, get_option('page_on_front')); ?>><?php echo __('Home').': '.get_the_title(get_option('page_on_front')); ?></option>
-			<?php if($wp_query->have_posts()): ?>
-				<?php while ($wp_query->have_posts()): $wp_query->the_post(); ?>
-					<option value="<?php echo get_dy_id();?>" <?php selected($options, get_dy_id()); ?>><?php echo get_the_title();?></option>
-				<?php endwhile; wp_reset_postdata(); ?>
-			<?php endif; ?>
-		</select>
-		<?php
+
+		$wp_query = new WP_Query($query_args);
+
+		while ($wp_query->have_posts()) {
+			$wp_query->the_post();
+
+			$options[get_dy_id()] = get_the_title();
+		}
+
+		wp_reset_postdata();
+
+		dy_select_controller::custom([
+			'key'     => 'dy_breadcrump',
+			'options' => $options,
+		]);
 	}
 
 	public function settings_page()
