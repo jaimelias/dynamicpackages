@@ -247,93 +247,64 @@ class paypal_me {
 		add_settings_field( 
 			$this->id, 
 			esc_html(__( 'Username', 'dynamicpackages' )), 
-			array($this, 'input_text'), 
+			['dy_input_controller', 'text'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id
-		);	
+			$this->id . '_settings_section',
+			[
+				'key' => $this->id,
+			]
+		);
 
 		add_settings_field( 
 			$this->id . '_min', 
 			esc_html(__( 'Min. Amount', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
+			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_min'
+			$this->id . '_settings_section',
+			[
+				'key'    => $this->id . '_min',
+				'append' => currency_symbol(),
+			]
 		);
 
 		add_settings_field( 
 			$this->id . '_max', 
 			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
+			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_max'
+			$this->id . '_settings_section', 
+			[
+				'key'    => $this->id . '_max',
+				'append' => currency_symbol(),
+			]
 		);
 
 		add_settings_field( 
 			$this->id . '_service_fee', 
 			esc_html(__( 'Service Fee', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
+			['dy_input_controller', 'percentage'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_service_fee'
-		);
-
-		$show_args = array(
-			'name' => $this->id . '_show',
-			'options' => array(
-				array(
-					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
-					'value' => 0
-				),
-				array(
-					'text' => esc_html('Only Deposits', 'dynamicpackages'),
-					'value' => 1
-				),
-			)
+			$this->id . '_settings_section',
+			[
+				'key'    => $this->id . '_service_fee',
+				'append' => '%',
+			]
 		);
 
 		add_settings_field( 
 			$this->id . '_show', 
 			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array($this, 'select'), 
+			['dy_select_controller', 'custom'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
-			$show_args
+			[
+				'key' => $this->id . '_show',
+				'options' => [
+					0 => __('Full Payments and Deposits', 'dynamicpackages'),
+					1 => __('Only Deposits', 'dynamicpackages'),
+				],
+			]
 		);		
-	}
-	
-	public function input_text($name){
-		$option = get_option($name);
-		?>
-		<input type="text" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
-		<?php
-	}
-	
-	public function input_number($name){
-		$option = get_option($name);
-		?>
-		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
-		<?php
-	}
-
-	public function select($args) {
-		
-		$name = $args['name'];
-		$options = $args['options'];
-		$value = intval(get_option($name));
-		$render_options = '';
-		
-		for($x = 0; $x < count($options); $x++)
-		{
-			$this_value = intval($options[$x]['value']);
-			$this_text = $options[$x]['text'];
-			$selected = ($value === $this_value) ? ' selected ' : '';
-			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
-		}
-
-		?>
-			<select name="<?php echo esc_attr($name); ?>">
-				<?php echo $render_options; ?>
-			</select>
-		<?php 
 	}
 
 	public function add_settings_page()

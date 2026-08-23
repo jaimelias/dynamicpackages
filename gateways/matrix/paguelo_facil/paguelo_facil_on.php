@@ -685,7 +685,8 @@ class paguelo_facil_on{
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
 			[
-				'key' => $this->id . '_min'
+				'key' => $this->id . '_min',
+				'append' => currency_symbol(),
 			]
 		);
 
@@ -696,7 +697,8 @@ class paguelo_facil_on{
 			$this->id . '_settings', 
 			$this->id . '_control_section', 
 			[
-				'key' => $this->id . '_max'
+				'key' => $this->id . '_max',
+				'append' => currency_symbol(),
 			]
 		);
 		

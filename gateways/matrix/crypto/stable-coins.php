@@ -301,7 +301,7 @@ class stable_coins {
 		
 		add_settings_section(
 			$this->id . '_settings_section', 
-			esc_html(__( 'General Settings', 'dynamicpackages' )), 
+			__( 'General Settings', 'dynamicpackages' ), 
 			'', 
 			$this->id . '_settings'
 		);
@@ -338,12 +338,7 @@ class stable_coins {
 
 			add_settings_field(
 				$setting_key,
-				esc_html(
-					sprintf(
-						__('%s Contract Address', 'dynamicpackages'),
-						$value['name']
-					)
-				),
+				sprintf( __('%s Contract Address', 'dynamicpackages'), $value['name'] ),
 				['dy_input_controller', 'text'],
 				$this->id . '_settings',
 				$this->id . '_settings_section',
