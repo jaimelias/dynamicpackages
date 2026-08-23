@@ -700,24 +700,19 @@ class paguelo_facil_on{
 			]
 		);
 		
-		$show_field = function($args) {
-			dy_select_controller::custom(
-				[
-					0 => __('Full Payments and Deposits', 'dynamicpackages'),
-					1 => __('Only Deposits', 'dynamicpackages'),
-				],
-				$args
-			);
-		};
 
 		add_settings_field( 
 			$this->id . '_show', 
 			__( 'Show', 'dynamicpackages' ), 
-			$show_field, 
+			['dy_select_controller', 'custom'], 
 			$this->id . '_settings', 
 			$this->id . '_control_section',
 			[
-				'key' => $this->id . '_show'
+				'key' => $this->id . '_show',
+				'options' => [
+					0 => __('Full Payments and Deposits', 'dynamicpackages'),
+					1 => __('Only Deposits', 'dynamicpackages'),
+				]
 			]
 		);
 		

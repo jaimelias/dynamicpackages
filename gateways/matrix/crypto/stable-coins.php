@@ -306,90 +306,61 @@ class stable_coins {
 			$this->id . '_settings'
 		);
 	
-		add_settings_field( 
-			$this->id . '_max', 
-			esc_html(__( 'Max. Amount', 'dynamicpackages' )), 
-			array($this, 'input_number'), 
-			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_max'
-		);
-
-		$show_args = array(
-			'name' => $this->id . '_show',
-			'options' => array(
-				array(
-					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
-					'value' => 0
-				),
-				array(
-					'text' => esc_html('Only Deposits', 'dynamicpackages'),
-					'value' => 1
-				),
-			)
-		);
-
-		add_settings_field( 
-			$this->id . '_show', 
-			esc_html(__( 'Show', 'dynamicpackages' )), 
-			array($this, 'select'), 
-			$this->id . '_settings', 
+		add_settings_field(
+			$this->id . '_max',
+			__('Max. Amount', 'dynamicpackages'),
+			['dy_input_controller', 'price'],
+			$this->id . '_settings',
 			$this->id . '_settings_section',
-			$show_args
-		);	
+			[
+				'key' => $this->id . '_max',
+				'append' => currency_symbol(),
+			]
+		);
+
+		add_settings_field(
+			$this->id . '_show',
+			__('Show', 'dynamicpackages'),
+			['dy_select_controller', 'custom'],
+			$this->id . '_settings',
+			$this->id . '_settings_section',
+			[
+				'key' => $this->id . '_show',
+				'options' => 				[
+					0 => __('Full Payments and Deposits', 'dynamicpackages'),
+					1 => __('Only Deposits', 'dynamicpackages'),
+				]
+			]
+		);
 		
-		foreach($this->all_networks as $key => $value)
-		{
-			add_settings_field( 
-				$this->id . '_' . $key , 
-				esc_html(sprintf(__("%s Contract Address", 'dynamicpackages'), $value['name'])), 
-				array($this, 'input_text'), 
-				$this->id . '_settings', 
-				$this->id . '_settings_section', $this->id . '_' . $key
+		foreach ($this->all_networks as $key => $value) {
+			$setting_key = $this->id . '_' . $key;
+
+			add_settings_field(
+				$setting_key,
+				esc_html(
+					sprintf(
+						__('%s Contract Address', 'dynamicpackages'),
+						$value['name']
+					)
+				),
+				['dy_input_controller', 'text'],
+				$this->id . '_settings',
+				$this->id . '_settings_section',
+				[
+					'key'   => $setting_key,
+					'style' => 'width: 450px;',
+				]
 			);
 		}
 
 	}
-	
-	public function input_text($name){
-		$option = get_option($name);
-		?>
-		<input type="text" style="width: 450px;" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
-		<?php
-	}
-	
-	public function input_number($name){
-		$option = get_option($name);
-		?>
-		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
-		<?php
-	}
-
-	public function select($args) {
-		
-		$name = $args['name'];
-		$options = $args['options'];
-		$value = intval(get_option($name));
-		$render_options = '';
-		
-		for($x = 0; $x < count($options); $x++)
-		{
-			$this_value = intval($options[$x]['value']);
-			$this_text = $options[$x]['text'];
-			$selected = ($value === $this_value) ? ' selected ' : '';
-			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
-		}
-
-		?>
-			<select name="<?php echo esc_attr($name); ?>">
-				<?php echo $render_options; ?>
-			</select>
-		<?php 
-	}	
 
 	public function add_settings_page()
 	{
 		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->name, 'manage_options', $this->id, array($this, 'settings_page'));
 	}
+
 	public function settings_page()
 		 { 
 		?><div class="wrap">
