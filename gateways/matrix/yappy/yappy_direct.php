@@ -276,97 +276,63 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id, 
 			__( 'Yappy Cell Phone Number', 'dynamicpackages' ), 
-			array($this, 'input_number'), 
+			['dy_input_controller', 'int'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id
+			$this->id . '_settings_section',
+			[
+				'key'    => $this->id,
+				'append' => ' #',
+			]
 		);	
 		
 		add_settings_field( 
 			$this->id . '_business', 
 			__( 'Yappy Business Name', 'dynamicpackages' ), 
-			array($this, 'input_text'), 
+			['dy_input_controller', 'text'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_business'
-		);			
+			$this->id . '_settings_section', 
+			[
+				'key' => $this->id . '_business',
+			]
+		);
+
 		add_settings_field( 
 			$this->id . '_max', 
 			__( 'Max. Amount', 'dynamicpackages' ), 
-			array($this, 'input_number'), 
+			['dy_input_controller', 'price'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_max'
-		);
-
-		$show_args = array(
-			'name' => $this->id . '_show',
-			'options' => array(
-				array(
-					'text' => __('Full Payments and Deposits', 'dynamicpackages'),
-					'value' => 0
-				),
-				array(
-					'text' => __('Only Deposits', 'dynamicpackages'),
-					'value' => 1
-				),
-			)
+			$this->id . '_settings_section',
+			[
+				'key'    => $this->id . '_max',
+				'append' => currency_symbol(),
+			]
 		);
 
 		add_settings_field( 
 			$this->id . '_show', 
 			__( 'Show', 'dynamicpackages' ), 
-			array($this, 'select'), 
+			['dy_select_controller', 'custom'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
-			$show_args
+			[
+				'key' => $this->id . '_show',
+				'options' => [
+					0 => __('Full Payments and Deposits', 'dynamicpackages'),
+					1 => __('Only Deposits', 'dynamicpackages'),
+				],
+			]
 		);
 		
 		add_settings_field( 
 			$this->id . '_qrcode', 
 			__( 'QR Code Url', 'dynamicpackages' ), 
-			array($this, 'input_url'), 
+			['dy_input_controller', 'url'], 
 			$this->id . '_settings', 
-			$this->id . '_settings_section', $this->id . '_qrcode'
+			$this->id . '_settings_section', 
+			[
+				'key' => $this->id . '_qrcode',
+			]
 		);
-	}
-	
-	public function input_text($name){
-		$option = get_option($name);
-		?>
-		<input type="text" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
-		<?php
-	}
-	public function input_number($name){
-		$option = get_option($name);
-		?>
-		<input type="number" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" /> #
-		<?php
-	}
-	public function input_url($name){
-		$option = get_option($name);
-		?>
-		<input type="url" name="<?php echo esc_attr($name); ?>" id="<?php echo esc_attr($name); ?>" value="<?php echo esc_attr($option); ?>" />
-		<?php
-	}
-
-	public function select($args) {
-		
-		$name = $args['name'];
-		$options = $args['options'];
-		$value = intval(get_option($name));
-		$render_options = '';
-		
-		for($x = 0; $x < count($options); $x++)
-		{
-			$this_value = intval($options[$x]['value']);
-			$this_text = $options[$x]['text'];
-			$selected = ($value === $this_value) ? ' selected ' : '';
-			$render_options .= '<option value="'.esc_attr($this_value).'" '.esc_attr($selected).'>'.esc_html($this_text).'</option>';
-		}
-
-		?>
-			<select name="<?php echo esc_attr($name); ?>">
-				<?php echo $render_options; ?>
-			</select>
-		<?php 
 	}
 
 	public function add_settings_page()
