@@ -64,21 +64,26 @@ class dy_utilities {
 
 	public static function booking_date()
 	{
-		if(isset($_REQUEST['booking_date']))
+		$booking_date = secure_request('booking_date');
+
+		if(is_valid_date($booking_date))
 		{
-			return ($_REQUEST['booking_date']) ? strtotime(sanitize_text_field($_REQUEST['booking_date'].' 00:00:00')) : null;
+			return strtotime($booking_date.' 00:00:00');
 		}
+
+		return null;
 	}
+
 	public static function end_date()
-	{
-		$output = '';
-		
-		if(isset($_REQUEST['end_date']))
+	{		
+		$end_date = secure_request('end_date');
+
+		if(is_valid_date($end_date))
 		{
-			$output = ($_REQUEST['end_date']) ? strtotime(sanitize_text_field($_REQUEST['end_date'].' 00:00:00')) : null;	
+			return strtotime($end_date.' 00:00:00');
 		}
 		
-		return $output;
+		return null;
 	}
 
 	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
