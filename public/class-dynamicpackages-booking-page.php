@@ -73,7 +73,7 @@ class Dynamicpackages_Booking_Page {
 		}
 
 		
-		$add_ons = (array) apply_filters('dy_get_add_ons', null);
+		$add_ons = (array) apply_filters('dy_get_add_ons', []);
 		$regular_amount = (float) dy_utilities::total('regular');
 		$amount = (float) dy_utilities::total();
 		$payment_amount = (float) dy_utilities::payment_amount();

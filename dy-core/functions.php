@@ -290,7 +290,7 @@ function home_lang()
     {
         global $polylang;
 
-        if($polylang)
+        if(isset($polylang))
         {
             $path = '';
             $pll_url = pll_home_url();
@@ -466,9 +466,9 @@ if (!function_exists("is_valid_date")) {
             return false;
         }
         static $cache = [];
-        $cacheKey = implode("|", $formats) . "::" . $str;
-        if (isset($cache[$cacheKey])) {
-            return $cache[$cacheKey];
+        $cache_key = implode("|", $formats) . "::" . $str;
+        if (isset($cache[$cache_key])) {
+            return $cache[$cache_key];
         }
         $valid = false;
         foreach ($formats as $format) {
@@ -479,7 +479,7 @@ if (!function_exists("is_valid_date")) {
             }
         }
 		
-        return $cache[$cacheKey] = $valid;
+        return $cache[$cache_key] = $valid;
     }
 }
 

@@ -367,169 +367,171 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	}
 	public function get_add_ons()
 	{
+		static $cache = [];
+		
+		$the_id = get_dy_id();
+		$cache_key = 'dy_get_add_ons_' . $the_id;
+
+		$post = get_post($the_id);
+
+		if(!($post instanceof WP_Post)) {
+			return [];
+		}
+
+		if (isset($cache[$cache_key])) {
+			return $cache[$cache_key];
+		}
+
 		$output = [];
-		global $dy_get_add_ons;
 
-		if(isset($dy_get_add_ons))
-		{
-			$output = $dy_get_add_ons;
-		}
-		else
-		{
-			global $polylang;
-			global $post;
-			$package_type = dy_utilities::get_package_type($post->ID);
-			$package_unit = (int) package_field('package_length_unit');
-			$parent_terms = [];
+		global $polylang;
+		
+		$package_type = dy_utilities::get_package_type($post->ID);
+		$parent_terms = [];
 
-			$def_lang = true;
-			$pax = intval(dy_utilities::pax_num()) - 1;
-			
-			if($polylang)
+		$pax_idx = max(0, absint(dy_utilities::pax_num()) - 1);
+		
+		$default_language = isset($polylang) ? pll_default_language() : null;
+		$def_lang = !isset($polylang) || pll_current_language() === $default_language;
+
+		$current_terms = get_the_terms($post->ID, $this->name);
+		$current_terms = (is_array($current_terms)) ? $current_terms : [];
+
+		if(property_exists($post, 'post_parent'))
+		{
+			if($post->post_parent > 0)
 			{
-				if(pll_current_language() != pll_default_language())
-				{
-					$def_lang = false;
-				}				
+				$parent_terms = get_the_terms($post->post_parent, $this->name);
+				$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
 			}
+		}			
+		
+		$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
+		
+		foreach($terms as $term)
+		{
+			$term_id = $term->term_id;
+			$name = $term->name;
+			$price = 0;
+			
+			if (!$def_lang) {
+				$default_term_id = pll_get_term($term_id, $default_language);
 
-			$current_terms = get_the_terms($post->ID, $this->name);
-			$current_terms = (is_array($current_terms)) ? $current_terms : array();
-
-			if(property_exists($post, 'post_parent'))
-			{
-				if($post->post_parent > 0)
-				{
-					$parent_terms = get_the_terms($post->post_parent, $this->name);
-					$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
+				if ($default_term_id) {
+					$term_id = $default_term_id;
 				}
-			}			
-			
-			$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
-			
-			if(is_array($terms))
-			{
-				foreach($terms as $term)
-				{
-					$term_id = $term->term_id;
-					$name = $term->name;
-					$price = 0;
-					
-					if($def_lang === false)
-					{
-						$term_id = pll_get_term($term_id, pll_default_language());
-					}
-					
-					$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
-					
-					$add_on_type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
-					
-					if(is_array($add_ons_price))
-					{
-						if(array_key_exists('tax_add_ons_c', $add_ons_price))
-						{
-							$add_ons_price = $add_ons_price['tax_add_ons_c'];
-							
-							if(isset($add_ons_price[$pax]))
-							{
-								$price = floatval($add_ons_price[$pax][0]);
-							}
-						}
-					}
-					
-					if($add_on_type > 0)
-					{
-						//multi-day or rental per day
-						if($package_type === 'multi-day' || $package_type === 'rental-per-day')
-						{
-							
-							$package_duration = secure_request('booking_extra', 1, 'absint');
-							
-							if($add_on_type === 2)
-							{
-								$package_duration = $package_duration + 1;
-							}
-							
-							$price = $price * $package_duration;
-						}
-						else if($package_type === 'transport')
-						{
-							$package_duration = 1;
-							$booking_date = dy_utilities::booking_date();
-							$end_date = dy_utilities::end_date();
-							$additional_duration = (int) dy_utilities::get_multi_day_duration($booking_date, $end_date);
-							$package_duration = $package_duration + $additional_duration;
-
-							if($add_on_type === 2)
-							{
-								$package_duration = $package_duration + 1;
-							}
-							else if($add_on_type === 3 && !empty($end_date))
-							{
-								$package_duration = 2; //charged each way
-							}
-
-							$price = $price * $package_duration;
-						}
-					}
-					
-					if($price > 0)
-					{
-						array_push($output, array(
-								'id' => $term_id, 
-								'price' => $price, 
-								'name' => $name,
-								'description' => $term->description
-							)
-						);					
-					}			
-				}			
 			}
+			
+			$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
+			
+			$add_on_type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
+			
+			if (isset($add_ons_price['tax_add_ons_c'][$pax_idx][0])) {
+				$price = (float) $add_ons_price['tax_add_ons_c'][$pax_idx][0];
+			}
+			
+			if($add_on_type > 0)
+			{
+				//multi-day or rental per day
+				if($package_type === 'multi-day' || $package_type === 'rental-per-day')
+				{
+					
+					$package_duration = secure_request('booking_extra', 1, 'absint');
+					
+					if($add_on_type === 2)
+					{
+						$package_duration = $package_duration + 1;
+					}
+					
+					$price = $price * $package_duration;
+				}
+				else if($package_type === 'transport')
+				{
+					$package_duration = 1;
+					$booking_date = dy_utilities::booking_date();
+					$end_date = dy_utilities::end_date();
+					$additional_duration = (int) dy_utilities::get_multi_day_duration($booking_date, $end_date);
+					$package_duration = $package_duration + $additional_duration;
 
-			$GLOBALS['dy_get_add_ons'] = $output;
+					if($add_on_type === 2)
+					{
+						$package_duration = $package_duration + 1;
+					}
+					else if($add_on_type === 3 && !empty($end_date))
+					{
+						$package_duration = 2; //charged each way
+					}
+
+					$price = $price * $package_duration;
+				}
+			}
+			
+			if($price > 0)
+			{
+				$output[] = [
+					'id'          => $term_id,
+					'price'       => $price,
+					'name'        => $name,
+					'description' => $term->description,
+				];
+			}			
 		}
 
-		return $output;	
+		return $cache[$cache_key] = $output;
 	}
 
 
 	public function included_add_ons_arr($output = [])
 	{
-		if ($this->has_add_ons() && !empty(secure_post('add_ons'))) {
-			$add_ons = $this->get_add_ons();
-			$add_ons_included = explode(',', secure_post('add_ons'));
-			$add_ons_count = count($add_ons);
-			
-			if (is_array($add_ons) && is_array($add_ons_included)) {
-				for ($x = 0; $x < $add_ons_count; $x++) {
-					if (in_array($add_ons[$x]['id'], $add_ons_included)) {
-						$output[] = $add_ons[$x];
-					}
-				}                    
-			}            
+		$add_ons_post = secure_post('add_ons');
+
+		if (!$this->has_add_ons() || empty($add_ons_post)) {
+			return $output;
 		}
+
+		$add_ons = $this->get_add_ons();
+
+		if (!is_array($add_ons)) {
+			return $output;
+		}
+
+		$add_ons_included = explode(',', $add_ons_post);
+
+		foreach ($add_ons as $add_on) {
+			if (in_array($add_on['id'], $add_ons_included, true)) {
+				$output[] = $add_on;
+			}
+		}
+
 		return $output;
 	}
 	
 	public function included_add_ons_list($separator = null)
 	{
-		// Use included_add_ons_arr to get the filtered add-ons
-		$output = '';
 		$included_add_ons = $this->included_add_ons_arr();
 
-		$sep = (!empty($separator)) ? "{$separator} " : '';
-		
-		if (!empty($included_add_ons)) {
-			foreach ($included_add_ons as $add_on) {
-				$separator = ($add_on['description']) ? ': ' : null;
-				$output .= '<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">'
-						 . $sep . $add_on['name'] . $separator . '</strong>' . $add_on['description'];
-			}
+		if (empty($included_add_ons)) {
+			return '';
 		}
-	
+
+		$output = '';
+		$prefix = !empty($separator) ? esc_html($separator) . ' ' : '';
+
+		foreach ($included_add_ons as $add_on) {
+			$description = esc_html($add_on['description']);
+			$description_separator = !empty($description) ? ': ' : '';
+
+			$output .= sprintf(
+				'<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" /><strong style="color:#666666;">%s%s%s</strong>%s',
+				$prefix,
+				esc_html($add_on['name']),
+				$description_separator,
+				$description
+			);
+		}
+
 		return $output;
 	}
-	
 	
 }
 
