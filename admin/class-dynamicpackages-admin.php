@@ -113,7 +113,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_webhook', 
 			__( 'Checkout Webhook URL', 'dynamicpackages' ), 
-			['dy_input_controller', 'url'], 
+			['dy_input_option', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
 			[
@@ -125,7 +125,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_quote_webhook', 
 			__( 'Quote Webhook URL', 'dynamicpackages' ), 
-			['dy_input_controller', 'url'], 
+			['dy_input_option', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
 			[
@@ -136,7 +136,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_kyc', 
 			__( 'KYC Form URL', 'dynamicpackages' ), 
-			['dy_input_controller', 'url'], 
+			['dy_input_option', 'url'], 
 			'dy_settings', 
 			'dy_integrations_section',
 			[
@@ -150,7 +150,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_max_disabled_dates', 
 			__( 'Max. Disabled Dates', 'dynamicpackages' ), 
-			['dy_input_controller', 'int'], 
+			['dy_input_option', 'int'], 
 			'dy_settings', 
 			'dy_settings_section',
 			[
@@ -180,7 +180,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_excerpt', 
 			__( 'Hide Package Description (Excerpt)', 'dynamicpackages' ), 
-			['dy_input_controller', 'checkbox'], 
+			['dy_input_option', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
 			[
@@ -191,7 +191,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_enabled_days', 
 			__( 'Hide Enabled Days', 'dynamicpackages' ), 
-			['dy_input_controller', 'checkbox'], 
+			['dy_input_option', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
 			[
@@ -202,7 +202,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_start_address', 
 			__( 'Hide Start Address', 'dynamicpackages' ), 
-			['dy_input_controller', 'checkbox'], 
+			['dy_input_option', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
 			[
@@ -213,7 +213,7 @@ class Dynamicpackages_Admin {
 		add_settings_field( 
 			'dy_archive_hide_max_persons', 
 			__( 'Hide Max. Persons', 'dynamicpackages' ), 
-			['dy_input_controller', 'checkbox'], 
+			['dy_input_option', 'checkbox'], 
 			'dy_settings', 
 			'dy_list_section',
 			[
@@ -277,7 +277,7 @@ class Dynamicpackages_Admin {
 
 		wp_reset_postdata();
 
-		dy_select_controller::custom([
+		dy_select_option::custom([
 			'key'     => 'dy_breadcrump',
 			'options' => $options,
 		]);

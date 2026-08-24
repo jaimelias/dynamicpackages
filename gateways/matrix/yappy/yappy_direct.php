@@ -276,7 +276,7 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id, 
 			__( 'Yappy Cell Phone Number', 'dynamicpackages' ), 
-			['dy_input_controller', 'int'], 
+			['dy_input_option', 'int'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			[
@@ -288,7 +288,7 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id . '_business', 
 			__( 'Yappy Business Name', 'dynamicpackages' ), 
-			['dy_input_controller', 'text'], 
+			['dy_input_option', 'text'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
 			[
@@ -299,7 +299,7 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id . '_max', 
 			__( 'Max. Amount', 'dynamicpackages' ), 
-			['dy_input_controller', 'price'], 
+			['dy_input_option', 'price'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			[
@@ -311,7 +311,7 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id . '_show', 
 			__( 'Show', 'dynamicpackages' ), 
-			['dy_select_controller', 'custom'], 
+			['dy_select_option', 'custom'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section',
 			[
@@ -326,7 +326,7 @@ class yappy_direct {
 		add_settings_field( 
 			$this->id . '_qrcode', 
 			__( 'QR Code Url', 'dynamicpackages' ), 
-			['dy_input_controller', 'url'], 
+			['dy_input_option', 'url'], 
 			$this->id . '_settings', 
 			$this->id . '_settings_section', 
 			[
