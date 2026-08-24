@@ -319,7 +319,6 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		if(is_booking_page())
 		{
 			$output = '';
-			$pax = intval(dy_utilities::pax_num()) - 1;
 			$terms = $this->get_add_ons();
 			$add_ons_arr = [];
 			$addon_colspan  = (!wp_is_mobile()) ? 2 : 1;
