@@ -5,6 +5,9 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Taxonomy_Add_Ons
 {
+
+	static $cache = [];
+
 	function __construct()
 	{
 		$this->init();
@@ -290,28 +293,17 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	
 	public function has_add_ons()
 	{
-		$output = false;
-		global $dy_has_add_ons;
-		
-		if(isset($dy_has_add_ons))
-		{
-			$output = $dy_has_add_ons;
-		}
-		else
-		{
-			$add_ons = $this->get_add_ons();
-			
-			if(is_array($add_ons))
-			{
-				if(count($add_ons) > 0)
-				{
-					$output = true;
-				}
-			}
 
-			$GLOBALS['dy_has_add_ons'] = $output;
+		$the_id = get_dy_id();
+		$cache_key = 'dy_has_add_ons_' . $the_id;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
 		}
-		return $output;
+
+		$add_ons = $this->get_add_ons();
+		
+		return self::$cache[$cache_key] = is_array($add_ons) && count($add_ons) > 0;
 	}
 	
 	public function checkout_items()
