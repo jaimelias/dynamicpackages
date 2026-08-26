@@ -113,7 +113,7 @@ class Dynamicpackages_WP_JSON
 
 			if($day_of_the_week == 1)
 			{
-				array_push($disable['disable'], $x+1);
+				$disable['disable'][] = $x+1;
 			}
 		}
 

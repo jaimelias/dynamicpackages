@@ -134,7 +134,7 @@ class Dynamicpackages_Tables{
 					$price = $sum_price;
 				}
 
-				array_push($price_table, $price);
+				$price_table[] = $price;
 
 				if($price)
 				{

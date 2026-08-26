@@ -159,7 +159,7 @@ class Dynamicpackages_Booking_Page {
 				$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
 				$terms_conditions_item['name'] = $terms_conditions[$x]->name;
 				$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
-				array_push($terms_conditions_clean, $terms_conditions_item);
+				$terms_conditions_clean[] = $terms_conditions_item;
 			}
 			
 			$output = $terms_conditions_clean;		

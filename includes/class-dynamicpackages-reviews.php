@@ -392,7 +392,7 @@ class Dynamicpackages_Reviews
 		{
 			$item = $comments[$x];
 			$item->int_date = strtotime($item->comment_date);
-			array_push($output, $item);
+			$output[] = $item;
 		}
 		
 		usort($output, function($a, $b) { return $b->int_date - $a->int_date; });
@@ -567,7 +567,7 @@ class Dynamicpackages_Reviews
 			for($x = 0; $x < count($languages); $x++)
 			{
 				$lang = $languages[$x];
-				array_push($language_list, $lang);
+				$language_list[] = $lang;
 			}			
 			
 			if(count($language_list) > 0)
@@ -591,10 +591,10 @@ class Dynamicpackages_Reviews
 						{
 							$count++;
 							$get_rating = get_comment_meta($comments[$x]->comment_ID, 'dy_rating', true);
-							array_push($rating, $get_rating);
+							$rating[] = $get_rating;
 						}
 						
-						array_push($merged_comments, $comments);
+						$merged_comments[] = $comments;
 					}	
 				}
 				

@@ -54,8 +54,8 @@
 					'field' => 'slug',
 					'terms' => $cat_imp
 				);
-	
-				array_push($args['tax_query'], $cat_imp_args);					
+
+				$args['tax_query'][] = $cat_imp_args;				
 			}
 		}
 		
@@ -69,7 +69,7 @@
 					'terms' => $loc_imp
 				);
 
-				array_push($args['tax_query'], $loc_imp_args);					
+				$args['tax_query'][] = $loc_imp_args;				
 			}
 		}
 
@@ -102,7 +102,8 @@
 					'compare' => '='
 				);
  
-				array_push($args['meta_query'], $filter_today);
+				$args['meta_query'][] = $filter_today;
+	
 			}
 			else if($sort_imp == 'tomorrow')
 			{
@@ -123,7 +124,9 @@
 					'compare' => '<='
 				);
 			
-				array_push($args['meta_query'], $filter_today, $filter_tomorrow);
+				$args['meta_query'][] = $filter_today;
+				$args['meta_query'][] = $filter_tomorrow;
+
 			}			
 			else if($sort_imp == 'week')
 			{
@@ -143,7 +146,8 @@
 					'compare' => '<='
 				);
 
-				array_push($args['meta_query'], $filter_today, $filter_week);
+				$args['meta_query'][] = $filter_today;
+				$args['meta_query'][] = $filter_week;
 			}
 			else if($sort_imp == 'month')
 			{
@@ -163,7 +167,8 @@
 					'compare' => '<='
 				);
 
-				array_push($args['meta_query'], $filter_today, $filter_month);
+				$args['meta_query'][] = $filter_today;
+				$args['meta_query'][] = $filter_month;
 			}
 		}		
 
@@ -183,7 +188,7 @@ $display = array(
 	'compare' => '!='
 );	
 
-array_push($args['meta_query'], $display);
+$args['meta_query'][] = $display;
 
 $args['posts_per_page'] = $posts_per_page;		
 	

@@ -1078,7 +1078,7 @@ class Dynamicpackages_Public {
 						
 						if(!in_array($day, $week_days))
 						{
-							array_push($new_range, $range[$x]);
+							$new_range[] = $range[$x];
 						}
 					}
 				}

@@ -366,7 +366,7 @@ class dy_utilities {
 				$child_starting_at = (float) self::starting_at($child->ID);
 
 				if($child_starting_at > 0) {
-					array_push($prices, $child_starting_at);
+					$prices[] = $child_starting_at;
 				}
 				
 			}
@@ -506,7 +506,7 @@ class dy_utilities {
 				$price = $price * $pax_row_number;
 			}
 
-			array_push($prices, $price);	
+			$prices[] = $price;	
 	}
 						
 		if(is_array($prices))
@@ -608,7 +608,7 @@ class dy_utilities {
 
 			foreach ($range as $key => $value)
 			{
-				array_push($output, $value->format('Y-m-d'));
+				$output[] = $value->format('Y-m-d');
 			}
 		}
 		
@@ -630,7 +630,7 @@ class dy_utilities {
 				{
 					$from = $disabled_dates[$x][0];
 					$to = $disabled_dates[$x][1];
-					array_push($output, self::get_date_range($from, $to));
+					$output[] = self::get_date_range($from, $to);
 				}
 			}			
 		}
@@ -645,7 +645,7 @@ class dy_utilities {
 		{
 			for($y = 0; $y < count($array[$x]); $y++)
 			{
-				array_push($output, $array[$x][$y]);
+				$output[] =  $array[$x][$y];
 			}
 		}
 		return array_unique($output);
@@ -692,7 +692,7 @@ class dy_utilities {
 								{
 									if(in_array($booking_dates_range[$d], $seasons_dates_range))
 									{
-										array_push($duration_arr, intval($duration_season));
+										$duration_arr[] = (int) $duration_season;
 									}
 								}
 							}							
@@ -764,7 +764,7 @@ class dy_utilities {
 			{
 				$week_day = intval(date('w', strtotime($days[$x])));
 				$week_day = ($week_day === 0) ?  6 : $week_day - 1;
-				array_push($output, $surcharges[$week_day]);
+				$output[] = $surcharges[$week_day];
 			}
 		}
 
@@ -1109,7 +1109,7 @@ class dy_utilities {
 		{
 			if(intval(package_field('package_day_'.$days[$x] )) === 1)
 			{
-				array_push($output, $x+1);
+				$output[] = $x+1;
 			}
 		}
 		return $output;
@@ -1223,7 +1223,7 @@ class dy_utilities {
 			{
 				for($x = 0; $x < count($terms); $x++)
 				{
-					array_push($output, $terms[$x]);
+					$output[] = $terms[$x];
 				}			
 			}		
 		}
@@ -1317,17 +1317,17 @@ class dy_utilities {
 	public static function payment_amount($service_fee = 0)
 	{
 		$the_id = get_dy_id();
-		$total = floatval(self::subtotal(null, $the_id));
+		$total = (float) self::subtotal(null, $the_id);
 		
 		if(dy_validators::has_deposit())
 		{
-			$deposit = floatval(self::get_deposit());
+			$deposit = (float) self::get_deposit();
 			$total = $total*($deposit*0.01);			
 		}
 		
 		$total = $total + self::get_add_ons_total();
 
-		$service_fee = floatval($service_fee);
+		$service_fee = (float) $service_fee;
 
 		if($service_fee > 0)
 		{
@@ -1339,8 +1339,8 @@ class dy_utilities {
 
 	public static function outstanding_amount()
 	{
-		$total = (self::total()) ? floatval(self::total()) : 0;
-		$payment_amount = (self::payment_amount()) ? floatval(self::payment_amount()) : 0;
+		$total = self::total() ? (float) self::total() : 0;
+		$payment_amount = self::payment_amount() ? (float) self::payment_amount() : 0;
 		return $total - $payment_amount;
 	}
 	public static function format_date($date)
@@ -1386,15 +1386,15 @@ class dy_utilities {
 		$days = self::get_week_days_abbr();
 		
 		return array_map(function($day){
-			return intval(package_field('package_week_day_surcharge_' . $day));
+			return (int) package_field('package_week_day_surcharge_' . $day);
 		}, $days);
 	}
 
 	public static function get_tax_list($term_name = '', $label = '', $is_link = true, $icon_class = null)
 	{
 		$output = '';
-		$is_link_str = ($is_link) ? 1 : 0;
-		$icon_class_str = (!empty($icon_class)) ? 1 : 0;
+		$is_link_str = $is_link ? 1 : 0;
+		$icon_class_str = !empty($icon_class) ? 1 : 0;
 		$cache_key = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
 
 		if (array_key_exists($cache_key, self::$cache)) {
@@ -1438,8 +1438,8 @@ class dy_utilities {
 				$item = ($is_link) 
 					? '<a href="'.esc_url($url).'" title="'.esc_attr($title).'" >'.esc_html($t->name).'</a>' 
 					: esc_html($t->name);
-					
-				array_push($terms_array, $item);
+				
+				$terms_array[] = $item;
 			}
 		}
 		
@@ -1554,7 +1554,7 @@ class dy_utilities {
 			
 			if(package_field($day) != 1)
 			{
-				array_push($enabled_days, $labels[$x]);
+				$enabled_days[] = $labels[$x];
 			}
 		}
 		
@@ -1623,7 +1623,7 @@ class dy_utilities {
 				$day = date('N', strtotime($range[$x]));
 
 				if (!in_array($day, $week_days)) {
-					array_push($new_range, $range[$x]);
+					$new_range[] = $range[$x];
 				}
 			}
 		}
