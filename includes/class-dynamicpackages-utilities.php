@@ -1604,69 +1604,107 @@ class dy_utilities {
 
 	public static function update_package_date_in_db($the_id)
 	{
-		$output = '';
-		global $polylang;
-		global $post;
+		$the_id = (int) $the_id;
 
-		if (isset($polylang)) {
-			if (pll_current_language($post->post_name) != pll_default_language()) {
-				$the_id = pll_get_post(get_dy_id(), pll_default_language());
+		if ($the_id <= 0) {
+			return '';
+		}
+
+		// Resolve the default-language post.
+		if (function_exists('pll_get_post') && function_exists('pll_default_language')) {
+			$default_id = pll_get_post(
+				$the_id,
+				pll_default_language('slug')
+			);
+
+			if ($default_id) {
+				$the_id = (int) $default_id;
 			}
 		}
 
-		$cache_key = 'dy_update_package_date_in_db_' . (string) $the_id;
+		$cache_key = 'dy_update_package_date_in_db_' . $the_id;
 
+		// Request-level cache.
 		if (array_key_exists($cache_key, self::$cache)) {
-			
-			return self::$cache[$cache_key]; // Retorna el valor cacheado sin recalcular desde cache
-		}	
+			return self::$cache[$cache_key];
+		}
 
-		// ✅ Verificamos si ya hay un transient válido (1 hora)
+		// Persistent transient cache.
 		$cached_output = get_transient($cache_key);
+
 		if ($cached_output !== false) {
-			return $cached_output; // Retorna el valor cacheado sin recalcular desde get_transient
+			return self::$cache[$cache_key] = $cached_output;
 		}
 
-		$today = strtotime('today');
-		$last_day = strtotime("+365 days", $today);
 		$from = (int) package_field('package_booking_from');
-		$to = (int) package_field('package_booking_to');
-		$week_days = (array) self::get_week_days_list();
+		$to   = (int) package_field('package_booking_to');
 
-		if ($from > 0) {
-			$today = strtotime("+ {$from} days", $today);
-		}
-		if ($to > 0) {
-			$last_day = strtotime("+ {$to} days", $today);
-		}
+		$base_timestamp = strtotime('today');
 
-		$today = date('Y-m-d', $today);
-		$last_day = date('Y-m-d', $last_day);
+		$from_timestamp = $from > 0
+			? strtotime("+{$from} days", $base_timestamp)
+			: $base_timestamp;
 
-		$new_range = [];
-		$range = (array) self::get_date_range($today, $last_day);
-		$disabled_range = (array) self::get_disabled_range();
+		$to_timestamp = $to > 0
+			? strtotime("+{$to} days", $base_timestamp)
+			: strtotime('+365 days', $from_timestamp);
 
-		for ($x = 0; $x < count($range); $x++) {
-			if (!in_array($range[$x], $disabled_range)) {
-				$day = date('N', strtotime($range[$x]));
+		// Invalid range.
+		if ($to_timestamp < $from_timestamp) {
+			$output = '';
+		} else {
 
-				if (!in_array($day, $week_days)) {
-					$new_range[] = $range[$x];
+			$from_date = date('Y-m-d', $from_timestamp);
+			$to_date   = date('Y-m-d', $to_timestamp);
+
+			$range = (array) self::get_date_range(
+				$from_date,
+				$to_date
+			);
+
+			$disabled_dates = array_fill_keys(
+				(array) self::get_disabled_range(),
+				true
+			);
+
+			$disabled_days = array_fill_keys(
+				array_map(
+					'intval',
+					(array) self::get_week_days_list()
+				),
+				true
+			);
+
+			$output = '';
+
+			foreach ($range as $date) {
+
+				if (isset($disabled_dates[$date])) {
+					continue;
 				}
+
+				$day = (int) date('N', strtotime($date));
+
+				if (isset($disabled_days[$day])) {
+					continue;
+				}
+
+				$output = $date;
+				break;
 			}
 		}
 
-		if (is_array($new_range) && count($new_range) > 0) {
-			$output = $new_range[0];
-		}
-
-		if (!empty($output)) {
+		if ($output !== '') {
 			update_post_meta($the_id, 'package_date', $output);
+		} else {
+			delete_post_meta($the_id, 'package_date');
 		}
 
-		// ✅ Guardamos en transient por 1 hora (3600 segundos)
-		set_transient($cache_key, $output, 3600);
+		set_transient(
+			$cache_key,
+			$output,
+			HOUR_IN_SECONDS
+		);
 
 		self::$cache[$cache_key] = $output;
 
