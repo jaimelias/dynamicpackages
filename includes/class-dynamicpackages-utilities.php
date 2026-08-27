@@ -657,85 +657,93 @@ class dy_utilities {
 	{
 		//this will be used only for multi-day packages only
 
-		if(is_booking_page() || is_confirmation_page())
+		$the_id = get_dy_id();
+		$cache_key = 'dy_get_min_nights _' . $the_id;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
+		if(!is_booking_page() && !is_confirmation_page()) {
+			return null;
+		}
+
+		$duration = (int) package_field('package_duration'); //this is the package base duration
+
+		if(request_has('booking_extra')) {
+			$booking_extra = secure_request('booking_extra', 1, 'absint'); //this is the clients requested number of days/nights
+			if($booking_extra > $duration) $duration = $booking_extra;
+		}
+
+		$booking_date = secure_request('booking_date');
+		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
+		$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
+		$seasons = self::get_package_hot_chart('package_seasons_chart');
+		$duration_arr = [];
+
+		
+		if(is_array($seasons))
 		{
-			$duration = (int) package_field('package_duration'); //this is the package base duration
-
-			if(request_has('booking_extra')) {
-				$booking_extra = secure_request('booking_extra', 1, 'absint'); //this is the clients requested number of days/nights
-				if($booking_extra > $duration) $duration = $booking_extra;
-			}
-
-			$booking_date = secure_request('booking_date');
-			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
-			$seasons = self::get_package_hot_chart('package_seasons_chart');
-			$duration_arr = [];
-
-			
-			if(is_array($seasons))
+			if(array_key_exists('seasons_chart', $seasons))
 			{
-				if(array_key_exists('seasons_chart', $seasons))
+				$seasons = $seasons['seasons_chart'];
+
+				if(!is_array($seasons) || count($seasons) === 0) {
+					return $duration;
+				}
+				
+				for($s = 0; $s < count($seasons); $s++)
 				{
-					$seasons = $seasons['seasons_chart'];
+					if(
+						$seasons[$s] === null ||
+						!isset($seasons[$s][1]) ||
+						!isset($seasons[$s][2]) ||
+						!isset($seasons[$s][3])
+					) continue;
 
-					if(!is_array($seasons) || count($seasons) === 0) {
-						return $duration;
+					$from_season = $seasons[$s][1];
+					$to_season = $seasons[$s][2];
+
+					if(!is_valid_date($from_season) || !is_valid_date($to_season)) {
+						continue;
 					}
+
+					$duration_season = (int) $seasons[$s][3];
+
+					if($duration_season < $duration) {
+						continue;
+					}
+
+					$seasons_dates_range = self::get_date_range($from_season, $to_season, false);
 					
-					for($s = 0; $s < count($seasons); $s++)
+					if(!is_array($seasons_dates_range) || count($seasons_dates_range) === 0)
 					{
-						if(
-							$seasons[$s] === null ||
-							!isset($seasons[$s][1]) ||
-							!isset($seasons[$s][2]) ||
-							!isset($seasons[$s][3])
-						) continue;
+						continue;
+					}
 
-						$from_season = $seasons[$s][1];
-						$to_season = $seasons[$s][2];
-
-						if(!is_valid_date($from_season) || !is_valid_date($to_season)) {
-							continue;
-						}
-
-						$duration_season = (int) $seasons[$s][3];
-
-						if($duration_season < $duration) {
-							continue;
-						}
-
-						$seasons_dates_range = self::get_date_range($from_season, $to_season, false);
-						
-						if(!is_array($seasons_dates_range) || count($seasons_dates_range) === 0)
+					foreach($booking_dates_range as $date)
+					{
+						if(in_array($date, $seasons_dates_range))
 						{
-							continue;
-						}
-
-						foreach($booking_dates_range as $date)
-						{
-							if(in_array($date, $seasons_dates_range))
-							{
-								$duration_arr[] = $duration_season;
-								break;
-							}
+							$duration_arr[] = $duration_season;
+							break;
 						}
 					}
 				}
 			}
-			
-			if(count($duration_arr) > 0)
-			{
-				$max_duration = max($duration_arr);
-				
-				if($max_duration > $duration)
-				{
-					$duration = $max_duration;
-				}					
-			}
-			
-			return $duration;
 		}
+		
+		if(count($duration_arr) > 0)
+		{
+			$max_duration = max($duration_arr);
+			
+			if($max_duration > $duration)
+			{
+				$duration = $max_duration;
+			}					
+		}
+		
+		return self::$cache[$cache_key] = $duration;
 	}
 
 
