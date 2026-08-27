@@ -652,72 +652,93 @@ class dy_utilities {
 	}	
 
 
+	
 	public static function get_min_nights()
 	{
+		//this will be used only for multi-day packages only
+
 		if(is_booking_page() || is_confirmation_page())
 		{
-			$duration = intval(package_field('package_duration'));
-			$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+			$duration = (int) package_field('package_duration'); //this is the package base duration
+
+			if(request_has('booking_extra')) {
+				$booking_extra = secure_request('booking_extra', 1, 'absint'); //this is the clients requested number of days/nights
+				if($booking_extra > $duration) $duration = $booking_extra;
+			}
+
+			$booking_date = secure_request('booking_date');
 			$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false);
+			$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
 			$seasons = self::get_package_hot_chart('package_seasons_chart');
 			$duration_arr = [];
-			
-			if(isset($_REQUEST['booking_extra']))
-			{
-				if($_REQUEST['booking_extra'] > $duration)
-				{
-					$duration = intval(sanitize_text_field($_REQUEST['booking_extra']));
-				}
-			}
+
 			
 			if(is_array($seasons))
 			{
 				if(array_key_exists('seasons_chart', $seasons))
 				{
 					$seasons = $seasons['seasons_chart'];
+
+					if(!is_array($seasons) || count($seasons) === 0) {
+						return $duration;
+					}
 					
 					for($s = 0; $s < count($seasons); $s++)
 					{
+						if(
+							$seasons[$s] === null ||
+							!isset($seasons[$s][1]) ||
+							!isset($seasons[$s][2]) ||
+							!isset($seasons[$s][3])
+						) continue;
+
 						$from_season = $seasons[$s][1];
 						$to_season = $seasons[$s][2];
-						$duration_season = $seasons[$s][3];
+
+						if(!is_valid_date($from_season) || !is_valid_date($to_season)) {
+							continue;
+						}
+
+						$duration_season = (int) $seasons[$s][3];
+
+						if($duration_season < $duration) {
+							continue;
+						}
+
 						$seasons_dates_range = self::get_date_range($from_season, $to_season, false);
 						
-						if(is_array($seasons_dates_range))
+						if(!is_array($seasons_dates_range) || count($seasons_dates_range) === 0)
 						{
-							for($x = 0; $x < count($seasons_dates_range); $x++)
+							continue;
+						}
+
+						foreach($booking_dates_range as $date)
+						{
+							if(in_array($date, $seasons_dates_range))
 							{
-								for($d = 0; $d < count($booking_dates_range); $d++)
-								{
-									if(in_array($booking_dates_range[$d], $seasons_dates_range))
-									{
-										$duration_arr[] = (int) $duration_season;
-									}
-								}
-							}							
+								$duration_arr[] = $duration_season;
+								break;
+							}
 						}
 					}
 				}
 			}
 			
-			if(is_array($duration_arr))
+			if(count($duration_arr) > 0)
 			{
-				if(count($duration_arr) > 0)
+				$max_duration = max($duration_arr);
+				
+				if($max_duration > $duration)
 				{
-					$max_duration = max($duration_arr);
-					
-					if(count($duration_arr) > 0 && $max_duration > $duration)
-					{
-						$duration = $max_duration;
-					}					
-				}
+					$duration = $max_duration;
+				}					
 			}
 			
-			$output = $duration;
-			return $output;	
+			return $duration;
 		}
-	}	
+	}
+
+
 	public static function get_season($booking_date)
 	{
 		if(is_booking_page() || is_confirmation_page())

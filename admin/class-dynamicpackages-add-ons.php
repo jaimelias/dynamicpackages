@@ -58,13 +58,27 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 	public function admin_taxonomy_form_row($name, $label, $field, $description = null)
 	{
-		if($description)
-		{
-			$description = '<br/><p class="description">'.esc_html($description).'</p>';
+		if ($description) {
+			$description = sprintf(
+				'<br/><p class="description">%s</p>',
+				esc_html($description)
+			);
 		}
-		return '<tr class="form-field"><th scope="row" valign="top"><label for="'.esc_attr($name).'">'.esc_html($label).'</label></th><td>'.$field.$description.'</td></tr>';
+
+		return sprintf(
+			'<tr class="form-field">
+				<th scope="row" valign="top">
+					<label for="%s">%s</label>
+				</th>
+				<td>%s%s</td>
+			</tr>',
+			esc_attr($name),
+			esc_html($label),
+			$field,
+			$description
+		);
 	}
-		
+			
 
 	public function save($term_id) {
 		
@@ -313,12 +327,14 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$output = '';
 			$terms = $this->get_add_ons();
 			$add_ons_arr = [];
-			$addon_colspan  = (!wp_is_mobile()) ? 2 : 1;
-			
+			$addon_colspan = (!wp_is_mobile()) ? 2 : 1;
+
 			if(is_array($terms))
 			{
-
-				$add_ons_package_id = 'dy_add_ons_' . get_dy_id();
+				$add_ons_package_id = sprintf(
+					'dy_add_ons_%s',
+					get_dy_id()
+				);
 
 				if(isset($_COOKIE[$add_ons_package_id]))
 				{
@@ -326,36 +342,61 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 					if($add_ons_value)
 					{
-						$add_ons_arr = explode(",", $add_ons_value);
+						$add_ons_arr = explode(',', $add_ons_value);
 					}
-
 				}
 
-				for($x = 0; $x < count($terms); $x++)
+				$terms_count = count($terms);
+
+				for($x = 0; $x < $terms_count; $x++)
 				{
-					$term_id = $terms[$x]['id'];
+					$term = $terms[$x];
+					$term_id = $term['id'];
+					$price = (float) $term['price'];
 
-					$selected = (in_array($term_id, $add_ons_arr)) ? 'selected' : '';
-					$label = '<span>'.esc_html($terms[$x]['name']).'</span>';
-					$price = $terms[$x]['price'];
-					$description = $terms[$x]['description'];
-					
-					$label .= ' <br/><small class="semibold">'.esc_html(wrap_money_full($price).' '.__('per person', 'dynamicpackages')).'</small>';
-
-					if(!empty($description))
+					if($price > 0.0)
 					{
-						$label .= '<br/><small>'.esc_html($description).'</small>';
+						$selected = (in_array($term_id, $add_ons_arr)) ? 'selected' : '';
+						$description = $term['description'];
+
+						$label = sprintf(
+							'<span>%s</span> <br/><small class="semibold">%s</small>',
+							esc_html($term['name']),
+							esc_html(
+								sprintf(
+									'%s %s',
+									wrap_money_full($price),
+									__('per person', 'dynamicpackages')
+								)
+							)
+						);
+
+						if(!empty($description))
+						{
+							$label .= sprintf(
+								'<br/><small>%s</small>',
+								esc_html($description)
+							);
+						}
+
+						$output .= sprintf(
+							'<tr><td colspan="%s">%s</td><td><select class="add_ons width-100 border-box small" data-id="%s"><option value="0">%s</option><option value="1" %s>%s</option></select></td></tr>',
+							esc_attr($addon_colspan),
+							$label,
+							esc_attr($term_id),
+							esc_html(__('No', 'dynamicpackages')),
+							$selected,
+							esc_html(__('Yes', 'dynamicpackages'))
+						);
 					}
-					
-					if(intval($price) > 0)
-					{
-						$output .= '<tr><td colspan="'.esc_attr($addon_colspan).'">'.$label.'</td><td><select class="add_ons width-100 border-box small" data-id="'.esc_attr($term_id).'"><option value="0">'.esc_html(__('No', 'dynamicpackages')).'</option><option value="1" '.$selected.'>'.esc_html(__('Yes', 'dynamicpackages')).'</option></select></td></tr>';
-					}					
 				}
 			}
+
 			echo $output;
 		}
 	}
+
+
 	public function get_add_ons()
 	{
 		static $cache = [];
@@ -415,7 +456,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			
 			$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
 			
-			$add_on_type = intval(get_term_meta($term_id, 'tax_add_ons_type', true));				
+			$add_on_type = (int) get_term_meta($term_id, 'tax_add_ons_type', true);
 			
 			if (isset($add_ons_price['tax_add_ons_c'][$pax_idx][0])) {
 				$price = (float) $add_ons_price['tax_add_ons_c'][$pax_idx][0];
