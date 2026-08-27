@@ -95,6 +95,7 @@ class dynamicpackages {
 		require_once $dir . 'admin/class-dynamicpackages-metaboxes.php';
 		require_once $dir . 'admin/class-dynamicpackages-metapost.php';
 		require_once $dir . 'admin/class-dynamicpackages-post-type.php';
+		require_once $dir . 'admin/class-dynamicpackages-extended-package-fields.php';
 
 		//gateways
 		require_once $dir . 'gateways/class-dynamicpackages-gateways.php';

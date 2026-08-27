@@ -505,7 +505,7 @@ class Dynamicpackages_Metaboxes
 
 	public function build_week_day_surcharge_fields()
 	{
-		$output = '<fieldset><h3 id="week_day_surcharges">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
+		$output = '<h3 id="week_day_surcharges">' . esc_html(__('Surcharge per day of the week', 'dynamicpackages')) . '</h3>';
 
 		for ($x = 0; $x < 7; $x++)
 		{
