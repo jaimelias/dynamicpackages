@@ -695,7 +695,7 @@ class dy_utilities {
 				for($s = 0; $s < count($seasons); $s++)
 				{
 					if(
-						$seasons[$s] === null ||
+						!is_array($seasons[$s]) ||
 						!isset($seasons[$s][1]) ||
 						!isset($seasons[$s][2]) ||
 						!isset($seasons[$s][3])
