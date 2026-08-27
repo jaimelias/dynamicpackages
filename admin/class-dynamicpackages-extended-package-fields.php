@@ -7,24 +7,15 @@ function dy_get_value_package_field($args) {
     static $cache = [];
     $key = $args['key'];
 
-    $post_id = null;
 
-    if (array_key_exists('post_id', $args) && is_numeric($args['post_id'])) {
-        $candidate = (int) $args['post_id'];
-
-        if ($candidate > 0) {
-            $post_id = $candidate;
-        }
-    }
-
-    $cache_key =  'dy_get_value_package_field_' . $key . '_' . $post_id;
+    $cache_key =  'dy_get_value_package_field_' . $key;
 
     if (array_key_exists($cache_key, $cache)) {
             return $cache[$cache_key];
     }
 
 
-    return $cache[$cache_key] = package_field($key, $post_id);
+    return $cache[$cache_key] = package_field($key);
 }
 
 class dy_input_package_field extends dy_input_abstract {
