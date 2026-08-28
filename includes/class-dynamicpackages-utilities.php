@@ -668,11 +668,27 @@ class dy_utilities {
 			return null;
 		}
 
-		$duration = (int) package_field('package_duration'); //this is the package base duration
+		$duration = max(1, absint(package_field('package_duration')));
+		$package_type = self::get_package_type($the_id);
 
-		if(request_has('booking_extra')) {
-			$booking_extra = secure_request('booking_extra', 1, 'absint'); //this is the clients requested number of days/nights
-			if($booking_extra > $duration) $duration = $booking_extra;
+		$has_max_duration = in_array(
+			$package_type,
+			['multi-day', 'rental-per-day', 'rental-per-hour'],
+			true
+		);
+
+		$duration_max = $has_max_duration
+			? absint(package_field('package_duration_max'))
+			: 0;
+
+		if(request_has('booking_extra'))
+		{
+			$booking_extra = secure_request('booking_extra', $duration, 'absint');
+
+			if( $booking_extra > $duration && $duration_max > $duration)
+			{
+				$duration = min($booking_extra, $duration_max);
+			}
 		}
 
 		$booking_date = secure_request('booking_date');
@@ -733,6 +749,7 @@ class dy_utilities {
 			}
 		}
 		
+		//seasonal duration must override max_duration and booking_extra
 		if(count($duration_arr) > 0)
 		{
 			$max_duration = max($duration_arr);
@@ -1044,7 +1061,10 @@ class dy_utilities {
 		{
 			if(($package_type === 'rental-per-hour' || $package_type === 'rental-per-day') && isset($_REQUEST['booking_extra']))
 			{
-				$sum = $sum * intval(sanitize_text_field($_REQUEST['booking_extra']));
+
+				$effective_duration = max(1, absint(self::get_min_nights()) );
+
+				$sum = $sum * $effective_duration;
 			}
 
 			if($package_type !== 'multi-day')

@@ -5,7 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 class Dynamicpackages_Metapost
 {
 
-	static $package_type = null;
+	static $valid_package_types = [0, 1, 2, 3, 4];
+	static $post_id = null;
 
 	public function __construct()
 	{
@@ -27,6 +28,7 @@ class Dynamicpackages_Metapost
 		if(!is_string($nonce) || !wp_verify_nonce($nonce, '_package_nonce')) return;
 		if(!current_user_can('edit_post', $post_id)) return;
 
+		self::$post_id = $post_id;
 		$languages = get_languages();
 		$package_post = get_post($post_id);
 		$is_child = (
@@ -54,6 +56,15 @@ class Dynamicpackages_Metapost
 				absint(dy_utilities::starting_at())
 			);
 		}
+	}
+
+	private static function get_package_type() {
+
+		return self::get_posted_scalar(
+			'package_package_type',
+			null,
+			'absint'
+		) ?? absint(package_field('package_package_type', self::$post_id));
 	}
 
 	private static function save_simple_fields($post_id)
@@ -102,9 +113,12 @@ class Dynamicpackages_Metapost
 			'absint'
 		);
 
-		
-
 		if($package_type === null) return;
+
+		if(!in_array($package_type, self::$valid_package_types, true)) {
+			write_log("Invalid package_type=$package_type detected in Dynamicpackages_Metapost::save_package_type_fields($post_id)");
+			return;
+		}
 
 		$package_type = (int) $package_type;
 
@@ -131,8 +145,6 @@ class Dynamicpackages_Metapost
 		}
 
 		update_post_meta($post_id, 'package_package_type', $package_type);
-
-		self::$package_type = $package_type;
 	}
 
 	private static function save_duration_fields($post_id, $is_child)
@@ -142,21 +154,32 @@ class Dynamicpackages_Metapost
 		$duration = self::get_posted_scalar(
 			'package_duration',
 			null,
-			'sanitize_text_field'
+			'absint'
 		);
+
 
 		if($duration === null) return;
 
+		$duration = max(1, $duration);
+
 		update_post_meta($post_id, 'package_duration', $duration);
 
-		$is_transport = self::$package_type === 4;
+		$package_type = self::get_package_type();
 
-		if(!post_has('package_duration_max') || $is_transport) return;
+		if(!in_array($package_type, self::$valid_package_types, true)) return;
+
+		if(!in_array($package_type, [1, 2, 3], true))
+		{
+			delete_post_meta($post_id, 'package_duration_max');
+			return;
+		}
+
+		if(!post_has('package_duration_max')) return;
 
 		$duration_max = self::get_posted_scalar(
 			'package_duration_max',
 			null,
-			'sanitize_text_field'
+			'absint'
 		);
 
 		if($duration_max === null) return;

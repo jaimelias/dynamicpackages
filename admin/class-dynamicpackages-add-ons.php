@@ -468,7 +468,9 @@ class Dynamicpackages_Taxonomy_Add_Ons
 				if($package_type === 'multi-day' || $package_type === 'rental-per-day')
 				{
 					
-					$package_duration = secure_request('booking_extra', 1, 'absint');
+					$package_duration = request_has('booking_extra') 
+					? max(1, absint(dy_utilities::get_min_nights()))
+					: 1;
 					
 					if($add_on_type === 2)
 					{

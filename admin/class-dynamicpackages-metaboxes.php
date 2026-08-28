@@ -690,12 +690,12 @@ class Dynamicpackages_Metaboxes
 
 		<p>
 			<label for="package_duration"><?php echo esc_html(__('Duration', 'dynamicpackages')); ?></label><br />
-			<input type="number" name="package_duration" id="package_duration" <?php echo esc_attr($this->disable_child); ?> value="<?php echo esc_attr($this->duration > 0) ? $this->duration : 1; ?>">
+			<input type="number" step="1" min="1" name="package_duration" id="package_duration" <?php echo esc_attr($this->disable_child); ?> value="<?php echo esc_attr($this->duration > 0) ? $this->duration : 1; ?>">
 		</p>
 
 		<p>
 			<label for="package_duration_max"><?php echo esc_html(__('Maximum Duration', 'dynamicpackages')); ?></label><br />
-			<input type="number" step="0.1" name="package_duration_max" <?php echo esc_attr($this->disable_child); ?> id="package_duration_max" value="<?php echo esc_attr($this->duration_max); ?>">
+			<input type="number" step="1" min="1" name="package_duration_max" <?php echo esc_attr($this->disable_child); ?> id="package_duration_max" value="<?php echo esc_attr($this->duration_max); ?>">
 		</p>
 
 		<?php if (!$this->is_child): ?>
