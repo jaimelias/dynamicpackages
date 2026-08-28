@@ -113,6 +113,11 @@ public static function validate_quote()
 	}
 	public static function has_package()
 	{
+
+		if($_SERVER['REQUEST_METHOD'] !== 'GET') {
+			return false;
+		}
+
 		$output = false;
 		$cache_key = 'dy_has_package';
 		
@@ -166,6 +171,10 @@ public static function validate_quote()
 	{
 		$output = false;
 		$cache_key = 'dy_is_booking_page';
+
+		if($_SERVER['REQUEST_METHOD'] !== 'GET') {
+			return false;
+		}
 		
         if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
@@ -183,6 +192,7 @@ public static function validate_quote()
 		$the_id = get_dy_id();
 
 		if(!self::validate_the_id($the_id)) {
+			
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -192,16 +202,61 @@ public static function validate_quote()
 			return self::$cache[$cache_key] = false;
 		}
 
-		if(self::validate_booking_date($the_id) && self::validate_pax_regular($the_id) && self::validate_hash())
-		{
-			$output = true;
+		$missing_required_get_params = [];
+		$required_get_params = [
+			'dy_id',
+			'booking_date',
+			'pax_regular',
+			'hash'
+		];
+
+		$count_required_get_params = count($required_get_params);
+
+		for ($x = 0; $x < $count_required_get_params; $x++) {
+			if (!get_has($required_get_params[$x])) {
+				$missing_required_get_params[] = $required_get_params[$x];
+			}
 		}
-		else
-		{
-			$output = false;
+		
+		$count_missing_required_get_params = count($missing_required_get_params);
+		
+		//if all the required_get_params it means that this is a standard package page
+		if ($count_missing_required_get_params > 0 && $count_missing_required_get_params !== $count_required_get_params) {
+			$GLOBALS['dy_request_invalids'] = array_map(
+				function($param) {
+					return sprintf(__('Missing required request parameter: %s.'), $param);
+				},
+				$missing_required_get_params
+			);
+			return self::$cache[$cache_key] = false;
 		}
 
-        //store output in $cache
+		$invalid_required_get_params = [];
+
+		if (!self::validate_booking_date($the_id)) {
+			$invalid_required_get_params[] = 'booking_date';
+		}
+		if (!self::validate_pax_regular($the_id)) {
+			$invalid_required_get_params[] = 'pax_regular';
+		}
+		if (!self::validate_hash()) {
+			$invalid_required_get_params[] = 'hash';
+		}
+
+		if(count($invalid_required_get_params) > 0) {
+
+			$GLOBALS['dy_request_invalids'] = array_map(
+				function($param) {
+					return sprintf(__('Invalid request parameter: %s.'), $param);
+				},
+				$invalid_required_get_params
+			);
+			
+			$output = false;
+		} else {
+			$output = true;
+		}
+        
         
 
 		return self::$cache[$cache_key] = $output;
@@ -220,26 +275,59 @@ public static function validate_quote()
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_regular_request = secure_request('pax_regular', 1, 'absint');
+		$pax_regular = secure_request('pax_regular', 0, 'absint');
 
-		if (!is_int($pax_regular_request) || $pax_regular_request <= 0) {
+		if (!is_int($pax_regular) || $pax_regular <= 0) {
+			$GLOBALS['dy_request_invalids'] = [__('Invalid param: pax_regular.', 'dynamicpackages')];
 			return self::$cache[$cache_key] = false;
 		}
 
-		$min_persons = (int) package_field('package_min_persons', $the_id);
+		$pax_discount = secure_request('pax_discount', 0, 'absint');
+		$pax_free = secure_request('pax_free', 0, 'absint');
+		$pax_sum = $pax_regular + $pax_discount + $pax_free;
 
-		if (!is_int($min_persons) || $min_persons <= 0) {
-			// No valid minimum configured — treat as invalid rather than auto-passing
+		$package_min_persons = absint(package_field('package_min_persons'));
+		$package_max_persons = absint(package_field('package_max_persons'));
+		$package_increase_persons = absint(package_field('package_increase_persons'));
+		$hard_max_persons = $package_max_persons + $package_increase_persons;
+
+		if (!is_int($package_min_persons) || $package_min_persons <= 0) {
+			$GLOBALS['dy_request_invalids'] = [__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
 			return self::$cache[$cache_key] = false;
 		}
 
-		$output = $pax_regular_request >= $min_persons;
+		if (!is_int($package_max_persons) || $package_max_persons <= 0) {
+			$GLOBALS['dy_request_invalids'] = [__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
+			return self::$cache[$cache_key] = false;
+		}
 
-		return self::$cache[$cache_key] = $output;
+		if (!is_int($package_increase_persons) || $package_increase_persons < 0) {
+			$GLOBALS['dy_request_invalids'] = [__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
+			return self::$cache[$cache_key] = false;
+		}
+
+		if($pax_sum < $package_min_persons) {
+
+    		$GLOBALS['dy_request_invalids'] = [__('You have not reached the minimum number of participants required for this package.', 'dynamicpackages')];
+			return self::$cache[$cache_key] = false;
+		}
+
+		if($pax_sum > $hard_max_persons) {
+
+			$GLOBALS['dy_request_invalids'] = [__('You have exceeded the maximum number of participants allowed for this package', 'dynamicpackages')];
+			return self::$cache[$cache_key] = false;
+		}
+
+		return self::$cache[$cache_key] = true;
 	}
 
 	public static function is_confirmation_page()
 	{
+
+		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			return false;
+		}
+
 		$output = false;
 		$cache_key = 'dy_is_checkout_page';
 	

@@ -68,18 +68,9 @@ class Dynamicpackages_Gateways
 
 		$package_min_persons = absint(package_field('package_min_persons'));
 		$package_max_persons = absint(package_field('package_max_persons'));
-		$package_increase_persons = absint(package_field('package_increase_persons'));
-		$hard_max_persons = $package_max_persons + $package_max_persons;
-		
 		$pax_sum = secure_get('pax_regular', 1, 'absint') + secure_get('pax_discount', 0, 'absint') + secure_get('pax_free', 0, 'absint');
 
-		if($pax_sum > $hard_max_persons) {
-			$content = sprintf(
-				'<p class="minimal_error strong">%s</p>',
-				__('You have exceeded the maximum number of participants allowed for this package')
-			);		
-		}
-		else if($pax_sum <  $package_min_persons || $pax_sum > $package_max_persons)
+		if($pax_sum > $package_max_persons)
 		{
 			$content = sprintf(
 				'<p class="minimal_success strong">%s</p><h2>%s - %s</h2>%s',

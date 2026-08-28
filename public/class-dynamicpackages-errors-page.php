@@ -37,7 +37,9 @@ class Dynamicpackages_Errors_Page {
 
 		if(isset($dy_request_invalids))
 		{
-            return sprintf('<p class="minimal_alert">%s</p>', json_encode($dy_request_invalids));
+			return implode('', array_map(function($message) {
+				return sprintf('<p class="minimal_alert strong">%s</p>', esc_html($message));
+			}, $dy_request_invalids));
 		}
 
         return $content;
