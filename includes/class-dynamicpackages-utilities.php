@@ -1059,7 +1059,7 @@ class dy_utilities {
 		}
 		else
 		{
-			if(($package_type === 'rental-per-hour' || $package_type === 'rental-per-day') && isset($_REQUEST['booking_extra']))
+			if(($package_type === 'rental-per-hour' || $package_type === 'rental-per-day'))
 			{
 
 				$effective_duration = max(1, absint(self::get_min_nights()) );

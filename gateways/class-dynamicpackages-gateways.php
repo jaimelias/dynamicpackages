@@ -345,10 +345,10 @@ class Dynamicpackages_Gateways
 	
 	public function invalid_min_duration()
 	{
-		if(isset($_GET['booking_extra']) && is_booking_page())
+		if(get_has('booking_extra') && is_booking_page())
 		{
-			$booking_extra = intval(sanitize_text_field($_GET['booking_extra']));
-			$min_duration = dy_utilities::get_min_nights();
+			$min_duration = max(1, absint(dy_utilities::get_min_nights()));
+			$booking_extra = secure_get('booking_extra', $min_duration, 'absint');
 			$duration_unit = package_field('package_length_unit');
 			
 			if($booking_extra < $min_duration)
