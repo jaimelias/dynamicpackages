@@ -243,7 +243,8 @@ class Dynamicpackages_Metaboxes
 			) ,
 			'min' => 'package_enabled_num',
 			'max' => 'package_enabled_num',
-			'value' => $this->enabled_dates
+			'value' => $this->enabled_dates,
+			'disabled' => $this->disable_child
 		);
 
 
@@ -362,7 +363,7 @@ class Dynamicpackages_Metaboxes
 			<hr>
 
 			<label>🧠 Add to Training Data:</label> 
-			<select name="package_training_data" id="package_training_data">
+			<select name="package_training_data" id="package_training_data" <?php echo esc_attr($this->disable_child); ?>>
 				<option value="0" <?php echo ($this->training_data == 0) ? 'selected' : ''; ?>>No</option>
 				<option value="1" <?php echo ($this->training_data == 1) ? 'selected' : ''; ?>>Yes</option>
 			</select>
@@ -378,7 +379,7 @@ class Dynamicpackages_Metaboxes
 
 			<p>
 			<label for="package_one_way_surcharge"><?php echo esc_html(__('One-way Surcharge', 'dynamicpackages')); ?></label></br>
-			<input type="number" name="package_one_way_surcharge" id="package_one_way_surcharge" value="<?php echo esc_attr($this->one_way_surcharge); ?>">%
+			<input type="number" name="package_one_way_surcharge" id="package_one_way_surcharge" value="<?php echo esc_attr($this->one_way_surcharge); ?>" <?php echo esc_attr($this->disable_child); ?>>%
 		</p>
 
 		<?php
@@ -401,7 +402,7 @@ class Dynamicpackages_Metaboxes
 
 			<p>
 				<label for="package_start_address_short"><?php echo esc_html(__('Departure Address Short', 'dynamicpackages')); ?></label></br>
-				<input type="text" name="package_start_address_short" id="package_start_address_short" value="<?php echo esc_attr($this->start_address_short); ?>"> 
+				<input type="text" name="package_start_address_short" id="package_start_address_short" value="<?php echo esc_attr($this->start_address_short); ?>" <?php echo esc_attr($this->disable_child); ?>> 
 			</p>
 
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
@@ -421,7 +422,7 @@ class Dynamicpackages_Metaboxes
 			
 			<p>
 				<label for="package_return_address_short"><?php echo esc_html(__('Short Departure Address', 'dynamicpackages')); ?></label></br>
-				<input type="text" name="package_return_address_short" id="package_return_address_short" value="<?php echo esc_attr($this->return_address_short); ?>">
+				<input type="text" name="package_return_address_short" id="package_return_address_short" value="<?php echo esc_attr($this->return_address_short); ?>" <?php echo esc_attr($this->disable_child); ?>>
 			</p>		
 			
 		<?php endif; ?>
@@ -590,7 +591,7 @@ class Dynamicpackages_Metaboxes
 		<p><input type="url" class="width-100" name="package_disabled_dates_api" id="package_disabled_dates_api" value="<?php echo esc_url($this->disabled_dates_api); ?>" > </p>
 		</fieldset>
 		
-		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 1, 20); ?></h3>
+		<h3><?php echo esc_html(__('Force Enabled Dates', 'dynamicpackages')); ?> <?php $this->select_number('enabled_num', 1, 20, $this->disable_child); ?></h3>
 		
 		<?php echo handsontable($this->enabled_dates_args); ?>	
 	

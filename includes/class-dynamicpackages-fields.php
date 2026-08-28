@@ -92,15 +92,21 @@ class Dynamicpackages_Fields
         }
 
         // Check if the current post has a parent and adjust $this_id
-        if (($post instanceof WP_Post) && property_exists($post, 'post_parent') && $post->post_parent > 0) {
-            if (!in_array($name, $excludes)) {
-                $this_id = $post->post_parent;
-            }
-        }
+        $is_child = (
+            $post instanceof WP_Post
+            && property_exists($post, 'post_parent')
+            && $post->post_parent > 0
+        );
 
-        $is_transport = (int) get_post_meta($this_id, 'package_package_type', true); //do not change this code
-         
-        // Add transport-specific excludes if applicable
+        $parent_id = $is_child ? (int) $post->post_parent : 0;
+        $type_id   = $is_child ? $parent_id : $this_id;
+
+        $is_transport = (int) get_post_meta(
+            $type_id,
+            'package_package_type',
+            true
+        );
+
         if ($is_transport === 4) {
             $excludes = array_merge($excludes, [
                 'package_check_in_hour',
@@ -110,6 +116,10 @@ class Dynamicpackages_Fields
                 'package_start_address',
                 'package_return_address',
             ]);
+        }
+
+        if ($is_child && !in_array($name, $excludes, true)) {
+            $this_id = $parent_id;
         }
 
         // Generate a unique cache key

@@ -1,389 +1,382 @@
-<?php 
-
+<?php
 
 if ( !defined( 'WPINC' ) ) exit;
 
-#[AllowDynamicProperties]
-class Dynamicpackages_Metapost{
-	
+class Dynamicpackages_Metapost
+{
+
+	static $package_type = null;
+
 	public function __construct()
 	{
-		$this->init();
-		
+		add_action('save_post', array($this, 'package_save'), 10, 3);
 	}
-	public function init()
+
+	public static function package_save($post_id)
 	{
-		add_action('save_post', array($this, 'package_save') , 10, 3);
-	}	
-	
-	public static function package_save($post_id) 
-	{
-		if(defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-		if(! isset( $_POST['package_nonce'] ) || ! wp_verify_nonce( $_POST['package_nonce'], '_package_nonce' ) ) return;
-		if(! current_user_can( 'edit_post', $post_id ) ) return;
+		$post_id = absint($post_id);
+
+		if($post_id === 0) return;
+		if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+		if(wp_is_post_revision($post_id)) return;
+		if(get_post_type($post_id) !== 'packages') return;
+		if(!post_has('package_nonce')) return;
+
+		$nonce = secure_post('package_nonce', '', 'sanitize_text_field');
+
+		if(!is_string($nonce) || !wp_verify_nonce($nonce, '_package_nonce')) return;
+		if(!current_user_can('edit_post', $post_id)) return;
 
 		$languages = get_languages();
+		$package_post = get_post($post_id);
+		$is_child = (
+			$package_post instanceof WP_Post
+			&& (int) $package_post->post_parent > 0
+		);
 
 		dy_utilities::update_package_date_in_db($post_id);
-		
-		if(isset( $_POST['package_fixed_price']))
-			update_post_meta( $post_id, 'package_fixed_price', esc_attr($_POST['package_fixed_price']));
-		
-		if(isset( $_POST['package_show_pricing']))
-			update_post_meta( $post_id, 'package_show_pricing', esc_attr($_POST['package_show_pricing']));		
-		
-		if(isset($_POST['package_package_type']))
-		{
-			if(intval($_POST['package_package_type']) == 2)
-			{
-				update_post_meta( $post_id, 'package_length_unit', 2);				
-			}
-			else if(intval($_POST['package_package_type']) == 3)
-			{
-				update_post_meta( $post_id, 'package_length_unit', 1);				
-			}
-			else
-			{
-				if (isset($_POST['package_length_unit']))
-				{
-					update_post_meta( $post_id, 'package_length_unit', esc_attr($_POST['package_length_unit']));
-				}
-			}
-		}
 
-		if(isset($_POST['package_duration']))
-		{
-			update_post_meta( $post_id, 'package_duration', esc_attr($_POST['package_duration']));
+		self::save_package_type_fields($post_id);
 
-			if(isset($_POST['package_duration_max']))
-			{
-				if(intval($_POST['package_duration_max']) >= 1)
-				{
-					if(intval($_POST['package_duration']) > intval($_POST['package_duration_max']))
-					{
-						update_post_meta( $post_id, 'package_duration_max', esc_attr(intval($_POST['package_duration']) + 1));
-					}
-					else
-					{
-						update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
-					}
-				}
-				else
-				{
-					update_post_meta( $post_id, 'package_duration_max', esc_attr($_POST['package_duration_max']));
-				}
-			}
-		}
+		self::save_simple_fields($post_id);
+		self::save_duration_fields($post_id, $is_child);
+		self::save_defaulted_numeric_fields($post_id);
+		self::save_hot_fields($post_id, $is_child);
+		self::save_parent_fields($post_id, $is_child);
+		self::save_language_fields($post_id, $languages);
+		self::save_week_day_fields($post_id);
 
-	
-		
-		if(isset( $_POST['package_display']))
-			update_post_meta( $post_id, 'package_display', esc_attr($_POST['package_display']));		
-		if(isset( $_POST['package_schema']))
-			update_post_meta( $post_id, 'package_schema', intval($_POST['package_schema']));		
-		if(isset( $_POST['package_trip_code']))
-			update_post_meta( $post_id, 'package_trip_code', esc_attr($_POST['package_trip_code']));
-		if(isset( $_POST['package_auto_booking']))
-			update_post_meta( $post_id, 'package_auto_booking', esc_attr($_POST['package_auto_booking']));
-		
-		if(isset( $_POST['package_disabled_num']))
-			update_post_meta( $post_id, 'package_disabled_num', esc_attr($_POST['package_disabled_num']));
-		if(isset( $_POST['package_disabled_dates']))
-			update_post_meta( $post_id, 'package_disabled_dates', esc_attr($_POST['package_disabled_dates']));		
-		if(isset( $_POST['package_disabled_dates_api']))
-			update_post_meta( $post_id, 'package_disabled_dates_api', esc_url($_POST['package_disabled_dates_api']));
-		if(isset( $_POST['package_enabled_num']))
-			update_post_meta( $post_id, 'package_enabled_num', esc_attr($_POST['package_enabled_num']));
-		if(isset( $_POST['package_enabled_dates']))
-			update_post_meta( $post_id, 'package_enabled_dates', esc_attr($_POST['package_enabled_dates']));	
-						
-		if(isset( $_POST['package_booking_from']))
+		if(post_has('package_package_type'))
 		{
-			update_post_meta( $post_id, 'package_booking_from', esc_attr($_POST['package_booking_from']));
+			update_post_meta(
+				$post_id,
+				'package_starting_at',
+				absint(dy_utilities::starting_at())
+			);
 		}
-		
-		//package_booking_to require else with 365 days
-		if(isset( $_POST['package_booking_to']))
-		{
-			if(intval($_POST['package_booking_to']) > 0)
-			{
-				update_post_meta( $post_id, 'package_booking_to', esc_attr($_POST['package_booking_to']));
-			}
-			else
-			{
-				update_post_meta( $post_id, 'package_booking_to', 365 );
-			}			
-		}
-		
-		if(isset( $_POST['package_badge']))
-			update_post_meta( $post_id, 'package_badge', esc_attr($_POST['package_badge']));	
-		if(isset( $_POST['package_badge_color']))
-			update_post_meta( $post_id, 'package_badge_color', esc_attr($_POST['package_badge_color']));
-		
-		//min_persons require else with 1
-		if(isset( $_POST['package_min_persons']))
-		{
-			if(intval($_POST['package_min_persons']) > 0)
-			{
-				update_post_meta( $post_id, 'package_min_persons', esc_attr($_POST['package_min_persons']));
-			}
-			else
-			{
-				update_post_meta( $post_id, 'package_min_persons', esc_attr( 1 ) );
-			}			
-		}
+	}
 
-		//max_persons require else with 1
-		if(isset( $_POST['package_max_persons']))
-		{
-			if(intval($_POST['package_max_persons']) > 0)
-			{
-				update_post_meta( $post_id, 'package_max_persons', esc_attr($_POST['package_max_persons']));
-			}
-			else
-			{
-				update_post_meta( $post_id, 'package_max_persons', esc_attr( 1 ) );
-			}			
-		}
-		
-		//package_increase_persons
-		if(isset( $_POST['package_increase_persons']))
-		{
-			update_post_meta( $post_id, 'package_increase_persons', esc_attr($_POST['package_increase_persons']));
-		}		
+	private static function save_simple_fields($post_id)
+	{
+		$fields = [
+			'package_fixed_price'       => 'absint',
+			'package_show_pricing'      => 'absint',
+			'package_display'           => 'absint',
+			'package_schema'            => 'absint',
+			'package_trip_code'         => 'sanitize_text_field',
+			'package_auto_booking'      => 'absint',
+			'package_disabled_num'      => 'absint',
+			'package_disabled_dates_api'=> 'esc_url',
+			'package_booking_from'      => 'absint',
+			'package_badge'             => 'absint',
+			'package_badge_color'       => 'sanitize_key',
+			'package_increase_persons'  => 'absint',
+			'package_payment'           => 'absint',
+			'package_num_seasons'       => 'absint',
+			'package_by_hour'           => 'absint',
+			'package_max_hour'          => 'sanitize_text_field',
+			'package_min_hour'          => 'sanitize_text_field',
+			'package_check_in_hour'     => 'sanitize_text_field',
+			'package_start_hour'        => 'sanitize_text_field',
+			'package_start_address'     => 'sanitize_textarea_field',
+			'package_check_in_end_hour' => 'sanitize_text_field',
+			'package_return_hour'       => 'sanitize_text_field',
+			'package_return_address'    => 'sanitize_textarea_field',
+			'package_redirect_page'     => 'absint',
+			'package_max_coupons'       => 'absint',
+		];
 
-		if(isset( $_POST['package_payment']))
+		foreach($fields as $key => $sanitizer)
 		{
-			update_post_meta( $post_id, 'package_payment', esc_attr($_POST['package_payment']));
+			self::update_posted_meta($post_id, $key, $sanitizer);
 		}
-		if(isset( $_POST['package_deposit']))
+	}
+
+	private static function save_package_type_fields($post_id)
+	{
+		if(!post_has('package_package_type')) return;
+
+		$package_type = self::get_posted_scalar(
+			'package_package_type',
+			null,
+			'absint'
+		);
+
+		
+
+		if($package_type === null) return;
+
+		$package_type = (int) $package_type;
+
+		if($package_type === 2)
 		{
-			if(floatval($_POST['package_deposit']) > 0)
-			{
-				update_post_meta( $post_id, 'package_deposit', esc_attr($_POST['package_deposit']));
-			}
-			else
-			{
-				update_post_meta( $post_id, 'package_deposit', esc_attr( 25 ) );
-			}			
-		}		
-		
-		if(isset( $_POST['package_num_seasons']))
-			update_post_meta( $post_id, 'package_num_seasons', esc_attr($_POST['package_num_seasons']));			
-		if(isset( $_POST['package_seasons_chart']))
-			update_post_meta( $post_id, 'package_seasons_chart', esc_attr($_POST['package_seasons_chart']));	
-		if(isset( $_POST['package_price_chart']))
-			update_post_meta( $post_id, 'package_price_chart', esc_attr($_POST['package_price_chart']));	
-		
-		if(isset( $_POST['package_occupancy_chart']))
-			update_post_meta( $post_id, 'package_occupancy_chart', esc_attr($_POST['package_occupancy_chart']));		
-		
-		//package_free require else with 0
-		if(isset( $_POST['package_free']))
+			update_post_meta($post_id, 'package_length_unit', 2);
+		}
+		elseif($package_type === 3)
 		{
-			if(intval($_POST['package_free']) > 0)
+			update_post_meta($post_id, 'package_length_unit', 1);
+		}
+		elseif(post_has('package_length_unit'))
+		{
+			$length_unit = self::get_posted_scalar(
+				'package_length_unit',
+				null,
+				'absint'
+			);
+
+			if($length_unit !== null)
 			{
-				update_post_meta( $post_id, 'package_free', esc_attr($_POST['package_free']));
-			}	
-			else
-			{
-				update_post_meta( $post_id, 'package_free', esc_attr( 0 ) );	
+				update_post_meta($post_id, 'package_length_unit', $length_unit);
 			}
 		}
 
-		
-		//package_discount require else with 0		
-		if(isset( $_POST['package_discount']))
+		update_post_meta($post_id, 'package_package_type', $package_type);
+
+		self::$package_type = $package_type;
+	}
+
+	private static function save_duration_fields($post_id, $is_child)
+	{
+		if(!post_has('package_duration') || $is_child) return;
+
+		$duration = self::get_posted_scalar(
+			'package_duration',
+			null,
+			'sanitize_text_field'
+		);
+
+		if($duration === null) return;
+
+		update_post_meta($post_id, 'package_duration', $duration);
+
+		$is_transport = self::$package_type === 4;
+
+		if(!post_has('package_duration_max') || $is_transport) return;
+
+		$duration_max = self::get_posted_scalar(
+			'package_duration_max',
+			null,
+			'sanitize_text_field'
+		);
+
+		if($duration_max === null) return;
+
+		if(
+			intval($duration_max) >= 1
+			&& intval($duration) > intval($duration_max)
+		)
 		{
-			if(intval($_POST['package_discount']) > 0)
-			{
-				update_post_meta( $post_id, 'package_discount', esc_attr($_POST['package_discount']));
-			}
-			else
-			{
-				update_post_meta( $post_id, 'package_discount', esc_attr( 0 ) );
-			}			
+			$duration_max = intval($duration) + 1;
 		}
 
-		//package_package_type	
-		if(isset( $_POST['package_package_type']))
-			update_post_meta( $post_id, 'package_package_type', esc_attr($_POST['package_package_type']));		
-		if(isset( $_POST['package_by_hour']))
-			update_post_meta( $post_id, 'package_by_hour', esc_attr($_POST['package_by_hour']));	
-		if(isset( $_POST['package_max_hour']))
-			update_post_meta( $post_id, 'package_max_hour', esc_attr($_POST['package_max_hour']));		
-		if(isset( $_POST['package_min_hour']))
-			update_post_meta( $post_id, 'package_min_hour', esc_attr($_POST['package_min_hour']));
-		//departure
-		if(isset( $_POST['package_check_in_hour']))
-			update_post_meta( $post_id, 'package_check_in_hour', esc_attr($_POST['package_check_in_hour']));
-		if(isset( $_POST['package_start_hour']))
-			update_post_meta( $post_id, 'package_start_hour', esc_attr($_POST['package_start_hour']));
-		if(isset( $_POST['package_start_address']))
-			update_post_meta( $post_id, 'package_start_address', esc_attr($_POST['package_start_address']));
-		if(isset( $_POST['package_start_address_short']))
-			update_post_meta( $post_id, 'package_start_address_short', esc_attr($_POST['package_start_address_short']));
-		//return
-		if(isset( $_POST['package_check_in_end_hour']))
-			update_post_meta( $post_id, 'package_check_in_end_hour', esc_attr($_POST['package_check_in_end_hour']));
-		if(isset( $_POST['package_return_hour']))
-			update_post_meta( $post_id, 'package_return_hour', esc_attr($_POST['package_return_hour']));
-		if(isset( $_POST['package_return_address']))
-			update_post_meta( $post_id, 'package_return_address', esc_attr($_POST['package_return_address']));				
-		if(isset( $_POST['package_return_address_short']))
-			update_post_meta( $post_id, 'package_return_address_short', esc_attr($_POST['package_return_address_short']));				
-		if(isset( $_POST['package_redirect_page']))
-			update_post_meta( $post_id, 'package_redirect_page', esc_attr($_POST['package_redirect_page']));		
-		if(isset( $_POST['package_training_data']))
-			update_post_meta( $post_id, 'package_training_data', esc_attr($_POST['package_training_data']));		
-			
-		for($x = 0; $x < count($languages); $x++)
+		update_post_meta($post_id, 'package_duration_max', $duration_max);
+	}
+
+	private static function save_defaulted_numeric_fields($post_id)
+	{
+		if(post_has('package_booking_to'))
 		{
-			$lang = $languages[$x];
+			$booking_to = self::get_posted_scalar(
+				'package_booking_to',
+				0,
+				'absint'
+			);
 
-			if(isset( $_POST['package_confirmation_message_'.$lang]))
+			if($booking_to !== null)
 			{
-				update_post_meta( $post_id, 'package_confirmation_message_'.$lang, sanitize_textarea_field($_POST['package_confirmation_message_'.$lang] ));
-			}
-
-			if(isset( $_POST['package_child_title_'.$lang]))
-			{
-				update_post_meta( $post_id, 'package_child_title_'.$lang, esc_attr($_POST['package_child_title_'.$lang] ));
-			}
-
-			if(isset( $_POST['package_redirect_url_'.$lang]))
-			{
-				update_post_meta( $post_id, 'package_redirect_url_'.$lang, esc_url($_POST['package_redirect_url_'.$lang] ));
+				update_post_meta(
+					$post_id,
+					'package_booking_to',
+					$booking_to > 0 ? $booking_to : 365
+				);
 			}
 		}
-		
-		// ALL THE CHECKBOXES REQUIRE AN ELSE
-		//monday
-		if(isset( $_POST['package_day_mon']))
-		{
-			update_post_meta( $post_id, 'package_day_mon', esc_attr($_POST['package_day_mon']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_mon', '' );	
-		}
-		
-		//tuesday
-		if(isset( $_POST['package_day_tue']))
-		{
-			update_post_meta( $post_id, 'package_day_tue', esc_attr($_POST['package_day_tue']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_tue', '' );	
-		}		
-		
-		//wednesday
-		if(isset( $_POST['package_day_wed']))
-		{
-			update_post_meta( $post_id, 'package_day_wed', esc_attr($_POST['package_day_wed']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_wed', '' );	
-		}			
-		
-		//thursday
-		if(isset( $_POST['package_day_thu']))
-		{
-			update_post_meta( $post_id, 'package_day_thu', esc_attr($_POST['package_day_thu']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_thu', '' );	
-		}			
-		
-		//friday
-		if(isset( $_POST['package_day_fri']))
-		{
-			update_post_meta( $post_id, 'package_day_fri', esc_attr($_POST['package_day_fri']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_fri', '' );	
-		}			
-		
-		//saturday
-		if(isset( $_POST['package_day_sat']))
-		{
-			update_post_meta( $post_id, 'package_day_sat', esc_attr($_POST['package_day_sat']));	
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_sat', '' );	
-		}			
-		
-		//sunday
-		if(isset( $_POST['package_day_sun']))
-		{
-			update_post_meta( $post_id, 'package_day_sun', esc_attr($_POST['package_day_sun']));		
-		}
-		else
-		{
-			update_post_meta( $post_id, 'package_day_sun', '' );	
-		}	
 
-		//coupons
-		if(isset( $_POST['package_coupons']))
+		foreach(['package_min_persons', 'package_max_persons'] as $key)
 		{
-			update_post_meta( $post_id, 'package_coupons', esc_attr($_POST['package_coupons']));
-		}			
-		if(isset( $_POST['package_max_coupons']))
-		{
-			update_post_meta( $post_id, 'package_max_coupons', esc_attr($_POST['package_max_coupons']));
-		}
-		
-		//starting at
-		if(isset( $_POST['package_package_type']))
-		{
-			$starting_at = intval(dy_utilities::starting_at());
-			update_post_meta( $post_id, 'package_starting_at', esc_attr( $starting_at ) );
+			if(!post_has($key)) continue;
+
+			$value = self::get_posted_scalar($key, 0, 'absint');
+
+			if($value !== null)
+			{
+				update_post_meta($post_id, $key, $value > 0 ? $value : 1);
+			}
 		}
 
-		//transport one-way surcharge
-		if(isset( $_POST['package_one_way_surcharge']))
+		if(post_has('package_deposit'))
 		{
-			update_post_meta( $post_id, 'package_one_way_surcharge', intval($_POST['package_one_way_surcharge']));
+			$deposit = self::get_posted_scalar(
+				'package_deposit',
+				0,
+				'floatval'
+			);
+
+			if($deposit !== null)
+			{
+				update_post_meta(
+					$post_id,
+					'package_deposit',
+					$deposit > 0 ? $deposit : 25
+				);
+			}
 		}
 
-		//surcharge per day of the week
+		foreach(['package_free', 'package_discount'] as $key)
+		{
+			if(!post_has($key)) continue;
 
-		if(isset( $_POST['package_week_day_surcharge_mon']))
-		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_mon', intval($_POST['package_week_day_surcharge_mon']));
+			$value = self::get_posted_scalar($key, 0, 'absint');
+
+			if($value !== null)
+			{
+				update_post_meta($post_id, $key, $value > 0 ? $value : 0);
+			}
 		}
-		if(isset( $_POST['package_week_day_surcharge_tue']))
+	}
+
+	private static function save_hot_fields($post_id, $is_child)
+	{
+		$fields = [
+			'package_disabled_dates'  => 'disabled_dates',
+			'package_seasons_chart'   => 'seasons_chart',
+			'package_price_chart'     => 'price_chart',
+			'package_occupancy_chart' => 'occupancy_chart',
+			'package_coupons'         => 'coupons',
+		];
+
+		foreach($fields as $key => $container)
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_tue', intval($_POST['package_week_day_surcharge_tue']));
-		}	
-		if(isset( $_POST['package_week_day_surcharge_wed']))
+			self::update_hot_field($post_id, $key, $container);
+		}
+
+		if(!$is_child)
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_wed', intval($_POST['package_week_day_surcharge_wed']));
-		}	
-		if(isset( $_POST['package_week_day_surcharge_thu']))
+			self::update_hot_field(
+				$post_id,
+				'package_enabled_dates',
+				'enabled_dates'
+			);
+		}
+	}
+
+	private static function save_parent_fields($post_id, $is_child)
+	{
+		if($is_child) return;
+
+		$fields = [
+			'package_enabled_num'         => 'absint',
+			'package_start_address_short' => 'sanitize_text_field',
+			'package_return_address_short'=> 'sanitize_text_field',
+			'package_training_data'       => 'absint',
+			'package_one_way_surcharge'   => 'absint',
+		];
+
+		foreach($fields as $key => $sanitizer)
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_thu', intval($_POST['package_week_day_surcharge_thu']));
-		}	
-		if(isset( $_POST['package_week_day_surcharge_fri']))
+			self::update_posted_meta($post_id, $key, $sanitizer);
+		}
+	}
+
+	private static function save_language_fields($post_id, $languages)
+	{
+		if(!is_array($languages)) return;
+
+		foreach($languages as $lang)
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_fri', intval($_POST['package_week_day_surcharge_fri']));
-		}	
-		if(isset( $_POST['package_week_day_surcharge_sat']))
+			self::update_posted_meta(
+				$post_id,
+				'package_confirmation_message_' . $lang,
+				'sanitize_textarea_field'
+			);
+
+			self::update_posted_meta(
+				$post_id,
+				'package_child_title_' . $lang,
+				'sanitize_text_field'
+			);
+
+			self::update_posted_meta(
+				$post_id,
+				'package_redirect_url_' . $lang,
+				'esc_url'
+			);
+		}
+	}
+
+	private static function save_week_day_fields($post_id)
+	{
+		$week_days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+		foreach($week_days as $day)
 		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_sat', intval($_POST['package_week_day_surcharge_sat']));
-		}	
-		if(isset( $_POST['package_week_day_surcharge_sun']))
-		{
-			update_post_meta( $post_id, 'package_week_day_surcharge_sun', intval($_POST['package_week_day_surcharge_sun']));
-		}			
-		
-		
-	}	
+			$day_key = 'package_day_' . $day;
+
+			update_post_meta(
+				$post_id,
+				$day_key,
+				post_has($day_key) ? 1 : ''
+			);
+
+			self::update_posted_meta(
+				$post_id,
+				'package_week_day_surcharge_' . $day,
+				'absint'
+			);
+		}
+	}
+
+	private static function update_hot_field($post_id, $key, $container)
+	{
+		if(!post_has($key)) return;
+
+		$value = self::get_posted_scalar(
+			$key,
+			null,
+			'sanitize_text_field'
+		);
+
+		if($value === null) return;
+
+		$decoded = json_decode(
+			html_entity_decode(
+				(string) $value,
+				ENT_QUOTES | ENT_HTML5,
+				'UTF-8'
+			),
+			true
+		);
+
+		if(!is_array($decoded) || !array_key_exists($container, $decoded)) return;
+
+		$encoded = wp_json_encode($decoded);
+
+		if(!is_string($encoded)) return;
+
+		update_post_meta($post_id, $key, $encoded);
+	}
+
+	private static function update_posted_meta(
+		$post_id,
+		$key,
+		$sanitizer = 'sanitize_text_field'
+	) {
+		if(!post_has($key)) return;
+
+		$value = self::get_posted_scalar($key, null, $sanitizer);
+
+		if($value === null) return;
+
+		update_post_meta($post_id, $key, $value);
+	}
+
+	private static function get_posted_scalar(
+		$key,
+		$default = '',
+		$sanitizer = 'sanitize_text_field'
+	) {
+		$value = secure_post($key, $default, $sanitizer);
+
+		return is_scalar($value) ? $value : null;
+	}
 }
-
-?>

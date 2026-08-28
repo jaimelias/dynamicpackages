@@ -215,7 +215,9 @@ const handlePackageType = () => {
 	}	
 
 	jQuery('#package_package_type').each(function(){
+		const isChild = jQuery(this).prop('disabled');
 		const packageType = parseInt(jQuery(this).val());
+		
 		const duration_max = jQuery('#package_duration_max');
 		const lengthUnitField = jQuery('#package_length_unit');
 		const lengthUnitFieldValue = parseInt(jQuery(lengthUnitField).val());
@@ -256,14 +258,17 @@ const handlePackageType = () => {
 			}
 		}
 
-		if(hasMaxDuration.includes(packageType))
-		{
-			jQuery(duration_max).prop('disabled', false);
+		if(!isChild) {
+			if(hasMaxDuration.includes(packageType))
+			{
+				jQuery(duration_max).prop('disabled', false);
+			}
+			else
+			{
+				jQuery(duration_max).val('').prop('disabled', true);
+			}
 		}
-		else
-		{
-			jQuery(duration_max).val('').prop('disabled', true);
-		}
+
 
 		const lengthUnitFieldValueValid = !disableLengthUnits.includes(lengthUnitFieldValue);
 
