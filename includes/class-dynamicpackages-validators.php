@@ -191,11 +191,6 @@ public static function validate_quote()
 
 		$the_id = get_dy_id();
 
-		if(!self::validate_the_id($the_id)) {
-			
-			return self::$cache[$cache_key] = false;
-		}
-
 		$post   = $the_id ? get_post($the_id) : null;
 
 		if (!($post instanceof WP_Post) || $post->post_type !== 'packages') {
@@ -233,6 +228,9 @@ public static function validate_quote()
 
 		$invalid_required_get_params = [];
 
+		if(!self::validate_the_id($the_id) || $the_id !== secure_get('dy_id', null, 'absint')) {
+			$invalid_required_get_params[] = 'dy_id';
+		}
 		if (!self::validate_booking_date($the_id)) {
 			$invalid_required_get_params[] = 'booking_date';
 		}
