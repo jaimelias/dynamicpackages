@@ -10,9 +10,73 @@ if ( !defined( 'WPINC' ) ) exit;
 
 if ( ! function_exists( '_secure_prepare_sanitizer' ) ) {
 	function _secure_prepare_sanitizer( $sanitize_cb ) {
+
+		// Rechaza notación científica en cadenas (ej. "1e10", "2E-3") para los sanitizadores de enteros.
+		$is_scientific_notation = function ( $value ) {
+			return is_string( $value ) && preg_match( '/^\s*[+-]?(\d+\.?\d*|\.\d+)[eE][+-]?\d+\s*$/', $value );
+		};
+
+		// Valida que el valor numérico esté estrictamente dentro del rango de enteros de PHP.
+		$is_within_int_range = function ( $value ) {
+			$float_value = (float) $value;
+			return $float_value >= PHP_INT_MIN && $float_value <= PHP_INT_MAX;
+		};
+
+		// intval: numérico, entero, dentro de rango de PHP_INT, sin notación científica (puede ser negativo).
+		if ( is_string( $sanitize_cb ) && 'intval' === $sanitize_cb && function_exists( $sanitize_cb ) ) {
+			return function ( $value ) use ( $sanitize_cb, $is_scientific_notation, $is_within_int_range ) {
+				if ( ! is_numeric( $value ) ) {
+					return null;
+				}
+				if ( $is_scientific_notation( $value ) ) {
+					return null;
+				}
+				if ( ! $is_within_int_range( $value ) ) {
+					return null;
+				}
+				if ( (float) $value !== floor( (float) $value ) ) {
+					return null;
+				}
+				return call_user_func( $sanitize_cb, $value );
+			};
+		}
+
+		// absint: numérico, entero, dentro de rango de PHP_INT, sin notación científica, y no negativo.
+		if ( is_string( $sanitize_cb ) && 'absint' === $sanitize_cb && function_exists( $sanitize_cb ) ) {
+			return function ( $value ) use ( $sanitize_cb, $is_scientific_notation, $is_within_int_range ) {
+				if ( ! is_numeric( $value ) ) {
+					return null;
+				}
+				if ( $is_scientific_notation( $value ) ) {
+					return null;
+				}
+				if ( ! $is_within_int_range( $value ) ) {
+					return null;
+				}
+				if ( (float) $value !== floor( (float) $value ) ) {
+					return null;
+				}
+				if ( (float) $value < 0 ) {
+					return null;
+				}
+				return call_user_func( $sanitize_cb, $value );
+			};
+		}
+
+		// floatval: numérico y finito (decimales y notación científica permitidos).
+		if ( is_string( $sanitize_cb ) && 'floatval' === $sanitize_cb && function_exists( $sanitize_cb ) ) {
+			return function ( $value ) use ( $sanitize_cb ) {
+				if ( ! is_numeric( $value ) || ! is_finite( (float) $value ) ) {
+					return null;
+				}
+				return call_user_func( $sanitize_cb, $value );
+			};
+		}
+
 		if ( is_string( $sanitize_cb ) && function_exists( $sanitize_cb ) ) {
 			return $sanitize_cb;
 		}
+
 		if ( is_callable( $sanitize_cb ) ) {
 			return $sanitize_cb;
 		}
@@ -20,6 +84,7 @@ if ( ! function_exists( '_secure_prepare_sanitizer' ) ) {
 		return 'sanitize_text_field';
 	}
 }
+
 
 if ( ! function_exists( '_secure_input' ) ) {
 	function _secure_input( $source_name, $key, $default = '', $sanitize_cb = 'sanitize_text_field' ) {
