@@ -172,21 +172,19 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_is_booking_page';
 
-		if($_SERVER['REQUEST_METHOD'] !== 'GET') {
-			return false;
-		}
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		if (
-			is_admin()
+		if(
+			($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET'
+			|| is_admin()
 			|| wp_doing_ajax()
 			|| wp_doing_cron()
 			|| (defined('REST_REQUEST') && REST_REQUEST)
+			|| !is_singular('packages')
 		) {
-			return self::$cache[$cache_key] = false;
+			return false;
+		}
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
 		}
 
 		$the_id = get_dy_id();
@@ -216,13 +214,28 @@ public static function validate_quote()
 		$count_missing_required_get_params = count($missing_required_get_params);
 		
 		//if all the required_get_params it means that this is a standard package page
-		if ($count_missing_required_get_params > 0 && $count_missing_required_get_params !== $count_required_get_params) {
+
+		if(
+			$count_missing_required_get_params
+			=== $count_required_get_params
+		) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		if($count_missing_required_get_params > 0) {
 			$GLOBALS['dy_request_invalids'] = array_map(
-				function($param) {
-					return sprintf(__('Missing required request parameter: %s.'), $param);
+				static function($param) {
+					return sprintf(
+						__(
+							'Missing required request parameter: %s.',
+							'dynamicpackages'
+						),
+						$param
+					);
 				},
 				$missing_required_get_params
 			);
+
 			return self::$cache[$cache_key] = false;
 		}
 
