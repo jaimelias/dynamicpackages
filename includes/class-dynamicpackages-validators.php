@@ -41,7 +41,7 @@ public static function validate_quote()
 		$total        = (float) dy_utilities::total();
 		$min_persons  = (int) package_field('package_min_persons', $the_id);
 		$max_persons  = (int) package_field('package_max_persons', $the_id);
-		$pax_regular  = secure_request('pax_regular', 1, 'absint');
+		$pax_regular  = secure_request('pax_regular', 0, 'absint');
 		$pax_discount = secure_request('pax_discount', 0, 'absint');
 		$pax_free     = secure_request('pax_free', 0, 'absint');
 
@@ -91,7 +91,7 @@ public static function validate_quote()
 			return self::$cache[$cache_key] = false;
 		}
 
-		if(isset($_GET['booking_date']))
+		if(get_has('booking_date'))
 		{
 			$booking_date = dy_utilities::booking_date();
 			$min_range = dy_utilities::min_range($the_id);
@@ -551,30 +551,47 @@ public static function validate_terms_conditions()
 		return $output;
 	}
 
-	
+		
 	public static function validate_hash()
 	{
-		$output = false;
 		$cache_key = 'dy_validate_hash';
 
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$hash = hash('sha512', dy_utilities::pax_num().$_GET['booking_date']);
-		
-		if(isset($_GET['hash']))
-		{
-			if($hash == $_GET['hash'])
-			{
-				$output = true;
-			}				
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
 		}
-		
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
 
-		return $output;
+		if(
+			!get_has('booking_date')
+			|| !get_has('hash')
+			|| !get_has('pax_regular')
+		) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$booking_date = secure_get('booking_date');
+		$request_hash = secure_get('hash');
+
+		if(
+			!is_valid_date($booking_date)
+			|| !preg_match('/^[a-f0-9]{128}$/', $request_hash)
+		) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$pax_num =
+			secure_get('pax_regular', 0, 'absint')
+			+ secure_get('pax_discount', 0, 'absint')
+			+ secure_get('pax_free', 0, 'absint');
+
+		$expected_hash = hash(
+			'sha512',
+			$pax_num . $booking_date
+		);
+
+		return self::$cache[$cache_key] = hash_equals(
+			$expected_hash,
+			$request_hash
+		);
 	}
 	
 	public static function has_coupon()
@@ -737,9 +754,9 @@ public static function validate_terms_conditions()
 		$sort_by = '';
 		$search = '';
 		
-		if(isset($_GET['location']))
+		if(get_has('location'))
 		{
-			$package_location = sanitize_text_field($_GET['location']);
+			$package_location = secure_get('location');
 			
 			if(!empty($package_location))
 			{
@@ -747,19 +764,19 @@ public static function validate_terms_conditions()
 			}
 		}
 		
-		if(isset($_GET['category']))
+		if(get_has('category'))
 		{
-			$package_category = sanitize_text_field($_GET['category']);
+			$package_category = secure_get('category');
 			
 			if(!empty($package_category))
 			{
 				$category = get_term_by('slug', $package_category, 'package_category');
 			}				
 		}
-		if(isset($_GET['sort']))
+		if(get_has('sort'))
 		{
 			$sort_by_arr = dy_utilities::sort_by_arr();
-			$sort_by_value = sanitize_text_field($_GET['sort']);
+			$sort_by_value = secure_get('sort');
 
 			if(!empty($sort_by_value) || $sort_by_value !== 'any')
 			{
@@ -768,16 +785,9 @@ public static function validate_terms_conditions()
 					$sort_by = true;
 				}
 			}
-		}	
-
-		if(isset($_GET['keywords']))
-		{
-			if(!empty($_GET['keywords']))
-			{
-				$search = true;
-			}
 		}
-				
+
+		$search = !empty(secure_get('keywords', ''));
 
 		if(!empty($location) || !empty($category) || !empty($sort_by) || !empty($search))
 		{

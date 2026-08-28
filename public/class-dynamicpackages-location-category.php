@@ -13,13 +13,59 @@ class Dynamicpackages_Location_Category {
 	public function __construct() {
 		$priority = DY_IS_PACKAGE_PAGE_PRIORITY;
 
-		add_action('wp',              [$this, 'remove_default_canonicals']);
-		add_action('wp_head',         [$this, 'location_category_canonical']);
+		add_action('wp', [$this, 'remove_default_canonicals']);
+		add_action('wp_head', [$this, 'location_category_canonical']);
 		add_filter('pll_translation_url', [$this, 'location_category_alternate'], $priority, 2);
-		add_filter('pre_get_document_title', [$this, 'wp_title'],  $priority);
-		add_filter('wp_title',               [$this, 'wp_title'],  $priority);
-		add_filter('the_title',              [$this, 'the_title'], $priority);
+		add_filter('pre_get_document_title', [$this, 'wp_title'], $priority);
+		add_filter('wp_title', [$this, 'wp_title'], $priority);
+		add_filter('the_title', [$this, 'the_title'], $priority);
 		add_filter('get_the_excerpt', [$this, 'modify_excerpt'], $priority);
+		add_action('admin_init', array($this, 'title_modifier'), 10, 2);
+	}
+
+	public function title_modifier()
+	{
+		$taxonomies = ['package_category', 'package_location'];
+		
+		for($x = 0; $x < count($taxonomies); $x++)
+		{
+			$tax = $taxonomies[$x];
+			add_action($tax.'_edit_form_fields', array($this, 'title_form'), 10, 2);
+			add_action( 'create_'.$tax, array($this, 'save_term'), 10, 2);
+			add_action( 'edited_'.$tax, array($this, 'save_term'), 10, 2);
+		}
+	}	
+
+	public function title_form($term)
+	{
+		$term_id = absint($term->term_id);
+
+		$row = dy_taxonomy_form_row(
+			'tax_title_modifier',
+			__('Title Modifier', 'dynamicpackages')
+		);
+
+		dy_input_term_meta::text([
+			'term_id' => $term_id,
+			'key'     => 'tax_title_modifier',
+			'prepend' => $row->prepend,
+			'append'  => $row->append,
+		]);
+	}
+
+	public function save_term($term_id) {
+		
+		$term_id = absint($term_id);
+
+		if($term_id === 0 || !current_user_can('edit_term', $term_id))
+		{
+			return;
+		}	
+		
+		if(post_has('tax_title_modifier'))
+		{
+			update_term_meta($term_id, 'tax_title_modifier', secure_post('tax_title_modifier'));
+		}
 	}
 
 

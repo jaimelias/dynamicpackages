@@ -64,53 +64,37 @@ class Dynamicpackages_Gateways
 
 	public function the_content($content)
 	{
-		if(is_singular('packages') && get_has('booking_date'))
-		{
-			if(is_booking_page())
-			{
-				if(dy_validators::validate_hash())
-				{
-					$package_min_persons = absint(package_field('package_min_persons'));
-					$package_max_persons = absint(package_field('package_max_persons'));
-					$pax_regular = secure_get('pax_regular', 1, 'absint'); //(isset($_GET['pax_regular'])) ? absint($_GET['pax_regular']) : 1;
-					$pax_discount = secure_get('pax_discount', 0, 'absint'); //(isset($_GET['pax_discount'])) ? absint($_GET['pax_discount']) : 0;
-					$pax_free = secure_get('pax_free', 0, 'absint'); //(isset($_GET['pax_free'])) ? absint($_GET['pax_free']) : 0;
-					
-					$pax_sum = $pax_regular + $pax_discount + $pax_free;
+		if(!is_booking_page()) return $content;
 
-					if($pax_sum <  $package_min_persons || $pax_sum > $package_max_persons)
-					{
-						$content = sprintf(
-							'<p class="minimal_success strong">%s</p><h2>%s - %s</h2>%s',
-							esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')),
-							esc_html(__('Contact The Experts', 'dynamicpackages')),
-							esc_html(__('Request Quote', 'dynamicpackages')),
-							(string) apply_filters('dy_booking_sidebar', '')
-						);					
-					}
-					else
-					{
-						ob_start();
-						require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/checkout-page.php');
-						$content = ob_get_contents();
-						ob_end_clean();									
-					}					
-				}
-				else
-				{
-					$content = sprintf(
-						'<p class="minimal_alert strong">%s</p>',
-						esc_html( __('Invalid Request', 'dynamicpackages') )
-					);
-				}
-			}
-			else
-			{				
-				$content = sprintf(
-					'<p class="minimal_alert strong">%s</p>',
-					esc_html( __('Invalid Request', 'dynamicpackages') )
-				);
-			}		
+		$package_min_persons = absint(package_field('package_min_persons'));
+		$package_max_persons = absint(package_field('package_max_persons'));
+		$package_increase_persons = absint(package_field('package_increase_persons'));
+		$hard_max_persons = $package_max_persons + $package_max_persons;
+		
+		$pax_sum = secure_get('pax_regular', 1, 'absint') + secure_get('pax_discount', 0, 'absint') + secure_get('pax_free', 0, 'absint');
+
+		if($pax_sum > $hard_max_persons) {
+			$content = sprintf(
+				'<p class="minimal_error strong">%s</p>',
+				__('You have exceeded the maximum number of participants allowed for this package')
+			);		
+		}
+		else if($pax_sum <  $package_min_persons || $pax_sum > $package_max_persons)
+		{
+			$content = sprintf(
+				'<p class="minimal_success strong">%s</p><h2>%s - %s</h2>%s',
+				esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')),
+				esc_html(__('Contact The Experts', 'dynamicpackages')),
+				esc_html(__('Request Quote', 'dynamicpackages')),
+				(string) apply_filters('dy_booking_sidebar', '')
+			);					
+		}
+		else
+		{
+			ob_start();
+			require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/checkout-page.php');
+			$content = (string) ob_get_contents();
+			ob_end_clean();									
 		}
 
 		return $content;

@@ -17,7 +17,6 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	{
 		$this->name = 'package_add_ons';
 		add_action('init', array($this, 'add_ons'));
-		add_action('admin_init', array($this, 'title_modifier'), 10, 2);
 		add_action('dy_checkout_items', array($this, 'checkout_items'), 10);
 		add_filter('dy_included_add_ons_list', array($this, 'included_add_ons_list'));
 		add_filter('dy_included_add_ons_arr', array($this, 'included_add_ons_arr'));
@@ -28,59 +27,12 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	public function add_ons()
 	{
 		add_action($this->name.'_edit_form_fields', array($this, 'add_ons_form'), 10, 2);
-		add_action( 'create_'.$this->name, array($this, 'save'), 10, 2);
-		add_action( 'edited_'.$this->name, array($this, 'save'), 10, 2);
+		add_action( 'create_'.$this->name, array($this, 'save_term'), 10, 2);
+		add_action( 'edited_'.$this->name, array($this, 'save_term'), 10, 2);
 	}
-	public function title_modifier()
-	{
-		$taxonomies = array('package_category', 'package_location');
-		
-		for($x = 0; $x < count($taxonomies); $x++)
-		{
-			$tax = $taxonomies[$x];
-			add_action($tax.'_edit_form_fields', array($this, 'title_form'), 10, 2);
-			add_action( 'create_'.$tax, array($this, 'save'), 10, 2);
-			add_action( 'edited_'.$tax, array($this, 'save'), 10, 2);
-		}
-	}	
-	public function title_form($term){
-		$term_id = $term->term_id;
-		$name = 'tax_title_modifier';
-		$field = $this->title_input($term_id, $name);
-		echo $this->admin_taxonomy_form_row($name, __( 'Title Modifier', 'dynamicpackages' ), $field);
-	}
+	
 
-	public function title_input($term_id, $name)
-	{
-		$value = get_term_meta($term_id, $name, true);
-		return '<input type="text" name="tax_title_modifier" id="tax_title_modifier" value="'.esc_attr($value).'">';
-	}
-
-	public function admin_taxonomy_form_row($name, $label, $field, $description = null)
-	{
-		if ($description) {
-			$description = sprintf(
-				'<br/><p class="description">%s</p>',
-				esc_html($description)
-			);
-		}
-
-		return sprintf(
-			'<tr class="form-field">
-				<th scope="row" valign="top">
-					<label for="%s">%s</label>
-				</th>
-				<td>%s%s</td>
-			</tr>',
-			esc_attr($name),
-			esc_html($label),
-			$field,
-			$description
-		);
-	}
-			
-
-	public function save($term_id) {
+	public function save_term($term_id) {
 		
 		$term_id = absint($term_id);
 
@@ -105,11 +57,6 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					$def_lang_term_id = $translated_term_id;
 				}
 			}
-		}		
-		
-		if(post_has('tax_title_modifier'))
-		{
-			update_term_meta($term_id, 'tax_title_modifier', secure_post('tax_title_modifier'));
 		}
 		
 		if(post_has('tax_add_ons'))
@@ -119,7 +66,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		if(post_has('tax_add_ons_max'))
 		{
 			$tax_add_ons_max = secure_post('tax_add_ons_max', 1, 'absint');
-			$tax_add_ons_max = min(500, max(1, $tax_add_ons_max));
+			$tax_add_ons_max = min(100, max(1, $tax_add_ons_max));
 
 			update_term_meta($def_lang_term_id, 'tax_add_ons_max', $tax_add_ons_max);
 		}
@@ -164,7 +111,14 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			}
 		}
 
-		ob_start();
+		$row = dy_taxonomy_form_row(
+			'tax_add_ons_type',
+			__('Type of Add-on', 'dynamicpackages'),
+			__(
+				'Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.',
+				'dynamicpackages'
+			)
+		);
 
 		dy_select_term_meta::custom([
 			'term_id' => $term_id,
@@ -175,21 +129,14 @@ class Dynamicpackages_Taxonomy_Add_Ons
 				2 => __('Variable duration price + 1', 'dynamicpackages'),
 				3 => __('Transport (charged each way)', 'dynamicpackages'),
 			],
+			'prepend' => $row->prepend,
+			'append'  => $row->append,
 		]);
 
-		$type_field = (string) ob_get_clean();
-
-		echo $this->admin_taxonomy_form_row(
-			'tax_add_ons_type',
-			__('Type of Add-on', 'dynamicpackages'),
-			$type_field,
-			__(
-				'Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.',
-				'dynamicpackages'
-			)
+		$row = dy_taxonomy_form_row(
+			'tax_add_ons_max',
+			__('Maximum Number of participants', 'dynamicpackages')
 		);
-
-		ob_start();
 
 		dy_select_term_meta::min_max([
 			'term_id' => $term_id,
@@ -197,17 +144,18 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			'min'     => 1,
 			'max'     => 500,
 			'step'    => 1,
+			'prepend' => $row->prepend,
+			'append'  => $row->append,
 		]);
 
-		$max_field = (string) ob_get_clean();
-
-		echo $this->admin_taxonomy_form_row(
-			'tax_add_ons_max',
-			__('Maximum Number of participants', 'dynamicpackages'),
-			$max_field
+		$row = dy_taxonomy_form_row(
+			'tax_add_ons',
+			__('Prices Per Person', 'dynamicpackages')
 		);
 
-		$prices_field = handsontable([
+		echo $row->prepend;
+
+		echo handsontable([
 			'container' => 'tax_add_ons_c',
 			'textarea'  => 'tax_add_ons',
 			'headers'   => [
@@ -222,11 +170,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			]),
 		]);
 
-		echo $this->admin_taxonomy_form_row(
-			'tax_add_ons',
-			__('Prices Per Person', 'dynamicpackages'),
-			$prices_field
-		);
+		echo $row->append;
 	}
 	
 	public function has_add_ons()
