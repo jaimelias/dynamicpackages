@@ -82,227 +82,151 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 	public function save($term_id) {
 		
-		if(!current_user_can( 'edit_posts' )) return;
-		
-		global $polylang;
-		
+		$term_id = absint($term_id);
+
+		if($term_id === 0 || !current_user_can('edit_term', $term_id))
+		{
+			return;
+		}
+				
 		$def_lang_term_id = $term_id;
 		
-		if(isset($polylang))
+		if(function_exists('pll_current_language') && function_exists('pll_default_language') && function_exists('pll_get_term'))
 		{
 			$current_language = pll_current_language();
 			$default_language = pll_default_language();
 
 			if($current_language != $default_language)
 			{	
-				if(pll_get_term($def_lang_term_id, $default_language))
+				$translated_term_id = pll_get_term($def_lang_term_id, $default_language);
+
+				if($translated_term_id > 0)
 				{
-					$def_lang_term_id = pll_get_term($def_lang_term_id, $default_language);
+					$def_lang_term_id = $translated_term_id;
 				}
 			}
 		}		
 		
-		if(!empty(secure_post('tax_title_modifier')))
+		if(post_has('tax_title_modifier'))
 		{
 			update_term_meta($term_id, 'tax_title_modifier', secure_post('tax_title_modifier'));
 		}
 		
-		if(!empty(secure_post('tax_add_ons')))
+		if(post_has('tax_add_ons'))
 		{	
 			update_term_meta($def_lang_term_id, 'tax_add_ons', secure_post('tax_add_ons'));
 		}	
-		if(!empty(secure_post('tax_add_ons_max')))
+		if(post_has('tax_add_ons_max'))
 		{
-			$tax_add_ons_max = (int) secure_post('tax_add_ons_max');
-			
-			if($tax_add_ons_max < 1)
-			{
-				$tax_add_ons_max = 1;
-			}
+			$tax_add_ons_max = secure_post('tax_add_ons_max', 1, 'absint');
+			$tax_add_ons_max = min(500, max(1, $tax_add_ons_max));
 
 			update_term_meta($def_lang_term_id, 'tax_add_ons_max', $tax_add_ons_max);
 		}
-		if(!empty(secure_post('tax_add_ons_type')))
+
+		if(post_has('tax_add_ons_type'))
 		{
-			$tax_add_ons_type = (int) secure_post('tax_add_ons_type');
-			update_term_meta($def_lang_term_id, 'tax_add_ons_type', $tax_add_ons_type);
+			$tax_add_ons_type = secure_post('tax_add_ons_type', 0, 'absint');
+
+			if(in_array($tax_add_ons_type, [0, 1, 2, 3], true)) {
+				update_term_meta($def_lang_term_id, 'tax_add_ons_type', $tax_add_ons_type);
+			}
+			else {
+				write_log("Invalid tax_add_ons_type=$tax_add_ons_type in Dynamicpackages_Taxonomy_Add_Ons::save.");
+			}
 		}	
 	}
 	
-	
+	public function add_ons_form($term)
+	{
+		$term_id = absint($term->term_id);
 
-	public function add_ons_form($term){
-	 
-		global $polylang;
-		$form = '';
-		$term_id = $term->term_id;
-		$args = [];
-		
-		$args['tax_add_ons_type'] = array(
-			'tag' => 'select', 
-			'type' => 'number', 
-			'label' => 'Type of Add-on', 
-			'options' => array(
-				__('Price is fixed', 'dynamicpackages'), 
-				__('Variable duration price', 'dynamicpackages'),
-				__('Variable duration price + 1', 'dynamicpackages'),
-				__('Transport (charged each way)', 'dynamicpackages'),
-			), 
-			'description' => __('Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.', 'dynamicpackages')
-		);
-		
-		$args['tax_add_ons_max'] = array(
-			'tag' => 'select',
-			'type' => 'number',
-			'label' => __('Maximum Number of participants', 'dynamicpackages')
-		);
-		
-		$args['tax_add_ons'] = array(
-			'tag' => 'textarea', 
-			'class' => 'hidden', 
-			'label' => __('Prices Per Person', 'dynamicpackages'), 
-			'handsontable' => true
-		);
-
-		if(isset($polylang))
+		if(
+			function_exists('pll_current_language')
+			&& function_exists('pll_default_language')
+			&& function_exists('pll_get_term')
+		)
 		{
 			$current_language = pll_current_language();
 			$default_language = pll_default_language();
 
 			if($current_language !== $default_language)
 			{
-				$def_lang_term_id = pll_get_term($term_id, $default_language);
-				
+				$def_lang_term_id = pll_get_term(
+					$term_id,
+					$default_language
+				);
+
 				if($def_lang_term_id)
 				{
 					$term_id = $def_lang_term_id;
 				}
 			}
 		}
-		
-		foreach($args as $k => $v)
-		{
-			if(array_key_exists('tag', $args[$k]) && array_key_exists('label', $args[$k]))
-			{
-				$field = '';
-				$value = get_term_meta($term_id, $k, true);
-				$input = '';
-				$input .= ' name="'.esc_attr($k).'" ';
-				$input .= ' id="'.esc_attr($k).'" ';
-				$label = $args[$k]['label'];
-				
-				if(array_key_exists('class', $args[$k]))
-				{
-					$input .= ' class="'.esc_attr($args[$k]['class']).'" ';
-				}
-				if(array_key_exists('type', $args[$k]))
-				{
-					if($args[$k]['type'] == 'number')
-					{
-						$input .= ' type="number" ';
-						
-						if(array_key_exists('min', $args[$k]))
-						{
-							$input .= ' min="'.esc_attr($args[$k]['min']).'" ';
-						}
-					}
-				}
-				
-				if($args[$k]['tag'] == 'input')
-				{
-					$input .= ' value="'.esc_attr($value).'" ';
-					$field = '<input '.$input.'/>';
-				}
-				else if($args[$k]['tag'] == 'select')
-				{
-					$options = '';
-					
-					if(array_key_exists('options', $args[$k]))
-					{
-						if(is_array($args[$k]['options']))
-						{
-							if(count($args[$k]['options']) > 0)
-							{
-								for($o = 0; $o < count($args[$k]['options']); $o++)
-								{
-									$is_selected = ($value == $o) ? 'selected="selected"' : '';
-									$options .= '<option value="'.esc_attr($o).'" '.$is_selected.'>'.esc_html($args[$k]['options'][$o]).'</option>';
-								}
-							}
-						}
-					}
-					else
-					{
-						for($x = 0; $x < 499; $x++)
-						{
-							$is_selected = ($value == ($x+1)) ? 'selected="selected"' : '';
-							$options .= '<option  '.$is_selected.'>'.($x+1).'</option>';
-						}						
-					}
-					
 
-					
-					$select = '<select '.$input.'>'.$options.'</select>';
-					$field = $select;
-				}
-				else if($args[$k]['tag'] == 'textarea')
-				{
-					if(array_key_exists('handsontable', $args[$k]))
-					{
-						if($args[$k]['handsontable'] == true)
-						{							
-							$field = handsontable(array(
-								'container' => $k.'_c',
-								'textarea' => $k,
-								'headers' => array(__('Prices', 'dynamicpackages')),
-								'type' => array('currency'),
-								'min' => 'tax_add_ons_max',
-								'max' => 'tax_add_ons_max',
-								'value' => $value
-							));
-						}
-						else
-						{
-							$field = '<textarea '.$input.'>'.esc_textarea($value).'</textarea>';
-						}
-					}
-					else
-					{
-						$field = '<textarea '.$input.'>'.esc_textarea($value).'</textarea>';
-					}
-					
-				}
-				
-				if(array_key_exists('description', $args[$k]))
-				{
-					if(!empty($args[$k]['description']))
-					{
-						$field .= '<br/><p class="description">'.esc_html($args[$k]['description']).'</p>';
-					}
-				}
-				
-			}
-			else
-			{
-				$err = '';
-				
-				if(!array_key_exists('tag', $args[$k]))
-				{
-					$err .= '<br/>tag key not found';
-				}
-				if(!array_key_exists('label', $args[$k]))
-				{
-					$err .= '<br/>label key not found';
-				}				
-				
-				$label = 'Invalid Field';
-				$field = '<strong>'.esc_html($k).':</strong>'.$err;
-			}
+		ob_start();
 
-			$form .= $this->admin_taxonomy_form_row($k, $label, $field);
-		}
-		
-		echo $form;
+		dy_select_term_meta::custom([
+			'term_id' => $term_id,
+			'key'     => 'tax_add_ons_type',
+			'options' => [
+				0 => __('Price is fixed', 'dynamicpackages'),
+				1 => __('Variable duration price', 'dynamicpackages'),
+				2 => __('Variable duration price + 1', 'dynamicpackages'),
+				3 => __('Transport (charged each way)', 'dynamicpackages'),
+			],
+		]);
+
+		$type_field = (string) ob_get_clean();
+
+		echo $this->admin_taxonomy_form_row(
+			'tax_add_ons_type',
+			__('Type of Add-on', 'dynamicpackages'),
+			$type_field,
+			__(
+				'Variable price works only on multi-day and daily rental packages. If the package is calculated per night 1 additional day will be added to this add-on as long as this add-on is variable.',
+				'dynamicpackages'
+			)
+		);
+
+		ob_start();
+
+		dy_select_term_meta::min_max([
+			'term_id' => $term_id,
+			'key'     => 'tax_add_ons_max',
+			'min'     => 1,
+			'max'     => 500,
+			'step'    => 1,
+		]);
+
+		$max_field = (string) ob_get_clean();
+
+		echo $this->admin_taxonomy_form_row(
+			'tax_add_ons_max',
+			__('Maximum Number of participants', 'dynamicpackages'),
+			$max_field
+		);
+
+		$prices_field = handsontable([
+			'container' => 'tax_add_ons_c',
+			'textarea'  => 'tax_add_ons',
+			'headers'   => [
+				__('Prices', 'dynamicpackages'),
+			],
+			'type'       => ['currency'],
+			'min'        => 'tax_add_ons_max',
+			'max'        => 'tax_add_ons_max',
+			'value'      => dy_get_value_term_meta([
+				'term_id' => $term_id,
+				'key'     => 'tax_add_ons',
+			]),
+		]);
+
+		echo $this->admin_taxonomy_form_row(
+			'tax_add_ons',
+			__('Prices Per Person', 'dynamicpackages'),
+			$prices_field
+		);
 	}
 	
 	public function has_add_ons()

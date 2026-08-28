@@ -41,9 +41,9 @@ public static function validate_quote()
 		$total        = (float) dy_utilities::total();
 		$min_persons  = (int) package_field('package_min_persons', $the_id);
 		$max_persons  = (int) package_field('package_max_persons', $the_id);
-		$pax_regular  = (int) secure_request('pax_regular', 0, 'absint');
-		$pax_discount = (int) secure_request('pax_discount', 0, 'absint');
-		$pax_free     = (int) secure_request('pax_free', 0, 'absint');
+		$pax_regular  = secure_request('pax_regular', 1, 'absint');
+		$pax_discount = secure_request('pax_discount', 0, 'absint');
+		$pax_free     = secure_request('pax_free', 0, 'absint');
 
 		// Enforce documented constraints on package config
 		if ($min_persons <= 0 || $max_persons <= 0 || $max_persons <= $min_persons) {
@@ -220,7 +220,7 @@ public static function validate_quote()
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_regular_request = secure_request('pax_regular', 0, 'absint');
+		$pax_regular_request = secure_request('pax_regular', 1, 'absint');
 
 		if (!is_int($pax_regular_request) || $pax_regular_request <= 0) {
 			return self::$cache[$cache_key] = false;

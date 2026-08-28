@@ -64,23 +64,29 @@ class Dynamicpackages_Gateways
 
 	public function the_content($content)
 	{
-		if(is_singular('packages') && isset($_GET['booking_date']))
+		if(is_singular('packages') && get_has('booking_date'))
 		{
 			if(is_booking_page())
 			{
 				if(dy_validators::validate_hash())
 				{
-					$package_min_persons = package_field('package_min_persons');
-					$package_max_persons = package_field('package_max_persons');
-					$pax_regular = intval(sanitize_text_field($_GET['pax_regular']));			
-					$sum_people = (isset($_GET['pax_discount'])) ? $pax_regular + intval(sanitize_text_field($_GET['pax_discount'])) : $pax_regular;
-					$sum_people = (isset($_GET['pax_free'])) ? $sum_people + intval(sanitize_text_field($_GET['pax_free'])) : $sum_people;
+					$package_min_persons = absint(package_field('package_min_persons'));
+					$package_max_persons = absint(package_field('package_max_persons'));
+					$pax_regular = secure_get('pax_regular', 1, 'absint'); //(isset($_GET['pax_regular'])) ? absint($_GET['pax_regular']) : 1;
+					$pax_discount = secure_get('pax_discount', 0, 'absint'); //(isset($_GET['pax_discount'])) ? absint($_GET['pax_discount']) : 0;
+					$pax_free = secure_get('pax_free', 0, 'absint'); //(isset($_GET['pax_free'])) ? absint($_GET['pax_free']) : 0;
+					
+					$pax_sum = $pax_regular + $pax_discount + $pax_free;
 
-					if($pax_regular <  $package_min_persons || $sum_people > $package_max_persons)
+					if($pax_sum <  $package_min_persons || $pax_sum > $package_max_persons)
 					{
-						$content = '<p class="minimal_success strong">'.esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')).'</p>';
-						$content .= '<h2>'.__('Contact The Experts', 'dynamicpackages').' - '.__('Request Quote', 'dynamicpackages').'</h2>';
-						$content .= apply_filters('dy_booking_sidebar', null);							
+						$content = sprintf(
+							'<p class="minimal_success strong">%s</p><h2>%s - %s</h2>%s',
+							esc_html(__('Send us your request and we will send you the quote shortly.', 'dynamicpackages')),
+							esc_html(__('Contact The Experts', 'dynamicpackages')),
+							esc_html(__('Request Quote', 'dynamicpackages')),
+							(string) apply_filters('dy_booking_sidebar', '')
+						);					
 					}
 					else
 					{
@@ -92,12 +98,18 @@ class Dynamicpackages_Gateways
 				}
 				else
 				{
-					$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
+					$content = sprintf(
+						'<p class="minimal_alert strong">%s</p>',
+						esc_html( __('Invalid Request', 'dynamicpackages') )
+					);
 				}
 			}
 			else
 			{				
-				$content = '<p class="minimal_alert strong">'.esc_html( __('Invalid Request', 'dynamicpackages')).'</p>';
+				$content = sprintf(
+					'<p class="minimal_alert strong">%s</p>',
+					esc_html( __('Invalid Request', 'dynamicpackages') )
+				);
 			}		
 		}
 
@@ -270,7 +282,7 @@ class Dynamicpackages_Gateways
 			$output = '<p class="text-center bottom-20 large">🤖 ' . $this->estimate->only_estimate . ' ⬇️</p>';
 		}
 		
-		$output .= apply_filters('dy_booking_sidebar', null);	
+		$output .= apply_filters('dy_booking_sidebar', '');	
 		echo $output;	
 	}
 	
