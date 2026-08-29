@@ -130,24 +130,9 @@ class dy_utilities {
 	
 	public static function pax_num()
 	{
-		$output = 0;
-		
-		if(isset($_REQUEST['pax_regular']))
-		{
-			$output = intval(sanitize_text_field($_REQUEST['pax_regular']));
-		}
-		
-		if(isset($_REQUEST['pax_discount']))
-		{
-			$output = $output + intval(sanitize_text_field($_REQUEST['pax_discount']));
-		}
-		
-		if(isset($_REQUEST['pax_free']))
-		{
-			$output = $output + intval(sanitize_text_field($_REQUEST['pax_free']));
-		}		
-		
-		return $output;
+		return secure_request('pax_regular', 0, 'absint')
+			+ secure_request('pax_discount', 0, 'absint')
+			+ secure_request('pax_free', 0, 'absint');
 	}
 	
 	public static function get_active_coupon_params()
@@ -169,8 +154,7 @@ class dy_utilities {
 		$output->bookings_after_expires = false;
 		
 		$coupons = self::get_package_hot_chart('package_coupons');
-		$raw_code = isset($_REQUEST['coupon_code']) ? $_REQUEST['coupon_code'] : '';
-		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', strtolower(sanitize_text_field($raw_code)));
+		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', strtolower(secure_request('coupon_code')));
 
 		
 		if(is_array($coupons) && array_key_exists('coupons', $coupons))
@@ -247,13 +231,12 @@ class dy_utilities {
 		//sums discount price
 		$discount = self::get_price_discount($regular, 'total');
 
-		if(!empty(secure_request('pax_discount'))){
-			if($discount > 0 ) {
-				$subtotal += $discount;
-			}
-			else {
-				$subtotal = 0;
-			}
+		$pax_discount = secure_request('pax_discount', 0, 'absint');
+
+		if ($pax_discount > 0) {
+			$subtotal = $discount > 0
+				? $subtotal + $discount
+				: 0;
 		}
 		
 		//store output in $cache
@@ -537,12 +520,12 @@ class dy_utilities {
 		
 		$price_chart = self::get_package_hot_chart('package_price_chart', $the_id);
 	
-		if(is_array($price_chart))
-		{
-			if(array_key_exists('price_chart', $price_chart))
-			{
-				$output = $price_chart['price_chart'];
-			}
+		if (
+			is_array($price_chart)
+			&& array_key_exists('price_chart', $price_chart)
+			&& is_array($price_chart['price_chart'])
+		) {
+			$output = $price_chart['price_chart'];
 		}
 
 		//store output in $cache
@@ -681,14 +664,11 @@ class dy_utilities {
 			? absint(package_field('package_duration_max'))
 			: 0;
 
-		if(request_has('booking_extra'))
-		{
-			$booking_extra = secure_request('booking_extra', $duration, 'absint');
+		$booking_extra = secure_request('booking_extra', $duration, 'absint');
 
-			if( $booking_extra > $duration && $duration_max > $duration)
-			{
-				$duration = min($booking_extra, $duration_max);
-			}
+		if( $booking_extra > $duration && $duration_max > $duration)
+		{
+			$duration = min($booking_extra, $duration_max);
 		}
 
 		$booking_date = secure_request('booking_date');
@@ -819,7 +799,7 @@ class dy_utilities {
 
 	public static function get_price_occupancy($type = null)
 	{
-		if (!isset($_REQUEST['booking_date'])) {
+		if (!request_has('booking_date')) {
 			// Preserve original behavior: no return if booking_date isn't present.
 			return;
 		}
@@ -830,7 +810,7 @@ class dy_utilities {
 		$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart'); // base occupancy rates
 		$duration        = self::get_min_nights() ?? 1;                             // min nights required
 		$seasons         = self::get_package_hot_chart('package_seasons_chart');    // seasons matrix (not used directly but kept)
-		$booking_date    = sanitize_text_field($_REQUEST['booking_date']);          // selected date
+		$booking_date    = secure_request('booking_date');          // selected date
 		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +{$duration} days"));
 
 		// Precompute ranges/surcharges once
@@ -855,8 +835,8 @@ class dy_utilities {
 		}
 
 		// Read request params once per function (keeps "always use $_REQUEST" logic intact)
-		$pax_regular_param  = isset($_REQUEST['pax_regular'])  ? (int) sanitize_text_field($_REQUEST['pax_regular'])  : 0;
-		$pax_discount_param = isset($_REQUEST['pax_discount']) ? (int) sanitize_text_field($_REQUEST['pax_discount']) : 0;
+		$pax_regular_param  = secure_request('pax_regular', 0, 'absint');
+		$pax_discount_param = secure_request('pax_discount', 0, 'absint');
 
 		// Iterate seasons; keep indices to align with surcharges
 		$should_break = false;
@@ -928,78 +908,77 @@ class dy_utilities {
 		$sum = 0;
 		
 		if(is_booking_page() || is_confirmation_page())
-		{		
-			$base_price = 0;
-			$price_chart = self::get_price_chart();
-			$pax_regular = (isset($_REQUEST['pax_regular'])) ? floatval(sanitize_text_field($_REQUEST['pax_regular'])) : 0;
+		{
 
-			if(is_array($price_chart))
+			$pax_regular = secure_request('pax_regular', 0, 'absint');
+
+			if ($pax_regular === 0) {
+				return 0;
+			}
+
+			$price_chart = self::get_price_chart();
+			
+
+			if(!is_array($price_chart)) {
+				return 0;
+			}
+
+			$row = $price_chart[$pax_regular - 1] ?? [];
+
+			$base_price = (is_array($row) && !empty($row[0]))
+				? (float) $row[0]
+				: 0.0;
+			
+			$sum = self::get_price_calc($base_price, $regular, 'regular');
+			
+			if($type === 'total' && $pax_regular > 0)
 			{
-				for ($x = 0; $x < count($price_chart); $x++)
-				{
-					if($pax_regular == ($x+1))
-					{
-						if(!empty($price_chart[$x][0]))
-						{
-							$base_price = floatval($price_chart[$x][0]);
-						}
-					}
-				}
-				
-				$sum = self::get_price_calc($base_price, $regular, 'regular');
-				
-				if($type == 'total' && $pax_regular > 0)
-				{
-					$sum = $sum * $pax_regular;
-				}
+				$sum = $sum * $pax_regular;
 			}
 		}
 		return $sum;
 	}	
 
 
-	
-	public static function get_price_discount($regular = null, $type = null)
-	{
-		$sum = 0;
-		
-		if((is_booking_page() || is_confirmation_page()) && isset($_REQUEST['pax_discount']))
-		{
-
-			$pax_discount = intval(sanitize_text_field($_REQUEST['pax_discount']));
-
-			if($pax_discount > 0)
-			{
-				$base_price = 0;
-				$price_chart = self::get_price_chart();
-				$pax_discount = (isset($_REQUEST['pax_discount'])) ? floatval(sanitize_text_field($_REQUEST['pax_discount'])) : 0;
-
-				if(is_array($price_chart))
-				{
-					for($x = 0; $x < count($price_chart); $x++)
-					{
-							if($pax_discount == floatval(($x+1)))
-							{
-								$base_price = 0;
-								
-								if(!empty($price_chart[$x][1]))
-								{
-									$base_price = floatval($price_chart[$x][1]);
-								}
-							}
-					}
-					
-					$sum = self::get_price_calc($base_price, $regular, 'discount');
-					
-					if($type == 'total' && $pax_discount > 0)
-					{
-						$sum = $sum * $pax_discount;
-					}
-				}
-			}
+	public static function get_price_discount(
+		$regular = null,
+		$type = null
+	) {
+		if (!is_booking_page() && !is_confirmation_page()) {
+			return 0;
 		}
-		
-		return $sum;
+
+		$pax_discount = secure_request(
+			'pax_discount',
+			0,
+			'absint'
+		);
+
+		if ($pax_discount === 0) {
+			return 0;
+		}
+
+		$price_chart = self::get_price_chart();
+
+		if (!is_array($price_chart)) {
+			return 0;
+		}
+
+		$row = $price_chart[$pax_discount - 1] ?? [];
+
+		$base_price = (is_array($row) && !empty($row[1]))
+			? (float) $row[1]
+			: 0.0;
+
+		$sum = self::get_price_calc(
+			$base_price,
+			$regular,
+			'discount'
+		);
+
+		return $type === 'total'
+			? $sum * $pax_discount
+			: $sum;
 	}
 	
 	public static function get_price_calc($sum, $regular, $type)
@@ -1015,15 +994,15 @@ class dy_utilities {
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
-		$booking_date = sanitize_text_field($_REQUEST['booking_date']);
+		$booking_date = secure_request('booking_date');
 		$week_days_to_surcharge = array($booking_date);
-		$one_way_surcharge = intval(package_field('package_one_way_surcharge'));
+		$one_way_surcharge = (float) package_field('package_one_way_surcharge');
 
 		if($package_type === 'transport')
 		{
 			$sum_arr = [$sum];
 
-			$end_date = (isset($_REQUEST['end_date'])) ? sanitize_text_field($_REQUEST['end_date']) : '';
+			$end_date = secure_request('end_date');
 
 			if(is_valid_date($booking_date))
 			{
@@ -1050,7 +1029,7 @@ class dy_utilities {
 					}
 				}
 
-				if(!is_valid_date($end_date) && $one_way_surcharge > 0)
+				if(!is_valid_date($end_date) && $one_way_surcharge > 0.0)
 				{
 					$one_way_surcharge = ($one_way_surcharge / 100) * $sum;
 					$sum += $one_way_surcharge;
@@ -1166,45 +1145,44 @@ class dy_utilities {
 	
 	public static function hour()
 	{
-		$output = '';
-		$field = package_field('package_start_hour' );
+		$package_by_hour = absint(package_field('package_by_hour'));
 
-		if($field)
-		{
-			if(!empty($field))
-			{
-				$output = $field;
+		if($package_by_hour === 1) {
+			$booking_hour = secure_request('booking_hour');
+
+			if(is_valid_time($booking_hour)) {
+				return $booking_hour;
 			}
 		}
-		
-		if(isset($_REQUEST['booking_hour']))
-		{
-			$output = sanitize_text_field($_REQUEST['booking_hour']);
-		}
-		
-		return $output;
+
+		$package_start_hour = package_field('package_start_hour');
+
+		return is_valid_time($package_start_hour) 
+			? $package_start_hour 
+			: '';
 	}	
 	
 	public static function return_hour()
 	{
-		$output = '';
-		$field = package_field('package_return_hour' );
 
-		if(!empty($field))
-		{
-			$output = $field;
-		}
-		
-		if(isset($_REQUEST['return_hour']))
-		{
-			if(!empty($_REQUEST['return_hour']))
-			{
-				$output = sanitize_text_field($_REQUEST['return_hour']);
+		$package_by_hour = absint(package_field('package_by_hour'));
+
+		//overrides package_return_hour
+		if($package_by_hour === 1) {
+			$return_hour = secure_request('return_hour');
+
+			if(is_valid_time($return_hour)) {
+				return $return_hour;
 			}
-			
 		}
-		
-		return $output;
+
+
+		$package_return_hour = package_field('package_return_hour');
+
+		return is_valid_time($package_return_hour) 
+			? $package_return_hour 
+			: '';
+
 	}
 
 
@@ -1339,25 +1317,21 @@ class dy_utilities {
 		$total = 0;
 		$pax_num = self::pax_num();
 
-		if(apply_filters('dy_has_add_ons', null) && isset($_POST['add_ons']))
-		{
-			$add_ons = apply_filters('dy_get_add_ons', []);
-			$add_ons_included = explode(',', sanitize_text_field($_POST['add_ons']));
-			$add_ons_price = 0;
-			$add_ons_count = count($add_ons);
-			
-			if(is_array($add_ons) && is_array($add_ons_included))
-			{
-				for($x = 0; $x < $add_ons_count; $x++)
-				{					
-					if(in_array($add_ons[$x]['id'], $add_ons_included))
-					{
-						$add_ons_price += floatval($pax_num) * floatval($add_ons[$x]['price']);
-					}
-				}
-				
-				$total = $total + $add_ons_price;			
-			}			
+		$add_ons_post = secure_post('add_ons');
+
+		if (!apply_filters('dy_has_add_ons', null) || $add_ons_post === '') {
+			return 0;
+		}
+
+		$add_ons = (array) apply_filters('dy_get_add_ons', []);
+		$included_ids = array_map('absint', explode(',', $add_ons_post));
+
+		foreach ($add_ons as $add_on) {
+			$add_on_id = absint($add_on['id'] ?? 0);
+
+			if (in_array($add_on_id, $included_ids, true)) {
+				$total += $pax_num * (float) ($add_on['price'] ?? 0);
+			}
 		}
 		
 		return $total;

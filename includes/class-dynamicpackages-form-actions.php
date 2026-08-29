@@ -117,10 +117,10 @@ class Dynamicpackages_Actions{
 
 		$the_id = get_dy_id();
 
-		if(isset($_REQUEST['add_ons']))
+		if(request_has('add_ons'))
 		{
 			$add_ons_package_id = sanitize_key('dy_add_ons_' . $the_id);
-			$add_ons = sanitize_text_field($_REQUEST['add_ons']);
+			$add_ons = secure_request('add_ons');
 			setcookie($add_ons_package_id, $add_ons, time() + 3600);
 		}
 		

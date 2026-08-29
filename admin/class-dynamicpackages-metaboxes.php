@@ -379,7 +379,7 @@ class Dynamicpackages_Metaboxes
 
 			<p>
 			<label for="package_one_way_surcharge"><?php echo esc_html(__('One-way Surcharge', 'dynamicpackages')); ?></label></br>
-			<input type="number" name="package_one_way_surcharge" id="package_one_way_surcharge" value="<?php echo esc_attr($this->one_way_surcharge); ?>" <?php echo esc_attr($this->disable_child); ?>>%
+			<input type="number" step="0.01" min="0" name="package_one_way_surcharge" id="package_one_way_surcharge" value="<?php echo esc_attr($this->one_way_surcharge); ?>" <?php echo esc_attr($this->disable_child); ?>>%
 		</p>
 
 		<?php
