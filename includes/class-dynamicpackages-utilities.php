@@ -165,11 +165,12 @@ class dy_utilities {
 	
 
 	/**
-	 * Return validated parameters for the submitted coupon.
+	 * Return sanitized parameters for the submitted coupon.
 	 *
-	 * @return object|null Valid coupon parameters, or null when the coupon
-	 *                     is missing, unmatched, or contains invalid data.
+	 * @return object|null Valid coupon parameters, or null when $coupons_data is malformed.
+	 *                     
 	 */
+
 	public static function get_active_coupon_params()
 	{
 		$cache_key = 'dy_get_coupon';
@@ -180,17 +181,21 @@ class dy_utilities {
 
 		$coupons_data = self::get_package_hot_chart('package_coupons');
 
-		if (!is_array($coupons_data) || !isset($coupons_data['coupons']) || !is_array($coupons_data['coupons'])) {
+		if (!is_array($coupons_data) || !array_key_exists('coupons', $coupons_data) || !is_array($coupons_data['coupons'])) {
 			return self::$cache[$cache_key] = null;
 		}
 
 		$coupons = $coupons_data['coupons'];
 
-		if (empty($coupons)) {
+		if (count($coupons) === 0) {
 			return self::$cache[$cache_key] = null;
 		}
 
 		$coupon_code = self::normalize_coupon_code(secure_request('coupon_code'));
+
+		if ($coupon_code === null) {
+			return self::$cache[$cache_key] = null;
+		}
 
 		$output = (object) [
 			'code' => null,
@@ -202,7 +207,14 @@ class dy_utilities {
 			'bookings_after_expires' => false,
 		];
 
+		$has_errors = false;
+
 		foreach ($coupons as $coupon) {
+
+			if (!is_array($coupon)) {
+				continue;
+			}
+
 			$raw_code = $coupon[0] ?? null;
 
 			if (!is_string($raw_code) || trim($raw_code) === '') {
@@ -211,28 +223,37 @@ class dy_utilities {
 
 			$stored_code = self::normalize_coupon_code($raw_code);
 
-			if ($coupon_code !== $stored_code) {
+			if ($stored_code === null || $coupon_code !== $stored_code) {
 				continue;
 			}
 
-			$output->code                   = $stored_code;
-
+			$output->code = $stored_code;
 
 			$validate_discount = function ($value) {
 				$discount_raw = $value;
 				$discount = (float) $discount_raw;
 				
-				return is_numeric($discount_raw) && is_finite($discount) && $discount >= 0.0 && $discount <= 100;
+				return is_numeric($discount_raw) && is_finite($discount) && $discount > 0.0 && $discount <= 100;
 			};
 
-			$output->discount               = isset($coupon[1]) && $validate_discount($coupon[1]) ? (float) $coupon[1] : 0.0;
-			$output->expiration             = isset($coupon[2]) && is_valid_date($coupon[2]) ? $coupon[2] : '';
-			$output->publish                = isset($coupon[3]) ? (bool) $coupon[3] : false;
-			$output->min_duration           = isset($coupon[4]) && is_numeric($coupon[4]) ? absint($coupon[4]) : 0;
-			$output->max_duration           = isset($coupon[5]) && is_numeric($coupon[5]) ? absint($coupon[5]) : 0;
+			$output->discount = isset($coupon[1]) && $validate_discount($coupon[1]) ? (float) $coupon[1] : 0.0;
+
+			if($output->discount === 0.0) {
+				$has_errors = true;
+				break;
+			}
+
+			$output->expiration = isset($coupon[2]) && is_valid_date($coupon[2]) ? $coupon[2] : '';
+			$output->publish = isset($coupon[3]) ? (bool) $coupon[3] : false;
+			$output->min_duration = isset($coupon[4]) && is_numeric($coupon[4]) ? absint($coupon[4]) : 0;
+			$output->max_duration = isset($coupon[5]) && is_numeric($coupon[5]) ? absint($coupon[5]) : 0;
 			$output->bookings_after_expires = isset($coupon[6]) ? (bool) $coupon[6] : false;
 
 			break;
+		}
+
+		if($has_errors) {
+			return self::$cache[$cache_key] = null;
 		}
 
 		return self::$cache[$cache_key] = $output;

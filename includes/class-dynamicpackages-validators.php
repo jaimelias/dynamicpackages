@@ -695,40 +695,22 @@ public static function validate_terms_conditions()
 	
 	public static function has_coupon()
 	{
-		$output = false;
 		$cache_key = 'dy_has_coupon';
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
 
-		$max_coupons = (int) package_field( 'package_max_coupons');
-
-		if($max_coupons > 0)
-		{
-			$coupons = dy_utilities::get_package_hot_chart('package_coupons');
-			
-			if(is_array($coupons))
-			{
-				if(array_key_exists('coupons', $coupons))
-				{
-					if(isset($coupons['coupons'][0]))
-					{
-						$coupons = $coupons['coupons'][0];
-						
-						if(!empty($coupons[0]) && !empty($coupons[1]))
-						{
-							$output = true;
-						}						
-					}
-				}					
-			}
+		if (array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-		
-		return $output;
+		if (absint(package_field('package_max_coupons')) === 0) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$coupons = dy_utilities::get_package_hot_chart('package_coupons');
+		$first   = $coupons['coupons'][0] ?? null;
+
+		$output = is_array($first) && !empty($first[0]) && !empty($first[1]);
+
+		return self::$cache[$cache_key] = $output;
 	}
 
 	public static function validate_coupon()
@@ -741,13 +723,11 @@ public static function validate_terms_conditions()
             return self::$cache[$cache_key];
         }
 
-		$coupon_code = secure_request('coupon_code');
+		$coupon_code = dy_utilities::normalize_coupon_code(secure_request('coupon_code'));
 		
-		if(!self::has_coupon() || empty($coupon_code)) {
+		if(!self::has_coupon() || $coupon_code === null) {
 			return self::$cache[$cache_key] = false;
 		}
-
-		$coupon_code = dy_utilities::normalize_coupon_code(secure_request('coupon_code'));
 
 		$coupon_params = dy_utilities::get_active_coupon_params();
 
@@ -758,7 +738,7 @@ public static function validate_terms_conditions()
 		$stored_coupon_code = $coupon_params->code;
 		$discount = $coupon_params->discount;
 
-		if($discount < 0.0 || $discount > 100.0) {
+		if($discount <= 0.0 || $discount > 100.0) {
 
 			return self::$cache[$cache_key] = false;
 		}
