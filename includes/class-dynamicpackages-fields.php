@@ -133,12 +133,11 @@ class Dynamicpackages_Fields
         // Retrieve the field value
         $this_field = get_post_meta($this_id, $name, true);
 
-        if(isset($_REQUEST['enable_payment']) && $name === 'package_auto_booking')
+        if(request_has('enable_payment') && $name === 'package_auto_booking')
         {
             $this_field = '1';
         }
-
-        elseif(isset($_REQUEST['force_availability']))
+        else if(request_has('force_availability'))
         {
             if($name === 'package_disabled_dates_api') $this_field = '';
             else if($name === 'package_booking_from') $this_field = '0';
@@ -154,7 +153,7 @@ class Dynamicpackages_Fields
 
         if(isset($_REQUEST['route']))
         {
-            if($_REQUEST['route'] === '1')
+            if(secure_request('route', null, 'absint'))
             {
                 if($name === 'package_payment') $this_field = '0';
                 if($name === 'package_deposit') $this_field = '';
