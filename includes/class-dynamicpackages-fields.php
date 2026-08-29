@@ -151,13 +151,10 @@ class Dynamicpackages_Fields
             else if($name === 'package_day_sun') $this_field = '';
         }
 
-        if(isset($_REQUEST['route']))
+        if(secure_request('route', null, 'absint') === 1)
         {
-            if(secure_request('route', null, 'absint'))
-            {
-                if($name === 'package_payment') $this_field = '0';
-                if($name === 'package_deposit') $this_field = '';
-            }
+            if($name === 'package_payment') $this_field = '0';
+            if($name === 'package_deposit') $this_field = '';
         }
 
         // Store the value in the cache
