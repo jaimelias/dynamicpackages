@@ -32,7 +32,7 @@ class Dynamic_Core_Providers {
 
 	public function admin_head() {
 
-		if(!isset($_GET['taxonomy']) || $_GET['taxonomy'] !== self::TAXONOMY) {
+		if(secure_get('taxonomy') !== self::TAXONOMY) {
 			return;
 		}
 
