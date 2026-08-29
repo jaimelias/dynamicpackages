@@ -747,7 +747,7 @@ public static function validate_terms_conditions()
 			return self::$cache[$cache_key] = false;
 		}
 
-		$coupon_code = (string) strtolower(sanitize_text_field($_REQUEST['coupon_code']));
+		$coupon_code = secure_request('coupon_code');
 		$coupon_code = (string) preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
 
 		$coupon_params = (object) dy_utilities::get_active_coupon_params();

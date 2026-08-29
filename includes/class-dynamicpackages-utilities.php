@@ -64,26 +64,32 @@ class dy_utilities {
 
 	public static function booking_date()
 	{
-		$booking_date = secure_request('booking_date');
+		$cache_key = 'dy_booking_date';
 
-		if(is_valid_date($booking_date))
-		{
-			return strtotime($booking_date.' 00:00:00');
+		if( array_key_exists($cache_key, self::$cache) ) {
+			return self::$cache[$cache_key];
 		}
 
-		return null;
+		$booking_date = secure_request('booking_date');
+
+		return self::$cache[$cache_key] = is_valid_date($booking_date) 
+			? strtotime($booking_date.' 00:00:00') 
+			: null;
 	}
 
 	public static function end_date()
-	{		
-		$end_date = secure_request('end_date');
+	{
+		$cache_key = 'dy_end_date';
 
-		if(is_valid_date($end_date))
-		{
-			return strtotime($end_date.' 00:00:00');
+		if( array_key_exists($cache_key, self::$cache) ) {
+			return self::$cache[$cache_key];
 		}
+
+		$end_date = secure_request('end_date');
 		
-		return null;
+		return self::$cache[$cache_key] = is_valid_date($end_date)
+			? strtotime($end_date.' 00:00:00')
+			: null;
 	}
 
 	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
@@ -834,7 +840,6 @@ class dy_utilities {
 			$seasons_array[] = ($season === 'price_chart') ? 'occupancy_chart' : ('occupancy_chart' . $season);
 		}
 
-		// Read request params once per function (keeps "always use $_REQUEST" logic intact)
 		$pax_regular_param  = secure_request('pax_regular', 0, 'absint');
 		$pax_discount_param = secure_request('pax_discount', 0, 'absint');
 
@@ -886,7 +891,6 @@ class dy_utilities {
 					$sum += $pax_regular_price * $occupancy_surcharge_percent;
 				}
 
-				// Children discounts (use $_REQUEST-derived value; non-strict comparison preserved)
 				if ($pax_discount_param > 0 && $type === 'discount') {
 					if ($pax_discount_price == 0) {
 						$sum = 0.0;
@@ -1145,19 +1149,25 @@ class dy_utilities {
 	
 	public static function hour()
 	{
+
+		$the_id = get_dy_id();
+		$booking_hour = secure_request('booking_hour');
+		$cache_key = 'dy_hour_' . $the_id . '_' . $booking_hour;
+
+		if( array_key_exists($cache_key, self::$cache) ) {
+			return self::$cache[$cache_key];
+		}
+
 		$package_by_hour = absint(package_field('package_by_hour'));
 
-		if($package_by_hour === 1) {
-			$booking_hour = secure_request('booking_hour');
 
-			if(is_valid_time($booking_hour)) {
-				return $booking_hour;
-			}
+		if($package_by_hour === 1 && is_valid_time($booking_hour) && (is_booking_page() || is_confirmation_page())) {
+			return self::$cache[$cache_key] = $booking_hour;
 		}
 
 		$package_start_hour = package_field('package_start_hour');
 
-		return is_valid_time($package_start_hour) 
+		return self::$cache[$cache_key] = is_valid_time($package_start_hour) 
 			? $package_start_hour 
 			: '';
 	}	
@@ -1165,21 +1175,24 @@ class dy_utilities {
 	public static function return_hour()
 	{
 
+		$the_id = get_dy_id();
+		$return_hour = secure_request('return_hour');
+		$cache_key = 'dy_return_hour_' . $the_id . '_' . $return_hour;
+
+		if( array_key_exists($cache_key, self::$cache) ) {
+			return self::$cache[$cache_key];
+		}
+
 		$package_by_hour = absint(package_field('package_by_hour'));
 
 		//overrides package_return_hour
-		if($package_by_hour === 1) {
-			$return_hour = secure_request('return_hour');
-
-			if(is_valid_time($return_hour)) {
-				return $return_hour;
-			}
+		if($package_by_hour === 1 && is_valid_time($return_hour) && (is_booking_page() || is_confirmation_page())) {
+			return self::$cache[$cache_key] = $return_hour;
 		}
-
 
 		$package_return_hour = package_field('package_return_hour');
 
-		return is_valid_time($package_return_hour) 
+		return self::$cache[$cache_key] = is_valid_time($package_return_hour) 
 			? $package_return_hour 
 			: '';
 

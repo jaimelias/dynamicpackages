@@ -25,35 +25,16 @@ class dy_Add_To_Calendar
 		}
 	}
 	public function is_valid()
-	{
-		$output = false;
-		
-		if(is_singular('packages'))
+	{		
+		if(!is_singular('packages'))
 		{
-			$date = '';
-			$hour = '';
-			$output = false;
-			
-			if(isset($_REQUEST['booking_date']))
-			{
-				$date = $_REQUEST['booking_date'];
-			}
-			if(isset($_REQUEST['booking_hour']))
-			{
-				$hour = $_REQUEST['booking_hour'];
-			}
-
-			if(!empty(package_field('package_start_hour')))
-			{
-				$hour = package_field('package_start_hour');
-			}	
-			if(!empty($hour) && !empty($date))
-			{
-				$output = true;
-			}			
+			return false;
 		}
 
-		return $output;
+		$date = dy_utilities::booking_date();
+		$hour = dy_utilities::hour();
+		
+		return !empty($hour) && !empty($date);
 	}
 	
 	public function show()
@@ -68,17 +49,13 @@ class dy_Add_To_Calendar
 			return '';
 		}
 
-		$label        = __('Add to calendar', 'dynamicpackages'); // translatable
-		$label_attr   = esc_attr($label);
-		$label_html   = esc_html($label);
+		
+		$hour = dy_utilities::hour();
+		$booking_date = secure_request('booking_date');
 
-		$booking_date = sanitize_text_field($_REQUEST['booking_date'] ?? '');
-		$start_text   = esc_html($booking_date . ' ' . dy_utilities::hour());
+		if(empty($hour) || empty($booking_date)) return '';
 
-		$timezone     = esc_html(get_option('timezone_string'));
-		$title        = esc_html($post->post_title);
-		$description  = esc_html(apply_filters('dy_description', null));
-		$location     = esc_html(package_field('package_start_address'));
+		$label        = __('Add to calendar', 'dynamicpackages'); 
 
 		$html = sprintf(
 			'<div class="bottom-20 addevent_container">
@@ -91,13 +68,13 @@ class dy_Add_To_Calendar
 					<span class="location">%s</span>
 				</div>
 			</div>',
-			$label_attr,
-			$label_html,
-			$start_text,
-			$timezone,
-			$title,
-			$description,
-			$location
+			esc_attr($label),
+			esc_html($label),
+			esc_html($booking_date . ' ' . dy_utilities::hour()),
+			esc_html(get_option('timezone_string')),
+			esc_html($post->post_title),
+			esc_html((string) apply_filters('dy_description', null)),
+			esc_html(package_field('package_start_address'))
 		);
 
 		// Match the original behavior of returning buffered HTML (without extra output)
