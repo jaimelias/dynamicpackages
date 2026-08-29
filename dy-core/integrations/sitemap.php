@@ -62,9 +62,6 @@ class Dynamic_Sitemap
     }
 
     private function set_changefreq($changefreq) {
-        // Preserve the existing behavior of mirroring the sanitized value into $_GET.
-        $_GET[self::CHANGEFREQ_QUERY_VAR] = $changefreq;
-
         $this->changefreq_override = in_array(
             $changefreq,
             self::ALLOWED_CHANGEFREQ,

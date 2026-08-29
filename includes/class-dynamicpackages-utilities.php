@@ -140,60 +140,102 @@ class dy_utilities {
 			+ secure_request('pax_discount', 0, 'absint')
 			+ secure_request('pax_free', 0, 'absint');
 	}
+
+	public static function normalize_coupon_code($value) {
+		if (!is_string($value)) {
+			return null;
+		}
+
+		$value = preg_replace(
+			'/[^A-Za-z0-9 ]/',
+			'',
+			strtolower($value)
+		);
+
+		if (!is_string($value)) {
+			return null;
+		}
+
+		$value = trim($value);
+
+		return preg_match('/[a-z0-9]/', $value) === 1
+			? $value
+			: null;
+	}
 	
+
+	/**
+	 * Return validated parameters for the submitted coupon.
+	 *
+	 * @return object|null Valid coupon parameters, or null when the coupon
+	 *                     is missing, unmatched, or contains invalid data.
+	 */
 	public static function get_active_coupon_params()
 	{
 		$cache_key = 'dy_get_coupon';
-
 
 		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
-		$output = (object) array();
-		$output->code = null;
-		$output->discount = 0;
-		$output->expiration = null;
-		$output->publish = false;
-		$output->min_duration = 0;
-		$output->max_duration = 0;
-		$output->bookings_after_expires = false;
-		
-		$coupons = self::get_package_hot_chart('package_coupons');
-		$coupon_code = preg_replace("/[^A-Za-z0-9 ]/", '', strtolower(secure_request('coupon_code')));
+		$coupons_data = self::get_package_hot_chart('package_coupons');
 
-		
-		if(is_array($coupons) && array_key_exists('coupons', $coupons))
-		{
-			$coupons = $coupons['coupons'];
-			$count_coupons = count($coupons);
-			
-			for($x = 0; $x < $count_coupons; $x++)
-			{
-				if(!empty($coupons[$x][0]))
-				{
-					$stored_code = (isset($coupons[$x][0]) && !empty($coupons[$x][0]) && is_string($coupons[$x][0])) 
-						? preg_replace("/[^A-Za-z0-9 ]/", '', strtolower($coupons[$x][0])) 
-						: null;
-
-					if($coupon_code !== $stored_code) continue;
-
-					$output->code = $stored_code;
-					$output->discount = (isset($coupons[$x][1]) && is_numeric($coupons[$x][1])) ? (float) $coupons[$x][1] : 0;
-					$output->expiration = (isset($coupons[$x][2]) && is_valid_date($coupons[$x][2])) ? $coupons[$x][2] : null;
-					$output->publish = (isset($coupons[$x][3])) ? (bool) $coupons[$x][3] : false;
-					$output->min_duration = (isset($coupons[$x][4]) && is_numeric($coupons[$x][4])) ? (int) $coupons[$x][4] : 0;
-					$output->max_duration = (isset($coupons[$x][5]) && is_numeric($coupons[$x][5])) ? (int) $coupons[$x][5] : 0;
-					$output->bookings_after_expires = (isset($coupons[$x][6])) ? (bool) $coupons[$x][6] : false;
-
-					break; //early exit after match
-				}
-			}				
+		if (!is_array($coupons_data) || !isset($coupons_data['coupons']) || !is_array($coupons_data['coupons'])) {
+			return self::$cache[$cache_key] = null;
 		}
-		
-		self::$cache[$cache_key] = $output;
-		return $output;
 
+		$coupons = $coupons_data['coupons'];
+
+		if (empty($coupons)) {
+			return self::$cache[$cache_key] = null;
+		}
+
+		$coupon_code = self::normalize_coupon_code(secure_request('coupon_code'));
+
+		$output = (object) [
+			'code' => null,
+			'discount' => 0,
+			'expiration' => null,
+			'publish' => false,
+			'min_duration' => 0,
+			'max_duration' => 0,
+			'bookings_after_expires' => false,
+		];
+
+		foreach ($coupons as $coupon) {
+			$raw_code = $coupon[0] ?? null;
+
+			if (!is_string($raw_code) || trim($raw_code) === '') {
+				continue;
+			}
+
+			$stored_code = self::normalize_coupon_code($raw_code);
+
+			if ($coupon_code !== $stored_code) {
+				continue;
+			}
+
+			$output->code                   = $stored_code;
+
+
+			$validate_discount = function ($value) {
+				$discount_raw = $value;
+				$discount = (float) $discount_raw;
+				
+				return is_numeric($discount_raw) && is_finite($discount) && $discount >= 0.0 && $discount <= 100;
+			};
+
+			$output->discount               = isset($coupon[1]) && $validate_discount($coupon[1]) ? (float) $coupon[1] : 0.0;
+			$output->expiration             = isset($coupon[2]) && is_valid_date($coupon[2]) ? $coupon[2] : '';
+			$output->publish                = isset($coupon[3]) ? (bool) $coupon[3] : false;
+			$output->min_duration           = isset($coupon[4]) && is_numeric($coupon[4]) ? absint($coupon[4]) : 0;
+			$output->max_duration           = isset($coupon[5]) && is_numeric($coupon[5]) ? absint($coupon[5]) : 0;
+			$output->bookings_after_expires = isset($coupon[6]) ? (bool) $coupon[6] : false;
+
+			break;
+		}
+
+		return self::$cache[$cache_key] = $output;
 	}
 
 	public static function total($regular = null)
@@ -994,7 +1036,7 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
-		$coupon_params = self::get_active_coupon_params();
+		
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
@@ -1068,6 +1110,8 @@ class dy_utilities {
 		
 		if(dy_validators::validate_coupon() && $regular === null)
 		{
+			$coupon_params = self::get_active_coupon_params();
+			
 			$sum = $sum * ((100 - $coupon_params->discount) /100);
 		}
 

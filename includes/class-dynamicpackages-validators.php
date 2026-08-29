@@ -747,24 +747,36 @@ public static function validate_terms_conditions()
 			return self::$cache[$cache_key] = false;
 		}
 
-		$coupon_code = secure_request('coupon_code');
-		$coupon_code = (string) preg_replace("/[^A-Za-z0-9 ]/", '', $coupon_code);
+		$coupon_code = dy_utilities::normalize_coupon_code(secure_request('coupon_code'));
 
-		$coupon_params = (object) dy_utilities::get_active_coupon_params();
-		$stored_coupon_code = (string) $coupon_params->code;
-		$package_type = (string) dy_utilities::get_package_type();
+		$coupon_params = dy_utilities::get_active_coupon_params();
 
-		$duration = (int) dy_utilities::get_min_nights();
+		if(!$coupon_params) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		$stored_coupon_code = $coupon_params->code;
+		$discount = $coupon_params->discount;
+
+		if($discount < 0.0 || $discount > 100.0) {
+
+			return self::$cache[$cache_key] = false;
+		}
+
+
+		$package_type = dy_utilities::get_package_type();
+
+		$duration = absint(dy_utilities::get_min_nights());
 		$booking_date = secure_request('booking_date');
 		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-		$booking_dates_range = (array) dy_utilities::get_date_range($booking_date, $booking_date_to, false);
+		$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
 		
 		if($stored_coupon_code === $coupon_code)
 		{
-			$coupon_expiration = (string) $coupon_params->expiration;
-			$coupon_min_duration = (int) $coupon_params->min_duration;
-			$coupon_max_duration = (int) $coupon_params->max_duration;
-			$coupon_bookings_after_expires = (bool) $coupon_params->bookings_after_expires;
+			$coupon_expiration = $coupon_params->expiration;
+			$coupon_min_duration = $coupon_params->min_duration;
+			$coupon_max_duration = $coupon_params->max_duration;
+			$coupon_bookings_after_expires = $coupon_params->bookings_after_expires;
 			$valid_expiration = false;
 
 			if(($duration < $coupon_min_duration && $coupon_min_duration > 0) || ($duration > $coupon_max_duration && $coupon_max_duration > 0) )
