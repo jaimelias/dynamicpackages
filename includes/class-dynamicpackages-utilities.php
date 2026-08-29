@@ -1161,7 +1161,7 @@ class dy_utilities {
 		$package_by_hour = absint(package_field('package_by_hour'));
 
 
-		if($package_by_hour === 1 && is_valid_time($booking_hour) && (is_booking_page() || is_confirmation_page())) {
+		if($package_by_hour === 1 && is_valid_time($booking_hour)) {
 			return self::$cache[$cache_key] = $booking_hour;
 		}
 
@@ -1186,7 +1186,7 @@ class dy_utilities {
 		$package_by_hour = absint(package_field('package_by_hour'));
 
 		//overrides package_return_hour
-		if($package_by_hour === 1 && is_valid_time($return_hour) && (is_booking_page() || is_confirmation_page())) {
+		if($package_by_hour === 1 && is_valid_time($return_hour)) {
 			return self::$cache[$cache_key] = $return_hour;
 		}
 

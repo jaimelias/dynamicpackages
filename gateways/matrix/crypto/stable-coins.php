@@ -218,7 +218,7 @@ class stable_coins {
 
 		global $dy_request_invalids;
 		
-		if(is_confirmation_page() && isset($_POST['dy_network']) && !isset($dy_request_invalids))
+		if(is_confirmation_page() && post_has('dy_network') && !isset($dy_request_invalids))
 		{
 			$network = secure_post('dy_network', '', 'sanitize_key');
 

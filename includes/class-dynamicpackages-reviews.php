@@ -146,41 +146,48 @@ class Dynamicpackages_Reviews
 			</div>
 		<?php
 	}
+
+	public static function is_valid_dy_rating_value() {
+		$dy_rating = secure_post('dy_rating', 0, 'absint');
+		return $dy_rating >= 1 && $dy_rating <= 5;
+	}
 	
 	public function save_comment($comment_id)
 	{
-		if(isset($_POST['dy_rating']))
-		{
-			if($_POST['dy_rating'] > 0)
-			{
-				add_comment_meta($comment_id, 'dy_rating', intval($_POST['dy_rating']));
-			}
+		$dy_rating = secure_post('dy_rating', 0, 'absint');
+
+		if(!$this->is_valid_dy_rating_value()) {
+			return;
 		}
+
+		add_comment_meta($comment_id, 'dy_rating', $dy_rating );
 	}
 	
 	public function edit_comment($comment_id)
 	{
-		if(isset($_POST['dy_rating']))
-		{
-			if($_POST['dy_rating'] > 0)
-			{
-				update_comment_meta( $comment_id, 'dy_rating', intval($_POST['dy_rating']));
-			}
-		}		
+		$dy_rating = secure_post('dy_rating', 0, 'absint');
+
+		if(!$this->is_valid_dy_rating_value()) {
+			return;
+		}
+
+		update_comment_meta( $comment_id, 'dy_rating', $dy_rating );
 	}
 	
 	public function require_comment($commentdata) {
-		if (!is_admin() && !isset($_POST['dy_rating']))
-		{
-			if(intval($_POST['dy_rating']) < 1)
-			{
-				wp_die(__( 'Error: You did not add a rating. Hit the Back button on your Web browser and resubmit your comment with a rating.', 'dynamicpackages'));			
-			}
+
+		if (!is_admin() && !$this->is_valid_dy_rating_value()) {
+			wp_die(
+				__(
+					'Error: You did not add a rating. Hit the Back button on your Web browser and resubmit your comment with a rating.',
+					'dynamicpackages'
+				)
+			);
 		}
 		
-		if(isset($_POST['dy_alias']))
+		if(post_has('dy_alias'))
 		{
-			$commentdata['comment_author'] = sanitize_text_field($_POST['dy_alias']);
+			$commentdata['comment_author'] = secure_post('dy_alias');
 			
 			
 			//random date
