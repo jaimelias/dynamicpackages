@@ -817,10 +817,7 @@ class paguelo_facil_on{
 	public function build_request()
 	{
 		// IP con preferencia a Cloudflare si existe
-		$ip = $_SERVER['REMOTE_ADDR'] ?? '';
-		if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
-		}
+		$ip = get_ip_address();
 
 		// Datos principales
 		$CCNum  = secure_post('CCNum');
