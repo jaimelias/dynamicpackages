@@ -385,7 +385,16 @@ public static function validate_quote()
 		{
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
-				$output = self::validate_submission_rate_limits();
+
+				$submission_rate_limits = self::validate_submission_rate_limits();
+				$post_id_rate_limits = self::validate_post_id_rate_limits();
+				$gateway_rate_limits = self::validate_gateway_rate_limits();
+
+				if($submission_rate_limits && $post_id_rate_limits && $gateway_rate_limits) {
+					$output = true;
+				} else {
+					$output = false;
+				}
 			}
 			else
 			{
@@ -398,29 +407,33 @@ public static function validate_quote()
 
 		return $output;
 	}
+
+	public static function is_white_listed_from_rate_limits() : bool {
+		$post_id = absint(secure_post('dy_id'));
+
+		if($post_id > 0 && current_user_can('edit_post', $post_id)) {
+			return true;
+		}
+
+		$host = strtolower(
+			trim(
+				(string) wp_parse_url(get_option('home'), PHP_URL_HOST),
+				'[] .'
+			)
+		);
+
+		return $host === 'localhost';
+	}
 	
 	public static function validate_submission_rate_limits(): bool
 	{
-		if(current_user_can('edit_post', secure_post('dy_id'))) {
+		if(self::is_white_listed_from_rate_limits()) {
 			return true;
 		}
-
 
 		$ip = get_ip_address();
-
-		// Use the configured URL, never a client-controlled Host header.
 		$host = strtolower(trim((string) wp_parse_url(get_option('home'), PHP_URL_HOST), '[] .'));
 
-		if(
-			($host !== '' || in_array($ip, ['::1', '127.0.0.1'], true))
-			&& (
-				filter_var($host, FILTER_VALIDATE_IP)
-				|| strpos($host, '.') === false
-				|| preg_match('/(?:^|\.)(localhost|local|test)$/', $host)
-			)
-		) {
-			return true;
-		}
 
 		$cache_key = 'dy_validate_submission_rate_limits';
 
@@ -606,6 +619,160 @@ public static function validate_quote()
 				__('Too many submissions. Please try again later.', 'dynamicpackages')
 			];
 			return false;
+		}
+
+		return self::$cache[$cache_key] = true;
+	}
+
+	public static function validate_post_id_rate_limits(): bool
+	{
+		$post_id = absint(secure_post('dy_id'));
+
+		return self::validate_rate_limit_bucket('post_id', $post_id);
+	}
+
+	public static function validate_gateway_rate_limits(): bool
+	{
+		// Gateway IDs are names (for example, paguelo_facil_on), not integers.
+		$dy_request = secure_post('dy_request', '', 'sanitize_key');
+
+		return self::validate_rate_limit_bucket('gateway', $dy_request);
+	}
+
+	/**
+	 * Count each POST once per request, with independent rolling windows.
+	 * Longer windows keep counting while a shorter cooldown is active.
+	 */
+	private static function validate_rate_limit_bucket($scope, $suffix): bool
+	{
+		if(self::is_white_listed_from_rate_limits() || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+			return true;
+		}
+
+		$cache_key = 'dy_validate_rate_limits_' . $scope . '_' . $suffix;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
+		self::$cache[$cache_key] = false;
+
+		$reject = static function($seconds, $reason = '') use ($scope) {
+			$seconds = max(1, (int) $seconds);
+			$minutes = (int) ceil($seconds / MINUTE_IN_SECONDS);
+			$cooldown = $seconds >= MINUTE_IN_SECONDS
+				? sprintf(_n('%d minute', '%d minutes', $minutes, 'dynamicpackages'), $minutes)
+				: sprintf(_n('%d second', '%d seconds', $seconds, 'dynamicpackages'), $seconds);
+			$message = sprintf(
+				__('We cannot accept this submission right now. Please try again in %s.', 'dynamicpackages'),
+				$cooldown
+			);
+
+			if(!in_array($message, $GLOBALS['dy_request_invalids'] ?? [], true)) {
+				$GLOBALS['dy_request_invalids'][] = $message;
+			}
+
+			if($reason !== '') {
+				write_log(['message' => 'Rate limit validation failed', 'scope' => $scope, 'reason' => $reason]);
+			}
+
+			return false;
+		};
+
+		if($suffix === '' || $suffix === 0) {
+			return $reject(MINUTE_IN_SECONDS, 'Missing or invalid rate limit identifier');
+		}
+
+		// Unverified requests must not consume a shared post or gateway quota.
+		if(!validate_turnstile()) {
+			return false;
+		}
+
+		// Change thresholds and cooldowns here for both public validators.
+		$rules = [
+			'30s' => ['window' => 30, 'limit' => 5, 'cooldown' => MINUTE_IN_SECONDS],
+			'5m' => ['window' => 5 * MINUTE_IN_SECONDS, 'limit' => 15, 'cooldown' => 10 * MINUTE_IN_SECONDS],
+			'1h' => ['window' => HOUR_IN_SECONDS, 'limit' => 30, 'cooldown' => HOUR_IN_SECONDS]
+		];
+		$blocked_until = 0;
+		$new_blocks = [];
+		$storage_failed = false;
+
+		global $wpdb;
+
+		// Serialize updates to this bucket so concurrent requests cannot lose attempts.
+		$lock_name = 'dy_rl_' . substr(hash('sha256', $wpdb->prefix . $cache_key), 0, 56);
+
+		if((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 1)', $lock_name)) !== '1') {
+			return $reject(MINUTE_IN_SECONDS, 'Unable to acquire rate limit lock');
+		}
+
+		try {
+			$now = time();
+			$external_cache = wp_using_ext_object_cache();
+
+			if(!$external_cache) {
+				wp_cache_delete('notoptions', 'options');
+			}
+
+			foreach($rules as $period => $rule) {
+				$key = 'dy_rl_v1_' . $scope . '_' . $period . '_' . $suffix;
+
+				if(!$external_cache) {
+					wp_cache_delete('_transient_' . $key, 'options');
+					wp_cache_delete('_transient_timeout_' . $key, 'options');
+				}
+
+				$state = get_transient($key);
+
+				if($state === false) {
+					$state = ['attempts' => [], 'blocked_until' => 0];
+				}
+
+				if($state['blocked_until'] <= $now) {
+					$state['attempts'] = array_values(array_filter(
+						$state['attempts'],
+						static function($timestamp) use ($now, $rule) {
+							return $timestamp > $now - $rule['window'];
+						}
+					));
+					$state['attempts'][] = $now;
+					$state['blocked_until'] = 0;
+
+					if(count($state['attempts']) >= $rule['limit']) {
+						$state['blocked_until'] = $now + $rule['cooldown'];
+						$new_blocks[] = $period;
+					}
+
+					$ttl = max($rule['window'], $state['blocked_until'] - $now);
+
+					if(!set_transient($key, $state, $ttl)) {
+						$storage_failed = true;
+					}
+				}
+
+				$blocked_until = max($blocked_until, $state['blocked_until']);
+			}
+		} finally {
+			$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock_name));
+		}
+
+		if($new_blocks) {
+			write_log([
+				'message' => 'Rate limit reached',
+				'scope' => $scope,
+				'key_suffix' => $suffix,
+				'limits' => $new_blocks,
+				'blocked_until' => $blocked_until
+			]);
+		}
+
+		if($storage_failed) {
+			return $reject(max(MINUTE_IN_SECONDS, $blocked_until - time()), 'Unable to persist rate limit state');
+		}
+
+		if($blocked_until > time()) {
+			return $reject($blocked_until - time());
 		}
 
 		return self::$cache[$cache_key] = true;

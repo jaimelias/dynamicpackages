@@ -70,25 +70,31 @@ if ( ! function_exists('write_log')) {
 		}
 	}
 	
-	function write_log($log = '', $debug = false) {
+	function write_log($log = '', $log_headers = false, $debug = false) {
 		$separator = "**************************";
 		$separator_start = "\n\n" . $separator . 'WRITE_LOG_START' . $separator . "\n";
 		$separator_end = "\n" . $separator . 'WRITE_LOG_END' . $separator . "\n\n";
 
-		$output = $separator_start
-			. "URI = " . ($_SERVER['REQUEST_URI'] ?? '') 
-			. "\nUSER_AGENT = " . ($_SERVER['HTTP_USER_AGENT'] ?? '')
-			. "\nIP_ADDRESS = " . (function_exists('get_ip_address') ? get_ip_address() : '(unknown)')
-			. "\nTYPE = " . gettype($log);
+		$output = $separator_start;
 
-		if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
-			// remove sensitive fields
-			foreach (['CCNum', 'ExpMonth', 'ExpYear', 'CVV2'] as $sensitive) {
-				if (isset($_POST[$sensitive])) {
-					unset($_POST[$sensitive]);
+		if($log_headers === true) {
+			$headers = [
+				'URI' => $_SERVER['REQUEST_URI'] ?? '',
+				'USER_AGENT' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+				'IP_ADDRESS' => function_exists('get_ip_address') ? get_ip_address() : '(unknown)',
+				'TYPE' => gettype($log)
+			];
+
+			if(isset($_POST) && is_array($_POST) && !empty($_POST)) {
+				$headers['POST'] = $_POST;
+
+				// Redact the logged copy without changing the active request.
+				foreach(['CCNum', 'ExpMonth', 'ExpYear', 'CVV2'] as $sensitive) {
+					unset($headers['POST'][$sensitive]);
 				}
 			}
-			$output .= "\nPOST = " . json_encode($_POST);
+
+			$output .= 'HEADERS = ' . wp_json_encode($headers, JSON_INVALID_UTF8_SUBSTITUTE);
 		}
 
 		$output .= "\nLOG = ";
