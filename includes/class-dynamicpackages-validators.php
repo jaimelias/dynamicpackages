@@ -389,7 +389,7 @@ public static function validate_quote()
 			}
 			else
 			{
-				$GLOBALS['dy_request_invalids'] = ['invalid_request'];
+				$GLOBALS['dy_request_invalids'] = array('invalid_request');
 			}
 		}
 
@@ -507,31 +507,24 @@ public static function validate_quote()
 		$output = false;
 		$cache_key = 'dy_validate_checkout_' . sanitize_key($gateway_name);
 
+		if (array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
 
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		if(self::is_confirmation_page() && self::validate_contact_details() && self::validate_booking_details())
+		if(self::validate_request())
 		{
-
-			if(self::validate_contact_details() && self::validate_booking_details()) {
-				if($gateway_name === secure_post('dy_request') && self::validate_card())
-				{
-					$output = true;
-				}
-			} else {
-				$GLOBALS['dy_request_invalids'] = ['invalid_request'];
+			if($gateway_name === secure_post('dy_request') && self::validate_card())
+			{
+				$output = true;
 			}
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		self::$cache[$cache_key] = $output;
 
 		return $output;
 	}
 	
-public static function validate_terms_conditions()
+	public static function validate_terms_conditions()
 	{
 		$output = true;
 		$cache_key = 'dy_validate_terms_conditions';
