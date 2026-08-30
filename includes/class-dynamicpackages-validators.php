@@ -385,7 +385,7 @@ public static function validate_quote()
 		{
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
-				$output = true;
+				$output = self::validate_submission_rate_limits();
 			}
 			else
 			{
@@ -399,6 +399,218 @@ public static function validate_quote()
 		return $output;
 	}
 	
+	public static function validate_submission_rate_limits(): bool
+	{
+		if(current_user_can('edit_post', secure_post('dy_id'))) {
+			return true;
+		}
+
+
+		$ip = get_ip_address();
+
+		// Use the configured URL, never a client-controlled Host header.
+		$host = strtolower(trim((string) wp_parse_url(get_option('home'), PHP_URL_HOST), '[] .'));
+
+		if(
+			($host !== '' || in_array($ip, ['::1', '127.0.0.1'], true))
+			&& (
+				filter_var($host, FILTER_VALIDATE_IP)
+				|| strpos($host, '.') === false
+				|| preg_match('/(?:^|\.)(localhost|local|test)$/', $host)
+			)
+		) {
+			return true;
+		}
+
+		$cache_key = 'dy_validate_submission_rate_limits';
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
+		if(($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+			return self::$cache[$cache_key] = true;
+		}
+
+		self::$cache[$cache_key] = false;
+
+		// write_log() mutates $_POST; omit the payload and always restore it.
+		$log = static function($details) {
+			$submitted = $_POST;
+
+			try {
+				$_POST = [];
+				write_log($details);
+			} finally {
+				$_POST = $submitted;
+			}
+		};
+
+		$reject = static function($reason) use ($log) {
+			$GLOBALS['dy_request_invalids'] = [
+				__('Unable to validate this submission. Please try again later.', 'dynamicpackages')
+			];
+			$log(['message' => 'Submission rate limit validation failed', 'reason' => $reason]);
+			return false;
+		};
+
+		if($host === '') {
+			return $reject('Invalid configured site hostname');
+		}
+
+		$required = ['dy_request', 'dy_id', 'phone', 'country_calling_code', 'email', 'first_name', 'lastname'];
+
+		foreach($required as $param) {
+			if(!post_has($param) || secure_post($param) === '') {
+				return $reject('Missing or invalid parameter: ' . $param);
+			}
+		}
+
+		$dy_request = secure_post('dy_request', '', 'sanitize_key');
+		$dy_id = secure_post('dy_id', 0, 'absint');
+		$calling_code = preg_replace('/\D+/', '', secure_post('country_calling_code'));
+		$phone = preg_replace('/\D+/', '', secure_post('phone'));
+		$email = strtolower(secure_post('email', '', 'sanitize_email'));
+		$normalize_name = static function($name) {
+			$name = trim((string) preg_replace('/\s+/u', ' ', $name));
+			return function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+		};
+		$first_name = $normalize_name(secure_post('first_name'));
+		$lastname = $normalize_name(secure_post('lastname'));
+
+		if($dy_request === '' || $dy_id <= 0 || $calling_code === '' || $phone === '' || !is_email($email) || $first_name === '' || $lastname === '') {
+			return $reject('Invalid normalized submission parameters');
+		}
+
+		$phone = '+' . $calling_code . $phone;
+		
+
+		if(!filter_var($ip, FILTER_VALIDATE_IP)) {
+			return $reject('Unable to determine a valid client IP');
+		}
+
+		// Invalid challenge tokens must not consume another customer's identity quota.
+		if(!validate_turnstile()) {
+			return false;
+		}
+
+		$subjects = [
+			'request_phone' => [$dy_request, $phone],
+			'package_phone' => [$dy_id, $phone],
+			'request_email' => [$dy_request, $email],
+			'package_email' => [$dy_id, $email],
+			'ip' => [$ip],
+			'request_name' => [$dy_request, $first_name, $lastname],
+			'package_name' => [$dy_id, $first_name, $lastname]
+		];
+		$windows = [
+			'd' => [DAY_IN_SECONDS, 10, DAY_IN_SECONDS],
+			'h' => [HOUR_IN_SECONDS, 5, 2 * HOUR_IN_SECONDS]
+		];
+		$blocked_until = 0;
+		$ban_ip = false;
+		$new_blocks = [];
+		$storage_failed = false;
+		$salt = wp_salt('auth');
+
+		global $wpdb;
+
+		// A transient-based lock would have the same read/write race as the counters.
+		$lock_name = 'dy_rl_' . substr(hash('sha256', $wpdb->prefix . $salt), 0, 56);
+
+		if((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 1)', $lock_name)) !== '1') {
+			return $reject('Unable to acquire submission rate limit lock');
+		}
+
+		try {
+			$now = time();
+			$external_cache = wp_using_ext_object_cache();
+
+			if(!$external_cache) {
+				wp_cache_delete('notoptions', 'options');
+			}
+
+			foreach($subjects as $dimension => $parts) {
+				$digest = hash_hmac('sha256', wp_json_encode([$dimension, $parts]), $salt);
+
+				foreach($windows as $period => [$window, $limit, $duration]) {
+					$key = 'dy_rl_v1_' . $period . '_' . $digest;
+
+					if(!$external_cache) {
+						// Discard options cached before this request acquired the lock.
+						wp_cache_delete('_transient_' . $key, 'options');
+						wp_cache_delete('_transient_timeout_' . $key, 'options');
+					}
+
+					$state = get_transient($key);
+
+					if($state === false) {
+						$state = ['attempts' => [], 'blocked_until' => 0];
+					}
+
+					if($state['blocked_until'] <= $now) {
+						$state['attempts'] = array_values(array_filter(
+							$state['attempts'],
+							static function($timestamp) use ($now, $window) {
+								return $timestamp > $now - $window;
+							}
+						));
+						$state['attempts'][] = $now;
+						$state['blocked_until'] = 0;
+
+						if(count($state['attempts']) >= $limit) {
+							$state['blocked_until'] = $now + $duration;
+							$new_blocks[] = $dimension . ':' . $period;
+						}
+
+						$ttl = max($window, $state['blocked_until'] - $now);
+
+						if(!set_transient($key, $state, $ttl)) {
+							$storage_failed = true;
+						}
+					}
+
+					if($state['blocked_until'] > $now) {
+						$blocked_until = max($blocked_until, $state['blocked_until']);
+
+						if($period === 'd') {
+							$ban_ip = true;
+							break;
+						}
+					}
+				}
+			}
+		} finally {
+			$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock_name));
+		}
+
+		if($new_blocks) {
+			$log([
+				'message' => 'Submission rate limit reached',
+				'limits' => $new_blocks,
+				'blocked_until' => $blocked_until
+			]);
+		}
+
+		if($ban_ip) {
+			// Failure to ban remotely must never allow a locally blocked submission.
+			cloudflare_ban_ip_address('DynamicPackages submission rate limit: 10 attempts in 24 hours');
+		}
+
+		if($storage_failed) {
+			return $reject('Unable to persist submission rate limit state');
+		}
+
+		if($blocked_until > 0) {
+			$GLOBALS['dy_request_invalids'] = [
+				__('Too many submissions. Please try again later.', 'dynamicpackages')
+			];
+			return false;
+		}
+
+		return self::$cache[$cache_key] = true;
+	}
+
 	public static function validate_unique_tx_id($txt = '') {
 		if (!is_string($txt) || $txt === '') return false;
 

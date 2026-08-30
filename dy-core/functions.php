@@ -185,9 +185,68 @@ function current_language()
 
 if(!function_exists('get_ip_address'))
 {
-	function get_ip_address()
+	/**
+	 * Return the normalized client IP, or an empty string if it cannot be trusted.
+	 */
+	function get_ip_address(): string
 	{
-		return (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) ? $_SERVER['HTTP_CF_CONNECTING_IP'] : $_SERVER['REMOTE_ADDR'];
+		$ip = trim((string) ($_SERVER['REMOTE_ADDR'] ?? ''));
+
+		if(!filter_var($ip, FILTER_VALIDATE_IP)) {
+			return '';
+		}
+
+		// Match the proxy policy used by cloudflare_ban_ip_address().
+		$proxy_ranges = (array) apply_filters('dy_cloudflare_proxy_ranges', [
+			'173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22',
+			'141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20',
+			'197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
+			'104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22', '2400:cb00::/32',
+			'2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32',
+			'2a06:98c0::/29', '2c0f:f248::/32'
+		]);
+		$packed_ip = inet_pton($ip);
+
+		foreach($proxy_ranges as $cidr) {
+			$parts = explode('/', (string) $cidr, 2);
+
+			if(count($parts) !== 2 || !filter_var($parts[0], FILTER_VALIDATE_IP) || !ctype_digit($parts[1])) {
+				continue;
+			}
+
+			$network = inet_pton($parts[0]);
+			$bits = (int) $parts[1];
+
+			if(strlen($network) !== strlen($packed_ip) || $bits > strlen($packed_ip) * 8) {
+				continue;
+			}
+
+			$bytes = intdiv($bits, 8);
+			$remaining = $bits % 8;
+
+			if(substr($packed_ip, 0, $bytes) !== substr($network, 0, $bytes)) {
+				continue;
+			}
+
+			if($remaining > 0) {
+				$mask = (0xff << (8 - $remaining)) & 0xff;
+
+				if((ord($packed_ip[$bytes]) & $mask) !== (ord($network[$bytes]) & $mask)) {
+					continue;
+				}
+			}
+
+			$ip = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+
+			if(!filter_var($ip, FILTER_VALIDATE_IP)) {
+				return '';
+			}
+
+			$packed_ip = inet_pton($ip);
+			break;
+		}
+
+		return inet_ntop($packed_ip);
 	}
 	
 }
