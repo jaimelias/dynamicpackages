@@ -370,11 +370,11 @@ class Dynamicpackages_Actions{
 					$name = $terms_conditions[$x]->name;
 					
 					//PAGE
-					$html = '<style type="text/css">p{line-height: 1.25;}ul{line-height: 1.25;}ol{line-height: 1.25;}</style>';
-					$html .= '<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">';
-					$html .= '<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">'.esc_html($name).'</h1>';
-					$html .= $Parsedown->text($terms_conditions[$x]->description);
-					$html .= '</page>';		
+					$html = sprintf(
+						'<h1 style="text-align: center; margin: 0; padding: 0; font-size: 20pt;">%s</h1>%s',
+						esc_html($name),
+						$Parsedown->text($terms_conditions[$x]->description)
+					);
 					
 					//PDF
 					$filename = $name . '.pdf';
