@@ -37,106 +37,94 @@ $add_ons = apply_filters('dy_included_add_ons_list', null);
 $label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
 $package_url = get_the_permalink($post_id);
 
-$email_pdf = <<<EOT
-	<style type="text/css">
-	<!--
-	table { vertical-align: top; }
-	tr { vertical-align: top; }
-	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.25;}
-	-->
-	</style>
-	<div backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
-		
-		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
-			<tr>
-				<td style="width: 50%;">
-					<div>
-						<h1 style="margin: 0; padding: 0; font-size: 20pt;">{$company_name}</h1>
-						<div style="color: #666666;">{$company_tax_id}</div>			
-					</div>
-				</td>
-				<td style="width: 50%;">
-					<div style="text-align: right;">
-						<strong style="color: #666666;">{$label_doc}</strong>
-						<br>
-						{$today}
-						<br>
-						<br>
-						<strong style="color: #666666;">{$label_client}</strong>
-						<br> 
-						{$client_name}
-						<br>
-						+{$client_phone}
-						<br>
-						{$client_email}				
-					</div>
-				</td>
-			</tr>			
-		</table>
-		
-		<br>
-		<br>
-		
-		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
-			<tr>
-				<td style="width: 70%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
-					<strong style="color: #666666;">{$label_item}</strong>
-				</td>
-				<td style="width: 30%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
-					<div style="text-align: right;">
-						<strong style="color: #666666;">{$label_subtotal}</strong>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td style="width: 70%;">
-					{$description}
-					<br>
-					<strong><a href="{$package_url}">{$label_show_package}</a></strong>
-					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					{$details}
-					{$add_ons}
-					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">{$label_included}:</strong> {$included}
-					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">{$label_not_included}:</strong> {$not_included}
-				</td>
-				<td style="width: 30%;">
-					<div style="text-align: right;">{$total}</div>
-				</td>
-			</tr>
-			
-			<tr>
-				<td style="width: 70%; border-top: 1pt solid #cccccc;"></td>
-				<td style="width: 30%; border-top: 1pt solid #cccccc;">
-					<div style="text-align: right; line-height: 1.5;">
-						{$totals_area}
-					</div>
-				</td>
-			</tr>
-
-			<tr>
-				<td style="width: 70%;">
-					<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
-					<strong style="color: #666666;">{$label_notes}</strong>
-					<br>
-					{$notes}			
-				</td>
-				<td style="width: 30%;"></td>
-			</tr>
-			
-		</table>
-
-
-
-			<div style="line-height: 1.5; text-align: center;">
-				{$company_contact}
-				<br>
-				{$footer}				
+$email_pdf = <<<HTML
+<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
+	<tr>
+		<td style="width: 50%;">
+			<div>
+				<h1 style="margin: 0; padding: 0; font-size: 20pt;">{$company_name}</h1>
+				<div style="color: #666666;">{$company_tax_id}</div>			
 			</div>
+		</td>
+		<td style="width: 50%;">
+			<div style="text-align: right;">
+				<strong style="color: #666666;">{$label_doc}</strong>
+				<br>
+				{$today}
+				<br>
+				<br>
+				<strong style="color: #666666;">{$label_client}</strong>
+				<br> 
+				{$client_name}
+				<br>
+				+{$client_phone}
+				<br>
+				{$client_email}				
+			</div>
+		</td>
+	</tr>			
+</table>
+
+<br>
+<br>
+
+<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
+	<tr>
+		<td style="width: 70%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
+			<strong style="color: #666666;">{$label_item}</strong>
+		</td>
+		<td style="width: 30%; border-top: 1pt solid #cccccc; border-bottom: 1pt solid #cccccc;">
+			<div style="text-align: right;">
+				<strong style="color: #666666;">{$label_subtotal}</strong>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td style="width: 70%;">
+			{$description}
+			<br>
+			<strong><a href="{$package_url}">{$label_show_package}</a></strong>
+			<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+			{$details}
+			{$add_ons}
+			<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+			<strong style="color: #666666;">{$label_included}:</strong> {$included}
+			<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+			<strong style="color: #666666;">{$label_not_included}:</strong> {$not_included}
+		</td>
+		<td style="width: 30%;">
+			<div style="text-align: right;">{$total}</div>
+		</td>
+	</tr>
 	
-		
-	</div>
-EOT;
+	<tr>
+		<td style="width: 70%; border-top: 1pt solid #cccccc;"></td>
+		<td style="width: 30%; border-top: 1pt solid #cccccc;">
+			<div style="text-align: right; line-height: 1.5;">
+				{$totals_area}
+			</div>
+		</td>
+	</tr>
+
+	<tr>
+		<td style="width: 70%;">
+			<hr height="1" style="height:1px; border:0 none; color: #eeeeee; background-color: #eeeeee;" />
+			<strong style="color: #666666;">{$label_notes}</strong>
+			<br>
+			{$notes}			
+		</td>
+		<td style="width: 30%;"></td>
+	</tr>
+	
+</table>
+
+
+
+<div style="line-height: 1.5; text-align: center;">
+	{$company_contact}
+	<br>
+	{$footer}				
+</div>
+HTML;
 
 ?>
