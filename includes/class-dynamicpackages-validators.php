@@ -389,7 +389,7 @@ public static function validate_quote()
 			}
 			else
 			{
-				$GLOBALS['dy_request_invalids'] = array('invalid_request');
+				$GLOBALS['dy_request_invalids'] = ['invalid_request'];
 			}
 		}
 
@@ -514,9 +514,14 @@ public static function validate_quote()
 
 		if(self::is_confirmation_page() && self::validate_contact_details() && self::validate_booking_details())
 		{
-			if($gateway_name === secure_post('dy_request') && self::validate_card())
-			{
-				$output = true;
+
+			if(self::validate_contact_details() && self::validate_booking_details()) {
+				if($gateway_name === secure_post('dy_request') && self::validate_card())
+				{
+					$output = true;
+				}
+			} else {
+				$GLOBALS['dy_request_invalids'] = ['invalid_request'];
 			}
 		}
 
