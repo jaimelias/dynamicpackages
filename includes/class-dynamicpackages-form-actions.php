@@ -3,8 +3,6 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-use Spipu\Html2Pdf\Html2Pdf;
-
 #[AllowDynamicProperties]
 class Dynamicpackages_Actions{
 
@@ -245,19 +243,6 @@ class Dynamicpackages_Actions{
         return apply_filters('dy_request_the_content', $content);
     }
 
-	public function doc_pdf($html, $filename)
-	{
-		$temp_path = wp_upload_dir()['basedir'];
-		$temp_filename = '/temp_' . uniqid() .'.pdf';
-		$doc_pdf = new Html2Pdf('P', 'A4');
-		$doc_pdf->pdf->SetDisplayMode('fullpage');
-		$doc_pdf->writeHTML($html);
-		$pdf_path = $temp_path . $temp_filename;
-		$doc_pdf->Output($pdf_path, 'F');
-
-		return array("filename" => $filename, "pathname" => $pdf_path);
-	}
-
     public function send_email()
     {
 
@@ -267,8 +252,12 @@ class Dynamicpackages_Actions{
 		{
 			$attachment_filename = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages')) . '.pdf';
 			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
-			$estimate = $this->doc_pdf($email_pdf, $attachment_filename);
-			$attachments[$attachment_filename] = $estimate['pathname'];
+			$estimate = cloudflare_html_to_pdf($email_pdf, $attachment_filename);
+
+			if(is_array($estimate)) {
+				$attachments[$attachment_filename] = $estimate['pathname'];
+			}
+			
 			$terms_html = $this->get_term_condition_as_html();
 
 			if(is_array($terms_html))
@@ -279,8 +268,12 @@ class Dynamicpackages_Actions{
 					{
 						$term_html = $terms_html[$x]['html'];
 						$term_filename = $terms_html[$x]['filename'];
-						$term_pdf = $this->doc_pdf($term_html, $term_filename);
-						$attachments[$term_pdf['filename']] = $term_pdf['pathname'];
+						$term_pdf = cloudflare_html_to_pdf($term_html, $term_filename);
+
+						if(is_array($term_pdf)) {
+							$attachments[$term_pdf['filename']] = $term_pdf['pathname'];
+						}
+						
 					}
 				}
 			}

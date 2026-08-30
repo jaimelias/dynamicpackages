@@ -45,8 +45,7 @@ $email_pdf = <<<EOT
 	td { vertical-align: top; padding: 12pt 8pt; line-height: 1.25;}
 	-->
 	</style>
-	<page backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
-		<bookmark title="{$label_doc}" level="0" ></bookmark>
+	<div backcolor="#ffffff" style="font-size: 12pt;" backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
 		
 		<table style="width: 100%; border: 0;" cellspacing="0" cellpadding="0">
 			<tr>
@@ -129,15 +128,15 @@ $email_pdf = <<<EOT
 		</table>
 
 
-		<page_footer>
+
 			<div style="line-height: 1.5; text-align: center;">
 				{$company_contact}
 				<br>
 				{$footer}				
 			</div>
-		</page_footer>
+	
 		
-	</page>
+	</div>
 EOT;
 
 ?>
