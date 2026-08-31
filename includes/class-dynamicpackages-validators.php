@@ -767,13 +767,28 @@ public static function validate_quote()
 		return self::$cache[$cache_key] = true;
 	}
 
-	public static function validate_unique_tx_id($txt = '') {
-		if (!is_string($txt) || $txt === '') return false;
+	public static function validate_unique_tx_id() {
 
-		return (bool) preg_match(
+		$unique_tx_id = secure_post('unique_tx_id');
+		$turnstile = secure_post('cf-turnstile-response');
+
+		if (!is_string($unique_tx_id) || $unique_tx_id === '') return false;
+		if (!is_string($turnstile) || $turnstile === '') return false;
+
+		$is_valid_format =  (bool) preg_match(
 			'/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
-			$txt
+			$unique_tx_id
 		);
+
+		if(!$is_valid_format) {
+			return false;
+		}
+
+		$transient_key = 'secret_tx_id_' . $unique_tx_id;
+		$secret_tx_id = get_transient( $transient_key );
+		$expected_secret_tx_id= hash_hmac('sha256', ($unique_tx_id . $turnstile), wp_salt('auth'));
+
+		return is_string($secret_tx_id) && hash_equals($expected_secret_tx_id, $secret_tx_id);
 	}
 
 	public static function validate_contact_details()
@@ -799,9 +814,9 @@ public static function validate_quote()
 				
 			)
 			{
-				$unique_tx_id = secure_post('unique_tx_id');
+				
 
-				if(!self::validate_unique_tx_id($unique_tx_id))
+				if(!self::validate_unique_tx_id())
 				{
 					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
 					$invalids[] = $invalid_transaction_id_message;

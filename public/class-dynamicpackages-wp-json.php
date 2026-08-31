@@ -100,6 +100,7 @@ class Dynamicpackages_WP_JSON
 	public function transactions_endpoint($request)
 	{
 		$package_id = absint($request['package_id']);
+		$turnstile = $request['turnstile'];
 		$post = get_post($package_id);
 
 		$is_readable = $post instanceof WP_Post
@@ -121,10 +122,10 @@ class Dynamicpackages_WP_JSON
 		}
 
 		$unique_tx_id = wp_generate_uuid4();
-		$secret_tx_id  = hash_hmac('sha256', $unique_tx_id, wp_salt('auth'));
+		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $turnstile), wp_salt('auth'));
 		$transient_key = 'secret_tx_id_' . $unique_tx_id;
 
-		set_transient( 'secret_tx_id_', $secret_tx_id, DAY_IN_SECONDS );
+		set_transient($transient_key, $secret_tx_id, DAY_IN_SECONDS);
 
 		$output = [
 			'unique_tx_id' => $unique_tx_id
