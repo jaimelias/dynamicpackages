@@ -812,10 +812,16 @@ public static function validate_quote()
 			{
 				$unique_tx_id = secure_post('unique_tx_id');
 
+				write_log(secure_post('dy_nonce'));
+
 				if(!self::validate_unique_tx_id($unique_tx_id))
 				{
 					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
 					$invalids[] = $invalid_transaction_id_message;
+				}
+				if(!wp_verify_nonce(secure_post('dy_nonce'), 'dy_nonce')) {
+					
+					$invalids[] = __('Invalid nonce.', 'dynamicpackages');
 				}
 				if(!is_email($_POST['email']))
 				{

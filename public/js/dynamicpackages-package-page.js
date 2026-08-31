@@ -28,21 +28,23 @@ const datePicker = async () => {
 
 	const formContainer = jQuery('.dy_package_booking_form_container');
 	const {wpJsonUrl, post_id} = dyCoreArgs;
-	const {site_timestamp} = await getNonce() || undefined;
+	const { site_timestamp, dy_nonce } = (await getNonce()) ?? {};
 	
 	if(formContainer.length === 0 && !site_timestamp)
 	{
 		return false;
 	}
-	
 
-
-	jQuery('body').append(jQuery('<div>').attr({'id': 'availability_calendar'}));
+	if(!jQuery('#availability_calendar').length)
+{
+		jQuery('<div>', {
+			id: 'availability_calendar'
+		}).appendTo('body');
+	}
 
 	const buildPicker = async () => {
 		
 		const windowLocationUrl = new URL(window.location);
-		const { dy_nonce } = await getNonce() || {};
 		const endpoint = new URL(`${wpJsonUrl}/dynamicpackages/disabled-dates/${post_id}`);
 		endpoint.searchParams.set('dy_nonce', dy_nonce);
 		endpoint.searchParams.set('stamp', Date.now());
@@ -52,16 +54,12 @@ const datePicker = async () => {
 			end_date: null
 		};
 
-		const hasEndDate = jQuery(formContainer)
-			.find('.dy_package_booking_form input.dy_date_picker[name="end_date"]')
+		const hasEndDate = formContainer.find('.dy_package_booking_form input.dy_date_picker[name="end_date"]')
 			.length > 0;
 
-		const requests = ['booking_date'];
-
-		if(hasEndDate)
-		{
-			requests.push('end_date');
-		}
+		const requests = hasEndDate
+			? ['booking_date', 'end_date']
+			: ['booking_date'];
 
 		await Promise.all(
 			requests.map(async name => {
@@ -85,14 +83,20 @@ const datePicker = async () => {
 			})
 		);
 
-		jQuery(formContainer).each(function () {
-			const thisForm = jQuery(this).find('.dy_package_booking_form');
-			const fields = jQuery(thisForm).find('input.dy_date_picker');
+		const today = new Date(site_timestamp);
+		const hour = today.getHours();
+		const weekDay = today.getDay();
+		let officeClose = 17;
+		const forceAvailability = windowLocationUrl.searchParams.has('force_availability');
 
-			jQuery(fields).each(function(){
+		formContainer.each(function () {
+			const thisForm = jQuery(this).find('.dy_package_booking_form');
+			const fields = thisForm.find('input.dy_date_picker');
+
+			fields.each(function(){
 				
 				const field = jQuery(this);
-				const name = jQuery(field).attr('name');
+				const name = field.attr('name');
 
 				let args = {
 					container: '#availability_calendar',
@@ -101,16 +105,10 @@ const datePicker = async () => {
 					...datePickerState[name === 'end_date' ? 'end_date' : 'booking_date']
 				};
 
-				const today = new Date(site_timestamp);
-
-				const hour = today.getHours();
-				const weekDay = today.getDay();
-				let officeClose = 17;
-
 				console.log({weekDay, hour, today});
 
 				//by default 0 0 today is converted into a true boolean
-				if((typeof args.min !== 'boolean') && args.min === 1)
+				if(args.min === 1)
 				{
 					if(weekDay === 0 || weekDay === 6)
 					{
@@ -123,7 +121,7 @@ const datePicker = async () => {
 					}
 				}
 
-				if(windowLocationUrl.searchParams.has('force_availability'))
+				if(forceAvailability)
 				{
 					args = {...args, min: true, max: 365, disable: []};
 				}
@@ -132,12 +130,12 @@ const datePicker = async () => {
 				{
 					args.onOpen = () => {
 
-						const bookingDatePicker = jQuery(thisForm)
+						const bookingDatePicker = thisForm
 							.find('input.dy_date_picker[name="booking_date"]')
 							.pickadate('picker');
 
 						const bookingDateVal = bookingDatePicker.get('select');
-						const endDate = jQuery(thisForm)
+						const endDate = thisForm
 							.find('input.dy_date_picker[name="end_date"]');
 
 						if(bookingDateVal && endDate.length !== 0)
@@ -152,20 +150,19 @@ const datePicker = async () => {
 					}; 
 				}
 
-				if(jQuery(field).attr('type') == 'text')
-				{
-					jQuery(field).pickadate(args);
-				}
-				else if(jQuery(field).attr('type') == 'date')
-				{
-					jQuery(field).attr({
-						'type': 'text'
-					});
+				const type = field.attr('type');
 
-					jQuery(field).pickadate(args);
+				if(type === 'text' || type === 'date')
+				{
+					if(type === 'date')
+					{
+						field.attr('type', 'text');
+					}
+
+					field.pickadate(args);
 				}
 				
-				jQuery(field).removeAttr('disabled').attr({
+				field.removeAttr('disabled').attr({
 					'placeholder': null
 				});
 
@@ -176,13 +173,13 @@ const datePicker = async () => {
 
 	await buildPicker();
 
-	jQuery(formContainer).each(function(){
+	formContainer.each(function(){
 		const thisForm = jQuery(this).find('.dy_package_booking_form');
 		
-		jQuery(thisForm).find('select.booking_select').change(function(){
+		thisForm.find('select.booking_select').change(function(){
 
-			jQuery(thisForm).find('input.dy_date_picker').val('');
-			jQuery(thisForm).find('input.dy_time_picker').val('');
+			thisForm.find('input.dy_date_picker').val('');
+			thisForm.find('input.dy_time_picker').val('');
 		});
 	});
 };
