@@ -75,13 +75,9 @@ class cuanto{
 	
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
+		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
-			
-			if(validate_turnstile())
-			{
-				$content = $this->message(null);
-			}			
+			$content = $this->message(null);			
 		}
 		return $content;
 	}
@@ -291,7 +287,7 @@ class cuanto{
 				$add = true;
 			}
 			
-			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
+			if(is_confirmation_page() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

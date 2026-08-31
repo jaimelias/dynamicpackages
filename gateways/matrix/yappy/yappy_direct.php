@@ -149,35 +149,31 @@ class yappy_direct {
 
 	public function filter_content($content)
 	{
-		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
+		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
-			
+			$content = $this->message(null);
 
-			if(validate_turnstile())
+			if(!empty($this->qrcode))
 			{
-				$content = $this->message(null);
+				$amount = wrap_money_full(dy_utilities::payment_amount());
 
-				if(!empty($this->qrcode))
+				$label = __('payment', 'dynamicpackages');
+	
+				if(dy_validators::has_deposit())
 				{
-					$amount = wrap_money_full(dy_utilities::payment_amount());
-
-					$label = __('payment', 'dynamicpackages');
-		
-					if(dy_validators::has_deposit())
-					{
-						$label = __('deposit', 'dynamicpackages');
-					}
-
-					$content .= '<p class="large dy_pad padding-10">'.esc_html(sprintf(__('B. Alternatively, you can also scan the following QR code within your Banco General Yappy app and then send us the %s (%s).', 'dynamicpackages'), $label, $amount)).'</p>';
-					$content .= '<p><img width="250" height="250" src="'.esc_url($this->qrcode).'" alt="yappy qrcode"/></p>';
+					$label = __('deposit', 'dynamicpackages');
 				}
+
+				$content .= '<p class="large dy_pad padding-10">'.esc_html(sprintf(__('B. Alternatively, you can also scan the following QR code within your Banco General Yappy app and then send us the %s (%s).', 'dynamicpackages'), $label, $amount)).'</p>';
+				$content .= '<p><img width="250" height="250" src="'.esc_url($this->qrcode).'" alt="yappy qrcode"/></p>';
 			}
 		}
+
 		return $content;
 	}
 	public function title($title)
 	{
-		if(in_the_loop() && dy_validators::validate_request() && $this->is_request_submitted())
+		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
 			$title = esc_html(sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name));
 		}
@@ -367,7 +363,7 @@ class yappy_direct {
 				$add = true;
 			}
 			
-			if(validate_turnstile() && is_confirmation_page() && dy_validators::validate_request())
+			if(is_confirmation_page() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{
@@ -378,17 +374,17 @@ class yappy_direct {
 		
 		if($add)
 		{
-			$array[$this->id] = array(
+			$array[$this->id] = [
                 'id' => $this->id,
                 'name' => $this->name,
                 'type' => $this->type,
                 'color' => $this->color,
                 'background_color' => $this->background_color,
 				'brands' => $this->brands,
-'branding' => $this->branding(),
-'icon' => $this->icon,
-'gateway_coupon' => $this->gateway_coupon
-            );
+				'branding' => $this->branding(),
+				'icon' => $this->icon,
+				'gateway_coupon' => $this->gateway_coupon
+			];
 		}
 		
 		return $array;	

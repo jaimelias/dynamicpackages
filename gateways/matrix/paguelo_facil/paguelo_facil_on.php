@@ -161,7 +161,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		if(dy_validators::validate_checkout($this->id) === false || validate_turnstile() === false) {
+		if(dy_validators::validate_checkout($this->id) === false) {
 			return true;
 		}
 
@@ -774,7 +774,6 @@ class paguelo_facil_on{
 				)
 				&& is_confirmation_page()
 				&& dy_validators::validate_request()
-				&& validate_turnstile()
 			)
 			{
 				$add = true;

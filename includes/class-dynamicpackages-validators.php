@@ -385,11 +385,7 @@ public static function validate_quote()
 		{
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
-
-				$unique_tx_id = secure_post('unique_tx_id');
-				$transient_key = 'dy_send_data_' . $unique_tx_id;
-
-				if (!validate_turnstile() && get_transient($transient_key) === false) {
+				if (!validate_turnstile()) {
 					return self::$cache[$cache_key] = false;
 				}
 

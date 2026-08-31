@@ -62,7 +62,6 @@ class Dynamicpackages_Actions{
 		$this->submission_is_valid = (
 			$this->is_request_submitted()
 			&& dy_validators::validate_request()
-			&& validate_turnstile()
 		);
 
 		return $this->submission_is_valid;

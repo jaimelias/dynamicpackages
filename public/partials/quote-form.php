@@ -35,6 +35,7 @@
 		<?php endif; ?>
 	
 		<!-- Config -->
+		<input type="hidden" name="unique_tx_id" value="" />
 		<input type="hidden" name="dy_request" value="<?php echo esc_attr($request_form); ?>" />
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
 		<input type="hidden" name="dy_id" value="<?php echo esc_attr(get_dy_id()); ?>"/>

@@ -380,7 +380,9 @@ const addOnsCalc = () => {
 
 
 
-const checkoutFormSubmit = () => {
+const checkoutFormSubmit = async () => {
+
+
 
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
@@ -389,6 +391,7 @@ const checkoutFormSubmit = () => {
 	const turnstileToken = thisForm
 		.find('[name="cf-turnstile-response"]')
 		.val();
+
 
 	if(!turnstileToken)
 	{
@@ -466,6 +469,23 @@ const checkoutFormSubmit = () => {
 				sendGa4Event( 'add_payment_info', {...checkoutEventArgs, payment_type: dyRequestVal});
 			}
 		}
+
+		const {wpJsonUrl, post_id} = dyCoreArgs;
+		const { dy_nonce } = (await getNonce()) ?? {};
+		const url = new URL(`${wpJsonUrl}/dynamicpackages/transactions/${post_id}`)
+
+		url.searchParams.set('dy_nonce', dy_nonce);
+		url.searchParams.set('turnstile', turnstileToken);
+
+		const response = await fetch(url);
+		const responseData = (await response.json()) ?? {};
+
+		const {unique_tx_id} = responseData
+
+	    if(unique_tx_id)
+        {
+			thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
+        }
 		
 		//console.log(formToArray(thisForm));
 		

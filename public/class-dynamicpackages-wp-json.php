@@ -9,14 +9,13 @@ class Dynamicpackages_WP_JSON
 
 	function __construct()
 	{
-		add_action('rest_api_init', array($this, 'register_rest_routes'));
+		add_action('rest_api_init', array($this, 'register_rest_routes_disabled_dates'));
+		add_action('rest_api_init', array($this, 'register_rest_routes_transactions'));
 		add_filter('dy_core_wp_json_args', array($this, 'hook_unique_tx_id'));
 	}
 
-	public function register_rest_routes()
-	{
-
-		$package_id_args = array(
+	public function register_rest_routes_transactions() {
+		$package_id_param = array(
 			'required'          => true,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => static function($value) {
@@ -24,7 +23,54 @@ class Dynamicpackages_WP_JSON
 			},
 		);
 
-		$dy_nonce_args = array(
+		$dy_nonce_param = array(
+			'required'          => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value) && wp_verify_nonce($value, 'dy_nonce');
+			},
+		);
+
+		$turnstile_param = array(
+			'required'          => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value) && (bool) preg_match('/^[A-Za-z0-9_.\-]{20,2048}$/', $value);
+			},
+		);
+		
+
+		register_rest_route(
+			'dy-core',
+			'/dynamicpackages/transactions/(?P<package_id>\d+)',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array(
+					$this,
+					'transactions_endpoint'
+				),
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'package_id' => $package_id_param,
+					'dy_nonce' => $dy_nonce_param,
+					'turnstile' => $turnstile_param,
+				),
+			)
+		);
+	}
+
+	public function register_rest_routes_disabled_dates()
+	{
+
+		$package_id_param = array(
+			'required'          => true,
+			'sanitize_callback' => 'absint',
+			'validate_callback' => static function($value) {
+				return dy_validators::validate_the_id($value);
+			},
+		);
+
+		$dy_nonce_param = array(
 			'required'          => true,
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => static function($value) {
@@ -43,13 +89,49 @@ class Dynamicpackages_WP_JSON
 				),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'package_id' => $package_id_args,
-					'dy_nonce' => $dy_nonce_args,
+					'package_id' => $package_id_param,
+					'dy_nonce' => $dy_nonce_param,
 				),
 			)
 		);
 	}
 	
+
+	public function transactions_endpoint($request)
+	{
+		$package_id = absint($request['package_id']);
+		$post = get_post($package_id);
+
+		$is_readable = $post instanceof WP_Post
+			&& 'packages' === $post->post_type
+			&& (
+				is_post_publicly_viewable($post)
+				|| current_user_can('read_post', $package_id)
+			);
+
+		if (!$is_readable) {
+			return $this->rest_response(
+				array(
+					'code'    => 'invalid_post_id',
+					'message' => 'Package not found.',
+					'data'    => array('status' => 404),
+				),
+				404
+			);
+		}
+
+		$unique_tx_id = wp_generate_uuid4();
+		$secret_tx_id  = hash_hmac('sha256', $unique_tx_id, wp_salt('auth'));
+		$transient_key = 'secret_tx_id_' . $unique_tx_id;
+
+		set_transient( 'secret_tx_id_', $secret_tx_id, DAY_IN_SECONDS );
+
+		$output = [
+			'unique_tx_id' => $unique_tx_id
+		];
+
+		return $this->rest_response($output);
+	}
 
 	public function disabled_dates_endpoint($request)
 	{
@@ -66,7 +148,7 @@ class Dynamicpackages_WP_JSON
 		if (!$is_readable) {
 			return $this->rest_response(
 				array(
-					'code'    => 'dynamicpackages_package_not_found',
+					'code'    => 'invalid_post_id',
 					'message' => 'Package not found.',
 					'data'    => array('status' => 404),
 				),
