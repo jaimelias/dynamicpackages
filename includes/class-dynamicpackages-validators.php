@@ -386,15 +386,18 @@ public static function validate_quote()
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
 
-				$submission_rate_limits = self::validate_submission_rate_limits();
-				$post_id_rate_limits = self::validate_post_id_rate_limits();
-				$gateway_rate_limits = self::validate_gateway_rate_limits();
+				$unique_tx_id = secure_post('unique_tx_id');
+				$transient_key = 'dy_send_data_' . $unique_tx_id;
 
-				if($submission_rate_limits && $post_id_rate_limits && $gateway_rate_limits) {
-					$output = true;
-				} else {
-					$output = false;
+				if (!validate_turnstile() && get_transient($transient_key) === false) {
+					return self::$cache[$cache_key] = false;
 				}
+
+				$submission_valid = self::validate_submission_rate_limits();
+				$post_valid = self::validate_post_id_rate_limits();
+				$gateway_valid = self::validate_gateway_rate_limits();
+
+				$output = $submission_valid && $post_valid && $gateway_valid;
 			}
 			else
 			{
@@ -500,11 +503,6 @@ public static function validate_quote()
 
 		if(!filter_var($ip, FILTER_VALIDATE_IP)) {
 			return $reject('Unable to determine a valid client IP');
-		}
-
-		// Invalid challenge tokens must not consume another customer's identity quota.
-		if(!validate_turnstile()) {
-			return false;
 		}
 
 		$subjects = [
@@ -683,11 +681,6 @@ public static function validate_quote()
 			return $reject(MINUTE_IN_SECONDS, 'Missing or invalid rate limit identifier');
 		}
 
-		// Unverified requests must not consume a shared post or gateway quota.
-		if(!validate_turnstile()) {
-			return false;
-		}
-
 		// Change thresholds and cooldowns here for both public validators.
 		$rules = [
 			'30s' => ['window' => 30, 'limit' => 5, 'cooldown' => MINUTE_IN_SECONDS],
@@ -811,8 +804,6 @@ public static function validate_quote()
 			)
 			{
 				$unique_tx_id = secure_post('unique_tx_id');
-
-				write_log(secure_post('dy_nonce'));
 
 				if(!self::validate_unique_tx_id($unique_tx_id))
 				{

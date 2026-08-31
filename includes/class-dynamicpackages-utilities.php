@@ -1264,38 +1264,66 @@ class dy_utilities {
 	}
 
 
-	public static function webhook($option, $data)
+	public static function webhook($url, $payload = '')
 	{
-		$webhook = get_option($option);
-		
-		if($webhook)
-		{
-			if(!filter_var($webhook, FILTER_VALIDATE_URL) === false)
-			{
-				$ch = curl_init();
+		try {
+			$url = get_option($url);
 
-				$endpoint = str_replace('&#038;', '&', $webhook);
-				curl_setopt($ch, CURLOPT_URL, $endpoint);
-				curl_setopt($ch, CURLOPT_POST, 1);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data)));
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch,CURLOPT_TIMEOUT, 20);
-				$result = curl_exec($ch);
-				$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-	
-				if ($httpCode !== 200) {
-					write_log($result);
-				} else {
-
-					//write_log($result);
-				}
+			if (is_array($payload) || is_object($payload)) {
+				$payload = wp_json_encode($payload);
 			}
+
+			if (!is_string($url)) {
+				return false;
+			}
+
+			$url = str_replace('&#038;', '&', $url);
+
+			if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+				return false;
+			}
+
+			$headers = [
+				'Content-Type: application/json',
+				'Content-Length: ' . strlen($payload)
+			];
+
+			$ch = curl_init();
+
+			if ($ch === false) {
+				throw new \RuntimeException('Failed to initialize cURL handle.');
+			}
+
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+
+			$result = curl_exec($ch);
+
+			if ($result === false) {
+				$error = curl_error($ch);
+				$errno  = curl_errno($ch);
+				curl_close($ch);
+				throw new \RuntimeException("cURL error ({$errno}): {$error}");
+			}
+
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+
+			if ($httpCode !== 200) {
+				write_log(curl_error($ch) ?: $result);
+				return false;
+			}
+
+			return true;
+
+		} catch (\Throwable $e) {
+			write_log($e->getMessage());
+			return false;
 		}
-
-		return true;
-
 	}
 
 	public static function get_taxonomies($term_name)
