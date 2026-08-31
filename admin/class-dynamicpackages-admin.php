@@ -13,12 +13,12 @@ class Dynamicpackages_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->plugin_id = $plugin_id;
 		$this->version = $version;
-		add_action('admin_menu', array($this, 'add_settings_page'));
-		add_action('admin_init', array($this, 'settings_init'));
-		add_action('admin_init', array($this, 'load_scripts'));
+		add_action('admin_menu', [$this, 'add_settings_page']);
+		add_action('admin_init', [$this, 'settings_init']);
+		add_action('admin_init', [$this, 'load_scripts']);
 		add_editor_style($this->plugin_dir_file . 'css/dynamicpackages-admin.css');
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_styles'));
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+		add_action('admin_enqueue_scripts', [$this, 'enqueue_styles']);
+		add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
 	}
 
 	public function load_scripts()
@@ -28,7 +28,7 @@ class Dynamicpackages_Admin {
 		if(isset($pagenow))
 		{
 			
-			if(in_array($pagenow, array('post.php', 'term.php', 'admin.php')))
+			if(in_array($pagenow, ['post.php', 'term.php', 'admin.php']))
 			{
 				$GLOBALS['dy_load_picker_scripts'] = true;
 			}
@@ -38,7 +38,7 @@ class Dynamicpackages_Admin {
 
 	public function enqueue_styles() {
 
-		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', array(), time(), 'all' );
+		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', [], time(), 'all' );
 	}
 	
 	public function enqueue_scripts() {
@@ -52,7 +52,7 @@ class Dynamicpackages_Admin {
 	public  function add_settings_page()
 	{
 		$icon_url = $this->plugin_dir_file . 'assets/rocket.svg';
-		add_menu_page($this->plugin_name, $this->plugin_name, 'manage_options',  $this->plugin_id, array($this, 'settings_page'), $icon_url);
+		add_menu_page($this->plugin_name, $this->plugin_name, 'manage_options',  $this->plugin_id, [$this, 'settings_page'], $icon_url);
 	}
 
 	public function settings_init(  ) { 
@@ -170,8 +170,8 @@ class Dynamicpackages_Admin {
 				'value' => null,
 				'max' => 'dy_max_disabled_dates', 
 				'container' => 'disabled_dates',
-				'headers' => array(__('From', 'dynamicpackages'), __('To', 'dynamicpackages')),
-				'type' => array('date', 'date'),
+				'headers' => [__('From', 'dynamicpackages'), __('To', 'dynamicpackages')],
+				'type' => ['date', 'date'],
 			]
 		);	
 		

@@ -470,14 +470,17 @@ const checkoutFormSubmit = async () => {
 			}
 		}
 
+		const dy_request = thisForm.find('input[name="dy_request"]').val();
+		const email = thisForm.find('input[name="email"]').val();
 		const {wpJsonUrl, post_id} = dyCoreArgs;
 		const { dy_nonce } = (await getNonce()) ?? {};
 		const url = new URL(`${wpJsonUrl}/dynamicpackages/transactions/${post_id}`)
 
 		url.searchParams.set('dy_nonce', dy_nonce);
-		url.searchParams.set('turnstile', turnstileToken);
+		url.searchParams.set('dy_request', dy_request);
+		url.searchParams.set('email', email);
 
-		const response = await fetch(url);
+		const response = await fetch(url, {method: 'POST'});
 		const responseData = (await response.json()) ?? {};
 
 		const {unique_tx_id} = responseData
@@ -489,7 +492,9 @@ const checkoutFormSubmit = async () => {
 		
 		//console.log(formToArray(thisForm));
 		
-		createFormSubmit(thisForm);
+		if(response.ok) {
+			createFormSubmit(thisForm);
+		}
 	}
 	else
 	{	

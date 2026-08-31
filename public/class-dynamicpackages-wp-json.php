@@ -9,79 +9,87 @@ class Dynamicpackages_WP_JSON
 
 	function __construct()
 	{
-		add_action('rest_api_init', array($this, 'register_rest_routes_disabled_dates'));
-		add_action('rest_api_init', array($this, 'register_rest_routes_transactions'));
-		add_filter('dy_core_wp_json_args', array($this, 'hook_unique_tx_id'));
+		add_action('rest_api_init', [$this, 'register_rest_routes_disabled_dates']);
+		add_action('rest_api_init', [$this, 'register_rest_routes_transactions']);
 	}
 
 	public function register_rest_routes_transactions() {
-		$package_id_param = array(
+		$package_id_param = [
 			'required'          => true,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => static function($value) {
 				return dy_validators::validate_the_id($value);
 			},
-		);
+		];
 
-		$dy_nonce_param = array(
+		$dy_nonce_param = [
 			'required'          => true,
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => static function($value) {
 				return is_string($value) && wp_verify_nonce($value, 'dy_nonce');
 			},
-		);
+		];
 
-		$turnstile_param = array(
+		$dy_request_param = [
 			'required'          => true,
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => static function($value) {
-				return is_string($value) && (bool) preg_match('/^[A-Za-z0-9_.\-]{20,2048}$/', $value);
+				return $value && is_string($value);
 			},
-		);
+		];
+
+		$email_param = [
+			'required'          => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value) && is_email($value);
+			},
+		];
 		
 
 		register_rest_route(
 			'dy-core',
 			'/dynamicpackages/transactions/(?P<package_id>\d+)',
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array(
+			[
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => [
 					$this,
 					'transactions_endpoint'
-				),
+				],
 				'permission_callback' => '__return_true',
-				'args'                => array(
+				'args'=> [
 					'package_id' => $package_id_param,
 					'dy_nonce' => $dy_nonce_param,
-					'turnstile' => $turnstile_param,
-				),
-			)
+					'email' => $email_param,
+					'dy_request' => $dy_request_param,
+				],
+			]
 		);
 	}
 
 	public function register_rest_routes_disabled_dates()
 	{
 
-		$package_id_param = array(
+		$package_id_param = [
 			'required'          => true,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => static function($value) {
 				return dy_validators::validate_the_id($value);
 			},
-		);
+		];
 
-		$dy_nonce_param = array(
+		$dy_nonce_param = [
 			'required'          => true,
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => static function($value) {
 				return is_string($value) && wp_verify_nonce($value, 'dy_nonce');
 			},
-		);
+		];
 
 		register_rest_route(
 			'dy-core',
 			'/dynamicpackages/disabled-dates/(?P<package_id>\d+)',
-			array(
+			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array(
 					$this,
@@ -92,7 +100,7 @@ class Dynamicpackages_WP_JSON
 					'package_id' => $package_id_param,
 					'dy_nonce' => $dy_nonce_param,
 				),
-			)
+			]
 		);
 	}
 	
@@ -100,11 +108,12 @@ class Dynamicpackages_WP_JSON
 	public function transactions_endpoint($request)
 	{
 		$package_id = absint($request['package_id']);
-		$turnstile = $request['turnstile'];
+		$email = $request['email'];
+		$dy_request = $request['dy_request'];
 		$post = get_post($package_id);
 
 		$is_readable = $post instanceof WP_Post
-			&& 'packages' === $post->post_type
+			&& ('packages' === $post->post_type || $dy_request === 'contact')
 			&& (
 				is_post_publicly_viewable($post)
 				|| current_user_can('read_post', $package_id)
@@ -112,17 +121,17 @@ class Dynamicpackages_WP_JSON
 
 		if (!$is_readable) {
 			return $this->rest_response(
-				array(
+				[
 					'code'    => 'invalid_post_id',
 					'message' => 'Package not found.',
 					'data'    => array('status' => 404),
-				),
+				],
 				404
 			);
 		}
 
 		$unique_tx_id = wp_generate_uuid4();
-		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $turnstile), wp_salt('auth'));
+		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $email), wp_salt('auth'));
 		$transient_key = 'secret_tx_id_' . $unique_tx_id;
 
 		set_transient($transient_key, $secret_tx_id, DAY_IN_SECONDS);
@@ -148,11 +157,11 @@ class Dynamicpackages_WP_JSON
 
 		if (!$is_readable) {
 			return $this->rest_response(
-				array(
+				[
 					'code'    => 'invalid_post_id',
 					'message' => 'Package not found.',
 					'data'    => array('status' => 404),
-				),
+				],
 				404
 			);
 		}
@@ -403,13 +412,6 @@ class Dynamicpackages_WP_JSON
 			return $disable;
 		}
 	
-	}
-
-	public function hook_unique_tx_id($output = array())
-	{
-		$output['unique_tx_id'] = wp_generate_uuid4();
-
-		return $output;
 	}
 }
 

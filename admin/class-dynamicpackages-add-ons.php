@@ -16,19 +16,19 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	public function init()
 	{
 		$this->name = 'package_add_ons';
-		add_action('init', array($this, 'add_ons'));
-		add_action('dy_checkout_items', array($this, 'checkout_items'), 10);
-		add_filter('dy_included_add_ons_list', array($this, 'included_add_ons_list'));
-		add_filter('dy_included_add_ons_arr', array($this, 'included_add_ons_arr'));
-		add_filter('dy_has_add_ons', array($this, 'has_add_ons'));
-		add_filter('dy_get_add_ons', array($this, 'get_add_ons'));
+		add_action('init', [$this, 'add_ons']);
+		add_action('dy_checkout_items', [$this, 'checkout_items'], 10);
+		add_filter('dy_included_add_ons_list', [$this, 'included_add_ons_list']);
+		add_filter('dy_included_add_ons_arr', [$this, 'included_add_ons_arr']);
+		add_filter('dy_has_add_ons', [$this, 'has_add_ons']);
+		add_filter('dy_get_add_ons', [$this, 'get_add_ons']);
 	}
 	
 	public function add_ons()
 	{
-		add_action($this->name.'_edit_form_fields', array($this, 'add_ons_form'), 10, 2);
-		add_action( 'create_'.$this->name, array($this, 'save_term'), 10, 2);
-		add_action( 'edited_'.$this->name, array($this, 'save_term'), 10, 2);
+		add_action($this->name.'_edit_form_fields', [$this, 'add_ons_form'], 10, 2);
+		add_action( 'create_'.$this->name, [$this, 'save_term'], 10, 2);
+		add_action( 'edited_'.$this->name, [$this, 'save_term'], 10, 2);
 	}
 	
 

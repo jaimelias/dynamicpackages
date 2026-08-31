@@ -8,7 +8,7 @@ class Dynamicpackages_Metaboxes
 
     public function __construct()
     {
-		add_action('add_meta_boxes', array($this, 'package_add_meta_box'));
+		add_action('add_meta_boxes', [$this, 'package_add_meta_box']);
     }
 
     public function package_add_meta_box()
@@ -16,47 +16,47 @@ class Dynamicpackages_Metaboxes
 
 		$this->set_args();
 
-        add_meta_box('package-a', __('Description', 'dynamicpackages') , array($this,
+        add_meta_box('package-a', __('Description', 'dynamicpackages') , [$this,
             'package_description_html'
-        ) , 'packages', 'normal', 'default');
-        add_meta_box('package-b', __('Pricing Controls', 'dynamicpackages') , array($this,
+        ] , 'packages', 'normal', 'default');
+        add_meta_box('package-b', __('Pricing Controls', 'dynamicpackages') , [$this,
             'package_pricing_html'
-        ) , 'packages', 'normal', 'default');
+        ] , 'packages', 'normal', 'default');
 
         if (!$this->has_children)
         {
-            add_meta_box('package-c', __('Rates', 'dynamicpackages') , array($this,
+            add_meta_box('package-c', __('Rates', 'dynamicpackages') , [$this,
                 'package_rates_html'
-            ) , 'packages', 'normal', 'default');
+            ] , 'packages', 'normal', 'default');
         }
 
-        add_meta_box('package-d', __('Availability', 'dynamicpackages') , array($this,
+        add_meta_box('package-d', __('Availability', 'dynamicpackages') , [$this,
             'package_availability_html'
-        ) , 'packages', 'normal', 'default');
+        ] , 'packages', 'normal', 'default');
 
         if (!$this->is_child)
         {
 
-            add_meta_box('package-f', __('Messages', 'dynamicpackages') , array($this,
+            add_meta_box('package-f', __('Messages', 'dynamicpackages') , [$this,
                 'package_messages_html'
-            ) , 'packages', 'normal', 'default');
+            ] , 'packages', 'normal', 'default');
         }
 
 		if(!$this->is_child || ($this->is_transport && $this->is_child))
 		{
-            add_meta_box('package-e', __('Departure', 'dynamicpackages') , array($this,
+            add_meta_box('package-e', __('Departure', 'dynamicpackages') , [$this,
                 'package_departure_html'
-            ) , 'packages', 'normal', 'default');
+            ] , 'packages', 'normal', 'default');
 		}
 
-		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , array($this,
+		add_meta_box('package-g', __('Coupons', 'dynamicpackages') , [$this,
 			'package_coupon_html'
-		) , 'packages', 'normal', 'default');
+		] , 'packages', 'normal', 'default');
 
 
-	add_meta_box('package-h', __('Controls', 'dynamicpackages') , array($this,
-		'package_controls_html'
-	) , 'packages', 'normal', 'default');
+		add_meta_box('package-h', __('Controls', 'dynamicpackages') , [$this,
+			'package_controls_html'
+		] , 'packages', 'normal', 'default');
 
 
     }
@@ -124,7 +124,7 @@ class Dynamicpackages_Metaboxes
 	}
 
 	public function set_week_day_fields(){
-		$week_day_fields = array('week_day_surcharge', 'day');
+		$week_day_fields = ['week_day_surcharge', 'day'];
 
 		for($x = 0; $x < 7; $x++)
 		{
@@ -140,7 +140,7 @@ class Dynamicpackages_Metaboxes
 	public function set_lang_fields()
 	{
 		//handles language based fields
-		$lang_fields = array('confirmation_message', 'child_title', 'redirect_url');
+		$lang_fields = ['confirmation_message', 'child_title', 'redirect_url'];
 
 		for($x = 0; $x < count($lang_fields); $x++)
 		{
@@ -155,10 +155,10 @@ class Dynamicpackages_Metaboxes
 
 	public function set_handsontable_args()
 	{
-		$this->coupon_args = array(
+		$this->coupon_args = [
 			'container' => 'coupons',
 			'textarea' => 'package_coupons',
-			'headers' => array(
+			'headers' => [
 				__('Code', 'dynamicpackages') ,
 				__('Discount (%)', 'dynamicpackages') ,
 				__('Expiration', 'dynamicpackages') ,
@@ -166,8 +166,8 @@ class Dynamicpackages_Metaboxes
 				__('Min. Duration', 'dynamicpackages') ,
 				__('Max. Duration', 'dynamicpackages'),
 				__('Bookings After Expires', 'dynamicpackages'),
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'text',
 				'numeric',
 				'date',
@@ -175,97 +175,97 @@ class Dynamicpackages_Metaboxes
 				'numeric',
 				'numeric',
 				'checkbox',
-			) ,
+			] ,
 			'min' => 'package_max_coupons',
 			'max' => 'package_max_coupons',
 			'value' => $this->coupons,
 			'disabled' => $this->disable_child
-		);
+		];
 
-		$this->price_chart_args = array(
+		$this->price_chart_args = [
 			'container' => 'price_chart',
 			'textarea' => 'package_price_chart',
-			'headers' => array(
+			'headers' => [
 				__('Regular', 'dynamicpackages') ,
 				__('Discount', 'dynamicpackages')
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'currency',
 				'currency'
-			) ,
+			] ,
 			'min' => 'package_min_persons',
 			'max' => 'package_max_persons',
 			'value' => $this->price_chart
-		);
+		];
 
-		$this->occupancy_chart_args = array(
+		$this->occupancy_chart_args = [
 			'container' => 'occupancy_chart',
 			'textarea' => 'package_occupancy_chart',
-			'headers' => array(
+			'headers' => [
 				__('Regular', 'dynamicpackages') ,
 				__('Discount', 'dynamicpackages')
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'currency',
 				'currency'
-			) ,
+			] ,
 			'min' => 'package_min_persons',
 			'max' => 'package_max_persons',
 			'value' => $this->occupancy_chart
-		);
+		];
 
-		$this->disabled_dates_args = array(
+		$this->disabled_dates_args = [
 			'container' => 'disabled_dates',
 			'textarea' => 'package_disabled_dates',
-			'headers' => array(
+			'headers' => [
 				__('From', 'dynamicpackages') ,
 				__('To', 'dynamicpackages')
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'date',
 				'date'
-			) ,
+			] ,
 			'min' => 'package_disabled_num',
 			'max' => 'package_disabled_num',
 			'value' => $this->disabled_dates
-		);
+		];
 
-		$this->enabled_dates_args = array(
+		$this->enabled_dates_args = [
 			'container' => 'enabled_dates',
 			'textarea' => 'package_enabled_dates',
-			'headers' => array(
+			'headers' => [
 				__('From', 'dynamicpackages') ,
 				__('To', 'dynamicpackages')
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'date',
 				'date'
-			) ,
+			] ,
 			'min' => 'package_enabled_num',
 			'max' => 'package_enabled_num',
 			'value' => $this->enabled_dates,
 			'disabled' => $this->disable_child
-		);
+		];
 
 
-		$this->seasons_args = array(
+		$this->seasons_args = [
 			'container' => 'seasons_chart',
 			'textarea' => 'package_seasons_chart',
-			'headers' => array(
+			'headers' => [
 				__('Name', 'dynamicpackages') ,
 				__('From', 'dynamicpackages') ,
 				__('To', 'dynamicpackages') ,
 				__('Duration', 'dynamicpackages') ,
 				__('ID', 'dynamicpackages')
-			) ,
-			'type' => array(
+			] ,
+			'type' => [
 				'text',
 				'date',
 				'date',
 				'dropdown',
 				'readonly'
-			) ,
-			'dropdown' => array(
+			] ,
+			'dropdown' => [
 				1,
 				2,
 				3,
@@ -273,12 +273,12 @@ class Dynamicpackages_Metaboxes
 				5,
 				6,
 				7
-			) ,
+			] ,
 			'min' => 'package_num_seasons',
 			'max' => 'package_num_seasons',
 			'value' => $this->seasons_chart,
 			'disabled' => $this->disable_child
-		);
+		];
 	}
 
     public function select_number($name, $min = 1, $max = 50, $attr = '')

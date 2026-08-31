@@ -395,10 +395,6 @@ public static function validate_quote()
 
 				$output = $submission_valid && $post_valid && $gateway_valid;
 			}
-			else
-			{
-				$GLOBALS['dy_request_invalids'] = array('invalid_request');
-			}
 		}
 
         //store output in $cache
@@ -770,23 +766,16 @@ public static function validate_quote()
 	public static function validate_unique_tx_id() {
 
 		$unique_tx_id = secure_post('unique_tx_id');
-		$turnstile = secure_post('cf-turnstile-response');
+		$email = secure_post('email');
 
 		if (!is_string($unique_tx_id) || $unique_tx_id === '') return false;
-		if (!is_string($turnstile) || $turnstile === '') return false;
+		if (!is_email($email)) return false;
 
-		$is_valid_format =  (bool) preg_match(
-			'/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',
-			$unique_tx_id
-		);
-
-		if(!$is_valid_format) {
-			return false;
-		}
+		write_log($email);
 
 		$transient_key = 'secret_tx_id_' . $unique_tx_id;
 		$secret_tx_id = get_transient( $transient_key );
-		$expected_secret_tx_id= hash_hmac('sha256', ($unique_tx_id . $turnstile), wp_salt('auth'));
+		$expected_secret_tx_id= hash_hmac('sha256', ($unique_tx_id . $email), wp_salt('auth'));
 
 		return is_string($secret_tx_id) && hash_equals($expected_secret_tx_id, $secret_tx_id);
 	}
@@ -814,17 +803,6 @@ public static function validate_quote()
 				
 			)
 			{
-				
-
-				if(!self::validate_unique_tx_id())
-				{
-					$invalid_transaction_id_message = __('Invalid unique transaction ID.', 'dynamicpackages');
-					$invalids[] = $invalid_transaction_id_message;
-				}
-				if(!wp_verify_nonce(secure_post('dy_nonce'), 'dy_nonce')) {
-					
-					$invalids[] = __('Invalid nonce.', 'dynamicpackages');
-				}
 				if(!is_email($_POST['email']))
 				{
 					$invalids[] = __('Invalid email.', 'dynamicpackages');
@@ -947,7 +925,6 @@ public static function validate_quote()
 	
 	public static function validate_booking_details()
 	{
-		$output = false;
 		$cache_key = 'dy_validate_booking_details';		
 		
 
@@ -955,15 +932,40 @@ public static function validate_quote()
             return self::$cache[$cache_key];
         }
 
-		if(isset($_POST['booking_date']) && isset($_POST['booking_hour']) && isset($_POST['duration']) && isset($_POST['pax_num']) && self::validate_terms_conditions())
-		{	
-			$output = true;
+		if(secure_post('dy_request') === 'contact') {
+			return self::$cache[$cache_key] = true;
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		$output = true;
+		$invalids = [];
+
+		if(!self::validate_unique_tx_id())
+		{
+			$invalids[] = __('Invalid unique_tx_id.', 'dynamicpackages');
+		}
+		if(!is_valid_date(secure_post('booking_date'))) {
+			$invalids[] = __('Invalid booking_date.', 'dynamicpackages');
+		}
+		if(!is_valid_time(dy_utilities::hour())) {
+			write_log(dy_utilities::hour());
+			$invalids[] = __('Invalid booking_hour.', 'dynamicpackages');
+		}
+		if(empty(secure_post('duration'))) {
+			$invalids[] = __('Invalid duration.', 'dynamicpackages');
+		}
+		if(empty(secure_post('pax_num', 0, 'absint'))) {
+			$invalids[] = __('Invalid pax_num.', 'dynamicpackages');
+		}
+		if(!self::validate_terms_conditions()) {
+			$invalids[] = __('Invalid terms_conditions.', 'dynamicpackages');
+		}
+
+		if(count($invalids) > 0) {
+			$GLOBALS['dy_request_invalids'] = $invalids;
+			$output = false;
+		}
         
-		return $output;		
+		return self::$cache[$cache_key] = $output;
 	}
 	public static function validate_card()
 	{

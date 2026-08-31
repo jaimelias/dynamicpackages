@@ -149,7 +149,7 @@ class Dynamicpackages_Forms
 
 		$plugin_dir_url = plugin_dir_url( __DIR__ );
 		
-		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_attr(base64_encode(get_permalink())).'" data-gclid="true">';
+		$form = '<div class="dy_package_booking_form_container"><form class="dy_package_booking_form" data-starting-at="'.esc_attr($starting_at).'" data-title="'.esc_attr($title).'" data-method="get" data-action="'.esc_attr(base64_encode(get_permalink())).'" >';
 		
 		if($auto_booking == 1)
 		{
