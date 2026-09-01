@@ -303,17 +303,26 @@ public static function validate_quote()
 		$hard_max_persons = $package_max_persons + $package_increase_persons;
 
 		if (!is_int($package_min_persons) || $package_min_persons <= 0) {
-			dy_errors::add(__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
+			dy_errors::add(
+				__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
+				500
+			);
 			return self::$cache[$cache_key] = false;
 		}
 
 		if (!is_int($package_max_persons) || $package_max_persons <= 0) {
-			dy_errors::add(__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
+			dy_errors::add(
+				__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
+				500
+			);
 			return self::$cache[$cache_key] = false;
 		}
 
 		if (!is_int($package_increase_persons) || $package_increase_persons < 0) {
-			dy_errors::add(__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
+			dy_errors::add(
+				__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
+				500
+			);
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -464,7 +473,10 @@ public static function validate_quote()
 		};
 
 		$reject = static function($reason) use ($log) {
-			dy_errors::add(__('Unable to validate this submission. Please try again later.', 'dynamicpackages'));
+			dy_errors::add(
+				__('Unable to validate this submission. Please try again later.', 'dynamicpackages'),
+				500
+			);
 			$log(['message' => 'Submission rate limit validation failed', 'reason' => $reason]);
 			return false;
 		};
@@ -612,7 +624,10 @@ public static function validate_quote()
 		}
 
 		if($blocked_until > 0) {
-			dy_errors::add(__('Too many submissions. Please try again later.', 'dynamicpackages'));
+			dy_errors::add(
+				__('Too many submissions. Please try again later.', 'dynamicpackages'),
+				429
+			);
 			return false;
 		}
 
@@ -663,7 +678,7 @@ public static function validate_quote()
 				$cooldown
 			);
 
-			dy_errors::add($message);
+			dy_errors::add($message, 429);
 
 			if($reason !== '') {
 				write_log(['message' => 'Rate limit validation failed', 'scope' => $scope, 'reason' => $reason]);

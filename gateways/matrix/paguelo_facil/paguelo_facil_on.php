@@ -139,19 +139,16 @@ class paguelo_facil_on{
 		}
 
 		$ExpMonth = secure_post('ExpMonth', 0, 'absint');
-
-		if(!is_int($ExpMonth) || $ExpMonth < 1 || $ExpMonth > 12)
-		{
-			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
-		}
-
-		$ExpMonth = secure_post('ExpMonth', 0, 'absint');
 		$ExpYear  = secure_post('ExpYear', 0, 'absint');
 
 		$current_year  = (int) wp_date('Y');
 		$current_month = (int) wp_date('n');
 
-		$month_is_valid = $ExpMonth >= 1 && $ExpMonth <= 12;
+		$month_is_valid = (
+			$ExpMonth >= 1
+			&& $ExpMonth <= 12
+		);
+
 		$year_is_valid = (
 			$ExpYear >= $current_year
 			&& $ExpYear <= $current_year + 20
@@ -172,7 +169,7 @@ class paguelo_facil_on{
 			&& $ExpMonth < $current_month
 		)
 		{
-			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
+			$invalids[] = __('The card has expired.', 'dynamicpackages');
 		}
 
 		$CVV2     = secure_post('CVV2');
