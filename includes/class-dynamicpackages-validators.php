@@ -867,27 +867,6 @@ public static function validate_quote()
 		return $output;
 	}
 	
-	public static function validate_checkout($gateway_name)
-	{
-		$output = false;
-		$cache_key = 'dy_validate_checkout_' . sanitize_key($gateway_name);
-
-		if (array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		if(self::validate_request())
-		{
-			if($gateway_name === secure_post('dy_request') && self::validate_card())
-			{
-				$output = true;
-			}
-		}
-
-		self::$cache[$cache_key] = $output;
-
-		return $output;
-	}
 	
 	public static function validate_terms_conditions()
 	{
@@ -967,75 +946,7 @@ public static function validate_quote()
         
 		return self::$cache[$cache_key] = $output;
 	}
-	public static function validate_card()
-	{
-		$invalids = [];
-		$output = false;
-		$cache_key = 'dy_validate_card';
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
 
-		$required_params = ['CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'country', 'address', 'city'];
-
-		for($x = 0; $x < count($required_params); $x++)
-		{
-			if(!array_key_exists($required_params[$x], $_POST))
-			{
-				$invalids[] = sprintf(__('Required param %s not found.', 'dynamicpackages'), $required_params[$x]);
-			}
-		}
-
-		if(count($invalids) === 0) {
-			
-			if(!self::luhn_check($_POST['CCNum']))
-			{
-				$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
-			}
-			if(empty($_POST['ExpMonth']))
-			{
-				$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
-			}
-			if(empty($_POST['ExpYear']))
-			{
-				$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
-			}
-			if(empty($_POST['CVV2']))
-			{
-				$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
-			}
-			if(empty($_POST['country']))
-			{
-				$invalids[] = __('Invalid country.', 'dynamicpackages');
-			}
-			if(empty($_POST['city']))
-			{
-				$invalids[] = __('Invalid city.', 'dynamicpackages');
-			}
-			if(empty($_POST['address']))
-			{
-				$invalids[] = __('Invalid address.', 'dynamicpackages');
-			}
-		}
-		
-		if(is_array($invalids))
-		{
-			if(count($invalids) === 0)
-			{
-				$output = true;			
-			}
-			else
-			{
-				$GLOBALS['dy_request_invalids'] = $invalids;
-			}
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		return $output;
-	}
 
 		
 	public static function validate_hash()
@@ -1448,35 +1359,6 @@ public static function validate_quote()
         self::$cache[$cache_key] = $output;
 		
 		return $output;
-	}
-
-	
-	public static function luhn_check($number) 
-	{
-	  $number = preg_replace('/\D/', '', $number);
-	  $number_length = strlen($number);
-	  $parity = $number_length % 2;
-	  $total = 0;
-	  
-	  for ($i=0; $i < $number_length; $i++)
-	  {
-		$digit = $number[$i];
-		
-		if ($i % 2 == $parity)
-		{
-		  $digit*=2;
-		  
-		  if ($digit > 9) 
-		  {
-			$digit-=9;
-		  }
-		}
-	 
-		$total+=$digit;
-	  }
-
-	  return ($total % 10 == 0) ? TRUE : FALSE;
-
 	}
 
 	public static function is_spam($str) {
