@@ -472,24 +472,32 @@ public static function validate_quote()
 			}
 		};
 
-		$reject = static function($reason) use ($log) {
+		$reject = static function(
+			$reason,
+			$http_status = 500
+		) use ($log) {
 			dy_errors::add(
 				__('Unable to validate this submission. Please try again later.', 'dynamicpackages'),
-				500
+				$http_status
 			);
-			$log(['message' => 'Submission rate limit validation failed', 'reason' => $reason]);
+
+			$log([
+				'message' => 'Submission rate limit validation failed',
+				'reason'  => $reason,
+			]);
+
 			return false;
 		};
 
 		if($host === '') {
-			return $reject('Invalid configured site hostname');
+			return $reject('Invalid configured site hostname', 500);
 		}
 
 		$required = ['dy_request', 'dy_id', 'phone', 'country_calling_code', 'email', 'first_name', 'lastname'];
 
 		foreach($required as $param) {
 			if(!post_has($param) || secure_post($param) === '') {
-				return $reject('Missing or invalid parameter: ' . $param);
+				return $reject('Missing or invalid parameter: ' . $param, 400);
 			}
 		}
 
@@ -506,14 +514,14 @@ public static function validate_quote()
 		$lastname = $normalize_name(secure_post('lastname'));
 
 		if($dy_request === '' || $dy_id <= 0 || $calling_code === '' || $phone === '' || !is_email($email) || $first_name === '' || $lastname === '') {
-			return $reject('Invalid normalized submission parameters');
+			return $reject('Invalid normalized submission parameters', 400);
 		}
 
 		$phone = '+' . $calling_code . $phone;
 		
 
 		if(!filter_var($ip, FILTER_VALIDATE_IP)) {
-			return $reject('Unable to determine a valid client IP');
+			return $reject('Unable to determine a valid client IP', 500);
 		}
 
 		$subjects = [
@@ -541,7 +549,7 @@ public static function validate_quote()
 		$lock_name = 'dy_rl_' . substr(hash('sha256', $wpdb->prefix . $salt), 0, 56);
 
 		if((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 1)', $lock_name)) !== '1') {
-			return $reject('Unable to acquire submission rate limit lock');
+			return $reject('Unable to acquire submission rate limit lock', 503);
 		}
 
 		try {
@@ -620,7 +628,7 @@ public static function validate_quote()
 		}
 
 		if($storage_failed) {
-			return $reject('Unable to persist submission rate limit state');
+			return $reject('Unable to persist submission rate limit state', 503);
 		}
 
 		if($blocked_until > 0) {
@@ -667,7 +675,7 @@ public static function validate_quote()
 
 		self::$cache[$cache_key] = false;
 
-		$reject = static function($seconds, $reason = '') use ($scope) {
+		$reject = static function($seconds, $reason = '', $http_status = 429) use ($scope) {
 			$seconds = max(1, (int) $seconds);
 			$minutes = (int) ceil($seconds / MINUTE_IN_SECONDS);
 			$cooldown = $seconds >= MINUTE_IN_SECONDS
@@ -678,7 +686,7 @@ public static function validate_quote()
 				$cooldown
 			);
 
-			dy_errors::add($message, 429);
+			dy_errors::add($message, $http_status);
 
 			if($reason !== '') {
 				write_log(['message' => 'Rate limit validation failed', 'scope' => $scope, 'reason' => $reason]);
@@ -688,7 +696,7 @@ public static function validate_quote()
 		};
 
 		if($suffix === '' || $suffix === 0) {
-			return $reject(MINUTE_IN_SECONDS, 'Missing or invalid rate limit identifier');
+			return $reject(MINUTE_IN_SECONDS, 'Missing or invalid rate limit identifier', 400);
 		}
 
 		// Change thresholds and cooldowns here for both public validators.
@@ -707,7 +715,7 @@ public static function validate_quote()
 		$lock_name = 'dy_rl_' . substr(hash('sha256', $wpdb->prefix . $cache_key), 0, 56);
 
 		if((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 1)', $lock_name)) !== '1') {
-			return $reject(MINUTE_IN_SECONDS, 'Unable to acquire rate limit lock');
+			return $reject(MINUTE_IN_SECONDS, 'Unable to acquire rate limit lock', 503);
 		}
 
 		try {
@@ -771,7 +779,7 @@ public static function validate_quote()
 		}
 
 		if($storage_failed) {
-			return $reject(max(MINUTE_IN_SECONDS, $blocked_until - time()), 'Unable to persist rate limit state');
+			return $reject(max(MINUTE_IN_SECONDS, $blocked_until - time()), 'Unable to persist rate limit state', 503);
 		}
 
 		if($blocked_until > time()) {
