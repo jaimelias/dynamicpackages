@@ -145,15 +145,17 @@ class paguelo_facil_on{
 			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
 		}
 
-		$ExpMonth = secure_post('ExpMonth');
-		$ExpYear  = secure_post('ExpYear');
-		
+		$ExpMonth = secure_post('ExpMonth', 0, 'absint');
+		$ExpYear  = secure_post('ExpYear', 0, 'absint');
 
-		$month_is_valid = is_string($ExpMonth)
-			&& preg_match('/\A(?:0[1-9]|1[0-2])\z/', $ExpMonth) === 1;
+		$current_year  = (int) wp_date('Y');
+		$current_month = (int) wp_date('n');
 
-		$year_is_valid = is_string($ExpYear)
-			&& preg_match('/\A\d{2}\z/', $ExpYear) === 1;
+		$month_is_valid = $ExpMonth >= 1 && $ExpMonth <= 12;
+		$year_is_valid = (
+			$ExpYear >= $current_year
+			&& $ExpYear <= $current_year + 20
+		);
 
 		if(!$month_is_valid)
 		{
@@ -164,24 +166,13 @@ class paguelo_facil_on{
 		{
 			$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
 		}
-
-		if($month_is_valid && $year_is_valid)
+		else if(
+			$ExpYear === $current_year
+			&& $month_is_valid
+			&& $ExpMonth < $current_month
+		)
 		{
-			$current_year = (int) wp_date('Y');
-			$current_month = (int) wp_date('n');
-			$expiration_year = 2000 + (int) $ExpYear;
-			$expiration_month = (int) $ExpMonth;
-
-			if( $expiration_year < $current_year || $expiration_year > $current_year + 20
-			)
-			{
-				$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
-			}
-			else if($expiration_year === $current_year && $expiration_month < $current_month
-			)
-			{
-				$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
-			}
+			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
 		}
 
 		$CVV2     = secure_post('CVV2');
@@ -942,6 +933,9 @@ class paguelo_facil_on{
 		$email  = secure_post('email');
 		$phone  = secure_post('country_calling_code') . secure_post('phone');
 
+		$ExpYear = secure_post('ExpYear', 0, 'absint');
+		$ExpYear = sprintf('%02d', $ExpYear % 100);
+
 		// Hash secreto
 		$hash = $CCNum . $CVV2 . $email;
 
@@ -953,7 +947,7 @@ class paguelo_facil_on{
 			'CDSC'       => substr(apply_filters('dy_description', null), 0, 150),
 			'CCNum'      => $CCNum,
 			'ExpMonth'   => secure_post('ExpMonth'),
-			'ExpYear'    => secure_post('ExpYear'),
+			'ExpYear'    => $ExpYear,
 			'CVV2'       => $CVV2,
 			'Name'       => secure_post('first_name'),
 			'LastName'   => secure_post('lastname'),
