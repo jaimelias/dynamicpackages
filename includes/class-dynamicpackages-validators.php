@@ -391,7 +391,7 @@ public static function validate_quote()
 
 				return self::$cache[$cache_key] = false;
 			}
-			
+
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
 				if (!validate_turnstile()) {
@@ -785,89 +785,72 @@ public static function validate_quote()
 
 	public static function validate_contact_details()
 	{
-		$output = false;
-		$invalids = [];
 		$cache_key = 'dy_validate_contact_details';
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
 
-		if(self::is_confirmation_page())
-		{
-			if(
-				isset($_POST['unique_tx_id'])
-				&& isset($_POST['first_name'])
-				&& isset($_POST['lastname'])
-				&& isset($_POST['phone'])
-				&& isset($_POST['country_calling_code'])
-				&& isset($_POST['email'])
-				&& isset($_POST['repeat_email'])
-				
-			)
-			{
-				if(!is_email($_POST['email']))
-				{
-					$invalids[] = __('Invalid email.', 'dynamicpackages');
-				}
-				if(!is_email($_POST['repeat_email']))
-				{
-					$invalids[] = __('Invalid repeated email.', 'dynamicpackages');
-				}
-				if($_POST['email'] !== $_POST['repeat_email'])
-				{
-					$invalids[] = __('Email and repeated email are not equal.', 'dynamicpackages');
-				}
-				if(empty($_POST['first_name']))
-				{
-					$invalids[] = __('First name is empty.', 'dynamicpackages');
-				}
-				if(empty($_POST['lastname']))
-				{
-					$invalids[] = __('Lastname is empty.', 'dynamicpackages');
-				}
-				if(empty($_POST['phone']))
-				{
-					$invalids[] = __('Phone is empty.', 'dynamicpackages');
-				}
-				if(empty($_POST['country_calling_code']))
-				{
-					$invalids[] = __('Country Calling Code is empty.', 'dynamicpackages');
-				}
-				if(isset($_POST['inquiry']))
-				{
-					if(empty($_POST['inquiry']))
-					{
-						$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
-					}
-					else
-					{
-						if(self::is_spam($_POST['inquiry']))
-						{
-							$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
-						}
-					}
-				}
+		if (array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
+
+		$first_name = secure_post('first_name', null);
+		$lastname = secure_post('lastname', null);
+		$phone = secure_post('phone', null);
+		$country_calling_code = secure_post('country_calling_code', null);
+		$email = secure_post('email', null, 'sanitize_email');
+		$repeat_email = secure_post('repeat_email', null, 'sanitize_email');
+		$inquiry = secure_post('inquiry', null, 'sanitize_textarea_field');
+		$invalids = [];
+
+		if(in_array(null, [
+			$first_name,
+			$lastname,
+			$phone,
+			$country_calling_code,
+			$email,
+			$repeat_email
+		], true)) {
+			$invalids[] = __('Invalid Request.', 'dynamicpackages');
+		} else {
+			if(!is_email($email)) {
+				$invalids[] = __('Invalid email.', 'dynamicpackages');
 			}
-			else
-			{
-				$invalids[] = __('Invalid Request.', 'dynamicpackages');
-			}				
+
+			if(!is_email($repeat_email)) {
+				$invalids[] = __('Invalid repeated email.', 'dynamicpackages');
+			}
+
+			if($email !== $repeat_email) {
+				$invalids[] = __('Email and repeated email are not equal.', 'dynamicpackages');
+			}
+
+			if(empty($first_name)) {
+				$invalids[] = __('First name is empty.', 'dynamicpackages');
+			}
+
+			if(empty($lastname)) {
+				$invalids[] = __('Lastname is empty.', 'dynamicpackages');
+			}
+
+			if(empty($phone)) {
+				$invalids[] = __('Phone is empty.', 'dynamicpackages');
+			}
+
+			if(empty($country_calling_code)) {
+				$invalids[] = __('Country Calling Code is empty.', 'dynamicpackages');
+			}
+
+			if($inquiry !== null && (empty($inquiry) || self::is_spam($inquiry))) {
+				$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
+			}
 		}
 
-		if(count($invalids) === 0)
-		{
-			$output = true;
-		}
-		else
-		{
+		$output = count($invalids) === 0;
+
+		if(!$output) {
 			dy_errors::add($invalids);
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-		
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 	
 	
