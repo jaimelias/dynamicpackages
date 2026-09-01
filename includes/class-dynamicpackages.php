@@ -126,7 +126,6 @@ class dynamicpackages {
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
 		new Dynamicpackages_Confirmation_Page($this->version);
-		new Dynamicpackages_Errors_Page($this->version);
 		new Dynamicpackages_Location_Category($this->version);
 		new Dynamicpackages_Export_Post_Types($this->version);
 		new Dynamicpackages_WP_JSON();
