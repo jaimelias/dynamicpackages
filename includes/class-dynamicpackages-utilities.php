@@ -1267,6 +1267,10 @@ class dy_utilities {
 	public static function webhook($url, $payload = '')
 	{
 		try {
+
+			//silences the script termination when the user aborts the request (e.g., closes the browser)
+			ignore_user_abort(true);
+
 			$url = get_option($url);
 
 			if (is_array($payload) || is_object($payload)) {
@@ -1287,6 +1291,12 @@ class dy_utilities {
 				'Content-Type: application/json',
 				'Content-Length: ' . strlen($payload)
 			];
+
+			//silences the curl_exec() output to the browser and flushes the output buffer
+			while (ob_get_level() > 0) {
+				ob_end_flush();
+			}
+			flush();
 
 			$ch = curl_init();
 
