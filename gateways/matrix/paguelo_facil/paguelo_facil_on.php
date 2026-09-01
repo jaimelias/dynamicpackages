@@ -145,31 +145,44 @@ class paguelo_facil_on{
 
 		if(count($invalids) === 0) {
 			
-			if(!luhn_check($_POST['CCNum']))
+			if(!luhn_check(secure_post('CCNum')))
 			{
 				$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
 			}
-			if(empty($_POST['ExpMonth']))
+
+			$ExpMonth = secure_post('ExpMonth', 0, 'absint');
+
+			if(!is_int($ExpMonth) || $ExpMonth < 1 || $ExpMonth > 12)
 			{
 				$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
 			}
-			if(empty($_POST['ExpYear']))
+
+			$ExpYear = secure_post('ExpYear', 0, 'absint');
+			$currYear = (int) date('Y');
+
+			if(!is_int($ExpYear) || $ExpYear < $currYear || $ExpYear > $currYear + 20)
 			{
 				$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
 			}
-			if(empty($_POST['CVV2']))
+
+			$CVV2 = secure_post('CVV2', 0, 'absint');
+
+			if(empty($CVV2) || !is_int($CVV2) || $CVV2 < 100 || $CVV2 > 999)
 			{
 				$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
 			}
-			if(empty($_POST['country']))
+
+			$country = secure_post('country');
+			
+			if(empty($country) || !is_string($country) || strlen($country) !== 2)
 			{
 				$invalids[] = __('Invalid country.', 'dynamicpackages');
 			}
-			if(empty($_POST['city']))
+			if(empty(secure_post('city')))
 			{
 				$invalids[] = __('Invalid city.', 'dynamicpackages');
 			}
-			if(empty($_POST['address']))
+			if(empty(secure_post('address')))
 			{
 				$invalids[] = __('Invalid address.', 'dynamicpackages');
 			}
