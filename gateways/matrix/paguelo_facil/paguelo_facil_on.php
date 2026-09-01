@@ -35,7 +35,7 @@ class paguelo_facil_on{
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
 		$this->type = 'card-on-site';
 		$this->brands = ['Mastercard', 'Visa'];
-		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
+		$this->cards_accepted = implode_last($this->brands, __('or', 'dynamicpackages'));
 		$this->cclw = (string) get_option($this->id, '');
 		$this->show = (int) get_option($this->id . '_show', 0);
 		$this->min = (float) get_option($this->id . '_min', 0.0);

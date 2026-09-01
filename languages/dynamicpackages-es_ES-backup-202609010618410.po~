@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2026-09-01 06:18+0000\n"
+"PO-Revision-Date: 2026-09-01 06:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -740,15 +740,15 @@ msgstr "Bueno"
 
 #: dy-core/admin.php:310
 msgid "Google Ads Conversion ID (AW-...)"
-msgstr "Google Ads Conversion ID (AW-...)"
+msgstr ""
 
 #: dy-core/admin.php:332
 msgid "Google Ads Lead Label"
-msgstr "Google Ads Lead Label"
+msgstr ""
 
 #: dy-core/admin.php:321
 msgid "Google Ads Purchase Label"
-msgstr "Google Ads Purchase Label"
+msgstr ""
 
 #: admin/class-dynamicpackages-metaboxes.php:735
 msgid "Green"
@@ -794,7 +794,7 @@ msgstr "alto a bajo"
 
 #: admin/class-dynamicpackages-admin.php:252
 msgid "Home"
-msgstr "Inicio"
+msgstr ""
 
 #: includes/class-dynamicpackages-utilities.php:321
 #: public/class-dynamicpackages-forms.php:259
@@ -1183,6 +1183,11 @@ msgstr "Número de cupones"
 msgid "Number of Special Seasons"
 msgstr "Número de temporadas especiales"
 
+#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:38
+#: gateways/matrix/cuanto/cuanto.php:28
+msgid "o"
+msgstr ""
+
 #: public/class-dynamicpackages-booking-page.php:71
 msgid "off"
 msgstr "descuento"
@@ -1235,8 +1240,6 @@ msgstr "Sólo depósitos"
 #: public/email-templates/estimates-pdf.php:26
 #: public/email-templates/estimates.php:37
 #: gateways/partials/checkout-page.php:171
-#: gateways/matrix/paguelo_facil/paguelo_facil_on.php:38
-#: gateways/matrix/cuanto/cuanto.php:28
 msgid "or"
 msgstr "o"
 

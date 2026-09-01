@@ -25,7 +25,7 @@ class cuanto{
 		$this->order_status = 'pending';
 		$this->name = 'Cuanto.app';
 		$this->brands = ['Mastercard', 'Visa'];
-		$this->cards_accepted = implode_last($this->brands, __('o', 'dynamicpackages'));
+		$this->cards_accepted = implode_last($this->brands, __('or', 'dynamicpackages'));
 		$this->type = 'card-off-site';
 		$this->domain = 'cuanto.app';		
 		$this->username = get_option($this->id);
