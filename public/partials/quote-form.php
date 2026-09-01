@@ -14,6 +14,10 @@
 	{
 		$add_ons_value = $_COOKIE[$add_ons_package_id];
 	}
+
+	$autocomplete_scope = $has_gateway
+		? 'section-payment billing'
+		: 'section-contact';
 ?>
 
 <form id="dy_package_request_form" <?php echo $hide_form;?>  data-method="post" data-action="<?php echo esc_attr(base64_encode(get_permalink())); ?>">
@@ -58,21 +62,57 @@
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
 					<label for="first_name"><?php echo (esc_html__('Name', 'dynamicpackages')); ?></label>
-					<input type="text" name="first_name" class="bottom-20 required" />
+					<input
+						type="text"
+						name="first_name"
+						id="first_name"
+						class="bottom-20 required"
+						autocomplete="<?php echo esc_attr($autocomplete_scope . ' given-name'); ?>"
+						autocapitalize="words"
+						required
+					>
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
 					<label for="lastname"><?php echo (esc_html__('Last Name', 'dynamicpackages')); ?></label>
-					<input type="text" name="lastname" class="bottom-20 required" />
+					<input
+						type="text"
+						name="lastname"
+						id="lastname"
+						class="bottom-20 required"
+						autocomplete="<?php echo esc_attr($autocomplete_scope . ' family-name'); ?>"
+						autocapitalize="words"
+						required
+					>
 				</div>
 			</div>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
 					<label for="email"><?php echo (esc_html__('Email', 'dynamicpackages')); ?></label>
-					<input type="email" name="email" class="bottom-20 required" />				
+					<input
+						type="email"
+						name="email"
+						id="email"
+						class="bottom-20 required"
+						autocomplete="<?php echo esc_attr($autocomplete_scope . ' email'); ?>"
+						autocapitalize="none"
+						autocorrect="off"
+						spellcheck="false"
+						required
+					>				
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
 						<label for="repeat_email"><?php echo (esc_html__('Repeat Email', 'dynamicpackages')); ?></label>
-						<input type="email" name="repeat_email" class="bottom-20 required" />
+						<input
+							type="email"
+							name="repeat_email"
+							id="repeat_email"
+							class="bottom-20 required"
+							autocomplete="off"
+							autocapitalize="none"
+							autocorrect="off"
+							spellcheck="false"
+							required
+						>
 				</div>
 			</div>
 			
@@ -82,10 +122,27 @@
 						<label for="phone"><?php echo (esc_html__('Phone', 'dynamicaviation')); ?></label>
 						<div class="pure-g">
 							<div class="pure-u-1-2">
-									<select name="country_calling_code" class="countryCallingCode required"><option>--</option></select>
+								<select
+									name="country_calling_code"
+									id="country_calling_code"
+									class="countryCallingCode required"
+									autocomplete="<?php echo esc_attr($autocomplete_scope . ' tel-country-code'); ?>"
+									required
+									>
+									<option value="">--</option>
+								</select>
 							</div>
 							<div class="pure-u-1-2">
-									<input type="number" name="phone" class="required" />
+								<input
+									type="tel"
+									inputmode="tel"
+									name="phone"
+									id="phone"
+									class="required"
+									autocomplete="<?php echo esc_attr($autocomplete_scope . ' tel-national'); ?>"
+									aria-label="<?php echo esc_attr__('Phone Number', 'dynamicpackages'); ?>"
+									required
+								>
 							</div>
 						</div>
 					</div>

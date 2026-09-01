@@ -133,77 +133,90 @@ class paguelo_facil_on{
             return self::$cache[$cache_key];
         }
 
-		$required_params = ['CCNum', 'ExpMonth', 'ExpYear', 'CVV2', 'country', 'address', 'city'];
-
-		for($x = 0; $x < count($required_params); $x++)
+		if(!luhn_check(secure_post('CCNum')))
 		{
-			if(!array_key_exists($required_params[$x], $_POST))
-			{
-				$invalids[] = sprintf(__('Required param %s not found.', 'dynamicpackages'), $required_params[$x]);
-			}
+			$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
 		}
 
-		if(count($invalids) === 0) {
-			
-			if(!luhn_check(secure_post('CCNum')))
-			{
-				$invalids[] = __('Invalid Credit Card. Please return to the previous page to correct the numbers.', 'dynamicpackages');
-			}
+		$ExpMonth = secure_post('ExpMonth', 0, 'absint');
 
-			$ExpMonth = secure_post('ExpMonth', 0, 'absint');
+		if(!is_int($ExpMonth) || $ExpMonth < 1 || $ExpMonth > 12)
+		{
+			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
+		}
 
-			if(!is_int($ExpMonth) || $ExpMonth < 1 || $ExpMonth > 12)
-			{
-				$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
-			}
+		$ExpMonth = secure_post('ExpMonth');
+		$ExpYear  = secure_post('ExpYear');
+		
 
-			$ExpYear = secure_post('ExpYear', 0, 'absint');
-			$currYear = (int) date('Y');
+		$month_is_valid = is_string($ExpMonth)
+			&& preg_match('/\A(?:0[1-9]|1[0-2])\z/', $ExpMonth) === 1;
 
-			if(!is_int($ExpYear) || $ExpYear < $currYear || $ExpYear > $currYear + 20)
+		$year_is_valid = is_string($ExpYear)
+			&& preg_match('/\A\d{2}\z/', $ExpYear) === 1;
+
+		if(!$month_is_valid)
+		{
+			$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
+		}
+
+		if(!$year_is_valid)
+		{
+			$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
+		}
+
+		if($month_is_valid && $year_is_valid)
+		{
+			$current_year = (int) wp_date('Y');
+			$current_month = (int) wp_date('n');
+			$expiration_year = 2000 + (int) $ExpYear;
+			$expiration_month = (int) $ExpMonth;
+
+			if( $expiration_year < $current_year || $expiration_year > $current_year + 20
+			)
 			{
 				$invalids[] = __('Invalid expiration year.', 'dynamicpackages');
 			}
+			else if($expiration_year === $current_year && $expiration_month < $current_month
+			)
+			{
+				$invalids[] = __('Invalid expiration month.', 'dynamicpackages');
+			}
+		}
 
-			$CVV2 = secure_post('CVV2', 0, 'absint');
+		$CVV2     = secure_post('CVV2');
+		
+		if(!is_string($CVV2) || preg_match('/\A\d{3}\z/', $CVV2) !== 1) {
+			$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
+		}
 
-			if(empty($CVV2) || !is_int($CVV2) || $CVV2 < 100 || $CVV2 > 999)
-			{
-				$invalids[] = __('Invalid CVV (security code on the back of the card).', 'dynamicpackages');
-			}
-
-			$country = secure_post('country');
-			
-			if(empty($country) || !is_string($country) || strlen($country) !== 2)
-			{
-				$invalids[] = __('Invalid country.', 'dynamicpackages');
-			}
-			if(empty(secure_post('city')))
-			{
-				$invalids[] = __('Invalid city.', 'dynamicpackages');
-			}
-			if(empty(secure_post('address')))
-			{
-				$invalids[] = __('Invalid address.', 'dynamicpackages');
-			}
+		$country = secure_post('country');
+		
+		if(empty($country) || !is_string($country) || strlen($country) !== 2)
+		{
+			$invalids[] = __('Invalid country.', 'dynamicpackages');
+		}
+		if(empty(secure_post('city')))
+		{
+			$invalids[] = __('Invalid city.', 'dynamicpackages');
+		}
+		if(empty(secure_post('address')))
+		{
+			$invalids[] = __('Invalid address.', 'dynamicpackages');
 		}
 		
-		if(is_array($invalids))
+		if(count($invalids) === 0)
 		{
-			if(count($invalids) === 0)
-			{
-				$output = true;			
-			}
-			else
-			{
-				$GLOBALS['dy_request_invalids'] = $invalids;
-			}
+			$output = true;			
+		}
+		else
+		{
+			$GLOBALS['dy_request_invalids'] = array_unique(array_merge($GLOBALS['dy_request_invalids'] ?? [], $invalids));
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		//store output in $cache        
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
 	public  function validate_checkout($gateway_name)
