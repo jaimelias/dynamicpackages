@@ -936,6 +936,9 @@ class paguelo_facil_on{
 		$ExpYear = secure_post('ExpYear', 0, 'absint');
 		$ExpYear = sprintf('%02d', $ExpYear % 100);
 
+		$ExpMonth = secure_post('ExpMonth', 0, 'absint');
+		$ExpMonth = sprintf('%02d', $ExpMonth);
+
 		// Hash secreto
 		$hash = $CCNum . $CVV2 . $email;
 
@@ -946,7 +949,7 @@ class paguelo_facil_on{
 			'CMTN'       => round(dy_utilities::payment_amount(), 2),
 			'CDSC'       => substr(apply_filters('dy_description', null), 0, 150),
 			'CCNum'      => $CCNum,
-			'ExpMonth'   => secure_post('ExpMonth'),
+			'ExpMonth'   => $ExpMonth,
 			'ExpYear'    => $ExpYear,
 			'CVV2'       => $CVV2,
 			'Name'       => secure_post('first_name'),
