@@ -598,9 +598,7 @@ class paguelo_facil_on{
             return self::$cache[$cache_key];
         }
 
-		global $dy_request_invalids;
-
-		if(is_confirmation_page() && ($this->restored_from_cache || !isset($dy_request_invalids)))
+		if(is_confirmation_page() && ($this->restored_from_cache || !dy_errors::has_errors()))
 		{
 			if( secure_post('dy_request') === $this->id && ($this->restored_from_cache || self::$txt_status !== null))
 			{

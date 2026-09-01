@@ -128,11 +128,8 @@ class yappy_direct {
         if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
-
-		global $dy_request_invalids;
 		
-
-		if(is_confirmation_page() && !isset($dy_request_invalids))
+		if(is_confirmation_page() && !dy_errors::has_errors())
 		{
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{

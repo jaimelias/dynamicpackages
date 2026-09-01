@@ -210,10 +210,8 @@ class stable_coins {
         if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
         }
-
-		global $dy_request_invalids;
 		
-		if(is_confirmation_page() && post_has('dy_network') && !isset($dy_request_invalids))
+		if(is_confirmation_page() && post_has('dy_network') && !dy_errors::has_errors())
 		{
 			$network = secure_post('dy_network', '', 'sanitize_key');
 
