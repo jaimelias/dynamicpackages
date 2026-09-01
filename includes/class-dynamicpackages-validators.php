@@ -797,8 +797,6 @@ public static function validate_quote()
 		if (!is_string($unique_tx_id) || $unique_tx_id === '') return false;
 		if (!is_email($email)) return false;
 
-		write_log($email);
-
 		$transient_key = 'secret_tx_id_' . $unique_tx_id;
 		$secret_tx_id = get_transient( $transient_key );
 		$expected_secret_tx_id= hash_hmac('sha256', ($unique_tx_id . $email), wp_salt('auth'));
