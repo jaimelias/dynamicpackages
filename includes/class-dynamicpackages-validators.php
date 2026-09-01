@@ -383,6 +383,15 @@ public static function validate_quote()
 
 		if(self::is_confirmation_page())
 		{
+
+			if(!self::validate_unique_tx_id()) {
+				dy_errors::add(
+					__('Invalid unique_tx_id.', 'dynamicpackages')
+				);
+
+				return self::$cache[$cache_key] = false;
+			}
+			
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
 				if (!validate_turnstile()) {
@@ -912,10 +921,6 @@ public static function validate_quote()
 		$output = true;
 		$invalids = [];
 
-		if(!self::validate_unique_tx_id())
-		{
-			$invalids[] = __('Invalid unique_tx_id.', 'dynamicpackages');
-		}
 		if(!is_valid_date(secure_post('booking_date'))) {
 			$invalids[] = __('Invalid booking_date.', 'dynamicpackages');
 		}
