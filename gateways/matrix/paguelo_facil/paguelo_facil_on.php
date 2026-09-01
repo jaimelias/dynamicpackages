@@ -202,7 +202,7 @@ class paguelo_facil_on{
 		}
 		else
 		{
-			$GLOBALS['dy_request_invalids'] = array_unique(array_merge($GLOBALS['dy_request_invalids'] ?? [], $invalids));
+			dy_errors::add($invalids);
 		}
 
 		//store output in $cache        
@@ -261,9 +261,7 @@ class paguelo_facil_on{
 
 		if(!$this->is_payment_amount_allowed($amount))
 		{
-			$GLOBALS['dy_request_invalids'] = array(
-				__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages')
-			);
+			dy_errors::add(__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages'));
 
 			$this->skip_generic_submission();
 

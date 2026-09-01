@@ -223,7 +223,7 @@ public static function validate_quote()
 		}
 
 		if($count_missing_required_get_params > 0) {
-			$GLOBALS['dy_request_invalids'] = array_map(
+			dy_errors::add(array_map(
 				static function($param) {
 					return sprintf(
 						__(
@@ -234,7 +234,7 @@ public static function validate_quote()
 					);
 				},
 				$missing_required_get_params
-			);
+			));
 
 			return self::$cache[$cache_key] = false;
 		}
@@ -256,12 +256,12 @@ public static function validate_quote()
 
 		if(count($invalid_required_get_params) > 0) {
 
-			$GLOBALS['dy_request_invalids'] = array_map(
+			dy_errors::add(array_map(
 				function($param) {
 					return sprintf(__('Invalid request parameter: %s.'), $param);
 				},
 				$invalid_required_get_params
-			);
+			));
 			
 			$output = false;
 		} else {
@@ -289,7 +289,7 @@ public static function validate_quote()
 		$pax_regular = secure_request('pax_regular', 0, 'absint');
 
 		if (!is_int($pax_regular) || $pax_regular <= 0) {
-			$GLOBALS['dy_request_invalids'] = [__('Invalid param: pax_regular.', 'dynamicpackages')];
+			dy_errors::add(__('Invalid param: pax_regular.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -303,29 +303,29 @@ public static function validate_quote()
 		$hard_max_persons = $package_max_persons + $package_increase_persons;
 
 		if (!is_int($package_min_persons) || $package_min_persons <= 0) {
-			$GLOBALS['dy_request_invalids'] = [__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
+			dy_errors::add(__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
 		if (!is_int($package_max_persons) || $package_max_persons <= 0) {
-			$GLOBALS['dy_request_invalids'] = [__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
+			dy_errors::add(__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
 		if (!is_int($package_increase_persons) || $package_increase_persons < 0) {
-			$GLOBALS['dy_request_invalids'] = [__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages')];
+			dy_errors::add(__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
 		if($pax_sum < $package_min_persons) {
 
-    		$GLOBALS['dy_request_invalids'] = [__('You have not reached the minimum number of participants required for this package.', 'dynamicpackages')];
+			dy_errors::add(__('You have not reached the minimum number of participants required for this package.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
 		if($pax_sum > $hard_max_persons) {
 
-			$GLOBALS['dy_request_invalids'] = [__('You have exceeded the maximum number of participants allowed for this package', 'dynamicpackages')];
+			dy_errors::add(__('You have exceeded the maximum number of participants allowed for this package', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -455,9 +455,7 @@ public static function validate_quote()
 		};
 
 		$reject = static function($reason) use ($log) {
-			$GLOBALS['dy_request_invalids'] = [
-				__('Unable to validate this submission. Please try again later.', 'dynamicpackages')
-			];
+			dy_errors::add(__('Unable to validate this submission. Please try again later.', 'dynamicpackages'));
 			$log(['message' => 'Submission rate limit validation failed', 'reason' => $reason]);
 			return false;
 		};
@@ -605,9 +603,7 @@ public static function validate_quote()
 		}
 
 		if($blocked_until > 0) {
-			$GLOBALS['dy_request_invalids'] = [
-				__('Too many submissions. Please try again later.', 'dynamicpackages')
-			];
+			dy_errors::add(__('Too many submissions. Please try again later.', 'dynamicpackages'));
 			return false;
 		}
 
@@ -658,9 +654,7 @@ public static function validate_quote()
 				$cooldown
 			);
 
-			if(!in_array($message, $GLOBALS['dy_request_invalids'] ?? [], true)) {
-				$GLOBALS['dy_request_invalids'][] = $message;
-			}
+			dy_errors::add($message);
 
 			if($reason !== '') {
 				write_log(['message' => 'Rate limit validation failed', 'scope' => $scope, 'reason' => $reason]);
@@ -858,7 +852,7 @@ public static function validate_quote()
 		}
 		else
 		{
-			$GLOBALS['dy_request_invalids'] = $invalids;
+			dy_errors::add($invalids);
 		}
 
         //store output in $cache
@@ -896,7 +890,7 @@ public static function validate_quote()
 		}
 
 		if ($output === false) {
-			$GLOBALS['dy_request_invalids'] = array(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
+			dy_errors::add(__('Please you must accept our Terms & Conditions before booking', 'dynamicpackages'));
 		}
 
 		return self::$cache[$cache_key] = $output;
@@ -940,7 +934,7 @@ public static function validate_quote()
 		}
 
 		if(count($invalids) > 0) {
-			$GLOBALS['dy_request_invalids'] = $invalids;
+			dy_errors::add($invalids);
 			$output = false;
 		}
         
