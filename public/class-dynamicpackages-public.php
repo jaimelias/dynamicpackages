@@ -1014,7 +1014,7 @@ class Dynamicpackages_Public {
 	{
 		global $post;
 
-		if(!is_post_type_packages() || !dy_validators::is_child($post->ID)
+		if(!dy_validators::is_child($post->ID)
 		) {
 			return;
 		}

@@ -262,8 +262,6 @@ class Dynamicpackages_Export_Post_Types{
             return (object) [];
         }
 
-        global $polylang;
-
         $service_description = dy_format_blocks($post->post_content, 'text');
         $languages = (array) get_languages();
         $default_language = (string) default_language();

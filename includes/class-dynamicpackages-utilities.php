@@ -1336,8 +1336,6 @@ class dy_utilities {
 	public static function get_taxonomies($term_name)
 	{
 		global $post;
-	
-		if(!is_post_type_packages()) return [];
 
 		$output = [];
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
@@ -1370,12 +1368,9 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function get_taxo_names($term_name, $the_id = null)
-	{
-		$the_id = (!$the_id) ? get_dy_id() : $the_id;
+	public static function get_taxo_names($term_name, $the_id = null) : array {
+		
 		$post = get_post($the_id);
-
-		if(!is_post_type_packages()) return [];
 
 		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
 

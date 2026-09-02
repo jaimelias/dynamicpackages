@@ -17,9 +17,9 @@ function has_package()
 	return dy_validators::has_package();
 }
 
-function is_post_type_packages() : bool
+function is_post_type_packages($the_id = null) : bool
 {
-	return dy_validators::is_post_type_packages();
+	return dy_validators::is_post_type_packages($the_id);
 }
 
 
@@ -28,13 +28,17 @@ class dy_validators
 {
 	private static $cache = [];
 
-	public static function is_post_type_packages(): bool
+	public static function is_post_type_packages($the_id = null): bool
 	{
-		$the_id = get_dy_id();
+		if($the_id === null) {
+			$the_id = get_dy_id();
+		}
 
-		if($the_id === null) return false;
+		if(!is_numeric($the_id) || (int)$the_id <= 0) {
+			return false;
+		}
 
-		$post = get_post($the_id);
+		$post = get_post((int)$the_id);
 
 		return $post instanceof WP_Post
 			&& $post->post_type === 'packages';

@@ -266,17 +266,17 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 
 	public function get_add_ons()
-	{
-		static $cache = [];
+	{		
+		if(!is_post_type_packages()) {
+			return [];
+		}
 		
 		$the_id = get_dy_id();
 		$cache_key = 'dy_get_add_ons_' . $the_id;
 
 		$post = get_post($the_id);
 
-		if(!is_post_type_packages()) {
-			return [];
-		}
+
 
 		if (isset($cache[$cache_key])) {
 			return $cache[$cache_key];
