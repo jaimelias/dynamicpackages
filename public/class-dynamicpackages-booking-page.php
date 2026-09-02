@@ -103,7 +103,7 @@ class Dynamicpackages_Booking_Page {
 			'package_not_included' => (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'), '❌'),
 			'package_included' => (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅'),
 			'TERMS_CONDITIONS' => (array) $this->accept(),
-			'package_url' => get_permalink(),
+			'url' => get_permalink(),
 			'booking_url' => current_url_full(),
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),

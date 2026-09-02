@@ -1050,26 +1050,22 @@ class paguelo_facil_on{
 		{
 			$the_id = $post->ID;
 			
-			if(property_exists($post, 'post_parent'))
+			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 			{
 				$the_id = $post->post_parent;
 			}
 			
-			$languages = get_languages();
+			
+			$current_language = current_language();
+			$default_language = default_language();
+			$value = (string) package_field('package_confirmation_message_'.$current_language, $the_id)
+    			?: (string) package_field('package_confirmation_message_'.$default_language, $the_id);
 
-			for($x = 0; $x < count($languages); $x++)
-			{
-				$lang = $languages[$x];
-				$value = package_field('package_confirmation_message_'.$lang, $the_id);
-
-				if($value)
-				{
-					$Parsedown = new Parsedown();
-					$output = $Parsedown->text($value);
-				}
+			if($value !== '') {
+				$Parsedown = new Parsedown();
+				$output = $Parsedown->text($value);			
 			}
 		}
-
 
 		return $output;
 	}

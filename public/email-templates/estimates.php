@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-$post_id = secure_post('post_id', 0);
+$post_id = secure_post('dy_id', 0, 'absint');
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $label_doc = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages'));
 $greeting = apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), secure_post('first_name')));
@@ -51,7 +51,7 @@ $add_ons = apply_filters('dy_included_add_ons_list', '☑️');
 $label_show_package = esc_html(__('Show Package', 'dynamicpackages'));
 $package_url = get_the_permalink($post_id);
 
-$email_template = <<<EOT
+$email_template = <<<HTML
 <!DOCTYPE html>
 <html>
 	<head>
@@ -220,6 +220,6 @@ $email_template = <<<EOT
 		</div>		
 	</body>
 </html>
-EOT;
+HTML;
 
 ?>

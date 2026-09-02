@@ -4,11 +4,11 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 
-function package_field($name, $this_id = null) : string
+function package_field($name, $the_id = null) : string
 {
     try {
 
-        return Dynamicpackages_Fields::get($name, $this_id);
+        return Dynamicpackages_Fields::get($name, $the_id);
 
     } catch (Throwable $e) {
 
@@ -24,16 +24,16 @@ class Dynamicpackages_Fields
     private static $week_days = [];
     private static $languages = [];
 
-    public static function get($name, $this_id = null) : string
+    public static function get($name, $the_id = null) : string
 {
         global $post;
 
         // Ensure global $post is available
-        if ($this_id === null ) {
+        if (empty($the_id)) {
 
-            $this_id = get_dy_id();
+            $the_id = get_dy_id();
 
-            if($this_id === null)
+            if($the_id === null)
             {
                 $err_message = "'this_id' can not be null if 'post' is undefined in class 'Dynamicpackages_Fields': $name, URL: " . $_SERVER['REQUEST_URI'];
                 throw new Exception($err_message);
@@ -78,7 +78,7 @@ class Dynamicpackages_Fields
             $fields_not_inherited_from_parent[] = "package_redirect_url_$lang";
         }
 
-        // Check if the current post has a parent and adjust $this_id
+        // Check if the current post has a parent and adjust $the_id
         $is_child = (
             $post instanceof WP_Post
             && property_exists($post, 'post_parent')
@@ -86,7 +86,7 @@ class Dynamicpackages_Fields
         );
 
         $parent_id = $is_child ? (int) $post->post_parent : 0;
-        $type_id   = $is_child ? $parent_id : $this_id;
+        $type_id   = $is_child ? $parent_id : $the_id;
 
         $is_transport = (int) get_post_meta(
             $type_id,
@@ -106,11 +106,11 @@ class Dynamicpackages_Fields
         }
 
         if ($is_child && !in_array($name, $fields_not_inherited_from_parent, true)) {
-            $this_id = $parent_id;
+            $the_id = $parent_id;
         }
 
         // Generate a unique cache key
-        $cache_key = $name . '_' . $this_id;
+        $cache_key = $name . '_' . $the_id;
 
         // Use cached value if available
         if (array_key_exists($cache_key, self::$cache)) {
@@ -118,12 +118,12 @@ class Dynamicpackages_Fields
         }
 
         // Retrieve the field value
-        $this_field = get_post_meta($this_id, $name, true);
+        $this_field = get_post_meta($the_id, $name, true);
 
         if(!is_string($this_field))
         {
             write_log(
-                "Dynamicpackages_Fields::get() - Warning: Field value for '$name' in post '$this_id' is not a string. Value: " . print_r($this_field, true)
+                "Dynamicpackages_Fields::get() - Warning: Field value for '$name' in post '$the_id' is not a string. Value: " . print_r($this_field, true)
             );
             $this_field = '';
         }

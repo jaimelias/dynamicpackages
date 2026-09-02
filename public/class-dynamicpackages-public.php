@@ -985,44 +985,66 @@ class Dynamicpackages_Public {
 			echo $output;
 		}
 	}
-	public function count_child($this_id = null)
-	{
-		if($this_id == null)
+
+	public function count_child($the_id = null) : int {
+		if(empty($the_id))
 		{
 			global $post;
-			$this_id = $post->ID;
+			$the_id = $post instanceof WP_Post ? $post->ID : 0;
 		}
-		
-		$pages = get_pages( array( 'child_of' => $this_id, 'post_type' => 'packages'));
-		
-		if(is_array($pages))
+
+		if(empty($the_id))
 		{
-			return count($pages);
+			return 0;
 		}
+
+		$cache_key = 'dy_count_child_' . $the_id;
+
+		if(array_key_exists($cache_key, self::$cache))
+		{
+			return self::$cache[$cache_key];
+		}
+
+		$pages = get_pages(array('child_of' => $the_id, 'post_type' => 'packages'));
+
+		return self::$cache[$cache_key] = is_array($pages) ? count($pages) : 0;
 	}
-	public function similar_packages_link()
+
+	public function similar_packages_link(): void
 	{
-		$output = '';
-		$cache_key = 'dy_similar_packages_link';
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
 		global $post;
-		
-		if(($post instanceof WP_Post) && dy_validators::is_child())
-		{
-			$similar_packages_label = isset($this->current_language)
-				&& package_field('package_child_title_'.$this->current_language, $post->post_parent)
-				? package_field('package_child_title_'.$this->current_language, $post->post_parent)
-				: __('Similar packages', 'dynamicpackages');
 
-			$output = '<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox strong" href="'.esc_url(get_the_permalink($post->post_parent)).'"><span class="dashicons dashicons-arrow-left"></span>'.esc_html($this->count_child($post->post_parent)).' '.esc_html($similar_packages_label).'</a></div>';			
+		if(!is_post_type_packages() || !dy_validators::is_child($post->ID)
+		) {
+			return;
 		}
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
+		$cache_key = 'dy_similar_packages_link_' . $post->ID;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			echo self::$cache[$cache_key];
+			return;
+		}
+
+		$label = !empty($this->current_language)
+			? package_field(
+				'package_child_title_' . $this->current_language,
+				$post->post_parent
+			)
+			: '';
+
+		$similar_packages_label = $label !== ''
+			? $label
+			: __('Similar packages', 'dynamicpackages');
+
+		$output = sprintf(
+			'<div class="bottom-20"><a class="pure-button rounded block width-100 borderbox strong" href="%s"><span class="dashicons dashicons-arrow-left"></span>%s %s</a></div>',
+			esc_url(get_permalink($post->post_parent)),
+			esc_html($this->count_child($post->post_parent)),
+			esc_html($similar_packages_label)
+		);
+
+		self::$cache[$cache_key] = $output;
 
 		echo $output;
 	}

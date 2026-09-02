@@ -560,29 +560,21 @@ class Dynamicpackages_Reviews
 		}
 		else
 		{
-			$languages = get_languages();
-			$language_list = [];
-			$merged_comments = [];
 			$rating = [];
 			$count = 0;
+			$languages = get_languages();
+
 			$args = array(
-				'post_parent' => 0,
-				'post_type' => 'packages',
+				'post_parent'    => 0,
+				'post_type'      => 'packages',
 				'posts_per_page' => -1
 			);
 
-			for($x = 0; $x < count($languages); $x++)
-			{
-				$lang = $languages[$x];
-				$language_list[] = $lang;
-			}			
-			
-			if(count($language_list) > 0)
-			{
-				$args['lang'] = $language_list;
+			if (count($languages) > 0) {
+				$args['lang'] = $languages;
 			}
-			
-			$total_reviews = new WP_Query($args);	
+
+			$total_reviews = new WP_Query($args);
 
 			if($total_reviews->have_posts())
 			{

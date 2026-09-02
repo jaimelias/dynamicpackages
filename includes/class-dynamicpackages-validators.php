@@ -17,12 +17,30 @@ function has_package()
 	return dy_validators::has_package();
 }
 
+function is_post_type_packages() : bool
+{
+	return dy_validators::is_post_type_packages();
+}
+
+
 #[AllowDynamicProperties]
 class dy_validators
 {
 	private static $cache = [];
 
-public static function validate_quote()
+	public static function is_post_type_packages(): bool
+	{
+		$the_id = get_dy_id();
+
+		if($the_id === null) return false;
+
+		$post = get_post($the_id);
+
+		return $post instanceof WP_Post
+			&& $post->post_type === 'packages';
+	}
+	
+	public static function validate_quote()
 	{
 
 		$output = false;
@@ -187,11 +205,7 @@ public static function validate_quote()
 			return self::$cache[$cache_key];
 		}
 
-		$the_id = get_dy_id();
-
-		$post   = $the_id ? get_post($the_id) : null;
-
-		if (!($post instanceof WP_Post) || $post->post_type !== 'packages') {
+		if (!is_post_type_packages()) {
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -238,6 +252,7 @@ public static function validate_quote()
 		}
 
 		$invalid_required_get_params = [];
+		$the_id = get_dy_id();
 
 		if (!self::validate_booking_date($the_id)) {
 			$invalid_required_get_params[] = 'booking_date';
@@ -356,13 +371,19 @@ public static function validate_quote()
 			return self::$cache[$cache_key] = false;
 		}
 
-		$post_id = secure_post('post_id', 0);
+		$the_id = get_dy_id();
 
-		if(!empty(secure_post('dy_request')) && !empty($post_id))
+		if($the_id === null) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		if(!empty(secure_post('dy_request')))
 		{
-			$post = get_post($post_id);
+			$post = get_post($the_id);
 
-			if(($post instanceof WP_Post) && ($post->post_type === 'packages' || has_shortcode( $post->post_content, 'package_contact'))) {
+			$has_shortcode = ($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact');
+
+			if(is_post_type_packages() || $has_shortcode) {
 				$output = true;
 			}
 		}
@@ -414,9 +435,9 @@ public static function validate_quote()
 	}
 
 	public static function is_white_listed_from_rate_limits() : bool {
-		$post_id = absint(secure_post('dy_id'));
+		$the_id = secure_post('dy_id', 0, 'absint');
 
-		if($post_id > 0 && current_user_can('edit_post', $post_id)) {
+		if($the_id > 0 && current_user_can('edit_post', $the_id)) {
 			return true;
 		}
 
@@ -636,9 +657,11 @@ public static function validate_quote()
 
 	public static function validate_post_id_rate_limits(): bool
 	{
-		$post_id = absint(secure_post('dy_id'));
+		$the_id = secure_post('dy_id', 0, 'absint');
 
-		return self::validate_rate_limit_bucket('post_id', $post_id);
+		return $the_id === 0 
+			? false 
+			: self::validate_rate_limit_bucket('dy_id', $the_id);
 	}
 
 	public static function validate_gateway_rate_limits(): bool
@@ -1186,12 +1209,9 @@ public static function validate_quote()
 					return self::$cache[$cache_key];
 				}
 
-				if(property_exists($post, 'post_parent'))
+				if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 				{
-					if($post->post_parent > 0)
-					{
-						$output = true;
-					}					
+					$output = true;				
 				}
 
 				//store output in $cache

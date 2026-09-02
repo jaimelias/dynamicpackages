@@ -510,7 +510,7 @@ class Dynamicpackages_Export_Post_Types{
         }
 
 
-        if(isset($polylang))
+        if(function_exists('pll_get_post'))
         {
             foreach ($languages as $language) {
 

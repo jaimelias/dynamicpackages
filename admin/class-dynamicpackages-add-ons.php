@@ -274,7 +274,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 		$post = get_post($the_id);
 
-		if(!($post instanceof WP_Post)) {
+		if(!is_post_type_packages()) {
 			return [];
 		}
 
@@ -297,13 +297,10 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		$current_terms = get_the_terms($post->ID, $this->name);
 		$current_terms = (is_array($current_terms)) ? $current_terms : [];
 
-		if(property_exists($post, 'post_parent'))
+		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 		{
-			if($post->post_parent > 0)
-			{
-				$parent_terms = get_the_terms($post->post_parent, $this->name);
-				$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
-			}
+			$parent_terms = get_the_terms($post->post_parent, $this->name);
+			$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
 		}			
 		
 		$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );

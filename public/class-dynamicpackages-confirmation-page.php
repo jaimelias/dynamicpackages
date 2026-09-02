@@ -19,11 +19,14 @@ class Dynamicpackages_Confirmation_Page {
 
 	public function set_post_on_checkout_page()
 	{
-		global $post;
-		
-		if(is_confirmation_page() && !($post instanceof WP_Post))
+
+		if(is_confirmation_page())
 		{
-			$GLOBALS['post'] = get_post(secure_post('post_id'));
+            $the_id = get_dy_id();
+
+            if($the_id !== null) {
+                $GLOBALS['post'] = get_post($the_id);
+            }
 		}
 	}
 

@@ -36,7 +36,7 @@ class Dynamicpackages_LD_JSON
 			}
 		}
 
-		$package_url = get_permalink($package_main);
+		$url = get_permalink($package_main);
 
 		$website = [
 			'@context' => 'http://schema.org',
@@ -45,7 +45,7 @@ class Dynamicpackages_LD_JSON
 			'name' => get_bloginfo('name'),
 			'potentialAction' => [
 				'@type' => 'SearchAction',
-				'target' => "{$package_url}?keywords={search_term}",
+				'target' => "{$url}?keywords={search_term}",
 				'query' => 'required name=search_term',
 			],
 		];

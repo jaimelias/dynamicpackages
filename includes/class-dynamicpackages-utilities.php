@@ -34,12 +34,9 @@ class dy_utilities {
 			
 			global $post;
 
-			if(property_exists($post, 'post_parent'))
+			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 			{
-				if($post->post_parent > 0)
-				{
-					$the_id = $post->post_parent;
-				} 
+				$the_id = $post->post_parent;
 			}
 		}
 
@@ -1340,7 +1337,7 @@ class dy_utilities {
 	{
 		global $post;
 	
-		if(!($post instanceof WP_Post)) return [];
+		if(!is_post_type_packages()) return [];
 
 		$output = [];
 		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
@@ -1349,26 +1346,22 @@ class dy_utilities {
             return self::$cache[$cache_key];
         }
 
-
-		if($post instanceof WP_Post)
+		$the_id = $post->ID;
+		
+		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 		{
-			$the_id = $post->ID;
-			
-			if(property_exists($post, 'post_parent'))
-			{
-				$the_id = $post->post_parent;
-			}		
-			
-			$terms = get_the_terms($the_id, $term_name);
+			$the_id = $post->post_parent;
+		}		
+		
+		$terms = get_the_terms($the_id, $term_name);
 
-			
-			if($terms)
+		
+		if($terms)
+		{
+			for($x = 0; $x < count($terms); $x++)
 			{
-				for($x = 0; $x < count($terms); $x++)
-				{
-					$output[] = $terms[$x];
-				}			
-			}		
+				$output[] = $terms[$x];
+			}			
 		}
 
         //store output in $cache
@@ -1382,7 +1375,7 @@ class dy_utilities {
 		$the_id = (!$the_id) ? get_dy_id() : $the_id;
 		$post = get_post($the_id);
 
-		if(!($post instanceof WP_Post)) return [];
+		if(!is_post_type_packages()) return [];
 
 		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
 
@@ -1395,7 +1388,7 @@ class dy_utilities {
 
 		$parent_terms = [];
 
-		if(property_exists($post, 'post_parent'))
+		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 		{
 			$parent_terms = get_the_terms($post->post_parent, $term_name);
 			$parent_terms = is_array($parent_terms) 
@@ -1551,7 +1544,7 @@ class dy_utilities {
 			$current_terms = get_the_terms($post->ID, $term_name);
 			$current_terms = (is_array($current_terms)) ? $current_terms : array();
 
-			if(property_exists($post, 'post_parent'))
+			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 			{
 				$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
 				$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();

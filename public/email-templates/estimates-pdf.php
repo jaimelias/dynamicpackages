@@ -2,7 +2,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-$post_id = secure_post('post_id', 0);
+$post_id = secure_post('dy_id', 0, 'absint');
 $today = dy_utilities::format_date(strtotime('today UTC'));
 $total = apply_filters('dy_email_total', wrap_money_full(dy_utilities::total()));
 $company_name = get_bloginfo('name');
