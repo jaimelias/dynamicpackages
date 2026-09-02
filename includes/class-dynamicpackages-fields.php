@@ -6,34 +6,13 @@ if ( !defined( 'WPINC' ) ) exit;
 
 function package_field($name, $this_id = null)
 {
-    //enable this code debugs memory exaust
-    if ( !defined('WP_DEBUG') || !WP_DEBUG ) {
-        $val = Dynamicpackages_Fields::get($name, $this_id);
-        return is_string($val) ? $val : (string) $val;
-    }
-
     try {
 
-        $val = Dynamicpackages_Fields::get($name, $this_id);
-        return is_string($val) ? $val : (string) $val;
+        return Dynamicpackages_Fields::get($name, $this_id);
 
     } catch (Throwable $e) {
 
-        // Keep backtrace tiny: ignore args & cap to 2 frames (self + caller).
-        $t = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-
-        if (!empty($t[1])) {
-            $c = $t[1];
-            // Build the log message with simple concatenation to avoid sprintf allocations.
-            $msg  = 'package_field(' . $name . ', ' . (string) $this_id . ') ';
-            $msg .= 'called by ' . ($c['function'] ?? '[global]');
-            $msg .= ' in ' . ($c['file'] ?? '[unknown file]');
-            $msg .= ' on line ' . (isset($c['line']) ? (int) $c['line'] : 0);
-            $msg .= ' — ' . $e->getMessage();
-            if (function_exists('write_log')) write_log($msg);
-        } else {
-            if (function_exists('write_log')) write_log($e->getMessage());
-        }
+        write_log('Dynamicpackages_Fields::get() - Error: ' . $e->getMessage(), true);
 
         return '';
     }
@@ -133,6 +112,15 @@ class Dynamicpackages_Fields
         // Retrieve the field value
         $this_field = get_post_meta($this_id, $name, true);
 
+        if(!is_string($this_field))
+        {
+            write_log(
+                "Dynamicpackages_Fields::get() - Warning: Field value for '$name' in post '$this_id' is not a string. Value: " . print_r($this_field, true)
+            );
+            $this_field = '';
+        }
+
+
         if(request_has('enable_payment') && $name === 'package_auto_booking')
         {
             $this_field = '1';
@@ -156,11 +144,9 @@ class Dynamicpackages_Fields
             if($name === 'package_payment') $this_field = '0';
             if($name === 'package_deposit') $this_field = '';
         }
+        
 
-        // Store the value in the cache
-        self::$cache[$cache_key] = $this_field;
-
-        return $this_field;
+        return self::$cache[$cache_key] = $this_field;
     }
 }
 

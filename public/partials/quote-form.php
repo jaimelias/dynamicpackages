@@ -24,7 +24,7 @@
 
 	    <div class="text-center bottom-20" id="dy_checkout_branding">
 			<p class="large text-muted">
-				<?php esc_html_e($header_form); ?>
+				<?php echo esc_html(__($header_form)); ?>
 			</p>
 		</div>
 		
@@ -44,24 +44,24 @@
 		<input type="hidden" name="add_ons" value="<?php echo esc_attr($add_ons_value); ?>"/>
 		<input type="hidden" name="dy_id" value="<?php echo esc_attr(get_dy_id()); ?>"/>
 
-		<?php if(isset($_GET['route'])): ?>
+		<?php if(get_has('route')): ?>
 			<input type="hidden" name="route" value="<?php echo esc_attr(sanitize_text_field($_GET['route'])); ?>"/>
 		<?php endif; ?>
 		
-		<?php if(isset($_GET['enable_payment'])): ?>
+		<?php if(get_has('enable_payment')): ?>
 			<input type="hidden" name="enable_payment" value="true"/>
 		<?php endif; ?>
 
 
-		<?php if(isset($_GET['force_availability'])): ?>
+		<?php if(get_has('force_availability')): ?>
 			<input type="hidden" name="force_availability" value="true"/>
 		<?php endif; ?>		
 
 		<div>
-			<h3><?php echo (esc_html__('Contact Details', 'dynamicpackages')); ?></h3>
+			<h3><?php echo esc_html(__('Contact Details', 'dynamicpackages')); ?></h3>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="first_name"><?php echo (esc_html__('Name', 'dynamicpackages')); ?></label>
+					<label for="first_name"><?php echo esc_html(__('Name', 'dynamicpackages')); ?></label>
 					<input
 						type="text"
 						name="first_name"
@@ -73,7 +73,7 @@
 					>
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="lastname"><?php echo (esc_html__('Last Name', 'dynamicpackages')); ?></label>
+					<label for="lastname"><?php echo esc_html(__('Last Name', 'dynamicpackages')); ?></label>
 					<input
 						type="text"
 						name="lastname"
@@ -87,7 +87,7 @@
 			</div>
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
-					<label for="email"><?php echo (esc_html__('Email', 'dynamicpackages')); ?></label>
+					<label for="email"><?php echo esc_html(__('Email', 'dynamicpackages')); ?></label>
 					<input
 						type="email"
 						name="email"
@@ -101,7 +101,7 @@
 					>				
 				</div>
 				<div class="pure-u-1 pure-u-md-1-2">
-						<label for="repeat_email"><?php echo (esc_html__('Repeat Email', 'dynamicpackages')); ?></label>
+						<label for="repeat_email"><?php echo esc_html(__('Repeat Email', 'dynamicpackages')); ?></label>
 						<input
 							type="email"
 							name="repeat_email"
@@ -119,7 +119,7 @@
 			<div class="pure-g gutters">
 				<div class="pure-u-1 pure-u-md-1-2">
 					<div class="bottom-20">
-						<label for="phone"><?php echo (esc_html__('Phone', 'dynamicaviation')); ?></label>
+						<label for="phone"><?php echo esc_html(__('Phone', 'dynamicaviation')); ?></label>
 						<div class="pure-g">
 							<div class="pure-u-1-2">
 								<select
@@ -175,7 +175,7 @@
 					type="button"
 					onClick="checkoutFormSubmit(); return false;"
 					class="pure-button pure-button-primary strong large">
-					<?php esc_html_e($submit_form); ?>
+					<?php echo esc_html(__($submit_form)); ?>
 				</button>
 			</div>
 <?php endif; ?>
