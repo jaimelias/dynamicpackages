@@ -4,7 +4,7 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 
-function package_field($name, $this_id = null)
+function package_field($name, $this_id = null) : string
 {
     try {
 
@@ -21,9 +21,11 @@ function package_field($name, $this_id = null)
 class Dynamicpackages_Fields
 {
     private static $cache = [];
+    private static $week_days = [];
+    private static $languages = [];
 
-    public static function get($name, $this_id = null)
-    {
+    public static function get($name, $this_id = null) : string
+{
         global $post;
 
         // Ensure global $post is available
@@ -39,11 +41,17 @@ class Dynamicpackages_Fields
         }
 
         // Fetch week days and languages with fallbacks
-        $week_days = dy_utilities::get_week_days_abbr() ?? [];
-        $languages = get_languages() ?? [];
 
+        if(empty(self::$week_days)) {
+            self::$week_days = dy_utilities::get_week_days_abbr() ?? [];
+        }
+        
+        if(empty(self::$languages)) {
+            self::$languages = get_languages() ?? [];
+        }
+        
         // Define base excluded fields
-        $excludes = [
+        $fields_not_inherited_from_parent = [
             'package_occupancy_chart',
             'package_price_chart',
             'package_min_persons',
@@ -59,15 +67,15 @@ class Dynamicpackages_Fields
         ];
 
         // Add day-specific excludes
-        foreach ($week_days as $day) {
-            $excludes[] = "package_week_day_surcharge_$day";
-            $excludes[] = "package_day_$day";
+        foreach (self::$week_days as $day) {
+            $fields_not_inherited_from_parent[] = "package_week_day_surcharge_$day";
+            $fields_not_inherited_from_parent[] = "package_day_$day";
         }
 
         // Add language-specific excludes
-        foreach ($languages as $lang) {
-            $excludes[] = "package_child_title_$lang";
-            $excludes[] = "package_redirect_url_$lang";
+        foreach (self::$languages as $lang) {
+            $fields_not_inherited_from_parent[] = "package_child_title_$lang";
+            $fields_not_inherited_from_parent[] = "package_redirect_url_$lang";
         }
 
         // Check if the current post has a parent and adjust $this_id
@@ -87,7 +95,7 @@ class Dynamicpackages_Fields
         );
 
         if ($is_transport === 4) {
-            $excludes = array_merge($excludes, [
+            $fields_not_inherited_from_parent = array_merge($fields_not_inherited_from_parent, [
                 'package_check_in_hour',
                 'package_start_hour',
                 'package_check_in_end_hour',
@@ -97,7 +105,7 @@ class Dynamicpackages_Fields
             ]);
         }
 
-        if ($is_child && !in_array($name, $excludes, true)) {
+        if ($is_child && !in_array($name, $fields_not_inherited_from_parent, true)) {
             $this_id = $parent_id;
         }
 
