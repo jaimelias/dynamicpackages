@@ -105,7 +105,6 @@ class Dynamicpackages_Booking_Page {
 			'TERMS_CONDITIONS' => (array) $this->accept(),
 			'package_url' => get_permalink(),
 			'booking_url' => current_url_full(),
-			'hash' => secure_get('hash', null),
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),
 			'outstanding' => (float) $this->outstanding(),

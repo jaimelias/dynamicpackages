@@ -165,7 +165,7 @@ class Dynamicpackages_Forms
 		$form .= '<div style="max-width: 300px; margin: 0 auto 20px auto;"><img class="img-responsive" width="600" weight="200" alt="visa mastercard paypal yappy crypto usdt usdc btc" src="'.esc_url($plugin_dir_url.'gateways/matrix/assets/pagos.svg').'"  /></div>';
 
 
-		$form .= '<input type="hidden" name="dy_id" value="'.esc_attr(get_dy_id()).'"/>';
+		$form .= '<input type="hidden" value="'.esc_attr(get_dy_id()).'"/>';
 
 		if(($by_hour === '0' && $start_hour !== '' && $return_hour !== ''))
 		{

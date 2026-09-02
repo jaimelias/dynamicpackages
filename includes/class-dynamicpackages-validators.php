@@ -197,10 +197,8 @@ public static function validate_quote()
 
 		$missing_required_get_params = [];
 		$required_get_params = [
-			'dy_id',
 			'booking_date',
-			'pax_regular',
-			'hash'
+			'pax_regular'
 		];
 
 		$count_required_get_params = count($required_get_params);
@@ -241,17 +239,11 @@ public static function validate_quote()
 
 		$invalid_required_get_params = [];
 
-		if(!self::validate_the_id($the_id) || $the_id !== secure_get('dy_id', null, 'absint')) {
-			$invalid_required_get_params[] = 'dy_id';
-		}
 		if (!self::validate_booking_date($the_id)) {
 			$invalid_required_get_params[] = 'booking_date';
 		}
 		if (!self::validate_pax_regular($the_id)) {
 			$invalid_required_get_params[] = 'pax_regular';
-		}
-		if (!self::validate_hash()) {
-			$invalid_required_get_params[] = 'hash';
 		}
 
 		if(count($invalid_required_get_params) > 0) {
@@ -948,50 +940,6 @@ public static function validate_quote()
 		}
         
 		return self::$cache[$cache_key] = $output;
-	}
-
-
-		
-	public static function validate_hash()
-	{
-		$cache_key = 'dy_validate_hash';
-
-		if(array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		if(
-			!get_has('booking_date')
-			|| !get_has('hash')
-			|| !get_has('pax_regular')
-		) {
-			return self::$cache[$cache_key] = false;
-		}
-
-		$booking_date = secure_get('booking_date');
-		$request_hash = secure_get('hash');
-
-		if(
-			!is_valid_date($booking_date)
-			|| !preg_match('/^[a-f0-9]{128}$/', $request_hash)
-		) {
-			return self::$cache[$cache_key] = false;
-		}
-
-		$pax_num =
-			secure_get('pax_regular', 0, 'absint')
-			+ secure_get('pax_discount', 0, 'absint')
-			+ secure_get('pax_free', 0, 'absint');
-
-		$expected_hash = hash(
-			'sha512',
-			$pax_num . $booking_date
-		);
-
-		return self::$cache[$cache_key] = hash_equals(
-			$expected_hash,
-			$request_hash
-		);
 	}
 	
 	public static function has_coupon()

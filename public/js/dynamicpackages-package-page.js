@@ -409,15 +409,6 @@ const validateCheckPricesForm = () => {
 					}
 				});
 
-				const hashMessage = `${paxNum}${bookingDate.value}`
-				const hash = await sha512(hashMessage);
-
-				jQuery(thisForm).append(jQuery('<input />').attr({
-					name: 'hash',
-					type: 'hidden',
-					value: hash
-				}));
-
 				formToArray(thisForm).forEach(v => {
 					const {name, value} = v;
 					
