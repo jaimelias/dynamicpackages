@@ -920,4 +920,22 @@ if(!function_exists('luhn_check')) {
 }
 
 
+if (!function_exists('email_str_row_to_array')) {
+	function email_str_row_to_array($str, $recipients_limit = 10) {
+		if (!$str) {
+			return [];
+		}
+
+		$str    = str_replace("\r\n", "\n", html_entity_decode($str));
+		$emails = array_map('trim', explode("\n", $str));
+
+		return array_slice(
+			array_unique(array_filter(array_map('sanitize_email', $emails))),
+			0,
+			$recipients_limit
+		);
+	}
+}
+
+
 ?>
