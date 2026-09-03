@@ -34,3 +34,7 @@ cp -r dy-core ../../themes/minimalizr/submodules
 cd -
 cd ../
 perform_git_actions
+cd ../dynamicaviation
+perform_git_actions
+cd ./../themes/minimalizr
+perform_git_actions
