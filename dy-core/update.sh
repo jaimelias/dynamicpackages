@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # stop on first error, so a bad path doesn't cascade into worse damage
 
 # Check if a custom comment is provided as a command-line argument
 if [ -z "$1" ]; then
@@ -6,40 +7,41 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-# Set the custom comment
 CUSTOM_COMMENT="$1"
 
-# Function to perform the git actions
+# Anchor to the script's own directory so cwd assumptions don't break it
+cd "$(dirname "$0")"
+
+# Function to perform the git actions in the CURRENT directory
 perform_git_actions() {
     git add .
-    git commit -m "$CUSTOM_COMMENT"
+    git commit -m "$CUSTOM_COMMENT" || echo "Nothing to commit in $(pwd)"
     git push origin master
 }
 
-# Main script
-
-# Root directory
-perform_git_actions
-
-# Move to parent directory
+# --- 1. Commit dy-core itself ---
+# Gets to /wp-content/plugins/dynamicpackages
 cd ..
-
-# Parent directory
 perform_git_actions
 
-# Move to dynamicaviation directory
-cd ../dynamicaviation || exit
-./submodules.sh
+# --- 2. Sync into dynamicaviation and commit there ---
+rm -rf ../dynamicaviation/submodules/dy-core
+mkdir -p ../dynamicaviation/submodules
+cp -r dynamicpackages/dy-core ../dynamicaviation/submodules
 
-# Dynamicaviation directory
-perform_git_actions
+(
+    cd ../dynamicaviation
+    perform_git_actions
+)
 
-# Move to themes/minimalizr directory
-cd ../../themes/minimalizr || exit
-./submodules.sh
+# --- 3. Sync into minimalizr theme and commit there ---
+rm -rf ../../themes/minimalizr/submodules/dy-core
+mkdir -p ../../themes/minimalizr/submodules
+cp -r dynamicpackages/dy-core ../../themes/minimalizr/submodules
 
-# Minimalizr directory
-perform_git_actions
+(
+    cd ../../themes/minimalizr
+    perform_git_actions
+)
 
-# Return to the original directory
-cd -
+echo "Done."
