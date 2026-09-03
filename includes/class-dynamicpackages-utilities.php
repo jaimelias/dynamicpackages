@@ -1558,6 +1558,11 @@ class dy_utilities {
 			foreach ( $terms as $t )
 			{
 				$url = get_term_link($t);
+
+				if (is_wp_error($url)) {
+					continue;
+				}
+				
 				$title_modifier = get_term_meta($t->term_id, 'tax_title_modifier', true);
 
 				$title = (strlen($title_modifier) > strlen($t->name)) ? $title_modifier : $t->name;

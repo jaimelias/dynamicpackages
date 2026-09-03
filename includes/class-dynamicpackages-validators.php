@@ -903,12 +903,13 @@ class dy_validators
 			return self::$cache[$cache_key];
 		}
 
-		$auto_booking = intval(package_field('package_auto_booking'));
+		$auto_booking = (int) package_field('package_auto_booking');
 
 		if ($auto_booking === 1) {
-			$terms = dy_utilities::get_taxonomies('package_terms_conditions');
+			$terms = (array) dy_utilities::get_taxonomies('package_terms_conditions');
 
-			if (is_array($terms) && count($terms) > 0) {
+			if (!empty($terms)) {
+
 				foreach ($terms as $term) {
 					$term_name = 'terms_conditions_' . $term->term_id;
 					$accepted = secure_post($term_name, false);
@@ -918,6 +919,7 @@ class dy_validators
 						break;
 					}
 				}
+				
 			}
 		}
 
