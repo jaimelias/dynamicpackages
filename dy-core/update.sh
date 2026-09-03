@@ -13,7 +13,7 @@ CUSTOM_COMMENT="$1"
 perform_git_actions() {
     git add .
     git commit -m "$CUSTOM_COMMENT"
-    git push origin master
+    git push origin master --force
 }
 
 
