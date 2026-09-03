@@ -387,15 +387,15 @@ class Dynamicpackages_Metaboxes
 
 		<p>
 			<label for="package_check_in_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo esc_attr($this->check_in_hour); ?>">
+			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo esc_attr($this->check_in_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 		</p>
 		<p>
 			<label for="package_start_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo esc_attr($this->start_hour); ?>">
+			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo esc_attr($this->start_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 		</p>				
 		<p>
 			<label for="package_start_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
-			<textarea cols="60" type="text" name="package_start_address" id="package_start_address"><?php echo esc_textarea($this->start_address); ?></textarea>
+			<textarea cols="60" type="text" name="package_start_address" id="package_start_address" <?php echo esc_attr($this->disable_child); ?>><?php echo esc_textarea($this->start_address); ?></textarea>
 		</p>
 
 		<?php if ($this->is_transport): ?>
@@ -409,15 +409,15 @@ class Dynamicpackages_Metaboxes
 			
 			<p>
 				<label for="package_check_in_end_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr($this->package_check_in_end_hour); ?>">
+				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr($this->package_check_in_end_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 			</p>
 			<p>
 				<label for="package_return_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo esc_attr($this->return_hour); ?>">
+				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo esc_attr($this->return_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 			</p>				
 			<p>
 				<label for="package_return_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
-				<textarea cols="60" type="text" name="package_return_address" id="package_return_address"><?php echo esc_textarea($this->return_address); ?></textarea>
+				<textarea cols="60" type="text" name="package_return_address" id="package_return_address" <?php echo esc_attr($this->disable_child); ?>><?php echo esc_textarea($this->return_address); ?></textarea>
 			</p>
 			
 			<p>

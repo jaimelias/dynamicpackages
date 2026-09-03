@@ -86,24 +86,6 @@ class Dynamicpackages_Fields
         );
 
         $parent_id = $is_child ? (int) $post->post_parent : 0;
-        $type_id   = $is_child ? $parent_id : $the_id;
-
-        $is_transport = (int) get_post_meta(
-            $type_id,
-            'package_package_type',
-            true
-        );
-
-        if ($is_transport === 4) {
-            $fields_not_inherited_from_parent = array_merge($fields_not_inherited_from_parent, [
-                'package_check_in_hour',
-                'package_start_hour',
-                'package_check_in_end_hour',
-                'package_return_hour',
-                'package_start_address',
-                'package_return_address',
-            ]);
-        }
 
         if ($is_child && !in_array($name, $fields_not_inherited_from_parent, true)) {
             $the_id = $parent_id;
