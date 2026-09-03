@@ -904,9 +904,9 @@ if(!function_exists('luhn_check')) {
 
 if (!function_exists('str_row_to_array')) {
 	function str_row_to_array(
-		$str,
-		$items_limit = 100,
-		$sanitize_func = 'sanitize_text_field'
+		string $str,
+		int|null $items_limit = null,
+		Closure|string $sanitize_func = 'sanitize_text_field'
 	): array {
 		if (!$str) {
 			return [];
@@ -914,10 +914,6 @@ if (!function_exists('str_row_to_array')) {
 
 		if (!is_callable($sanitize_func)) {
 			$sanitize_func = 'sanitize_text_field';
-		}
-
-		if (!is_int($items_limit) || $items_limit < 1) {
-			$items_limit = 100;
 		}
 
 		$str = str_replace(
@@ -930,14 +926,16 @@ if (!function_exists('str_row_to_array')) {
 		$items = array_map($sanitize_func, $items);
 		$items = array_unique(array_filter($items));
 
-		return array_slice($items, 0, $items_limit);
+		return (is_int($items_limit) && $items_limit > 0) 
+			? array_slice($items, 0, $items_limit)
+			: $items;
 	}
 }
 
 if (!function_exists('email_str_row_to_array')) {
 	function email_str_row_to_array(
-		$str,
-		$recipients_limit = 10
+		string $str,
+		int $recipients_limit = null
 	): array {
 		return str_row_to_array(
 			$str,
