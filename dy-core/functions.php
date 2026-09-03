@@ -902,19 +902,47 @@ if(!function_exists('luhn_check')) {
 }
 
 
-if (!function_exists('email_str_row_to_array')) {
-	function email_str_row_to_array($str, $recipients_limit = 10) : array {
+if (!function_exists('str_row_to_array')) {
+	function str_row_to_array(
+		$str,
+		$items_limit = 100,
+		$sanitize_func = 'sanitize_text_field'
+	): array {
 		if (!$str) {
 			return [];
 		}
 
-		$str    = str_replace("\r\n", "\n", html_entity_decode($str));
-		$emails = array_map('trim', explode("\n", $str));
+		if (!is_callable($sanitize_func)) {
+			$sanitize_func = 'sanitize_text_field';
+		}
 
-		return array_slice(
-			array_unique(array_filter(array_map('sanitize_email', $emails))),
-			0,
-			$recipients_limit
+		if (!is_int($items_limit) || $items_limit < 1) {
+			$items_limit = 100;
+		}
+
+		$str = str_replace(
+			["\r\n", "\r"],
+			"\n",
+			html_entity_decode((string) $str)
+		);
+
+		$items = array_map('trim', explode("\n", $str));
+		$items = array_map($sanitize_func, $items);
+		$items = array_unique(array_filter($items));
+
+		return array_slice($items, 0, $items_limit);
+	}
+}
+
+if (!function_exists('email_str_row_to_array')) {
+	function email_str_row_to_array(
+		$str,
+		$recipients_limit = 10
+	): array {
+		return str_row_to_array(
+			$str,
+			$recipients_limit,
+			'sanitize_email'
 		);
 	}
 }
