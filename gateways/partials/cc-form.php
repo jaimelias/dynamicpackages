@@ -8,18 +8,20 @@
 
 		<div class="pure-g gutters">
 			<div class="pure-u-1 pure-u-lg-1-3">
-				<label for="country">
-					<?php echo esc_html__('Country', 'dynamicpackages'); ?>
+
+				<label for="address">
+					<?php echo esc_html__('Address', 'dynamicpackages'); ?>
 				</label>
 
-				<select
-					name="country"
-					id="country"
-					class="countrylist bottom-20"
-					autocomplete="section-payment billing country"
+				<input
+					type="text"
+					name="address"
+					id="address"
+					class="bottom-20"
+					autocomplete="section-payment billing address-line1"
 				>
-					<option value="">--</option>
-				</select>
+
+
 			</div>
 
 			<div class="pure-u-1 pure-u-lg-1-3">
@@ -37,17 +39,18 @@
 			</div>
 
 			<div class="pure-u-1 pure-u-lg-1-3">
-				<label for="address">
-					<?php echo esc_html__('Address', 'dynamicpackages'); ?>
+				<label for="country">
+					<?php echo esc_html__('Country', 'dynamicpackages'); ?>
 				</label>
 
-				<input
-					type="text"
-					name="address"
-					id="address"
-					class="bottom-20"
-					autocomplete="section-payment billing address-line1"
+				<select
+					name="country"
+					id="country"
+					class="countrylist bottom-20"
+					autocomplete="section-payment billing country"
 				>
+					<option value="">--</option>
+				</select>
 			</div>
 		</div>
 
