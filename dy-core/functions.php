@@ -901,7 +901,6 @@ if(!function_exists('luhn_check')) {
 	}
 }
 
-
 if (!function_exists('str_row_to_array')) {
 	function str_row_to_array(
 		string $str,
