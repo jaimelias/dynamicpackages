@@ -1143,32 +1143,22 @@ class dy_utilities {
 
 	public static function get_deposit()
 	{
-		global $dy_get_deposit;
-		$output =  25;
-		
-		if(isset($dy_get_deposit))
-		{
-			$output = $dy_get_deposit;
-		}
-		else
-		{
-			if(package_field('package_payment' ) == 1)
-			{
-				$deposit = floatval(package_field('package_deposit'));
+		$cache_key = 'dy_get_deposit';
 
-				if($deposit > 0)
-				{
-					$output = $deposit;
-				}
-			}
-			else
-			{
-				$output = 0;
-			}
-			
-			$GLOBALS['dy_get_deposit'] = $output;
+		if(array_key_exists($cache_key, self::$cache))
+		{
+			return self::$cache[$cache_key];
 		}
-		return $output;
+	
+		$output =  25;
+
+		if(absint(package_field('package_payment' )) === 0) {
+			return self::$cache[$cache_key] = 0;
+		}
+		
+		$deposit = floatval(package_field('package_deposit'));
+
+		return ($deposit > 0 && $deposit <= 100) ? $deposit : 25;
 	}
 
 	public static function payment_type()
@@ -1333,8 +1323,7 @@ class dy_utilities {
 		}
 	}
 
-	public static function get_taxonomies($term_name)
-	{
+	public static function get_taxonomies($term_name) : array {
 		global $post;
 
 		$output = [];
@@ -1441,34 +1430,38 @@ class dy_utilities {
 		return $total;
 	}
 	
-	public static function payment_amount($service_fee = 0)
-	{
+	public static function payment_amount(float $service_fee = 0.0) : float {
 		$the_id = get_dy_id();
+
+		$cache_key = 'dy_payment_amount_' . $the_id . '_' . $service_fee;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
 		$total = (float) self::subtotal(null, $the_id);
 		
 		if(dy_validators::has_deposit())
 		{
 			$deposit = (float) self::get_deposit();
-			$total = $total*($deposit*0.01);			
+			$total = $total * ($deposit * 0.01);			
 		}
 		
 		$total = $total + self::get_add_ons_total();
 
 		$service_fee = (float) $service_fee;
 
-		if($service_fee > 0)
+
+		if($service_fee > 0.0)
 		{
 			$total = $total * (1 + ($service_fee / 100));
 		}
 				
-		return $total;
-	}	
+		return self::$cache[$cache_key] = $total;
+	}
 
-	public static function outstanding_amount()
-	{
-		$total = self::total() ? (float) self::total() : 0;
-		$payment_amount = self::payment_amount() ? (float) self::payment_amount() : 0;
-		return $total - $payment_amount;
+	public static function outstanding_amount() : float {
+		return (float) self::total() - (float) self::payment_amount();
 	}
 	public static function format_date($date)
 	{

@@ -5,6 +5,8 @@ if ( !defined( 'WPINC' ) ) exit;
 #[AllowDynamicProperties]
 class Dynamicpackages_Booking_Page {
 
+	static $cache = [];
+
     public function __construct($version)
     {
 		$this->version = $version;
@@ -107,7 +109,7 @@ class Dynamicpackages_Booking_Page {
 			'booking_url' => current_url_full(),
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),
-			'outstanding' => (float) $this->outstanding(),
+			'outstanding' => (float) dy_utilities::outstanding_amount(),
 			'amount' => $amount,
 			'regular_amount' => $regular_amount,
 			'payment_type' => dy_utilities::payment_type(),
@@ -142,59 +144,20 @@ class Dynamicpackages_Booking_Page {
 	}
 
 	
-	public function accept()
-	{
-		$output = [];
+	public function accept() : array {
 		$terms = (array) dy_utilities::get_taxonomies('package_terms_conditions');
-		
-		if(is_array($terms) && count($terms) > 0)
-		{
-			$terms_conditions = $terms;
-			$terms_conditions_clean = [];
 
-			for($x = 0; $x < count($terms_conditions); $x++ )
-			{
-				$terms_conditions_item = [];
-				$terms_conditions_item['term_taxonomy_id'] = $terms_conditions[$x]->term_taxonomy_id;
-				$terms_conditions_item['name'] = $terms_conditions[$x]->name;
-				$terms_conditions_item['url'] = get_term_link($terms_conditions[$x]->term_taxonomy_id);
-				$terms_conditions_clean[] = $terms_conditions_item;
-			}
-			
-			$output = $terms_conditions_clean;		
+		if (empty($terms)) {
+			return [];
 		}
 
-		return $output;
-	}
-	
-	public function outstanding()
-	{
-		global $dy_outstanding;
-		$output = 0;
-		
-		if(isset($dy_outstanding))
-		{
-			$output = $dy_outstanding;
-		}
-		else
-		{
-			$total = (float) dy_utilities::total();
-			$payment_type = (int) package_field('package_payment');
-			$amount = $total; // igual que antes, por si no aplica depósito
-
-			if ($payment_type === 1) {
-				$deposit = (float) dy_utilities::get_deposit();
-
-				if ($deposit > 0) {
-					// mismo cálculo: $amount = $total * ($deposit * 0.01)
-					$amount = $total * ($deposit / 100);
-					$output = $total - $amount;
-				}
-			}
-
-			$GLOBALS['dy_outstanding'] = $output;
-		}
-		return $output;
+		return array_map(function ($term) {
+			return [
+				'term_taxonomy_id' => $term->term_taxonomy_id,
+				'name'             => $term->name,
+				'url'              => get_term_link($term->term_taxonomy_id),
+			];
+		}, $terms);
 	}
 
 	public function load_scripts($query)
