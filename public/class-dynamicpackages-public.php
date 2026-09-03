@@ -519,13 +519,17 @@ class Dynamicpackages_Public {
 		
 		if(!dy_validators::is_child() && ($post instanceof WP_Post))
 		{
-			$duration = package_field('package_duration');
-			$duration_unit = package_field('package_length_unit');
 			$header_name = 'package_child_title_'.$this->current_language;
-			$hide_prices = intval(package_field('package_show_pricing', $post->ID)) === 1;
+			$hide_prices = (int) package_field('package_show_pricing', $post->ID) === 1;
 
 			$header_title = package_field($header_name, $post->ID);
-			$label = (empty($header_title)) ? __('Packages', 'dynamicpackages') : sprintf(__('%s available %s', 'dynamicpackages'), $this->count_child(), $header_title);
+			$label = (empty($header_title)) 
+				? __('Packages', 'dynamicpackages') 
+				: sprintf(
+					__('%s available %s', 'dynamicpackages'), 
+					$this->count_child(), 
+					$header_title
+				);
 			
 			$args = array(
 				'post_parent' => $post->ID,
@@ -533,83 +537,58 @@ class Dynamicpackages_Public {
 				'numberposts' => -1
 			); 
 			
-			$children_array = get_children($args);
+			$children_array = (array) get_children($args);
 
-			if(is_array($children_array))
+			if(empty($children_array)) return '';
+
+			$has_rows = false;
+			$rows_arr = [];
+			
+			foreach($children_array as $item)
 			{
-				if(count($children_array) > 0)
-				{
-					$has_rows = false;
-					$rows_arr = [];
+				if(!property_exists($item, 'post_name') || empty($item->post_name)) continue;
+				
+					$row = '';
+					$starting_at = (int) dy_utilities::starting_at($item->ID);
+					$subpackage_name = 'package_child_title_'.$this->current_language;
+					$button_label = ($starting_at > 0 && $hide_prices === false) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
 					
-					foreach($children_array as $item)
+					$subpackage_name = package_field($subpackage_name, $item->ID);
+					
+					if(empty($subpackage_name))
 					{
-						if(property_exists($item, 'post_name'))
-						{
-							if(!empty($item->post_name))
-							{
-								$row = '';
-								$starting_at = (int) dy_utilities::starting_at($item->ID);
-								$subpackage_name = 'package_child_title_'.$this->current_language;
-								$button_label = ($starting_at > 0 && $hide_prices === false) ? '$' . $starting_at : __('Rates', 'dynamicpackages');
-								
-								$subpackage_name = package_field($subpackage_name, $item->ID);
-								
-								if(empty($subpackage_name))
-								{
-									$subpackage_name = $item->post_title;
-								}
-								
-								$row .= '<tr>';
-								$row .= '<td>'.esc_html($subpackage_name).'</td>';
-								$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
-								$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(normalize_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name)).'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
-								$row .= '</tr>';
-								
-								$rows_arr[] = array('price' => $starting_at, 'row' => $row);
-							}
-						}
+						$subpackage_name = $item->post_title;
 					}
 					
-					$count_rows = count($rows_arr);
+					$row .= '<tr>';
+					$row .= '<td>'.esc_html($subpackage_name).'</td>';
+					$row .= '<td class="text-center">'.esc_html(package_field('package_max_persons', $item->ID)).' <span class="dashicons dashicons-admin-users"></span></td>';
+					$row .= '<td><a class="strong pure-button pure-button-primary rounded block width-100 borderbox" href="'.esc_url(normalize_url(rtrim(get_the_permalink(), '/').'/'.$item->post_name)).'">'.esc_html($button_label).' <span class="dashicons dashicons-arrow-right"></span></a></td>';
+					$row .= '</tr>';
+					
+					$rows_arr[] = array('price' => $starting_at, 'row' => $row);
+			}
+			
+			if (!empty($rows_arr)) {
 
-					if($count_rows > 0)
-					{
+				usort($rows_arr, function($a, $b) {
+					return $a['price'] <=> $b['price'];
+				});
 
-						function sort_by_price($array) {
-							usort($array, function($a, $b) {
-								return $a['price'] - $b['price'];
-							});
-						
-							return $array;
-						}
-						
-						if($count_rows === 1)
-						{
-							$rows = $rows_arr[0]['row'];
-						}
-						else
-						{
+				$rows = implode('', array_column($rows_arr, 'row'));
 
-							$rows = '';
-							$rows_arr = sort_by_price($rows_arr);
+				$price_type_label = sprintf(__('Prices %s', 'dynamicpackages'), (string) apply_filters('dy_price_type', ''));
 
-							for ($x=0; $x < $count_rows; $x++)
-							{ 
-								$rows .= $rows_arr[$x]['row'];
-							}
-
-						}
-
-						$price_type_label = sprintf(__('Prices %s', 'dynamicpackages'), apply_filters('dy_price_type', false));
-
-						$output .= '<table class="pure-table pure-table-bordered bottom-20 width-100">'
-							. '<thead class="text-center"><tr><th colspan="3">'.esc_html($label).' - <small class="semibold text-muted">'.esc_html($price_type_label).'</small></th></tr></thead>'
-							. '<tbody class="small">'.$rows.'</tbody>'
-							. '</table>';
-					}		
-				}
-			}			
+				$output .= sprintf(
+					'<table class="pure-table pure-table-bordered bottom-20 width-100">'
+					. '<thead class="text-center"><tr><th colspan="3">%s - <small class="semibold text-muted">%s</small></th></tr></thead>'
+					. '<tbody class="small">%s</tbody>'
+					. '</table>',
+					esc_html($label),
+					esc_html($price_type_label),
+					$rows
+				);
+			}
 		}
 
         //store output in $cache

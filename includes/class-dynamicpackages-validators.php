@@ -1225,8 +1225,9 @@ class dy_validators
 		
 		return $output;
 	}
-	public static function has_children($the_id = 0) {
-		
+
+	public static function has_children($the_id = 0): bool
+	{
 		$output = false;
 
 		if($the_id)
@@ -1243,33 +1244,23 @@ class dy_validators
 			if(property_exists($post, 'ID') && self::validate_the_id($post->ID))
 			{
 				$cache_key = 'dy_has_children_' . $post->ID;
-				
-				if (array_key_exists($cache_key, self::$cache)) {
+
+				if(array_key_exists($cache_key, self::$cache)) {
 					return self::$cache[$cache_key];
 				}
 
-				$args = array(
-					'post_type' => 'packages',
-					'post_parent' => $post->ID,
-					'posts_per_page' => -1
-				);
-				
-				$children = get_posts($args);
-				
-				if(is_array($children))
-				{
-					if(count($children) > 0)
-					{
-						$output = $children;
-					}
-				}
-				
-				//store output in $cache
+				$children = get_posts([
+					'post_type'      => 'packages',
+					'post_parent'    => $post->ID,
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+				]);
+
+				$output = !empty($children);
 				self::$cache[$cache_key] = $output;
 			}
 		}
 
-		
 		return $output;
 	}
 

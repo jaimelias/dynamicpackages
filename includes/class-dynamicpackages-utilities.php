@@ -405,27 +405,27 @@ class dy_utilities {
 
 		$output = self::starting_at($the_id);
 		
-		if(dy_validators::has_children() && (in_the_loop() || is_singular('packages')))
+		if(in_the_loop() || is_singular('packages'))
 		{
 			$prices = [];
-			$children = dy_validators::has_children();
-	
-			foreach ( $children as $child )
+			$children = get_posts([
+				'post_type'      => 'packages',
+				'post_parent'    => $the_id,
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			]);
+
+			foreach($children as $child_id)
 			{
-				$child_starting_at = (float) self::starting_at($child->ID);
+				$child_starting_at = (float) self::starting_at($child_id);
 
 				if($child_starting_at > 0) {
 					$prices[] = $child_starting_at;
 				}
-				
 			}
 
-			if(is_array($prices))
-				{
-				if(count($prices) > 0)
-				{
-						$output = min($prices);
-				}
+			if(!empty($prices)) {
+				$output = min($prices);
 			}
 		}
 		

@@ -260,28 +260,37 @@ class Dynamicpackages_Gateways
 	
 	public function terms_conditions()
 	{
-		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
-		$output = '';
+		$terms_conditions = (array) dy_utilities::get_taxonomies('package_terms_conditions');
 		
-		if(is_array($terms_conditions))
-		{
-			if(count($terms_conditions) > 0)
-			{
-				$output = '<h3>'.esc_html(__('Terms & Conditions', 'dynamicpackages')).'</h3><p>';
-				
-				for($x = 0; $x < count($terms_conditions); $x++ )
-				{
-					$term = $terms_conditions[$x];
-					$id = $term->term_taxonomy_id;
-					$url = get_term_link($id);
-					$name = $term->name;
-					
-					$output .= '<label for="terms_conditions_'.esc_html($id).'" class="checkmark-container"><input type="checkbox" name="terms_conditions_'.esc_html($id).'" id="terms_conditions_'.esc_html($id).'" class="required" /><span class="checkmark"></span> <a href="'.esc_url($url).'" target="_blank">'.esc_html($name).'</a></label>';
-				}
-
-				$output .= '</p><hr/>';
-			}
+		if(empty($terms_conditions)) {
+			return;
 		}
+		
+		$output = '<h3>'.esc_html(__('Terms & Conditions', 'dynamicpackages')).'</h3><p>';
+		
+		for($x = 0; $x < count($terms_conditions); $x++ )
+		{
+			$term = $terms_conditions[$x];
+			$id = $term->term_taxonomy_id;
+			$url = get_term_link($id);
+
+			if (is_wp_error($url)) {
+				continue;
+			}
+
+			$name = $term->name;
+
+			
+			$output .= sprintf(
+				'<label for="terms_conditions_%1$s" class="checkmark-container"><input type="checkbox" name="terms_conditions_%1$s" id="terms_conditions_%1$s" class="required" /><span class="checkmark"></span> <a href="%2$s" target="_blank">%3$s</a></label>',
+				esc_attr( $id ),
+				esc_url( $url ),
+				esc_html( $name )
+			);
+
+		}
+
+		$output .= '</p><hr/>';
 
 		echo $output;
 		
