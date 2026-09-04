@@ -95,7 +95,7 @@ class dy_utilities {
 	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
 	{
 		// No end date or end < start → 0 days
-		if (!$strtotime_end || !$strtotime_start || $strtotime_end < $strtotime_start) {
+		if ($strtotime_end === false || !$strtotime_start === false || $strtotime_end < $strtotime_start) {
 			return 0;
 		}
 

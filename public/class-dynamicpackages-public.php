@@ -924,7 +924,7 @@ class Dynamicpackages_Public {
 					{
 						$expiration = 0;
 
-						if(is_valid_date($coupons[$x][2]))
+						if(is_valid_date((string) $coupons[$x][2]))
 						{
 							$expiration_date = $coupons[$x][2] . ' 23:59:59';
 							$expiration = new DateTime($expiration_date);
