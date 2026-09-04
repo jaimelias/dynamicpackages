@@ -423,10 +423,13 @@ if(!function_exists('currency_name'))
 }
 
 if (!function_exists("is_valid_date")) {
-    function is_valid_date($str, $formats = ["Y-m-d", "Y-m-d H:i:s"]) : bool{
-        if (empty($str) || !is_string($str)) {
-            return false;
-        }
+
+    function is_valid_date(string $str, array $formats = ["Y-m-d", "Y-m-d H:i:s"]) : bool{
+
+		if($str === '') {
+			return false;
+		}
+
         static $cache = [];
         $cache_key = implode("|", $formats) . "::" . $str;
         if (isset($cache[$cache_key])) {
