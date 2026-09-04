@@ -77,6 +77,39 @@ class Dynamicpackages_Fields
             ['response' => 500]
         );
     }
+    
+    private static function migrate_field($name, $the_id): array
+    {
+        $this_field = '';
+        $is_migrated = false;
+        $migration_arr = self::get_migration_arr();
+
+        for ($x = 0; $x < count($migration_arr); $x++) {
+            $row = $migration_arr[$x];
+            $old = implode("_", $row['old']);
+            $new = implode("_", $row['new']);
+
+            if (in_array($name, [$new, $old], true)) {
+
+                $this_field = get_post_meta($the_id, $new, true);
+                if ($this_field !== '') {
+                    $is_migrated = true;
+                    break;
+                }
+
+                $this_field = get_post_meta($the_id, $old, true);
+                if ($this_field !== '') {
+                    update_post_meta($the_id, $new, $this_field);
+                    delete_post_meta($the_id, $old);
+                    $is_migrated = true;
+                    break;
+                }
+            }
+        }
+
+        return [$this_field, $is_migrated];
+    }
+
     public static function get($name, $the_id = null) : string
     {
         global $post;
@@ -152,37 +185,7 @@ class Dynamicpackages_Fields
             return self::$cache[$cache_key];
         }
 
-        $is_migrated = false;
-        $this_field = '';
-        $migration_arr = self::get_migration_arr();
-
-        for ($x = 0; $x < count($migration_arr); $x++) {
-
-            $row = $migration_arr[$x];
-            $old = implode("_", $row['old']);
-            $new = implode("_", $row['new']);
-
-            if (in_array($name, [$new, $old], true)) {
-
-                // checks new first
-                $this_field = get_post_meta($the_id, $new, true);
-
-                if ($this_field !== '') {
-                    $is_migrated = true;
-                    break;
-                }
-
-                // fallback to old
-                $this_field = get_post_meta($the_id, $old, true);
-
-                if ($this_field !== '') {
-                    $is_migrated = true;
-                    break;
-                }
-            }
-        }
-
-        // Get default value if no migration is required for this name.
+        [$this_field, $is_migrated] = self::migrate_field($name, $the_id);
 
         if(!$is_migrated) {
             $this_field = get_post_meta($the_id, $name, true);
