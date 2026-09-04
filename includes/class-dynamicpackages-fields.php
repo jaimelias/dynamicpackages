@@ -37,6 +37,10 @@ class Dynamicpackages_Fields
             return self::$migration_arr;
         }
 
+        $is_sequential_array =  function ($arr) {
+            return array_keys($arr) === range(0, count($arr) - 1);
+        };
+
         foreach (self::$migration_arr as $row) {
 
             if (
@@ -47,8 +51,8 @@ class Dynamicpackages_Fields
                 || !is_array($row['new'])
                 || empty($row['old'])
                 || empty($row['new'])
-                || !array_is_list($row['old'])
-                || !array_is_list($row['new'])
+                || !$is_sequential_array($row['old'])
+                || !$is_sequential_array($row['new'])
             ) {
                 self::migration_schema_error($row);
             }
