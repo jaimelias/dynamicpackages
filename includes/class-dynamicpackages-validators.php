@@ -946,7 +946,7 @@ class dy_validators
 		$output = true;
 		$invalids = [];
 		$booking_hour = secure_post('booking_hour');
-		$resolved_hour = dy_utilities::hour();
+		$resolved_hour = dy_utilities::booking_hour();
 
 
 		if(!is_valid_date(secure_post('booking_date'))) {

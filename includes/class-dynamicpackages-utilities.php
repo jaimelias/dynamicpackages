@@ -1201,8 +1201,8 @@ class dy_utilities {
 		}
 		return $output;
 	}
-	
-	public static function hour()
+		
+	public static function booking_hour()
 	{
 
 		$the_id = get_dy_id();
@@ -1214,19 +1214,18 @@ class dy_utilities {
 		}
 
 		$package_by_hour = absint(package_field('package_by_hour'));
-
-
-		if($package_by_hour === 1 && is_valid_time($booking_hour)) {
-			return self::$cache[$cache_key] = $booking_hour;
-		}
-
 		$package_start_hour = package_field('package_start_hour');
 
-		return self::$cache[$cache_key] = is_valid_time($package_start_hour) 
-			? $package_start_hour 
+		if(is_valid_time($package_start_hour)) {
+			return self::$cache[$cache_key] = $package_start_hour;
+		}
+
+		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($booking_hour)
+			? $booking_hour
 			: '';
-	}	
-	
+	}
+
+
 	public static function return_hour()
 	{
 
@@ -1239,20 +1238,17 @@ class dy_utilities {
 		}
 
 		$package_by_hour = absint(package_field('package_by_hour'));
-
-		//overrides package_return_hour
-		if($package_by_hour === 1 && is_valid_time($return_hour)) {
-			return self::$cache[$cache_key] = $return_hour;
-		}
-
 		$package_return_hour = package_field('package_return_hour');
 
-		return self::$cache[$cache_key] = is_valid_time($package_return_hour) 
-			? $package_return_hour 
+		if(is_valid_time($package_return_hour)) {
+			return self::$cache[$cache_key] = $package_return_hour;
+		}
+
+		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($return_hour)
+			? $return_hour
 			: '';
 
 	}
-
 
 	public static function webhook($url, $payload = '')
 	{
