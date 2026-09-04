@@ -318,8 +318,15 @@ class Dynamicpackages_Taxonomy_Add_Ons
 					$term_id = $default_term_id;
 				}
 			}
+
+			$decoded = html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true));
+
+			if(!is_safe_json($decoded)) {
+				write_log("Invalid json string in $cache_key term_id $term_id.");
+				continue;
+			}
 			
-			$add_ons_price = json_decode(html_entity_decode(get_term_meta($term_id, 'tax_add_ons', true)), true);
+			$add_ons_price = json_decode($decoded, true);
 			
 			$add_on_type = (int) get_term_meta($term_id, 'tax_add_ons_type', true);
 			

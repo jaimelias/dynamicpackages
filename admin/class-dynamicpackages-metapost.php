@@ -361,18 +361,18 @@ class Dynamicpackages_Metapost
 
 		if($value === null) return;
 
-		$decoded = json_decode(
-			html_entity_decode(
-				(string) $value,
-				ENT_QUOTES | ENT_HTML5,
-				'UTF-8'
-			),
-			true
-		);
+		$decoded = html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-		if(!is_array($decoded) || !array_key_exists($container, $decoded)) return;
+		if(!is_safe_json($decoded)) {
+			write_log("Invalid json tring in update_hot_field post_id=$post_id key=$key container=$container.");
+			return;
+		}
 
-		$encoded = wp_json_encode($decoded);
+		$arr = json_decode($decoded, true);
+
+		if(!is_array($arr) || !array_key_exists($container, $arr)) return;
+
+		$encoded = wp_json_encode($arr);
 
 		if(!is_string($encoded)) return;
 

@@ -1463,20 +1463,16 @@ class dy_utilities {
 	public static function outstanding_amount() : float {
 		return (float) self::total() - (float) self::payment_amount();
 	}
-	public static function format_date($date)
-	{
+	public static function format_date($date) : string {
 		return date_i18n(get_option('date_format'), $date);
 	}
 	
-	public static function get_week_days_abbr()
-	{
-		return array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
+	public static function get_week_days_abbr() : array {
+		return ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 	}
 
-	public static function get_week_day_names_long()
-	{
-		return array(
-			
+	public static function get_week_day_names_long() : array {
+		return [
 			__('Monday', 'dynamicpackages'), 
 			__('Tuesday', 'dynamicpackages'), 
 			__('Wednesday', 'dynamicpackages'), 
@@ -1484,12 +1480,11 @@ class dy_utilities {
 			__('Friday', 'dynamicpackages'), 
 			__('Saturday', 'dynamicpackages'),
 			__('Sunday', 'dynamicpackages'),
-		);
+		];
 	}
 
-	public static function get_week_day_names_short()
-	{
-		return array(
+	public static function get_week_day_names_short() : array {
+		return [
 			__('Mon', 'dynamicpackages'),
 			 __('Tue', 'dynamicpackages'), 
 			 __('Wed', 'dynamicpackages'),
@@ -1497,12 +1492,11 @@ class dy_utilities {
 			 __('Fri', 'dynamicpackages'), 
 			 __('Sat', 'dynamicpackages'), 
 			 __('Sun', 'dynamicpackages')
-		);
+		];
 	}
 	
 	
-	public static function get_week_day_surcharges()
-	{
+	public static function get_week_day_surcharges() : array {
 		$days = self::get_week_days_abbr();
 		
 		return array_map(function($day){
@@ -1510,19 +1504,21 @@ class dy_utilities {
 		}, $days);
 	}
 
-	public static function get_tax_list($term_name = '', $label = '', $is_link = true, $icon_class = null)
-	{
-		$output = '';
-		$is_link_str = $is_link ? 1 : 0;
-		$icon_class_str = !empty($icon_class) ? 1 : 0;
-		$cache_key = 'dy_get_tax_list_'.$term_name.'_'.strlen($label).'_'.$is_link_str.'_'.$icon_class_str;
+	public static function get_tax_list(
+			string $term_name = '', 
+			string $label = '', 
+			bool $is_link = true, 
+			string $icon_class = ''
+		) : string {
+
+		
+		$icon_class_str = empty($icon_class) ? 0 : 1;
+		$suffix_hash = md5($term_name.'_'.md5($label).'_'.$is_link.'_'.$icon_class_str);
+		$cache_key = 'dy_get_tax_list_'.$suffix_hash;
 
 		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
-
-
-		$terms_array = [];
 
 		if(in_the_loop())
 		{
@@ -1534,8 +1530,8 @@ class dy_utilities {
 
 			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
 			{
-				$parent_terms = get_the_terms($post->post_parent, $term_name, array('depth' => 0));
-				$parent_terms = (is_array($parent_terms)) ? $parent_terms : array();
+				$parent_terms = get_the_terms($post->post_parent, $term_name, ['depth' => 0]);
+				$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
 			}
 			
 			$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
@@ -1545,6 +1541,10 @@ class dy_utilities {
 		{
 			$terms = get_terms(array('taxonomy' => $term_name));
 		}
+
+
+		$output = '';
+		$terms_array = [];
 
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) )
 		{
@@ -1608,18 +1608,18 @@ class dy_utilities {
 			return [];
 		}
 
-		// Decode the JSON data
-		$output = json_decode(html_entity_decode($raw_data), true);
+		$decoded = html_entity_decode($raw_data);
 
-		// Validate the JSON decoding
-		if (json_last_error() !== JSON_ERROR_NONE) {
+		if(!is_safe_json($decoded)) {
+
+			write_log("Invalid json string in $cache_key.");
 			return [];
 		}
 
-		//store output in $cache
-		self::$cache[$cache_key] = $output;
+		// Decode the JSON data
+		$output = json_decode($decoded, true);
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
 
