@@ -54,13 +54,11 @@ class dy_utilities {
 		
 	}
 
-	public static function sort_by_arr()
-	{
-		return array('new', 'low', 'high', 'today', 'tomorrow', 'week', 'month');
+	public static function sort_by_arr() : array {
+		return ['new', 'low', 'high', 'today', 'tomorrow', 'week', 'month'];
 	}
 
-	public static function booking_date()
-	{
+	public static function booking_date() : int|bool {
 		$cache_key = 'dy_booking_date';
 
 		if( array_key_exists($cache_key, self::$cache) ) {
@@ -69,13 +67,15 @@ class dy_utilities {
 
 		$booking_date = secure_request('booking_date');
 
-		return self::$cache[$cache_key] = is_valid_date($booking_date) 
-			? strtotime($booking_date.' 00:00:00') 
-			: null;
+		if(!is_valid_short_date($booking_date)) {
+			return self::$cache[$cache_key] = false;
+		}
+
+		//strtotime returns false on invalid param
+		return self::$cache[$cache_key] = strtotime($booking_date.' 00:00:00');
 	}
 
-	public static function end_date()
-	{
+	public static function end_date() : int|bool {
 		$cache_key = 'dy_end_date';
 
 		if( array_key_exists($cache_key, self::$cache) ) {
@@ -83,16 +83,19 @@ class dy_utilities {
 		}
 
 		$end_date = secure_request('end_date');
+
+		if(!is_valid_short_date($end_date)) {
+			return self::$cache[$cache_key] = false;
+		}
 		
-		return self::$cache[$cache_key] = is_valid_date($end_date)
-			? strtotime($end_date.' 00:00:00')
-			: null;
+		//strtotime returns false on invalid param
+		return self::$cache[$cache_key] =  strtotime($end_date.' 00:00:00');
 	}
 
 	public static function get_multi_day_duration($strtotime_start, $strtotime_end)
 	{
 		// No end date or end < start → 0 days
-		if (is_null($strtotime_end) || is_null($strtotime_start) || $strtotime_end < $strtotime_start) {
+		if (!$strtotime_end || !$strtotime_start || $strtotime_end < $strtotime_start) {
 			return 0;
 		}
 
