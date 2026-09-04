@@ -99,10 +99,10 @@ class dy_validators
 		return $output;
 	}
 	
-	public static function validate_booking_date($the_id = null)
+	public static function validate_start_date($the_id = null)
 	{
 		$output = false;
-		$cache_key = 'dy_validate_booking_date_' . $the_id;
+		$cache_key = 'dy_validate_start_date_' . $the_id;
 		
 
         if (array_key_exists($cache_key, self::$cache)) {
@@ -258,7 +258,7 @@ class dy_validators
 		$invalid_required_get_params = [];
 		$the_id = get_dy_id();
 
-		if (!self::validate_booking_date($the_id)) {
+		if (!self::validate_start_date($the_id)) {
 			$invalid_required_get_params[] = 'start_date';
 		}
 		if (!self::validate_pax_regular($the_id)) {
@@ -945,15 +945,15 @@ class dy_validators
 
 		$output = true;
 		$invalids = [];
-		$booking_hour = secure_post('booking_hour');
+		$start_hour = secure_post('booking_hour');
 		$resolved_hour = dy_utilities::start_hour();
 
 
 		if(!is_valid_date(secure_post('start_date'))) {
-			$invalids[] = __('Invalid booking_date.', 'dynamicpackages');
+			$invalids[] = __('Invalid start_date.', 'dynamicpackages');
 		}
 
-		if($resolved_hour !== '' && !is_valid_time($booking_hour)) {
+		if($resolved_hour !== '' && !is_valid_time($start_hour)) {
 			$invalids[] = __('Invalid booking_hour.', 'dynamicpackages');
 		}
 
@@ -1031,7 +1031,7 @@ class dy_validators
 		$duration = absint(dy_utilities::get_min_nights());
 		$start_date = secure_request('start_date');
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
-		$booking_dates_range = dy_utilities::get_date_range($start_date, $start_date_to, false);
+		$start_dates_range = dy_utilities::get_date_range($start_date, $start_date_to, false);
 		
 		if($stored_coupon_code === $coupon_code)
 		{
@@ -1068,8 +1068,8 @@ class dy_validators
 				{
 					$arr_valid_expiration = [];
 
-					for ($x = 0; $x < count($booking_dates_range); $x++) {
-						$range_date = new DateTime($booking_dates_range[$x]);
+					for ($x = 0; $x < count($start_dates_range); $x++) {
+						$range_date = new DateTime($start_dates_range[$x]);
 						$range_date->setTime(0, 0, 0);
 						$range_date = $range_date->getTimestamp();
 						

@@ -23,9 +23,62 @@ class Dynamicpackages_Fields
     private static $cache = [];
     private static $week_days = [];
     private static $languages = [];
+    private static $is_valid_migration_arr = false;
+    private static $migration_arr = [
+        [
+            "old" => ['package', 'return', 'hour'],
+            "new" => ['package', 'end', 'hour']
+        ]
+    ];
 
+    private static function get_migration_arr() {
+
+        if(self::$is_valid_migration_arr) {
+            return self::$migration_arr;
+        }
+
+        foreach (self::$migration_arr as $row) {
+
+            if (
+                !is_array($row)
+                || !array_key_exists('old', $row)
+                || !array_key_exists('new', $row)
+                || !is_array($row['old'])
+                || !is_array($row['new'])
+                || empty($row['old'])
+                || empty($row['new'])
+                || !array_is_list($row['old'])
+                || !array_is_list($row['new'])
+            ) {
+                self::migration_schema_error($row);
+            }
+
+            foreach (array_merge($row['old'], $row['new']) as $part) {
+                if (!is_string($part) || $part === '') {
+                    self::migration_schema_error($row);
+                }
+            }
+        }
+
+        self::$is_valid_migration_arr = true;
+        return self::$migration_arr;
+    }
+
+    private static function migration_schema_error($row) {
+
+        write_log(
+            'Dynamicpackages_Fields::get_migration_arr() - Error: Invalid migration_arr schema. Row: ' . print_r($row, true),
+            true
+        );
+
+        wp_die(
+            'Internal Server Error',
+            'Internal Server Error',
+            ['response' => 500]
+        );
+    }
     public static function get($name, $the_id = null) : string
-{
+    {
         global $post;
 
         // Ensure global $post is available
@@ -99,8 +152,42 @@ class Dynamicpackages_Fields
             return self::$cache[$cache_key];
         }
 
-        // Retrieve the field value
-        $this_field = get_post_meta($the_id, $name, true);
+        $is_migrated = false;
+        $this_field = '';
+        $migration_arr = self::get_migration_arr();
+
+        for ($x = 0; $x < count($migration_arr); $x++) {
+
+            $row = $migration_arr[$x];
+            $old = implode("_", $row['old']);
+            $new = implode("_", $row['new']);
+
+            if (in_array($name, [$new, $old], true)) {
+
+                // checks new first
+                $this_field = get_post_meta($the_id, $new, true);
+
+                if ($this_field !== '') {
+                    $is_migrated = true;
+                    break;
+                }
+
+                // fallback to old
+                $this_field = get_post_meta($the_id, $old, true);
+
+                if ($this_field !== '') {
+                    $is_migrated = true;
+                    break;
+                }
+            }
+        }
+
+        // Get default value if no migration is required for this name.
+
+        if(!$is_migrated) {
+            $this_field = get_post_meta($the_id, $name, true);
+        }
+        
 
         if(!is_string($this_field))
         {

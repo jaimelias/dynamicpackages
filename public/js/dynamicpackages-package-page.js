@@ -50,7 +50,7 @@ const datePicker = async () => {
 		endpoint.searchParams.set('stamp', Date.now());
 
 		const datePickerState = {
-			booking_date: null,
+			start_date: null,
 			end_date: null
 		};
 

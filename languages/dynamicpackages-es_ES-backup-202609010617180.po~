@@ -859,7 +859,7 @@ msgid "Invalid address."
 msgstr "Dirección inválida."
 
 #: includes/class-dynamicpackages-validators.php:908
-msgid "Invalid booking_date."
+msgid "Invalid start_date."
 msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:912

@@ -59,7 +59,7 @@ class dy_utilities {
 	}
 
 	public static function start_date() : int|bool {
-		$cache_key = 'dy_booking_date';
+		$cache_key = 'dy_start_date';
 
 		if( array_key_exists($cache_key, self::$cache) ) {
 			return self::$cache[$cache_key];
@@ -742,7 +742,7 @@ class dy_utilities {
 
 		$start_date = secure_request('start_date');
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
-		$booking_dates_range = self::get_date_range($start_date, $start_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
+		$start_dates_range = self::get_date_range($start_date, $start_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
 		$seasons = self::get_package_hot_chart('package_seasons_chart');
 		$duration_arr = [];
 
@@ -786,7 +786,7 @@ class dy_utilities {
 						continue;
 					}
 
-					foreach($booking_dates_range as $date)
+					foreach($start_dates_range as $date)
 					{
 						if(in_array($date, $seasons_dates_range))
 						{
@@ -869,7 +869,7 @@ class dy_utilities {
 	public static function get_price_occupancy($type = null)
 	{
 		if (!request_has('start_date')) {
-			// Preserve original behavior: no return if booking_date isn't present.
+			// Preserve original behavior: no return if start_date isn't present.
 			return;
 		}
 
@@ -883,23 +883,23 @@ class dy_utilities {
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +{$duration} days"));
 
 		// Precompute ranges/surcharges once
-		$booking_dates_range     = self::get_date_range($start_date, $start_date_to, false);
-		$booking_dates_surcharges = self::get_range_week_day_surcharges($booking_dates_range);
+		$start_dates_range     = self::get_date_range($start_date, $start_date_to, false);
+		$start_dates_surcharges = self::get_range_week_day_surcharges($start_dates_range);
 
 		// Validate arrays (mirror original intent but remove duplicates)
-		if (!is_array($occupancy_chart) || !is_array($seasons) || !is_array($booking_dates_range)) {
+		if (!is_array($occupancy_chart) || !is_array($seasons) || !is_array($start_dates_range)) {
 			return $sum;
 		}
 
 		// Must match exact number of days
-		if ($duration != count($booking_dates_range)) {
+		if ($duration != count($start_dates_range)) {
 			return $sum;
 		}
 
 		// Build occupancy keys for each day (season -> chart key)
 		$seasons_array = [];
 		for ($d = 0; $d < $duration; $d++) {
-			$season = self::get_season($booking_dates_range[$d]);
+			$season = self::get_season($start_dates_range[$d]);
 			$seasons_array[] = ($season === 'price_chart') ? 'occupancy_chart' : ('occupancy_chart' . $season);
 		}
 
@@ -923,7 +923,7 @@ class dy_utilities {
 			}
 
 			// Surcharge factor
-			$occupancy_surcharge         = (float) ($booking_dates_surcharges[$s] ?? 0);
+			$occupancy_surcharge         = (float) ($start_dates_surcharges[$s] ?? 0);
 			$occupancy_surcharge_percent = ($occupancy_surcharge > 0) ? ($occupancy_surcharge + 100) / 100 : 1.0;
 
 			$price_row = $occupancy_chart[$key];
