@@ -364,8 +364,8 @@ class Dynamicpackages_Public {
 		$returnShort    = package_field( 'package_return_address_short' );
 	
 		// Dates & hours
-		$depDate        = dy_utilities::format_date( dy_utilities::booking_date() );
-		$depHour        = dy_utilities::booking_hour() ? '@ ' . dy_utilities::booking_hour() : '';
+		$depDate        = dy_utilities::format_date( dy_utilities::start_date() );
+		$depHour        = dy_utilities::start_hour() ? '@ ' . dy_utilities::start_hour() : '';
 	
 		$endRaw         = sanitize_text_field( $_REQUEST['end_date'] ?? '' );
 		$hasReturn      = $endRaw && is_valid_date( $endRaw );
@@ -670,7 +670,7 @@ class Dynamicpackages_Public {
 
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
-		$booking_date = (dy_utilities::booking_date()) ? dy_utilities::format_date(dy_utilities::booking_date()) : null;
+		$booking_date = (dy_utilities::start_date()) ? dy_utilities::format_date(dy_utilities::start_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
@@ -679,7 +679,7 @@ class Dynamicpackages_Public {
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
 		$check_in_hour = package_field('package_check_in_hour');
-		$start_hour = dy_utilities::booking_hour();
+		$start_hour = dy_utilities::start_hour();
 		$start_address = package_field('package_start_address');
 		$start_address_short = package_field('package_start_address_short');
 		$check_in_end_hour = package_field('package_check_in_end_hour');
@@ -783,7 +783,7 @@ class Dynamicpackages_Public {
 		{
 			if($schedule) $req[] = 'schedule';
 			if($show_max_persons) $req[] = 'max_persons';
-			if(dy_utilities::booking_hour() && $is_transport_fixed === false) $req[] = 'start_hour';
+			if(dy_utilities::start_hour() && $is_transport_fixed === false) $req[] = 'start_hour';
 			if(!get_option('dy_archive_hide_start_address')) $req[] = 'start_address';
 			if(!get_option('dy_archive_hide_enabled_days')) $req[] = 'enabled_days';
 
@@ -804,7 +804,7 @@ class Dynamicpackages_Public {
 			}
 
 			if($check_in_hour) $req[] = 'check_in';
-			if(dy_utilities::booking_hour()) $req[] = 'start_hour';
+			if(dy_utilities::start_hour()) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
 			if($is_transport)
@@ -831,7 +831,7 @@ class Dynamicpackages_Public {
 
 			if($booking_date) $req[] = 'booking_date';
 			if($check_in_hour) $req[] = 'check_in';
-			if(dy_utilities::booking_hour()) $req[] = 'start_hour';
+			if(dy_utilities::start_hour()) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
 			if(isset($_REQUEST['end_date']))

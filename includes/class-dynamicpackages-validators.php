@@ -115,7 +115,7 @@ class dy_validators
 
 		if(get_has('booking_date'))
 		{
-			$booking_date = dy_utilities::booking_date();
+			$booking_date = dy_utilities::start_date();
 			$min_range = dy_utilities::min_range($the_id);
 			$max_range = dy_utilities::max_range($the_id);
 						
@@ -946,7 +946,7 @@ class dy_validators
 		$output = true;
 		$invalids = [];
 		$booking_hour = secure_post('booking_hour');
-		$resolved_hour = dy_utilities::booking_hour();
+		$resolved_hour = dy_utilities::start_hour();
 
 
 		if(!is_valid_date(secure_post('booking_date'))) {

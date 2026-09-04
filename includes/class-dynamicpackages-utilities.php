@@ -58,7 +58,7 @@ class dy_utilities {
 		return ['new', 'low', 'high', 'today', 'tomorrow', 'week', 'month'];
 	}
 
-	public static function booking_date() : int|bool {
+	public static function start_date() : int|bool {
 		$cache_key = 'dy_booking_date';
 
 		if( array_key_exists($cache_key, self::$cache) ) {
@@ -1202,12 +1202,12 @@ class dy_utilities {
 		return $output;
 	}
 		
-	public static function booking_hour()
+	public static function start_hour()
 	{
 
 		$the_id = get_dy_id();
-		$booking_hour = secure_request('booking_hour');
-		$cache_key = 'dy_hour_' . $the_id . '_' . $booking_hour;
+		$start_hour = secure_request('start_hour');
+		$cache_key = 'dy_booking_hour_' . $the_id . '_' . $start_hour;
 
 		if( array_key_exists($cache_key, self::$cache) ) {
 			return self::$cache[$cache_key];
@@ -1220,8 +1220,8 @@ class dy_utilities {
 			return self::$cache[$cache_key] = $package_start_hour;
 		}
 
-		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($booking_hour)
-			? $booking_hour
+		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($start_hour)
+			? $start_hour
 			: '';
 	}
 

@@ -293,7 +293,7 @@ class Dynamicpackages_Export_Post_Types{
         $not_included = (array) dy_utilities::get_taxo_names('package_not_included', $post->ID);
         $categories = (array) dy_utilities::get_taxo_names('package_category', $post->ID);
         $is_transport = $package_type === 'transport';
-        $start_time = dy_utilities::booking_hour();
+        $start_time = dy_utilities::start_hour();
         $starting_at = (float) dy_utilities::starting_at();
         
         $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);

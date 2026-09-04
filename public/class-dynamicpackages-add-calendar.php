@@ -31,8 +31,8 @@ class dy_Add_To_Calendar
 			return false;
 		}
 
-		$date = dy_utilities::booking_date();
-		$hour = dy_utilities::booking_hour();
+		$date = dy_utilities::start_date();
+		$hour = dy_utilities::start_hour();
 		
 		return !empty($hour) && !empty($date);
 	}
@@ -50,7 +50,7 @@ class dy_Add_To_Calendar
 		}
 
 		
-		$hour = dy_utilities::booking_hour();
+		$hour = dy_utilities::start_hour();
 		$booking_date = secure_request('booking_date');
 
 		if(empty($hour) || empty($booking_date)) return '';
@@ -70,7 +70,7 @@ class dy_Add_To_Calendar
 			</div>',
 			esc_attr($label),
 			esc_html($label),
-			esc_html($booking_date . ' ' . dy_utilities::booking_hour()),
+			esc_html($booking_date . ' ' . dy_utilities::start_hour()),
 			esc_html(get_option('timezone_string')),
 			esc_html($post->post_title),
 			esc_html((string) apply_filters('dy_description', null)),
