@@ -104,7 +104,7 @@ class paguelo_facil_on{
 			(string) secure_post('transport_type'),
 			(string) secure_post('route'),
 			(string) secure_post('end_date'),
-			(string) secure_post('return_hour'),
+			(string) secure_post('end_hour'),
 			(string) secure_post('coupon_code'),
 			(string) secure_post('add_ons'),
 			(string) secure_post('duration'),

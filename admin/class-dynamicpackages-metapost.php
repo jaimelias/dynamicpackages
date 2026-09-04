@@ -91,7 +91,7 @@ class Dynamicpackages_Metapost
 			'package_start_hour'        => 'sanitize_text_field',
 			'package_start_address'     => 'sanitize_textarea_field',
 			'package_check_in_end_hour' => 'sanitize_text_field',
-			'package_return_hour'       => 'sanitize_text_field',
+			'package_end_hour'       => 'sanitize_text_field',
 			'package_return_address'    => 'sanitize_textarea_field',
 			'package_redirect_page'     => 'absint',
 			'package_max_coupons'       => 'absint',

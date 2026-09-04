@@ -38,7 +38,7 @@ class Dynamic_Core_Orders {
 			'start_date',
 			'booking_hour',
 			'end_date',
-			'return_hour',
+			'end_hour',
 			'booking_extra',
 			'coupon_code'
 		];

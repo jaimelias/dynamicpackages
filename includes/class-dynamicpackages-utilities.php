@@ -1226,26 +1226,26 @@ class dy_utilities {
 	}
 
 
-	public static function return_hour()
+	public static function end_hour()
 	{
 
 		$the_id = get_dy_id();
-		$return_hour = secure_request('return_hour');
-		$cache_key = 'dy_return_hour_' . $the_id . '_' . $return_hour;
+		$end_hour = secure_request('end_hour');
+		$cache_key = 'dy_return_hour_' . $the_id . '_' . $end_hour;
 
 		if( array_key_exists($cache_key, self::$cache) ) {
 			return self::$cache[$cache_key];
 		}
 
 		$package_by_hour = absint(package_field('package_by_hour'));
-		$package_end_hour = package_field('package_return_hour');
+		$package_end_hour = package_field('package_end_hour');
 
 		if(is_valid_time($package_end_hour)) {
 			return self::$cache[$cache_key] = $package_end_hour;
 		}
 
-		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($return_hour)
-			? $return_hour
+		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($end_hour)
+			? $end_hour
 			: '';
 
 	}

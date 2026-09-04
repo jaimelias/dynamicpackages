@@ -370,7 +370,7 @@ const validateCheckPricesForm = () => {
 
 				if(name === 'end_date' && value !== '')
 				{
-					required = [...required, 'end_date', 'return_hour'];
+					required = [...required, 'end_date', 'end_hour'];
 				}
 			});
 

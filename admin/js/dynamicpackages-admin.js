@@ -74,9 +74,9 @@ jQuery(() => {
 				{
 					jQuery('#package_check_in_end_hour').val('')
 				}
-				if(jQuery('#package_return_hour').length !== 0)
+				if(jQuery('#package_end_hour').length !== 0)
 				{
-					jQuery('#package_return_hour').val('')
+					jQuery('#package_end_hour').val('')
 				}
 			}
 		})

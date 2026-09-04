@@ -92,7 +92,7 @@ class Dynamicpackages_Metaboxes
 		$this->start_hour = package_field('package_start_hour');
 		$this->start_address = package_field('package_start_address');
 		$this->start_address_short = package_field('package_start_address_short');
-		$this->return_hour = package_field('package_return_hour');
+		$this->end_hour = package_field('package_end_hour');
 		$this->return_address = package_field('package_return_address');
 		$this->return_address_short = package_field('package_return_address_short');
 		$this->increase_persons = (int) package_field('package_increase_persons');
@@ -412,8 +412,8 @@ class Dynamicpackages_Metaboxes
 				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr($this->package_check_in_end_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 			</p>
 			<p>
-				<label for="package_return_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_return_hour" id="package_return_hour" value="<?php echo esc_attr($this->return_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
+				<label for="package_end_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
+				<input class="timepicker" type="text" name="package_end_hour" id="package_end_hour" value="<?php echo esc_attr($this->end_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
 			</p>				
 			<p>
 				<label for="package_return_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>

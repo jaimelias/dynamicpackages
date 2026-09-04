@@ -370,7 +370,7 @@ class Dynamicpackages_Public {
 		$endRaw         = sanitize_text_field( $_REQUEST['end_date'] ?? '' );
 		$hasReturn      = $endRaw && is_valid_date( $endRaw );
 		$retDate        = $hasReturn ? dy_utilities::format_date( dy_utilities::end_date() ) : '';
-		$retHour        = ( $hasReturn && dy_utilities::return_hour() ) ? '@ ' . dy_utilities::return_hour() : '';
+		$retHour        = ( $hasReturn && dy_utilities::end_hour() ) ? '@ ' . dy_utilities::end_hour() : '';
 	
 		// Passenger counts
 		$counts = [
@@ -687,7 +687,7 @@ class Dynamicpackages_Public {
 		$return_address_short = package_field('package_return_address_short');
 
 		
-		$return_hour = dy_utilities::return_hour();
+		$end_hour = dy_utilities::end_hour();
 		$max_persons = package_field('package_max_persons');
 		$show_max_persons = (intval(get_option('dy_archive_hide_max_persons')) === 1 || intval(package_field('package_fixed_price')) === 0) 
 			? false 
@@ -700,10 +700,10 @@ class Dynamicpackages_Public {
 		{
 			$schedule = __('Schedule', 'dynamicpackages') .' '. $min_hour . ' - '. $max_hour;
 		}
-		else if($is_transport && $start_hour && $return_hour && !$is_package_by_hour)
+		else if($is_transport && $start_hour && $end_hour && !$is_package_by_hour)
 		{
 			$is_transport_fixed = true;
-			$schedule = sprintf(__('Departure %s - Return %s', 'dynamicpackages'), $start_hour, $return_hour);
+			$schedule = sprintf(__('Departure %s - Return %s', 'dynamicpackages'), $start_hour, $end_hour);
 		}
 
 		// Base labels
@@ -753,8 +753,8 @@ class Dynamicpackages_Public {
 		$sa = $modify_route;  // shorthand
 		$first_address  = $sa ? $return_address : $start_address;
 		$second_address = $sa ? $start_address        : $return_address;
-		$first_hour     = $sa ? $return_hour          : $start_hour;
-		$second_hour    = $sa ? $start_hour           : $return_hour;
+		$first_hour     = $sa ? $end_hour          : $start_hour;
+		$second_hour    = $sa ? $start_hour           : $end_hour;
 		$first_checkin  = $sa ? $check_in_end_hour    : $check_in_hour;
 		$second_checkin = $sa ? $check_in_hour        : $check_in_end_hour;
 
@@ -768,7 +768,7 @@ class Dynamicpackages_Public {
 			'label_return'       => [ null,     $label_return ],
 			'end_date'           => [ 'calendar',$end_date ],
 			'check_in_end_hour'  => [ 'clock',   __('Check‑in', 'dynamicpackages') . ' ' . $second_checkin ],
-			'return_hour'        => [ 'clock',   __('Returning', 'dynamicpackages') . ' ' . $second_hour ],
+			'end_hour'        => [ 'clock',   __('Returning', 'dynamicpackages') . ' ' . $second_hour ],
 			'return_address'     => [ 'location',$second_address ],
 		];
 
@@ -811,7 +811,7 @@ class Dynamicpackages_Public {
 			{
 				$req[] = 'label_return';
 				$req[] = 'end_date';
-				if($return_hour) $req[] = 'return_hour';
+				if($end_hour) $req[] = 'end_hour';
 				if($check_in_end_hour) $req[] = 'check_in_end_hour';
 				if($return_address)$req[] = 'return_address';				
 			}
@@ -840,7 +840,7 @@ class Dynamicpackages_Public {
 				{
 					$req[] = 'label_return';
 					$req[] = 'end_date';
-					if($return_hour) $req[] = 'return_hour';
+					if($end_hour) $req[] = 'end_hour';
 					if($check_in_end_hour) $req[] = 'check_in_end_hour';
 					if($return_address) $req[] = 'return_address';
 				}

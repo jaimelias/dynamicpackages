@@ -281,7 +281,7 @@ class Dynamicpackages_Export_Post_Types{
         $check_in_hour = (string) package_field('package_check_in_hour');
         $start_address = (string) package_field('package_start_address');
         $start_address_short = (string) package_field('package_start_address_short');
-        $return_hour = (string) package_field('package_return_hour');
+        $end_hour = (string) package_field('package_end_hour');
         $return_check_in_hour = (string) package_field('package_check_in_end_hour');
         $return_address = (string) package_field('package_return_address');
         $return_address_short = (string) package_field('package_return_address_short');
@@ -364,7 +364,7 @@ class Dynamicpackages_Export_Post_Types{
                 'route_origin' => $return_address_short ?? $return_address,
                 'route_destination' => $start_address_short ?? $start_address,
                 'route_check_in_time' => $return_check_in_hour,
-                'route_departure_time' => $return_hour,
+                'route_departure_time' => $end_hour,
                 'route_origin_address' => $return_address,
                 'route_destination_address' => $start_address,
                 'route_one_way_duration' => $duration_value_label

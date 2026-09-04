@@ -91,7 +91,7 @@ class Dynamicpackages_Booking_Page {
 			'booking_extra' => secure_get('booking_extra', null),
 			'booking_hour' => esc_html(dy_utilities::start_hour()),
 			'end_date' => secure_get('end_date', null),
-			'return_hour' => (string) dy_utilities::return_hour(),
+			'end_hour' => (string) dy_utilities::end_hour(),
 			'duration' => (string) dy_utilities::show_duration(),
 			'pax_num' => (int) dy_utilities::pax_num(),
 			'pax_regular' => secure_get('pax_regular', 0, 'absint'),

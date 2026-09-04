@@ -141,7 +141,7 @@ class Dynamicpackages_Forms
 			: __('Date', 'dynamicpackages');
 
 		$start_hour = package_field('package_start_hour');
-		$return_hour = package_field('package_return_hour');
+		$end_hour = package_field('package_end_hour');
 
 		$start_address_short = package_field('package_start_address_short');
 		$return_address_short = package_field('package_return_address_short');
@@ -167,9 +167,9 @@ class Dynamicpackages_Forms
 
 		$form .= '<input type="hidden" value="'.esc_attr(get_dy_id()).'"/>';
 
-		if(($by_hour === '0' && $start_hour !== '' && $return_hour !== ''))
+		if(($by_hour === '0' && $start_hour !== '' && $end_hour !== ''))
 		{
-			$form .= '<input type="hidden" class="schedule" value="'.esc_attr($start_hour .' - '.$return_hour).'"/>';
+			$form .= '<input type="hidden" class="schedule" value="'.esc_attr($start_hour .' - '.$end_hour).'"/>';
 		}
 
 		if(isset($_GET['force_availability'])){
@@ -222,7 +222,7 @@ class Dynamicpackages_Forms
 			if($by_hour == 1)
 			{
 				$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo;'.$return_route_label.'</label>';
-				$form .= '<p><input type="text" name="return_hour" class="dy_time_picker" /></p>';
+				$form .= '<p><input type="text" name="end_hour" class="dy_time_picker" /></p>';
 			}		
 		}
 

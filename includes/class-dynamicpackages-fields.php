@@ -99,8 +99,12 @@ class Dynamicpackages_Fields
 
                 $this_field = get_post_meta($the_id, $old, true);
                 if ($this_field !== '') {
-                    update_post_meta($the_id, $new, $this_field);
-                    delete_post_meta($the_id, $old);
+                    $is_updated = update_post_meta($the_id, $new, $this_field);
+
+                    if($is_updated !== false) {
+                        delete_post_meta($the_id, $old);
+                    }
+                    
                     $is_migrated = true;
                     break;
                 }
