@@ -201,7 +201,7 @@ class Dynamicpackages_Forms
 		$departure_route_label = ($is_transport && $has_route) ? '<div class="small light departure_route_label"></div>' : '';
 
 		$form .= '<hr/><label>'.esc_html($date_label).$departure_route_label.'</label>';
-		$form .= '<p><input type="text" name="booking_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';	
+		$form .= '<p><input type="text" name="start_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';	
 
 
 		if($by_hour == 1)

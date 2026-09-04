@@ -65,14 +65,14 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$booking_date = secure_request('booking_date');
+		$start_date = secure_request('start_date');
 
-		if(!is_valid_short_date($booking_date)) {
+		if(!is_valid_short_date($start_date)) {
 			return self::$cache[$cache_key] = false;
 		}
 
 		//strtotime returns false on invalid param
-		return self::$cache[$cache_key] = strtotime($booking_date.' 00:00:00');
+		return self::$cache[$cache_key] = strtotime($start_date.' 00:00:00');
 	}
 
 	public static function end_date() : int|bool {
@@ -740,9 +740,9 @@ class dy_utilities {
 			$duration = min($booking_extra, $duration_max);
 		}
 
-		$booking_date = secure_request('booking_date');
-		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-		$booking_dates_range = self::get_date_range($booking_date, $booking_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
+		$start_date = secure_request('start_date');
+		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
+		$booking_dates_range = self::get_date_range($start_date, $start_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
 		$seasons = self::get_package_hot_chart('package_seasons_chart');
 		$duration_arr = [];
 
@@ -813,7 +813,7 @@ class dy_utilities {
 	}
 
 
-	public static function get_season($booking_date)
+	public static function get_season($start_date)
 	{
 		if(is_booking_page() || is_confirmation_page())
 		{
@@ -826,14 +826,14 @@ class dy_utilities {
 				{
 					$seasons = $seasons['seasons_chart'];
 
-					$booking_date = strtotime(sanitize_text_field($booking_date));
+					$start_date = strtotime(sanitize_text_field($start_date));
 						
 					for($x = 0; $x < count($seasons); $x++)
 					{
 						$from_season = (!empty($seasons[$x][1])) ? strtotime($seasons[$x][1]) : 0;
 						$to_season = (!empty($seasons[$x][2])) ? strtotime($seasons[$x][2]) : 0;
 				
-						if($booking_date >= $from_season && $booking_date <= $to_season)
+						if($start_date >= $from_season && $start_date <= $to_season)
 						{
 							$last_cell = count($seasons[$x]) - 1;
 							$season = $seasons[$x][$last_cell];
@@ -868,7 +868,7 @@ class dy_utilities {
 
 	public static function get_price_occupancy($type = null)
 	{
-		if (!request_has('booking_date')) {
+		if (!request_has('start_date')) {
 			// Preserve original behavior: no return if booking_date isn't present.
 			return;
 		}
@@ -879,11 +879,11 @@ class dy_utilities {
 		$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart'); // base occupancy rates
 		$duration        = self::get_min_nights() ?? 1;                             // min nights required
 		$seasons         = self::get_package_hot_chart('package_seasons_chart');    // seasons matrix (not used directly but kept)
-		$booking_date    = secure_request('booking_date');          // selected date
-		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +{$duration} days"));
+		$start_date    = secure_request('start_date');          // selected date
+		$start_date_to = date('Y-m-d', strtotime($start_date . " +{$duration} days"));
 
 		// Precompute ranges/surcharges once
-		$booking_dates_range     = self::get_date_range($booking_date, $booking_date_to, false);
+		$booking_dates_range     = self::get_date_range($start_date, $start_date_to, false);
 		$booking_dates_surcharges = self::get_range_week_day_surcharges($booking_dates_range);
 
 		// Validate arrays (mirror original intent but remove duplicates)
@@ -1061,8 +1061,8 @@ class dy_utilities {
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
-		$booking_date = secure_request('booking_date');
-		$week_days_to_surcharge = array($booking_date);
+		$start_date = secure_request('start_date');
+		$week_days_to_surcharge = array($start_date);
 		$one_way_surcharge = (float) package_field('package_one_way_surcharge');
 
 		if($package_type === 'transport')
@@ -1071,7 +1071,7 @@ class dy_utilities {
 
 			$end_date = secure_request('end_date');
 
-			if(is_valid_date($booking_date))
+			if(is_valid_date($start_date))
 			{
 				if(is_valid_date($end_date))
 				{

@@ -35,7 +35,7 @@ class Dynamic_Core_Orders {
 			'pax_regular',
 			'pax_discount',
 			'pax_free',
-			'booking_date',
+			'start_date',
 			'booking_hour',
 			'end_date',
 			'return_hour',

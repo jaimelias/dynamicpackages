@@ -58,8 +58,8 @@ const datePicker = async () => {
 			.length > 0;
 
 		const requests = hasEndDate
-			? ['booking_date', 'end_date']
-			: ['booking_date'];
+			? ['start_date', 'end_date']
+			: ['start_date'];
 
 		await Promise.all(
 			requests.map(async name => {
@@ -102,7 +102,7 @@ const datePicker = async () => {
 					container: '#availability_calendar',
 					format: 'yyyy-mm-dd',
 					firstDay: 1,
-					...datePickerState[name === 'end_date' ? 'end_date' : 'booking_date']
+					...datePickerState[name === 'end_date' ? 'end_date' : 'start_date']
 				};
 
 				console.log({weekDay, hour, today});
@@ -131,7 +131,7 @@ const datePicker = async () => {
 					args.onOpen = () => {
 
 						const bookingDatePicker = thisForm
-							.find('input.dy_date_picker[name="booking_date"]')
+							.find('input.dy_date_picker[name="start_date"]')
 							.pickadate('picker');
 
 						const bookingDateVal = bookingDatePicker.get('select');
@@ -344,9 +344,9 @@ const validateCheckPricesForm = () => {
 
 		jQuery(submitButton).click(async () => {
 			let invalids = [];
-			let required = ['booking_date', 'booking_hour', 'route', 'transport_type'];
+			let required = ['start_date', 'booking_hour', 'route', 'transport_type'];
 			const data = formToArray(thisForm);
-			const bookingDate = data.find(v => v.name === 'booking_date');
+			const bookingDate = data.find(v => v.name === 'start_date');
 			const endDate = data.find(v => v.name === 'end_date');
 			let paxNum = 0;
 
@@ -386,7 +386,7 @@ const validateCheckPricesForm = () => {
 
 			if(typeof bookingDate !== 'undefined' && typeof endDate !== 'undefined')
 			{
-				const dateNames = ['booking_date', 'end_date'];
+				const dateNames = ['start_date', 'end_date'];
 
 				if(new Date(bookingDate.value) > new Date(endDate.value))
 				{

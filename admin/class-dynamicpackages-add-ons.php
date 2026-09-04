@@ -352,9 +352,9 @@ class Dynamicpackages_Taxonomy_Add_Ons
 				else if($package_type === 'transport')
 				{
 					$package_duration = 1;
-					$booking_date = dy_utilities::start_date();
+					$start_date = dy_utilities::start_date();
 					$end_date = dy_utilities::end_date();
-					$additional_duration = (int) dy_utilities::get_multi_day_duration($booking_date, $end_date);
+					$additional_duration = (int) dy_utilities::get_multi_day_duration($start_date, $end_date);
 					$package_duration = $package_duration + $additional_duration;
 
 					if($add_on_type === 2)

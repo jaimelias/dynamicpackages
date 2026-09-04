@@ -94,7 +94,7 @@ class paguelo_facil_on{
 			(string) secure_post('unique_tx_id'),
 			(string) secure_post('dy_id'),
 			strtolower((string) secure_post('email', '', 'sanitize_email')),
-			(string) secure_post('booking_date'),
+			(string) secure_post('start_date'),
 			(string) secure_post('booking_hour'),
 			(string) secure_post('booking_extra'),
 			(string) secure_post('pax_regular'),
@@ -906,7 +906,7 @@ class paguelo_facil_on{
 		{
 			$outstanding = wrap_money_full(dy_utilities::outstanding_amount());
 			$total =  wrap_money_full(dy_utilities::payment_amount());
-			$date = secure_post('booking_date');
+			$date = secure_post('start_date');
 			
 			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').'<br/><span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
 			$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;

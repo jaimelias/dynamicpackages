@@ -51,9 +51,9 @@ class dy_Add_To_Calendar
 
 		
 		$hour = dy_utilities::start_hour();
-		$booking_date = secure_request('booking_date');
+		$start_date = secure_request('start_date');
 
-		if(empty($hour) || empty($booking_date)) return '';
+		if(empty($hour) || empty($start_date)) return '';
 
 		$label        = __('Add to calendar', 'dynamicpackages'); 
 
@@ -70,7 +70,7 @@ class dy_Add_To_Calendar
 			</div>',
 			esc_attr($label),
 			esc_html($label),
-			esc_html($booking_date . ' ' . dy_utilities::start_hour()),
+			esc_html($start_date . ' ' . dy_utilities::start_hour()),
 			esc_html(get_option('timezone_string')),
 			esc_html($post->post_title),
 			esc_html((string) apply_filters('dy_description', null)),

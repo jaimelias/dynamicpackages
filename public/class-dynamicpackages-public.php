@@ -343,7 +343,7 @@ class Dynamicpackages_Public {
 		global $post;
 	
 		// Guard: nothing to do without a post or booking date
-		if ( empty( $post ) || empty( $_REQUEST['booking_date'] ) ) {
+		if ( empty( $post ) || empty( $_REQUEST['start_date'] ) ) {
 			return '';
 		}
 
@@ -670,7 +670,7 @@ class Dynamicpackages_Public {
 
 		global $dy_is_archive;
 		$is_archive = (isset($dy_is_archive)) ? true : false;
-		$booking_date = (dy_utilities::start_date()) ? dy_utilities::format_date(dy_utilities::start_date()) : null;
+		$start_date = (dy_utilities::start_date()) ? dy_utilities::format_date(dy_utilities::start_date()) : null;
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
@@ -761,7 +761,7 @@ class Dynamicpackages_Public {
 		// Build once
 		$route = [
 			'label_departure'    => [ null,     $label_departure ],
-			'booking_date'       => [ 'calendar',$booking_date ],
+			'start_date'       => [ 'calendar',$start_date ],
 			'check_in'           => [ 'clock',   __('Check‑in', 'dynamicpackages') . ' ' . $first_checkin ],
 			'start_hour'         => [ 'clock',   __('Departing', 'dynamicpackages') . ' ' . $first_hour ],
 			'start_address'      => [ 'location',$first_address ],
@@ -829,7 +829,7 @@ class Dynamicpackages_Public {
 				$req[] = 'duration';
 			}
 
-			if($booking_date) $req[] = 'booking_date';
+			if($start_date) $req[] = 'start_date';
 			if($check_in_hour) $req[] = 'check_in';
 			if(dy_utilities::start_hour()) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';

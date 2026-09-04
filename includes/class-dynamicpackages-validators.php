@@ -113,15 +113,15 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		if(get_has('booking_date'))
+		if(get_has('start_date'))
 		{
-			$booking_date = dy_utilities::start_date();
+			$start_date = dy_utilities::start_date();
 			$min_range = dy_utilities::min_range($the_id);
 			$max_range = dy_utilities::max_range($the_id);
 						
-			if($booking_date)
+			if($start_date)
 			{
-				if($booking_date >= $min_range && $booking_date <= $max_range)
+				if($start_date >= $min_range && $start_date <= $max_range)
 				{
 					$output = true;
 				}
@@ -215,7 +215,7 @@ class dy_validators
 
 		$missing_required_get_params = [];
 		$required_get_params = [
-			'booking_date',
+			'start_date',
 			'pax_regular'
 		];
 
@@ -259,7 +259,7 @@ class dy_validators
 		$the_id = get_dy_id();
 
 		if (!self::validate_booking_date($the_id)) {
-			$invalid_required_get_params[] = 'booking_date';
+			$invalid_required_get_params[] = 'start_date';
 		}
 		if (!self::validate_pax_regular($the_id)) {
 			$invalid_required_get_params[] = 'pax_regular';
@@ -949,7 +949,7 @@ class dy_validators
 		$resolved_hour = dy_utilities::start_hour();
 
 
-		if(!is_valid_date(secure_post('booking_date'))) {
+		if(!is_valid_date(secure_post('start_date'))) {
 			$invalids[] = __('Invalid booking_date.', 'dynamicpackages');
 		}
 
@@ -1029,9 +1029,9 @@ class dy_validators
 		$package_type = dy_utilities::get_package_type();
 
 		$duration = absint(dy_utilities::get_min_nights());
-		$booking_date = secure_request('booking_date');
-		$booking_date_to = date('Y-m-d', strtotime($booking_date . " +$duration days"));
-		$booking_dates_range = dy_utilities::get_date_range($booking_date, $booking_date_to, false);
+		$start_date = secure_request('start_date');
+		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
+		$booking_dates_range = dy_utilities::get_date_range($start_date, $start_date_to, false);
 		
 		if($stored_coupon_code === $coupon_code)
 		{
@@ -1058,9 +1058,9 @@ class dy_validators
 			$expiration_stamp = $expiration_stamp->getTimestamp();
 
 			//booking
-			$booking_date_stamp = new DateTime($booking_date);
-			$booking_date_stamp->setTime(0,0,0);
-			$booking_date_stamp = $booking_date_stamp->getTimestamp();
+			$start_date_stamp = new DateTime($start_date);
+			$start_date_stamp->setTime(0,0,0);
+			$start_date_stamp = $start_date_stamp->getTimestamp();
 
 			if($expiration_stamp > dy_strtotime('today midnight'))
 			{
@@ -1089,7 +1089,7 @@ class dy_validators
 				}
 				else
 				{
-					if($booking_date_stamp >= $expiration_stamp)
+					if($start_date_stamp >= $expiration_stamp)
 					{
 						if($coupon_bookings_after_expires === true)
 						{
