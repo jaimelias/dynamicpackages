@@ -1238,10 +1238,10 @@ class dy_utilities {
 		}
 
 		$package_by_hour = absint(package_field('package_by_hour'));
-		$package_return_hour = package_field('package_return_hour');
+		$package_end_hour = package_field('package_return_hour');
 
-		if(is_valid_time($package_return_hour)) {
-			return self::$cache[$cache_key] = $package_return_hour;
+		if(is_valid_time($package_end_hour)) {
+			return self::$cache[$cache_key] = $package_end_hour;
 		}
 
 		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($return_hour)
