@@ -945,14 +945,18 @@ class dy_validators
 
 		$output = true;
 		$invalids = [];
+		$booking_hour = secure_post('booking_hour');
+		$resolved_hour = dy_utilities::hour();
 
 
 		if(!is_valid_date(secure_post('booking_date'))) {
 			$invalids[] = __('Invalid booking_date.', 'dynamicpackages');
 		}
-		if(!is_valid_time(secure_post('booking_hour')) && !is_valid_time(dy_utilities::hour())) {
+
+		if($resolved_hour !== '' && !is_valid_time($booking_hour)) {
 			$invalids[] = __('Invalid booking_hour.', 'dynamicpackages');
 		}
+
 		if(empty(secure_post('duration'))) {
 			$invalids[] = __('Invalid duration.', 'dynamicpackages');
 		}
