@@ -930,13 +930,12 @@ class dy_validators
 		return self::$cache[$cache_key] = $output;
 	}
 	
-	private static function validate_package_hour(string $type): bool
+	private static function validate_package_hour(string $type, string $request_hour): bool
 	{
 		if(!in_array($type, ['start_hour', 'end_hour'], true)) {
 			return false;
 		}
 
-		$request_hour = secure_request($type);
 		$cache_key = 'dy_validate_' . $type . '_' . $request_hour;
 
 		if(array_key_exists($cache_key, self::$cache)) {
@@ -979,11 +978,18 @@ class dy_validators
 			$invalids[] = __('Invalid start_date.', 'dynamicpackages');
 		}
 
-		if(!self::validate_package_hour('start_hour')) {
+		$start_hour = secure_post('start_hour');
+		$is_valid_start_hour = self::validate_package_hour('start_hour', $start_hour);
+
+		if(!$is_valid_start_hour) {
 			$invalids[] = __('Invalid start_hour.', 'dynamicpackages');
 		}
 
-		if(request_has('end_hour') && !self::validate_package_hour('end_hour')) {
+		$has_return = secure_post('end_date') !== '';
+		$end_hour = secure_post('end_hour');
+		$is_valid_end_hour = self::validate_package_hour('end_hour', $end_hour);
+
+		if($has_return && !$is_valid_end_hour) {
 			$invalids[] = __('Invalid end_hour.', 'dynamicpackages');
 		}
 
