@@ -144,9 +144,9 @@ class Dynamicpackages_Actions{
 		{
 			if($data['package_type'] === 'transport' && $data['route'] === '1')
 			{
-				if(array_key_exists('booking_hour', $data) && array_key_exists('end_hour', $data))
+				if(array_key_exists('start_hour', $data) && array_key_exists('end_hour', $data))
 				{
-					list($data['booking_hour'], $data['end_hour']) = [$data['end_hour'], $data['booking_hour']];
+					list($data['start_hour'], $data['end_hour']) = [$data['end_hour'], $data['start_hour']];
 				}
 				
 			}

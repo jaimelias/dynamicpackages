@@ -207,7 +207,7 @@ class Dynamicpackages_Forms
 		if($by_hour == 1)
 		{
 			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' &raquo;'.$departure_route_label.'</label>';
-			$form .= '<p><input type="text" name="booking_hour"  class="dy_time_picker" /></p>';	
+			$form .= '<p><input type="text" name="start_hour"  class="dy_time_picker" /></p>';	
 		}
 
 		//departure transport hidden end and start of departure hidden

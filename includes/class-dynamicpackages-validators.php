@@ -945,7 +945,7 @@ class dy_validators
 
 		$output = true;
 		$invalids = [];
-		$start_hour = secure_post('booking_hour');
+		$start_hour = secure_post('start_hour');
 		$resolved_hour = dy_utilities::start_hour();
 
 
@@ -954,7 +954,7 @@ class dy_validators
 		}
 
 		if($resolved_hour !== '' && !is_valid_time($start_hour)) {
-			$invalids[] = __('Invalid booking_hour.', 'dynamicpackages');
+			$invalids[] = __('Invalid start_hour.', 'dynamicpackages');
 		}
 
 		if(empty(secure_post('duration'))) {

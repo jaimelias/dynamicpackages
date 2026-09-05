@@ -344,7 +344,7 @@ const validateCheckPricesForm = () => {
 
 		jQuery(submitButton).click(async () => {
 			let invalids = [];
-			let required = ['start_date', 'booking_hour', 'route', 'transport_type'];
+			let required = ['start_date', 'start_hour', 'route', 'transport_type'];
 			const data = formToArray(thisForm);
 			const bookingDate = data.find(v => v.name === 'start_date');
 			const endDate = data.find(v => v.name === 'end_date');

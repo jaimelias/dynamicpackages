@@ -863,7 +863,7 @@ msgid "Invalid start_date."
 msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:912
-msgid "Invalid booking_hour."
+msgid "Invalid start_hour."
 msgstr ""
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:192

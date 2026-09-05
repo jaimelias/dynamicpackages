@@ -89,7 +89,7 @@ class Dynamicpackages_Booking_Page {
 			'total' => $payment_amount,
 			'start_date' => secure_get('start_date', null),
 			'booking_extra' => secure_get('booking_extra', null),
-			'booking_hour' => esc_html(dy_utilities::start_hour()),
+			'start_hour' => esc_html(dy_utilities::start_hour()),
 			'end_date' => secure_get('end_date', null),
 			'end_hour' => (string) dy_utilities::end_hour(),
 			'duration' => (string) dy_utilities::show_duration(),
