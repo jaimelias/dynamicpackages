@@ -1202,52 +1202,45 @@ class dy_utilities {
 		return $output;
 	}
 		
-	public static function start_hour()
+	public static function start_hour(): string
 	{
-
-		$the_id = get_dy_id();
-		$start_hour = secure_request('start_hour');
-		$cache_key = 'dy_start_hour_' . $the_id . '_' . $start_hour;
-
-		if( array_key_exists($cache_key, self::$cache) ) {
-			return self::$cache[$cache_key];
-		}
-
-		$package_by_hour = absint(package_field('package_by_hour'));
-		$package_start_hour = package_field('package_start_hour');
-
-		if(is_valid_time($package_start_hour)) {
-			return self::$cache[$cache_key] = $package_start_hour;
-		}
-
-		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($start_hour)
-			? $start_hour
-			: '';
+		return self::resolve_hour('start_hour');
 	}
 
 
-	public static function end_hour()
+	public static function end_hour(): string
 	{
+		return self::resolve_hour('end_hour');
+	}
+
+
+	private static function resolve_hour(string $type): string
+	{
+		if(!in_array($type, ['start_hour', 'end_hour'], true)) {
+			return '';
+		}
 
 		$the_id = get_dy_id();
-		$end_hour = secure_request('end_hour');
-		$cache_key = 'dy_return_hour_' . $the_id . '_' . $end_hour;
+		$request_hour = secure_request($type);
+		$cache_key = 'dy_' . $type . '_' . $the_id . '_' . $request_hour;
 
-		if( array_key_exists($cache_key, self::$cache) ) {
+		if(array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
 		$package_by_hour = absint(package_field('package_by_hour'));
-		$package_end_hour = package_field('package_end_hour');
 
-		if(is_valid_time($package_end_hour)) {
-			return self::$cache[$cache_key] = $package_end_hour;
+		if($package_by_hour === 1) {
+			return self::$cache[$cache_key] = is_valid_time($request_hour)
+				? $request_hour
+				: '';
 		}
 
-		return self::$cache[$cache_key] = $package_by_hour === 1 && is_valid_time($end_hour)
-			? $end_hour
-			: '';
+		$package_hour = package_field('package_' . $type);
 
+		return self::$cache[$cache_key] = is_valid_time($package_hour)
+			? $package_hour
+			: '';
 	}
 
 	public static function webhook($url, $payload = '')

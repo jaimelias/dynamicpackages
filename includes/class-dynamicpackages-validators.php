@@ -930,6 +930,35 @@ class dy_validators
 		return self::$cache[$cache_key] = $output;
 	}
 	
+	private static function validate_package_hour(string $type): bool
+	{
+		if(!in_array($type, ['start_hour', 'end_hour'], true)) {
+			return false;
+		}
+
+		$request_hour = secure_request($type);
+		$cache_key = 'dy_validate_' . $type . '_' . $request_hour;
+
+		if(array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
+
+		$package_by_hour = absint(package_field('package_by_hour'));
+
+		if($package_by_hour === 1) {
+			return self::$cache[$cache_key] = is_valid_time($request_hour);
+		}
+
+		$package_hour = package_field('package_' . $type);
+
+		if($package_by_hour === 0) {
+			return self::$cache[$cache_key] = is_valid_time($package_hour)
+				|| ($request_hour === '' && $package_hour === '');
+		}
+
+		return self::$cache[$cache_key] = false;
+	}
+
 	public static function validate_booking_details()
 	{
 		$cache_key = 'dy_validate_booking_details';		
@@ -945,16 +974,17 @@ class dy_validators
 
 		$output = true;
 		$invalids = [];
-		$start_hour = secure_post('start_hour');
-		$resolved_hour = dy_utilities::start_hour();
-
 
 		if(!is_valid_date(secure_post('start_date'))) {
 			$invalids[] = __('Invalid start_date.', 'dynamicpackages');
 		}
 
-		if($resolved_hour !== '' && !is_valid_time($start_hour)) {
+		if(!self::validate_package_hour('start_hour')) {
 			$invalids[] = __('Invalid start_hour.', 'dynamicpackages');
+		}
+
+		if(request_has('end_hour') && !self::validate_package_hour('end_hour')) {
+			$invalids[] = __('Invalid end_hour.', 'dynamicpackages');
 		}
 
 		if(empty(secure_post('duration'))) {
