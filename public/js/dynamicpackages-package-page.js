@@ -193,12 +193,21 @@ const timePicker = () => {
 	}
 
 	let args = {};
+
+	const min = dyPackageEnabledTimes?.min;
+	const max = dyPackageEnabledTimes?.max;
 	
-	if(dyPackageEnabledTimes.length > 1)
+	if(min)
 	{
-		args.min = dyPackageEnabledTimes[0];
-		args.max = dyPackageEnabledTimes[1];
+		args.min = min;
 	}
+
+	if(max)
+	{
+		args.max = max;
+	}
+
+	console.log(args);
 	
 	jQuery('.dy_package_booking_form').find('input.dy_time_picker').each(function()
 	{

@@ -52,12 +52,12 @@ class Dynamicpackages_Package_Page {
 				if(!empty($min_hour))
 				{
 					$min_hour = strtotime($min_hour);
-					$output[] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
+					$output['min'] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
 				}
 				if(!empty($max_hour))
 				{
 					$max_hour = strtotime($max_hour);
-					$output[] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
+					$output['max'] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
 				}
 			}
 			

@@ -1231,7 +1231,13 @@ class dy_utilities {
 		$package_by_hour = absint(package_field('package_by_hour'));
 
 		if($package_by_hour === 1) {
-			return self::$cache[$cache_key] = is_valid_time($request_hour)
+			$min_hour = package_field('package_min_hour');
+			$max_hour = package_field('package_max_hour');
+
+			return self::$cache[$cache_key] = is_hour_in_range(
+				$request_hour,
+				[$min_hour, $max_hour]
+			)
 				? $request_hour
 				: '';
 		}
