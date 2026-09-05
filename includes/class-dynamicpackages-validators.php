@@ -189,9 +189,8 @@ class dy_validators
 		return self::$cache[$cache_key] = true;
 	}
 
-	public static function is_booking_page()
+	public static function is_booking_page(): bool
 	{
-		$output = false;
 		$cache_key = 'dy_is_booking_page';
 
 		if(
@@ -206,83 +205,73 @@ class dy_validators
 		}
 
 		if(array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
+			return (bool) self::$cache[$cache_key];
 		}
 
-		if (!is_post_type_packages()) {
+		if(!self::is_post_type_packages()) {
 			return self::$cache[$cache_key] = false;
 		}
 
-		$missing_required_get_params = [];
-		$required_get_params = [
-			'start_date',
-			'pax_regular'
-		];
+		/*
+		* Si ambos valores están ausentes, se trata de la página normal
+		* del paquete y no de un intento de reserva.
+		*
+		* Un valor vacío permanece distinto de null y será validado como
+		* inválido más adelante.
+		*/
+		$start_date = secure_get('start_date', null);
+		$pax_regular = secure_get('pax_regular', null);
 
-		$count_required_get_params = count($required_get_params);
-
-		for ($x = 0; $x < $count_required_get_params; $x++) {
-			if (!get_has($required_get_params[$x])) {
-				$missing_required_get_params[] = $required_get_params[$x];
-			}
+		if($start_date === null && $pax_regular === null) {
+			return self::$cache[$cache_key] = false;
 		}
-		
-		$count_missing_required_get_params = count($missing_required_get_params);
-		
-		//if all the required_get_params it means that this is a standard package page
+
+		$the_id = get_dy_id();
+		$invalid_params = [];
+
+		if(!self::validate_start_date($the_id)) {
+			$invalid_params[] = 'start_date';
+		}
+
+		if(!self::validate_pax_regular($the_id)) {
+			$invalid_params[] = 'pax_regular';
+		}
 
 		if(
-			$count_missing_required_get_params
-			=== $count_required_get_params
+			!self::validate_package_hour(
+				'start_hour',
+				(string) secure_get('start_hour')
+			)
 		) {
-			return self::$cache[$cache_key] = false;
+			$invalid_params[] = 'start_hour';
 		}
 
-		if($count_missing_required_get_params > 0) {
-			dy_errors::add(array_map(
-				static function($param) {
-					return sprintf(
-						__(
-							'Missing required request parameter: %s.',
-							'dynamicpackages'
-						),
-						$param
-					);
-				},
-				$missing_required_get_params
-			));
+		$has_return = (string) secure_get('end_date') !== '';
 
-			return self::$cache[$cache_key] = false;
+		if(
+			$has_return
+			&& !self::validate_package_hour(
+				'end_hour',
+				(string) secure_get('end_hour')
+			)
+		) {
+			$invalid_params[] = 'end_hour';
 		}
 
-		$invalid_required_get_params = [];
-		$the_id = get_dy_id();
-
-		if (!self::validate_start_date($the_id)) {
-			$invalid_required_get_params[] = 'start_date';
-		}
-		if (!self::validate_pax_regular($the_id)) {
-			$invalid_required_get_params[] = 'pax_regular';
+		if($invalid_params === []) {
+			return self::$cache[$cache_key] = true;
 		}
 
-		if(count($invalid_required_get_params) > 0) {
+		dy_errors::add(array_map(
+			static fn(string $param): string => sprintf(
+				__('Invalid request parameter: %s.', 'dynamicpackages'),
+				$param
+			),
+			$invalid_params
+		));
 
-			dy_errors::add(array_map(
-				function($param) {
-					return sprintf(__('Invalid request parameter: %s.'), $param);
-				},
-				$invalid_required_get_params
-			));
-			
-			$output = false;
-		} else {
-			$output = true;
-		}
-        
-        
-
-		return self::$cache[$cache_key] = $output;
-	}	
+		return self::$cache[$cache_key] = false;
+	}
 	
 	public static function validate_pax_regular($the_id = 0) {
 
@@ -360,7 +349,7 @@ class dy_validators
 		}
 
 		$output = false;
-		$cache_key = 'dy_is_checkout_page';
+		$cache_key = 'dy_is_confirmation_page';
 	
         if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];
