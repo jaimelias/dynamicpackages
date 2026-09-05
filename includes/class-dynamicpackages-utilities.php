@@ -1207,7 +1207,7 @@ class dy_utilities {
 
 		$the_id = get_dy_id();
 		$start_hour = secure_request('start_hour');
-		$cache_key = 'dy_booking_hour_' . $the_id . '_' . $start_hour;
+		$cache_key = 'dy_start_hour_' . $the_id . '_' . $start_hour;
 
 		if( array_key_exists($cache_key, self::$cache) ) {
 			return self::$cache[$cache_key];
