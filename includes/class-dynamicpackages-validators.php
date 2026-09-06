@@ -275,7 +275,7 @@ class dy_validators
 	
 	public static function validate_pax_regular($the_id = 0) {
 
-
+		write_log($the_id = 0);
 		$cache_key = 'dy_validate_pax_regular_' . $the_id;
 
 		if (array_key_exists($cache_key, self::$cache)) {
