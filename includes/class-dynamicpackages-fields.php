@@ -12,7 +12,16 @@ function package_field($name, $the_id = null) : string
 
     } catch (Throwable $e) {
 
-        write_log('Dynamicpackages_Fields::get() - Error: ' . $e->getMessage(), true);
+        write_log(
+            [
+                'message'   => 'Dynamicpackages_Fields::get() failed.',
+                'exception' => get_class($e),
+                'error'     => $e->getMessage()
+            ],
+            true,
+            false,
+            'ERROR'
+        );
 
         return '';
     }
@@ -72,8 +81,14 @@ class Dynamicpackages_Fields
     private static function migration_schema_error($row) {
 
         write_log(
-            'Dynamicpackages_Fields::get_migration_arr() - Error: Invalid migration_arr schema. Row: ' . print_r($row, true),
-            true
+            [
+                'message'  => 'Invalid migration array schema.',
+                'row_type' => get_debug_type($row),
+                'row'      => $row
+            ],
+            true,
+            false,
+            'ERROR'
         );
 
         wp_die(
@@ -225,8 +240,17 @@ class Dynamicpackages_Fields
         if(!is_string($this_field))
         {
             write_log(
-                "Dynamicpackages_Fields::get() - Warning: Field value for '$name' in post '$the_id' is not a string. Value: " . print_r($this_field, true)
+                [
+                    'message'    => 'Field value is not a string.',
+                    'field'      => $name,
+                    'post_id'    => $the_id,
+                    'value_type' => get_debug_type($this_field)
+                ],
+                true,
+                false,
+                'WARNING'
             );
+            
             $this_field = '';
         }
 

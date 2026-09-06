@@ -1305,18 +1305,47 @@ class dy_utilities {
 				throw new \RuntimeException("cURL error ({$errno}): {$error}");
 			}
 
-			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
 
-			if ($httpCode !== 200) {
-				write_log(curl_error($ch) ?: $result);
+			if($http_code !== 200)
+			{
+				$response_excerpt = is_string($result)
+					? substr($result, 0, 4096)
+					: '';
+
+				write_log(
+					[
+						'message'            => 'HTTP request returned an unexpected status.',
+						'http_status'        => $http_code,
+						'response_excerpt'   => $response_excerpt,
+						'response_truncated' => is_string($result)
+							&& strlen($result) > 4096
+					],
+					false,
+					false,
+					'ERROR'
+				);
+
 				return false;
 			}
 
 			return true;
 
-		} catch (\Throwable $e) {
-			write_log($e->getMessage());
+		} catch(\Throwable $e) {
+			write_log(
+				[
+					'message'   => 'HTTP request failed.',
+					'exception' => get_class($e),
+					'error'     => $e->getMessage(),
+					'file'      => $e->getFile(),
+					'line'      => $e->getLine()
+				],
+				false,
+				false,
+				'ERROR'
+			);
+
 			return false;
 		}
 	}

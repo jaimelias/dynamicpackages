@@ -465,16 +465,14 @@ class dy_validators
 
 		self::$cache[$cache_key] = false;
 
-		// write_log() mutates $_POST; omit the payload and always restore it.
-		$log = static function($details) {
-			$submitted = $_POST;
-
-			try {
-				$_POST = [];
-				write_log($details);
-			} finally {
-				$_POST = $submitted;
-			}
+		$log = static function(mixed $details): void
+		{
+			write_log(
+				$details,
+				false,
+				false,
+				'ERROR'
+			);
 		};
 
 		$reject = static function(
