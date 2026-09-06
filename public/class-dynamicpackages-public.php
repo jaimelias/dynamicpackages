@@ -38,7 +38,6 @@ class Dynamicpackages_Public {
 		add_filter('get_the_excerpt', array($this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('term_description', array($this, 'modify_term_description'));
 		add_action('pre_get_posts', array($this, 'set_one_tax_per_page'));
-		add_filter('term_description', array($this, 'modify_term_description'));
 
 
 		//packages
@@ -84,55 +83,65 @@ class Dynamicpackages_Public {
 		
 
 	
-	public function package_template($template)
+	public function package_template(string $template): string
 	{
-		if(is_tax('package_terms_conditions') || is_tax('package_location') || is_tax('package_category') || 'packages' == get_post_type())
-		{
-			$new_template = locate_template( array( 'page.php' ) );
-			return $new_template;			
-		}	
-		return $template;
+		$is_package_page = is_tax([
+			'package_terms_conditions',
+			'package_location',
+			'package_category',
+		]) || get_post_type() === 'packages';
+
+		if (!$is_package_page) {
+			return $template;
+		}
+
+		return locate_template(['page.php']) ?: $template;
 	}
-	public function booking_sidebar()
+
+	public function booking_sidebar(): string
 	{
 		ob_start();
-		require_once($this->dirname_file . '/partials/quote-form.php');
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
+
+		require $this->dirname_file . '/partials/quote-form.php';
+
+		return (string) ob_get_clean();
 	}
 
-	public function the_content($content)
+	public function the_content(string $content): string
 	{
-		global $post;
-
-		if(is_tax('package_location') || is_tax('package_category'))
-		{
+		if (is_tax([
+			'package_location',
+			'package_category',
+		])) {
 			ob_start();
-			require_once($this->dirname_file . '/partials/archive.php');
-			$content = ob_get_contents();
-			ob_end_clean();
-		}
-		else if(is_tax('package_terms_conditions'))
-		{
-			$Parsedown = new Parsedown();
-			$term = get_term(get_queried_object()->term_id);
-			$content = $Parsedown->text($term->description);
-		}
-		else if(is_singular('packages'))
-		{
-			if(!is_booking_page())
-			{
-				$partial_content = $content;
-				
-				ob_start();
-				require_once($this->dirname_file . '/partials/single.php');
-				$content = ob_get_contents();
-				ob_end_clean();
 
-			}
+			require $this->dirname_file . '/partials/archive.php';
+
+			return (string) ob_get_clean();
 		}
-		
+
+		if (is_tax('package_terms_conditions')) {
+			$term = get_queried_object();
+
+			if (!$term instanceof WP_Term) {
+				return $content;
+			}
+
+			$parsedown = new Parsedown();
+
+			return $parsedown->text($term->description);
+		}
+
+		if (is_singular('packages') && !is_booking_page()) {
+			$partial_content = $content;
+
+			ob_start();
+
+			require $this->dirname_file . '/partials/single.php';
+
+			return (string) ob_get_clean();
+		}
+
 		return $content;
 	}
 	
@@ -156,164 +165,157 @@ class Dynamicpackages_Public {
 		);
 	}
 	
-	public function the_title($title)
+	public function the_title(string $title): string
 	{
-		if(!in_the_loop()) return $title;
-		
-		if(is_singular('packages') && is_booking_page())
-		{				
-			$title = sprintf(__('Booking Page: %s', 'dynamicpackages'), $title);
+		if (!in_the_loop() || !is_booking_page()) {
+			return $title;
 		}
 
-		return $title;
+		return sprintf(
+			__('Booking Page: %s', 'dynamicpackages'),
+			$title
+		);
 	}
 	
-	public function modify_tax_title($title)
+	public function modify_tax_title(string $title): string
 	{
-		if ( is_tax('package_terms_conditions') && in_the_loop() ) {
-			$title = sprintf('<span class="linkcolor">%s</span>', $title);
+		if (!is_tax('package_terms_conditions') || !in_the_loop()) {
+			return $title;
 		}
 
-		return $title;
+		return sprintf(
+			'<span class="linkcolor">%s</span>',
+			$title
+		);
 	}
 
-
 	
-	public static function price_type($force_per_person = false)
+	public static function price_type(bool $force_per_person = false): string
 	{
 		$name      = 'dy_price_type';
 		$the_id    = get_dy_id();
-		$cache_key = sprintf('%s_%s', $name, $the_id);
+		$cache_key = sprintf(
+			'%s_%s_%d',
+			$name,
+			$the_id,
+			(int) $force_per_person
+		);
 
-		if ( array_key_exists($cache_key, self::$cache) ) {
+		if (array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
 		$price_type    = (int) package_field('package_fixed_price');
 		$package_type  = dy_utilities::get_package_type($the_id);
 		$duration_unit = (int) package_field('package_length_unit');
-		$output        = '';
 
-		if ( $price_type === 0 || $force_per_person === true) {
-			$output = sprintf('%s ', __('per person', 'dynamicpackages'));
-		}
+		$output = ($price_type === 0 || $force_per_person)
+			? __('per person', 'dynamicpackages')
+			: '';
 
-		if ( $package_type === 'multi-day' ) {
-			$output .= sprintf(
+		$suffix = match ($package_type) {
+			'multi-day' => sprintf(
 				'%s %s',
 				__('per', 'dynamicpackages'),
 				dy_utilities::duration_label($duration_unit, 1)
-			);
-		} elseif ( $package_type === 'rental-per-hour' ) {
-			$output .= __('per hour', 'dynamicpackages');
-		} elseif ( $package_type === 'rental-per-day' ) {
-			$output .= __('per day', 'dynamicpackages');
-		} elseif ( $package_type === 'transport' ) {
-			$output .= __('one-way', 'dynamicpackages');
+			),
+			'rental-per-hour' => __('per hour', 'dynamicpackages'),
+			'rental-per-day'  => __('per day', 'dynamicpackages'),
+			'transport'       => __('one-way', 'dynamicpackages'),
+			default           => '',
+		};
+
+		if ($output !== '' && $suffix !== '') {
+			$output .= ' ';
 		}
 
-		// store output in cache
-		self::$cache[$cache_key] = $output;
+		$output .= $suffix;
 
-		return $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
+	private function render_tax_list(
+		string $taxonomy,
+		string $label,
+		bool $hierarchical,
+		string $icon
+	): void {
+		$cache_key = 'dy_' . $taxonomy . '_list';
 
-	public function get_location_list()
-	{
-		$output = '';
-		$cache_key = 'dy_get_location_list';
+		self::$cache[$cache_key] ??= dy_utilities::get_tax_list(
+			$taxonomy,
+			$label,
+			$hierarchical,
+			$icon
+		);
 
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$output = dy_utilities::get_tax_list('package_location', __('Places of Interest:', 'dynamicpackages'), true, 'dashicons dashicons-location');
-        
-		//store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		echo $output;
-	}
-	public function get_category_list()
-	{
-		$output = '';
-		$cache_key = 'dy_get_category_list';
-
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$output = dy_utilities::get_tax_list('package_category', __('Categories:', 'dynamicpackages'), true, 'dashicons dashicons-tag');
-        
-		//store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		echo $output;
+		echo self::$cache[$cache_key];
 	}
 
-
-	public function get_terms_conditions_list()
+	public function get_location_list(): void
 	{
-		$output = '';
-		$cache_key = 'dy_get_terms_conditions_list';
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$output = dy_utilities::get_tax_list('package_terms_conditions', __('Terms & Conditions:', 'dynamicpackages'), true, 'dashicons dashicons-warning');
-        
-		//store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		echo $output;	
-	}	
-	public function get_included_list()
-	{
-		$output = '';
-		$cache_key = 'dy_get_included_list';
-
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-        
-		$output = dy_utilities::get_tax_list('package_included', __('Included:', 'dynamicpackages'), false, 'dashicons dashicons-yes');
-        
-		//store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		echo $output;
+		$this->render_tax_list(
+			'package_location',
+			__('Places of Interest:', 'dynamicpackages'),
+			true,
+			'dashicons dashicons-location'
+		);
 	}
-	
-	public function get_not_included_list()
+
+	public function get_category_list(): void
 	{
-
-		$output = '';
-		$cache_key = 'dy_get_not_included_list';
-
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$output = dy_utilities::get_tax_list('package_not_included', __('Not Included:', 'dynamicpackages'), false, 'dashicons dashicons-no');
-        
-		//store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		echo $output;
+		$this->render_tax_list(
+			'package_category',
+			__('Categories:', 'dynamicpackages'),
+			true,
+			'dashicons dashicons-tag'
+		);
 	}
-	
-	public function set_one_tax_per_page( $query )
+
+	public function get_terms_conditions_list(): void
 	{
-		if((is_tax('package_location') || is_tax('package_category') || is_tax('package_terms_conditions')) && $query->is_main_query())
-		{
-			$query->set( 'posts_per_page', 1 );
+		$this->render_tax_list(
+			'package_terms_conditions',
+			__('Terms & Conditions:', 'dynamicpackages'),
+			true,
+			'dashicons dashicons-warning'
+		);
+	}
+
+	public function get_included_list(): void
+	{
+		$this->render_tax_list(
+			'package_included',
+			__('Included:', 'dynamicpackages'),
+			false,
+			'dashicons dashicons-yes'
+		);
+	}
+
+	public function get_not_included_list(): void
+	{
+		$this->render_tax_list(
+			'package_not_included',
+			__('Not Included:', 'dynamicpackages'),
+			false,
+			'dashicons dashicons-no'
+		);
+	}
+		
+	public function set_one_tax_per_page(\WP_Query $query): void
+	{
+		if (
+			!$query->is_main_query() ||
+			!$query->is_tax([
+				'package_location',
+				'package_category',
+				'package_terms_conditions',
+			])
+		) {
+			return;
 		}
+
+		$query->set('posts_per_page', 1);
 	}
 	
 	public static function description() {
@@ -456,34 +458,34 @@ class Dynamicpackages_Public {
 	}
 	
 	
-	public function show_badge()
+	public function show_badge(): void
 	{
-		$output = '';
-		$code   = (int) package_field('package_badge');
+		$code = (int) package_field('package_badge');
 
-		if ( $code > 0 ) {
-			
-			$color    = (string) package_field('package_badge_color');
-
-			$messages = [
-				null,
-				__('Best Seller', 'dynamicpackages'),
-				__('New', 'dynamicpackages'),
-				__('Offer', 'dynamicpackages'),
-				__('Featured', 'dynamicpackages'),
-				__('Last Minute Deal', 'dynamicpackages'),
-			];
-
-			if ( isset($messages[$code]) ) {
-				$output = sprintf(
-					'<small class="dy_badge_class %s">%s</small>',
-					esc_html($color),
-					esc_html($messages[$code])
-				);
-			}
+		if ($code <= 0) {
+			return;
 		}
 
-		echo $output;
+		$message = match ($code) {
+			1 => __('Best Seller', 'dynamicpackages'),
+			2 => __('New', 'dynamicpackages'),
+			3 => __('Offer', 'dynamicpackages'),
+			4 => __('Featured', 'dynamicpackages'),
+			5 => __('Last Minute Deal', 'dynamicpackages'),
+			default => '',
+		};
+
+		if ($message === '') {
+			return;
+		}
+
+		$color = package_field('package_badge_color');
+
+		printf(
+			'<small class="dy_badge_class %s">%s</small>',
+			esc_attr($color),
+			esc_html($message)
+		);
 	}
 
 	
@@ -580,62 +582,65 @@ class Dynamicpackages_Public {
 		return;
 	}
 	
-	public function modify_excerpt($excerpt)
+	public function modify_excerpt(string $excerpt): string
 	{
-		global $post;
-		
-		if(is_singular('packages'))
-		{
-			if(is_booking_page())
-			{
-				$excerpt = null;
-			}
-			else
-			{
-				$excerpt = null;
-				
-				if(!in_the_loop())
-				{
-					$excerpt .= ' '.__('Starting at', 'dynamicpackages');
-					
-					if(intval(dy_utilities::starting_at()) > 0)
-					{
-						$excerpt .= ' '.wrap_money_full(dy_utilities::starting_at()).' '.apply_filters('dy_price_type', false).'. ';
-						
-						if(package_field('package_payment') > 0 && package_field('package_deposit' ) > 0)
-						{
-							$excerpt .= __('Book it with a', 'dynamicpackages').' '.package_field('package_deposit' ).'% '.__('deposit', 'dynamicpackages').'. ';
-						}
-					}
-					
-				}
-				else
-				{
-					$excerpt = dy_utilities::show_duration(true) . ' - ';
-				}		
-								
-				$excerpt .= $post->post_excerpt;
-
-			}
+		if (!is_singular('packages')) {
+			return $excerpt;
 		}
-		
-		return $excerpt;
+
+		if (is_booking_page()) {
+			return '';
+		}
+
+		if (in_the_loop()) {
+			$duration = trim((string) dy_utilities::show_duration(true));
+
+			return $duration !== ''
+				? $duration . ' - ' . $excerpt
+				: $excerpt;
+		}
+
+		$starting_at = (float) dy_utilities::starting_at();
+
+		if ($starting_at <= 0) {
+			return $excerpt;
+		}
+
+		$price_type = trim((string) apply_filters('dy_price_type', false));
+
+		$prefix = sprintf(
+			'%s %s%s. ',
+			__('Starting at', 'dynamicpackages'),
+			wrap_money_full($starting_at),
+			$price_type !== '' ? ' ' . $price_type : ''
+		);
+
+		$package_payment = absint(package_field('package_payment'));
+		$package_deposit = absint(package_field('package_deposit'));
+
+		if ($package_payment > 0 && $package_deposit > 0) {
+			$prefix .= sprintf(
+				'%s %d%% %s. ',
+				__('Book it with a', 'dynamicpackages'),
+				$package_deposit,
+				__('deposit', 'dynamicpackages')
+			);
+		}
+
+		return $prefix . $excerpt;
 	}
-	
+		
 
 
 
 	
-	public function modify_term_description($description)
+	public function modify_term_description(string $description): string
 	{
-		if(is_tax())
-		{
-			if(is_tax('package_terms_conditions') || is_tax('package_location') || is_tax('package_category'))
-			{
-				$description = null;
-			}
-		}
-		return $description;
+		return is_tax([
+			'package_terms_conditions',
+			'package_location',
+			'package_category',
+		]) ? '' : $description;
 	}
 	
 	
