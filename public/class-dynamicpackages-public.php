@@ -35,7 +35,7 @@ class Dynamicpackages_Public {
 		add_filter('pre_get_document_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('the_title', array($this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('single_term_title', array($this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('get_the_excerpt', array($this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('term_description', array($this, 'modify_term_description'));
 		add_action('pre_get_posts', array($this, 'set_one_tax_per_page'));
 
@@ -582,7 +582,7 @@ class Dynamicpackages_Public {
 		return;
 	}
 	
-	public function modify_excerpt(string $excerpt): string
+	public function get_the_excerpt(string $excerpt): string
 	{
 		if (!is_singular('packages')) {
 			return $excerpt;

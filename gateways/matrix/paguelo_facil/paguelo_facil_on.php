@@ -615,7 +615,7 @@ class paguelo_facil_on{
 				
 				$output = '<p class="minimal_success strong"><span class="dashicons dashicons-yes"></span> ' . sprintf(__('Thank you for your %s of %s.', 'dynamicpackages'), $payment, wrap_money_full(dy_utilities::payment_amount())) . '</p>';
 				
-				$output .= '<div class="bottom-20">' . apply_filters('dy_description', null) . '</div>';
+				$output .= '<div class="bottom-20">' . apply_filters('dy_description', '') . '</div>';
 				$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 				
 				$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</p>';
@@ -940,7 +940,7 @@ class paguelo_facil_on{
 			'CCLW'       => $this->cclw,
 			'txType'     => 'SALE',
 			'CMTN'       => round(dy_utilities::payment_amount(), 2),
-			'CDSC'       => substr(apply_filters('dy_description', null), 0, 150),
+			'CDSC'       => substr(apply_filters('dy_description', ''), 0, 150),
 			'CCNum'      => $CCNum,
 			'ExpMonth'   => $ExpMonth,
 			'ExpYear'    => $ExpYear,

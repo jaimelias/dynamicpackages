@@ -19,7 +19,7 @@ $client_phone = secure_post('country_calling_code') . secure_post('phone');
 $label_item = __('Service', 'dynamicpackages');
 $label_total = __('Total', 'dynamicpackages');
 $label_subtotal = __('Subtotal', 'dynamicpackages');
-$description = apply_filters('dy_description', null);
+$description = apply_filters('dy_description', '');
 $details = '<strong style="color: #666666">'.esc_html(__('Itinerary', 'dynamicpackages')).':</strong><br/>' . apply_filters('dy_details', false);
 $included = (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'));
 $label_included = __('Included', 'dynamicpackages');

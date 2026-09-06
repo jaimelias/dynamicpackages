@@ -73,7 +73,7 @@ class dy_Add_To_Calendar
 			esc_html($start_date . ' ' . dy_utilities::start_hour()),
 			esc_html(get_option('timezone_string')),
 			esc_html($post->post_title),
-			esc_html((string) apply_filters('dy_description', null)),
+			esc_html((string) apply_filters('dy_description', '')),
 			esc_html(package_field('package_start_address'))
 		);
 

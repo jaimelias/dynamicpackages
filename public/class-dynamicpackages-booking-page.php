@@ -124,7 +124,7 @@ class Dynamicpackages_Booking_Page {
 	
 	public function get_description()
 	{
-		$output = (string) apply_filters('dy_description', null);
+		$output = (string) apply_filters('dy_description', '');
 
 		if (dy_validators::has_deposit()) {
 			$deposit = (float) dy_utilities::payment_amount();

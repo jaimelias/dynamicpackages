@@ -18,7 +18,7 @@ class Dynamicpackages_Location_Category {
 		add_filter('pll_translation_url', [$this, 'location_category_alternate'], $priority, 2);
 		add_filter('pre_get_document_title', [$this, 'wp_title'], $priority);
 		add_filter('the_title', [$this, 'the_title'], $priority);
-		add_filter('get_the_excerpt', [$this, 'modify_excerpt'], $priority);
+		add_filter('get_the_excerpt', [$this, 'get_the_excerpt'], $priority);
 		add_action('admin_init', array($this, 'title_modifier'), 10, 2);
 	}
 
@@ -544,7 +544,7 @@ class Dynamicpackages_Location_Category {
 		return self::$cache['term'][ $key ] = (string) $translated->slug;
 	}
 
-	public function modify_excerpt( $excerpt ) {
+	public function get_the_excerpt( $excerpt ) {
 		// Fast bail-outs first
 		if ( ! is_page() || ! dy_validators::validate_category_location() ) {
 			return $excerpt;
@@ -565,7 +565,7 @@ class Dynamicpackages_Location_Category {
 		}
 
 		if ( $has_packages_sc[ $pid ] ) {
-			return null; // keep exact original behavior
+			return ''; // keep exact original behavior
 		}
 
 		return $excerpt;

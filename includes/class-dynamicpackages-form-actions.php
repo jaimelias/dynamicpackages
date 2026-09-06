@@ -18,7 +18,7 @@ class Dynamicpackages_Actions{
 		add_filter('the_content', array($this, 'the_content'), 101);
 		add_filter('pre_get_document_title', array($this, 'wp_title'), 101);
 		add_filter('the_title', array($this, 'the_title'), 101);
-		add_filter('get_the_excerpt', array($this, 'modify_excerpt'));
+		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'));
 	}
 
 	public function is_request_submitted()
@@ -282,7 +282,7 @@ class Dynamicpackages_Actions{
 		}
 		else
 		{			
-			$request = (!empty(secure_post('inquiry'))) ?  secure_post('inquiry') : apply_filters('dy_description', null);
+			$request = (!empty(secure_post('inquiry'))) ?  secure_post('inquiry') : apply_filters('dy_description', '');
 			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), secure_post('first_name')))).'</p>';
 			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
 			
@@ -334,11 +334,11 @@ class Dynamicpackages_Actions{
 			) : $title;
 	}
 
-	public function modify_excerpt($excerpt)
+	public function get_the_excerpt($excerpt)
 	{
         if($this->is_request_submitted())
         {
-			$excerpt = apply_filters('dy_description', null);
+			$excerpt = apply_filters('dy_description', '');
         }
 
         return $excerpt;

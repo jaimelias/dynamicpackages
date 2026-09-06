@@ -402,7 +402,7 @@ class Dynamicpackages_Gateways
 	{
 		$label = __('Support via Whatsapp', 'dynamicpackages');
 		$total = dy_utilities::total();
-		$text = apply_filters('dy_description', null);
+		$text = apply_filters('dy_description', '');
 
 		if($total > 0)
 		{
