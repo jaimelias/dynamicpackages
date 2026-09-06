@@ -140,12 +140,12 @@ class Dynamicpackages_Fields
         return [$this_field, $is_migrated];
     }
 
-    public static function get($name, $the_id = null) : string
+    public static function get(string $name, null|int $the_id = null) : string
     {
         global $post;
 
         // Ensure global $post is available
-        if (empty($the_id)) {
+        if ($the_id === null) {
 
             $the_id = get_dy_id();
 
@@ -249,6 +249,7 @@ class Dynamicpackages_Fields
             else if($name === 'package_day_sun') $this_field = '';
         }
 
+        
         if(secure_request('route', null, 'absint') === 1)
         {
             if($name === 'package_payment') $this_field = '0';
