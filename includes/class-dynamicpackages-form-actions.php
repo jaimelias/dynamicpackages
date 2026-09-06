@@ -323,16 +323,17 @@ class Dynamicpackages_Actions{
 		return apply_filters('dy_email_subject', $output);
 	}
 
-    public function wp_title($title)
-    {
-        if($this->is_request_submitted())
-        {
-			$title = esc_html(__('Thank You for Your Request', 'dynamicpackages')).' | '.esc_html(get_bloginfo( 'name' ));
-        }
+	public function wp_title(string $title): string
+	{
+		return $this->is_request_submitted() 
+			? sprintf(
+				'%s | %s',
+				esc_html(__('Thank You for Your Request', 'dynamicpackages')),
+				esc_html(get_bloginfo('name')
+			)
+			) : $title;
+	}
 
-        return $title;
-    }
-	
 	public function modify_excerpt($excerpt)
 	{
         if($this->is_request_submitted())

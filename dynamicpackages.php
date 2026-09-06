@@ -30,7 +30,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-define('DY_IS_PACKAGE_PAGE_PRIORITY', 100);
+define('DY_IS_PACKAGE_PAGE_PRIORITY', 10);
 define('DY_IS_ERROR_PAGE_PRIORITY', 400);
 
 function activate_dynamicpackages() {

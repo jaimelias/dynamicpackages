@@ -17,7 +17,6 @@ class Dynamicpackages_Location_Category {
 		add_action('wp_head', [$this, 'location_category_canonical']);
 		add_filter('pll_translation_url', [$this, 'location_category_alternate'], $priority, 2);
 		add_filter('pre_get_document_title', [$this, 'wp_title'], $priority);
-		add_filter('wp_title', [$this, 'wp_title'], $priority);
 		add_filter('the_title', [$this, 'the_title'], $priority);
 		add_filter('get_the_excerpt', [$this, 'modify_excerpt'], $priority);
 		add_action('admin_init', array($this, 'title_modifier'), 10, 2);
@@ -192,104 +191,119 @@ class Dynamicpackages_Location_Category {
 		return $title;
 	}
 
-	public function wp_title( $title ) {
-		$q     = get_queried_object();
-		$parts = [];
+	public function wp_title(string $title): string
+	{
+		$q = get_queried_object();
 
-		if ( is_tax() ) {
-			$base = single_term_title( '', false );
+		if (is_tax()) {
+			$base                = single_term_title('', false);
+			$is_package_location = is_tax('package_location');
+			$is_package_category = is_tax('package_category');
 
-			if ( is_tax( 'package_location' ) || is_tax( 'package_category' ) ) {
-				$meta = ( $q && isset( $q->term_id ) ) ? (string) get_term_meta( (int) $q->term_id, 'tax_title_modifier', true ) : '';
+			if ($is_package_location || $is_package_category) {
+				$meta = ($q && isset($q->term_id))
+					? (string) get_term_meta((int) $q->term_id, 'tax_title_modifier', true)
+					: '';
 
-				if ( $meta !== '' ) {
+				if ($meta !== '') {
 					$base = $meta;
-				} elseif ( is_tax( 'package_location' ) ) {
+				} elseif ($is_package_location) {
 					$place = $base;
-					if ( ! empty( $q->parent ) ) {
-						$parent = $this->get_term_cached( (int) $q->parent, 'package_location' );
-						if ( $parent ) {
-							$place = sprintf( '%s, %s', $place, $parent->name );
+
+					if (!empty($q->parent)) {
+						$parent = $this->get_term_cached((int) $q->parent, 'package_location');
+
+						if ($parent) {
+							$place = sprintf('%s, %s', $place, $parent->name);
 						}
 					}
-					$base = sprintf( __( 'Packages in %s', 'dynamicpackages' ), $place );
+
+					$base = sprintf(__('Packages in %s', 'dynamicpackages'), $place);
 				}
 			}
 
-			$parts[] = $base;
+			return $this->build_wp_title([$base]);
+		}
 
-			// Pagination and site name
-			$paged = $this->current_page_number();
-			if ( $paged > 1 ) {
-				$parts[] = sprintf( __( 'Page %d', 'dynamicpackages' ), $paged );
-			}
-			$parts[] = get_bloginfo( 'name' );
+		if (is_page() && dy_validators::validate_category_location()) {
+			$bits = [
+				sprintf('%s:', __('Find Packages', 'dynamicpackages'))
+			];
 
-			return implode( ' | ', $parts );
+			if (get_has('keywords')) {
+				$keywords = $this->sanitize_keywords(secure_get('keywords'));
 
-		} elseif ( is_page() && dy_validators::validate_category_location() ) {
-			$bits   = [ __( 'Find Packages', 'dynamicpackages' ) . ':' ];
-			$catStr = '';
-			$locStr = '';
-
-			if ( get_has('keywords') ) {
-				$kw = $this->sanitize_keywords( secure_get('keywords') );
-				if ( $kw !== '' ) {
-					$bits[] = sprintf( '“%s”', $kw );
+				if ($keywords !== '') {
+					$bits[] = sprintf('“%s”', $keywords);
 				}
 			}
 
-			if ( get_has('category') ) {
+			if (get_has('category')) {
 				$slug = secure_get('category');
-				if ( $slug !== '' && $slug !== 'any' ) {
-					$cat = $this->get_term_by_slug_cached( $slug, 'package_category' );
-					if ( $cat ) {
-						$catStr = $cat->name;
+
+				if ($slug !== '' && $slug !== 'any') {
+					$category = $this->get_term_by_slug_cached($slug, 'package_category');
+
+					if ($category) {
+						$bits[] = $category->name;
 					}
 				}
 			}
-			if ( $catStr !== '' ) {
-				$bits[] = $catStr;
-			}
 
-			if ( get_has('location') ) {
+			if (get_has('location')) {
 				$slug = secure_get('location');
-				if ( $slug !== '' && $slug !== 'any' ) {
-					$loc = $this->get_term_by_slug_cached( $slug, 'package_location' );
-					if ( $loc ) {
-						$locStr = $loc->name;
-						if ( ! empty( $loc->parent ) ) {
-							$parent = $this->get_term_cached( (int) $loc->parent, 'package_location' );
-							if ( $parent ) {
-								$locStr = sprintf( '%s, %s', $locStr, $parent->name );
+
+				if ($slug !== '' && $slug !== 'any') {
+					$location = $this->get_term_by_slug_cached($slug, 'package_location');
+
+					if ($location) {
+						$location_name = $location->name;
+
+						if (!empty($location->parent)) {
+							$parent = $this->get_term_cached((int) $location->parent, 'package_location');
+
+							if ($parent) {
+								$location_name = sprintf(
+									'%s, %s',
+									$location_name,
+									$parent->name
+								);
 							}
 						}
-						$bits[] = $locStr;
+
+						$bits[] = $location_name;
 					}
 				}
 			}
 
-			if ( get_has('sort') ) {
+			if (get_has('sort')) {
 				$sort   = secure_get('sort');
 				$labels = $this->get_sort_title_labels();
-				if ( isset( $labels[ $sort ] ) ) {
-					$bits[] = sprintf( '(%s)', $labels[ $sort ] );
+
+				if (isset($labels[$sort])) {
+					$bits[] = sprintf('(%s)', $labels[$sort]);
 				}
 			}
 
-			$parts[] = trim( implode( ' ', $bits ) );
-
-			// Pagination and site name
-			$paged = $this->current_page_number();
-			if ( $paged > 1 ) {
-				$parts[] = sprintf( __( 'Page %d', 'dynamicpackages' ), $paged );
-			}
-			$parts[] = get_bloginfo( 'name' );
-
-			return implode( ' | ', $parts );
+			return $this->build_wp_title([
+				trim(implode(' ', $bits))
+			]);
 		}
 
 		return $title;
+	}
+
+	private function build_wp_title(array $parts): string
+	{
+		$paged = $this->current_page_number();
+
+		if ($paged > 1) {
+			$parts[] = sprintf(__('Page %d', 'dynamicpackages'), $paged);
+		}
+
+		$parts[] = get_bloginfo('name');
+
+		return implode(' | ', $parts);
 	}
 
 	public static function remove_default_canonicals() {

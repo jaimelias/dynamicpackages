@@ -30,6 +30,7 @@ class Dynamicpackages_Fields
             "new" => ['package', 'end', 'hour']
         ]
     ];
+    private static $migrations_in_progress = [];
 
     private static function get_migration_arr() {
 
@@ -94,23 +95,44 @@ class Dynamicpackages_Fields
             $new = implode("_", $row['new']);
 
             if (in_array($name, [$new, $old], true)) {
+                $migration_key = $the_id . ':' . $new;
+
+                if (isset(self::$migrations_in_progress[$migration_key])) {
+                    $value = get_post_meta($the_id, $new, true);
+
+                    if ($value === '') {
+                        $value = get_post_meta($the_id, $old, true);
+                    }
+
+                    return [$value, $value !== ''];
+                }
 
                 $this_field = get_post_meta($the_id, $new, true);
+
                 if ($this_field !== '') {
-                    $is_migrated = true;
-                    break;
+                    return [$this_field, true];
                 }
 
                 $this_field = get_post_meta($the_id, $old, true);
-                if ($this_field !== '') {
-                    $is_updated = update_post_meta($the_id, $new, $this_field);
 
-                    if($is_updated !== false) {
-                        delete_post_meta($the_id, $old);
+                if ($this_field !== '') {
+                    self::$migrations_in_progress[$migration_key] = true;
+
+                    try {
+                        $is_updated = update_post_meta(
+                            $the_id,
+                            $new,
+                            $this_field
+                        );
+
+                        if ($is_updated !== false) {
+                            delete_post_meta($the_id, $old);
+                        }
+                    } finally {
+                        unset(self::$migrations_in_progress[$migration_key]);
                     }
-                    
-                    $is_migrated = true;
-                    break;
+
+                    return [$this_field, true];
                 }
             }
         }

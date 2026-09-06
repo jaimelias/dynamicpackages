@@ -33,7 +33,6 @@ class Dynamicpackages_Public {
 		add_filter('template_include', array($this, 'package_template'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('the_content', array($this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('pre_get_document_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('wp_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('the_title', array($this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('single_term_title', array($this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
 		add_filter('get_the_excerpt', array($this, 'modify_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
@@ -106,7 +105,6 @@ class Dynamicpackages_Public {
 	public function the_content($content)
 	{
 		global $post;
-		global $polylang;
 
 		if(is_tax('package_location') || is_tax('package_category'))
 		{
@@ -138,40 +136,24 @@ class Dynamicpackages_Public {
 		return $content;
 	}
 	
-	public function wp_title($title)
+	public function wp_title(string $title): string
 	{
-		global $polylang;
-		global $post;		
-
-		if(is_singular('packages'))
-		{
-			if(is_booking_page())
-			{
-				$title = __('Online Booking', 'dynamicpackages').' '.get_the_title().' | '. get_bloginfo( 'name' );
-			}	
-			
-
-			if($post->post_parent > 0)
-			{
-				$args = array('p' => $post->post_parent, 'posts_per_page' => 1, 'post_type' => 'packages');
-				$parent_query = new WP_Query($args);
-				
-				$title = get_the_title();
-				
-				if ( $parent_query->have_posts() )
-				{
-					while ( $parent_query->have_posts() )
-					{
-						$parent_query->the_post();
-						$title .= ' | '. get_the_title().' | '. get_bloginfo( 'name' );
-					}
-					
-					wp_reset_postdata();
-				}
-			}				
+		if (!is_booking_page()) {
+			return $title;
 		}
 
-		return $title;
+		$post = get_queried_object();
+
+		if (!$post instanceof WP_Post) {
+			return $title;
+		}
+
+		return sprintf(
+			'%s %s | %s',
+			__('Online Booking', 'dynamicpackages'),
+			$post->post_title,
+			get_bloginfo('name')
+		);
 	}
 	
 	public function the_title($title)
