@@ -438,11 +438,14 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function starting_at($the_id = null)
-	{		
-		if(!$the_id)
-		{
+	public static function starting_at(int|null $the_id = null) : float|int {
+
+		if ($the_id === null) {
 			$the_id = get_dy_id();
+		}
+
+		if ($the_id <= 0) {
+			return 0;
 		}
 
 		$output = 0;
@@ -1708,8 +1711,7 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function update_package_date_in_db(int $the_id)
-	{
+	public static function update_package_date_in_db(int $the_id) : string {
 		if ($the_id <= 0) {
 			return '';
 		}

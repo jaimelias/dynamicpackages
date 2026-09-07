@@ -53,7 +53,7 @@ class Dynamicpackages_Metapost
 			update_post_meta(
 				$post_id,
 				'package_starting_at',
-				absint(dy_utilities::starting_at())
+				dy_utilities::starting_at($post_id)
 			);
 		}
 	}
