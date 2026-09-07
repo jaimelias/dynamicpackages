@@ -85,7 +85,9 @@ class paypal_me {
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
 	
-	public function filter_content(string $content = '') : string {
+	public function filter_content(mixed $content = '') : string {
+		$content = is_string($content) ? $content : '';
+
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
 			$content = $this->message('');		
@@ -93,8 +95,10 @@ class paypal_me {
 
 		return $content;
 	}
-	public function title($title)
+	public function title(mixed $title): string
 	{
+		$title = is_string($title) ? $title : '';
+
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
 			$title = esc_html(__('Thank you for choosing Paypal', 'dynamicpackages'));

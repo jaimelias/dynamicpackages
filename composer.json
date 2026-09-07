@@ -1,10 +1,19 @@
 {
   "require": {
-    "php": ">=8.0.0"
+    "php": "^8.0",
+    "vlucas/phpdotenv": "^5.7"
   },
   "config": {
     "platform": {
       "php": "8.0.0"
     }
+  },
+  "scripts": {
+      "start": [
+          "@start-apache",
+          "@sync-notion"
+      ],
+      "start-apache": "/Applications/MAMP/bin/startApache.sh && /Applications/MAMP/bin/startMysql.sh",
+      "sync-notion": "php .scripts/sync-notion.php"
   }
 }

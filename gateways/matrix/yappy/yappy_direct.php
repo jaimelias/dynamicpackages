@@ -144,10 +144,12 @@ class yappy_direct {
 		return $output;
 	}
 
-	public function filter_content($content = '') : string {
+	public function filter_content(mixed $content = '') : string {
+		$content = is_string($content) ? $content : '';
+
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
-			$content = $this->message(null);
+			$content = $this->message('');
 
 			if(!empty($this->qrcode))
 			{
@@ -168,8 +170,10 @@ class yappy_direct {
 		return $content;
 	}
 	
-	public function title($title)
+	public function title(mixed $title): string
 	{
+		$title = is_string($title) ? $title : '';
+
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
 			$title = esc_html(sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name));

@@ -107,8 +107,10 @@ class Dynamicpackages_Public {
 		return (string) ob_get_clean();
 	}
 
-	public function the_content(string $content): string
+	public function the_content(mixed $content): string
 	{
+		$content = is_string($content) ? $content : '';
+
 		if (is_tax([
 			'package_location',
 			'package_category',
@@ -129,7 +131,7 @@ class Dynamicpackages_Public {
 
 			$parsedown = new Parsedown();
 
-			return $parsedown->text($term->description);
+			return (string) $parsedown->text($term->description);
 		}
 
 		if (is_singular('packages') && !is_booking_page()) {
@@ -145,8 +147,10 @@ class Dynamicpackages_Public {
 		return $content;
 	}
 	
-	public function wp_title(string $title): string
+	public function wp_title(mixed $title): string
 	{
+		$title = is_string($title) ? $title : '';
+
 		if (!is_booking_page()) {
 			return $title;
 		}
@@ -165,8 +169,10 @@ class Dynamicpackages_Public {
 		);
 	}
 	
-	public function the_title(string $title): string
+	public function the_title(mixed $title): string
 	{
+		$title = is_string($title) ? $title : '';
+
 		if (!in_the_loop() || !is_booking_page()) {
 			return $title;
 		}
@@ -582,8 +588,10 @@ class Dynamicpackages_Public {
 		return;
 	}
 	
-	public function get_the_excerpt(string $excerpt): string
+	public function get_the_excerpt(mixed $excerpt): string
 	{
+		$excerpt = is_string($excerpt) ? $excerpt : '';
+
 		if (!is_singular('packages')) {
 			return $excerpt;
 		}

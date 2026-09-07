@@ -62,8 +62,10 @@ class Dynamicpackages_Gateways
 	
 
 
-	public function the_content(string $content = '')
+	public function the_content(mixed $content = ''): string
 	{
+		$content = is_string($content) ? $content : '';
+
 		if(!is_booking_page()) return $content;
 
 		$package_min_persons = absint(package_field('package_min_persons'));
@@ -84,8 +86,7 @@ class Dynamicpackages_Gateways
 		{
 			ob_start();
 			require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/checkout-page.php');
-			$content = ob_get_contents();
-			ob_end_clean();									
+			$content = (string) ob_get_clean();
 		}
 
 		return $content;

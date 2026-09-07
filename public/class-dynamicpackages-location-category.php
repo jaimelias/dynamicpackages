@@ -90,7 +90,8 @@ class Dynamicpackages_Location_Category {
 		return $labels;
 	}
 
-	public function the_title( $title ) {
+	public function the_title(mixed $title): string {
+		$title = is_string($title) ? $title : '';
 
 		if(!in_the_loop()) return $title;
 
@@ -191,8 +192,10 @@ class Dynamicpackages_Location_Category {
 		return $title;
 	}
 
-	public function wp_title(string $title): string
+	public function wp_title(mixed $title): string
 	{
+		$title = is_string($title) ? $title : '';
+
 		$q = get_queried_object();
 
 		if (is_tax()) {
@@ -544,7 +547,9 @@ class Dynamicpackages_Location_Category {
 		return self::$cache['term'][ $key ] = (string) $translated->slug;
 	}
 
-	public function get_the_excerpt( $excerpt ) {
+	public function get_the_excerpt(mixed $excerpt): string {
+		$excerpt = is_string($excerpt) ? $excerpt : '';
+
 		// Fast bail-outs first
 		if ( ! is_page() || ! dy_validators::validate_category_location() ) {
 			return $excerpt;

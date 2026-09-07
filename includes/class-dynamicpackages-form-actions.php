@@ -230,7 +230,8 @@ class Dynamicpackages_Actions{
 	}
 
 
-    public function the_content(string $content = '') : string {
+	public function the_content(mixed $content = '') : string {
+		$content = is_string($content) ? $content : '';
 		$request_type = secure_post('dy_request', '', 'sanitize_key');
 	
         if($this->data_sent && in_array($request_type, array('estimate_request', 'contact'), true))
@@ -238,8 +239,10 @@ class Dynamicpackages_Actions{
 			$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
         }
 
-        return apply_filters('dy_request_the_content', $content);
-    }
+		$filtered_content = apply_filters('dy_request_the_content', $content);
+
+		return is_string($filtered_content) ? $filtered_content : '';
+	}
 
     public function send_email()
     {
@@ -322,9 +325,11 @@ class Dynamicpackages_Actions{
 		return apply_filters('dy_email_subject', $output);
 	}
 
-	public function wp_title(string $title): string
+	public function wp_title(mixed $title): string
 	{
-		return $this->is_request_submitted() 
+		$title = is_string($title) ? $title : '';
+
+		return $this->is_request_submitted()
 			? sprintf(
 				'%s | %s',
 				esc_html(__('Thank You for Your Request', 'dynamicpackages')),
@@ -333,25 +338,32 @@ class Dynamicpackages_Actions{
 			) : $title;
 	}
 
-	public function get_the_excerpt($excerpt)
+	public function get_the_excerpt(mixed $excerpt): string
 	{
-        if($this->is_request_submitted())
-        {
-			$excerpt = apply_filters('dy_description', '');
-        }
+		$excerpt = is_string($excerpt) ? $excerpt : '';
 
-        return $excerpt;
+		if($this->is_request_submitted())
+		{
+			$description = apply_filters('dy_description', '');
+			$excerpt = is_string($description) ? $description : '';
+		}
+
+		return $excerpt;
 	}
 
-    public function the_title($title)
-    {	
+	public function the_title(mixed $title): string
+	{
+		$title = is_string($title) ? $title : '';
+
 		if(in_the_loop() && $this->is_request_submitted())
 		{
 			$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
 		}
 
-        return apply_filters('dy_request_the_title', $title);
-    }
+		$filtered_title = apply_filters('dy_request_the_title', $title);
+
+		return is_string($filtered_title) ? $filtered_title : '';
+	}
 	
 	public function get_term_condition_as_html()
 	{		

@@ -605,7 +605,9 @@ class paguelo_facil_on{
 		return self::$cache[$cache_key] = $output;
 	}
 	
-	public function the_content(string $output = '') : string {
+	public function the_content(mixed $output = '') : string {
+		$output = is_string($output) ? $output : '';
+
 		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
@@ -656,8 +658,10 @@ class paguelo_facil_on{
 		return $output;
 	}		
 		
-	public function the_title($output)
+	public function the_title(mixed $output): string
 	{
+		$output = is_string($output) ? $output : '';
+
 		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
