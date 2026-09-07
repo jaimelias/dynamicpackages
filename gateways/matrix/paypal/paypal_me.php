@@ -85,11 +85,10 @@ class paypal_me {
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
 	
-	public function filter_content($content)
-	{
+	public function filter_content(string $content = '') : string {
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
-			$content = $this->message(null);		
+			$content = $this->message('');		
 		}
 
 		return $content;
@@ -371,8 +370,7 @@ class paypal_me {
 		return $output;
 	}
 	
-	public function message($message)
-	{
+	public function message(string $message = '') : string {
 		$amount = money(dy_utilities::payment_amount($this->service_fee));
 		$url = 'https://'.$this->domain.'/'.$this->username.'/'.$amount;
 		$amount = wrap_money_full($amount);

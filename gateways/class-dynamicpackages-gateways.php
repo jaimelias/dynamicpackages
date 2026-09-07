@@ -62,7 +62,7 @@ class Dynamicpackages_Gateways
 	
 
 
-	public function the_content($content)
+	public function the_content(string $content = '')
 	{
 		if(!is_booking_page()) return $content;
 
@@ -84,7 +84,7 @@ class Dynamicpackages_Gateways
 		{
 			ob_start();
 			require_once(plugin_dir_path( __DIR__  ) . 'gateways/partials/checkout-page.php');
-			$content = (string) ob_get_contents();
+			$content = ob_get_contents();
 			ob_end_clean();									
 		}
 

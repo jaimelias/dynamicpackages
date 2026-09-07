@@ -144,8 +144,7 @@ class yappy_direct {
 		return $output;
 	}
 
-	public function filter_content($content)
-	{
+	public function filter_content($content = '') : string {
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
 			$content = $this->message(null);
@@ -168,6 +167,7 @@ class yappy_direct {
 
 		return $content;
 	}
+	
 	public function title($title)
 	{
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
@@ -177,8 +177,8 @@ class yappy_direct {
 		return $title;
 	}
 	
-	public function message($message)
-	{
+	public function message(string $message = '') : string {
+		
 		$destination = (!empty($this->business)) ? '@'.strtoupper($this->business) : $this->number;
 		$destination = '<strong>'.esc_html($destination).'</strong>';
 		$amount = wrap_money_full(dy_utilities::payment_amount());

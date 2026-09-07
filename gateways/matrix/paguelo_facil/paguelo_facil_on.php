@@ -605,8 +605,7 @@ class paguelo_facil_on{
 		return self::$cache[$cache_key] = $output;
 	}
 	
-	public function the_content($output)
-	{
+	public function the_content(string $output = '') : string {
 		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)

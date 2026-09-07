@@ -132,11 +132,10 @@ class stable_coins {
 		return sprintf(__('%s Payment Instructions', 'dynamicpackages'), $this->name);
 	}
 	
-	public function filter_content($content)
-	{
+	public function filter_content(string $content = '') : string {
 		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
 		{
-			$content = $this->message(null);		
+			$content = $this->message('');		
 		}
 		return $content;
 	}
@@ -410,8 +409,7 @@ class stable_coins {
 		return '<img src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'.svg').'" width="50" height="50" alt="'.esc_attr($this->name).'" />';
 	}
 	
-	public function message($message)
-	{
+	public function message(string $message = '') : string {
 		$amount = wrap_money_full(dy_utilities::payment_amount());
 		$network = secure_post('dy_network', '', 'sanitize_key');
 		$address = get_option($this->id . '_' . $network);

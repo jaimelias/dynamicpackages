@@ -230,8 +230,7 @@ class Dynamicpackages_Actions{
 	}
 
 
-    public function the_content($content)
-    {
+    public function the_content(string $content = '') : string {
 		$request_type = secure_post('dy_request', '', 'sanitize_key');
 	
         if($this->data_sent && in_array($request_type, array('estimate_request', 'contact'), true))
