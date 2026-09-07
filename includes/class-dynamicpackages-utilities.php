@@ -667,10 +667,9 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function get_disabled_range()
-	{
+	public static function get_disabled_range(int | null $the_id = null) : array {
 		$output = [];
-		$disabled = self::get_package_hot_chart('package_disabled_dates');
+		$disabled = self::get_package_hot_chart('package_disabled_dates', $the_id);
 		
 		if(is_array($disabled))
 		{
@@ -687,21 +686,8 @@ class dy_utilities {
 			}			
 		}
 		
-		return self::arrayFlatten($output);
-	}	
-
-	static function arrayFlatten($array) { 
-		$output = [];
-		
-		for($x = 0; $x < count($array); $x++)
-		{
-			for($y = 0; $y < count($array[$x]); $y++)
-			{
-				$output[] =  $array[$x][$y];
-			}
-		}
-		return array_unique($output);
-	}	
+		return array_unique(array_merge(...$output));
+	}
 
 
 	
@@ -1187,18 +1173,15 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function get_week_days_list()
-	{
+	public static function get_week_days_list($the_id): array {
 		$output = [];
-		$days = self::get_week_days_abbr();
-		
-		for($x = 0; $x < count($days); $x++)
-		{
-			if(intval(package_field('package_day_'.$days[$x] )) === 1)
-			{
-				$output[] = $x+1;
+
+		foreach (self::get_week_days_abbr() as $index => $day) {
+			if ((int) package_field('package_day_' . $day, $the_id) === 1) {
+				$output[] = $index + 1;
 			}
 		}
+
 		return $output;
 	}
 		
@@ -1725,10 +1708,8 @@ class dy_utilities {
 		return $output;
 	}
 
-	public static function update_package_date_in_db($the_id)
+	public static function update_package_date_in_db(int $the_id)
 	{
-		$the_id = (int) $the_id;
-
 		if ($the_id <= 0) {
 			return '';
 		}
@@ -1759,8 +1740,9 @@ class dy_utilities {
 			return self::$cache[$cache_key] = $cached_output;
 		}
 
-		$from = (int) package_field('package_booking_from');
-		$to   = (int) package_field('package_booking_to');
+		$from = (int) package_field('package_booking_from', $the_id);
+		$to   = (int) package_field('package_booking_to', $the_id);
+
 
 		$base_timestamp = strtotime('today');
 
@@ -1785,16 +1767,15 @@ class dy_utilities {
 				$to_date
 			);
 
+
+
 			$disabled_dates = array_fill_keys(
-				(array) self::get_disabled_range(),
+				self::get_disabled_range($the_id),
 				true
 			);
 
 			$disabled_days = array_fill_keys(
-				array_map(
-					'intval',
-					(array) self::get_week_days_list()
-				),
+				self::get_week_days_list($the_id),
 				true
 			);
 

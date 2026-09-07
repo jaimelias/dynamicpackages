@@ -45,7 +45,6 @@ class Dynamicpackages_Public {
 		add_action('dy_description', array($this, 'description'));
 		add_action('dy_show_coupons', array($this, 'show_coupons'));
 		add_filter('minimal_description', array($this, 'meta_description'));
-		add_filter('dy_event_arr', array($this, 'event_arr'));
 		add_filter('dy_price_type', array($this, 'price_type'));
 		add_filter('dy_booking_sidebar', array($this, 'booking_sidebar'));
 		add_action('dy_children_package', array($this, 'children_package'));
@@ -1037,62 +1036,6 @@ class Dynamicpackages_Public {
 		}
 		
 		return $description;
-	}
-
-	public function event_arr()
-	{
-		$output = [];
-		$cache_key = 'event_arr';
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$package_start_address = package_field('package_start_address');
-		$package_start_hour = package_field('package_start_hour');
-
-		if(!empty($package_start_address) && !empty($package_start_hour))
-		{
-			$from = intval(package_field('package_booking_from'));
-			$to = intval(package_field('package_booking_to'));
-
-			if($from >= 0 && $to > $from)
-			{
-				$new_range = [];
-				$today = date('Y-m-d', strtotime("+ {$from} days", dy_strtotime('now')));
-				$last_day = date('Y-m-d', strtotime("+ {$to} days", dy_strtotime('now')));
-				$range = dy_utilities::get_date_range($today, $last_day);
-				$disabled_range = dy_utilities::get_disabled_range();
-				$week_days = dy_utilities::get_week_days_list();
-				$count_range = 	(count($range) <= 30) ? count($range) : 30;
-										
-				for($x = 0; $x < $count_range; $x++)
-				{
-					if(!in_array($range[$x], $disabled_range))
-					{
-						$day = dy_date('N', dy_strtotime($range[$x]));
-						
-						if(!in_array($day, $week_days))
-						{
-							$new_range[] = $range[$x];
-						}
-					}
-				}
-				
-				if(is_array($new_range))
-				{
-					if(count($new_range) > 0)
-					{
-						$output = $new_range;
-					}
-				}
-			}
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		return $output;
 	}
 
 

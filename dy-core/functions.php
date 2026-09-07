@@ -19,10 +19,15 @@ if(!function_exists('get_dy_id'))
 			: (!empty($post_req) ? $post_req : null);
 
 		$the_id = null;
-		$get_queried_object_id = get_queried_object_id();
 
-		if($is_valid_id($get_queried_object_id)) {
-			$the_id = $get_queried_object_id;
+
+		if(is_main_query()) {
+			
+			$get_queried_object_id = get_queried_object_id();
+
+			if($is_valid_id($get_queried_object_id)) {
+				$the_id = $get_queried_object_id;
+			}
 		}
 
 		global $post;
