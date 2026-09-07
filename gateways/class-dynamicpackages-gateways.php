@@ -421,7 +421,7 @@ class Dynamicpackages_Gateways
 	public function modify_headers()
 	{
 		
-		if($this->can_user_force_sale() && is_package_page())
+		if(is_package_page() && $this->can_user_force_sale())
 		{
 			setcookie('has_user_logged_in', 'true', time() + (30 * 24 * 60 * 60), "/");
 		}		

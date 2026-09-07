@@ -26,9 +26,9 @@ $label_included = __('Included', 'dynamicpackages');
 $not_included = (string) dy_utilities::implode_taxo_names('package_not_included', __('or', 'dynamicpackages'));
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
-$notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '.<br/><br/>' : null;
+$notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '.<br/><br/>' : '';
 $notes = apply_filters('dy_email_notes', $notes_content);
-$label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
+$label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : '';
 $footer = $company_address;
 
 $totals_area = apply_filters('dy_totals_area', '<strong style="color: #666666">'.$label_total.'</strong><br/>' . $total);

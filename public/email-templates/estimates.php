@@ -38,9 +38,9 @@ $not_included = (string) dy_utilities::implode_taxo_names('package_not_included'
 $label_not_included = __('Not Included', 'dynamicpackages');
 $join_gateways = apply_filters('dy_join_gateways', null);
 $details = '<strong style="color: #666666">'.esc_html(__('Itinerary', 'dynamicpackages')).':</strong><br/>' . apply_filters('dy_details', false);
-$notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '.<br/><br/>' : null;
+$notes_content = ($join_gateways && secure_post('dy_request') === 'estimate_request') ? __('We accept', 'dynamicpackages') .' '. $join_gateways . '.<br/><br/>' : '';
 $notes = apply_filters('dy_email_notes', $notes_content);
-$label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : null;
+$label_notes = ($notes) ? apply_filters('dy_email_label_notes', __('Notes', 'dynamicpackages')) : '';
 $footer = $company_address;
 $whatsapp_url = sprintf('https://wa.me/%s?text=%s', get_option('dy_whatsapp'), urlencode($description));
 $whatsapp = (get_option('dy_whatsapp')) ? '<a style="border: 16px solid #25d366; text-align: center; background-color: #25d366; color: #fff; font-size: 18px; line-height: 18px; display: block; width: 100%; box-sizing: border-box; text-decoration: none; font-weight: 900;" href="'.esc_url($whatsapp_url).'">'.__('Whatsapp Advisory', 'dynamicpackages').'</a>' : null;
