@@ -2,6 +2,13 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
+function is_package_page() : bool {
+	return $_SERVER['REQUEST_METHOD'] === 'GET' 
+		&& is_post_type_packages() 
+		&& !is_booking_page() 
+		&& !is_confirmation_page();
+}
+
 function is_booking_page()
 {
 	return dy_validators::is_booking_page();

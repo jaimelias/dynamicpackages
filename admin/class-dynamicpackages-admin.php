@@ -242,8 +242,6 @@ class Dynamicpackages_Admin {
 	
 	public function dy_breadcrump_render()
 	{
-		global $polylang;
-
 		$front_page = (int) get_option('page_on_front');
 
 		$options = [
@@ -263,16 +261,14 @@ class Dynamicpackages_Admin {
 			'post__not_in'   => [$front_page],
 		];
 
-		if (isset($polylang)) {
+		if (function_exists('pll_default_language')) {
 			$query_args['lang'] = [pll_default_language()];
 		}
 
 		$wp_query = new WP_Query($query_args);
 
-		while ($wp_query->have_posts()) {
-			$wp_query->the_post();
-
-			$options[get_dy_id()] = get_the_title();
+		foreach ($wp_query->posts as $post) {
+			$options[$post->ID] = $post->post_title;
 		}
 
 		wp_reset_postdata();

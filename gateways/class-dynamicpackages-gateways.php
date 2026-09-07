@@ -43,7 +43,7 @@ class Dynamicpackages_Gateways
 	}
 	public function init()
 	{
-		add_filter('wp', array($this, 'modify_headers'), 100);
+		add_filter('init', array($this, 'modify_headers'), 100);
 		add_action('dy_cc_form', array($this, 'cc_form'));
 		add_filter('dy_list_gateways', array($this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
 		add_action('dy_checkout_area', array($this, 'checkout_area'), 1);
@@ -413,9 +413,15 @@ class Dynamicpackages_Gateways
 		echo whatsapp_button($label, $text);
 	}
 
+	public function can_user_force_sale () {
+
+		return is_user_logged_in() && current_user_can('edit_post', get_dy_id());
+	}
+
 	public function modify_headers()
 	{
-		if(is_user_logged_in())
+		
+		if($this->can_user_force_sale() && is_package_page())
 		{
 			setcookie('has_user_logged_in', 'true', time() + (30 * 24 * 60 * 60), "/");
 		}		
@@ -423,7 +429,7 @@ class Dynamicpackages_Gateways
 
 	public function copy_payment_link(): void
 	{
-		if(!isset($_COOKIE['has_user_logged_in']) && !is_user_logged_in())
+		if(!isset($_COOKIE['has_user_logged_in']) || !$this->can_user_force_sale() || !is_booking_page())
 		{
 			return;
 		}
