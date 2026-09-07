@@ -22,10 +22,15 @@ class Dynamicpackages_Confirmation_Page {
 
 		if(is_confirmation_page())
 		{
-            $the_id = get_dy_id();
+            $the_id = secure_post('dy_id', null, 'int');
 
-            if($the_id !== null) {
-                $GLOBALS['post'] = get_post($the_id);
+            if(is_int($the_id) && $the_id > 0) {
+
+                $post = get_post($the_id);
+
+                if($post instanceof WP_Post && $post->post_type === 'packages') {
+                    $GLOBALS['post'] = get_post($the_id);
+                }
             }
 		}
 	}
