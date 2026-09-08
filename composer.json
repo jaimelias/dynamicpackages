@@ -15,5 +15,8 @@
       ],
       "start-apache": "/Applications/MAMP/bin/startApache.sh && /Applications/MAMP/bin/startMysql.sh",
       "sync-notion": "php .scripts/sync-notion.php"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.2"
   }
 }
