@@ -6,6 +6,9 @@
   "config": {
     "platform": {
       "php": "8.0.0"
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
   "scripts": {
@@ -14,9 +17,22 @@
           "@sync-notion"
       ],
       "start-apache": "/Applications/MAMP/bin/startApache.sh && /Applications/MAMP/bin/startMysql.sh",
-      "sync-notion": "php .scripts/sync-notion.php"
+      "sync-notion": "php .scripts/sync-notion.php",
+      "lint": "parallel-lint --exclude vendor --exclude node_modules .",
+      "phpstan": "phpstan analyse --memory-limit=1G",
+      "phpcs": "phpcs",
+      "phpcbf": "phpcbf",
+      "audit": "composer audit",
+      "check": [
+          "@lint",
+          "@phpstan",
+          "@phpcs"
+      ]
   },
   "require-dev": {
-    "phpstan/phpstan": "^2.2"
+    "phpstan/phpstan": "^2.2",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "wp-coding-standards/wpcs": "^3.0",
+    "php-parallel-lint/php-parallel-lint": "^1.4"
   }
 }
