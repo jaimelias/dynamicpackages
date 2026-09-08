@@ -24,9 +24,9 @@ function has_package()
 	return dy_validators::has_package();
 }
 
-function is_post_type_packages($the_id = null) : bool
+function is_post_type_packages() : bool
 {
-	return dy_validators::is_post_type_packages($the_id);
+	return dy_validators::is_post_type_packages();
 }
 
 
@@ -35,11 +35,9 @@ class dy_validators
 {
 	private static $cache = [];
 
-	public static function is_post_type_packages($the_id = null): bool
+	public static function is_post_type_packages(): bool
 	{
-		if($the_id === null) {
-			$the_id = get_dy_id();
-		}
+		$the_id = get_dy_id();
 
 		if(!is_numeric($the_id) || (int)$the_id <= 0) {
 			return false;
@@ -48,7 +46,8 @@ class dy_validators
 		$post = get_post((int)$the_id);
 
 		return $post instanceof WP_Post
-			&& $post->post_type === 'packages';
+			&& $post->post_type === 'packages'
+			&& $post->post_status === 'publish';
 	}
 	
 	public static function validate_quote()
@@ -370,18 +369,20 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		$the_id = get_dy_id();
-
-		if($the_id === null) {
-			return self::$cache[$cache_key] = false;
-		}
-
 		$dy_request = secure_post('dy_request', '', 'sanitize_key');
 		$all_dy_request_types = dy_utilities::all_dy_request_types();
 
 		if(!in_array($dy_request, $all_dy_request_types, true)) {
 			return self::$cache[$cache_key] = false;
 		}
+
+		$the_id = get_dy_id();
+
+		if($the_id === null) {
+			return self::$cache[$cache_key] = false;
+		}
+
+
 
 		$post = get_post($the_id);
 

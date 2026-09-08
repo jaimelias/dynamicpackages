@@ -45,6 +45,7 @@ class Dynamicpackages_Actions{
 
 		return (
 			$post instanceof WP_Post
+			&& $post->post_status === 'publish'
 			&& has_shortcode($post->post_content, 'package_contact')
 		);
 	}
