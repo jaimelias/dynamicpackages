@@ -1,40 +1,57 @@
-# AGENTS.md
+# PROJECT.md
 
-## Project
-`dynamicpackages` is a WordPress plugin for service reservations, including hotels, tours, transport, hourly rentals, and daily rentals.
-The authoritative repository-specific architecture, scope, ownership, and domain rules are in:
-`docs/project-agents/PROJECT.md`
-Read that file before making code changes or architectural decisions in this repository.
-## Instruction Loading
-Use progressive disclosure. Read only the instruction files relevant to the current task; do not load every shared document by default.
-Before making implementation changes, read:
-`docs/shared-agents/BEFORE_CODING.md`
-Before modifying PHP code, also read:
-`docs/shared-agents/PHP.md`
-Before modifying JavaScript code, also read:
-`docs/shared-agents/JS.md`
-For work involving WordPress APIs, hooks, filters, REST, AJAX, cron, options, metadata, database access, templates, capabilities, sanitization, escaping, shortcodes, or asset registration/enqueueing, also read:
-`docs/shared-agents/WORDPRESS.md`
-For Polylang-related work, also read:
-`docs/shared-agents/POLYLANG.md`
-After modifying code and before reporting completion, read:
-`docs/shared-agents/AFTER_CODING.md`
-## Instruction Priority
-Follow the explicit task request together with these repository instructions. Where these repository documents overlap or conflict:
-1. This `AGENTS.md` defines repository-wide routing and mandatory constraints.
-2. `docs/project-agents/PROJECT.md` controls project-specific architecture, ownership, domain, and repository-scope rules.
-3. Relevant files under `docs/shared-agents/` provide language, framework, workflow, and validation rules.
-A task request may activate an exception only where these instructions explicitly allow an exception when requested. Do not treat generic shared guidance as permission to violate a project-specific constraint.
-## Core Constraints
-- Work inside this repository by default.
-- Inspect the existing implementation before changing behavior.
-- Implement the smallest correct change.
-- Do not perform unrelated refactors, formatting, renames, or cleanup.
-- Preserve backward compatibility and public contracts unless the task explicitly requires changing them.
-- Search for existing helpers and abstractions before introducing new ones.
-- Follow the project-specific `dy-core` ownership rules for shared ecosystem behavior.
-- Do not create direct application-level dependencies between `dynamicpackages`, `dynamicaviation`, and `minimalizr`.
-- Never modify `vendor/`, `node_modules/`, WordPress core, or third-party generated dependencies.
-- Do not modify sibling repositories unless explicitly requested.
-- Do not weaken security or validation rules merely to make automated checks pass.
-- Do not claim validation passed unless the relevant commands were actually executed successfully.
+## Project Role
+`dynamicpackages` is the primary WordPress plugin for service reservations, including hotels, tours, transport, hourly rentals, and daily rentals.
+The project uses PHP 8.1+, modern JavaScript, WordPress APIs, and jQuery Slim-compatible frontend code.
+Prefer code that is easy to understand at a glance. Favor the smallest correct implementation that satisfies the requested behavior. Simplicity must never come at the cost of security, correctness, or backward compatibility.
+## Ecosystem
+`dynamicpackages` is part of a four-component suite:
+- `dynamicpackages`: the current WordPress plugin and primary working repository.
+- `minimalizr`: a required WordPress theme dependency, installed in `../../themes/minimalizr`.
+- `dynamicaviation`: an optional WordPress plugin, installed in `../dynamicaviation`.
+- `dy-core`: the shared library whose canonical editable source is `./dy-core`.
+## Dependency Boundaries
+There are no direct application-level dependencies between `dynamicpackages`, `dynamicaviation`, and `minimalizr`.
+They must never call each other's functions, classes, or methods directly.
+Shared behavior belongs in `dy-core`.
+If functionality is required by more than one application, implement the reusable logic in `dy-core` and have each application consume the `dy-core` implementation independently.
+Do not create direct dependencies such as:
+- `dynamicpackages -> dynamicaviation`
+- `dynamicpackages -> minimalizr`
+- `dynamicaviation -> dynamicpackages`
+- `minimalizr -> dynamicpackages`
+The intended architecture is:
+- `dynamicpackages -> dy-core`
+- `dynamicaviation -> dy-core`
+- `minimalizr -> dy-core`
+## dy-core Ownership
+The canonical editable copy of `dy-core` is:
+`dynamicpackages/dy-core`
+Only modify `dy-core` from this repository.
+Copies of `dy-core` present in `dynamicaviation` or `minimalizr` are published consumer copies and must not be edited as part of work in `dynamicpackages`.
+When a task requires shared behavior:
+1. Modify the canonical `dynamicpackages/dy-core` implementation.
+2. Keep shared logic application-agnostic.
+3. Do not automatically synchronize or overwrite published copies in sibling projects unless explicitly requested.
+4. Assume publication of `dy-core` to sibling applications is a separate manual release step.
+When changing public behavior in `dy-core`, consider all ecosystem consumers.
+## Repository Scope
+By default, edits must remain inside the `dynamicpackages` repository.
+Reading `../dynamicaviation` and `../../themes/minimalizr` is allowed when necessary to understand integrations, compatibility, or existing behavior.
+Do not modify sibling projects unless explicitly requested.
+Never modify:
+- `vendor/`
+- `node_modules/`
+- WordPress core files
+- third-party generated dependencies
+Do not extensively scan unrelated directories when a targeted search can answer the question.
+## Application Domain
+Preserve existing reservation-domain contracts unless the requested task explicitly changes them.
+Before changing behavior involving reservation types, availability, dates, capacity, prices, totals, booking state, metadata, or external integrations, inspect the existing implementation and its callers first.
+Do not invent business rules or silently reinterpret units, currencies, dates, identifiers, or persisted values.
+If behavior is generic to more than one ecosystem application, prefer `dy-core` instead of introducing an application-specific duplicate.
+## Static Analysis Scope
+`dy-core` is part of the normal PHPStan analysis scope because its canonical source lives inside this repository.
+Do not analyze sibling applications as part of the normal `dynamicpackages` PHPStan run.
+## Completion Notes
+If `dy-core` was modified, explicitly mention that its published copies in sibling applications may need to be synchronized manually as a separate release step.
