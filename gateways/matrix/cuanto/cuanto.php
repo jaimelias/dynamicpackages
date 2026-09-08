@@ -18,6 +18,7 @@ class cuanto{
 		add_filter('dy_request_the_content', array($this, 'filter_content'), 101);
 		add_filter('dy_list_gateways', array($this, 'add_gateway'), 2);
 		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
+		add_filter('all_dy_request_types', [$this, 'register_dy_request_type']);
 	}
 	
 	public function init()
@@ -37,6 +38,13 @@ class cuanto{
 		$this->icon = '<span class="dashicons dashicons-cart"></span>';
 		$this->gateway_coupon = 'CUANTO';
 	}
+
+	private function register_dy_request_type (array $request_types): array {
+        $request_types[] = $this->id;
+
+        return $request_types;
+    }
+
 
 	public function prepare_submission($submission_context)
 	{		

@@ -47,7 +47,7 @@ class Dynamicpackages_Gateways
 		add_action('dy_cc_form', array($this, 'cc_form'));
 		add_filter('dy_list_gateways', array($this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
 		add_action('dy_checkout_area', array($this, 'checkout_area'), 1);
-		add_filter('the_content', array($this, 'the_content'), 102);			
+		add_filter('the_content', array($this, 'the_content'), 102);
 		add_action('dy_terms_conditions', array($this, 'terms_conditions'));
 		add_filter('dy_has_gateway', array($this, 'has_gateway'));
 		add_filter('dy_join_gateways', array($this, 'join_gateways'));

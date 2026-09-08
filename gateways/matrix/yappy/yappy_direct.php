@@ -21,6 +21,7 @@ class yappy_direct {
 		add_filter('dy_list_gateways', array($this, 'add_gateway'), 3);
 		add_filter('coupon_gateway', array($this, 'single_coupon'), 10, 3);
 		add_filter('dy_lead_event_gateways', array($this, 'lead_event_gateways'));
+		add_filter('all_dy_request_types', [$this, 'register_dy_request_type']);
 	}
 	
 	public function init()
@@ -42,6 +43,12 @@ class yappy_direct {
 		$this->icon = '<img alt="yappy" width="21" height="12" src="'.esc_url($this->plugin_dir_url.'assets/'.$this->id.'_icon.svg').'" />';
 		$this->gateway_coupon = 'YAPPY';
 	}
+
+	private function register_dy_request_type (array $request_types): array {
+        $request_types[] = $this->id;
+
+        return $request_types;
+    }
 	
 	public function prepare_submission($submission_context)
 	{

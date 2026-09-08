@@ -376,15 +376,19 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		if(!empty(secure_post('dy_request')))
-		{
-			$post = get_post($the_id);
+		$dy_request = secure_post('dy_request', '', 'sanitize_key');
+		$all_dy_request_types = dy_utilities::all_dy_request_types();
 
-			$has_shortcode = ($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact');
+		if(!in_array($dy_request, $all_dy_request_types, true)) {
+			return self::$cache[$cache_key] = false;
+		}
 
-			if(is_post_type_packages() || $has_shortcode) {
-				$output = true;
-			}
+		$post = get_post($the_id);
+
+		$has_shortcode = ($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact');
+
+		if(is_post_type_packages() || $has_shortcode) {
+			$output = true;
 		}
 
         //store output in $cache

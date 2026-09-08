@@ -25,11 +25,17 @@ class Dynamicpackages_Confirmation_Page {
             || wp_doing_ajax()
             || wp_doing_cron()
             || (defined('REST_REQUEST') && REST_REQUEST)
-            || empty(secure_post('dy_request'))
         ) {
             return;
         }
 
+
+		$dy_request = secure_post('dy_request', '', 'sanitize_key');
+		$all_dy_request_types = dy_utilities::all_dy_request_types();
+
+		if(!in_array($dy_request, $all_dy_request_types, true)) {
+			return;
+		}
 
         $dy_id = secure_post('dy_id', null, 'intval');
 

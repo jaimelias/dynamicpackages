@@ -13,16 +13,17 @@ class paguelo_facil_on{
 		$this->plugin_id = $plugin_id;
 		$this->id = 'paguelo_facil_on';
 
-		add_action('dy_prepare_gateway_submission_' . $this->id, array($this, 'prepare_submission'));
-		add_action('init', array($this, 'init'));
-		add_action('admin_init', array($this, 'settings_init'), 1);
-		add_action('admin_menu', array($this, 'add_settings_page'), 100);
-		add_action('init', array($this, 'checkout'), 50);
-		add_filter('dy_request_the_content', array($this, 'the_content'));
-		add_filter('dy_request_the_title', array($this, 'the_title'));
-		add_filter('dy_list_gateways', array($this, 'add_gateway'), 1);
-		add_filter('dy_debug_instructions', array($this, 'debug_instructions'));
-		add_filter('dy_purchase_event_gateways', array($this, 'purchase_event_gateways'));
+		add_action('dy_prepare_gateway_submission_' . $this->id, [$this, 'prepare_submission']);
+		add_action('init', [$this, 'init']);
+		add_action('admin_init', [$this, 'settings_init'], 1);
+		add_action('admin_menu', [$this, 'add_settings_page'], 100);
+		add_action('init', [$this, 'checkout'], 50);
+		add_filter('dy_request_the_content', [$this, 'the_content']);
+		add_filter('dy_request_the_title', [$this, 'the_title']);
+		add_filter('dy_list_gateways', [$this, 'add_gateway'], 1);
+		add_filter('dy_debug_instructions', [$this, 'debug_instructions']);
+		add_filter('dy_purchase_event_gateways', [$this, 'purchase_event_gateways']);
+		add_filter('all_dy_request_types', [$this, 'register_dy_request_type']);
 	}
 	
 
@@ -67,6 +68,12 @@ class paguelo_facil_on{
 		$this->icon = '<span class="dashicons dashicons-cart"></span>';
 		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
+
+	private function register_dy_request_type (array $request_types): array {
+        $request_types[] = $this->id;
+
+        return $request_types;
+    }
 
 	public function is_valid_cached_success($cached)
 	{

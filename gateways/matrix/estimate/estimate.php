@@ -9,13 +9,13 @@ class estimate_request{
 
 	function __construct($plugin_id)
 	{
-		add_action('init', array($this, 'init'));
-		add_filter('dy_list_gateways', array($this, 'add_gateway'), 10);
-	}
-
-	public function init()
-	{
 		$this->id = 'estimate_request';
+		add_filter('init', [$this, 'init']);
+		add_filter('dy_list_gateways', [$this, 'add_gateway'], 10);
+		add_filter('all_dy_request_types', [$this, 'register_dy_request_type']);
+	}
+	
+	public function init() {
 		$this->name = __('request an estimate', 'dynamicpackages');
 		$this->brands = [$this->name];
 		$this->type = 'alt';
@@ -25,8 +25,7 @@ class estimate_request{
 		$this->icon = '<span class="dashicons dashicons-email"></span>';
 		$this->gateway_coupon = '';
 	}
-	
-	
+
 	public function is_active()
 	{
 		$output = false;
