@@ -26,6 +26,13 @@ class estimate_request{
 		$this->gateway_coupon = '';
 	}
 
+	public function register_dy_request_type (array $request_types): array {
+        $request_types[] = $this->id;
+
+        return $request_types;
+    }
+
+
 	public function is_active()
 	{
 		$output = false;

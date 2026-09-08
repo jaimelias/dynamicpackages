@@ -69,7 +69,7 @@ class paguelo_facil_on{
 		$this->gateway_coupon = 'PAGUELOFACIL';
 	}
 
-	private function register_dy_request_type (array $request_types): array {
+	public function register_dy_request_type (array $request_types): array {
         $request_types[] = $this->id;
 
         return $request_types;
