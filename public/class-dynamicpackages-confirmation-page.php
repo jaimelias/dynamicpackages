@@ -22,7 +22,7 @@ class Dynamicpackages_Confirmation_Page {
 
 		if(is_confirmation_page())
 		{
-            $the_id = secure_post('dy_id', null, 'int');
+            $the_id = secure_post('dy_id', null, 'intval');
 
             if(is_int($the_id) && $the_id > 0) {
 
