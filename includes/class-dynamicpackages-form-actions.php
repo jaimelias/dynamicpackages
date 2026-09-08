@@ -84,7 +84,7 @@ class Dynamicpackages_Actions{
 		$submission_context = (object) array(
 			'accepted' => in_array(
 				$request_type,
-				array('estimate_request', 'contact'),
+				['estimate_request', 'contact'],
 				true
 			)
 		);
@@ -234,7 +234,7 @@ class Dynamicpackages_Actions{
 		$content = is_string($content) ? $content : '';
 		$request_type = secure_post('dy_request', '', 'sanitize_key');
 	
-        if($this->data_sent && in_array($request_type, array('estimate_request', 'contact'), true))
+        if($this->data_sent && in_array($request_type, ['estimate_request', 'contact'], true))
         {               
 			$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
         }

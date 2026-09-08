@@ -874,7 +874,7 @@ class paguelo_facil_on{
 			if(
 				in_array(
 					$request_type,
-					array('estimate_request', $failed_gateway),
+					['estimate_request', $failed_gateway],
 					true
 				)
 				&& is_confirmation_page()
