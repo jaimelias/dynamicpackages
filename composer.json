@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-      "commit": "./.scripts/commit.sh",
+      "commit": "./.scripts/commit.sh --app",
       "dy-core-copy": "./dy-core/update.sh --copy-only",
       "dy-core-publish": "./dy-core/update.sh --publish",
       "start": [
