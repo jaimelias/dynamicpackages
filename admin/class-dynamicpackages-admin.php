@@ -38,14 +38,14 @@ class Dynamicpackages_Admin {
 
 	public function enqueue_styles() {
 
-		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', [], time(), 'all' );
+		wp_enqueue_style( $this->plugin_id, $this->plugin_dir_file . 'css/dynamicpackages-admin.css', [], $this->version, 'all' );
 	}
 	
 	public function enqueue_scripts() {
 
 		$admin_dep = ['jquery']; //'hot', 'picker-js'
 
-		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', $admin_dep, time(), true );
+		wp_enqueue_script( $this->plugin_id, $this->plugin_dir_file . 'js/dynamicpackages-admin.js', $admin_dep, $this->version, true );
 	}
 
 	
