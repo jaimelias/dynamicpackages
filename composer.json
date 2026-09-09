@@ -12,7 +12,9 @@
     }
   },
   "scripts": {
-      "dy-core-update": "./dy-core/update.sh 'updated dy-core'",
+      "commit": "./.scripts/commit.sh",
+      "dy-core-copy": "./dy-core/update.sh --copy-only",
+      "dy-core-publish": "./dy-core/update.sh --publish",
       "start": [
           "@start-apache",
           "@sync-notion"

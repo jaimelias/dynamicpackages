@@ -16,7 +16,7 @@
  * Plugin Name: Dynamic Packages
  * Plugin URI: https://github.com/jaimelias/dynamicpackages
  * Description: This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version: 1.4.28
+ * Version: 1.4.29
  * Author: jaimelias
  * Author URI: https://jaimelias.com
  * License: GPL-2.0+
@@ -30,7 +30,7 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-define('DYNAMICPACKAGES_VERSION', '1.4.28');
+define('DYNAMICPACKAGES_VERSION', '1.4.29');
 
 function activate_dynamicpackages() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages-activator.php';

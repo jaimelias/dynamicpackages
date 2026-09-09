@@ -1,6 +1,9 @@
 .DS_Store
 .phar
 /.*
+!/.scripts/
+/.scripts/*
+!/.scripts/commit.sh
 /.env
 composer.lock
 composer.phar
