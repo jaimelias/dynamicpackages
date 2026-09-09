@@ -459,7 +459,7 @@ class dy_validators
 		}
 
 		$ip = get_ip_address();
-		$host = get_host(); //return '' if the values in wp_options for home missing or invalid
+		$host = get_resolved_host(); //return '' if the values in wp_options for home missing or invalid
 
 		$cache_key = 'dy_validate_submission_rate_limits';
 
