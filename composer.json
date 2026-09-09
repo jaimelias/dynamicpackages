@@ -12,6 +12,7 @@
     }
   },
   "scripts": {
+      "dy-core-update": "./dy-core/update.sh 'updated dy-core'",
       "start": [
           "@start-apache",
           "@sync-notion"
