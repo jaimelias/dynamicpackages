@@ -40,7 +40,7 @@ class dy_utilities {
 			}
 		}
 
-		$type = (string) package_field('package_package_type', $the_id);
+		$type = (string) package_field('package_type', $the_id);
 
 		if(!array_key_exists($type, $all_types)) {
 			return '';
@@ -346,7 +346,7 @@ class dy_utilities {
 		$duration = (float) package_field('package_duration');
 		$duration_label = (string) $duration;
 		$duration_unit = (int) package_field('package_length_unit');
-		$duration_max = (float) package_field('package_duration_max');
+		$duration_max = (float) package_field('package_max_duration');
 		$package_type = self::get_package_type($the_id);
 		
 		if(!empty($duration))
@@ -504,8 +504,8 @@ class dy_utilities {
 		}
 			
 		$duration_max = $is_child 
-			? intval(package_field('package_duration_max', $post->post_parent))
-			: intval(package_field('package_duration_max', $the_id));
+			? intval(package_field('package_max_duration', $post->post_parent))
+			: intval(package_field('package_max_duration', $the_id));
 			
 		$package_type = $is_child 
 			? self::get_package_type($post->post_parent) 
@@ -719,14 +719,14 @@ class dy_utilities {
 		);
 
 		$duration_max = $has_max_duration
-			? absint(package_field('package_duration_max'))
+			? absint(package_field('package_max_duration'))
 			: 0;
 
-		$booking_extra = secure_request('booking_extra', $duration, 'absint');
+		$additional_time = secure_request('additional_time', $duration, 'absint');
 
-		if( $booking_extra > $duration && $duration_max > $duration)
+		if( $additional_time > $duration && $duration_max > $duration)
 		{
-			$duration = min($booking_extra, $duration_max);
+			$duration = min($additional_time, $duration_max);
 		}
 
 		$start_date = secure_request('start_date');
@@ -787,7 +787,7 @@ class dy_utilities {
 			}
 		}
 		
-		//seasonal duration must override max_duration and booking_extra
+		//seasonal duration must override max_duration and additional_time
 		if(count($duration_arr) > 0)
 		{
 			$max_duration = max($duration_arr);

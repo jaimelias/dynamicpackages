@@ -341,15 +341,15 @@ class Dynamicpackages_Gateways
 	
 	public function invalid_min_duration()
 	{
-		if(get_has('booking_extra') && is_booking_page())
+		if(get_has('additional_time') && is_booking_page())
 		{
 			$min_duration = max(1, absint(dy_utilities::get_min_nights()));
-			$booking_extra = secure_get('booking_extra', $min_duration, 'absint');
+			$additional_time = secure_get('additional_time', $min_duration, 'absint');
 			$duration_unit = package_field('package_length_unit');
 			
-			if($booking_extra < $min_duration)
+			if($additional_time < $min_duration)
 			{
-				echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('You have chosen %s %s, but the minimum duration is %s %s.', 'dynamicpackages'), $booking_extra, dy_utilities::duration_label($duration_unit, $booking_extra), $min_duration, dy_utilities::duration_label($duration_unit, $min_duration))).'</p>';
+				echo '<p class="minimal_alert strong">'.esc_html(sprintf(__('You have chosen %s %s, but the minimum duration is %s %s.', 'dynamicpackages'), $additional_time, dy_utilities::duration_label($duration_unit, $additional_time), $min_duration, dy_utilities::duration_label($duration_unit, $min_duration))).'</p>';
 			}
 		}
 	}

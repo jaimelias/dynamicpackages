@@ -132,7 +132,7 @@ class Dynamicpackages_Forms
 		$by_hour = package_field('package_by_hour');
 		$package_type = dy_utilities::get_package_type();
 		$min_duration = intval(package_field('package_duration'));
-		$max_duration = intval(package_field('package_duration_max'));
+		$max_duration = intval(package_field('package_max_duration'));
 		$list_durations = ($max_duration > $min_duration) ? (1 + ($max_duration - $min_duration)) : 0;
 		$length_unit = package_field('package_length_unit');
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
@@ -245,7 +245,7 @@ class Dynamicpackages_Forms
 			}
 			
 			$form .= '<label>'.esc_html($time_label).'</label>';
-			$form .= '<p><select type="text" name="booking_extra">';
+			$form .= '<p><select type="text" name="additional_time">';
 			
 			for($x = 0; $x < $list_durations; $x++)
 			{

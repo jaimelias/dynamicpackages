@@ -48,7 +48,7 @@ class Dynamicpackages_Metapost
 		self::save_language_fields($post_id, $languages);
 		self::save_week_day_fields($post_id);
 
-		if(post_has('package_package_type'))
+		if(post_has('package_type'))
 		{
 			update_post_meta(
 				$post_id,
@@ -61,10 +61,10 @@ class Dynamicpackages_Metapost
 	private static function get_package_type() {
 
 		return self::get_posted_scalar(
-			'package_package_type',
+			'package_type',
 			null,
 			'absint'
-		) ?? absint(package_field('package_package_type', self::$post_id));
+		) ?? absint(package_field('package_type', self::$post_id));
 	}
 
 	private static function save_simple_fields($post_id)
@@ -105,10 +105,10 @@ class Dynamicpackages_Metapost
 
 	private static function save_package_type_fields($post_id)
 	{
-		if(!post_has('package_package_type')) return;
+		if(!post_has('package_type')) return;
 
 		$package_type = self::get_posted_scalar(
-			'package_package_type',
+			'package_type',
 			null,
 			'absint'
 		);
@@ -144,7 +144,7 @@ class Dynamicpackages_Metapost
 			}
 		}
 
-		update_post_meta($post_id, 'package_package_type', $package_type);
+		update_post_meta($post_id, 'package_type', $package_type);
 	}
 
 	private static function save_duration_fields($post_id, $is_child)
@@ -170,14 +170,14 @@ class Dynamicpackages_Metapost
 
 		if(!in_array($package_type, [1, 2, 3], true))
 		{
-			delete_post_meta($post_id, 'package_duration_max');
+			delete_post_meta($post_id, 'package_max_duration');
 			return;
 		}
 
-		if(!post_has('package_duration_max')) return;
+		if(!post_has('package_max_duration')) return;
 
 		$duration_max = self::get_posted_scalar(
-			'package_duration_max',
+			'package_max_duration',
 			null,
 			'absint'
 		);
@@ -192,7 +192,7 @@ class Dynamicpackages_Metapost
 			$duration_max = intval($duration) + 1;
 		}
 
-		update_post_meta($post_id, 'package_duration_max', $duration_max);
+		update_post_meta($post_id, 'package_max_duration', $duration_max);
 	}
 
 	private static function save_defaulted_numeric_fields($post_id)

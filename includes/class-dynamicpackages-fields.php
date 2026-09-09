@@ -37,7 +37,15 @@ class Dynamicpackages_Fields
         [
             "old" => ['package', 'return', 'hour'],
             "new" => ['package', 'end', 'hour']
-        ]
+        ],
+        [
+            "old" => ['package', 'package', 'type'],
+            "new" => ['package', 'type']
+        ],
+        [
+            "old" => ['package', 'duration', 'max'],
+            "new" => ['package', 'max', 'duration']
+        ],
     ];
     private static $migrations_in_progress = [];
 

@@ -103,7 +103,7 @@ class paguelo_facil_on{
 			strtolower((string) secure_post('email', '', 'sanitize_email')),
 			(string) secure_post('start_date'),
 			(string) secure_post('start_hour'),
-			(string) secure_post('booking_extra'),
+			(string) secure_post('additional_time'),
 			(string) secure_post('pax_regular'),
 			(string) secure_post('pax_discount'),
 			(string) secure_post('pax_free'),

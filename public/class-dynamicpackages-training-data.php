@@ -271,7 +271,7 @@ class Dynamicpackages_Export_Post_Types{
         $duration_unit = (int) package_field('package_length_unit');
         $duration_value_label = strtolower((string) dy_utilities::show_duration(false));
         $duration_restrictions = strtolower((string) dy_utilities::show_duration(true));
-        $duration_max = (int) package_field('package_duration_max');
+        $duration_max = (int) package_field('package_max_duration');
         $by_hour = (int) package_field('package_by_hour');
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');

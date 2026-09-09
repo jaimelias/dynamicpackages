@@ -11,7 +11,7 @@ class Dynamicpackages_Location_Category {
 	];
 
 	public function __construct() {
-		$priority = DY_IS_PACKAGE_PAGE_PRIORITY;
+		$priority = 10;
 
 		add_action('wp', [$this, 'remove_default_canonicals']);
 		add_action('wp_head', [$this, 'location_category_canonical']);

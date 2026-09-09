@@ -88,7 +88,7 @@ class Dynamicpackages_Booking_Page {
 			'coupon_discount_amount' => ($coupon_discount > 0 ) ? ($regular_amount - $amount) : 0,
 			'total' => $payment_amount,
 			'start_date' => secure_get('start_date', null),
-			'booking_extra' => secure_get('booking_extra', null),
+			'additional_time' => secure_get('additional_time', null),
 			'start_hour' => esc_html(dy_utilities::start_hour()),
 			'end_date' => secure_get('end_date', null),
 			'end_hour' => (string) dy_utilities::end_hour(),

@@ -27,7 +27,7 @@ jQuery(() => {
 		})
 	}
 
-	jQuery('#package_package_type').change(() => {
+	jQuery('#package_type').change(() => {
 		handlePackageType();
 		handlePackageSchema();
 		initSeasonGrids();
@@ -121,7 +121,7 @@ const initSeasonGrids = () => {
         });
     }
 
-	const packageType = parseInt(jQuery('#package_package_type').val());
+	const packageType = parseInt(jQuery('#package_type').val());
 	const occupancyDOM = buildOccupancyDOM();
 	const defaultOccupancyData = getDefaultData({el: occupancyDOM, hotDataFilter});
 
@@ -209,16 +209,16 @@ const initSeasonGrids = () => {
 
 const handlePackageType = () => {
 
-	if(jQuery('#package_package_type').length === 0)
+	if(jQuery('#package_type').length === 0)
 	{
 		return false;
 	}	
 
-	jQuery('#package_package_type').each(function(){
+	jQuery('#package_type').each(function(){
 		const isChild = jQuery(this).prop('disabled');
 		const packageType = parseInt(jQuery(this).val());
 		
-		const duration_max = jQuery('#package_duration_max');
+		const duration_max = jQuery('#package_max_duration');
 		const lengthUnitField = jQuery('#package_length_unit');
 		const lengthUnitFieldValue = parseInt(jQuery(lengthUnitField).val());
 		const num_seasons = jQuery('#package_num_seasons');
@@ -352,14 +352,14 @@ const handleMinMaxPax = () => {
 
 const handlePackageSchema  = () => {
 
-	if(jQuery('#package_schema').length === 0 || jQuery('#package_package_type').length === 0)
+	if(jQuery('#package_schema').length === 0 || jQuery('#package_type').length === 0)
 	{
 		return false;
 	}
 
 	const eventPackageTypes = [0, 1];
 	const schemaField = jQuery('#package_schema');
-	const packageTypeValue = parseInt(jQuery('#package_package_type').val());
+	const packageTypeValue = parseInt(jQuery('#package_type').val());
 	const eventOption = jQuery(schemaField).find(`option[value="0"]`);
 	const productOption = jQuery(schemaField).find(`option[value="1"]`);
 
@@ -402,7 +402,7 @@ const handlePackagePayment  = () => {
 
 const handleParentAttr = () => {
 
-	if(jQuery('#package_package_type').length === 0)
+	if(jQuery('#package_type').length === 0)
 	{
 		return false;
 	}	

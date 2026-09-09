@@ -69,7 +69,7 @@ class Dynamicpackages_Metaboxes
 		$this->disabled_dates = package_field('package_disabled_dates');
 		$this->enabled_dates = package_field('package_enabled_dates');
 		$this->seasons_chart = package_field('package_seasons_chart');
-        $this->package_type = (int) package_field('package_package_type');
+        $this->package_type = (int) package_field('package_type');
 		$this->length_unit = (int) package_field('package_length_unit');
 		$this->fixed_price = (int) package_field('package_fixed_price');
         $this->show_pricing = (int) package_field('package_show_pricing');
@@ -103,7 +103,7 @@ class Dynamicpackages_Metaboxes
 		$this->display = (int) package_field('package_display');
 		$this->code = package_field('package_trip_code');
 		$this->duration = (float) package_field('package_duration');
-		$this->duration_max = (float) package_field('package_duration_max');
+		$this->duration_max = (float) package_field('package_max_duration');
 		$this->badge = (int) package_field('package_badge');
 		$this->badge_color = package_field('package_badge_color');
 		$this->schema = (int) package_field('package_schema');
@@ -668,8 +668,8 @@ class Dynamicpackages_Metaboxes
 		<?php endif; ?>
 
 		<p>
-			<label for="package_package_type"><?php echo esc_html(__('Package Type', 'dynamicpackages')); ?></label><br />
-			<select name="package_package_type" id="package_package_type" <?php echo esc_attr($this->disable_child); ?>>
+			<label for="package_type"><?php echo esc_html(__('Package Type', 'dynamicpackages')); ?></label><br />
+			<select name="package_type" id="package_type" <?php echo esc_attr($this->disable_child); ?>>
 				<option value="0" <?php echo ($this->package_type === 0) ? 'selected' : ''; ?> ><?php echo esc_html(__('One day', 'dynamicpackages')); ?></option>
 				<option value="1" <?php echo ($this->package_type === 1) ? 'selected' : ''; ?> ><?php echo esc_html(__('Multi-day', 'dynamicpackages')); ?></option>
 				<option value="2" <?php echo ($this->package_type === 2) ? 'selected' : ''; ?> ><?php echo esc_html(__('Rental (per day)', 'dynamicpackages')); ?></option>
@@ -694,8 +694,8 @@ class Dynamicpackages_Metaboxes
 		</p>
 
 		<p>
-			<label for="package_duration_max"><?php echo esc_html(__('Maximum Duration', 'dynamicpackages')); ?></label><br />
-			<input type="number" step="1" min="1" name="package_duration_max" <?php echo esc_attr($this->disable_child); ?> id="package_duration_max" value="<?php echo esc_attr($this->duration_max); ?>">
+			<label for="package_max_duration"><?php echo esc_html(__('Maximum Duration', 'dynamicpackages')); ?></label><br />
+			<input type="number" step="1" min="1" name="package_max_duration" <?php echo esc_attr($this->disable_child); ?> id="package_max_duration" value="<?php echo esc_attr($this->duration_max); ?>">
 		</p>
 
 		<?php if (!$this->is_child): ?>

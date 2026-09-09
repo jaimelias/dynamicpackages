@@ -23,19 +23,19 @@ class Dynamicpackages_Public {
 
 		//scripts
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), 10);
 
 		//redirect
 		add_action('template_redirect', array($this, 'template_redirect'));
-		add_filter('post_type_link', array($this, 'post_type_link'), DY_IS_PACKAGE_PAGE_PRIORITY, 2);
+		add_filter('post_type_link', array($this, 'post_type_link'), 10, 2);
 
 		//template
-		add_filter('template_include', array($this, 'package_template'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('the_content', array($this, 'the_content'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('pre_get_document_title', array($this, 'wp_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('the_title', array($this, 'the_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('single_term_title', array($this, 'modify_tax_title'), DY_IS_PACKAGE_PAGE_PRIORITY);
-		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'), DY_IS_PACKAGE_PAGE_PRIORITY);
+		add_filter('template_include', array($this, 'package_template'), 10);
+		add_filter('the_content', array($this, 'the_content'), 10);
+		add_filter('pre_get_document_title', array($this, 'wp_title'), 10);
+		add_filter('the_title', array($this, 'the_title'), 10);
+		add_filter('single_term_title', array($this, 'modify_tax_title'), 10);
+		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'), 10);
 		add_filter('term_description', array($this, 'modify_term_description'));
 		add_action('pre_get_posts', array($this, 'set_one_tax_per_page'));
 
