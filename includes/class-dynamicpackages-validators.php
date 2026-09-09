@@ -439,20 +439,17 @@ class dy_validators
 	}
 
 	public static function is_white_listed_from_rate_limits() : bool {
-		$the_id = secure_post('dy_id', 0, 'absint');
-
-		if($the_id > 0 && current_user_can('edit_post', $the_id)) {
-			return true;
+		if ( ! is_local_host() ) {
+			return false;
 		}
 
-		$host = strtolower(
-			trim(
-				(string) wp_parse_url(get_option('home'), PHP_URL_HOST),
-				'[] .'
-			)
-		);
+		$the_id = secure_post( 'dy_id', null, 'int' );
 
-		return $host === 'localhost';
+		if ( empty( $the_id ) || $the_id <= 0 ) {
+			return false;
+		}
+
+		return current_user_can( 'edit_post', $the_id );
 	}
 	
 	public static function validate_submission_rate_limits(): bool
@@ -462,8 +459,7 @@ class dy_validators
 		}
 
 		$ip = get_ip_address();
-		$host = strtolower(trim((string) wp_parse_url(get_option('home'), PHP_URL_HOST), '[] .'));
-
+		$host = get_host(); //return '' if the values in wp_options for home missing or invalid
 
 		$cache_key = 'dy_validate_submission_rate_limits';
 
