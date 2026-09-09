@@ -443,7 +443,7 @@ class dy_validators
 			return false;
 		}
 
-		$the_id = secure_post( 'dy_id', null, 'int' );
+		$the_id = secure_post( 'dy_id', null, 'intval' );
 
 		if ( empty( $the_id ) || $the_id <= 0 ) {
 			return false;
