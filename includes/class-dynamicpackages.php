@@ -2,33 +2,6 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-/**
- * The file that defines the core plugin class
- *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link http://jaimelias.com
- * @since 1.0.0
- *
- * @package dynamicpackages
- * @subpackage dynamicpackages/includes
- */
-
-/**
- * The core plugin class.
- *
- * This is used to define internationalization, admin-specific hooks, and
- * public-facing site hooks.
- *
- * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
- *
- * @since 1.0.0
- * @package dynamicpackages
- * @subpackage dynamicpackages/includes
- * @author Jaimelías <jaimelias@about.me>
- */
 #[AllowDynamicProperties]
 class dynamicpackages {
 
@@ -37,15 +10,13 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = '1.4.20';
+		$this->version = is_local_host() ? time() : DYNAMICPACKAGES_VERSION;
 		
 		$this->load_dependencies();
 
 		new Dynamicpackages_Post_Types();
 		
-		add_action('init', array($this, 'load_dynamicpackage_textdomain'), PHP_INT_MAX);
-
-		
+		add_action('init', [$this, 'load_dynamicpackage_textdomain'], PHP_INT_MAX);
 
 		$this->initialize_plugin();
 	}

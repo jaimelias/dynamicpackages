@@ -13,22 +13,24 @@
  * @package           dynamicpackages
  *
  * @wordpress-plugin
- * Plugin Name:       Dynamic Packages
- * Plugin URI:        https://github.com/jaimelias/dynamicpackages
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
- * Author:            jaimelias
- * Author URI:        https://jaimelias.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       dynamicpackages
- * Domain Path:       /languages
- * GitHub Plugin URI:       jaimelias/dynamicpackages
+ * Plugin Name: Dynamic Packages
+ * Plugin URI: https://github.com/jaimelias/dynamicpackages
+ * Description: This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Version: 1.4.21
+ * Author: jaimelias
+ * Author URI: https://jaimelias.com
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain: dynamicpackages
+ * Domain Path: /languages
+ * GitHub Plugin URI: jaimelias/dynamicpackages
  */
 
 // If this file is called directly, abort.
 
 if ( !defined( 'WPINC' ) ) exit;
+
+define('DYNAMICPACKAGES_VERSION', '1.4.21');
 
 function activate_dynamicpackages() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dynamicpackages-activator.php';
