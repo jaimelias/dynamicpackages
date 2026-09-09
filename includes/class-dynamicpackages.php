@@ -10,9 +10,9 @@ class dynamicpackages {
 
 		$this->plugin_name = 'Dynamic Packages';
 		$this->plugin_id = 'dynamicpackages';
-		$this->version = is_local_host() ? time() : DYNAMICPACKAGES_VERSION;
-		
 		$this->load_dependencies();
+
+		$this->version = is_local_host() ? time() : DYNAMICPACKAGES_VERSION;
 
 		new Dynamicpackages_Post_Types();
 		
