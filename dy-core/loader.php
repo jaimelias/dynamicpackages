@@ -19,10 +19,12 @@ if(!class_exists('Dy_Core_Init'))
         {
             //core helpers
             require_once $this->plugin_dir_path . 'functions.php';
-            require_once $this->plugin_dir_path . 'write_log.php';
+            
             require_once $this->plugin_dir_path . 'errors-page.php';
             require_once $this->plugin_dir_path . 'security/waf.php';
             require_once $this->plugin_dir_path . 'security/queries.php';
+            require_once $this->plugin_dir_path . 'security/server.php';
+            require_once $this->plugin_dir_path . 'security/write_log.php';
             require_once $this->plugin_dir_path . 'controllers/abstracts/input_abstract.php';
             require_once $this->plugin_dir_path . 'controllers/abstracts/select_abstract.php';
             require_once $this->plugin_dir_path . 'controllers/abstracts/textarea_abstract.php';

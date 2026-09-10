@@ -347,22 +347,13 @@ if ( ! function_exists('write_log')) {
 			$parts[] = 'debug=' . $encode($lines);
 		}
 
-		$server_value = static function(string $key): string
-		{
-			$value = $_SERVER[$key] ?? '';
-
-			return is_scalar($value)
-				? (string) $value
-				: '';
-		};
-
 		$request_path = wp_parse_url(
-			$server_value('REQUEST_URI'),
+			server_value('REQUEST_URI'),
 			PHP_URL_PATH
 		);
 
 		$server_data = [
-			'method'     => $server_value('REQUEST_METHOD'),
+			'method'     => server_value('REQUEST_METHOD'),
 			'path'       => is_string($request_path) ? $request_path : ''
 		];
 
