@@ -3,7 +3,7 @@
 if ( !defined( 'WPINC' ) ) exit;
 
 function is_package_page() : bool {
-	return $_SERVER['REQUEST_METHOD'] === 'GET' 
+	return secure_server('REQUEST_METHOD') === 'GET' 
 		&& is_post_type_packages() 
 		&& !is_booking_page() 
 		&& !is_confirmation_page();
@@ -142,7 +142,7 @@ class dy_validators
 	public static function has_package()
 	{
 
-		if($_SERVER['REQUEST_METHOD'] !== 'GET') {
+		if(secure_server('REQUEST_METHOD') !== 'GET') {
 			return false;
 		}
 
@@ -200,7 +200,7 @@ class dy_validators
 		$cache_key = 'dy_is_booking_page';
 
 		if(
-			($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET'
+			secure_server('REQUEST_METHOD') !== 'GET'
 			|| is_admin()
 			|| wp_doing_ajax()
 			|| wp_doing_cron()
@@ -349,7 +349,7 @@ class dy_validators
 	public static function is_confirmation_page()
 	{
 
-		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		if(secure_server('REQUEST_METHOD') !== 'POST') {
 			return false;
 		}
 
@@ -467,7 +467,7 @@ class dy_validators
 			return self::$cache[$cache_key];
 		}
 
-		if(($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+		if(secure_server('REQUEST_METHOD') !== 'POST') {
 			return self::$cache[$cache_key] = true;
 		}
 
@@ -676,7 +676,7 @@ class dy_validators
 	 */
 	private static function validate_rate_limit_bucket($scope, $suffix): bool
 	{
-		if(self::is_white_listed_from_rate_limits() || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+		if(self::is_white_listed_from_rate_limits() || secure_server('REQUEST_METHOD') !== 'POST') {
 			return true;
 		}
 

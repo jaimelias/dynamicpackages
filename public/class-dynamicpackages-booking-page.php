@@ -106,7 +106,6 @@ class Dynamicpackages_Booking_Page {
 			'package_included' => (string) dy_utilities::implode_taxo_names('package_included', __('and', 'dynamicpackages'), '✅'),
 			'TERMS_CONDITIONS' => (array) $this->accept(),
 			'url' => get_permalink(),
-			'booking_url' => current_url_full(),
 			'currency_name' => currency_name(),
 			'currency_symbol' => currency_symbol(),
 			'outstanding' => (float) dy_utilities::outstanding_amount(),

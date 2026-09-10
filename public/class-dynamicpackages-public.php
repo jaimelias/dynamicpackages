@@ -1046,7 +1046,7 @@ class Dynamicpackages_Public {
 		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
 			return;
 		}
-		if ( isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'GET' ) {
+		if (secure_server('REQUEST_METHOD') !== 'GET' ) {
 			return;
 		}
 

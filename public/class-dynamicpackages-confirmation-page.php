@@ -20,7 +20,7 @@ class Dynamicpackages_Confirmation_Page {
     public function set_post_on_checkout_page(): void
     {
         if (
-            strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'
+            secure_server('REQUEST_METHOD') !== 'POST'
             || is_admin()
             || wp_doing_ajax()
             || wp_doing_cron()

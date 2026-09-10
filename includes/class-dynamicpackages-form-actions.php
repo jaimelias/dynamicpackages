@@ -29,7 +29,7 @@ class Dynamicpackages_Actions{
 		}
 
 		if(
-			strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST'
+			secure_server('REQUEST_METHOD') !== 'POST'
 			|| !is_confirmation_page()
 		)
 		{
