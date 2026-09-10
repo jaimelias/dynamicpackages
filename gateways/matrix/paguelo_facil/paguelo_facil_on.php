@@ -1060,7 +1060,7 @@ class paguelo_facil_on{
 		{
 			$the_id = $post->ID;
 			
-			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+			if($post->post_parent > 0)
 			{
 				$the_id = $post->post_parent;
 			}

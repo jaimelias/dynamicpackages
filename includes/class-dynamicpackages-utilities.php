@@ -34,7 +34,7 @@ class dy_utilities {
 			
 			global $post;
 
-			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+			if($post->post_parent > 0)
 			{
 				$the_id = $post->post_parent;
 			}
@@ -314,23 +314,26 @@ class dy_utilities {
 		return $subtotal;
 	}
 
-	public static function duration_label($unit, $value)
+	/**
+	 * Returns the translated duration label for a given unit and value.
+	 *
+	 * Units:
+	 * 0 = minute
+	 * 1 = hour
+	 * 2 = day
+	 * 3 = night
+	 * 4 = week
+	 */
+	public static function duration_label(int $unit, int|float $value): string
 	{
-		//duration_label(unit number, duration value, $translate);
-		
-		$singular = array(__('minute', 'dynamicpackages'), __('hour', 'dynamicpackages'), __('day', 'dynamicpackages'), __('night', 'dynamicpackages'), __('week', 'dynamicpackages'));
-		$plural = array(__('minutes', 'dynamicpackages'), __('hours', 'dynamicpackages'), __('days', 'dynamicpackages'), __('nights', 'dynamicpackages'), __('weeks', 'dynamicpackages'));
-		
-		$output = '';
-		$label = $singular;
-		
-		if($value > 1)
-		{
-			$label = $plural;
-		}
-		
-		
-		return $label[$unit];
+		return match ($unit) {
+			0 => _n('minute', 'minutes', $value, 'dynamicpackages'),
+			1 => _n('hour', 'hours', $value, 'dynamicpackages'),
+			2 => _n('day', 'days', $value, 'dynamicpackages'),
+			3 => _n('night', 'nights', $value, 'dynamicpackages'),
+			4 => _n('week', 'weeks', $value, 'dynamicpackages'),
+			default => '',
+		};
 	}
 
 	public static function show_duration($max = false)
@@ -1339,7 +1342,7 @@ class dy_utilities {
 
 		$the_id = $post->ID;
 		
-		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+		if($post->post_parent > 0)
 		{
 			$the_id = $post->post_parent;
 		}		
@@ -1376,7 +1379,7 @@ class dy_utilities {
 
 		$parent_terms = [];
 
-		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+		if($post->post_parent > 0)
 		{
 			$parent_terms = get_the_terms($post->post_parent, $term_name);
 			$parent_terms = is_array($parent_terms) 
@@ -1532,7 +1535,7 @@ class dy_utilities {
 			$current_terms = get_the_terms($post->ID, $term_name);
 			$current_terms = (is_array($current_terms)) ? $current_terms : array();
 
-			if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+			if($post->post_parent > 0)
 			{
 				$parent_terms = get_the_terms($post->post_parent, $term_name, ['depth' => 0]);
 				$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];

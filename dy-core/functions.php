@@ -496,39 +496,37 @@ if(!function_exists('hour_to_seconds')) {
 
 if(!function_exists('is_hour_in_range')) {
 	/**
+	 * Check whether a time falls within an optional time range.
+	 *
 	 * @param array{0?: string, 1?: string} $range
 	 */
 	function is_hour_in_range(string $hour_string, array $range): bool
 	{
-		$min_hour_string = $range[0] ?? '';
-		$max_hour_string = $range[1] ?? '';
+		$hour = hour_to_seconds($hour_string);
 
-		if(
-			!is_string($min_hour_string)
-			|| !is_string($max_hour_string)
-			|| !is_valid_time($hour_string)
-		) {
+		if($hour === false) {
 			return false;
 		}
 
-		$hour_seconds = hour_to_seconds($hour_string);
+		$min = $range[0] ?? '';
+		$max = $range[1] ?? '';
 
-		if($hour_seconds === false) {
+		if(!is_string($min) || !is_string($max)) {
 			return false;
 		}
 
-		if($min_hour_string !== '') {
-			$min_hour_seconds = hour_to_seconds($min_hour_string);
+		if($min !== '') {
+			$min = hour_to_seconds($min);
 
-			if($min_hour_seconds === false || $hour_seconds < $min_hour_seconds) {
+			if($min === false || $hour < $min) {
 				return false;
 			}
 		}
 
-		if($max_hour_string !== '') {
-			$max_hour_seconds = hour_to_seconds($max_hour_string);
+		if($max !== '') {
+			$max = hour_to_seconds($max);
 
-			if($max_hour_seconds === false || $hour_seconds > $max_hour_seconds) {
+			if($max === false || $hour > $max) {
 				return false;
 			}
 		}

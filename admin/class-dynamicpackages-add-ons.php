@@ -276,28 +276,31 @@ class Dynamicpackages_Taxonomy_Add_Ons
 
 		$post = get_post($the_id);
 
-
-
-		if (isset($cache[$cache_key])) {
-			return $cache[$cache_key];
+		if (array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
 		}
 
-		$output = [];
-
-		global $polylang;
-		
+		$output = [];		
 		$package_type = dy_utilities::get_package_type($post->ID);
 		$parent_terms = [];
 
 		$pax_idx = max(0, absint(dy_utilities::pax_num()) - 1);
 		
-		$default_language = isset($polylang) ? pll_default_language() : null;
-		$def_lang = !isset($polylang) || pll_current_language() === $default_language;
+		$default_language = function_exists('pll_default_language')
+			? pll_default_language()
+			: null;
+
+		$current_language = function_exists('pll_current_language')
+			? pll_current_language()
+			: null;
+
+		$def_lang = $current_language === null
+			|| $current_language === $default_language;
 
 		$current_terms = get_the_terms($post->ID, $this->name);
 		$current_terms = (is_array($current_terms)) ? $current_terms : [];
 
-		if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+		if($post->post_parent > 0)
 		{
 			$parent_terms = get_the_terms($post->post_parent, $this->name);
 			$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
@@ -311,7 +314,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$name = $term->name;
 			$price = 0;
 			
-			if (!$def_lang) {
+			if(!$def_lang && function_exists('pll_get_term')) {
 				$default_term_id = pll_get_term($term_id, $default_language);
 
 				if ($default_term_id) {
@@ -381,7 +384,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			}			
 		}
 
-		return $cache[$cache_key] = $output;
+		return self::$cache[$cache_key] = $output;
 	}
 
 

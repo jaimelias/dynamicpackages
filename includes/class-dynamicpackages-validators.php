@@ -1145,69 +1145,65 @@ class dy_validators
 		return self::$cache[$cache_key] = $output;
 	}
 	
-	
-	public static function validate_category_location()
+	public static function validate_category_location(): bool
 	{
-		
 		$cache_key = 'dy_validate_category_location';
 
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
+		if (array_key_exists($cache_key, self::$cache)) {
+			return self::$cache[$cache_key];
+		}
 
-		$output = false;
-		$package_location = '';
-		$package_category = '';
-		$location = '';
-		$category = '';
-		$sort_by = '';
-		$search = '';
-		
-		if(get_has('location'))
-		{
+		$location = false;
+		$category = false;
+		$sort_by = false;
+		$search = !empty(secure_get('keywords', ''));
+
+		if (get_has('location')) {
 			$package_location = secure_get('location');
-			
-			if(!empty($package_location))
-			{
-				$location = get_term_by('slug', $package_location, 'package_location');
+
+			if (!empty($package_location)) {
+				$location = get_term_by(
+					'slug',
+					$package_location,
+					'package_location'
+				);
 			}
 		}
-		
-		if(get_has('category'))
-		{
+
+		if (get_has('category')) {
 			$package_category = secure_get('category');
-			
-			if(!empty($package_category))
-			{
-				$category = get_term_by('slug', $package_category, 'package_category');
-			}				
+
+			if (!empty($package_category)) {
+				$category = get_term_by(
+					'slug',
+					$package_category,
+					'package_category'
+				);
+			}
 		}
-		if(get_has('sort'))
-		{
+
+		if (get_has('sort')) {
 			$sort_by_arr = dy_utilities::sort_by_arr();
 			$sort_by_value = secure_get('sort');
 
-			if(!empty($sort_by_value) || $sort_by_value !== 'any')
-			{
-				if(in_array($sort_by_value, $sort_by_arr))
-				{
-					$sort_by = true;
-				}
+			if (
+				!empty($sort_by_value)
+				&& $sort_by_value !== 'any'
+				&& in_array($sort_by_value, $sort_by_arr, true)
+			) {
+				$sort_by = true;
 			}
 		}
 
-		$search = !empty(secure_get('keywords', ''));
+		$output = !empty($location)
+			|| !empty($category)
+			|| $sort_by
+			|| $search;
 
-		if(!empty($location) || !empty($category) || !empty($sort_by) || !empty($search))
-		{
-			$output = true;
-		}
+		self::$cache[$cache_key] = $output;
 
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-		
 		return $output;
-	}	
+	}
 	
 	public static function has_deposit()
 	{
@@ -1255,7 +1251,7 @@ class dy_validators
 					return self::$cache[$cache_key];
 				}
 
-				if(property_exists($post, 'post_parent') && $post->post_parent > 0)
+				if($post->post_parent > 0)
 				{
 					$output = true;				
 				}

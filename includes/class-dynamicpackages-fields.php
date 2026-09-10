@@ -221,7 +221,6 @@ class Dynamicpackages_Fields
         // Check if the current post has a parent and adjust $the_id
         $is_child = (
             $post instanceof WP_Post
-            && property_exists($post, 'post_parent')
             && $post->post_parent > 0
         );
 

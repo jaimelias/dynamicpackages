@@ -407,10 +407,7 @@ class Dynamicpackages_WP_JSON
 			}			
 		}
 		
-		if(count($disable) > 0)
-		{
-			return $disable;
-		}
+		return $disable;
 	
 	}
 }

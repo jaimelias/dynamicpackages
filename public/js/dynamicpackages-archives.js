@@ -50,64 +50,72 @@ const booking_filter = () => {
 			}
 		});
 
-		jQuery(thisForm).find('select').change(function () {
-			
+		/**
+		 * Handles select changes and decides whether to submit the complete
+		 * search form or navigate directly to a single taxonomy URL.
+		 *
+		 * @param {Event} event jQuery change event.
+		 * @returns {void}
+		 */
+		jQuery(thisForm).find('select').on('change', event => {
+			const $select = jQuery(event.currentTarget);
 			const formData = jQuery(thisForm).serializeArray();
-			let countAllChanges = 0;
-			let taxChanges = [];
-			const thisValue = jQuery(this).val();
-			const thisName = jQuery(this).attr('name');
 
-			if(['package_location', 'package_category', 'package_sort'].includes(`package_${thisName}`))
-			{
-				if(typeof gtag !== 'undefined')
-				{
-					sendGa4Event( 'search', {search_term: `${thisName}-${thisValue}`});
+			const thisValue = $select.val();
+			const thisName = $select.attr('name');
+
+			if (['location', 'category', 'sort'].includes(thisName)) {
+				if (typeof sendGa4Event === 'function') {
+					sendGa4Event('search', {
+						search_term: `${thisName}-${thisValue}`,
+					});
 				}
 
-				if(typeof fbq !== 'undefined')
-				{
+				if (typeof fbq === 'function') {
 					fbq('track', 'Search');
 				}
 			}
 
-			formData.forEach(arr => {
-				const {name, value} = arr;
+			let countAllChanges = 0;
+			const taxChanges = [];
 
-				if(value !== nullParams[name])
-				{
-					
-					if(['location', 'category'].includes(name))
-					{
-						taxChanges.push({name, value});
-					}
-
-					countAllChanges++;
+			formData.forEach(({name, value}) => {
+				if (value === nullParams[name]) {
+					return;
 				}
+
+				if (['location', 'category'].includes(name)) {
+					taxChanges.push({name, value});
+				}
+
+				countAllChanges++;
 			});
-			
-			const countTaxChanges = taxChanges.length;
-			const isAny = arr => arr.value === 'any';
 
-			const submitForm = (countAllChanges === countTaxChanges) 
-				? (countTaxChanges === 1 && !taxChanges.every(isAny)) 
-				? false : true : true;
+			const shouldRedirectTaxonomy =
+				countAllChanges === 1
+				&& taxChanges.length === 1
+				&& taxChanges[0].value !== 'any';
 
-			if(submitForm)
-			{
+			if (!shouldRedirectTaxonomy) {
 				createFormSubmit(thisForm);
+				return;
 			}
-			else
-			{
-				const {value, name} = taxChanges[0];
-				const homeUrl = new URL(jQuery(thisForm).attr('data-home-url'));
-				let {pathname, hostname, protocol} = homeUrl;
-				pathnameArr = (pathname) ? pathname.split('/') : [];
-				pathnameArr = pathnameArr.filter(i => i);
-				pathnameArr.push(`package_${name}`, value);
-				const newPathname = pathnameArr.join('/');
-				window.location.href = `${protocol}//${hostname}/${newPathname}`;
-			}
+
+			const [{name, value}] = taxChanges;
+
+			const homeUrl = new URL(
+				jQuery(thisForm).attr('data-home-url')
+			);
+
+			const pathnameArr = homeUrl.pathname
+				.split('/')
+				.filter(Boolean);
+
+			pathnameArr.push(`package_${name}`, value);
+
+			homeUrl.pathname = `/${pathnameArr.join('/')}/`;
+
+			window.location.href = homeUrl.href;
 		});
 	});
 	

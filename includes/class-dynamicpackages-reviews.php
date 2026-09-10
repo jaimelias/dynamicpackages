@@ -591,9 +591,7 @@ class Dynamicpackages_Reviews
 							$count++;
 							$get_rating = get_comment_meta($comments[$x]->comment_ID, 'dy_rating', true);
 							$rating[] = $get_rating;
-						}
-						
-						$merged_comments[] = $comments;
+						}						
 					}	
 				}
 				
@@ -605,11 +603,11 @@ class Dynamicpackages_Reviews
 			{
 				$average = money((array_sum($rating)/$count));
 
-				$output = array(
+				$output = [
 					'ratingValue' => $average,
 					'reviewCount' => $count,
 					'@type' => 'AggregateRating'
-				);
+				];
 
 				$GLOBALS['dy_total_reviews'] = $output;
 			}			

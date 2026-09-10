@@ -399,144 +399,139 @@ class Dynamicpackages_Forms
 			}
 		}
 	}
-	public function free_select($price_chart, $min, $max, $option_disc, $option_free)
-	{		
-		$free = null;
-		 
-		
-		if(intval($option_free) > 0)
-		{
-			$start = 0;
-			$end = $option_free;
-			$range = $start.' - '.$end;
-			
-			
-			for($f = 1; $f < 3; $f++)
-			{
-				$free .= '<option data-price="0" value="'.esc_attr($f).'" >'.esc_html($f).'</option>';
-			}
-			if($free != null)
-			{
-				$free = '<option value="0">0</option>'.$free;
-				$output = '<label>'.esc_html(__('Children', 'dynamicpackages')).' '.esc_html($range).' '.esc_html(__('years old', 'dynamicpackages')).'</label>';
-				$output .= '<p><select name="pax_free" id="pax_free" class="booking_select">'.$free.'</select></p>';	
-				return $output;					
-			}
+	/**
+	 * Generates the free-children passenger selector.
+	 *
+	 * @return string|null Selector HTML when free children are enabled, otherwise null.
+	 */
+	public function free_select(
+		$price_chart,
+		$min,
+		$max,
+		$option_disc,
+		$option_free
+	): ?string {
+		$option_free = (int) $option_free;
+
+		if ($option_free <= 0) {
+			return null;
 		}
+
+		$free = '';
+
+		for ($f = 0; $f <= 2; $f++) {
+			$free .= sprintf(
+				'<option data-price="0" value="%s">%s</option>',
+				esc_attr((string) $f),
+				esc_html((string) $f)
+			);
+		}
+
+		$range = '0 - ' . $option_free;
+
+		$output = '<label>'
+			. esc_html__('Children', 'dynamicpackages')
+			. ' '
+			. esc_html($range)
+			. ' '
+			. esc_html__('years old', 'dynamicpackages')
+			. '</label>';
+
+		$output .= '<p><select name="pax_free" id="pax_free" class="booking_select">'
+			. $free
+			. '</select></p>';
+
+		return $output;
 	}
 	
-	public function get_all_terms_select($tax, $name)
+	/**
+	 * Generates a taxonomy <select> including parent and first-level child terms.
+	 *
+	 * The GET parameter identified by $name has priority over package globals.
+	 *
+	 * @param string $tax  WordPress taxonomy name.
+	 * @param string $name GET/select field name.
+	 *
+	 * @return string Generated HTML select or an empty string for an invalid taxonomy.
+	 */
+	public function get_all_terms_select(string $tax, string $name): string
 	{
 		$taxonomy = get_taxonomy($tax);
-		
-		$terms = get_terms(array(
-			'taxonomy' => $tax,
-			'hide_empty' => true,
-			'parent' => 0,
-			'orderby' => 'name'
-		));
-		
-		$any = null;
-		
-		if(isset($_GET[$name]))
-		{
-			$any = 'selected';
+
+		if (!$taxonomy) {
+			return '';
 		}
-				
-		$output = '<select name="'.esc_attr($name).'" class="width-100 block borderbox">';
-		
-		$output .= '<option value="any" '.esc_html($any).'>-- '.esc_html($taxonomy->labels->singular_name).' --</option>';
-		
-		
-		if (!empty($terms) && ! is_wp_error($terms))
-		{
-			foreach ( $terms as $term )
-			{
-				if($term->parent == 0)
-				{
-					$selected = null;
-					
-					global $package_location;
-					global $package_category;
-					
-					if(!isset($_GET[$tax]) && (isset($package_category) || isset($package_location)) )
-					{
-						if(isset($package_category))
-						{
-							if($term->slug == $package_category )
-							{
-								$selected = 'selected';
-							}
-						}
-						
-						if(isset($package_location))
-						{
-							if($term->slug == $package_location )
-							{
-								$selected = 'selected';
-							}
-						}
-					}
-					
-					elseif(isset($_GET[$name]))
-					{
-						if($term->slug == $_GET[$name] )
-						{
-							$selected = 'selected';
-						}
-					}
-					
-					$output .= '<option '.esc_html($selected).' id="'.esc_attr($term->slug).'" value="'.esc_attr($term->slug).'">'.esc_html($term->name).'</option>';
-					
-					$child_terms = get_terms(array(
-						'taxonomy' => $tax,
-						'hide_empty' => true,
-						'parent' => $term->term_id,
-						'orderby' => 'name'
-					));	
-					
-					if (!empty($terms) && ! is_wp_error($terms))
-					{
-						foreach ( $child_terms as $child_term )
-						{
-							$selected = null;
-							
-							if(!isset($_GET[$tax]) && (isset($package_category) || isset($package_location)) )
-							{
-								if(isset($package_category))
-								{
-									if($child_term->slug == $package_category )
-									{
-										$selected = 'selected';
-									}
-								}
-								
-								if(isset($package_location))
-								{
-									if($child_term->slug == $package_location )
-									{
-										$selected = 'selected';
-									}
-								}
-							}							
-							
-							if(isset($_GET[$tax]))
-							{
-								if($child_term->slug == $_GET[$tax] )
-								{
-									$selected = 'selected';
-								}
-							}
-							
-							$output .= '<option '.esc_html($selected).' id="'.esc_attr($child_term->slug).'" value="'.esc_attr($child_term->slug).'">'.esc_html('&nbsp;&nbsp;'.$child_term->name).'</option>';
-						}
-					}
-					
+
+		global $package_location;
+		global $package_category;
+
+		$global_value = match ($tax) {
+			'package_location' => $package_location ?? '',
+			'package_category' => $package_category ?? '',
+			default => '',
+		};
+
+		$current_value = isset($_GET[$name])
+			? secure_get($name, '')
+			: $global_value;
+
+		if (empty($current_value)) {
+			$current_value = 'any';
+		}
+
+		$terms = get_terms([
+			'taxonomy'   => $tax,
+			'hide_empty' => true,
+			'parent'     => 0,
+			'orderby'    => 'name',
+		]);
+
+		$output = sprintf(
+			'<select name="%s" class="width-100 block borderbox">',
+			esc_attr($name)
+		);
+
+		$output .= sprintf(
+			'<option value="any"%s>-- %s --</option>',
+			selected($current_value, 'any', false),
+			esc_html($taxonomy->labels->singular_name)
+		);
+
+		if (!is_wp_error($terms) && !empty($terms)) {
+			foreach ($terms as $term) {
+				$output .= sprintf(
+					'<option%s id="%s" value="%s">%s</option>',
+					selected($current_value, $term->slug, false),
+					esc_attr($term->slug),
+					esc_attr($term->slug),
+					esc_html($term->name)
+				);
+
+				$child_terms = get_terms([
+					'taxonomy'   => $tax,
+					'hide_empty' => true,
+					'parent'     => $term->term_id,
+					'orderby'    => 'name',
+				]);
+
+				if (is_wp_error($child_terms) || empty($child_terms)) {
+					continue;
+				}
+
+				foreach ($child_terms as $child_term) {
+					$output .= sprintf(
+						'<option%s id="%s" value="%s">— %s</option>',
+						selected($current_value, $child_term->slug, false),
+						esc_attr($child_term->slug),
+						esc_attr($child_term->slug),
+						esc_html($child_term->name)
+					);
 				}
 			}
 		}
-		
-		$output .= '</select>';	
+
+		$output .= '</select>';
+
 		return $output;
 	}
 	
