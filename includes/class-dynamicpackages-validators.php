@@ -291,23 +291,23 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_regular = secure_request('pax_regular', 0, 'absint');
+		$pax_regular = secure_request('pax_regular', 0, 'intval');
 
-		if (!is_int($pax_regular) || $pax_regular <= 0) {
+		if ($pax_regular <= 0) {
 			dy_errors::add(__('Invalid param: pax_regular.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_discount = secure_request('pax_discount', 0, 'absint');
-		$pax_free = secure_request('pax_free', 0, 'absint');
+		$pax_discount = secure_request('pax_discount', 0, 'intval');
+		$pax_free = secure_request('pax_free', 0, 'intval');
 		$pax_sum = $pax_regular + $pax_discount + $pax_free;
 
-		$package_min_persons = absint(package_field('package_min_persons'));
-		$package_max_persons = absint(package_field('package_max_persons'));
-		$package_increase_persons = absint(package_field('package_increase_persons'));
+		$package_min_persons = (int) package_field('package_min_persons');
+		$package_max_persons = (int) package_field('package_max_persons');
+		$package_increase_persons = (int) package_field('package_increase_persons');
 		$hard_max_persons = $package_max_persons + $package_increase_persons;
 
-		if (!is_int($package_min_persons) || $package_min_persons <= 0) {
+		if ($package_min_persons <= 0) {
 			dy_errors::add(
 				__('No valid package_min_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
 				500
@@ -315,7 +315,7 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		if (!is_int($package_max_persons) || $package_max_persons <= 0) {
+		if ($package_max_persons <= 0) {
 			dy_errors::add(
 				__('No valid package_max_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
 				500
@@ -323,7 +323,7 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		if (!is_int($package_increase_persons) || $package_increase_persons < 0) {
+		if ($package_increase_persons < 0) {
 			dy_errors::add(
 				__('No valid package_increase_persons configured — treat as invalid rather than auto-passing.', 'dynamicpackages'),
 				500

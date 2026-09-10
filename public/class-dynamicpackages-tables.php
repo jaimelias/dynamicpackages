@@ -118,7 +118,7 @@ class Dynamicpackages_Tables{
 				{
 					$price = $base_price;
 				}
-				else if($this->package_type === 'rental-per-day' && $this->package_type === 'rental-per-hour')
+				else if($this->package_type === 'rental-per-day' || $this->package_type === 'rental-per-hour')
 				{
 					$price = $base_price * $this->duration;
 				}
