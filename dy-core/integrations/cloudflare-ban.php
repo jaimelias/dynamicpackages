@@ -234,6 +234,14 @@ if (!function_exists('cloudflare_ban_ip_address')) {
             $ban_message
         );
 
+        ignore_user_abort(true);
+
+        //silences the curl_exec() output to the browser and flushes the output buffer
+        while (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        flush();
+
         $ban_url = sprintf(
             'https://api.cloudflare.com/client/v4/accounts/%s/firewall/access_rules/rules',
             rawurlencode($account_id)
