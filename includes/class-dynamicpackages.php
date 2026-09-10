@@ -109,9 +109,6 @@ class dynamicpackages {
 	public function load_dynamicpackage_textdomain() {
 
 		$domain = 'dynamicpackages';
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-	
-		
 		$dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
 		
 		load_plugin_textdomain(

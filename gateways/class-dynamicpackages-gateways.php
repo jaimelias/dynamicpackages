@@ -68,7 +68,6 @@ class Dynamicpackages_Gateways
 
 		if(!is_booking_page()) return $content;
 
-		$package_min_persons = absint(package_field('package_min_persons'));
 		$package_max_persons = absint(package_field('package_max_persons'));
 		$pax_sum = secure_get('pax_regular', 1, 'absint') + secure_get('pax_discount', 0, 'absint') + secure_get('pax_free', 0, 'absint');
 
