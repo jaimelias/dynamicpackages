@@ -42,8 +42,8 @@ if (!function_exists('cloudflare_ban_ip_address')) {
             return false;
         }
 
-        $remote_ip     = server_value('REMOTE_ADDR');
-        $connecting_ip = server_value('HTTP_CF_CONNECTING_IP');
+        $remote_ip     = secure_server('REMOTE_ADDR');
+        $connecting_ip = secure_server('HTTP_CF_CONNECTING_IP');
 
         if (!filter_var($remote_ip, FILTER_VALIDATE_IP)) {
             $log('Invalid REMOTE_ADDR.');
@@ -60,70 +60,9 @@ if (!function_exists('cloudflare_ban_ip_address')) {
          * Cloudflare proxy. Otherwise a direct-origin request could forge the
          * header and cause an unrelated address to be blocked.
          */
-        $cloudflare_ranges = get_cloudflare_proxy_ranges();
+        $is_cloudflare_proxied = is_cloudflare_proxied();
 
-        $ip_is_in_cidr = static function ( string $ip, mixed $cidr ): bool {
-            $parts = explode('/', (string) $cidr, 2);
-
-            if (count($parts) !== 2) {
-                return false;
-            }
-
-            $ip_binary      = inet_pton($ip);
-            $network_binary = inet_pton($parts[0]);
-            $prefix_length  = filter_var(
-                $parts[1],
-                FILTER_VALIDATE_INT
-            );
-
-            if (
-                $ip_binary === false
-                || $network_binary === false
-                || strlen($ip_binary) !== strlen($network_binary)
-                || $prefix_length === false
-            ) {
-                return false;
-            }
-
-            $address_bits = strlen($ip_binary) * 8;
-
-            if ($prefix_length < 0 || $prefix_length > $address_bits) {
-                return false;
-            }
-
-            $whole_bytes = intdiv($prefix_length, 8);
-            $remaining_bits = $prefix_length % 8;
-
-            if (
-                $whole_bytes > 0
-                && substr($ip_binary, 0, $whole_bytes)
-                    !== substr($network_binary, 0, $whole_bytes)
-            ) {
-                return false;
-            }
-
-            if ($remaining_bits === 0) {
-                return true;
-            }
-
-            $mask = (0xff << (8 - $remaining_bits)) & 0xff;
-
-            return (
-                (ord($ip_binary[$whole_bytes]) & $mask)
-                === (ord($network_binary[$whole_bytes]) & $mask)
-            );
-        };
-
-        $trusted_proxy = false;
-
-        foreach ($cloudflare_ranges as $cloudflare_range) {
-            if ($ip_is_in_cidr($remote_ip, $cloudflare_range)) {
-                $trusted_proxy = true;
-                break;
-            }
-        }
-
-        if (!$trusted_proxy) {
+        if (!$is_cloudflare_proxied) {
             $log(
                 'Refusing to trust CF-Connecting-IP because REMOTE_ADDR '
                 . "is not a Cloudflare proxy: {$remote_ip}"

@@ -19,7 +19,7 @@ class Dy_WAF {
 
 
 		$request_path = wp_parse_url(
-			server_value('REQUEST_URI'),
+			secure_server('REQUEST_URI'),
 			PHP_URL_PATH
 		);
 
