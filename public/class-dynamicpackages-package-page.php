@@ -67,11 +67,6 @@ class Dynamicpackages_Package_Page {
 
 	public function load_scripts($query)
 	{
-		global $post;
-		$load_recaptcha = false;
-		$load_picker = false;
-		$load_request_form_utilities = false;
-
 		if(isset($query->query_vars['packages']))
 		{
 			if($query->query_vars['packages'])

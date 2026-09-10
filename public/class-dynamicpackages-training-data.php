@@ -77,22 +77,23 @@ class Dynamicpackages_Export_Post_Types{
             $this->extension = $this->all_extensions[$this->format];
         }
 
-        $default_language = (string) default_language();
-        $languages = (array) get_languages();
-        $filter_lang = (string) (in_array(secure_get('lang'), $languages)) ? secure_get('lang') : default_language();
+        $default_language = default_language();
+        $languages = get_languages();
+        $get_lang = secure_get('lang');
+        $filter_lang = (in_array($get_lang, $languages)) ? $get_lang : default_language();
         
-        $args = array(
+        $args = [
             'post_type'      => 'packages',
             'posts_per_page' => -1,
             'lang' => $filter_lang,
-            'meta_query'     => array(
-                array(
+            'meta_query' => [
+                [
                     'key'     => 'package_training_data',
                     'value'   => '1',
                     'compare' => '='
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $query = new WP_Query($args);
         $data = [];
@@ -264,7 +265,6 @@ class Dynamicpackages_Export_Post_Types{
             return (object) [];
         }
 
-        $service_description = dy_format_blocks($post->post_content, 'text');
         $languages = (array) get_languages();
         $default_language = (string) default_language();
         $package_type = (string) dy_utilities::get_package_type($post->ID);
@@ -312,8 +312,7 @@ class Dynamicpackages_Export_Post_Types{
             'service_links_by_language' => [],
             'service_name_translations' => [],
             'service_enabled_days_of_the_week' => dy_utilities::enabled_days(true),
-            'service_hidden_rules' => [],
-            //'service_description' => "\n\n" . $service_description
+            'service_hidden_rules' => []
         ];
 
         if(!empty($post->post_excerpt)) {

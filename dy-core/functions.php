@@ -576,53 +576,6 @@ if(!function_exists('get_site_time'))
 	}
 }
 
-if ( ! function_exists( 'dy_format_blocks' ) ) {
-	function dy_format_blocks( $raw_blocks = '', $format = 'html' ) : string{
-
-		// Valid formats
-		$valid_formats = [ 'html', 'text' ];
-
-		// Check format
-		if ( ! in_array( $format, $valid_formats, true ) ) {
-			write_log(
-				sprintf(
-					'Invalid format "%s". Valid formats are: %s',
-					esc_html( $format ),
-					implode( ', ', $valid_formats )
-				)
-			);
-
-			return '';
-		}
-
-		// If no blocks passed, return empty string
-		if ( empty( $raw_blocks ) ) {
-			return '';
-		}
-
-		$output = [];
-		$blocks = parse_blocks( $raw_blocks );
-
-		foreach ( $blocks as $block ) {
-			$parsed_block = trim(do_shortcode(render_block( $block )));
-
-			if(empty($parsed_block)) continue;
-
-			if ( $format === 'html' ) {
-				$output[] = $parsed_block;
-			} elseif ( $format === 'text' ) {
-				$parsed_text = html_to_plain_text( $parsed_block );
-
-				if(empty($parsed_text)) continue;
-
-				$output[] = $parsed_text;
-			}
-		}
-
-		return (count($output) > 0) ? implode("\n\n", $output) : '';
-	}
-}
-
 
 if(!function_exists('html_to_plain_text')) {
 	function html_to_plain_text($html) : string {

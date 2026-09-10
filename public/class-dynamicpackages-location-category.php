@@ -171,11 +171,13 @@ class Dynamicpackages_Location_Category {
 			}
 
 			// sort label
-			if ( get_has('sort') ) {
-				$sort   = secure_get('sort');
+			$sort = $this->sanitize_sort(secure_get('sort'));
+
+			if ($sort !== null) {
 				$labels = $this->get_sort_title_labels();
-				if ( isset( $labels[ $sort ] ) ) {
-					$bits[] = sprintf( '(%s)', $labels[ $sort ] );
+
+				if (isset($labels[$sort])) {
+					$bits[] = sprintf('(%s)', $labels[$sort]);
 				}
 			}
 
@@ -279,8 +281,9 @@ class Dynamicpackages_Location_Category {
 				}
 			}
 
-			if (get_has('sort')) {
-				$sort   = secure_get('sort');
+			$sort = $this->sanitize_sort(secure_get('sort'));
+
+			if ($sort !== null) {
 				$labels = $this->get_sort_title_labels();
 
 				if (isset($labels[$sort])) {
@@ -393,84 +396,128 @@ class Dynamicpackages_Location_Category {
 	}
 
 	/**
-	 * Collect & sanitize query args from $_GET = secure_get.
-	 * Options:
-	 *  - translate (bool) : translate taxonomy terms to $lang slugs via Polylang
-	 *  - lang      (string|null)
+	 * Collects sanitized package-filter query arguments.
+	 *
+	 * Taxonomy and sort values equal to "any" are omitted because they
+	 * represent the absence of a filter. Taxonomy terms can optionally be
+	 * translated to their equivalent Polylang term slug.
+	 *
+	 * @param array{
+	 *     translate?: bool,
+	 *     lang?: string|null
+	 * } $opts Collection options.
+	 *
+	 * @return array<string, string> Normalized query arguments.
 	 */
-	private function collect_query_args_from_get( array $opts ) : array {
-		$translate = ! empty( $opts['translate'] );
-		$lang      = $opts['lang'] ?? null;
+	private function collect_query_args_from_get(array $opts): array
+	{
+		$translate = !empty($opts['translate']);
+		$lang = isset($opts['lang'])
+			? (string) $opts['lang']
+			: null;
 
 		$args = [];
 
-		// location
-		if ( get_has('location') ) {
-			$raw = secure_get('location');
-			if ( $raw !== '' ) {
-				$args['location'] = $translate
-					? ( $this->translate_term_to_lang_slug( $raw, 'location', (string) $lang ) ?? '' )
-					: $raw;
+		if (get_has('location')) {
+			$location = $this->normalize_tax_filter_param(
+				secure_get('location')
+			);
 
-				if ( $args['location'] === '' ) unset( $args['location'] );
+			if ($location !== null) {
+				if ($translate && $lang !== null) {
+					$location = $this->translate_term_to_lang_slug(
+						$location,
+						'package_location',
+						$lang
+					);
+				}
+
+				if ($location !== null && $location !== '') {
+					$args['location'] = $location;
+				}
 			}
 		}
 
-		// category
-		if ( get_has('category') ) {
-			$raw = secure_get('category');
-			if ( $raw !== '' ) {
-				$args['category'] = $translate
-					? ( $this->translate_term_to_lang_slug( $raw, 'category', (string) $lang ) ?? '' )
-					: $raw;
+		if (get_has('category')) {
+			$category = $this->normalize_tax_filter_param(
+				secure_get('category')
+			);
 
-				if ( $args['category'] === '' ) unset( $args['category'] );
+			if ($category !== null) {
+				if ($translate && $lang !== null) {
+					$category = $this->translate_term_to_lang_slug(
+						$category,
+						'package_category',
+						$lang
+					);
+				}
+
+				if ($category !== null && $category !== '') {
+					$args['category'] = $category;
+				}
 			}
 		}
 
-		// sort
-		if ( get_has('sort') ) {
-			$sort = secure_get('sort');
-			$sort = $this->sanitize_sort( $sort );
-			if ( $sort !== null ) {
+		$sort = $this->sanitize_sort(secure_get('sort'));
+
+		if ($sort !== null) {
+			if ($sort !== null) {
 				$args['sort'] = $sort;
 			}
 		}
 
-		// keywords
-		if ( get_has('keywords') ) {
-			$kw = secure_get('keywords');
-			if ( $kw !== '' ) {
-				$args['keywords'] = $kw;
+		if (get_has('keywords')) {
+			$keywords = secure_get('keywords');
+
+			if (is_string($keywords) && $keywords !== '') {
+				$args['keywords'] = $keywords;
 			}
 		}
 
 		return $args;
 	}
+	
+	/**
+	 * Normalizes a single taxonomy query parameter.
+	 *
+	 * Empty values and the public "any" sentinel mean that no taxonomy
+	 * constraint is active.
+	 *
+	 * @param string $value Raw query parameter.
+	 *
+	 * @return string|null Taxonomy slug, or null when unrestricted.
+	 */
+	private function normalize_tax_filter_param(string $value): ?string
+	{
+		$value = sanitize_title(trim($value));
 
-	private function sanitize_keywords( string $kw ) : string {
-		if ( $kw === '' ) return '';
-		$kw = sanitize_text_field( wp_unslash( $kw ) ); // keep identical with callers
-		if ( $kw === '' ) return '';
-		$kw = strtolower( $kw );
-		$kw = preg_replace( '/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $kw );
-		$kw = preg_replace( '/\s+/', ' ', $kw );
-		return substr( $kw, 0, 25 ) ?: '';
-	}
-
-	private function sanitize_sort( string $sort ) : ?string {
-		// Must be non-empty AND not 'any'
-		if ( $sort === '' || $sort === 'any' ) {
+		if ($value === '' || $value === 'any') {
 			return null;
 		}
 
-		if ( method_exists( 'dy_utilities', 'sort_by_arr' ) ) {
-			$allow = dy_utilities::sort_by_arr();
-			return ( is_array( $allow ) && in_array( $sort, $allow, true ) ) ? $sort : null;
+		return $value;
+	}
+
+	private function sanitize_sort(string $sort): ?string
+	{
+		$sort = sanitize_key($sort);
+
+		if ($sort === '' || $sort === 'any') {
+			return null;
 		}
 
-		// Minimal safe fallback (alphanumeric, _, - up to 30 chars)
-		return preg_match( '/^[a-z0-9_-]{1,30}$/i', $sort ) ? $sort : null;
+		if (method_exists('dy_utilities', 'sort_by_arr')) {
+			$allow = dy_utilities::sort_by_arr();
+
+			return (
+				is_array($allow)
+				&& in_array($sort, $allow, true)
+			) ? $sort : null;
+		}
+
+		return preg_match('/^[a-z0-9_-]{1,30}$/i', $sort)
+			? $sort
+			: null;
 	}
 
 	/* ---------- tiny WP_Term caches to avoid repeat lookups ---------- */
@@ -574,6 +621,32 @@ class Dynamicpackages_Location_Category {
 		}
 
 		return $excerpt;
+	}
+
+	/**
+	 * Sanitizes keywords used in generated package titles.
+	 *
+	 * @param string $kw Raw keyword value.
+	 *
+	 * @return string Sanitized keyword value.
+	 */
+	private function sanitize_keywords(string $kw): string
+	{
+		if ($kw === '') {
+			return '';
+		}
+
+		$kw = sanitize_text_field(wp_unslash($kw));
+
+		if ($kw === '') {
+			return '';
+		}
+
+		$kw = strtolower($kw);
+		$kw = preg_replace('/[^a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s]/', '', $kw);
+		$kw = preg_replace('/\s+/', ' ', $kw);
+
+		return substr($kw, 0, 25) ?: '';
 	}
 
 }

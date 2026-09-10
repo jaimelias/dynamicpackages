@@ -56,109 +56,202 @@ class Dynamicpackages_Shortcodes {
 		return apply_filters('dy_package_filter_form_cb', $content);
 	}	
 	
-	public function package_shortcode_full($attr, $content = '')
+	/**
+	 * Renders the packages shortcode using normalized archive filters.
+	 *
+	 * Taxonomy filters are represented internally as arrays of term slugs.
+	 * The values "", "any", and invalid input are normalized to null.
+	 *
+	 * GET parameters override shortcode attributes, including "any", which
+	 * explicitly clears the corresponding shortcode filter.
+	 *
+	 * @param mixed  $attr    Shortcode attributes.
+	 * @param string $content Shortcode content.
+	 *
+	 * @return string Rendered packages archive HTML.
+	 */
+	public function package_shortcode_full(mixed $attr, string|null $content = ''): string
 	{
 		global $polylang;
-		
-		if(is_array($attr))
-		{
-			if(array_key_exists('category', $attr))
-			{
-				if(!empty($attr['category']))
-				{
-					$cat_imp = explode(",", $attr['category']);
-				}
-			}
-			if(array_key_exists('location', $attr))
-			{
-				if(!empty($attr['location']))
-				{
-					$loc_imp = explode(",", $attr['location']);			
-				}
-			}
-			if(array_key_exists('cols', $attr))
-			{
-				if(!empty($attr['cols']))
-				{
-					$col_imp = $attr['cols'];
-				}
-			}
-			if(array_key_exists('display', $attr))
-			{
-				if(!empty($attr['display']))
-				{
-					$dis_imp = $attr['display'];
-				}
-			}
-			if(array_key_exists('all', $attr))
-			{
-				if(!empty($attr['all']))
-				{
-					$all_imp = true;
-				}
-			}
-			if(array_key_exists('pagination', $attr))
-			{
-				if(!empty($attr['pagination']))
-				{
-					if(filter_var($attr['pagination'], FILTER_VALIDATE_BOOLEAN)  === true)
-					{
-						$pagination_imp = true;
-					}
-				}
-			}
-			else
-			{
-				if(is_tax('package_categories') || is_tax('package_location'))
-				{
-					$pagination_imp = true;
-				}
-				else
-				{
-					$package_main = (get_option('dy_breadcrump')) ? get_option('dy_breadcrump') : get_option('page_on_front');
-					
-					if(isset($polylang))
-					{	
-						if(pll_current_language() != pll_default_language())
-						{
-							$package_main = pll_get_post($package_main, pll_current_language());
-						}
-					}
-					
-					if(get_dy_id() == $package_main)
-					{
-						$pagination_imp = true;
-					}					
-				}
-			}
-			if(array_key_exists('sortby', $attr))
-			{
-				if($attr['sortby'] != null)
-				{
-					$sort_imp = $attr['sortby'];
-				}			
-			}			
-		}
-		
-		if(!empty(secure_get('location')))
-		{
-			$loc_imp = secure_get('location');
-		}
-		if(!empty(secure_get('category')))
-		{
-			$cat_imp = secure_get('category');
-		}
-		if(!empty(secure_get('sort')))
-		{
-			$sort_imp = secure_get('sort');
-		}	
-		
-		ob_start();
-		require($this->plugin_dir_path . 'public/partials/archive.php');
-		$content = ob_get_contents();
-		ob_end_clean();	
 
-		return $content;
+		$attr = is_array($attr) ? $attr : [];
+
+		$cat_imp = $this->normalize_tax_filter($attr['category'] ?? null);
+		$loc_imp = $this->normalize_tax_filter($attr['location'] ?? null);
+		$sort_imp = $this->normalize_sort_filter($attr['sortby'] ?? null);
+
+		if (!empty($attr['cols'])) {
+			$cols = absint($attr['cols']);
+
+			if ($cols > 0) {
+				/*
+				* archive.php currently expects $col_imp[0].
+				*/
+				$col_imp = [$cols];
+			}
+		}
+
+		if (!empty($attr['display'])) {
+			$display = (int) $attr['display'];
+
+			if ($display > 0) {
+				$dis_imp = $display;
+			}
+		}
+
+		if (array_key_exists('pagination', $attr)) {
+			if (
+				filter_var(
+					$attr['pagination'],
+					FILTER_VALIDATE_BOOLEAN
+				) === true
+			) {
+				$pagination_imp = true;
+			}
+		} elseif (
+			is_tax('package_category')
+			|| is_tax('package_location')
+		) {
+			$pagination_imp = true;
+		} else {
+			$package_main = get_option('dy_breadcrump')
+				? (int) get_option('dy_breadcrump')
+				: (int) get_option('page_on_front');
+
+			if (function_exists('pll_get_post')) {
+				$current_language = current_language();
+				$default_language = default_language();
+
+				if ($current_language !== $default_language) {
+					$package_main = (int) pll_get_post(
+						$package_main,
+						$current_language
+					);
+				}
+			}
+
+			if (get_dy_id() === $package_main) {
+				$pagination_imp = true;
+			}
+		}
+
+		/*
+		* GET values have priority over shortcode attributes.
+		*
+		* Presence is checked instead of !empty() so ?location=any can
+		* intentionally remove a location imposed by the shortcode.
+		*/
+		if (get_has('location')) {
+			$loc_imp = $this->normalize_tax_filter(
+				secure_get('location')
+			);
+		}
+
+		if (get_has('category')) {
+			$cat_imp = $this->normalize_tax_filter(
+				secure_get('category')
+			);
+		}
+
+		if (get_has('sort')) {
+			$sort_imp = $this->normalize_sort_filter(
+				secure_get('sort')
+			);
+		}
+
+		ob_start();
+
+		require $this->plugin_dir_path . 'public/partials/archive.php';
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Normalizes a taxonomy filter into an array of term slugs.
+	 *
+	 * "any", empty values, and invalid values represent no restriction.
+	 * If "any" appears together with other values, "any" wins because it
+	 * explicitly means that the taxonomy must not restrict the query.
+	 *
+	 * @param mixed $value Raw shortcode or GET taxonomy value.
+	 *
+	 * @return array<string>|null Term slugs, or null when unrestricted.
+	 */
+	private function normalize_tax_filter(mixed $value): ?array
+	{
+		if ($value === null || $value === '' || $value === false) {
+			return null;
+		}
+
+		$values = is_array($value)
+			? $value
+			: explode(',', (string) $value);
+
+		$terms = array_values(
+			array_unique(
+				array_filter(
+					array_map(
+						static fn(mixed $term): string => sanitize_title(
+							trim((string) $term)
+						),
+						$values
+					),
+					static fn(string $term): bool => $term !== ''
+				)
+			)
+		);
+
+		if (
+			$terms === []
+			|| in_array('any', $terms, true)
+		) {
+			return null;
+		}
+
+		return $terms;
+	}
+
+	/**
+	 * Normalizes the archive sort parameter.
+	 *
+	 * "any", empty values, and unsupported sort values become null.
+	 *
+	 * @param mixed $value Raw shortcode or GET sort value.
+	 *
+	 * @return string|null Valid sort identifier, or null for default ordering.
+	 */
+	private function normalize_sort_filter(mixed $value): ?string
+	{
+		if (!is_scalar($value)) {
+			return null;
+		}
+
+		$sort = sanitize_key((string) $value);
+
+		if ($sort === '' || $sort === 'any') {
+			return null;
+		}
+
+		$allowed = method_exists('dy_utilities', 'sort_by_arr')
+			? dy_utilities::sort_by_arr()
+			: [
+				'new',
+				'low',
+				'high',
+				'today',
+				'tomorrow',
+				'week',
+				'month',
+			];
+
+		if (
+			!is_array($allowed)
+			|| !in_array($sort, $allowed, true)
+		) {
+			return null;
+		}
+
+		return $sort;
 	}
 
 	public function categories()

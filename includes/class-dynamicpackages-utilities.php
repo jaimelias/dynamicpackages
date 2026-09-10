@@ -1145,8 +1145,6 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 	
-		$output =  25;
-
 		if(absint(package_field('package_payment' )) === 0) {
 			return self::$cache[$cache_key] = 0;
 		}

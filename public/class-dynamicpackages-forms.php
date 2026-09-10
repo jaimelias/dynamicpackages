@@ -78,35 +78,76 @@ class Dynamicpackages_Forms
 		ob_end_clean();
 		return $output;
 	}
-	
-	public function sort_by()
+
+
+	/**
+	 * Generates the archive sorting selector.
+	 *
+	 * Internally, null represents default ordering. The HTML selector exposes
+	 * that state through the backward-compatible "any" option value.
+	 *
+	 * @return string Generated sorting selector HTML.
+	 */
+	public function sort_by(): string
 	{
-		$sort = 'any';
-		
-		if(isset($_GET['sort']))
-		{
-			if(!empty($_GET['sort']))
-			{
-				$sort = sanitize_text_field($_GET['sort']);
+		$sort = null;
+
+		if (get_has('sort')) {
+			$value = secure_get('sort', '');
+
+			if (is_scalar($value)) {
+				$value = sanitize_key((string) $value);
+
+				$allowed = dy_utilities::sort_by_arr();
+
+				if (in_array($value, $allowed, true)) {
+					$sort = $value;
+				}
 			}
 		}
-		
+
+		/*
+		* Translate the internal null state to the HTML boundary value.
+		*/
+		$selected_sort = $sort ?? 'any';
+
 		ob_start();
 		?>
-			<select name="sort">
-				<option value="any" <?php echo ($sort == 'any') ? 'selected':''; ?>>-- <?php esc_html_e('Sort by', 'dynamicpackages'); ?> --</option>
-				<option value="new" <?php echo ($sort == 'new') ? 'selected':''; ?>><?php esc_html_e('Newest', 'dynamicpackages'); ?></option>
-				<option value="low" <?php echo ($sort == 'low') ? 'selected':''; ?>><?php esc_html_e('Price', 'dynamicpackages'); ?>: <?php esc_html_e('low to high', 'dynamicpackages'); ?></option>
-				<option value="high" <?php echo ($sort == 'high') ? 'selected':''; ?>><?php esc_html_e('Price', 'dynamicpackages'); ?>: <?php esc_html_e('hight to low', 'dynamicpackages'); ?></option>
-				<option value="today" <?php echo ($sort == 'today') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('Today', 'dynamicpackages'); ?></option>
-				<option value="tomorrow" <?php echo ($sort == 'tomorrow') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('Tomorrow', 'dynamicpackages'); ?></option>
-				<option value="week" <?php echo ($sort == 'week') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('next 7 days', 'dynamicpackages'); ?></option>
-				<option value="month" <?php echo ($sort == 'month') ? 'selected':''; ?>><?php esc_html_e('Date', 'dynamicpackages'); ?>: <?php esc_html_e('next 30 days', 'dynamicpackages'); ?></option>
-			</select>
+		<select name="sort">
+			<option value="any" <?php selected($selected_sort, 'any'); ?>>
+				-- <?php esc_html_e('Sort by', 'dynamicpackages'); ?> --
+			</option>
+			<option value="new" <?php selected($selected_sort, 'new'); ?>>
+				<?php esc_html_e('Newest', 'dynamicpackages'); ?>
+			</option>
+			<option value="low" <?php selected($selected_sort, 'low'); ?>>
+				<?php esc_html_e('Price', 'dynamicpackages'); ?>:
+				<?php esc_html_e('low to high', 'dynamicpackages'); ?>
+			</option>
+			<option value="high" <?php selected($selected_sort, 'high'); ?>>
+				<?php esc_html_e('Price', 'dynamicpackages'); ?>:
+				<?php esc_html_e('high to low', 'dynamicpackages'); ?>
+			</option>
+			<option value="today" <?php selected($selected_sort, 'today'); ?>>
+				<?php esc_html_e('Date', 'dynamicpackages'); ?>:
+				<?php esc_html_e('Today', 'dynamicpackages'); ?>
+			</option>
+			<option value="tomorrow" <?php selected($selected_sort, 'tomorrow'); ?>>
+				<?php esc_html_e('Date', 'dynamicpackages'); ?>:
+				<?php esc_html_e('Tomorrow', 'dynamicpackages'); ?>
+			</option>
+			<option value="week" <?php selected($selected_sort, 'week'); ?>>
+				<?php esc_html_e('Date', 'dynamicpackages'); ?>:
+				<?php esc_html_e('next 7 days', 'dynamicpackages'); ?>
+			</option>
+			<option value="month" <?php selected($selected_sort, 'month'); ?>>
+				<?php esc_html_e('Date', 'dynamicpackages'); ?>:
+				<?php esc_html_e('next 30 days', 'dynamicpackages'); ?>
+			</option>
+		</select>
 		<?php
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;		
+
+		return (string) ob_get_clean();
 	}
 	
 	public function check_prices_form()
@@ -445,14 +486,18 @@ class Dynamicpackages_Forms
 	}
 	
 	/**
-	 * Generates a taxonomy <select> including parent and first-level child terms.
+	 * Generates a taxonomy selector including parent and first-level child terms.
 	 *
-	 * The GET parameter identified by $name has priority over package globals.
+	 * Internally, null represents no taxonomy restriction. The literal "any"
+	 * exists only as the HTML form value used to represent that state.
+	 *
+	 * GET parameters have priority over package globals.
 	 *
 	 * @param string $tax  WordPress taxonomy name.
 	 * @param string $name GET/select field name.
 	 *
-	 * @return string Generated HTML select or an empty string for an invalid taxonomy.
+	 * @return string Generated HTML selector, or an empty string for an
+	 *                invalid taxonomy.
 	 */
 	public function get_all_terms_select(string $tax, string $name): string
 	{
@@ -466,18 +511,21 @@ class Dynamicpackages_Forms
 		global $package_category;
 
 		$global_value = match ($tax) {
-			'package_location' => $package_location ?? '',
-			'package_category' => $package_category ?? '',
-			default => '',
+			'package_location' => $package_location ?? null,
+			'package_category' => $package_category ?? null,
+			default => null,
 		};
 
-		$current_value = isset($_GET[$name])
+		$raw_value = get_has($name)
 			? secure_get($name, '')
 			: $global_value;
 
-		if (empty($current_value)) {
-			$current_value = 'any';
-		}
+		$current_value = $this->normalize_select_tax_filter($raw_value);
+
+		/*
+		* "any" is deliberately introduced only here, at the HTML boundary.
+		*/
+		$selected_value = $current_value ?? 'any';
 
 		$terms = get_terms([
 			'taxonomy'   => $tax,
@@ -493,15 +541,15 @@ class Dynamicpackages_Forms
 
 		$output .= sprintf(
 			'<option value="any"%s>-- %s --</option>',
-			selected($current_value, 'any', false),
+			selected($selected_value, 'any', false),
 			esc_html($taxonomy->labels->singular_name)
 		);
 
-		if (!is_wp_error($terms) && !empty($terms)) {
+		if (!is_wp_error($terms) && $terms !== []) {
 			foreach ($terms as $term) {
 				$output .= sprintf(
 					'<option%s id="%s" value="%s">%s</option>',
-					selected($current_value, $term->slug, false),
+					selected($selected_value, $term->slug, false),
 					esc_attr($term->slug),
 					esc_attr($term->slug),
 					esc_html($term->name)
@@ -514,14 +562,21 @@ class Dynamicpackages_Forms
 					'orderby'    => 'name',
 				]);
 
-				if (is_wp_error($child_terms) || empty($child_terms)) {
+				if (
+					is_wp_error($child_terms)
+					|| $child_terms === []
+				) {
 					continue;
 				}
 
 				foreach ($child_terms as $child_term) {
 					$output .= sprintf(
 						'<option%s id="%s" value="%s">— %s</option>',
-						selected($current_value, $child_term->slug, false),
+						selected(
+							$selected_value,
+							$child_term->slug,
+							false
+						),
 						esc_attr($child_term->slug),
 						esc_attr($child_term->slug),
 						esc_html($child_term->name)
@@ -533,6 +588,40 @@ class Dynamicpackages_Forms
 		$output .= '</select>';
 
 		return $output;
+	}
+
+	/**
+	 * Normalizes a value for a single-value taxonomy selector.
+	 *
+	 * Arrays containing exactly one value are supported. Multiple taxonomy
+	 * values cannot be represented by a single-select control and therefore
+	 * resolve to null/"any".
+	 *
+	 * @param mixed $value Raw filter value.
+	 *
+	 * @return string|null Selected term slug, or null when unrestricted.
+	 */
+	private function normalize_select_tax_filter(mixed $value): ?string
+	{
+		if (is_array($value)) {
+			if (count($value) !== 1) {
+				return null;
+			}
+
+			$value = reset($value);
+		}
+
+		if (!is_scalar($value)) {
+			return null;
+		}
+
+		$value = sanitize_title(trim((string) $value));
+
+		if ($value === '' || $value === 'any') {
+			return null;
+		}
+
+		return $value;
 	}
 	
 	public function pagination($args)

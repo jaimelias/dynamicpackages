@@ -530,7 +530,6 @@ class Dynamicpackages_Public {
 
 			if(empty($children_array)) return '';
 
-			$has_rows = false;
 			$rows_arr = [];
 			
 			foreach($children_array as $item)

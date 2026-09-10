@@ -209,7 +209,6 @@ class Dynamicpackages_WP_JSON
 			}
 		}
 
-		$time = date('Y-m-d');
 		$from = (int) package_field('package_booking_from', $the_id );
 		
 		if($from == 0)
@@ -263,20 +262,12 @@ class Dynamicpackages_WP_JSON
 					continue;
 				}
 
-				$date_from = $disabled_dates[$x][0] . ' 00:00:00';
-				$date_to = (!is_valid_date($disabled_dates[$x][1])) 
-					? $disabled_dates[$x][0]  . ' 00:00:00' 
-					: $disabled_dates[$x][1]  . ' 00:00:00';
-
 				$period = new DatePeriod(
 					new DateTime($disabled_dates[$x][0]),
 					new DateInterval('P1D'),
 					new DateTime(date('Y-m-d H:i:s', strtotime($disabled_dates[$x][1] . ' +1 day')))
 				);
-				
-				$range = [];
-				$range_fix = [];
-				
+								
 				foreach ($period as $key => $value)
 				{
 					$this_date = $value->format('Y-m-d H:i:s');
@@ -367,10 +358,7 @@ class Dynamicpackages_WP_JSON
 					new DateInterval('P1D'),
 					new DateTime(date('Y-m-d H:i:s', strtotime($enabled_dates[$x][1] . ' +1 day')))
 				);
-				
-				$range = [];
-				$range_fix = [];
-				
+								
 				foreach ($period as $key => $value)
 				{
 					$this_date = $value->format('Y-m-d H:i:s');
