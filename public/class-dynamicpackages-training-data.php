@@ -296,7 +296,7 @@ class Dynamicpackages_Export_Post_Types{
         $start_time = dy_utilities::start_hour();
         $starting_at = (float) dy_utilities::starting_at();
         
-        $hash = sha1((string) $post->ID . $_SERVER['HTTP_HOST']);
+        $hash = sha1((string) $post->ID . secure_host('HTTP_HOST'));
         $service_id = strtoupper(substr($hash, 0, 12));
         $is_web_checkout_enabled = ($auto_booking === 1 && $starting_at > 0 );
         

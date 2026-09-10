@@ -4,7 +4,7 @@
 
 if(!function_exists('secure_server')) {
 
-    function secure_server( string $key )  : string {
+    function secure_server( string $key ) : string {
 
         if($key === '') {
             return '';
@@ -16,12 +16,17 @@ if(!function_exists('secure_server')) {
             return $cache[$key];
         }
 
-
         $value = $_SERVER[ $key ] ?? '';
 
-        return $cache[$key] = is_scalar( $value )
+        $value = is_scalar( $value )
             ? trim( (string) wp_unslash( $value ) )
             : '';
+
+        if($key === 'REQUEST_METHOD') {
+            $value = strtoupper( $value );
+        }
+
+        return $cache[$key] = $value;
     }
 }
 

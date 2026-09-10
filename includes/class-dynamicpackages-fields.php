@@ -174,7 +174,8 @@ class Dynamicpackages_Fields
 
             if($the_id === null)
             {
-                $err_message = "'the_id' can not be null if 'post' is undefined in class 'Dynamicpackages_Fields': $name, URL: " . $_SERVER['REQUEST_URI'];
+                $request_uri = secure_server('REQUEST_URI');
+                $err_message = "'the_id' can not be null if 'post' is undefined in class 'Dynamicpackages_Fields': $name, URL: " . $request_uri;
                 throw new Exception($err_message);
             }
         }
