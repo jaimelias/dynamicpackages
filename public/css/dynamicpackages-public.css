@@ -228,3 +228,10 @@ ul.tax_list > li.cat-item  > ul.children
 	overflow: visible;
 	height: 1em;
 }
+
+.minimal-site-alert {
+	margin-bottom: 20px;
+}
+.dy-site-alert-content {
+	padding: 20px 0;
+}
