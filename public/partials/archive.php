@@ -283,11 +283,9 @@ $itemlist_elements = [];
 								class="pure-u-1 pure-u-md-<?php echo esc_attr($break_md); ?> pure-u-lg-<?php echo esc_attr($break_lg); ?>"
 							>
 
-								<?php if (!empty($package_code)): ?>
-									<div class="hide-sm bottom-10 text-right uppercase light small text-muted">
-										<?php echo esc_html($package_code); ?>
-									</div>
-								<?php endif; ?>
+							<div class="hide-sm bottom-10 text-right uppercase light small text-muted">
+								<?php echo esc_html($package_code); ?>
+							</div>
 
 								<div class="dy_title_h3">
 									<h3 class="small">

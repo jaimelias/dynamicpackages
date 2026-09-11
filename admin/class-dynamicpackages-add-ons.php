@@ -388,8 +388,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 	}
 
 
-	public function included_add_ons_arr($output = [])
-	{
+	public function included_add_ons_arr($output = []) : array {
 		$add_ons_post = secure_post('add_ons');
 
 		if (!$this->has_add_ons() || empty($add_ons_post)) {
@@ -402,7 +401,11 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			return $output;
 		}
 
-		$add_ons_included = explode(',', $add_ons_post);
+
+		$add_ons_included = array_map(
+			'absint',
+			explode(',', $add_ons_post)
+		);
 
 		foreach ($add_ons as $add_on) {
 			if (in_array($add_on['id'], $add_ons_included, true)) {
@@ -413,8 +416,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 		return $output;
 	}
 	
-	public function included_add_ons_list($separator = null)
-	{
+	public function included_add_ons_list(string $separator = '') : string {
 		$included_add_ons = $this->included_add_ons_arr();
 
 		if (empty($included_add_ons)) {

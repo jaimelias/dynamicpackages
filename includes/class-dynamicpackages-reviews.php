@@ -599,7 +599,7 @@ class Dynamicpackages_Reviews
 			}
 			
 			
-			if($rating > 0 && $count > 0)
+			if(!empty($rating) && $count > 0)
 			{
 				$average = money((array_sum($rating)/$count));
 

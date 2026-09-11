@@ -7,8 +7,6 @@ if ( !defined( 'WPINC' ) ) exit;
 
 class Dynamicpackages_Export_Post_Types{
 
-    private static $cache = [];
-
     public function __construct($version)
     {
         add_action('wp', array($this, 'export_single_file'));
@@ -77,7 +75,6 @@ class Dynamicpackages_Export_Post_Types{
             $this->extension = $this->all_extensions[$this->format];
         }
 
-        $default_language = default_language();
         $languages = get_languages();
         $get_lang = secure_get('lang');
         $filter_lang = (in_array($get_lang, $languages)) ? $get_lang : default_language();
@@ -350,8 +347,8 @@ class Dynamicpackages_Export_Post_Types{
             $package->routes =  [];
 
             $origin_route = (object) array(
-                'route_origin' => $start_address_short ?? $start_address,
-                'route_destination' => $return_address_short ?? $return_address,
+                'route_origin' => $start_address_short ?: $start_address,
+                'route_destination' => $return_address_short ?: $return_address,
                 'route_check_in_time' => $start_time,
                 'route_departure_time' => $check_in_hour,
                 'route_origin_address' => $start_address,
@@ -360,8 +357,8 @@ class Dynamicpackages_Export_Post_Types{
             );
             
             $destination_route =  (object) array(
-                'route_origin' => $return_address_short ?? $return_address,
-                'route_destination' => $start_address_short ?? $start_address,
+                'route_origin' => $return_address_short ?: $return_address,
+                'route_destination' => $start_address_short ?: $start_address,
                 'route_check_in_time' => $return_check_in_hour,
                 'route_departure_time' => $end_hour,
                 'route_origin_address' => $return_address,
