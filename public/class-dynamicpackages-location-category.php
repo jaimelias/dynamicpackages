@@ -131,11 +131,10 @@ class Dynamicpackages_Location_Category {
 			$locStr = '';
 
 			// keywords → “term”
-			if ( get_has('keywords') ) {
-				$kw = $this->sanitize_keywords( secure_get('keywords') );
-				if ( $kw !== '' ) {
-					$bits[] = sprintf( '“%s”', $kw );
-				}
+			$kw = secure_get('keywords', '', 'dy_sanitize_keywords');
+
+			if ( $kw !== '' ) {
+				$bits[] = sprintf( '“%s”', $kw );
 			}
 
 			// category name
@@ -235,12 +234,10 @@ class Dynamicpackages_Location_Category {
 				sprintf('%s:', __('Find Packages', 'dynamicpackages'))
 			];
 
-			if (get_has('keywords')) {
-				$keywords = $this->sanitize_keywords(secure_get('keywords'));
+			$keywords = secure_get('keywords', '', 'dy_sanitize_keywords');
 
-				if ($keywords !== '') {
-					$bits[] = sprintf('“%s”', $keywords);
-				}
+			if ($keywords !== '') {
+				$bits[] = sprintf('“%s”', $keywords);
 			}
 
 			if (get_has('category')) {
