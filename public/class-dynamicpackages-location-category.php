@@ -418,43 +418,37 @@ class Dynamicpackages_Location_Category {
 
 		$args = [];
 
-		if (get_has('location')) {
-			$location = $this->normalize_tax_filter_param(
-				secure_get('location')
-			);
 
-			if ($location !== null) {
-				if ($translate && $lang !== null) {
-					$location = $this->translate_term_to_lang_slug(
-						$location,
-						'package_location',
-						$lang
-					);
-				}
+		$location = secure_get('location');
 
-				if ($location !== null && $location !== '') {
-					$args['location'] = $location;
-				}
+		if ($location !== '') {
+			if ($translate && $lang !== null) {
+
+				$location = $this->translate_term_to_lang_slug(
+					$location,
+					'package_location',
+					$lang
+				);
+			}
+
+			if ($location !== '') {
+				$args['location'] = $location;
 			}
 		}
 
-		if (get_has('category')) {
-			$category = $this->normalize_tax_filter_param(
-				secure_get('category')
-			);
+		$category = secure_get('category');
 
-			if ($category !== null) {
-				if ($translate && $lang !== null) {
-					$category = $this->translate_term_to_lang_slug(
-						$category,
-						'package_category',
-						$lang
-					);
-				}
+		if ($category !== '') {
+			if ($translate && $lang !== null) {
+				$category = $this->translate_term_to_lang_slug(
+					$category,
+					'package_category',
+					$lang
+				);
+			}
 
-				if ($category !== null && $category !== '') {
-					$args['category'] = $category;
-				}
+			if ($category !== '') {
+				$args['category'] = $category;
 			}
 		}
 
@@ -475,27 +469,6 @@ class Dynamicpackages_Location_Category {
 		}
 
 		return $args;
-	}
-	
-	/**
-	 * Normalizes a single taxonomy query parameter.
-	 *
-	 * Empty values and the public "any" sentinel mean that no taxonomy
-	 * constraint is active.
-	 *
-	 * @param string $value Raw query parameter.
-	 *
-	 * @return string|null Taxonomy slug, or null when unrestricted.
-	 */
-	private function normalize_tax_filter_param(string $value): ?string
-	{
-		$value = sanitize_title(trim($value));
-
-		if ($value === '' || $value === 'any') {
-			return null;
-		}
-
-		return $value;
 	}
 
 	private function sanitize_sort(string $sort): ?string
@@ -546,8 +519,8 @@ class Dynamicpackages_Location_Category {
 	 * Translate a term value (id/slug/name) to a target language slug.
 	 * Caches results aggressively in self::$cache['term'].
 	 */
-	private function translate_term_to_lang_slug( $value, string $taxonomy, string $lang ) : ?string {
-		if ( ! function_exists('pll_get_term') ) return null;
+	private function translate_term_to_lang_slug( $value, string $taxonomy, string $lang ) : string {
+		if ( ! function_exists('pll_get_term') ) return '';
 
 		$key = sprintf(
 			'%s:%s:%s',
@@ -559,7 +532,7 @@ class Dynamicpackages_Location_Category {
 			return self::$cache['term'][ $key ];
 		}
 
-		$term = null;
+		$term = '';
 
 		if ( is_numeric( $value ) ) {
 			$term = $this->get_term_cached( (int) $value, $taxonomy );
@@ -567,27 +540,27 @@ class Dynamicpackages_Location_Category {
 		if ( ! $term ) {
 			$term = get_term_by( 'slug', (string) $value, $taxonomy );
 			if ( $term && is_wp_error( $term ) ) {
-				$term = null;
+				$term = '';
 			}
 		}
 		if ( ! $term ) {
 			$term = get_term_by( 'name', (string) $value, $taxonomy );
 			if ( $term && is_wp_error( $term ) ) {
-				$term = null;
+				$term = '';
 			}
 		}
 		if ( ! $term ) {
-			return null;
+			return '';
 		}
 
 		$translated_id = pll_get_term( (int) $term->term_id, $lang );
 		if ( empty( $translated_id ) ) {
-			return null;
+			return '';
 		}
 
 		$translated = $this->get_term_cached( (int) $translated_id, $taxonomy );
 		if ( ! $translated ) {
-			return null;
+			return '';
 		}
 
 		// Cache and return slug.

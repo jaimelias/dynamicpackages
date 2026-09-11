@@ -1,40 +1,25 @@
 # AGENTS.md
 
-## Project
 `dynamicpackages` is a WordPress plugin for service reservations, including hotels, tours, transport, hourly rentals, and daily rentals.
-The authoritative repository-specific architecture, scope, ownership, and domain rules are in:
-`docs/project-agents/PROJECT.md`
-Read that file before making code changes or architectural decisions in this repository.
-## Instruction Loading
-Use progressive disclosure. Read only the instruction files relevant to the current task; do not load every shared document by default.
-Before making implementation changes, read:
-`docs/shared-agents/BEFORE_CODING.md`
-Before modifying PHP code, also read:
-`docs/shared-agents/PHP.md`
-Before modifying JavaScript code, also read:
-`docs/shared-agents/JS.md`
-For work involving WordPress APIs, hooks, filters, REST, AJAX, cron, options, metadata, database access, templates, capabilities, sanitization, escaping, shortcodes, or asset registration/enqueueing, also read:
-`docs/shared-agents/WORDPRESS.md`
-For Polylang-related work, also read:
-`docs/shared-agents/POLYLANG.md`
-After modifying code and before reporting completion, read:
-`docs/shared-agents/AFTER_CODING.md`
-## Instruction Priority
-Follow the explicit task request together with these repository instructions. Where these repository documents overlap or conflict:
-1. This `AGENTS.md` defines repository-wide routing and mandatory constraints.
-2. `docs/project-agents/PROJECT.md` controls project-specific architecture, ownership, domain, and repository-scope rules.
-3. Relevant files under `docs/shared-agents/` provide language, framework, workflow, and validation rules.
-A task request may activate an exception only where these instructions explicitly allow an exception when requested. Do not treat generic shared guidance as permission to violate a project-specific constraint.
-## Core Constraints
-- Work inside this repository by default.
-- Inspect the existing implementation before changing behavior.
-- Implement the smallest correct change.
-- Do not perform unrelated refactors, formatting, renames, or cleanup.
-- Preserve backward compatibility and public contracts unless the task explicitly requires changing them.
-- Search for existing helpers and abstractions before introducing new ones.
-- Follow the project-specific `dy-core` ownership rules for shared ecosystem behavior.
-- Do not create direct application-level dependencies between `dynamicpackages`, `dynamicaviation`, and `minimalizr`.
-- Never modify `vendor/`, `node_modules/`, WordPress core, or third-party generated dependencies.
-- Do not modify sibling repositories unless explicitly requested.
-- Do not weaken security or validation rules merely to make automated checks pass.
-- Do not claim validation passed unless the relevant commands were actually executed successfully.
+
+## `dy-core` folder
+- This is the single source of truth for a library used by other plugins/themes.
+- Do not modify or delete anything here unless explicitly requested, not even unused functions.
+
+## Before Coding
+- Implement the minimum surgical code required to solve the request correctly.
+- Do not start by changing code until the relevant behavior and existing implementation are understood.
+- Write simple modern code, easy to be understood.
+
+## PHP preferences:
+- Read `composer.json` for useful tools and project configs.
+- Use `dy-core/security/queries.php` for handing $_GET, $_POST, $_REQUEST, $_COOKIE, $_SERVER
+- Write modern PHP 8.1 code
+- Prefer `[]` array syntax
+- Type new methods, functions and its params
+- Add protection to new methods: `private`, `protected`, `public`, `static`
+- Avoid unnecessary recurrent DB calls or heavy computation with `static cache`
+- Avoid unnecessary use of `try{} catch(){}` with strong guards
+
+## JS preferences:
+- write modern JS code compatible with es6, jQuery Slim, arrow functions
