@@ -844,7 +844,7 @@ class paguelo_facil_on{
 
 	public function add_settings_page()
 	{
-		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->short_name, 'manage_options', $this->id, array($this, 'settings_page'));
+		add_submenu_page( $this->plugin_id, $this->name, '💸 '. $this->short_name, 'manage_options', $this->id, [$this, 'settings_page']);
 	}
 	public function settings_page()
 		 { 

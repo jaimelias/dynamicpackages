@@ -361,7 +361,7 @@ class Dynamic_Core_Admin {
             $this->plugin_name, 
             'manage_options',  
             $this->slug, 
-            array($this, 'settings_page'), 
+            [$this, 'settings_page'], 
             'dashicons-building'
         );
     }
