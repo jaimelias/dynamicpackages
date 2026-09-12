@@ -121,7 +121,8 @@ class Dynamicpackages_Post_Types
 			$singular = $config['singular_name'];
 			$plural   = $config['name'];
 
-			$labels = array_merge($config, [
+			$labels = [
+				...$config,
 				'search_items'      => sprintf(__('Search %s', 'dynamicpackages'), $plural),
 				'all_items'         => sprintf(__('All %s', 'dynamicpackages'), $plural),
 				'parent_item'       => sprintf(__('Parent %s', 'dynamicpackages'), $singular),
@@ -131,7 +132,7 @@ class Dynamicpackages_Post_Types
 				'add_new_item'      => sprintf(__('Add New %s', 'dynamicpackages'), $singular),
 				'new_item_name'     => sprintf(__('New %s Name', 'dynamicpackages'), $singular),
 				'menu_name'         => sprintf('%s %s', $config['emoji'], $plural),
-			]);
+			];
 
 			register_taxonomy($taxonomy, ['packages'], [
 				'labels'            => $labels,

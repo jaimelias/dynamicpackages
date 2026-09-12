@@ -224,7 +224,7 @@ class Dynamicpackages_Reviews
 
 					if($translatedPostComments)
 					{
-						$comments = array_merge($comments, $translatedPostComments);
+						$comments = [...$comments, ...$translatedPostComments];
 					}
 				}
 
@@ -347,21 +347,18 @@ class Dynamicpackages_Reviews
 
 			<div><?php comment_text(); ?></div>
 
-			<div class="reply"><?php 
-					comment_reply_link( 
-						array_merge( 
-							$args, 
-							array( 
-								'add_below' => $add_below, 
-								'depth'     => $depth, 
-								'max_depth' => $args['max_depth'] 
-							) 
-						) 
-					); ?>
-			</div><?php 
-		if ( 'div' != $args['style'] ) : ?>
-			</div><hr/><?php 
-		endif;
+		<div class="reply"><?php
+				comment_reply_link([
+					...$args,
+					'add_below' => $add_below,
+					'depth'     => $depth,
+					'max_depth' => $args['max_depth'],
+				]); ?>
+		</div>
+		<?php 
+			if ( 'div' != $args['style'] ) : ?>
+				</div><hr/><?php 
+			endif;
 	}
 	
 	public function order_by_date($comments, $post_ID)
@@ -423,7 +420,7 @@ class Dynamicpackages_Reviews
 					
 					if ( $translatedPostComments )
 					{
-						$comments = array_merge($comments, $translatedPostComments);
+						$comments = [...$comments, ...$translatedPostComments];
 						
 					}
 				}

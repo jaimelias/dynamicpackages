@@ -322,7 +322,7 @@ class paguelo_facil_on{
 		return true;
 	}
 
-	public function purchase_event_gateways($gateways = array())
+	public function purchase_event_gateways($gateways = [])
 	{
 		if(
 			self::$txt_status === 2

@@ -7,56 +7,53 @@ class Dynamicpackages_Public {
 
 	private static $cache = [];
 
-	public function __construct($version) {
-
-		if(is_admin())
-		{
+	public function __construct(int|string $version)
+	{
+		if (is_admin()) {
 			return;
 		}
-
 		$this->version = $version;
-		$this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
-		$this->plugin_dir_url_dir = plugin_dir_url( __DIR__ );
-		$this->dirname_file = dirname( __FILE__ );
+		$this->plugin_dir_url_file = plugin_dir_url(__FILE__);
+		$this->plugin_dir_url_dir  = plugin_dir_url(__DIR__);
+		$this->dirname_file        = dirname(__FILE__);
 
-		add_action('init', array($this, 'init'));
+		add_action('init', [$this, 'init']);
 
-		//scripts
-		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'), 10);
+		// scripts
+		add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
+		add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts'], 10);
 
-		//redirect
-		add_action('template_redirect', array($this, 'template_redirect'));
-		add_filter('post_type_link', array($this, 'post_type_link'), 10, 2);
+		// redirect
+		add_action('template_redirect', [$this, 'template_redirect']);
+		add_filter('post_type_link', [$this, 'post_type_link'], 10, 2);
 
-		//template
-		add_filter('template_include', array($this, 'package_template'), 10);
-		add_filter('the_content', array($this, 'the_content'), 10);
-		add_filter('pre_get_document_title', array($this, 'wp_title'), 10);
-		add_filter('the_title', array($this, 'the_title'), 10);
-		add_filter('single_term_title', array($this, 'modify_tax_title'), 10);
-		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'), 10);
-		add_filter('term_description', array($this, 'modify_term_description'));
-		add_action('pre_get_posts', array($this, 'set_one_tax_per_page'));
+		// template
+		add_filter('template_include', [$this, 'package_template'], 10);
+		add_filter('the_content', [$this, 'the_content'], 10);
+		add_filter('pre_get_document_title', [$this, 'wp_title'], 10);
+		add_filter('the_title', [$this, 'the_title'], 10);
+		add_filter('single_term_title', [$this, 'modify_tax_title'], 10);
+		add_filter('get_the_excerpt', [$this, 'get_the_excerpt'], 10);
+		add_filter('term_description', [$this, 'modify_term_description']);
+		add_action('pre_get_posts', [$this, 'set_one_tax_per_page']);
 
-
-		//packages
-		add_filter('dy_details', array($this, 'details'));
-		add_action('dy_description', array($this, 'description'));
-		add_action('dy_show_coupons', array($this, 'show_coupons'));
-		add_filter('minimal_description', array($this, 'meta_description'));
-		add_filter('dy_price_type', array($this, 'price_type'));
-		add_filter('dy_booking_sidebar', array($this, 'booking_sidebar'));
-		add_action('dy_children_package', array($this, 'children_package'));
-		add_action('dy_similar_packages_link', array($this, 'similar_packages_link'));
-		add_action('dy_get_terms_conditions_list', array($this, 'get_terms_conditions_list'));
-		add_action('dy_get_included_list', array($this, 'get_included_list'));
-		add_action('dy_get_not_included_list', array($this, 'get_not_included_list'));
-		add_action('dy_get_category_list', array($this, 'get_category_list'));
-		add_action('dy_get_location_list', array($this, 'get_location_list'));
-		add_action('dy_show_badge', array($this, 'show_badge'));
-		add_action('dy_show_event_date', array($this, 'show_event_date'));
-		add_action('dy_edit_link', array($this, 'edit_link'));
+		// packages
+		add_filter('dy_details', [$this, 'details']);
+		add_action('dy_description', [$this, 'description']);
+		add_action('dy_show_coupons', [$this, 'show_coupons']);
+		add_filter('minimal_description', [$this, 'meta_description']);
+		add_filter('dy_price_type', [$this, 'price_type']);
+		add_filter('dy_booking_sidebar', [$this, 'booking_sidebar']);
+		add_action('dy_children_package', [$this, 'children_package']);
+		add_action('dy_similar_packages_link', [$this, 'similar_packages_link']);
+		add_action('dy_get_terms_conditions_list', [$this, 'get_terms_conditions_list']);
+		add_action('dy_get_included_list', [$this, 'get_included_list']);
+		add_action('dy_get_not_included_list', [$this, 'get_not_included_list']);
+		add_action('dy_get_category_list', [$this, 'get_category_list']);
+		add_action('dy_get_location_list', [$this, 'get_location_list']);
+		add_action('dy_show_badge', [$this, 'show_badge']);
+		add_action('dy_show_event_date', [$this, 'show_event_date']);
+		add_action('dy_edit_link', [$this, 'edit_link']);
 	}
 
 	public function init()
@@ -66,7 +63,7 @@ class Dynamicpackages_Public {
 	
 	public function enqueue_styles() {
 		
-		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css', array(), $this->version);
+		wp_enqueue_style('dynamicpackages', $this->plugin_dir_url_file . 'css/dynamicpackages-public.css', [], $this->version);
 	}
 	
 	public function enqueue_scripts() {
@@ -766,7 +763,7 @@ class Dynamicpackages_Public {
 		];
 
 		// Merge in one go
-		$args = array_merge($args, $route);
+		$args = [...$args, ...$route];
 
 
 		$req = [];

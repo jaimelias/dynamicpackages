@@ -350,7 +350,7 @@ class cuanto{
 		return $message;  
 	}
 
-	public function lead_event_gateways($arr = array()) {
+	public function lead_event_gateways($arr = []) {
 		$arr[] = $this->id;
 
 		return $arr;

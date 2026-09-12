@@ -75,7 +75,7 @@ class Dynamicpackages_Fields
                 self::migration_schema_error($row);
             }
 
-            foreach (array_merge($row['old'], $row['new']) as $part) {
+            foreach ([...$row['old'], ...$row['new']] as $part) {
                 if (!is_string($part) || $part === '') {
                     self::migration_schema_error($row);
                 }

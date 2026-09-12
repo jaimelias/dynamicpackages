@@ -415,7 +415,7 @@ class yappy_direct {
 		return $str;
 	}
 
-	public function lead_event_gateways($arr = array()) {
+	public function lead_event_gateways($arr = []) {
 		$arr[] = $this->id;
 
 		return $arr;

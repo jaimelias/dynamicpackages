@@ -47,7 +47,7 @@ class Dynamicpackages_WP_JSON
 
 		register_rest_route(
 			'dy-core',
-			'/dynamicpackages/transactions/(?P<package_id>\d+)',
+			'/transactions/(?P<package_id>\d+)',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [

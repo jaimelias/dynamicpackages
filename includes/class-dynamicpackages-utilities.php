@@ -1387,7 +1387,7 @@ class dy_utilities {
 
 		$terms_by_id = [];
 
-		foreach (array_merge($current_terms, $parent_terms) as $term) {
+		foreach ([...$current_terms, ...$parent_terms] as $term) {
 			if ($term instanceof WP_Term) {
 				$terms_by_id[$term->term_id] = $term->name;
 			}
@@ -1531,7 +1531,7 @@ class dy_utilities {
 
 			$parent_terms = [];
 			$current_terms = get_the_terms($post->ID, $term_name);
-			$current_terms = (is_array($current_terms)) ? $current_terms : array();
+			$current_terms = (is_array($current_terms)) ? $current_terms : [];
 
 			if($post->post_parent > 0)
 			{
@@ -1539,8 +1539,7 @@ class dy_utilities {
 				$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
 			}
 			
-			$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
-		
+			$terms = array_unique([...$current_terms, ...$parent_terms], SORT_REGULAR);
 		}
 		else
 		{

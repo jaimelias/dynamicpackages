@@ -82,7 +82,7 @@ class stable_coins {
 
     public function get_all_networks()
     {
-        $networks = array();
+        $networks = [];
 
         foreach (self::ASSETS[$this->id]['networks'] as $network_id) {
             $networks[$network_id] = self::NETWORKS[$network_id];
@@ -443,7 +443,7 @@ class stable_coins {
 		
 		return $message;
 	}	
-	public function lead_event_gateways($arr = array()) {
+	public function lead_event_gateways($arr = []) {
 		$arr[] = $this->id;
 
 		return $arr;

@@ -71,8 +71,8 @@ class Dynamicpackages_Tables{
 		$occupancy_chart = (is_array($this->occupancy_chart)) 
 			? (array_key_exists('occupancy_chart', $this->occupancy_chart)) 
 			? $this->occupancy_chart['occupancy_chart'] 
-			: array() 
-			: array();	
+			: [] 
+			: [];	
 
 		if(is_array($this->price_chart))
 		{

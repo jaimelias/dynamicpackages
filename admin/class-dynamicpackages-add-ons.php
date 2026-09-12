@@ -306,7 +306,7 @@ class Dynamicpackages_Taxonomy_Add_Ons
 			$parent_terms = (is_array($parent_terms)) ? $parent_terms : [];
 		}			
 		
-		$terms = array_unique(array_merge($current_terms, $parent_terms), SORT_REGULAR );
+		$terms = array_unique([...$current_terms, ...$parent_terms], SORT_REGULAR);
 		
 		foreach($terms as $term)
 		{

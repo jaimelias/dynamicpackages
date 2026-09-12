@@ -607,7 +607,7 @@ class Parsedown
                 ),
                 'element' => array(
                     'name' => $name,
-                    'elements' => array(),
+                    'elements' => [],
                 ),
             );
             $Block['data']['markerTypeRegex'] = preg_quote($Block['data']['markerType'], '/');
@@ -634,7 +634,7 @@ class Parsedown
                 'name' => 'li',
                 'handler' => array(
                     'function' => 'li',
-                    'argument' => !empty($matches[3]) ? array($matches[3]) : array(),
+                    'argument' => !empty($matches[3]) ? array($matches[3]) : [],
                     'destination' => 'elements'
                 )
             );
@@ -889,7 +889,7 @@ class Parsedown
             $this->DefinitionData['Reference'][$id] = $Data;
 
             $Block = array(
-                'element' => array(),
+                'element' => [],
             );
 
             return $Block;
@@ -1001,7 +1001,7 @@ class Parsedown
             'identified' => true,
             'element' => array(
                 'name' => 'table',
-                'elements' => array(),
+                'elements' => [],
             ),
         );
 
@@ -1011,7 +1011,7 @@ class Parsedown
 
         $Block['element']['elements'] []= array(
             'name' => 'tbody',
-            'elements' => array(),
+            'elements' => [],
         );
 
         $Block['element']['elements'][0]['elements'] []= array(
@@ -1132,12 +1132,12 @@ class Parsedown
     # ~
     #
 
-    public function line($text, $nonNestables = array())
+    public function line($text, $nonNestables = [])
     {
         return $this->elements($this->lineElements($text, $nonNestables));
     }
 
-    protected function lineElements($text, $nonNestables = array())
+    protected function lineElements($text, $nonNestables = [])
     {
         # standardize line breaks
         $text = str_replace(array("\r\n", "\r"), "\n", $text);
@@ -1145,7 +1145,7 @@ class Parsedown
         $Elements = [];
 
         $nonNestables = (empty($nonNestables)
-            ? array()
+            ? []
             : array_combine($nonNestables, $nonNestables)
         );
 
@@ -1193,10 +1193,10 @@ class Parsedown
 
 
                 $Inline['element']['nonNestables'] = isset($Inline['element']['nonNestables'])
-                    ? array_merge($Inline['element']['nonNestables'], $nonNestables)
+                    ? [...$Inline['element']['nonNestables'], ...$nonNestables]
                     : $nonNestables
                 ;
-
+                
                 # the text that comes before the inline
                 $unmarkedText = substr($text, 0, $Inline['position']);
 
@@ -1245,7 +1245,7 @@ class Parsedown
     {
         $Inline = array(
             'extent' => strlen($text),
-            'element' => array(),
+            'element' => [],
         );
 
         $Inline['element']['elements'] = self::pregReplaceElements(

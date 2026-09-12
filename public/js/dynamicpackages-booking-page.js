@@ -474,7 +474,7 @@ const checkoutFormSubmit = async () => {
 		const email = thisForm.find('input[name="email"]').val();
 		const {wpJsonUrl, post_id} = dyCoreArgs;
 		const { dy_nonce } = (await getNonce()) ?? {};
-		const url = new URL(`${wpJsonUrl}/dynamicpackages/transactions/${post_id}`)
+		const url = new URL(`${wpJsonUrl}/transactions/${post_id}`)
 
 		url.searchParams.set('dy_nonce', dy_nonce);
 		url.searchParams.set('dy_request', dy_request);

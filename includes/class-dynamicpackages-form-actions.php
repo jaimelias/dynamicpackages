@@ -208,7 +208,7 @@ class Dynamicpackages_Actions{
 		}
 
 		$purchase_gateways = array_unique(
-			apply_filters('dy_purchase_event_gateways', array())
+			apply_filters('dy_purchase_event_gateways', [])
 		);
 
 		if(in_array($request_type, $purchase_gateways, true))
