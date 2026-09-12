@@ -1,3 +1,7 @@
+# my-project/.codex/config.toml
+sandbox_mode = "read-only"
+approval_policy = "on-request"
+
 default_permissions = "workspace-filtered"
 
 [permissions.workspace-filtered]
