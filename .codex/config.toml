@@ -1,3 +1,23 @@
-# my-project/.codex/config.toml
-sandbox_mode = "read-only"
-approval_policy = "on-request"
+default_permissions = "workspace-filtered"
+
+[permissions.workspace-filtered]
+extends = ":workspace"
+
+[permissions.workspace-filtered.filesystem]
+glob_scan_max_depth = 12
+
+[permissions.workspace-filtered.filesystem.":workspace_roots"]
+"**/qrcode.min.js" = "deny"
+"**/handsontable.full.min.js" = "deny"
+"**/handsontable.full.min.css" = "deny"
+"**/MakerCluster.css" = "deny"
+"**/MakerCluster.default.css" = "deny"
+"**/algoliasearch.min.js" = "deny"
+"**/autocomplete.jquery.min.js" = "deny"
+
+"**/languages/**" = "deny"
+"**/vendor/**" = "deny"
+"**/node_modules/**" = "deny"
+"**/picker/**" = "deny"
+"**/translations/**" = "deny"
+"**/flags/**" = "deny"
