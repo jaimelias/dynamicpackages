@@ -20,7 +20,7 @@ class DY_SendGrid
 
 
 		add_action('admin_init', [$this, 'settings_init'], 1);
-		add_action('admin_menu', [$this, 'add_settings_page'], 1);
+		add_action('admin_menu', [$this, 'add_settings_page'], 20);
 
 		if($this->web_api_key && is_email($this->email)) {
 			add_filter(

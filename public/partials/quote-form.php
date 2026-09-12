@@ -18,6 +18,8 @@
 	$autocomplete_scope = $has_gateway
 		? 'section-payment billing'
 		: 'section-contact';
+	
+	$site_key = get_turnstile_site_key();
 ?>
 
 <form id="dy_package_request_form" <?php echo $hide_form;?>  data-method="post" data-action="<?php echo esc_attr(base64_encode(get_permalink())); ?>">
@@ -162,11 +164,11 @@
 		
 		<?php do_action('dy_contact_inquiry_textarea'); ?>
 		
-		<?php if(get_option('dy_cf_turnstile_site_key')): ?>
+		<?php if($site_key !== ''): ?>
 			<div class="dy-turnstile-submit">
 				<div
 					class="cf-turnstile"
-					data-sitekey="<?php echo esc_attr(get_option('dy_cf_turnstile_site_key')); ?>"
+					data-sitekey="<?php echo esc_attr($site_key); ?>"
 					data-retry="auto"
 					data-refresh-expired="auto">
 				</div>
