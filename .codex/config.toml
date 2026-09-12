@@ -11,6 +11,8 @@ extends = ":workspace"
 glob_scan_max_depth = 12
 
 [permissions.workspace-filtered.filesystem.":workspace_roots"]
+"**/jquery-3.6.1.slim.min.map" = "deny"
+"**/jquery-3.6.1.slim.min.js" = "deny"
 "**/qrcode.min.js" = "deny"
 "**/handsontable.full.min.js" = "deny"
 "**/handsontable.full.min.css" = "deny"
@@ -18,10 +20,15 @@ glob_scan_max_depth = 12
 "**/MakerCluster.default.css" = "deny"
 "**/algoliasearch.min.js" = "deny"
 "**/autocomplete.jquery.min.js" = "deny"
-
 "**/languages/**" = "deny"
 "**/vendor/**" = "deny"
 "**/node_modules/**" = "deny"
+"**/fonts/**" = "deny"
 "**/picker/**" = "deny"
 "**/translations/**" = "deny"
 "**/flags/**" = "deny"
+"**/.git/**" = "deny"
+"**/dist/**" = "deny"
+"**/build/**" = "deny"
+"**/cache/**" = "deny"
+"**/*.log" = "deny"
