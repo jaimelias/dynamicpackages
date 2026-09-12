@@ -12,6 +12,9 @@
     }
   },
   "scripts": {
+      "memory-build": [
+        "code2prompt . --include='*.php' --token-map --encoding=cl100k --output-format=xml  --exclude='*.l10n.php' --output-file=memory-php.xml"
+      ],
       "commit": "./.scripts/commit.sh --app",
       "dy-core-copy": "./dy-core/update.sh --copy-only",
       "dy-core-publish": "./dy-core/update.sh --publish",
