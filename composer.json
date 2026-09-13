@@ -12,15 +12,18 @@
     }
   },
   "scripts": {
+      "start": [
+          "@start-apache",
+          "@map"
+      ],
+      "map" : "php .scripts/map.php",
       "ml-build": [
         "code2prompt . --include='*.php' --token-map --encoding=cl100k --output-format=xml  --exclude='*.l10n.php,parsedown.php' --output-file='ml/memory-php.xml'"
       ],
       "commit": "./.scripts/commit.sh --app",
       "dy-core-copy": "./dy-core/update.sh --copy-only",
       "dy-core-publish": "./dy-core/update.sh --publish",
-      "start": [
-          "@start-apache"
-      ],
+
       "start-apache": "/Applications/MAMP/bin/startApache.sh && /Applications/MAMP/bin/startMysql.sh",
       "lint": "parallel-lint --exclude vendor --exclude node_modules .",
       "phpstan": "phpstan analyse --memory-limit=1G",
