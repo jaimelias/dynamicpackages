@@ -378,156 +378,205 @@ const addOnsCalc = () => {
 	});
 }
 
+let checkoutSubmissionInProgress = false;
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const checkoutFormSubmit = async (signRetry = 0) => {
-
-
-	const retryAfterMs = 2000;
-	const {submit_error} = dyPackageBookingArgs;
-	const thisForm = jQuery('#dy_package_request_form');
-
-	if(!turnstileWidget1) {
-		throw new Error(`Turnstile turnstileWidget1 not found.`);
-	}
-
-	const signTransactionToken = turnstile.getResponse(turnstileWidget1);
-
-	if (!signTransactionToken) {
-		if (signRetry < 5) {
-			turnstile.reset(turnstileWidget1);
-			console.warn(`Turnstile token is missing or expired. Retry ${signRetry + 1}/5...`);
-
-			setTimeout(() => checkoutFormSubmit(signRetry + 1), retryAfterMs);
-			return;
-		} else {
-			throw new Error(`Turnstile token is missing or expired after ${signRetry} retries.`);
-		}
-	}
-
-
-	const checkoutArgs = getUpdatedCheckoutArgs();
-	const {amount} = checkoutArgs;
-	let invalids = [];
-	const formFields = formToArray(thisForm);
-	const dyRequestVal = jQuery(thisForm).find('[name="dy_request"]').val();
-	const excludedPurchase = ['contact', 'estimate_request'];
-
-	formFields.forEach(i => {
-
-		const {name, value} = i;
-		const field = jQuery(thisForm).find('[name="'+name+'"]');
-		const label = jQuery(thisForm).find('label[for="'+name+'"]');
-		const isRequired = (jQuery(field).hasClass('required')) ? true : false;
-		const isNull = !value;
-		
-		if(isRequired)
-		{
-			if(isNull || !isValidValue({name, value, thisForm}))
-			{
-				if(name.startsWith('terms_conditions_'))
-				{
-					invalids.push(name);
-					jQuery(label).addClass('invalid_checkmark');
-					console.log(jQuery(field).attr('name')+ ' invalid');
-				}
-				else
-				{
-					invalids.push(name);
-					jQuery(field).addClass('invalid_field');
-					console.log(jQuery(field).attr('name')+ ' invalid');
-				}
-			}
-			else
-			{
-				if(name.startsWith('terms_conditions_'))
-				{
-					jQuery(label).removeClass('invalid_checkmark');
-				}
-				else
-				{
-					jQuery(field).removeClass('invalid_field');
-				}
-			}
-		}
-	});
-	
-	if(invalids.length === 0)
+const executeTurnstileWithRetry = async (
+	widgetId,
 	{
+		maxRetries = 5,
+		timeoutMs = 10000,
+		retryDelayMs = 1000
+	} = {}
+) => {
+	let lastError;
+
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
+		try {
+			const token = await new Promise((resolve, reject) => {
+				let settled = false;
+
+				const finish = (callback, value) => {
+					if (settled) {
+						return;
+					}
+
+					settled = true;
+					clearTimeout(timeoutId);
+					delete window.dyTurnstileWaiters[widgetId];
+					callback(value);
+				};
+
+				const timeoutId = setTimeout(() => {
+					finish(
+						reject,
+						new Error('Turnstile token request timed out.')
+					);
+				}, timeoutMs);
+
+				window.dyTurnstileWaiters[widgetId] = {
+					resolve: token => {
+						if (!token) {
+							finish(
+								reject,
+								new Error('Turnstile returned an empty token.')
+							);
+							return;
+						}
+
+						finish(resolve, token);
+					},
+					reject: error => finish(reject, error)
+				};
+
+				try {
+					turnstile.reset(widgetId);
+					turnstile.execute(widgetId);
+				} catch (error) {
+					finish(reject, error);
+				}
+			});
+
+			return token;
+		} catch (error) {
+			lastError = error;
+
+			if (attempt === maxRetries) {
+				break;
+			}
+
+			console.warn(
+				`Turnstile attempt ${attempt + 1}/${maxRetries + 1} failed. Retrying...`,
+				error
+			);
+
+			await sleep(retryDelayMs);
+		}
+	}
+
+	throw lastError || new Error('Unable to obtain a Turnstile token.');
+};
+
+const checkoutFormSubmit = async () => {
+	if (checkoutSubmissionInProgress) {
+		return false;
+	}
+
+	checkoutSubmissionInProgress = true;
+
+	const thisForm = jQuery('#dy_package_request_form');
+	const { submit_error } = dyPackageBookingArgs;
+
+	try {
+		/*
+		 * Keep your existing validation block here.
+		 * It should populate `invalids`, but it must run BEFORE
+		 * requesting the Turnstile token.
+		 */
+		const invalids = [];
+		const formFields = formToArray(thisForm);
+
+		formFields.forEach(({ name, value }) => {
+			const field = thisForm.find(`[name="${name}"]`);
+			const label = thisForm.find(`label[for="${name}"]`);
+
+			if (!field.hasClass('required')) {
+				return;
+			}
+
+			if (!value || !isValidValue({ name, value, thisForm })) {
+				invalids.push(name);
+
+				if (name.startsWith('terms_conditions_')) {
+					label.addClass('invalid_checkmark');
+				} else {
+					field.addClass('invalid_field');
+				}
+			} else if (name.startsWith('terms_conditions_')) {
+				label.removeClass('invalid_checkmark');
+			} else {
+				field.removeClass('invalid_field');
+			}
+		});
+
+		if (invalids.length > 0) {
+			if (
+				invalids.includes('country') ||
+				invalids.includes('country_calling_code')
+			) {
+				countryDropdown();
+			}
+
+			alert(`${submit_error}: ${invalids.join(', ')}`);
+			return false;
+		}
+
+		const checkoutArgs = getUpdatedCheckoutArgs();
+		const { amount } = checkoutArgs;
+
 		populateCheckoutForm(thisForm);
 
-		//facebook pixel
-		if(typeof fbq !== typeof undefined)
-		{
-			fbq('track', 'Lead');
-		}
-		
-		//google analytics
-		if(typeof gtag !== 'undefined')
-		{	
-			if(!excludedPurchase.includes(dyRequestVal))
-			{
-				let checkoutEventArgs = getCheckoutEventArgs({...checkoutArgs});
+		const signTransactionToken =
+			await executeTurnstileWithRetry(turnstileWidget1);
 
-				//console.log(checkoutEventArgs);
+		const dy_request = thisForm.find('[name="dy_request"]').val();
+		const email = thisForm.find('[name="email"]').val();
+		const { wpJsonUrl, post_id } = dyCoreArgs;
 
-				sendGa4Event( 'begin_checkout', checkoutEventArgs);
-				sendGa4Event( 'add_payment_info', {...checkoutEventArgs, payment_type: dyRequestVal});
-			}
-		}
+		const signUrl = new URL(`${wpJsonUrl}/transactions/${post_id}`);
 
-		const dy_request = thisForm.find('input[name="dy_request"]').val();
-		const email = thisForm.find('input[name="email"]').val();
-		const {wpJsonUrl, post_id} = dyCoreArgs;
-		const url = new URL(`${wpJsonUrl}/transactions/${post_id}`)
-
-		url.searchParams.set('dy_request', dy_request);
-		url.searchParams.set('email', email);
-		url.searchParams.set('cf-turnstile-response', signTransactionToken);
-		url.searchParams.set('action', 'sign-transaction');
-
-		const response = await fetch(url, {method: 'POST'});
-		const responseData = (await response.json()) ?? {};
-
-		const {unique_tx_id} = responseData
-
-	    if(unique_tx_id)
-        {
-			thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
-        }
-
-		if(turnstileWidget1) {
-			turnstile.remove(turnstileWidget1);
-		}
-		
-
-		const turnstileWidget2 = turnstile.render("#turnstile-container", {
-			sitekey: turnstileSiteKey,
-			action: 'submit-transaction',
-			callback: (submitTransactionToken) => {
-				console.log({submitTransactionToken})
-			},
+		const signBody = new URLSearchParams({
+			dy_request,
+			email,
+			'cf-turnstile-response': signTransactionToken,
+			action: 'sign-transaction'
 		});
-		
-		//console.log(formToArray(thisForm));
-		
-		if(response.ok) {
-			//createFormSubmit(thisForm);
+
+		const signResponse = await fetch(signUrl, {
+			method: 'POST',
+			body: signBody
+		});
+
+		if (!signResponse.ok) {
+			throw new Error(
+				`Transaction signing failed: ${signResponse.status}`
+			);
 		}
-	}
-	else
-	{	
-		if(invalids.includes('country') || invalids.includes('country_calling_code')) {
-			countryDropdown();
+
+		const signResponseData = await signResponse.json();
+		const { unique_tx_id } = signResponseData;
+
+		if (!unique_tx_id) {
+			throw new Error('Transaction signing returned no transaction ID.');
 		}
 
-		alert(`${submit_error}: ${invalids.join(', ')}`);
+		thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
+
+		const submitTransactionToken =
+			await executeTurnstileWithRetry(turnstileWidget2);
+
+		// Avoid duplicate Turnstile fields.
+		thisForm.find('[name="cf-turnstile-response"]').remove();
+
+		jQuery('<input>', {
+			type: 'hidden',
+			name: 'cf-turnstile-response'
+	})
+			.val(submitTransactionToken)
+			.appendTo(thisForm);
+
+		createFormSubmit(thisForm);
+
+		return false;
+	} catch (error) {
+		console.error('Checkout submission failed:', error);
+		alert(error.message || 'Unable to submit the form. Please try again.');
+		return false;
+	} finally {
+		checkoutSubmissionInProgress = false;
 	}
-
-	
-
-	return false;
-}
+};
 
 const getCheckoutEventArgs = checkoutArgs => {
 	
