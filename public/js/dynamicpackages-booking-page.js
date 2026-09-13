@@ -378,204 +378,67 @@ const addOnsCalc = () => {
 	});
 }
 
-let checkoutSubmissionInProgress = false;
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const executeTurnstileWithRetry = async (
-	widgetId,
-	{
-		maxRetries = 5,
-		timeoutMs = 10000,
-		retryDelayMs = 1000
-	} = {}
-) => {
-	let lastError;
-
-	for (let attempt = 0; attempt <= maxRetries; attempt++) {
-		try {
-			const token = await new Promise((resolve, reject) => {
-				let settled = false;
-
-				const finish = (callback, value) => {
-					if (settled) {
-						return;
-					}
-
-					settled = true;
-					clearTimeout(timeoutId);
-					delete window.dyTurnstileWaiters[widgetId];
-					callback(value);
-				};
-
-				const timeoutId = setTimeout(() => {
-					finish(
-						reject,
-						new Error('Turnstile token request timed out.')
-					);
-				}, timeoutMs);
-
-				window.dyTurnstileWaiters[widgetId] = {
-					resolve: token => {
-						if (!token) {
-							finish(
-								reject,
-								new Error('Turnstile returned an empty token.')
-							);
-							return;
-						}
-
-						finish(resolve, token);
-					},
-					reject: error => finish(reject, error)
-				};
-
-				try {
-					turnstile.reset(widgetId);
-					turnstile.execute(widgetId);
-				} catch (error) {
-					finish(reject, error);
-				}
-			});
-
-			return token;
-		} catch (error) {
-			lastError = error;
-
-			if (attempt === maxRetries) {
-				break;
-			}
-
-			console.warn(
-				`Turnstile attempt ${attempt + 1}/${maxRetries + 1} failed. Retrying...`,
-				error
-			);
-
-			await sleep(retryDelayMs);
-		}
-	}
-
-	throw lastError || new Error('Unable to obtain a Turnstile token.');
-};
-
-const checkoutFormSubmit = async () => {
-	if (checkoutSubmissionInProgress) {
-		return false;
-	}
-
-	checkoutSubmissionInProgress = true;
-
+const checkoutFormSubmit = () => {
 	const thisForm = jQuery('#dy_package_request_form');
 	const { submit_error } = dyPackageBookingArgs;
 
-	try {
-		/*
-		 * Keep your existing validation block here.
-		 * It should populate `invalids`, but it must run BEFORE
-		 * requesting the Turnstile token.
-		 */
-		const invalids = [];
-		const formFields = formToArray(thisForm);
+	const invalids = [];
+	const formFields = formToArray(thisForm);
 
-		formFields.forEach(({ name, value }) => {
-			const field = thisForm.find(`[name="${name}"]`);
-			const label = thisForm.find(`label[for="${name}"]`);
+	formFields.forEach(({ name, value }) => {
+		const field = thisForm.find(`[name="${name}"]`);
+		const label = thisForm.find(`label[for="${name}"]`);
 
-			if (!field.hasClass('required')) {
-				return;
-			}
+		if (!field.hasClass('required')) return;
 
-			if (!value || !isValidValue({ name, value, thisForm })) {
-				invalids.push(name);
+		if (!value || !isValidValue({ name, value, thisForm })) {
+			invalids.push(name);
 
-				if (name.startsWith('terms_conditions_')) {
-					label.addClass('invalid_checkmark');
-				} else {
-					field.addClass('invalid_field');
-				}
-			} else if (name.startsWith('terms_conditions_')) {
-				label.removeClass('invalid_checkmark');
+			if (name.startsWith('terms_conditions_')) {
+				label.addClass('invalid_checkmark');
 			} else {
-				field.removeClass('invalid_field');
+				field.addClass('invalid_field');
 			}
-		});
+		} else if (name.startsWith('terms_conditions_')) {
+			label.removeClass('invalid_checkmark');
+		} else {
+			field.removeClass('invalid_field');
+		}
+	});
 
-		if (invalids.length > 0) {
-			if (
-				invalids.includes('country') ||
-				invalids.includes('country_calling_code')
-			) {
-				countryDropdown();
-			}
-
-			alert(`${submit_error}: ${invalids.join(', ')}`);
-			return false;
+	if (invalids.length > 0) {
+		if (invalids.includes('country') || invalids.includes('country_calling_code')) {
+			countryDropdown();
 		}
 
-		const checkoutArgs = getUpdatedCheckoutArgs();
-		const { amount } = checkoutArgs;
-
-		populateCheckoutForm(thisForm);
-
-		const signTransactionToken =
-			await executeTurnstileWithRetry(turnstileWidget1);
-
-		const dy_request = thisForm.find('[name="dy_request"]').val();
-		const email = thisForm.find('[name="email"]').val();
-		const { wpJsonUrl, post_id } = dyCoreArgs;
-
-		const signUrl = new URL(`${wpJsonUrl}/transactions/${post_id}`);
-
-		const signBody = new URLSearchParams({
-			dy_request,
-			email,
-			'cf-turnstile-response': signTransactionToken,
-			action: 'sign-transaction'
-		});
-
-		const signResponse = await fetch(signUrl, {
-			method: 'POST',
-			body: signBody
-		});
-
-		if (!signResponse.ok) {
-			throw new Error(
-				`Transaction signing failed: ${signResponse.status}`
-			);
-		}
-
-		const signResponseData = await signResponse.json();
-		const { unique_tx_id } = signResponseData;
-
-		if (!unique_tx_id) {
-			throw new Error('Transaction signing returned no transaction ID.');
-		}
-
-		thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
-
-		const submitTransactionToken =
-			await executeTurnstileWithRetry(turnstileWidget2);
-
-		// Avoid duplicate Turnstile fields.
-		thisForm.find('[name="cf-turnstile-response"]').remove();
-
-		jQuery('<input>', {
-			type: 'hidden',
-			name: 'cf-turnstile-response'
-	})
-			.val(submitTransactionToken)
-			.appendTo(thisForm);
-
-		createFormSubmit(thisForm);
-
+		alert(`${submit_error}: ${invalids.join(', ')}`);
 		return false;
-	} catch (error) {
-		console.error('Checkout submission failed:', error);
-		alert(error.message || 'Unable to submit the form. Please try again.');
-		return false;
-	} finally {
-		checkoutSubmissionInProgress = false;
 	}
+
+	const checkoutArgs = getUpdatedCheckoutArgs();
+
+	populateCheckoutForm(thisForm);
+
+	if (typeof fbq !== 'undefined') {
+		fbq('track', 'Lead');
+	}
+
+	if (typeof gtag !== 'undefined') {
+		const dyRequestVal = thisForm.find('[name="dy_request"]').val();
+		const excludedPurchase = ['contact', 'estimate_request'];
+
+		if (!excludedPurchase.includes(dyRequestVal)) {
+			const checkoutEventArgs = getCheckoutEventArgs({ ...checkoutArgs });
+			sendGa4Event('begin_checkout', checkoutEventArgs);
+			sendGa4Event('add_payment_info', {
+				...checkoutEventArgs,
+				payment_type: dyRequestVal
+			});
+		}
+	}
+
+	createFormSubmit(thisForm);
+	return false;
 };
 
 const getCheckoutEventArgs = checkoutArgs => {
@@ -667,4 +530,3 @@ const copyPaymentLink = () => {
     });
 
 }
-
