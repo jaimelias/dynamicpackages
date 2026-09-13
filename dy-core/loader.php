@@ -26,7 +26,7 @@ if(!class_exists('Dy_Core_Init'))
             load_plugin_textdomain(
                 DY_CORE_TEXTDOMAIN,
                 false,
-                dirname( plugin_basename( dirname( __FILE__ ) ) ) . '/languages'
+                dirname( plugin_basename( __FILE__ ) ) . '/languages'
             );
         }
 

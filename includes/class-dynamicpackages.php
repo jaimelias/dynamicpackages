@@ -108,7 +108,7 @@ class dynamicpackages {
 	public function load_dynamicpackage_textdomain() {
 
 		$domain = 'dynamicpackages';
-		$dir = dirname( plugin_basename( __FILE__ ) ) . '/languages';
+		$dir = dirname( plugin_basename( dirname( __FILE__ ) ) ) . '/languages';
 		
 		load_plugin_textdomain(
 			$domain,

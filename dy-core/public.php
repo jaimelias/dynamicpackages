@@ -533,7 +533,9 @@ class Dynamic_Core_Public {
 
         $args = [
             'turnstileSiteKey' => get_turnstile_site_key(),
-            'translations' => []
+            'translations' => [
+                'contact_support' => __('Contact Support', 'dycore')
+            ]
         ];
         
         return sprintf('const turnstileArgs=%s;', wp_json_encode($args));

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2026-09-13 18:33+0000\n"
+"PO-Revision-Date: 2026-09-13 19:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;esc_html_e\n"
-"X-Loco-Version: 2.7.2; wp-6.8.1\n"
+"X-Loco-Version: 2.8.8; wp-7.1; php-8.2.0\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: includes/class-dynamicpackages-validators.php:695
@@ -386,7 +386,7 @@ msgid "Copy payment link"
 msgstr "Copiar link de pagos"
 
 #: public/class-dynamicpackages-booking-page.php:46
-msgid "Corregir"
+msgid "Correct fields"
 msgstr ""
 
 #: gateways/partials/cc-form.php:43
@@ -911,7 +911,7 @@ msgstr "Email repetido inválido."
 #: includes/class-dynamicpackages-validators.php:273
 #, php-format
 msgid "Invalid request parameter: %s."
-msgstr "Parámetro inválido: %s."
+msgstr "Parámetros inválidos: %s."
 
 #: includes/class-dynamicpackages-validators.php:866
 msgid "Invalid Request."
