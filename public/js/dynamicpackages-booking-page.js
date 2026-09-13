@@ -380,23 +380,25 @@ const addOnsCalc = () => {
 
 
 
-const checkoutFormSubmit = async () => {
+const checkoutFormSubmit = async (signRetry = 0) => {
 
 
-
+	const retryAfterMs = 2000;
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
 
-	//Because the widget is inside #dy_package_request_form, Turnstile creates "cf-turnstile-response" field
-	const turnstileToken = thisForm
-		.find('[name="cf-turnstile-response"]')
-		.val();
+	const signTransactionToken = turnstile.getResponse(turnstileWidget1);
 
+	if (!signTransactionToken) {
+		if (signRetry < 5) {
+			turnstile.reset(turnstileWidget1);
+			console.warn(`Turnstile token is missing or expired. Retry ${signRetry + 1}/5...`);
 
-	if(!turnstileToken)
-	{
-		console.warn('Turnstile token is missing or expired.');
-		return false;
+			setTimeout(() => checkoutFormSubmit(signRetry + 1), retryAfterMs);
+			return;
+		} else {
+			throw new Error(`Turnstile token is missing or expired after ${signRetry} retries.`);
+		}
 	}
 
 
@@ -479,6 +481,7 @@ const checkoutFormSubmit = async () => {
 		url.searchParams.set('dy_nonce', dy_nonce);
 		url.searchParams.set('dy_request', dy_request);
 		url.searchParams.set('email', email);
+		url.searchParams.set('cf-turnstile-response', signTransactionToken);
 
 		const response = await fetch(url, {method: 'POST'});
 		const responseData = (await response.json()) ?? {};
@@ -489,11 +492,21 @@ const checkoutFormSubmit = async () => {
         {
 			thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
         }
+
+		turnstile.remove(turnstileWidget1);
+
+		const turnstileWidget2 = turnstile.render("#turnstile-container", {
+			sitekey: turnstileSiteKey,
+			action: 'submit-transaction',
+			callback: (submitTransactionToken) => {
+				console.log({submitTransactionToken})
+			},
+		});
 		
 		//console.log(formToArray(thisForm));
 		
 		if(response.ok) {
-			createFormSubmit(thisForm);
+			//createFormSubmit(thisForm);
 		}
 	}
 	else

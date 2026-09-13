@@ -166,12 +166,8 @@
 		
 		<?php if($site_key !== ''): ?>
 			<div class="dy-turnstile-submit">
-				<div
-					class="cf-turnstile"
-					data-sitekey="<?php echo esc_attr($site_key); ?>"
-					data-retry="auto"
-					data-refresh-expired="auto">
-				</div>
+
+				<div id="turnstile-container"></div>
 
 				<button
 					type="button"
