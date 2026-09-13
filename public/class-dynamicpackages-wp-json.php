@@ -12,19 +12,11 @@ class Dynamicpackages_WP_JSON
 	}
 
 	public function register_rest_routes_transactions() {
-		$package_id_param = [
+		$dy_id_param = [
 			'required'          => true,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => static function($value) {
 				return dy_validators::validate_the_id($value);
-			},
-		];
-
-		$dy_nonce_param = [
-			'required'          => true,
-			'sanitize_callback' => 'sanitize_text_field',
-			'validate_callback' => static function($value) {
-				return is_string($value) && wp_verify_nonce($value, 'dy_nonce');
 			},
 		];
 
@@ -43,11 +35,26 @@ class Dynamicpackages_WP_JSON
 				return is_string($value) && is_email($value);
 			},
 		];
-		
 
+		$turnstile = [
+			'required' => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value);
+			},
+		];
+
+		$action = [
+			'required' => true,
+			'sanitize_callback' => 'sanitize_text_field',
+			'validate_callback' => static function($value) {
+				return is_string($value);
+			},
+		];
+		
 		register_rest_route(
 			'dy-core',
-			'/transactions/(?P<package_id>\d+)',
+			'/transactions/(?P<dy_id>\d+)',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [
@@ -56,10 +63,11 @@ class Dynamicpackages_WP_JSON
 				],
 				'permission_callback' => '__return_true',
 				'args'=> [
-					'package_id' => $package_id_param,
-					'dy_nonce' => $dy_nonce_param,
+					'dy_id' => $dy_id_param,
 					'email' => $email_param,
 					'dy_request' => $dy_request_param,
+					'cf-turnstile-response' => $turnstile,
+					'action' => $action,
 				],
 			]
 		);
@@ -68,7 +76,7 @@ class Dynamicpackages_WP_JSON
 	public function register_rest_routes_disabled_dates()
 	{
 
-		$package_id_param = [
+		$dy_id_param = [
 			'required'          => true,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => static function($value) {
@@ -86,7 +94,7 @@ class Dynamicpackages_WP_JSON
 
 		register_rest_route(
 			'dy-core',
-			'/dynamicpackages/disabled-dates/(?P<package_id>\d+)',
+			'/dynamicpackages/disabled-dates/(?P<dy_id>\d+)',
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array(
@@ -95,7 +103,7 @@ class Dynamicpackages_WP_JSON
 				),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'package_id' => $package_id_param,
+					'dy_id' => $dy_id_param,
 					'dy_nonce' => $dy_nonce_param,
 				),
 			]
@@ -105,16 +113,32 @@ class Dynamicpackages_WP_JSON
 
 	public function transactions_endpoint($request)
 	{
-		$package_id = absint($request['package_id']);
-		$email = $request['email'];
-		$dy_request = $request['dy_request'];
-		$post = get_post($package_id);
+
+		$turnstile = $request['cf-turnstile-response'];
+		$action = $request['action'];
+
+		if(!validate_turnstile($turnstile, $action)) {
+			return $this->rest_response(
+				[
+					'code'    => 'invalid_turnstile_token',
+					'message' => 'Invalid Request.',
+					'data'    => ['status' => 400],
+				],
+				404
+			);	
+		}
+
+		$dy_id = absint($request['dy_id']);
+		$email = sanitize_email(trim((string) $request['email']));
+		$dy_request = sanitize_key($request['dy_request']);
+		
+		$post = get_post($dy_id);
 
 		$is_readable = $post instanceof WP_Post
 			&& ('packages' === $post->post_type || $dy_request === 'contact')
 			&& (
 				is_post_publicly_viewable($post)
-				|| current_user_can('read_post', $package_id)
+				|| current_user_can('read_post', $dy_id)
 			);
 
 		if (!$is_readable) {
@@ -122,17 +146,37 @@ class Dynamicpackages_WP_JSON
 				[
 					'code'    => 'invalid_post_id',
 					'message' => 'Package not found.',
-					'data'    => array('status' => 404),
+					'data'    => ['status' => 404],
 				],
 				404
 			);
 		}
 
-		$unique_tx_id = wp_generate_uuid4();
-		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $email), wp_salt('auth'));
-		$transient_key = 'secret_tx_id_' . $unique_tx_id;
+		$all_dy_request_types = dy_utilities::all_dy_request_types();
 
-		set_transient($transient_key, $secret_tx_id, DAY_IN_SECONDS);
+		if(!in_array($dy_request, $all_dy_request_types, true)) {
+			return $this->rest_response(
+				[
+					'code'    => 'invalid_dy_request',
+					'message' => 'Invalid Request.',
+					'data'    => ['status' => 400],
+				],
+				404
+			);
+		}
+
+
+		$unique_tx_id = wp_generate_uuid4();
+		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $email . $dy_request . $dy_id), wp_salt('auth'));
+		$secret_transient_key = 'secret_tx_id_' . $unique_tx_id;
+
+		$transient_body = [
+			'unique_tx_id' => $unique_tx_id,
+			'secret_tx_id' => $secret_tx_id,
+			'dy_request' => $dy_request
+		];
+
+		set_transient($secret_transient_key, $transient_body, DAY_IN_SECONDS);
 
 		$output = [
 			'unique_tx_id' => $unique_tx_id
@@ -143,14 +187,14 @@ class Dynamicpackages_WP_JSON
 
 	public function disabled_dates_endpoint($request)
 	{
-		$package_id = $request['package_id'];
-		$post = get_post($package_id);
+		$dy_id = $request['dy_id'];
+		$post = get_post($dy_id);
 
 		$is_readable = $post instanceof WP_Post
 			&& 'packages' === $post->post_type
 			&& (
 				is_post_publicly_viewable($post)
-				|| current_user_can('read_post', $package_id)
+				|| current_user_can('read_post', $dy_id)
 			);
 
 		if (!$is_readable) {

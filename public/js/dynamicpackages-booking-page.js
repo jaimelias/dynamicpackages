@@ -387,6 +387,10 @@ const checkoutFormSubmit = async (signRetry = 0) => {
 	const {submit_error} = dyPackageBookingArgs;
 	const thisForm = jQuery('#dy_package_request_form');
 
+	if(!turnstileWidget1) {
+		throw new Error(`Turnstile turnstileWidget1 not found.`);
+	}
+
 	const signTransactionToken = turnstile.getResponse(turnstileWidget1);
 
 	if (!signTransactionToken) {
@@ -475,13 +479,12 @@ const checkoutFormSubmit = async (signRetry = 0) => {
 		const dy_request = thisForm.find('input[name="dy_request"]').val();
 		const email = thisForm.find('input[name="email"]').val();
 		const {wpJsonUrl, post_id} = dyCoreArgs;
-		const { dy_nonce } = (await getNonce()) ?? {};
 		const url = new URL(`${wpJsonUrl}/transactions/${post_id}`)
 
-		url.searchParams.set('dy_nonce', dy_nonce);
 		url.searchParams.set('dy_request', dy_request);
 		url.searchParams.set('email', email);
 		url.searchParams.set('cf-turnstile-response', signTransactionToken);
+		url.searchParams.set('action', 'sign-transaction');
 
 		const response = await fetch(url, {method: 'POST'});
 		const responseData = (await response.json()) ?? {};
@@ -493,7 +496,10 @@ const checkoutFormSubmit = async (signRetry = 0) => {
 			thisForm.find('[name="unique_tx_id"]').val(unique_tx_id);
         }
 
-		turnstile.remove(turnstileWidget1);
+		if(turnstileWidget1) {
+			turnstile.remove(turnstileWidget1);
+		}
+		
 
 		const turnstileWidget2 = turnstile.render("#turnstile-container", {
 			sitekey: turnstileSiteKey,

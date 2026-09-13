@@ -420,7 +420,7 @@ class dy_validators
 
 			if(self::validate_contact_details() && self::validate_booking_details())
 			{
-				if (!validate_turnstile()) {
+				if (!validate_turnstile(secure_post('cf-turnstile-response'), 'submit-transaction')) {
 					return self::$cache[$cache_key] = false;
 				}
 
@@ -802,19 +802,39 @@ class dy_validators
 		return self::$cache[$cache_key] = true;
 	}
 
-	public static function validate_unique_tx_id() {
-
+	public static function validate_unique_tx_id(): bool
+	{
 		$unique_tx_id = secure_post('unique_tx_id');
-		$email = secure_post('email');
+		$email = secure_post('email', '', 'sanitize_email');
+		$dy_request = secure_post('dy_request', '', 'sanitize_key');
+		$dy_id = secure_post('dy_id', 0, 'absint');
 
 		if (!is_string($unique_tx_id) || $unique_tx_id === '') return false;
 		if (!is_email($email)) return false;
+		if($dy_id === 0 || $dy_request === '') return false;
 
-		$transient_key = 'secret_tx_id_' . $unique_tx_id;
-		$secret_tx_id = get_transient( $transient_key );
-		$expected_secret_tx_id= hash_hmac('sha256', ($unique_tx_id . $email), wp_salt('auth'));
+		$all_dy_request_types = dy_utilities::all_dy_request_types();
 
-		return is_string($secret_tx_id) && hash_equals($expected_secret_tx_id, $secret_tx_id);
+		if(!in_array($dy_request, $all_dy_request_types, true)) {
+			return false;
+		}
+
+		$secret_transient_key = 'secret_tx_id_' . $unique_tx_id;
+		$transient_body = get_transient($secret_transient_key);
+
+
+		if (!is_array($transient_body)) return false;
+
+		$secret_tx_id = $transient_body['secret_tx_id'] ?? null;
+
+		if (!is_string($secret_tx_id)) return false;
+
+		$expected_secret_tx_id = hash_hmac('sha256', ($unique_tx_id . $email .  $dy_request .  $dy_id), wp_salt('auth'));
+
+		$is_valid = hash_equals($expected_secret_tx_id, $secret_tx_id);
+
+
+		return $is_valid;
 	}
 
 	public static function validate_contact_details()
@@ -826,13 +846,13 @@ class dy_validators
 		}
 
 
-		$first_name = secure_post('first_name', null);
-		$lastname = secure_post('lastname', null);
-		$phone = secure_post('phone', null);
-		$country_calling_code = secure_post('country_calling_code', null);
-		$email = secure_post('email', null, 'sanitize_email');
-		$repeat_email = secure_post('repeat_email', null, 'sanitize_email');
-		$inquiry = secure_post('inquiry', null, 'sanitize_textarea_field');
+		$first_name = secure_post('first_name');
+		$lastname = secure_post('lastname');
+		$phone = secure_post('phone');
+		$country_calling_code = secure_post('country_calling_code');
+		$email = secure_post('email', '', 'sanitize_email');
+		$repeat_email = secure_post('repeat_email', '', 'sanitize_email');
+		$inquiry = secure_post('inquiry', '', 'sanitize_textarea_field');
 		$invalids = [];
 
 		if(in_array(null, [
@@ -873,7 +893,7 @@ class dy_validators
 				$invalids[] = __('Country Calling Code is empty.', 'dynamicpackages');
 			}
 
-			if($inquiry !== null && (empty($inquiry) || self::is_spam($inquiry))) {
+			if($inquiry !== '' && (empty($inquiry) || self::is_spam($inquiry))) {
 				$invalids[] = __('Inquiry is empty.', 'dynamicpackages');
 			}
 		}
