@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2026-09-13 18:33+0000\n"
+"PO-Revision-Date: 2026-09-13 18:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -911,7 +911,7 @@ msgstr "Email repetido inválido."
 #: includes/class-dynamicpackages-validators.php:273
 #, php-format
 msgid "Invalid request parameter: %s."
-msgstr "Parámetro inválido: %s."
+msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:866
 msgid "Invalid Request."

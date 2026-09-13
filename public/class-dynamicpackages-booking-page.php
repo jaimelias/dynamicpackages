@@ -42,7 +42,8 @@ class Dynamicpackages_Booking_Page {
         if($this->is_valid())
         {
 			$strings = array(
-				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages')
+				'submit_error' => __('Error: please correct the invalid fields in color red.', 'dynamicpackages'),
+				'correct_form' => __('Fix fields', 'dynamicpackages')
 			);
 
 			wp_enqueue_script('dynamicpackages-booking', $this->plugin_dir_url_file . 'js/dynamicpackages-booking-page.js', ['jquery', 'dy-core-utilities', 'cloudflare-turnstile', 'cloudflare-turnstile-widgets'], $this->version, true );

@@ -380,7 +380,7 @@ const addOnsCalc = () => {
 
 const checkoutFormSubmit = () => {
 	const thisForm = jQuery('#dy_package_request_form');
-	const { submit_error } = dyPackageBookingArgs;
+	const { submit_error, correct_form } = dyPackageBookingArgs;
 
 	const invalids = [];
 	const formFields = formToArray(thisForm);
@@ -411,7 +411,9 @@ const checkoutFormSubmit = () => {
 			countryDropdown();
 		}
 
-		alert(`${submit_error}: ${invalids.join(', ')}`);
+		const errorMessage = `${submit_error}: ${invalids.join(', ')}`;
+
+		dyAlert(errorMessage, correct_form);
 		return false;
 	}
 
