@@ -173,7 +173,8 @@ class Dynamicpackages_WP_JSON
 		$transient_body = [
 			'unique_tx_id' => $unique_tx_id,
 			'secret_tx_id' => $secret_tx_id,
-			'dy_request' => $dy_request
+			'dy_request' => $dy_request,
+			'status' => 'started'
 		];
 
 		set_transient($secret_transient_key, $transient_body, DAY_IN_SECONDS);

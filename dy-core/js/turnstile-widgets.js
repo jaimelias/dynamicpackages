@@ -1,4 +1,6 @@
 window.dyTurnstileWaiters = window.dyTurnstileWaiters || {};
+window.dyTurnstileWidgets = window.dyTurnstileWidgets || {};
+
 
 const notifyTurnstile = (widgetId, type, value) => {
 	const waiter = window.dyTurnstileWaiters[widgetId];
@@ -16,40 +18,44 @@ const notifyTurnstile = (widgetId, type, value) => {
 	}
 };
 
-const turnstileWidget1 = turnstile.render('#turnstile-container-1', {
-	sitekey: turnstileSiteKey,
+const createTurnstileWidget = ({
+	container,
+	action,
+	id,
+	appearance
+}) => {
+
+	window.dyTurnstileWidgets[id] = turnstile.render(container, {
+		sitekey: turnstileSiteKey,
+		action,
+		appearance,
+		callback: token => notifyTurnstile(window.dyTurnstileWidgets[id], 'resolve', token),
+		'expired-callback': () =>
+			notifyTurnstile(
+				window.dyTurnstileWidgets[id],
+				'reject',
+				new Error(`Turnstile "${id}" token expired.`)
+			),
+		'error-callback': code =>
+			notifyTurnstile(
+				window.dyTurnstileWidgets[id],
+				'reject',
+				new Error(`Turnstile "${id}" error: ${code}`)
+			)
+	});
+
+}
+
+createTurnstileWidget({
+	id: 'turnstileWidget1', 
+	container: '#turnstile-container-1', 
 	action: 'sign-transaction',
-	appearance: 'execute',
-	callback: token => notifyTurnstile(turnstileWidget1, 'resolve', token),
-	'expired-callback': () =>
-		notifyTurnstile(
-			turnstileWidget1,
-			'reject',
-			new Error('Turnstile token expired.')
-		),
-	'error-callback': code =>
-		notifyTurnstile(
-			turnstileWidget1,
-			'reject',
-			new Error(`Turnstile error: ${code}`)
-		)
+	appearance: 'execute'
 });
 
-const turnstileWidget2 = turnstile.render('#turnstile-container-2', {
-	sitekey: turnstileSiteKey,
+createTurnstileWidget({
+	id: 'turnstileWidget2', 
+	container: '#turnstile-container-2', 
 	action: 'submit-transaction',
-	appearance: 'execute',
-	callback: token => notifyTurnstile(turnstileWidget2, 'resolve', token),
-	'expired-callback': () =>
-		notifyTurnstile(
-			turnstileWidget2,
-			'reject',
-			new Error('Turnstile token expired.')
-		),
-	'error-callback': code =>
-		notifyTurnstile(
-			turnstileWidget2,
-			'reject',
-			new Error(`Turnstile error: ${code}`)
-		)
+	appearance: 'interaction-only'
 });

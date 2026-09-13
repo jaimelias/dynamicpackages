@@ -167,8 +167,11 @@
 		<?php if($site_key !== ''): ?>
 			<div class="dy-turnstile-submit">
 
-				<div id="turnstile-container-1"></div>
-				<div id="turnstile-container-2"></div>
+				<div class="bottom-20">
+					<div id="turnstile-container-1"></div>
+					<div id="turnstile-container-2"></div>
+				</div>
+
 
 				<button
 					type="button"

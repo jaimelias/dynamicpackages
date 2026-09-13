@@ -263,10 +263,63 @@ const executeTurnstileWithRetry = async (
     throw lastError || new Error('Unable to obtain a Turnstile token.');
 };
 
+const signDyTransaction = async ({signUrl, signRequest, widgetId, maxRetries = 2}) => {
+    let unique_tx_id;
+    let lastSignError;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            if (attempt > 0) {
+                await sleep(10000);
+            }
+
+            // Turnstile tokens are single-use, so retries need fresh tokens.
+            const signTransactionToken = await executeTurnstileWithRetry(widgetId);
+            const signBody = new URLSearchParams({
+                ...signRequest,
+                'cf-turnstile-response': signTransactionToken
+            });
+
+            const signResponse = await fetch(signUrl, {
+                method: 'POST',
+                body: signBody
+            });
+
+            if (!signResponse.ok) {
+                throw new Error(`Transaction signing failed: ${signResponse.status}`);
+            }
+
+            ({unique_tx_id} = await signResponse.json());
+
+            if (!unique_tx_id) {
+                throw new Error('Transaction signing returned no transaction ID.');
+            }
+
+            return unique_tx_id;
+        } catch (error) {
+            lastSignError = error;
+
+            if (attempt === maxRetries) {
+                throw new Error(
+                    `Transaction signing failed after ${maxRetries + 1} attempts.`,
+                    {cause: error}
+                );
+            }
+
+            console.warn(
+                `Transaction signing attempt ${attempt + 1}/${maxRetries + 1} failed. Retrying in 10 seconds...`,
+                error
+            );
+        }
+    }
+
+    throw new Error('Transaction signing failed.', {cause: lastSignError});
+};
+
 const hasTurnstileWidgets = () => (
     typeof turnstile !== 'undefined'
-    && typeof turnstileWidget1 !== 'undefined'
-    && typeof turnstileWidget2 !== 'undefined'
+    && typeof window?.dyTurnstileWidgets?.turnstileWidget1 !== 'undefined'
+    && typeof window?.dyTurnstileWidgets?.turnstileWidget2 !== 'undefined'
     && window.dyTurnstileWaiters
 );
 
@@ -301,30 +354,23 @@ const createFormSubmit = async form => {
 
         if (hasTurnstileWidgets()) {
             try {
-                const signTransactionToken = await executeTurnstileWithRetry(turnstileWidget1);
+
+                const {turnstileWidget1, turnstileWidget2} = window.dyTurnstileWidgets || {};
+
+                
+
                 const { wpJsonUrl, post_id } = dyCoreArgs;
                 const signUrl = new URL(`${wpJsonUrl}/transactions/${post_id}`);
-                const signBody = new URLSearchParams({
+                const signRequest = {
                     dy_request: form.find('[name="dy_request"]').val() || '',
                     email: form.find('[name="email"]').val() || '',
-                    'cf-turnstile-response': signTransactionToken,
                     action: 'sign-transaction'
+                };
+                const unique_tx_id = await signDyTransaction({
+                    signUrl,
+                    signRequest,
+                    widgetId: turnstileWidget1
                 });
-
-                const signResponse = await fetch(signUrl, {
-                    method: 'POST',
-                    body: signBody
-                });
-
-                if (!signResponse.ok) {
-                    throw new Error(`Transaction signing failed: ${signResponse.status}`);
-                }
-
-                const { unique_tx_id } = await signResponse.json();
-
-                if (!unique_tx_id) {
-                    throw new Error('Transaction signing returned no transaction ID.');
-                }
 
                 formFields = formFields.filter(({ name }) => (
                     name !== 'cf-turnstile-response' && name !== 'unique_tx_id'
@@ -332,10 +378,14 @@ const createFormSubmit = async form => {
                 formFields.push({ name: 'unique_tx_id', value: unique_tx_id });
 
                 const submitTransactionToken = await executeTurnstileWithRetry(turnstileWidget2);
+
+                console.log({submitTransactionToken})
+
                 formFields.push({
                     name: 'cf-turnstile-response',
                     value: submitTransactionToken
                 });
+
             } catch (error) {
                 console.error('Turnstile submission failed:', error);
                 form.find('button').prop('disabled', false);
