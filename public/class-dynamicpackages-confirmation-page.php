@@ -36,13 +36,13 @@ class Dynamicpackages_Confirmation_Page {
 			return;
 		}
 
-		$transaction = DyTransactions::get(
+		$transaction = dy_transactions::get(
 			$unique_tx_id
 		);
 
 		if (
 			$transaction === null
-			|| ! DyTransactions::validate(
+			|| ! dy_transactions::validate(
 				$unique_tx_id,
 				[
 					$unique_tx_id,

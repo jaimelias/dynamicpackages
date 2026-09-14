@@ -167,7 +167,7 @@ class Dynamicpackages_WP_JSON
 
 
 		$unique_tx_id = wp_generate_uuid4();
-		$transaction_created = DyTransactions::create(
+		$transaction_created = dy_transactions::create(
 			$unique_tx_id,
 			[
 				'dy_request' => $dy_request,

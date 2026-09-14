@@ -86,7 +86,7 @@ class Dynamicpackages_Actions{
 			return false;
 		}
 
-		$transaction = DyTransactions::get($unique_tx_id);
+		$transaction = dy_transactions::get($unique_tx_id);
 
 		if ($transaction === null) {
 			return false;
@@ -130,12 +130,12 @@ class Dynamicpackages_Actions{
 
 		// Mark the transaction successful first; commit the payload after side effects complete.
 		if ($should_store_success) {
-			if (! DyTransactions::update($unique_tx_id, 'success', [], DAY_IN_SECONDS)) {
+			if (! dy_transactions::update($unique_tx_id, 'success', [], DAY_IN_SECONDS)) {
 				return false;
 			}
 		}
 
-		$stored_transaction = DyTransactions::$transaction_obj ?? $transaction;
+		$stored_transaction = dy_transactions::$transaction_obj ?? $transaction;
 		$the_id = (int) ($stored_transaction->dy_id ?? get_dy_id());
 
 		if(request_has('add_ons'))
@@ -198,7 +198,7 @@ class Dynamicpackages_Actions{
 		$this->send_email();
 
 		if ($should_store_success) {
-			if (! DyTransactions::update($unique_tx_id, 'success', $transaction_payload, DAY_IN_SECONDS)) {
+			if (! dy_transactions::update($unique_tx_id, 'success', $transaction_payload, DAY_IN_SECONDS)) {
 				return false;
 			}
 		}

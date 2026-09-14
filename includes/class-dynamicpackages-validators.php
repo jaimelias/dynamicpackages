@@ -819,7 +819,7 @@ class dy_validators
 			return false;
 		}
 
-		return DyTransactions::validate(
+		return dy_transactions::validate(
 			$unique_tx_id,
 			[$unique_tx_id, $email, $dy_request, $dy_id]
 		);
