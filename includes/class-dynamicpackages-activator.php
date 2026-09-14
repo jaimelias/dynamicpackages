@@ -35,7 +35,7 @@ class dynamicpackages_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		dy_core_schedule_rewrite_flush();
 	}
 
 }
