@@ -140,11 +140,16 @@ const initSeasonGrids = () => {
 	let seasonConfigData = getDataFromTextarea({el: '#seasons_chart', hotDataFilter});
 	let occupancyChartData = getDataFromTextarea({el: occupancyDOM, hotDataFilter});
 
-	let {seasons_chart} = seasonConfigData;
+	let seasons_chart = seasonConfigData.seasons_chart;
 
-	if(seasons_chart.hasOwnProperty('seasons_chart'))
+	if(!Array.isArray(seasons_chart) && seasons_chart && typeof seasons_chart === 'object')
 	{
 		seasons_chart = seasons_chart.seasons_chart;
+	}
+
+	if(!Array.isArray(seasons_chart))
+	{
+		seasons_chart = [];
 	}
 
 	let newRows = [];
@@ -344,7 +349,7 @@ const handleMinMaxPax = () => {
 		});
 	});
 
-	jQuery('#package_min_persons').change(function(){
+	jQuery('#package_min_persons').change(() => {
 		handleMinMaxPax();
 	});
 
@@ -393,7 +398,7 @@ const handlePackagePayment  = () => {
 	{
 		jQuery(depositAmount).prop('disabled', false)
 
-		if(Number(depositAmount) === 0)
+		if(Number(depositAmount.val()) === 0)
 		{
 			jQuery(depositAmount).val('25')
 		}

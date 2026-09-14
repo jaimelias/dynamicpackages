@@ -64,20 +64,43 @@ const reValidateDate = async () => {
 		endpoint.searchParams.set('dy_nonce', dy_nonce);
 		endpoint.searchParams.set('stamp', Date.now());
 
-        const url = new URL(window.location.href);
-        let bookingDateStr = url.searchParams.get('start_date') + ' 00:00:00';
-        let bookingDate;
+		const url = new URL(window.location.href);
+		const startDate = url.searchParams.get('start_date');
 
-		let endDateStr = (url.searchParams.has('end_date')) ? url.searchParams.get('end_date') + ' 00:00:00' : ''
+		if(!startDate)
+		{
+			return false;
+		}
+
+		const bookingDateStr = `${startDate} 00:00:00`;
+
+		if(!localRegex.test(bookingDateStr))
+		{
+			return false;
+		}
+
+		const bookingDate = new Date(bookingDateStr);
+
+		if(Number.isNaN(bookingDate.getTime()))
+		{
+			return false;
+		}
+
+		const endDateParam = url.searchParams.get('end_date');
+		const endDateStr = endDateParam ? `${endDateParam} 00:00:00` : '';
 		let endDate;
 
-        if (localRegex.test(bookingDateStr)) {
-            bookingDate = new Date(bookingDateStr);
-        }
 		if(localRegex.test(endDateStr))
 		{
-			endDate = new Date(endDateStr)
+			const parsedEndDate = new Date(endDateStr);
+
+			if(!Number.isNaN(parsedEndDate.getTime()))
+			{
+				endDate = parsedEndDate;
+			}
 		}
+
+		const hasValidEndDate = Boolean(endDate);
 
         const response = await fetch(endpoint);
         if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -100,13 +123,13 @@ const reValidateDate = async () => {
                 .filter(d => Array.isArray(d) && d.length === 3)
                 .map(([year, month, day]) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')} 00:00:00`);
 
-            if (formattedDisabledDates.includes(bookingDateStr) || (localRegex.test(endDateStr) && formattedDisabledDates.includes(endDateStr))) {
+            if (formattedDisabledDates.includes(bookingDateStr) || (hasValidEndDate && formattedDisabledDates.includes(endDateStr))) {
                 disableBookingForm(thisForm);
             }
         }
 
 		const bookingDayOfTheWeek = getDayOfTheWeek(bookingDate)
-		const endDayOfTheWeek = (localRegex.test(endDateStr)) ?  getDayOfTheWeek(endDate) : undefined
+		const endDayOfTheWeek = hasValidEndDate ? getDayOfTheWeek(endDate) : undefined
 		const disableDaysOfTheWeek = disable.filter(d => typeof d === 'number' && !isNaN(d))
 		const forcedEnabledDates = disable
 			.filter(d => Array.isArray(d) && d.length === 4 && d[3] === 'inverted')
@@ -521,9 +544,9 @@ const copyPaymentLink = () => {
         currentUrl.searchParams.set('enable_payment', 'true');
 
         // Copy the updated URL to the clipboard
-        navigator.clipboard.writeText(currentUrl.href).then(function () {
+        navigator.clipboard.writeText(currentUrl.href).then(() => {
             console.log('Payment link copied to clipboard: ' + currentUrl.href);
-        }).catch(function (err) {
+        }).catch(err => {
             console.error('Could not copy text: ', err);
         });
 
