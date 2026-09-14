@@ -30,18 +30,49 @@ class Dynamicpackages_Confirmation_Page {
         }
 
 
-		$dy_request = secure_post('dy_request', '', 'sanitize_key');
-		$all_dy_request_types = dy_utilities::all_dy_request_types();
+		$unique_tx_id = secure_post('unique_tx_id');
 
-		if(!in_array($dy_request, $all_dy_request_types, true)) {
+		if (! is_string($unique_tx_id) || $unique_tx_id === '') {
 			return;
 		}
 
-        $dy_id = secure_post('dy_id', null, 'intval');
+		$transaction = DyTransactions::get(
+			$unique_tx_id
+		);
 
-        if (!is_int($dy_id) || $dy_id <= 0) {
-            return;
-        }
+		if (
+			$transaction === null
+			|| ! DyTransactions::validate(
+				$unique_tx_id,
+				[
+					$unique_tx_id,
+					(string) secure_post('email', '', 'sanitize_email'),
+					(string) secure_post('dy_request', '', 'sanitize_key'),
+					(int) secure_post('dy_id', 0, 'absint'),
+				]
+			)
+		) {
+			return;
+		}
+
+		$dy_request = sanitize_key((string) ($transaction->dy_request ?? ''));
+		$dy_id = absint($transaction->dy_id ?? 0);
+		$all_dy_request_types = dy_utilities::all_dy_request_types();
+
+		if (! in_array($dy_request, $all_dy_request_types, true)) {
+			return;
+		}
+
+		if ($dy_id <= 0) {
+			return;
+		}
+
+		$this->set_request_value('dy_request', $dy_request);
+		$this->set_request_value('dy_id', $dy_id);
+
+		if (($transaction->status ?? '') === 'success') {
+			$this->hydrate_successful_transaction($transaction);
+		}
 
         //do not use "global $post", use $GLOBALS['post'] for the guard and a separate local variable. 
         $current_post = $GLOBALS['post'] ?? null;
@@ -79,8 +110,56 @@ class Dynamicpackages_Confirmation_Page {
             return;
         }
 
-        $GLOBALS['post'] = $requested_post;
-    }
+		$GLOBALS['post'] = $requested_post;
+	}
+
+	private function hydrate_successful_transaction(object $transaction): void
+	{
+		$sections = [
+			'booking_details' => [
+				'pax_regular',
+				'pax_discount',
+				'pax_free',
+				'transport_type',
+				'route',
+				'start_date',
+				'start_hour',
+				'end_date',
+				'end_hour',
+				'additional_time',
+				'coupon_code',
+				'force_availability',
+			],
+			'contact_details' => [
+				'first_name',
+				'lastname',
+				'phone',
+				'country_calling_code',
+				'email',
+				'repeat_email',
+				'inquiry',
+			],
+		];
+
+		foreach ($sections as $section => $fields) {
+			$values = $transaction->{$section} ?? null;
+			$values = is_object($values) ? get_object_vars($values) : (is_array($values) ? $values : []);
+
+			foreach ($fields as $field) {
+				if (! array_key_exists($field, $values) || ! is_scalar($values[$field])) {
+					continue;
+				}
+
+				$this->set_request_value($field, $values[$field]);
+			}
+		}
+	}
+
+	private function set_request_value(string $key, string|int|float|bool $value): void
+	{
+		$_POST[$key] = $value;
+		$_REQUEST[$key] = $value;
+	}
 
     public function enqueue_scripts()
     {

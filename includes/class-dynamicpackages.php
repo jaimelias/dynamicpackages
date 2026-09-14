@@ -35,6 +35,7 @@ class dynamicpackages {
 
 		//dynamic core scripts
 		require_once $dir . 'dy-core/loader.php';
+		require_once $dir . 'includes/class-dynamicpackages-transactions.php';
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';

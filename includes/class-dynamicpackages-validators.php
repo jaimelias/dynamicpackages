@@ -819,22 +819,10 @@ class dy_validators
 			return false;
 		}
 
-		$secret_transient_key = 'secret_tx_id_' . $unique_tx_id;
-		$transient_body = get_transient($secret_transient_key);
-
-
-		if (!is_array($transient_body)) return false;
-
-		$secret_tx_id = $transient_body['secret_tx_id'] ?? null;
-
-		if (!is_string($secret_tx_id)) return false;
-
-		$expected_secret_tx_id = hash_hmac('sha256', ($unique_tx_id . $email .  $dy_request .  $dy_id), wp_salt('auth'));
-
-		$is_valid = hash_equals($expected_secret_tx_id, $secret_tx_id);
-
-
-		return $is_valid;
+		return DyTransactions::validate(
+			$unique_tx_id,
+			[$unique_tx_id, $email, $dy_request, $dy_id]
+		);
 	}
 
 	public static function validate_contact_details()

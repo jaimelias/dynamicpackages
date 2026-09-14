@@ -75,61 +75,6 @@ class paguelo_facil_on{
         return $request_types;
     }
 
-	public function is_valid_cached_success($cached)
-	{
-		return (
-			is_array($cached)
-			&& isset($cached['sign'], $cached['status'])
-			&& $cached['status'] === 2
-			&& is_string($cached['sign'])
-			&& hash_equals(
-				$cached['sign'],
-				$this->checkout_request_sign()
-			)
-		);
-	}
-
-	public function checkout_request_sign() {
-
-		$cache_key = $this->id . '_checkout_request_sign_' . secure_post('unique_tx_id');
-
-		if (array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		$arr = [
-			(string) secure_post('unique_tx_id'),
-			(string) secure_post('dy_id'),
-			strtolower((string) secure_post('email', '', 'sanitize_email')),
-			(string) secure_post('start_date'),
-			(string) secure_post('start_hour'),
-			(string) secure_post('additional_time'),
-			(string) secure_post('pax_regular'),
-			(string) secure_post('pax_discount'),
-			(string) secure_post('pax_free'),
-			(string) secure_post('pax_num'),
-			(string) secure_post('transport_type'),
-			(string) secure_post('route'),
-			(string) secure_post('end_date'),
-			(string) secure_post('end_hour'),
-			(string) secure_post('coupon_code'),
-			(string) secure_post('add_ons'),
-			(string) secure_post('duration'),
-			(string) currency_name(),
-			(string) secure_post('cf-turnstile-response')
-		];
-
-		$text = implode('|', $arr);
-		
-		$hash = hash_hmac(
-			'sha256',
-			$text,
-			wp_salt('auth')
-		);
-
-		return self::$cache[$cache_key] = $hash;
-	}
-
 	public  function validate_card()
 	{
 		$invalids = [];
@@ -246,17 +191,42 @@ class paguelo_facil_on{
 
 		$unique_tx_id = secure_post('unique_tx_id');
 
-		if(!dy_validators::validate_unique_tx_id($unique_tx_id))
-		{
+		if(
+			! is_string($unique_tx_id)
+			|| ! DyTransactions::validate(
+				$unique_tx_id,
+				[
+					$unique_tx_id,
+					(string) secure_post('email', '', 'sanitize_email'),
+					(string) secure_post('dy_request', '', 'sanitize_key'),
+					(int) secure_post('dy_id', 0, 'absint'),
+				]
+			)
+		) {
 			return true;
 		}
 
-		$cached_success = get_transient('success_' . $unique_tx_id);
+		$transaction = DyTransactions::get($unique_tx_id);
+		$status = (string) ($transaction->status ?? '');
 
-		if($cached_success !== false)
-		{
-			$this->skip_generic_submission();
-			$this->restore_cached_success($cached_success);
+		if (in_array($status, ['processing', 'success', 'declined', 'error'], true)) {
+			self::$txt_status = match ($status) {
+				'success' => 2,
+				'declined' => 1,
+				default => 0,
+			};
+			$this->restored_from_cache = true;
+
+			$has_payload = $status === 'success' && $this->has_transaction_payload($transaction);
+			if (in_array($status, ['declined', 'error'], true)) {
+				add_filter('dy_fail_checkout_gateway_name', function(){
+					return $this->id;
+				});
+			}
+
+			if ($status !== 'success' || $has_payload) {
+				$this->skip_generic_submission();
+			}
 
 			return true;
 		}
@@ -276,27 +246,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transient_is_processing_value = get_transient('is_processing_' . $unique_tx_id); //returns false if not found
-
-		if($transient_is_processing_value === 'is_processing')
-		{
-			$this->skip_generic_submission();
-
-			$cached_success = get_transient('success_' . $unique_tx_id);
-
-			if($cached_success === false)
-			{
-				self::$txt_status = 0;
-			}
-			else
-			{
-				$this->restore_cached_success($cached_success);
-			}
-
-			return true;
-		}
-
-		set_transient('is_processing_' . $unique_tx_id, 'is_processing', 300);
+		DyTransactions::update($unique_tx_id, 'processing', [], 300);
 
 
 		self::$txt_status = $this->resolve_checkout_status();
@@ -306,20 +256,30 @@ class paguelo_facil_on{
 			write_log($this->error_codes);
 		}
 
-		if(self::$txt_status === 2 && $this->debug_mode === -1)
-		{
+		$status = match (self::$txt_status) {
+			2 => 'success',
+			1 => 'declined',
+			default => 'error',
+		};
 
-			$success_args = [
-				'sign' => $this->checkout_request_sign(),
-				'status' => 2
-			];
-
-			set_transient('success_' . $unique_tx_id, $success_args, DAY_IN_SECONDS);
-		}
-
-		delete_transient('is_processing_' . $unique_tx_id);
+		DyTransactions::update(
+			$unique_tx_id,
+			$status,
+			[],
+			$status === 'success' ? DAY_IN_SECONDS : HOUR_IN_SECONDS
+		);
 
 		return true;
+	}
+
+	private function has_transaction_payload(object $transaction): bool
+	{
+		$contact_details = $transaction->contact_details ?? null;
+		$contact_details = is_object($contact_details)
+			? get_object_vars($contact_details)
+			: (is_array($contact_details) ? $contact_details : []);
+
+		return ! empty($contact_details['email']);
 	}
 
 	public function purchase_event_gateways($gateways = [])
@@ -344,19 +304,6 @@ class paguelo_facil_on{
 			'__return_true',
 			PHP_INT_MAX
 		);
-	}
-
-	private function restore_cached_success($cached)
-	{
-		if(!$this->is_valid_cached_success($cached))
-		{
-			write_log('Gateway: cached transaction signature mismatch.');
-			return;
-		}
-
-		self::$txt_status = 2;
-		$this->restored_from_cache = true;
-
 	}
 
 	private function resolve_checkout_status()

@@ -167,17 +167,25 @@ class Dynamicpackages_WP_JSON
 
 
 		$unique_tx_id = wp_generate_uuid4();
-		$secret_tx_id  = hash_hmac('sha256', ($unique_tx_id . $email . $dy_request . $dy_id), wp_salt('auth'));
-		$secret_transient_key = 'secret_tx_id_' . $unique_tx_id;
+		$transaction_created = DyTransactions::create(
+			$unique_tx_id,
+			[
+				'dy_request' => $dy_request,
+				'email'      => $email,
+				'dy_id'      => $dy_id,
+			]
+		);
 
-		$transient_body = [
-			'unique_tx_id' => $unique_tx_id,
-			'secret_tx_id' => $secret_tx_id,
-			'dy_request' => $dy_request,
-			'status' => 'started'
-		];
-
-		set_transient($secret_transient_key, $transient_body, DAY_IN_SECONDS);
+		if (! $transaction_created) {
+			return $this->rest_response(
+				[
+					'code'    => 'transaction_not_created',
+					'message' => 'Unable to start transaction.',
+					'data'    => ['status' => 503],
+				],
+				503
+			);
+		}
 
 		$output = [
 			'unique_tx_id' => $unique_tx_id

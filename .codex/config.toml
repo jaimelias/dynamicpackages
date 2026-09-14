@@ -33,3 +33,4 @@ glob_scan_max_depth = 12
 "**/build/**" = "deny"
 "**/cache/**" = "deny"
 "**/*.log" = "deny"
+".codex/map.xml" = "deny"
