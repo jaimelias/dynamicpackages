@@ -229,11 +229,3 @@ ul.tax_list > li.cat-item  > ul.children
 	height: 1em;
 }
 
-.minimal-site-alert {
-	margin-bottom: 20px;
-	text-align: center;
-	font-weight: 900;
-}
-.dy-site-alert-content {
-	padding: 20px 0;
-}
