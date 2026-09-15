@@ -54,12 +54,12 @@ class Dynamicpackages_WP_JSON
 		
 		register_rest_route(
 			'dy-core',
-			'/transactions/(?P<dy_id>\d+)',
+			'/tx/(?P<dy_id>\d+)',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [
 					$this,
-					'transactions_endpoint'
+					'tx_endpoint'
 				],
 				'permission_callback' => '__return_true',
 				'args'=> [
@@ -111,7 +111,7 @@ class Dynamicpackages_WP_JSON
 	}
 	
 
-	public function transactions_endpoint($request)
+	public function tx_endpoint($request)
 	{
 
 		$turnstile = $request['cf-turnstile-response'];
