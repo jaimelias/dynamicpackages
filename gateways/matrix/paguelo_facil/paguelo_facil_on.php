@@ -17,7 +17,7 @@ class paguelo_facil_on{
 		add_action('init', [$this, 'init']);
 		add_action('admin_init', [$this, 'settings_init'], 1);
 		add_action('admin_menu', [$this, 'add_settings_page'], 100);
-		add_action('init', [$this, 'checkout'], 50);
+		add_action('dy_process_gateway_submission_' . $this->id, [$this, 'checkout']);
 		add_filter('dy_request_the_content', [$this, 'the_content']);
 		add_filter('dy_request_the_title', [$this, 'the_title']);
 		add_filter('dy_list_gateways', [$this, 'add_gateway'], 1);
@@ -30,7 +30,6 @@ class paguelo_facil_on{
 	public function init()
 	{
 		$this->order_status = 'paid';
-		$this->restored_from_cache = false;
 		
 		$this->short_name = __('Paguelo Facil', 'dynamicpackages');
 		$this->name = __('Paguelo Facil On-site', 'dynamicpackages');
@@ -159,127 +158,19 @@ class paguelo_facil_on{
 		return self::$cache[$cache_key] = $output;
 	}
 
-	public  function validate_checkout($gateway_name)
+	/** Called only by the submission controller after validation and persistent claim. */
+	public function checkout(object $tx): void
 	{
-		$output = false;
-		$cache_key = 'dy_validate_checkout_' . sanitize_key($gateway_name);
-
-		if (array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		if(dy_validators::validate_request())
-		{
-			if($gateway_name === secure_post('dy_request') && $this->validate_card())
-			{
-				$output = true;
-			}
-		}
-
-		self::$cache[$cache_key] = $output;
-
-		return $output;
-	}
-	
-	public function checkout()
-	{
-
-		if(secure_post('dy_request', '', 'sanitize_key') !== $this->id)
-		{
-			return true;
-		}
-
-		$tx_id = secure_post('tx_id');
-
-		if(
-			! is_string($tx_id)
-			|| ! dy_tx::validate(
-				$tx_id,
-				[
-					$tx_id,
-					(string) secure_post('email', '', 'sanitize_email'),
-					(string) secure_post('dy_request', '', 'sanitize_key'),
-					(int) secure_post('dy_id', 0, 'absint'),
-				]
-			)
-		) {
-			return true;
-		}
-
-		$tx = dy_tx::get_stored_tx($tx_id);
-		$status = (string) ($tx->status ?? '');
-
-		if (in_array($status, ['processing', 'success', 'declined', 'error'], true)) {
-			self::$txt_status = match ($status) {
-				'success' => 2,
-				'declined' => 1,
-				default => 0,
-			};
-			$this->restored_from_cache = true;
-
-			$has_payload = $status === 'success' && $this->has_transaction_payload($tx);
-			if (in_array($status, ['declined', 'error'], true)) {
-				add_filter('dy_fail_checkout_gateway_name', function(){
-					return $this->id;
-				});
-			}
-
-			if ($status !== 'success' || $has_payload) {
-				$this->skip_generic_submission();
-			}
-
-			return true;
-		}
-
-		$amount = (float) dy_utilities::payment_amount();
-
-		if(!$this->is_payment_amount_allowed($amount))
-		{
-			dy_errors::add(__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages'));
-
-			$this->skip_generic_submission();
-
-			return true;
-		}
-
-		if($this->validate_checkout($this->id) === false) {
-			return true;
-		}
-
-		dy_tx::update($tx_id, 'processing', [], 300);
-
-
 		self::$txt_status = $this->resolve_checkout_status();
-
-		if(isset($this->error_codes))
-		{
-			write_log($this->error_codes);
-		}
-
-		$status = match (self::$txt_status) {
+		$tx->status = match (self::$txt_status) {
 			2 => 'success',
 			1 => 'declined',
 			default => 'error',
 		};
-
-		dy_tx::update(
-			$tx_id,
-			$status,
-			[],
-			$status === 'success' ? DAY_IN_SECONDS : HOUR_IN_SECONDS
-		);
-
-		return true;
-	}
-
-	private function has_transaction_payload(object $tx): bool
-	{
-		$contact_details = $tx->contact_details ?? null;
-		$contact_details = is_object($contact_details)
-			? get_object_vars($contact_details)
-			: (is_array($contact_details) ? $contact_details : []);
-
-		return ! empty($contact_details['email']);
+		if (isset($this->error_codes)) {
+			write_log($this->error_codes);
+		}
+		$this->configure_result();
 	}
 
 	public function purchase_event_gateways($gateways = [])
@@ -287,7 +178,6 @@ class paguelo_facil_on{
 		if(
 			self::$txt_status === 2
 			&& $this->debug_mode === -1
-			&& !$this->restored_from_cache
 		)
 		{
 			$gateways[] = $this->id;
@@ -296,15 +186,6 @@ class paguelo_facil_on{
 		return $gateways;
 	}
 
-
-	private function skip_generic_submission()
-	{
-		add_filter(
-			'dy_skip_generic_form_submission',
-			'__return_true',
-			PHP_INT_MAX
-		);
-	}
 
 	private function resolve_checkout_status()
 	{
@@ -359,15 +240,20 @@ class paguelo_facil_on{
 		return 0;
 	}
 
-	public function prepare_submission($submission_context)
+	public function prepare_submission(object $submission_context): void
 	{
-		if(self::$txt_status === null)
-		{
+		if (!Dynamicpackages_Actions::is_submission() || secure_post('dy_request') !== $this->id) {
 			return;
 		}
+		if (!$this->is_payment_amount_allowed((float) dy_utilities::payment_amount())) {
+			dy_errors::add(__('Payment amount is outside the limits allowed by the selected gateway.', 'dynamicpackages'));
+			return;
+		}
+		$submission_context->accepted = $this->validate_card();
+	}
 
-		$submission_context->accepted = true;
-
+	private function configure_result(): void
+	{
 		add_filter('dy_email_message', array($this, 'message'));
 		add_filter('dy_email_message', array($this, 'email_message_bottom'));
 		add_filter('dy_email_subject', array($this, 'subject'));
@@ -402,7 +288,7 @@ class paguelo_facil_on{
 	{		
 		if(self::$txt_status !== null)
 		{
-			$first_name = secure_post('first_name');
+			$first_name = dy_tx::request_value('first_name');
 			$title = secure_post('title');
 			$payment_amount = dy_utilities::payment_amount();
 			
@@ -538,31 +424,17 @@ class paguelo_facil_on{
 
 		return $output;
 	}
-	public function is_request_submitted()
+	public function is_request_submitted(): bool
 	{
-		$output = false;
-		$cache_key = $this->id . '_is_valid_request';
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		if(is_confirmation_page() && ($this->restored_from_cache || !dy_errors::has_errors()))
-		{
-			if( secure_post('dy_request') === $this->id && ($this->restored_from_cache || self::$txt_status !== null))
-			{
-				$output = true;
-			}
-		}
-
-
-		return self::$cache[$cache_key] = $output;
+		return Dynamicpackages_Actions::is_submission()
+			&& secure_post('dy_request') === $this->id
+			&& self::$txt_status !== null;
 	}
 	
 	public function the_content(mixed $output = '') : string {
 		$output = is_string($output) ? $output : '';
 
-		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
+		if($this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
 			{
@@ -573,7 +445,7 @@ class paguelo_facil_on{
 				$output .= '<div class="bottom-20">' . apply_filters('dy_description', '') . '</div>';
 				$output .= '<div class="bottom-20">' . $this->message(null) . '</div>';
 				
-				$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), secure_post('email', '', 'sanitize_email'))).'</p>';
+				$output .= '<p class="minimal_success strong"><span class="dashicons dashicons-email"></span> '.esc_html(sprintf(__('We have sent you an email to %s with more details and the confirmation of this booking.', 'dynamicpackages'), dy_tx::request_value('email'))).'</p>';
 				
 				$add_to_calendar = apply_filters('dy_add_to_calendar', null);
 				
@@ -605,7 +477,7 @@ class paguelo_facil_on{
 		{
 			foreach($this->error_codes as $k => $v)
 			{
-				$output .= '<p class="minimal_alert strong">'.$k .': '.$v.'</p>';
+				$output .= '<p class="minimal_alert strong">' . esc_html($k . ': ' . $v) . '</p>';
 			}			
 		}
 		
@@ -616,7 +488,7 @@ class paguelo_facil_on{
 	{
 		$output = is_string($output) ? $output : '';
 
-		if(self::$txt_status !== null && in_the_loop() && $this->is_request_submitted())
+		if($this->is_request_submitted())
 		{
 			if(self::$txt_status === 2)
 			{
@@ -666,7 +538,7 @@ class paguelo_facil_on{
 		{
 			$payment = (int) package_field('package_payment');
 			
-			if(is_booking_page() || is_confirmation_page())
+			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 			{
 				$total = (float) dy_utilities::payment_amount();
 			}
@@ -831,7 +703,7 @@ class paguelo_facil_on{
 					['estimate_request', $failed_gateway],
 					true
 				)
-				&& is_confirmation_page()
+				&& Dynamicpackages_Actions::is_submission()
 				&& dy_validators::validate_request()
 			)
 			{
@@ -863,7 +735,7 @@ class paguelo_facil_on{
 		{
 			$outstanding = wrap_money_full(dy_utilities::outstanding_amount());
 			$total =  wrap_money_full(dy_utilities::payment_amount());
-			$date = secure_post('start_date');
+			$date = dy_tx::request_value('start_date');
 			
 			$output .= '<br/><strong style="color: #666666;">'.__('Paid', 'dynamicpackages').'<br/><span class="sm-hide">('.$date.')</span></strong><br/> -'.$total;
 			$output .= '<br/><strong style="color: #666666;">'.__('Amount Due', 'dynamicpackages').'</strong><br/> '.$outstanding;
@@ -880,8 +752,8 @@ class paguelo_facil_on{
 		// Datos principales
 		$CCNum  = secure_post('CCNum');
 		$CVV2   = secure_post('CVV2');
-		$email  = secure_post('email');
-		$phone  = secure_post('country_calling_code') . secure_post('phone');
+		$email  = dy_tx::request_value('email');
+		$phone  = dy_tx::request_value('country_calling_code') . dy_tx::request_value('phone');
 
 		$ExpYear = secure_post('ExpYear', 0, 'absint');
 		$ExpYear = sprintf('%02d', $ExpYear % 100);
@@ -902,8 +774,8 @@ class paguelo_facil_on{
 			'ExpMonth'   => $ExpMonth,
 			'ExpYear'    => $ExpYear,
 			'CVV2'       => $CVV2,
-			'Name'       => secure_post('first_name'),
-			'LastName'   => secure_post('lastname'),
+			'Name'       => dy_tx::request_value('first_name'),
+			'LastName'   => dy_tx::request_value('lastname'),
 			'Email'      => $email,
 			'Address'    => secure_post('address'),
 			'Tel'        => $phone,
@@ -948,7 +820,7 @@ class paguelo_facil_on{
 			&& post_has('email')
 			&& secure_post('CCNum') === $this->dummy_cc
 			&& $this->user_can_debug()
-			&& secure_post('email') === $this->debug_email
+			&& dy_tx::request_value('email') === $this->debug_email
 		)
 		{
 			if(secure_post('CVV2') === '222')

@@ -130,7 +130,7 @@ class Dynamicpackages_Public {
 			return (string) $parsedown->text($term->description);
 		}
 
-		if (is_singular('packages') && !is_booking_page()) {
+		if (is_singular('packages') && !is_booking_page() && !is_confirmation_page()) {
 			$partial_content = $content;
 
 			ob_start();
@@ -1042,7 +1042,7 @@ class Dynamicpackages_Public {
 		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
 			return;
 		}
-		if (secure_server('REQUEST_METHOD') !== 'GET' ) {
+		if (secure_server('REQUEST_METHOD') !== 'GET' || is_confirmation_page()) {
 			return;
 		}
 

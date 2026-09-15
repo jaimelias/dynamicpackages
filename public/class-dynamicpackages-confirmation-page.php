@@ -1,176 +1,162 @@
 <?php
 
-if ( !defined( 'WPINC' ) ) exit;
+if (!defined('WPINC')) exit;
 
-#[AllowDynamicProperties]
-class Dynamicpackages_Confirmation_Page {
+/** Package presentation for the endpoint registered by Dy_Confirmation_Page. */
+class Dynamicpackages_Confirmation_Page
+{
+    private string $version;
+    private ?object $tx = null;
 
-    public function __construct($version)
+    public function __construct(int|string $version)
     {
-        $this->version = $version;
-        $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
-
-        //fix bug
-        add_action('init', array($this, 'set_post_on_checkout_page'));
-
-        //scripts
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        $this->version = (string) $version;
+        add_action('init', [$this, 'localized_routes'], 20);
+        add_action('wp_loaded', [$this, 'refresh_routes']);
+        add_action('pre_get_posts', [$this, 'prepare_query'], 101);
+        add_filter('posts_pre_query', [$this, 'transaction_post'], 10, 2);
+        add_action('wp', [$this, 'prepare_confirmation'], 20);
+        add_filter('redirect_canonical', [$this, 'redirect_canonical']);
+        add_filter('the_content', [$this, 'the_content'], 101);
+        add_filter('pre_get_document_title', [$this, 'wp_title'], 101);
+        add_filter('the_title', [$this, 'the_title'], 101);
+        add_filter('get_the_excerpt', [$this, 'get_the_excerpt'], 101);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
     }
 
-    public function set_post_on_checkout_page(): void
+    public function localized_routes(): void
     {
-        if (
-            secure_server('REQUEST_METHOD') !== 'POST'
-            || is_admin()
-            || wp_doing_ajax()
-            || wp_doing_cron()
-            || (defined('REST_REQUEST') && REST_REQUEST)
-        ) {
+        if (!function_exists('pll_languages_list')) return;
+        $languages = array_map(static fn(string $language): string => preg_quote($language, '#'), get_languages());
+        if ($languages !== []) {
+            add_rewrite_rule('^(' . implode('|', $languages) . ')/dy-tx/([^/]+)/?$',
+                'index.php?lang=$matches[1]&dy-tx=$matches[2]', 'top');
+        }
+    }
+
+    public function refresh_routes(): void
+    {
+        if (dy_get_option('dy_checkout_rewrite_version') === '1') return;
+        flush_rewrite_rules(false);
+        update_option('dy_checkout_rewrite_version', '1', false);
+    }
+
+    public static function is_confirmation(): bool
+    {
+        return secure_server('REQUEST_METHOD') === 'GET'
+            && !is_admin() && !wp_doing_ajax() && !wp_doing_cron()
+            && !(defined('REST_REQUEST') && REST_REQUEST)
+            && is_string(get_query_var('dy-tx')) && get_query_var('dy-tx') !== '';
+    }
+
+    public function prepare_query(WP_Query $query): void
+    {
+        if (!$query->is_main_query() || !self::is_confirmation()) return;
+
+        // The shared endpoint selects page.php; supply its actual transaction post to the loop.
+        $query->is_home = false;
+        $query->is_archive = false;
+        $query->is_404 = false;
+        $query->is_single = false;
+        $query->is_page = true;
+        $query->is_singular = true;
+        $query->set('no_found_rows', true);
+    }
+
+    public function transaction_post(?array $posts, WP_Query $query): ?array
+    {
+        if (!$query->is_main_query() || !self::is_confirmation()) return $posts;
+
+        $tx_id = (string) get_query_var('dy-tx');
+        $tx = wp_is_uuid($tx_id, 4) ? dy_tx::get_stored_tx($tx_id) : null;
+        $post = $tx !== null ? get_post((int) $tx->dy_id) : null;
+        if ($tx !== null && $post instanceof WP_Post && $post->post_status === 'publish'
+            && dy_tx::validate($tx_id, get_object_vars($tx))
+            && in_array($tx->dy_request, dy_utilities::all_dy_request_types(), true)
+            && ($post->post_type === 'packages' || has_shortcode($post->post_content, 'package_contact'))) {
+            $this->tx = $tx;
+        } else {
+            // A loop is needed to display the shared endpoint's invalid/expired-ID errors.
+            $post = new WP_Post((object) [
+                'ID' => 0, 'post_type' => 'page', 'post_status' => 'publish',
+                'post_title' => '', 'post_content' => '', 'post_excerpt' => '',
+                'post_parent' => 0, 'post_name' => '', 'post_author' => 0,
+            ]);
+        }
+        $query->found_posts = 1;
+        $query->max_num_pages = 1;
+        $query->queried_object = $post;
+        $query->queried_object_id = $post->ID;
+        return [$post];
+    }
+
+    public function prepare_confirmation(): void
+    {
+        if (!self::is_confirmation()) return;
+        if ($this->tx === null) {
+            dy_errors::add(__('Invalid or expired transaction ID.', 'dynamicpackages'));
             return;
         }
 
-
-		$tx_id = secure_post('tx_id');
-
-		if ($tx_id === '') {
-			return;
-		}
-
-		$tx = dy_tx::get_stored_tx($tx_id);
-
-		if (
-			$tx === null
-			|| ! dy_tx::validate(
-				$tx_id,
-				[
-					$tx_id,
-					(string) secure_post('email', '', 'sanitize_email'),
-					(string) secure_post('dy_request', '', 'sanitize_key'),
-					(int) secure_post('dy_id', 0, 'absint'),
-				]
-			)
-		) {
-			return;
-		}
-
-		$dy_request = sanitize_key((string) ($tx->dy_request ?? ''));
-		$dy_id = absint($tx->dy_id ?? 0);
-		$all_dy_request_types = dy_utilities::all_dy_request_types();
-
-		if (! in_array($dy_request, $all_dy_request_types, true)) {
-			return;
-		}
-
-		if ($dy_id <= 0) {
-			return;
-		}
-
-		$this->set_request_value('dy_request', $dy_request);
-		$this->set_request_value('dy_id', $dy_id);
-
-		if (($tx->status ?? '') === 'success') {
-			$this->hydrate_successful_transaction($tx);
-		}
-
-        //do not use "global $post", use $GLOBALS['post'] for the guard and a separate local variable. 
-        $current_post = $GLOBALS['post'] ?? null;
-
-        if ($current_post instanceof WP_Post) {
-            if ((int) $current_post->ID !== $dy_id) {
-                write_log(
-                    sprintf(
-                        'Existing post %d does not match submitted post %d.',
-                        (int) $current_post->ID,
-                        $dy_id
-                    ),
-                    false,
-                    false,
-                    'WARNING'
-                );
-
-                wp_die(
-                    'Invalid package request.',
-                    '',
-                    ['response' => 400]
-                );
+        // Carry queued conversions across the POST/redirect/GET boundary once per browser.
+        $cookie = 'dy_tx_seen_' . $this->tx->tx_id;
+        $events = $this->tx->confirmation['events'] ?? [];
+        if (!cookie_has($cookie) && $events !== []) {
+            foreach ($events as $event) {
+                $params = $event['params'];
+                dy_gtag_queue_server_event($event['name'], $this->tx->tx_id,
+                    $params['value'], $params['currency'], $params['items'] ?? []);
             }
-
-            return;
+            setcookie($cookie, '1', [
+                'expires' => time() + DAY_IN_SECONDS,
+                'path' => (string) (wp_parse_url(home_lang(), PHP_URL_PATH) ?: '/'),
+                'secure' => is_ssl(), 'httponly' => true, 'samesite' => 'Lax',
+            ]);
         }
+    }
 
-        $requested_post = get_post($dy_id);
-
-        if (
-            !($requested_post instanceof WP_Post)
-            || $requested_post->post_type !== 'packages'
-            || $requested_post->post_status !== 'publish'
-        ) {
-            return;
-        }
-
-		$GLOBALS['post'] = $requested_post;
-	}
-
-	private function hydrate_successful_transaction(object $tx): void
-	{
-		$sections = [
-			'booking_details' => [
-				'pax_regular',
-				'pax_discount',
-				'pax_free',
-				'transport_type',
-				'route',
-				'start_date',
-				'start_hour',
-				'end_date',
-				'end_hour',
-				'additional_time',
-				'coupon_code',
-				'force_availability',
-			],
-			'contact_details' => [
-				'first_name',
-				'lastname',
-				'phone',
-				'country_calling_code',
-				'email',
-				'repeat_email',
-				'inquiry',
-			],
-		];
-
-		foreach ($sections as $section => $fields) {
-			$values = $tx->{$section} ?? null;
-			$values = is_object($values) ? get_object_vars($values) : (is_array($values) ? $values : []);
-
-			foreach ($fields as $field) {
-				if (! array_key_exists($field, $values) || ! is_scalar($values[$field])) {
-					continue;
-				}
-
-				$this->set_request_value($field, $values[$field]);
-			}
-		}
-	}
-
-	private function set_request_value(string $key, string|int|float|bool $value): void
-	{
-		$_POST[$key] = $value;
-		$_REQUEST[$key] = $value;
-	}
-
-    public function enqueue_scripts()
+    public function redirect_canonical(string|false $url): string|false
     {
-        if(is_confirmation_page())
-        {
-			$strings = array(
-				'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages')
-			);
+        return self::is_confirmation() ? false : $url;
+    }
 
-            wp_enqueue_script('dynamicpackages-confirmation', $this->plugin_dir_url_file . 'js/dynamicpackages-confirmation-page.js', array( 'jquery'), $this->version, true );
-			wp_localize_script('dynamicpackages-confirmation', 'dyPackageConfirmationArgs', $strings);
+    public function the_content(mixed $content): string
+    {
+        if (self::is_confirmation() && in_the_loop() && is_main_query()) {
+            return (string) ($this->tx->confirmation['content'] ?? $content);
+        }
+        return is_string($content) ? $content : '';
+    }
+
+    public function wp_title(mixed $title): string
+    {
+        return self::is_confirmation()
+            ? (string) ($this->tx->confirmation['title'] ?? $title)
+            : (is_string($title) ? $title : '');
+    }
+
+    public function the_title(mixed $title): string
+    {
+        return in_the_loop() && is_main_query() ? $this->wp_title($title) : (string) $title;
+    }
+
+    public function get_the_excerpt(mixed $excerpt): string
+    {
+        return self::is_confirmation()
+            ? (string) ($this->tx->confirmation['excerpt'] ?? '')
+            : (is_string($excerpt) ? $excerpt : '');
+    }
+
+    public function enqueue_scripts(): void
+    {
+        if (!self::is_confirmation()) return;
+        wp_enqueue_script('dynamicpackages-confirmation', plugin_dir_url(__FILE__) . 'js/dynamicpackages-confirmation-page.js', ['jquery'], $this->version, true);
+        wp_localize_script('dynamicpackages-confirmation', 'dyPackageConfirmationArgs', [
+            'textCopiedToClipBoard' => __('Copied to Clipboard!', 'dynamicpackages'),
+        ]);
+        if (str_contains((string) ($this->tx->confirmation['content'] ?? ''), 'addeventatc')) {
+            wp_enqueue_script('dy_add_to_calendar', 'https://addevent.com/libs/atc/1.6.1/atc.min.js', [], null, true);
+            wp_add_inline_style('minimalLayout', '.addeventatc{visibility:hidden}.addevent_container{height:42px}');
         }
     }
 }
-
-?>

@@ -69,7 +69,9 @@ class Dynamicpackages_Gateways
 		if(!is_booking_page()) return $content;
 
 		$package_max_persons = absint(package_field('package_max_persons'));
-		$pax_sum = secure_get('pax_regular', 1, 'absint') + secure_get('pax_discount', 0, 'absint') + secure_get('pax_free', 0, 'absint');
+		$pax_sum = (get_has('pax_regular') ? dy_tx::request_value('pax_regular') : 1)
+			+ dy_tx::request_value('pax_discount')
+			+ dy_tx::request_value('pax_free');
 
 		if($pax_sum > $package_max_persons)
 		{
@@ -308,7 +310,7 @@ class Dynamicpackages_Gateways
 	
 	public function coupon_confirmation()
 	{
-		if (!is_booking_page() || empty(secure_get('coupon_code', null))) {
+		if (!is_booking_page() || empty(dy_tx::request_value('coupon_code'))) {
 			return;
 		}
 
@@ -343,7 +345,7 @@ class Dynamicpackages_Gateways
 		if(get_has('additional_time') && is_booking_page())
 		{
 			$min_duration = max(1, absint(dy_utilities::get_min_nights()));
-			$additional_time = secure_get('additional_time', $min_duration, 'absint');
+			$additional_time = dy_tx::request_value('additional_time');
 			$duration_unit = package_field('package_length_unit');
 			
 			if($additional_time < $min_duration)

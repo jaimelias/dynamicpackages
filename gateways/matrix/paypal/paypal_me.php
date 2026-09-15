@@ -86,7 +86,7 @@ class paypal_me {
             return self::$cache[$cache_key];
         }
         
-		return self::$cache[$cache_key] = sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
+		return self::$cache[$cache_key] = sprintf(__('%s, %s sent you a payment request for %s using %s - %s', 'dynamicpackages'), dy_tx::request_value('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), sanitize_text_field($this->name), secure_post('title'));
 	}
 	
 	public function label_notes()
@@ -97,7 +97,7 @@ class paypal_me {
 	public function filter_content(mixed $content = '') : string {
 		$content = is_string($content) ? $content : '';
 
-		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
+		if($this->is_request_submitted())
 		{
 			$content = $this->message('');		
 		}
@@ -108,7 +108,7 @@ class paypal_me {
 	{
 		$title = is_string($title) ? $title : '';
 
-		if(in_the_loop() && $this->is_request_submitted() && dy_validators::validate_request())
+		if($this->is_request_submitted())
 		{
 			$title = esc_html(__('Thank you for choosing Paypal', 'dynamicpackages'));
 		}
@@ -167,7 +167,7 @@ class paypal_me {
             return self::$cache[$cache_key];
         }
 		
-		if(is_confirmation_page() && !dy_errors::has_errors())
+		if(Dynamicpackages_Actions::is_submission() && !dy_errors::has_errors())
 		{
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -198,7 +198,7 @@ class paypal_me {
 			$show = intval($this->show);
 			$payment = package_field('package_payment');
 			
-			if(is_booking_page() || is_confirmation_page())
+			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 			{
 				$total = dy_utilities::payment_amount();
 			}
@@ -345,7 +345,7 @@ class paypal_me {
 				$add = true;
 			}
 			
-			if(is_confirmation_page() && dy_validators::validate_request())
+			if(Dynamicpackages_Actions::is_submission() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

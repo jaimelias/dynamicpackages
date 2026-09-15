@@ -99,7 +99,7 @@ class estimate_request{
 		
 		if($this->show())
 		{
-			if(is_singular('packages') && !is_confirmation_page())
+			if(is_singular('packages') && !Dynamicpackages_Actions::is_submission())
 			{
 				$add = true;
 			}

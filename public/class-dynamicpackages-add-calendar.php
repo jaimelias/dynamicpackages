@@ -51,7 +51,7 @@ class dy_Add_To_Calendar
 
 		
 		$hour = dy_utilities::start_hour();
-		$start_date = secure_request('start_date');
+		$start_date = dy_tx::request_value('start_date');
 
 		if(empty($hour) || empty($start_date)) return '';
 

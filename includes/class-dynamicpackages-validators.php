@@ -69,9 +69,9 @@ class dy_validators
 		$total        = (float) dy_utilities::total();
 		$min_persons  = (int) package_field('package_min_persons', $the_id);
 		$max_persons  = (int) package_field('package_max_persons', $the_id);
-		$pax_regular  = secure_request('pax_regular', 0, 'absint');
-		$pax_discount = secure_request('pax_discount', 0, 'absint');
-		$pax_free     = secure_request('pax_free', 0, 'absint');
+		$pax_regular  = dy_tx::request_value('pax_regular');
+		$pax_discount = dy_tx::request_value('pax_discount');
+		$pax_free     = dy_tx::request_value('pax_free');
 
 		// Enforce documented constraints on package config
 		if ($min_persons <= 0 || $max_persons <= 0 || $max_persons <= $min_persons) {
@@ -225,10 +225,10 @@ class dy_validators
 		* Un valor vacío permanece distinto de null y será validado como
 		* inválido más adelante.
 		*/
-		$start_date = secure_get('start_date', null);
-		$pax_regular = secure_get('pax_regular', null);
+		$start_date = dy_tx::request_value('start_date');
+		$pax_regular = dy_tx::request_value('pax_regular');
 
-		if($start_date === null && $pax_regular === null) {
+		if(!get_has('start_date') && !get_has('pax_regular')) {
 			return self::$cache[$cache_key] = false;
 		}
 
@@ -246,19 +246,19 @@ class dy_validators
 		if(
 			!self::validate_package_hour(
 				'start_hour',
-				(string) secure_get('start_hour')
+				(string) dy_tx::request_value('start_hour')
 			)
 		) {
 			$invalid_params[] = 'start_hour';
 		}
 
-		$has_return = (string) secure_get('end_date') !== '';
+		$has_return = (string) dy_tx::request_value('end_date') !== '';
 
 		if(
 			$has_return
 			&& !self::validate_package_hour(
 				'end_hour',
-				(string) secure_get('end_hour')
+				(string) dy_tx::request_value('end_hour')
 			)
 		) {
 			$invalid_params[] = 'end_hour';
@@ -291,15 +291,15 @@ class dy_validators
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_regular = secure_request('pax_regular', 0, 'intval');
+		$pax_regular = dy_tx::request_value('pax_regular');
 
 		if ($pax_regular <= 0) {
 			dy_errors::add(__('Invalid param: pax_regular.', 'dynamicpackages'));
 			return self::$cache[$cache_key] = false;
 		}
 
-		$pax_discount = secure_request('pax_discount', 0, 'intval');
-		$pax_free = secure_request('pax_free', 0, 'intval');
+		$pax_discount = dy_tx::request_value('pax_discount');
+		$pax_free = dy_tx::request_value('pax_free');
 		$pax_sum = $pax_regular + $pax_discount + $pax_free;
 
 		$package_min_persons = (int) package_field('package_min_persons');
@@ -346,96 +346,16 @@ class dy_validators
 		return self::$cache[$cache_key] = true;
 	}
 
-	public static function is_confirmation_page()
+	/** Compatibility predicate for pricing helpers shared by submission and confirmation. */
+	public static function is_confirmation_page(): bool
 	{
-
-		if(secure_server('REQUEST_METHOD') !== 'POST') {
-			return false;
-		}
-
-		$output = false;
-		$cache_key = 'dy_is_confirmation_page';
-	
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		if (
-			is_admin()
-			|| wp_doing_ajax()
-			|| wp_doing_cron()
-			|| (defined('REST_REQUEST') && REST_REQUEST)
-		) {
-			return self::$cache[$cache_key] = false;
-		}
-
-		$dy_request = secure_post('dy_request', '', 'sanitize_key');
-		$all_dy_request_types = dy_utilities::all_dy_request_types();
-
-		if(!in_array($dy_request, $all_dy_request_types, true)) {
-			return self::$cache[$cache_key] = false;
-		}
-
-		$the_id = get_dy_id();
-
-		if($the_id === null) {
-			return self::$cache[$cache_key] = false;
-		}
-
-
-
-		$post = get_post($the_id);
-
-		$has_shortcode = ($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact');
-
-		if(is_post_type_packages() || $has_shortcode) {
-			$output = true;
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-		
-		return $output;
+		return Dynamicpackages_Actions::is_submission()
+			|| Dynamicpackages_Confirmation_Page::is_confirmation();
 	}
 
-	public static function validate_request()
+	public static function validate_request(): bool
 	{
-		$output = false;
-		$cache_key = 'dy_validate_request';
-		
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		if(self::is_confirmation_page())
-		{
-
-			if(!self::validate_unique_tx_id()) {
-				dy_errors::add(
-					__('Invalid tx_id.', 'dynamicpackages')
-				);
-
-				return self::$cache[$cache_key] = false;
-			}
-
-			if(self::validate_contact_details() && self::validate_booking_details())
-			{
-				if (!validate_turnstile(secure_post('cf-turnstile-response'), 'submit-transaction')) {
-					return self::$cache[$cache_key] = false;
-				}
-
-				$submission_valid = self::validate_submission_rate_limits();
-				$post_valid = self::validate_post_id_rate_limits();
-				$gateway_valid = self::validate_gateway_rate_limits();
-
-				$output = $submission_valid && $post_valid && $gateway_valid;
-			}
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		return $output;
+		return Dynamicpackages_Actions::validate_request();
 	}
 
 	public static function is_white_listed_from_rate_limits() : bool {
@@ -505,24 +425,29 @@ class dy_validators
 		}
 
 		$required = ['dy_request', 'dy_id', 'phone', 'country_calling_code', 'email', 'first_name', 'lastname'];
+		$contract_fields = ['phone', 'country_calling_code', 'email', 'first_name', 'lastname'];
 
 		foreach($required as $param) {
-			if(!post_has($param) || secure_post($param) === '') {
+			$value = in_array($param, $contract_fields, true)
+				? dy_tx::request_value($param)
+				: secure_post($param);
+
+			if(!post_has($param) || $value === '') {
 				return $reject('Missing or invalid parameter: ' . $param, 400);
 			}
 		}
 
 		$dy_request = secure_post('dy_request', '', 'sanitize_key');
 		$dy_id = secure_post('dy_id', 0, 'absint');
-		$calling_code = preg_replace('/\D+/', '', secure_post('country_calling_code'));
-		$phone = preg_replace('/\D+/', '', secure_post('phone'));
-		$email = strtolower(secure_post('email', '', 'sanitize_email'));
+		$calling_code = preg_replace('/\D+/', '', dy_tx::request_value('country_calling_code'));
+		$phone = preg_replace('/\D+/', '', dy_tx::request_value('phone'));
+		$email = strtolower(dy_tx::request_value('email'));
 		$normalize_name = static function($name) {
 			$name = trim((string) preg_replace('/\s+/u', ' ', $name));
 			return function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
 		};
-		$first_name = $normalize_name(secure_post('first_name'));
-		$lastname = $normalize_name(secure_post('lastname'));
+		$first_name = $normalize_name(dy_tx::request_value('first_name'));
+		$lastname = $normalize_name(dy_tx::request_value('lastname'));
 
 		if($dy_request === '' || $dy_id <= 0 || $calling_code === '' || $phone === '' || !is_email($email) || $first_name === '' || $lastname === '') {
 			return $reject('Invalid normalized submission parameters', 400);
@@ -805,7 +730,7 @@ class dy_validators
 	public static function validate_unique_tx_id(): bool
 	{
 		$tx_id = secure_post('tx_id');
-		$email = secure_post('email', '', 'sanitize_email');
+		$email = dy_tx::request_value('email');
 		$dy_request = secure_post('dy_request', '', 'sanitize_key');
 		$dy_id = secure_post('dy_id', 0, 'absint');
 
@@ -834,13 +759,13 @@ class dy_validators
 		}
 
 
-		$first_name = secure_post('first_name');
-		$lastname = secure_post('lastname');
-		$phone = secure_post('phone');
-		$country_calling_code = secure_post('country_calling_code');
-		$email = secure_post('email', '', 'sanitize_email');
-		$repeat_email = secure_post('repeat_email', '', 'sanitize_email');
-		$inquiry = secure_post('inquiry', '', 'sanitize_textarea_field');
+		$first_name = dy_tx::request_value('first_name');
+		$lastname = dy_tx::request_value('lastname');
+		$phone = dy_tx::request_value('phone');
+		$country_calling_code = dy_tx::request_value('country_calling_code');
+		$email = dy_tx::request_value('email');
+		$repeat_email = dy_tx::request_value('repeat_email');
+		$inquiry = dy_tx::request_value('inquiry');
 		$invalids = [];
 
 		if(in_array(null, [
@@ -982,19 +907,19 @@ class dy_validators
 		$output = true;
 		$invalids = [];
 
-		if(!is_valid_date(secure_post('start_date'))) {
+		if(!is_valid_date(dy_tx::request_value('start_date'))) {
 			$invalids[] = __('Invalid start_date.', 'dynamicpackages');
 		}
 
-		$start_hour = secure_post('start_hour');
+		$start_hour = dy_tx::request_value('start_hour');
 		$is_valid_start_hour = self::validate_package_hour('start_hour', $start_hour);
 
 		if(!$is_valid_start_hour) {
 			$invalids[] = __('Invalid start_hour.', 'dynamicpackages');
 		}
 
-		$has_return = secure_post('end_date') !== '';
-		$end_hour = secure_post('end_hour');
+		$has_return = dy_tx::request_value('end_date') !== '';
+		$end_hour = dy_tx::request_value('end_hour');
 		$is_valid_end_hour = self::validate_package_hour('end_hour', $end_hour);
 
 		if($has_return && !$is_valid_end_hour) {
@@ -1049,7 +974,7 @@ class dy_validators
             return self::$cache[$cache_key];
         }
 
-		$coupon_code = dy_utilities::normalize_coupon_code(secure_request('coupon_code'));
+		$coupon_code = dy_utilities::normalize_coupon_code(dy_tx::request_value('coupon_code'));
 		
 		if(!self::has_coupon() || $coupon_code === null) {
 			return self::$cache[$cache_key] = false;
@@ -1073,7 +998,7 @@ class dy_validators
 		$package_type = dy_utilities::get_package_type();
 
 		$duration = absint(dy_utilities::get_min_nights());
-		$start_date = secure_request('start_date');
+		$start_date = dy_tx::request_value('start_date');
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
 		$start_dates_range = dy_utilities::get_date_range($start_date, $start_date_to, false);
 		

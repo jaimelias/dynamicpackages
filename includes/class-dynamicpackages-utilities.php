@@ -65,7 +65,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$start_date = secure_request('start_date');
+		$start_date = dy_tx::request_value('start_date');
 
 		if(!is_valid_short_date($start_date)) {
 			return self::$cache[$cache_key] = false;
@@ -82,7 +82,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		$end_date = secure_request('end_date');
+		$end_date = dy_tx::request_value('end_date');
 
 		if(!is_valid_short_date($end_date)) {
 			return self::$cache[$cache_key] = false;
@@ -136,9 +136,9 @@ class dy_utilities {
 	
 	public static function pax_num()
 	{
-		return secure_request('pax_regular', 0, 'absint')
-			+ secure_request('pax_discount', 0, 'absint')
-			+ secure_request('pax_free', 0, 'absint');
+		return dy_tx::request_value('pax_regular')
+			+ dy_tx::request_value('pax_discount')
+			+ dy_tx::request_value('pax_free');
 	}
 
 	public static function normalize_coupon_code($value) {
@@ -191,7 +191,7 @@ class dy_utilities {
 			return self::$cache[$cache_key] = null;
 		}
 
-		$coupon_code = self::normalize_coupon_code(secure_request('coupon_code'));
+		$coupon_code = self::normalize_coupon_code(dy_tx::request_value('coupon_code'));
 
 		if ($coupon_code === null) {
 			return self::$cache[$cache_key] = null;
@@ -300,7 +300,7 @@ class dy_utilities {
 		//sums discount price
 		$discount = self::get_price_discount($regular, 'total');
 
-		$pax_discount = secure_request('pax_discount', 0, 'absint');
+		$pax_discount = dy_tx::request_value('pax_discount');
 
 		if ($pax_discount > 0) {
 			$subtotal = $discount > 0
@@ -725,14 +725,16 @@ class dy_utilities {
 			? absint(package_field('package_max_duration'))
 			: 0;
 
-		$additional_time = secure_request('additional_time', $duration, 'absint');
+		$additional_time = request_has('additional_time')
+			? dy_tx::request_value('additional_time')
+			: $duration;
 
 		if( $additional_time > $duration && $duration_max > $duration)
 		{
 			$duration = min($additional_time, $duration_max);
 		}
 
-		$start_date = secure_request('start_date');
+		$start_date = dy_tx::request_value('start_date');
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +$duration days"));
 		$start_dates_range = self::get_date_range($start_date, $start_date_to, false); //clientes from and to array of dates e.g. ["2026-12-03"] or ["2026-12-03", "2026-12-04"]
 		$seasons = self::get_package_hot_chart('package_seasons_chart');
@@ -871,7 +873,7 @@ class dy_utilities {
 		$occupancy_chart = self::get_package_hot_chart('package_occupancy_chart'); // base occupancy rates
 		$duration        = self::get_min_nights() ?? 1;                             // min nights required
 		$seasons         = self::get_package_hot_chart('package_seasons_chart');    // seasons matrix (not used directly but kept)
-		$start_date    = secure_request('start_date');          // selected date
+		$start_date    = dy_tx::request_value('start_date');          // selected date
 		$start_date_to = date('Y-m-d', strtotime($start_date . " +{$duration} days"));
 
 		// Precompute ranges/surcharges once
@@ -895,8 +897,8 @@ class dy_utilities {
 			$seasons_array[] = ($season === 'price_chart') ? 'occupancy_chart' : ('occupancy_chart' . $season);
 		}
 
-		$pax_regular_param  = secure_request('pax_regular', 0, 'absint');
-		$pax_discount_param = secure_request('pax_discount', 0, 'absint');
+		$pax_regular_param  = dy_tx::request_value('pax_regular');
+		$pax_discount_param = dy_tx::request_value('pax_discount');
 
 		// Iterate seasons; keep indices to align with surcharges
 		$should_break = false;
@@ -969,7 +971,7 @@ class dy_utilities {
 		if(is_booking_page() || is_confirmation_page())
 		{
 
-			$pax_regular = secure_request('pax_regular', 0, 'absint');
+			$pax_regular = dy_tx::request_value('pax_regular');
 
 			if ($pax_regular === 0) {
 				return 0;
@@ -1053,7 +1055,7 @@ class dy_utilities {
 		$package_type = self::get_package_type();
 		$occupancy_price = ($package_type === 'multi-day') ? self::get_price_occupancy($type) : 0;
 		$sum = $sum + $occupancy_price;
-		$start_date = secure_request('start_date');
+		$start_date = dy_tx::request_value('start_date');
 		$week_days_to_surcharge = array($start_date);
 		$one_way_surcharge = (float) package_field('package_one_way_surcharge');
 
@@ -1061,7 +1063,7 @@ class dy_utilities {
 		{
 			$sum_arr = [$sum];
 
-			$end_date = secure_request('end_date');
+			$end_date = dy_tx::request_value('end_date');
 
 			if(is_valid_date($start_date))
 			{
@@ -1208,7 +1210,7 @@ class dy_utilities {
 		}
 
 		$the_id = get_dy_id();
-		$request_hour = secure_request($type);
+		$request_hour = dy_tx::request_value($type);
 		$cache_key = 'dy_' . $type . '_' . $the_id . '_' . $request_hour;
 
 		if(array_key_exists($cache_key, self::$cache)) {

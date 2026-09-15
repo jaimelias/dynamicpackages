@@ -1,143 +1,169 @@
 <?php
 
+if (!defined('WPINC')) exit;
 
-if ( !defined( 'WPINC' ) ) exit;
-
-#[AllowDynamicProperties]
-class Dynamicpackages_Actions{
-
-	private $submission_is_valid = null;
-	private $data_sent = false;
-	private $plugin_dir_path_dir;
+class Dynamicpackages_Actions
+{
+	private static ?bool $submission_valid = null;
+	private string $plugin_dir_path_dir;
 
 	public function __construct()
 	{
 		$this->plugin_dir_path_dir = plugin_dir_path(__DIR__);
-
-		add_action('template_redirect', array($this, 'send_data'), 20);
-		add_filter('the_content', array($this, 'the_content'), 101);
-		add_filter('pre_get_document_title', array($this, 'wp_title'), 101);
-		add_filter('the_title', array($this, 'the_title'), 101);
-		add_filter('get_the_excerpt', array($this, 'get_the_excerpt'));
+		add_action('template_redirect', [$this, 'submit'], 20);
 	}
 
-	public function is_request_submitted()
+	public static function is_submission(): bool
 	{
-		if(apply_filters('dy_skip_generic_form_submission', false))
-		{
+		if (secure_server('REQUEST_METHOD') !== 'POST'
+			|| is_admin() || wp_doing_ajax() || wp_doing_cron()
+			|| (defined('REST_REQUEST') && REST_REQUEST)) {
 			return false;
 		}
 
-		if(
-			secure_server('REQUEST_METHOD') !== 'POST'
-			|| !is_confirmation_page()
-		)
-		{
+		$request_type = secure_post('dy_request', '', 'sanitize_key');
+		if (!in_array($request_type, dy_utilities::all_dy_request_types(), true)) {
 			return false;
 		}
 
-		global $post;
-
-		if(is_singular('packages'))
-		{
-			return true;
-		}
-
-		return (
-			$post instanceof WP_Post
-			&& $post->post_status === 'publish'
-			&& has_shortcode($post->post_content, 'package_contact')
-		);
+		$post = get_post(get_dy_id());
+		return $post instanceof WP_Post && $post->post_status === 'publish'
+			&& ($post->post_type === 'packages' || has_shortcode($post->post_content, 'package_contact'));
 	}
 
-	public function is_valid_submission()
+	public function submit(): void
 	{
-		if($this->submission_is_valid !== null)
-		{
-			return $this->submission_is_valid;
+		if ($this->send_data()) {
+			nocache_headers();
+			wp_safe_redirect(trailingslashit(home_lang()) . 'dy-tx/' . rawurlencode((string) secure_post('tx_id')), 303);
+			exit;
 		}
-
-		/*
-		* Cheap/local checks run before the remote Turnstile request.
-		*/
-		$this->submission_is_valid = (
-			$this->is_request_submitted()
-			&& dy_validators::validate_request()
-		);
-
-		return $this->submission_is_valid;
 	}
 
-    public function send_data()
-    {
-		if($this->data_sent)
-		{
-			return true;
+	/** Serialize all side effects for a transaction, including concurrent POST retries. */
+	public function send_data(): bool
+	{
+		if (!self::is_submission()) {
+			return false;
 		}
-
-		if(!$this->is_valid_submission())
-		{
+		if (!dy_validators::validate_unique_tx_id()
+			|| (int) secure_post('dy_id', 0, 'absint') !== (int) get_queried_object_id()) {
+			dy_errors::add(__('Invalid tx_id.', 'dynamicpackages'));
 			return false;
 		}
 
-		$tx_id = secure_post('tx_id');
-
-		if (! is_string($tx_id) || $tx_id === '') {
+		global $wpdb;
+		$tx_id = (string) secure_post('tx_id');
+		$lock = 'dy_submit_' . substr(hash('sha256', $wpdb->prefix . $tx_id), 0, 54);
+		if ((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 1)', $lock)) !== '1') {
+			dy_errors::add(__('This request is already being processed. Please try again shortly.', 'dynamicpackages'), 409);
 			return false;
 		}
 
-		$tx = dy_tx::get_stored_tx($tx_id);
-
-		if ($tx === null) {
-			return false;
-		}
-
-		$request_type = sanitize_key((string) ($tx->dy_request ?? ''));
-
-		$submission_context = (object) array(
-			'accepted' => in_array(
-				$request_type,
-				['estimate_request', 'contact'],
-				true
-			)
-		);
-
-		if($request_type !== '')
-		{
-			do_action(
-				'dy_prepare_gateway_submission_' . $request_type,
-				$submission_context
-			);
-		}
-
-		if(!$submission_context->accepted)
-		{
-			return false;
-		}
-
-		$this->data_sent = true;
-
-		$transaction_payload = dy_tx::get_sanitized_request_payload();
-		$is_paguelo_facil = $request_type === 'paguelo_facil_on';
-		$should_store_success = ! $is_paguelo_facil || ($tx->status ?? '') === 'success';
-
-		if (
-			($tx->status ?? '') === 'success'
-			&& $this->has_transaction_payload($tx)
-		) {
-			return true;
-		}
-
-		// Mark the transaction successful first; commit the payload after side effects complete.
-		if ($should_store_success) {
-			if (! dy_tx::update($tx_id, 'success', [], DAY_IN_SECONDS)) {
+		try {
+			// Another worker may have completed while this request waited for the lock.
+			if (!wp_using_ext_object_cache()) {
+				wp_cache_delete('_transient_tx_id_' . $tx_id, 'options');
+				wp_cache_delete('_transient_timeout_tx_id_' . $tx_id, 'options');
+			}
+			$tx = dy_tx::get_stored_tx($tx_id);
+			if ($tx === null) {
+				dy_errors::add(__('Invalid or expired transaction ID.', 'dynamicpackages'));
 				return false;
 			}
+			// Never repeat charges or notifications, even after an interrupted response.
+			if ($tx->status !== 'started') {
+				return true;
+			}
+			if (!self::validate_request()) {
+				return false;
+			}
+
+			$context = (object) ['accepted' => in_array($tx->dy_request, ['contact', 'estimate_request'], true)];
+			do_action('dy_prepare_gateway_submission_' . $tx->dy_request, $context);
+			if (!$context->accepted || dy_errors::has_errors()) {
+				if (!dy_errors::has_errors()) {
+					dy_errors::add(__('The selected payment method could not accept this request.', 'dynamicpackages'));
+				}
+				return false;
+			}
+
+			$tx->status = 'processing';
+			if (!$this->store($tx)) {
+				return false;
+			}
+			$tx->status = 'success';
+			do_action('dy_process_gateway_submission_' . $tx->dy_request, $tx);
+			foreach (dy_tx::get_sanitized_request_payload() as $section => $values) {
+				$tx->{$section} = (object) $values;
+			}
+			$this->queue_conversion_events($tx->dy_request, $tx_id);
+			$tx->confirmation = $this->confirmation_result($tx);
+			// Persist the result before notifications; a failed response must not allow a second charge.
+			if (!$this->store($tx)) {
+				return false;
+			}
+			$this->send_notifications($tx);
+			return true;
+		} finally {
+			$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
+		}
+	}
+
+	private function store(object $tx): bool
+	{
+		if (dy_tx::update($tx)) {
+			return true;
+		}
+		dy_errors::add(__('Unable to store the transaction result. Please contact us before submitting again.', 'dynamicpackages'), 503);
+		return false;
+	}
+
+	private function confirmation_result(object $tx): array
+	{
+		$content = '<p class="minimal_success strong">' . esc_html(__('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')) . '</p>';
+		$title = __('Thank You for Your Request', 'dynamicpackages');
+		$events = [];
+		foreach (['generate_lead', 'purchase'] as $name) {
+			$event = $GLOBALS['dy_gtag_server_events'][$name . '|' . $tx->tx_id] ?? null;
+			if (is_array($event)) {
+				$events[] = $event;
+			}
+		}
+		return [
+			'title' => (string) apply_filters('dy_request_the_title', $title),
+			'content' => (string) apply_filters('dy_request_the_content', $content),
+			'excerpt' => (string) apply_filters('dy_description', ''),
+			'events' => $events,
+		];
+	}
+
+	public static function validate_request(): bool
+	{
+		if (!self::is_submission()) return false;
+		if (self::$submission_valid !== null) return self::$submission_valid;
+		self::$submission_valid = false;
+
+		if (!dy_validators::validate_unique_tx_id()) {
+			dy_errors::add(__('Invalid tx_id.', 'dynamicpackages'));
+			return false;
+		}
+		if (!dy_validators::validate_contact_details() || !dy_validators::validate_booking_details()) {
+			return false;
+		}
+		if (!validate_turnstile((string) secure_post('cf-turnstile-response'), 'submit-transaction')) {
+			return false;
 		}
 
-		$stored_transaction = dy_tx::$transaction_obj ?? $tx;
-		$the_id = (int) ($stored_transaction->dy_id ?? get_dy_id());
+		$submission_valid = dy_validators::validate_submission_rate_limits();
+		$post_valid = dy_validators::validate_post_id_rate_limits();
+		$gateway_valid = dy_validators::validate_gateway_rate_limits();
+		return self::$submission_valid = $submission_valid && $post_valid && $gateway_valid;
+	}
 
+	private function send_notifications(object $tx): void
+	{
+		$the_id = (int) $tx->dy_id;
 		if(request_has('add_ons'))
 		{
 			$add_ons_package_id = sanitize_key('dy_add_ons_' . $the_id);
@@ -145,23 +171,30 @@ class Dynamicpackages_Actions{
 			setcookie($add_ons_package_id, $add_ons, time() + 3600);
 		}
 		
-		$data = $_POST;
-		$data['tx_id'] = (string) ($stored_transaction->tx_id ?? $tx_id);
-		$data['dy_request'] = (string) ($stored_transaction->dy_request ?? $request_type);
-		$data['dy_id'] = (int) ($stored_transaction->dy_id ?? $the_id);
-		$data = array_merge($data, $this->flatten_transaction_payload($transaction_payload));
-		unset($data['CCNum']);
-		unset($data['ExpMonth']);
-		unset($data['ExpYear']);
-		unset($data['CVV2']);
-		unset($data['cf-turnstile-response']);
-		unset($data['dy_nonce']);
+		$data = [];
+		// Match the scalar fields posted by populateCheckoutForm, excluding card credentials.
+		foreach ([
+			'post_id', 'description', 'coupon_discount', 'coupon_discount_amount', 'total',
+			'duration', 'pax_num', 'package_code', 'title', 'package_type',
+			'package_not_included', 'package_included', 'url', 'currency_name',
+			'currency_symbol', 'outstanding', 'amount', 'regular_amount', 'payment_type',
+			'deposit', 'enable_payment', 'dy_network', 'address', 'city', 'country',
+		] as $field) {
+			if (post_has($field)) {
+				$data[$field] = secure_post($field);
+			}
+		}
+		foreach ((array) dy_utilities::get_taxonomies('package_terms_conditions') as $term) {
+			$field = 'terms_conditions_' . $term->term_taxonomy_id;
+			if (post_has($field)) {
+				$data[$field] = secure_post($field);
+			}
+		}
+		$data['tx_id'] = $tx->tx_id;
+		$data['dy_request'] = $tx->dy_request;
+		$data['dy_id'] = $the_id;
+		$data = array_merge($data, $this->flatten_transaction_payload($tx));
 
-		//only in development
-		//global $dy_orders;
-		//$dy_orders->save_order($data);
-
-		//write_log(json_encode($data));
 
 		$by_hour = package_field('package_by_hour');
 		$start_hour = package_field('package_start_hour');
@@ -189,31 +222,9 @@ class Dynamicpackages_Actions{
 
 		$payload = wp_json_encode($webhook_args);
 
-		$this->queue_conversion_events(
-			$request_type,
-			$tx_id
-		);
-
 		dy_utilities::webhook($webhook_option, $payload);
 		$this->send_email();
 
-		if ($should_store_success) {
-			if (! dy_tx::update($tx_id, 'success', $transaction_payload, DAY_IN_SECONDS)) {
-				return false;
-			}
-		}
-
-		return true;
-    }
-
-	private function has_transaction_payload(object $tx): bool
-	{
-		$contact_details = $tx->contact_details ?? null;
-		$contact_details = is_object($contact_details)
-			? get_object_vars($contact_details)
-			: (is_array($contact_details) ? $contact_details : []);
-
-		return ! empty($contact_details['email']);
 	}
 
 	private function flatten_transaction_payload(object|array $tx): array
@@ -240,16 +251,16 @@ class Dynamicpackages_Actions{
 		return $output;
 	}
 
-	private function get_conversion_amount()
+	private function get_conversion_amount(): float
 	{
 		$value      = (float) dy_utilities::total();
-		$raw        = get_option('dy_bidding_conversion_percentage', 15); // default 15
+		$raw        = dy_get_option('dy_bidding_conversion_percentage', '15'); // default 15
 		$percentage = is_numeric($raw) ? max(1, min(100, (float) $raw)) : 15;
 
 		return $value * ($percentage / 100);
 	}
 
-	private function queue_conversion_events($request_type, $tx_id)
+	private function queue_conversion_events(string $request_type, string $tx_id): void
 	{
 		$value = $this->get_conversion_amount();
 
@@ -295,22 +306,7 @@ class Dynamicpackages_Actions{
 		}
 	}
 
-
-	public function the_content(mixed $content = '') : string {
-		$content = is_string($content) ? $content : '';
-		$request_type = secure_post('dy_request', '', 'sanitize_key');
-	
-        if($this->data_sent && in_array($request_type, ['estimate_request', 'contact'], true))
-        {               
-			$content = '<p class="minimal_success strong">'.esc_html( __('Thank you for contacting us. Our staff will be in touch with you soon.', 'dynamicpackages')).'</p>';
-        }
-
-		$filtered_content = apply_filters('dy_request_the_content', $content);
-
-		return is_string($filtered_content) ? $filtered_content : '';
-	}
-
-    public function send_email()
+    public function send_email(): void
     {
 
 		$attachments = [];
@@ -350,22 +346,22 @@ class Dynamicpackages_Actions{
 		}
 		else
 		{			
-			$request = (!empty(secure_post('inquiry'))) ?  secure_post('inquiry') : apply_filters('dy_description', '');
-			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), secure_post('first_name')))).'</p>';
+			$request = (!empty(dy_tx::request_value('inquiry'))) ? dy_tx::request_value('inquiry') : apply_filters('dy_description', '');
+			$message = '<p>'.esc_html(apply_filters('dy_email_greeting', sprintf(__('Hello %s,', 'dynamicpackages'), dy_tx::request_value('first_name')))).'</p>';
 			$message .= '<p>'.sprintf(__('Our staff will be in touch with you very soon with more information about your request: %s', 'dynamicpackages'), '<strong>'.esc_html($request).'</strong>').'</p>';
 			
-			if(get_option('dy_phone') && get_option('dy_email'))
+			if(dy_get_option('dy_phone') && dy_get_option('dy_email'))
 			{
-				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(get_option('dy_phone')), sanitize_email(get_option('dy_email')))).'</p>';
+				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(dy_get_option('dy_phone')), sanitize_email(dy_get_option('dy_email')))).'</p>';
 			}
 
 
-			$phone = secure_post('country_calling_code').secure_post('phone');
+			$phone = dy_tx::request_value('country_calling_code') . dy_tx::request_value('phone');
 			$message .= '<p>'.esc_html(sprintf(__('When is a good time to call you at %s? Or do you prefer Whatsapp?', 'dynamicpackages'), $phone)).'</p>';			
 		}
 	
 
-		$to = secure_post('email', '', 'sanitize_email');
+		$to = dy_tx::request_value('email');
 		$subject = $this->subject();
 		$body = $message;
 		$headers = array('Content-Type: text/html; charset=UTF-8');
@@ -373,65 +369,24 @@ class Dynamicpackages_Actions{
 		wp_mail($to, $subject, $body, $headers,  $attachments);
     }
 	
-	public function subject()
+	public function subject(): string
 	{
 		if(dy_validators::validate_quote())
 		{
-			$output = sprintf(__('%s, %s has sent you an estimate for %s - %s', 'dynamicpackages'), secure_post('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), secure_post('title'));			
+			$output = sprintf(__('%s, %s has sent you an estimate for %s - %s', 'dynamicpackages'), dy_tx::request_value('first_name'), get_bloginfo('name'), wrap_money_full(dy_utilities::total()), secure_post('title'));			
 		}
 		else
 		{
 			global $post;
 			
 			$request = (isset($post->post_title)) ? $post->post_title : __('General Inquiry', 'dynamicpackages');
-			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), secure_post('first_name'), $request);	
+			$output = sprintf(__('%s, thanks for your request: %s', 'dynamicpackages'), dy_tx::request_value('first_name'), $request);	
 		}
 
 			
 		return apply_filters('dy_email_subject', $output);
 	}
-
-	public function wp_title(mixed $title): string
-	{
-		$title = is_string($title) ? $title : '';
-
-		return $this->is_request_submitted()
-			? sprintf(
-				'%s | %s',
-				esc_html(__('Thank You for Your Request', 'dynamicpackages')),
-				esc_html(get_bloginfo('name')
-			)
-			) : $title;
-	}
-
-	public function get_the_excerpt(mixed $excerpt): string
-	{
-		$excerpt = is_string($excerpt) ? $excerpt : '';
-
-		if($this->is_request_submitted())
-		{
-			$description = apply_filters('dy_description', '');
-			$excerpt = is_string($description) ? $description : '';
-		}
-
-		return $excerpt;
-	}
-
-	public function the_title(mixed $title): string
-	{
-		$title = is_string($title) ? $title : '';
-
-		if(in_the_loop() && $this->is_request_submitted())
-		{
-			$title = esc_html(__('Thank You for Your Request', 'dynamicpackages'));
-		}
-
-		$filtered_title = apply_filters('dy_request_the_title', $title);
-
-		return is_string($filtered_title) ? $filtered_title : '';
-	}
-	
-	public function get_term_condition_as_html()
+	public function get_term_condition_as_html(): array
 	{		
 		$output = [];
 		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');

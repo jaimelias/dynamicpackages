@@ -17,6 +17,7 @@ class Dynamicpackages_Booking_Page {
 
     public function is_valid()
     {
+        if (Dynamicpackages_Confirmation_Page::is_confirmation()) return false;
         $output = false;
 
         if(is_singular('packages') && is_booking_page() && !is_confirmation_page())
@@ -88,16 +89,16 @@ class Dynamicpackages_Booking_Page {
 			'coupon_discount' => $coupon_discount,
 			'coupon_discount_amount' => ($coupon_discount > 0 ) ? ($regular_amount - $amount) : 0,
 			'total' => $payment_amount,
-			'start_date' => secure_get('start_date', null),
-			'additional_time' => secure_get('additional_time', null),
+			'start_date' => get_has('start_date') ? dy_tx::request_value('start_date') : null,
+			'additional_time' => get_has('additional_time') ? dy_tx::request_value('additional_time') : null,
 			'start_hour' => esc_html(dy_utilities::start_hour()),
-			'end_date' => secure_get('end_date', null),
+			'end_date' => get_has('end_date') ? dy_tx::request_value('end_date') : null,
 			'end_hour' => (string) dy_utilities::end_hour(),
 			'duration' => (string) dy_utilities::show_duration(),
 			'pax_num' => (int) dy_utilities::pax_num(),
-			'pax_regular' => secure_get('pax_regular', 0, 'absint'),
-			'pax_discount' => secure_get('pax_discount', 0, 'absint'),
-			'pax_free' => secure_get('pax_free', 0, 'absint'),
+			'pax_regular' => dy_tx::request_value('pax_regular'),
+			'pax_discount' => dy_tx::request_value('pax_discount'),
+			'pax_free' => dy_tx::request_value('pax_free'),
 			'package_code' => (string) package_field('package_trip_code'),
 			'title' => (string) $post->post_title,
 			'package_type' => (string) dy_utilities::get_package_type($post->ID),
@@ -162,6 +163,7 @@ class Dynamicpackages_Booking_Page {
 
 	public function load_scripts($query)
 	{
+		if (Dynamicpackages_Confirmation_Page::is_confirmation()) return;
 		global $post;
 
 		$load_turnstile = false;
