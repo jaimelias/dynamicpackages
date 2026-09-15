@@ -80,7 +80,7 @@ class paypal_me {
 
 	public function subject()
 	{
-		$cache_key = $this->id . '_subject_' . secure_post('unique_tx_id');
+		$cache_key = $this->id . '_subject_' . secure_post('tx_id');
 		
 		if (array_key_exists($cache_key, self::$cache)) {
             return self::$cache[$cache_key];

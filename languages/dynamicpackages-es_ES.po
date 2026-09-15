@@ -930,8 +930,8 @@ msgid "Invalid terms_conditions."
 msgstr "Términos y condiciones no válidos."
 
 #: includes/class-dynamicpackages-validators.php:415
-msgid "Invalid unique_tx_id."
-msgstr "Inválida unique_tx_id."
+msgid "Invalid tx_id."
+msgstr "Inválida tx_id."
 
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:443
 msgid "Invoice"

@@ -189,14 +189,14 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$unique_tx_id = secure_post('unique_tx_id');
+		$tx_id = secure_post('tx_id');
 
 		if(
-			! is_string($unique_tx_id)
+			! is_string($tx_id)
 			|| ! dy_transactions::validate(
-				$unique_tx_id,
+				$tx_id,
 				[
-					$unique_tx_id,
+					$tx_id,
 					(string) secure_post('email', '', 'sanitize_email'),
 					(string) secure_post('dy_request', '', 'sanitize_key'),
 					(int) secure_post('dy_id', 0, 'absint'),
@@ -206,7 +206,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transaction = dy_transactions::get($unique_tx_id);
+		$transaction = dy_transactions::get($tx_id);
 		$status = (string) ($transaction->status ?? '');
 
 		if (in_array($status, ['processing', 'success', 'declined', 'error'], true)) {
@@ -246,7 +246,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		dy_transactions::update($unique_tx_id, 'processing', [], 300);
+		dy_transactions::update($tx_id, 'processing', [], 300);
 
 
 		self::$txt_status = $this->resolve_checkout_status();
@@ -263,7 +263,7 @@ class paguelo_facil_on{
 		};
 
 		dy_transactions::update(
-			$unique_tx_id,
+			$tx_id,
 			$status,
 			[],
 			$status === 'success' ? DAY_IN_SECONDS : HOUR_IN_SECONDS

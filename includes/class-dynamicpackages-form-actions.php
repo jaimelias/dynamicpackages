@@ -80,13 +80,13 @@ class Dynamicpackages_Actions{
 			return false;
 		}
 
-		$unique_tx_id = secure_post('unique_tx_id');
+		$tx_id = secure_post('tx_id');
 
-		if (! is_string($unique_tx_id) || $unique_tx_id === '') {
+		if (! is_string($tx_id) || $tx_id === '') {
 			return false;
 		}
 
-		$transaction = dy_transactions::get($unique_tx_id);
+		$transaction = dy_transactions::get($tx_id);
 
 		if ($transaction === null) {
 			return false;
@@ -130,7 +130,7 @@ class Dynamicpackages_Actions{
 
 		// Mark the transaction successful first; commit the payload after side effects complete.
 		if ($should_store_success) {
-			if (! dy_transactions::update($unique_tx_id, 'success', [], DAY_IN_SECONDS)) {
+			if (! dy_transactions::update($tx_id, 'success', [], DAY_IN_SECONDS)) {
 				return false;
 			}
 		}
@@ -146,7 +146,7 @@ class Dynamicpackages_Actions{
 		}
 		
 		$data = $_POST;
-		$data['unique_tx_id'] = (string) ($stored_transaction->unique_tx_id ?? $unique_tx_id);
+		$data['tx_id'] = (string) ($stored_transaction->tx_id ?? $tx_id);
 		$data['dy_request'] = (string) ($stored_transaction->dy_request ?? $request_type);
 		$data['dy_id'] = (int) ($stored_transaction->dy_id ?? $the_id);
 		$data = array_merge($data, $this->flatten_transaction_payload($transaction_payload));
@@ -191,14 +191,14 @@ class Dynamicpackages_Actions{
 
 		$this->queue_conversion_events(
 			$request_type,
-			$unique_tx_id
+			$tx_id
 		);
 
 		dy_utilities::webhook($webhook_option, $payload);
 		$this->send_email();
 
 		if ($should_store_success) {
-			if (! dy_transactions::update($unique_tx_id, 'success', $transaction_payload, DAY_IN_SECONDS)) {
+			if (! dy_transactions::update($tx_id, 'success', $transaction_payload, DAY_IN_SECONDS)) {
 				return false;
 			}
 		}
@@ -281,7 +281,7 @@ class Dynamicpackages_Actions{
 		return $value * ($percentage / 100);
 	}
 
-	private function queue_conversion_events($request_type, $unique_tx_id)
+	private function queue_conversion_events($request_type, $tx_id)
 	{
 		$value = $this->get_conversion_amount();
 
@@ -298,7 +298,7 @@ class Dynamicpackages_Actions{
 		{
 			dy_gtag_queue_server_event(
 				'generate_lead',
-				$unique_tx_id,
+				$tx_id,
 				$value,
 				$currency
 			);
@@ -319,7 +319,7 @@ class Dynamicpackages_Actions{
 
 			dy_gtag_queue_server_event(
 				'purchase',
-				$unique_tx_id,
+				$tx_id,
 				$value,
 				$currency,
 				array($item)

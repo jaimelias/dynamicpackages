@@ -30,22 +30,22 @@ class Dynamicpackages_Confirmation_Page {
         }
 
 
-		$unique_tx_id = secure_post('unique_tx_id');
+		$tx_id = secure_post('tx_id');
 
-		if (! is_string($unique_tx_id) || $unique_tx_id === '') {
+		if (! is_string($tx_id) || $tx_id === '') {
 			return;
 		}
 
 		$transaction = dy_transactions::get(
-			$unique_tx_id
+			$tx_id
 		);
 
 		if (
 			$transaction === null
 			|| ! dy_transactions::validate(
-				$unique_tx_id,
+				$tx_id,
 				[
-					$unique_tx_id,
+					$tx_id,
 					(string) secure_post('email', '', 'sanitize_email'),
 					(string) secure_post('dy_request', '', 'sanitize_key'),
 					(int) secure_post('dy_id', 0, 'absint'),

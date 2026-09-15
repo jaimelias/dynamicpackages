@@ -412,7 +412,7 @@ class dy_validators
 
 			if(!self::validate_unique_tx_id()) {
 				dy_errors::add(
-					__('Invalid unique_tx_id.', 'dynamicpackages')
+					__('Invalid tx_id.', 'dynamicpackages')
 				);
 
 				return self::$cache[$cache_key] = false;
@@ -804,12 +804,12 @@ class dy_validators
 
 	public static function validate_unique_tx_id(): bool
 	{
-		$unique_tx_id = secure_post('unique_tx_id');
+		$tx_id = secure_post('tx_id');
 		$email = secure_post('email', '', 'sanitize_email');
 		$dy_request = secure_post('dy_request', '', 'sanitize_key');
 		$dy_id = secure_post('dy_id', 0, 'absint');
 
-		if (!is_string($unique_tx_id) || $unique_tx_id === '') return false;
+		if (!is_string($tx_id) || $tx_id === '') return false;
 		if (!is_email($email)) return false;
 		if($dy_id === 0 || $dy_request === '') return false;
 
@@ -820,8 +820,8 @@ class dy_validators
 		}
 
 		return dy_transactions::validate(
-			$unique_tx_id,
-			[$unique_tx_id, $email, $dy_request, $dy_id]
+			$tx_id,
+			[$tx_id, $email, $dy_request, $dy_id]
 		);
 	}
 

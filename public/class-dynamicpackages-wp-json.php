@@ -166,9 +166,9 @@ class Dynamicpackages_WP_JSON
 		}
 
 
-		$unique_tx_id = wp_generate_uuid4();
+		$tx_id = wp_generate_uuid4();
 		$transaction_created = dy_transactions::create(
-			$unique_tx_id,
+			$tx_id,
 			[
 				'dy_request' => $dy_request,
 				'email'      => $email,
@@ -188,7 +188,7 @@ class Dynamicpackages_WP_JSON
 		}
 
 		$output = [
-			'unique_tx_id' => $unique_tx_id
+			'tx_id' => $tx_id
 		];
 
 		return $this->rest_response($output);
