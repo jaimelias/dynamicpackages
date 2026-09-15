@@ -117,7 +117,7 @@ class Dynamicpackages_Actions{
 
 		$this->data_sent = true;
 
-		$transaction_payload = dy_tx::get_sanitized_post_payload();
+		$transaction_payload = dy_tx::get_sanitized_request_payload();
 		$is_paguelo_facil = $request_type === 'paguelo_facil_on';
 		$should_store_success = ! $is_paguelo_facil || ($tx->status ?? '') === 'success';
 

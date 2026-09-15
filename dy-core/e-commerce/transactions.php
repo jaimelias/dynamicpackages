@@ -434,40 +434,60 @@ class dy_tx
 	 */
 
 
-	public static function get_sanitized_post_payload(): array
+	public static function get_sanitized_request_payload(): array
 	{
-		$cache_key = 'get_sanitized_post_payload';
+		$cache_key = 'get_sanitized_request_payload';
 
 		if(array_key_exists($cache_key, self::$cache)) {
 			return self::$cache[$cache_key];
 		}
 
+
+		$fn = match (secure_server('REQUEST_METHOD')) {
+			'POST' => 'secure_post',
+			'GET'  => 'secure_get',
+			default => null,
+		};
+
+		if ($fn === null) {
+			return [];
+		}
+
+		$getter = static function (
+			string $key,
+			string|int|float|bool|null $default = '',
+			callable|string $sanitizer = 'sanitize_text_field'
+		) use ($fn): string|int|float|bool|null {
+			return $fn($key, $default, $sanitizer);
+		};
+
+
 		$post_payload =  [
 			'booking_details' => [
-				'pax_regular'       => (int) secure_post('pax_regular', 0, 'absint'),
-				'pax_discount'      => (int) secure_post('pax_discount', 0, 'absint'),
-				'pax_free'          => (int) secure_post('pax_free', 0, 'absint'),
-				'transport_type'    => (string) secure_post('transport_type'),
-				'route'             => (string) secure_post('route'),
-				'start_date'        => (string) secure_post('start_date'),
-				'start_hour'        => (string) secure_post('start_hour'),
-				'end_date'          => (string) secure_post('end_date'),
-				'end_hour'          => (string) secure_post('end_hour'),
-				'additional_time'   => (int) secure_post('additional_time', 0, 'absint'),
-				'coupon_code'       => (string) secure_post('coupon_code'),
+				'pax_regular'       => $getter('pax_regular', 0, 'absint'),
+				'pax_discount'      => $getter('pax_discount', 0, 'absint'),
+				'pax_free'          => $getter('pax_free', 0, 'absint'),
+				'transport_type'    => $getter('transport_type'),
+				'route'             => $getter('route'),
+				'start_date'        => $getter('start_date'),
+				'start_hour'        => $getter('start_hour'),
+				'end_date'          => $getter('end_date'),
+				'end_hour'          => $getter('end_hour'),
+				'additional_time'   => $getter('additional_time', 0, 'absint'),
+				'coupon_code'       => $getter('coupon_code'),
 				'force_availability'=> (bool) filter_var(
-					secure_post('force_availability', false),
+					$getter('force_availability', false),
 					FILTER_VALIDATE_BOOLEAN
 				),
 			],
 			'contact_details' => [
-				'first_name'          => (string) secure_post('first_name'),
-				'lastname'            => (string) secure_post('lastname'),
-				'phone'               => (string) secure_post('phone'),
-				'country_calling_code'=> (string) secure_post('country_calling_code'),
-				'email'               => (string) secure_post('email', '', 'sanitize_email'),
-				'repeat_email'        => (string) secure_post('repeat_email', '', 'sanitize_email'),
-				'inquiry'             => (string) secure_post('inquiry', '', 'sanitize_textarea_field'),
+				'first_name'          => $getter('first_name'),
+				'lastname'            => $getter('lastname'),
+				'phone'               => $getter('phone'),
+				'country_calling_code'=> $getter('country_calling_code'),
+				'email'               => $getter('email', '', 'sanitize_email'),
+				'repeat_email'        => $getter('repeat_email', '', 'sanitize_email'),
+				'inquiry'             => $getter('inquiry', '', 'sanitize_textarea_field'),
 			],
 		];
 
@@ -476,7 +496,7 @@ class dy_tx
 		return self::$cache[$cache_key] = $post_payload;
 	}
 
-	public static function flat_sanitized_post_payload(): array
+	public static function flat_sanitized_request_payload(): array
 	{
 		$cache_key = 'sanitized_post_payload_flat';
 
@@ -485,22 +505,22 @@ class dy_tx
 		}
 
 		return self::$cache[$cache_key] = array_merge(
-			...array_values(self::get_sanitized_post_payload())
+			...array_values(self::get_sanitized_request_payload())
 		);
 	}
 
 	/**
-	 * Return a sanitized POST payload value by its field name.
+	 * Return a sanitized POST|GET payload value by its field name.
 	 */
-	public static function post_value(string $key): string|int|bool|null
+	public static function request_value(string $key): string|int|bool|null
 	{
 
-		$flat_payload = self::flat_sanitized_post_payload();
+		$flat_payload = self::flat_sanitized_request_payload();
 
 		if(!array_key_exists($key, $flat_payload)) {
 
 			$message = sprintf(
-				'dy_tx::post_value(): unknown sanitized payload key "%s".',
+				'dy_tx::request_value(): unknown sanitized payload key "%s".',
 				$key
 			);
 
