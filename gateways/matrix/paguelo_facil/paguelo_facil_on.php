@@ -193,7 +193,7 @@ class paguelo_facil_on{
 
 		if(
 			! is_string($tx_id)
-			|| ! dy_transactions::validate(
+			|| ! dy_tx::validate(
 				$tx_id,
 				[
 					$tx_id,
@@ -206,7 +206,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transaction = dy_transactions::get($tx_id);
+		$transaction = dy_tx::get($tx_id);
 		$status = (string) ($transaction->status ?? '');
 
 		if (in_array($status, ['processing', 'success', 'declined', 'error'], true)) {
@@ -246,7 +246,7 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		dy_transactions::update($tx_id, 'processing', [], 300);
+		dy_tx::update($tx_id, 'processing', [], 300);
 
 
 		self::$txt_status = $this->resolve_checkout_status();
@@ -262,7 +262,7 @@ class paguelo_facil_on{
 			default => 'error',
 		};
 
-		dy_transactions::update(
+		dy_tx::update(
 			$tx_id,
 			$status,
 			[],
