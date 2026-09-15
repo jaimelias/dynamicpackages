@@ -206,8 +206,8 @@ class paguelo_facil_on{
 			return true;
 		}
 
-		$transaction = dy_tx::get($tx_id);
-		$status = (string) ($transaction->status ?? '');
+		$tx = dy_tx::get_stored_tx($tx_id);
+		$status = (string) ($tx->status ?? '');
 
 		if (in_array($status, ['processing', 'success', 'declined', 'error'], true)) {
 			self::$txt_status = match ($status) {
@@ -217,7 +217,7 @@ class paguelo_facil_on{
 			};
 			$this->restored_from_cache = true;
 
-			$has_payload = $status === 'success' && $this->has_transaction_payload($transaction);
+			$has_payload = $status === 'success' && $this->has_transaction_payload($tx);
 			if (in_array($status, ['declined', 'error'], true)) {
 				add_filter('dy_fail_checkout_gateway_name', function(){
 					return $this->id;
@@ -272,9 +272,9 @@ class paguelo_facil_on{
 		return true;
 	}
 
-	private function has_transaction_payload(object $transaction): bool
+	private function has_transaction_payload(object $tx): bool
 	{
-		$contact_details = $transaction->contact_details ?? null;
+		$contact_details = $tx->contact_details ?? null;
 		$contact_details = is_object($contact_details)
 			? get_object_vars($contact_details)
 			: (is_array($contact_details) ? $contact_details : []);

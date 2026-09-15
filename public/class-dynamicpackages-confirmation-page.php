@@ -32,16 +32,14 @@ class Dynamicpackages_Confirmation_Page {
 
 		$tx_id = secure_post('tx_id');
 
-		if (! is_string($tx_id) || $tx_id === '') {
+		if ($tx_id === '') {
 			return;
 		}
 
-		$transaction = dy_tx::get(
-			$tx_id
-		);
+		$tx = dy_tx::get_stored_tx($tx_id);
 
 		if (
-			$transaction === null
+			$tx === null
 			|| ! dy_tx::validate(
 				$tx_id,
 				[
@@ -55,8 +53,8 @@ class Dynamicpackages_Confirmation_Page {
 			return;
 		}
 
-		$dy_request = sanitize_key((string) ($transaction->dy_request ?? ''));
-		$dy_id = absint($transaction->dy_id ?? 0);
+		$dy_request = sanitize_key((string) ($tx->dy_request ?? ''));
+		$dy_id = absint($tx->dy_id ?? 0);
 		$all_dy_request_types = dy_utilities::all_dy_request_types();
 
 		if (! in_array($dy_request, $all_dy_request_types, true)) {
@@ -70,8 +68,8 @@ class Dynamicpackages_Confirmation_Page {
 		$this->set_request_value('dy_request', $dy_request);
 		$this->set_request_value('dy_id', $dy_id);
 
-		if (($transaction->status ?? '') === 'success') {
-			$this->hydrate_successful_transaction($transaction);
+		if (($tx->status ?? '') === 'success') {
+			$this->hydrate_successful_transaction($tx);
 		}
 
         //do not use "global $post", use $GLOBALS['post'] for the guard and a separate local variable. 
@@ -113,7 +111,7 @@ class Dynamicpackages_Confirmation_Page {
 		$GLOBALS['post'] = $requested_post;
 	}
 
-	private function hydrate_successful_transaction(object $transaction): void
+	private function hydrate_successful_transaction(object $tx): void
 	{
 		$sections = [
 			'booking_details' => [
@@ -142,7 +140,7 @@ class Dynamicpackages_Confirmation_Page {
 		];
 
 		foreach ($sections as $section => $fields) {
-			$values = $transaction->{$section} ?? null;
+			$values = $tx->{$section} ?? null;
 			$values = is_object($values) ? get_object_vars($values) : (is_array($values) ? $values : []);
 
 			foreach ($fields as $field) {

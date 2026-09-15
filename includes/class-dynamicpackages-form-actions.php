@@ -86,13 +86,13 @@ class Dynamicpackages_Actions{
 			return false;
 		}
 
-		$transaction = dy_tx::get($tx_id);
+		$tx = dy_tx::get_stored_tx($tx_id);
 
-		if ($transaction === null) {
+		if ($tx === null) {
 			return false;
 		}
 
-		$request_type = sanitize_key((string) ($transaction->dy_request ?? ''));
+		$request_type = sanitize_key((string) ($tx->dy_request ?? ''));
 
 		$submission_context = (object) array(
 			'accepted' => in_array(
@@ -117,13 +117,13 @@ class Dynamicpackages_Actions{
 
 		$this->data_sent = true;
 
-		$transaction_payload = $this->get_transaction_payload();
+		$transaction_payload = dy_tx::get_sanitized_post_payload();
 		$is_paguelo_facil = $request_type === 'paguelo_facil_on';
-		$should_store_success = ! $is_paguelo_facil || ($transaction->status ?? '') === 'success';
+		$should_store_success = ! $is_paguelo_facil || ($tx->status ?? '') === 'success';
 
 		if (
-			($transaction->status ?? '') === 'success'
-			&& $this->has_transaction_payload($transaction)
+			($tx->status ?? '') === 'success'
+			&& $this->has_transaction_payload($tx)
 		) {
 			return true;
 		}
@@ -135,7 +135,7 @@ class Dynamicpackages_Actions{
 			}
 		}
 
-		$stored_transaction = dy_tx::$transaction_obj ?? $transaction;
+		$stored_transaction = dy_tx::$transaction_obj ?? $tx;
 		$the_id = (int) ($stored_transaction->dy_id ?? get_dy_id());
 
 		if(request_has('add_ons'))
@@ -206,41 +206,9 @@ class Dynamicpackages_Actions{
 		return true;
     }
 
-	private function get_transaction_payload(): array
+	private function has_transaction_payload(object $tx): bool
 	{
-		return [
-			'booking_details' => [
-				'pax_regular'       => (int) secure_post('pax_regular', 0, 'absint'),
-				'pax_discount'      => (int) secure_post('pax_discount', 0, 'absint'),
-				'pax_free'          => (int) secure_post('pax_free', 0, 'absint'),
-				'transport_type'    => (string) secure_post('transport_type'),
-				'route'             => (string) secure_post('route'),
-				'start_date'        => (string) secure_post('start_date'),
-				'start_hour'        => (string) secure_post('start_hour'),
-				'end_date'          => (string) secure_post('end_date'),
-				'end_hour'          => (string) secure_post('end_hour'),
-				'additional_time'   => (int) secure_post('additional_time', 0, 'absint'),
-				'coupon_code'       => (string) secure_post('coupon_code'),
-				'force_availability'=> (bool) filter_var(
-					secure_post('force_availability', false),
-					FILTER_VALIDATE_BOOLEAN
-				),
-			],
-			'contact_details' => [
-				'first_name'          => (string) secure_post('first_name'),
-				'lastname'            => (string) secure_post('lastname'),
-				'phone'               => (string) secure_post('phone'),
-				'country_calling_code'=> (string) secure_post('country_calling_code'),
-				'email'               => (string) secure_post('email', '', 'sanitize_email'),
-				'repeat_email'        => (string) secure_post('repeat_email', '', 'sanitize_email'),
-				'inquiry'             => (string) secure_post('inquiry', '', 'sanitize_textarea_field'),
-			],
-		];
-	}
-
-	private function has_transaction_payload(object $transaction): bool
-	{
-		$contact_details = $transaction->contact_details ?? null;
+		$contact_details = $tx->contact_details ?? null;
 		$contact_details = is_object($contact_details)
 			? get_object_vars($contact_details)
 			: (is_array($contact_details) ? $contact_details : []);
@@ -248,14 +216,14 @@ class Dynamicpackages_Actions{
 		return ! empty($contact_details['email']);
 	}
 
-	private function flatten_transaction_payload(object|array $transaction): array
+	private function flatten_transaction_payload(object|array $tx): array
 	{
 		$output = [];
 
 		foreach (['booking_details', 'contact_details'] as $section) {
-			$values = is_object($transaction)
-				? ($transaction->{$section} ?? [])
-				: ($transaction[$section] ?? []);
+			$values = is_object($tx)
+				? ($tx->{$section} ?? [])
+				: ($tx[$section] ?? []);
 			$values = is_object($values) ? get_object_vars($values) : $values;
 
 			if (! is_array($values)) {

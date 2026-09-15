@@ -282,7 +282,7 @@ class Dynamicpackages_Fields
         }
 
         
-        if(secure_request('route', null, 'absint') === 1)
+        if(secure_request('route', 0, 'absint') === 1)
         {
             if($name === 'package_payment') $this_field = '0';
             if($name === 'package_deposit') $this_field = '';
