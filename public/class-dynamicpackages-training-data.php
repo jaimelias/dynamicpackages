@@ -286,9 +286,9 @@ class Dynamicpackages_Export_Post_Types{
         $min_persons = (int) package_field('package_min_persons');
         $max_persons = (int) package_field('package_max_persons');
 
-        $included = (array) dy_utilities::get_taxo_names('package_included', $post->ID);
-        $not_included = (array) dy_utilities::get_taxo_names('package_not_included', $post->ID);
-        $categories = (array) dy_utilities::get_taxo_names('package_category', $post->ID);
+        $included = (array) dy_get_taxo_names('package_included', $post->ID);
+        $not_included = (array) dy_get_taxo_names('package_not_included', $post->ID);
+        $categories = (array) dy_get_taxo_names('package_category', $post->ID);
         $is_transport = $package_type === 'transport';
         $start_time = dy_utilities::start_hour();
         $starting_at = (float) dy_utilities::starting_at();
@@ -582,8 +582,8 @@ class Dynamicpackages_Export_Post_Types{
     public function get_surcharges($package_type)
     {
         $output = (object) [];
-        $week_days = dy_utilities::get_week_days_abbr();
-        $week_days_label = dy_utilities::get_week_day_names_long();
+        $week_days = dy_get_week_days_abbr();
+        $week_days_label = dy_get_week_day_names_long();
         $week_day_surcharges = [];
         
 

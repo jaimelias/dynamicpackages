@@ -243,7 +243,7 @@ class Dynamicpackages_WP_JSON
 		$the_id = $post->ID;
 		$disable = [];
 		$disable['disable'] = [];
-		$days = dy_utilities::get_week_days_abbr();
+		$days = dy_get_week_days_abbr();
 		$error_fallback = array(
 			'disable' => [0, 1, 2, 3, 4, 5, 6],
 			'min' => true,

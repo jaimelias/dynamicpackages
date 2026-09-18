@@ -114,8 +114,8 @@ class Dynamicpackages_Metaboxes
 		$this->is_transport = dy_utilities::get_package_type() === 'transport';
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
-		$this->week_days = dy_utilities::get_week_days_abbr();
-		$this->week_day_names = dy_utilities::get_week_day_names_long();
+		$this->week_days = dy_get_week_days_abbr();
+		$this->week_day_names = dy_get_week_day_names_long();
 		$this->set_lang_fields();
 		$this->set_week_day_fields();
 		$this->set_handsontable_args();

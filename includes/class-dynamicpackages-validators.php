@@ -833,7 +833,7 @@ class dy_validators
 		$auto_booking = (int) package_field('package_auto_booking');
 
 		if ($auto_booking === 1) {
-			$terms = (array) dy_utilities::get_taxonomies('package_terms_conditions');
+			$terms = (array) dy_get_taxonomies('package_terms_conditions');
 
 			if (!empty($terms)) {
 

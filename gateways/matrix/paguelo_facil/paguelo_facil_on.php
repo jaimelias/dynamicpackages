@@ -341,7 +341,7 @@ class paguelo_facil_on{
 		{
 			if(self::$txt_status === 2)
 			{
-				$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
+				$terms_conditions = dy_get_taxonomies('package_terms_conditions');
 				
 				if(is_array($terms_conditions))
 				{

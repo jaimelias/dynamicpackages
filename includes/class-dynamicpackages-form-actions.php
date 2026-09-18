@@ -184,7 +184,7 @@ class Dynamicpackages_Actions
 				$data[$field] = secure_post($field);
 			}
 		}
-		foreach ((array) dy_utilities::get_taxonomies('package_terms_conditions') as $term) {
+		foreach ((array) dy_get_taxonomies('package_terms_conditions') as $term) {
 			$field = 'terms_conditions_' . $term->term_taxonomy_id;
 			if (post_has($field)) {
 				$data[$field] = secure_post($field);
@@ -389,7 +389,7 @@ class Dynamicpackages_Actions
 	public function get_term_condition_as_html(): array
 	{		
 		$output = [];
-		$terms_conditions = dy_utilities::get_taxonomies('package_terms_conditions');
+		$terms_conditions = dy_get_taxonomies('package_terms_conditions');
 		$Parsedown = new Parsedown();
 		
 		if(is_array($terms_conditions))

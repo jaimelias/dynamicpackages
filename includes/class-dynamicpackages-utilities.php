@@ -8,10 +8,8 @@ class dy_utilities {
 
 	private static $cache = [];
 
-
 	public static function get_package_type($the_id = null)
 	{
-
 		$cache_key = $the_id.'_get_package_type';
 		$output = '';
 
@@ -1329,89 +1327,6 @@ class dy_utilities {
 			return false;
 		}
 	}
-
-	public static function get_taxonomies($term_name) : array {
-		global $post;
-
-		$output = [];
-		$cache_key = 'dy_get_taxonomies_'.$term_name.'_'.$post->ID;
-
-        if (array_key_exists($cache_key, self::$cache)) {
-            return self::$cache[$cache_key];
-        }
-
-		$the_id = $post->ID;
-		
-		if($post->post_parent > 0)
-		{
-			$the_id = $post->post_parent;
-		}		
-		
-		$terms = get_the_terms($the_id, $term_name);
-
-		
-		if($terms)
-		{
-			for($x = 0; $x < count($terms); $x++)
-			{
-				$output[] = $terms[$x];
-			}			
-		}
-
-        //store output in $cache
-        self::$cache[$cache_key] = $output;
-
-		return $output;
-	}
-
-	public static function get_taxo_names($term_name, $the_id = null) : array {
-		
-		$post = get_post($the_id);
-
-		$cache_key = 'dy_get_taxo_names_'.$term_name.'_'.$post->ID;
-
-		if (array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		$current_terms = get_the_terms($post->ID, $term_name);
-		$current_terms = is_array($current_terms) ? $current_terms : [];
-
-		$parent_terms = [];
-
-		if($post->post_parent > 0)
-		{
-			$parent_terms = get_the_terms($post->post_parent, $term_name);
-			$parent_terms = is_array($parent_terms) 
-				? $parent_terms 
-				: [];
-		}
-
-		$terms_by_id = [];
-
-		foreach ([...$current_terms, ...$parent_terms] as $term) {
-			if ($term instanceof WP_Term) {
-				$terms_by_id[$term->term_id] = $term->name;
-			}
-		}
-
-		$output = array_values($terms_by_id);
-
-		return self::$cache[$cache_key] = $output;
-	}
-	
-	public static function implode_taxo_names($tax, $last_separator = ',', $item_separator = '')
-	{
-		$output = '';
-		$items_arr = self::get_taxo_names($tax, get_dy_id());
-
-		if(is_array($items_arr) && count($items_arr) > 0)
-		{
-			$output = implode_last($items_arr, $last_separator, $item_separator);
-		}
-
-		return $output;
-	}
 	
 	public static function get_add_ons_total() {
 		$total = 0;
@@ -1473,38 +1388,9 @@ class dy_utilities {
 	public static function format_date($date) : string {
 		return date_i18n(get_option('date_format'), $date);
 	}
-	
-	public static function get_week_days_abbr() : array {
-		return ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-	}
 
-	public static function get_week_day_names_long() : array {
-		return [
-			__('Monday', 'dynamicpackages'), 
-			__('Tuesday', 'dynamicpackages'), 
-			__('Wednesday', 'dynamicpackages'), 
-			__('Thursday', 'dynamicpackages'), 
-			__('Friday', 'dynamicpackages'), 
-			__('Saturday', 'dynamicpackages'),
-			__('Sunday', 'dynamicpackages'),
-		];
-	}
-
-	public static function get_week_day_names_short() : array {
-		return [
-			__('Mon', 'dynamicpackages'),
-			 __('Tue', 'dynamicpackages'), 
-			 __('Wed', 'dynamicpackages'),
-			 __('Thu', 'dynamicpackages'), 
-			 __('Fri', 'dynamicpackages'), 
-			 __('Sat', 'dynamicpackages'), 
-			 __('Sun', 'dynamicpackages')
-		];
-	}
-	
-	
 	public static function get_week_day_surcharges() : array {
-		$days = self::get_week_days_abbr();
+		$days = dy_get_week_days_abbr();
 		
 		return array_map(function($day){
 			return (int) package_field('package_week_day_surcharge_' . $day);
@@ -1675,8 +1561,8 @@ class dy_utilities {
 		}		
 
 		$output = '';
-		$days = dy_utilities::get_week_days_abbr();
-		$labels = ($force_long === true) ? dy_utilities::get_week_day_names_long() : dy_utilities::get_week_day_names_short();
+		$days = dy_get_week_days_abbr();
+		$labels = ($force_long === true) ? dy_get_week_day_names_long() : dy_get_week_day_names_short();
 		$enabled_days = [];
 		
 		for($x = 0; $x < count($days); $x++)

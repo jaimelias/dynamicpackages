@@ -43,7 +43,7 @@ class WP_Query {
     public function is_main_query(): bool { return true; }
     public function set(string $key, mixed $value): void { $this->query_vars[$key] = $value; }
 }
-$post = new WP_Post((object) ['ID' => 42, 'post_status' => 'publish', 'post_type' => $request_type === 'contact' ? 'page' : 'packages',
+$post = new WP_Post((object) ['ID' => 42, 'post_parent' => 0, 'post_status' => 'publish', 'post_type' => $request_type === 'contact' ? 'page' : 'packages',
     'post_content' => '[package_contact]', 'post_title' => 'Island ferry']);
 $wpdb = new class {
     public string $prefix = 'wp_';
@@ -98,6 +98,7 @@ function wp_doing_cron(): bool { return false; }
 function get_dy_id(): int { return 42; }
 function get_queried_object_id(): int { return $GLOBALS['case'] === 'wrong-destination' ? 99 : 42; }
 function get_post(int $id): ?WP_Post { return $id === 42 ? $GLOBALS['post'] : null; }
+function get_the_terms(mixed $post, string $taxonomy): false { return false; }
 function has_shortcode(string $content, string $shortcode): bool { return str_contains($content, '[' . $shortcode . ']'); }
 function is_singular(string $type): bool { return $GLOBALS['post']->post_type === $type; }
 function is_main_query(): bool { return true; }
@@ -167,6 +168,7 @@ class dy_utilities {
     public static function webhook(string $option, string $payload): void { $GLOBALS['webhooks'][] = [$option, json_decode($payload, true)]; }
 }
 $root = dirname(__DIR__);
+require $root . '/dy-core/helpers/getters.php';
 require $root . '/dy-core/e-commerce/transactions.php';
 require $root . '/dy-core/e-commerce/confirmation-page.php';
 require $root . '/dy-core/integrations/gtag.php';

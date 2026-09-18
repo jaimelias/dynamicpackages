@@ -262,7 +262,7 @@ class Dynamicpackages_Gateways
 	
 	public function terms_conditions()
 	{
-		$terms_conditions = (array) dy_utilities::get_taxonomies('package_terms_conditions');
+		$terms_conditions = (array) dy_get_taxonomies('package_terms_conditions');
 		
 		if(empty($terms_conditions)) {
 			return;
