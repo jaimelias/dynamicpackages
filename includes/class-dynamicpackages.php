@@ -54,8 +54,7 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
 		require_once $dir . 'public/class-dynamicpackages-confirmation-page.php';
 		require_once $dir . 'public/class-dynamicpackages-location-category.php';
-		require_once $dir . 'public/class-dynamicpackages-training-data.php';
-		
+
 		//admin
 		require_once $dir . 'admin/class-dynamicpackages-admin.php';
 		require_once $dir . 'admin/class-dynamicpackages-add-ons.php';
@@ -95,7 +94,6 @@ class dynamicpackages {
 		new Dynamicpackages_Booking_Page($this->version);
 		new Dynamicpackages_Confirmation_Page($this->version);
 		new Dynamicpackages_Location_Category($this->version);
-		new Dynamicpackages_Export_Post_Types($this->version);
 		new Dynamicpackages_WP_JSON();
 	}
 

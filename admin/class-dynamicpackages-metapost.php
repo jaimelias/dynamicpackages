@@ -291,7 +291,6 @@ class Dynamicpackages_Metapost
 			'package_enabled_num'         => 'absint',
 			'package_start_address_short' => 'sanitize_text_field',
 			'package_return_address_short'=> 'sanitize_text_field',
-			'package_training_data'       => 'absint',
 			'package_one_way_surcharge'   => 'floatval',
 		];
 

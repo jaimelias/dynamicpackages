@@ -120,7 +120,6 @@ class Dynamicpackages_Metaboxes
 		$this->set_week_day_fields();
 		$this->set_handsontable_args();
 		$this->redirect_page = (int) package_field('package_redirect_page');
-		$this->training_data = (int) package_field('package_training_data');
 	}
 
 	public function set_week_day_fields(){
@@ -358,14 +357,6 @@ class Dynamicpackages_Metaboxes
 			<select name="package_redirect_page" id="package_redirect_page">
 				<option value="0" <?php echo ($this->redirect_page == 0) ? 'selected' : ''; ?>>Package Page</option>
 				<option value="1" <?php echo ($this->redirect_page == 1) ? 'selected' : ''; ?>>Booking Page</option>
-			</select>
-
-			<hr>
-
-			<label>🧠 Add to Training Data:</label> 
-			<select name="package_training_data" id="package_training_data" <?php echo esc_attr($this->disable_child); ?>>
-				<option value="0" <?php echo ($this->training_data == 0) ? 'selected' : ''; ?>>No</option>
-				<option value="1" <?php echo ($this->training_data == 1) ? 'selected' : ''; ?>>Yes</option>
 			</select>
 		
 		<?php
