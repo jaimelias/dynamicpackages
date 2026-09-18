@@ -32,6 +32,8 @@ function package_field(string $name, null|int $the_id = null): string
             }
         }
 
+        write_log($the_id);
+
         static $week_days = [];
         static $languages = [];
 
