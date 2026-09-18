@@ -4,7 +4,7 @@ if ( !defined( 'WPINC' )) exit;
 
 if(!class_exists('Dy_Core_Init'))
 {
-    define('DY_CORE_VERSION', '1.1.38');
+    define('DY_CORE_VERSION', '1.1.39');
 
     if ( !defined( 'DY_CORE_TEXTDOMAIN' ) ) {
         define( 'DY_CORE_TEXTDOMAIN', 'dycore' );
@@ -53,6 +53,7 @@ if(!class_exists('Dy_Core_Init'))
             
             require_once $plugin_dir_path . 'errors-page.php';
             require_once $plugin_dir_path . 'security/queries.php';
+            require_once $plugin_dir_path . 'security/fields.php';
             require_once $plugin_dir_path . 'security/write_log.php';
             require_once $plugin_dir_path . 'security/get-option.php';
             require_once $plugin_dir_path . 'security/ip-utilities.php';
