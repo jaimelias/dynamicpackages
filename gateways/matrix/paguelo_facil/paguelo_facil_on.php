@@ -45,13 +45,13 @@ class paguelo_facil_on{
 		$this->background_color = '#262626';
 		$this->dummy_cc = '4321502106746398';
 
-		$debug_email = sanitize_email(
+		$debug_email = dy_sanitize_email(
 			(string) get_option($this->id . '_debug_email', '')
 		);
 
 		$this->debug_email = is_email($debug_email)
 			? $debug_email
-			: sanitize_email((string) get_option('admin_email', ''));
+			: dy_sanitize_email((string) get_option('admin_email', ''));
 
 
 		$this->debug_mode = $this->debug();

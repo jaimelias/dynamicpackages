@@ -352,7 +352,7 @@ class Dynamicpackages_Actions
 			
 			if(dy_get_option('dy_phone') && dy_get_option('dy_email'))
 			{
-				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(dy_get_option('dy_phone')), sanitize_email(dy_get_option('dy_email')))).'</p>';
+				$message .= '<p>'.esc_html(sprintf(__('Do not hesitate to call us at %s or email us at %s if you have any questions.', 'dynamicpackages'), esc_html(dy_get_option('dy_phone')), dy_sanitize_email((string) dy_get_option('dy_email')))).'</p>';
 			}
 
 

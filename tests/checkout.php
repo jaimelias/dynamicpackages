@@ -74,6 +74,7 @@ function cookie_has(string $key): bool { return isset($GLOBALS['cookies'][$key])
 function sanitize_text_field(mixed $value): string { return trim(strip_tags((string) $value)); }
 function sanitize_textarea_field(mixed $value): string { return sanitize_text_field($value); }
 function sanitize_email(mixed $value): string { return (string) $value; }
+function dy_sanitize_email(string $email): string { return sanitize_email(strtolower(trim($email))); }
 function sanitize_key(mixed $value): string { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $value)); }
 function absint(mixed $value): int { return abs((int) $value); }
 function is_email(string $email): bool { return (bool) filter_var($email, FILTER_VALIDATE_EMAIL); }

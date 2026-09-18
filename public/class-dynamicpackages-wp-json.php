@@ -129,7 +129,7 @@ class Dynamicpackages_WP_JSON
 		}
 
 		$dy_id = absint($request['dy_id']);
-		$email = sanitize_email(trim((string) $request['email']));
+		$email = dy_sanitize_email(trim((string) $request['email']));
 		$dy_request = sanitize_key($request['dy_request']);
 		
 		$post = get_post($dy_id);
