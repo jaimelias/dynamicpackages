@@ -22,6 +22,14 @@ new Dy_Core_Fields(
 
 function package_field(string $name, null|int $the_id = null): string
 {
+
+    static $cache = [];
+    $cache_key = $name . '_' . $the_id;
+
+    if(array_key_exists($cache_key, $cache)) {
+        return $cache[$cache_key];
+    }
+
     try {
         if ($the_id === null) {
             $the_id = get_dy_id();
@@ -31,8 +39,6 @@ function package_field(string $name, null|int $the_id = null): string
                 throw new Exception("'the_id' can not be null if 'post' is undefined in package_field(): $name, URL: $request_uri");
             }
         }
-
-        write_log($the_id);
 
         static $week_days = [];
         static $languages = [];
@@ -107,7 +113,7 @@ function package_field(string $name, null|int $the_id = null): string
             if($name === 'package_deposit') $this_field = '';
         }
 
-        return $this_field;
+        return $cache[$cache_key] = $this_field;
     } catch (Throwable $e) {
         write_log(
             [
@@ -120,6 +126,6 @@ function package_field(string $name, null|int $the_id = null): string
             'ERROR'
         );
 
-        return '';
+        return $cache[$cache_key] = '';
     }
 }

@@ -1180,7 +1180,7 @@ class dy_utilities {
 	public static function get_week_days_list($the_id): array {
 		$output = [];
 
-		foreach (self::get_week_days_abbr() as $index => $day) {
+		foreach (dy_get_week_days_abbr() as $index => $day) {
 			if ((int) package_field('package_day_' . $day, $the_id) === 1) {
 				$output[] = $index + 1;
 			}
