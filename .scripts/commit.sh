@@ -138,4 +138,4 @@ fi
 
 git add .
 git commit --quiet -m "${message} - ${commit_version}"
-git push --quiet origin master
+git push --quiet origin master --force
