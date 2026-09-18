@@ -10,7 +10,7 @@ class Dynamicpackages_Package_Page {
 		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
-        add_action('parse_query', array($this, 'load_scripts'));
+        add_action('pre_get_posts', array($this, 'load_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 		add_action('entry_content_class', array($this, 'entry_content_class'));
     }
