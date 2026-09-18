@@ -16,7 +16,7 @@ class dynamicpackages {
 
 		new Dynamicpackages_Post_Types();
 		
-		add_action('init', [$this, 'load_dynamicpackage_textdomain'], PHP_INT_MAX);
+		add_action('init', [$this, 'load_plugin_textdomain'], PHP_INT_MAX);
 
 		$this->initialize_plugin();
 	}
@@ -105,7 +105,7 @@ class dynamicpackages {
 	}
 
 
-	public function load_dynamicpackage_textdomain() {
+	public function load_plugin_textdomain() {
 
 		$domain = 'dynamicpackages';
 		$dir = dirname( plugin_basename( dirname( __FILE__ ) ) ) . '/languages';
