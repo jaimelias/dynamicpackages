@@ -5,8 +5,7 @@ if ( !defined( 'WPINC' ) ) exit;
 function is_package_page() : bool {
 	return secure_server('REQUEST_METHOD') === 'GET' 
 		&& is_post_type_packages() 
-		&& !is_booking_page() 
-		&& !is_confirmation_page();
+		&& !is_booking_page();
 }
 
 function is_booking_page()

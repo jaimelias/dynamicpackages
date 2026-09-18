@@ -362,7 +362,13 @@ class dy_utilities {
 				}
 			}
 				
-			if(!is_booking_page() && !is_confirmation_page())
+
+			if(is_booking_page())
+			{
+				$duration = $min_nights;
+				$duration_label = (string) $duration;
+			}
+			else
 			{
 				if($duration_max > $duration)
 				{
@@ -373,11 +379,6 @@ class dy_utilities {
 						$duration_label .= ' - '.$duration_max;
 					}
 				}			
-			}
-			else
-			{
-				$duration = $min_nights;
-				$duration_label = (string) $duration;
 			}
 			
 			

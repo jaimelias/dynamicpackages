@@ -10,28 +10,18 @@ class Dynamicpackages_Package_Page {
 		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
 
-        add_action('pre_get_posts', array($this, 'load_scripts'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-		add_action('entry_content_class', array($this, 'entry_content_class'));
+        add_action('wp', [$this, 'load_scripts']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+		add_action('entry_content_class', [$this, 'entry_content_class']);
     }
-
-	public function is_valid()
-	{
-		if(is_singular('packages') && !is_booking_page() && !is_confirmation_page())
-		{
-			return true;
-		}
-		
-		return false;
-	}
 
     public function enqueue_scripts()
     {
-        if($this->is_valid())
+        if(is_package_page())
         {
 			global $dy_load_picker_scripts;
 
-            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', array( 'jquery', 'landing-cookies', 'dy-core-utilities', 'picker-js'), $this->version, true );
+            wp_enqueue_script('dynamicpackages-page', $this->plugin_dir_url_file . 'js/dynamicpackages-package-page.js', ['jquery', 'landing-cookies', 'dy-core-utilities', 'picker-js'], $this->version, true );
             wp_add_inline_script('dynamicpackages-page', $this->enabled_times(), 'before');
         }
     }
@@ -71,7 +61,7 @@ class Dynamicpackages_Package_Page {
 		{
 			if($query->query_vars['packages'])
 			{
-				if(!is_booking_page() && !is_confirmation_page())
+				if(is_package_page())
 				{
 					$GLOBALS['dy_load_picker_scripts'] = true;
 				}

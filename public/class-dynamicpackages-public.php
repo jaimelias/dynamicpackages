@@ -130,7 +130,7 @@ class Dynamicpackages_Public {
 			return (string) $parsedown->text($term->description);
 		}
 
-		if (is_singular('packages') && !is_booking_page() && !is_confirmation_page()) {
+		if (is_package_page()) {
 			$partial_content = $content;
 
 			ob_start();
@@ -664,7 +664,7 @@ class Dynamicpackages_Public {
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
-		$is_confirmation_page = is_confirmation_page();
+		$is_submission = Dynamicpackages_Actions::is_submission();
 		$is_booking_page = is_booking_page();
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
@@ -778,7 +778,7 @@ class Dynamicpackages_Public {
 			if(!get_option('dy_archive_hide_enabled_days')) $req[] = 'enabled_days';
 
 		}
-		else if(is_singular('packages') && !$is_booking_page && !$is_confirmation_page)
+		else if(is_singular('packages') && !$is_booking_page && !$is_submission)
 		{
 
 			$show_labels = true;
@@ -806,7 +806,7 @@ class Dynamicpackages_Public {
 				if($return_address)$req[] = 'return_address';				
 			}
 		}
-		else if($is_booking_page || $is_confirmation_page)
+		else if($is_booking_page || $is_submission)
 		{
 			$show_labels = true;
 
@@ -1042,15 +1042,15 @@ class Dynamicpackages_Public {
 		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
 			return;
 		}
-		if (secure_server('REQUEST_METHOD') !== 'GET' || is_confirmation_page()) {
+		if (secure_server('REQUEST_METHOD') !== 'GET') {
 			return;
 		}
 
-		if(
-			is_singular('packages') === false 
-			|| is_404()
-			|| is_main_query() === false
-		) {
+		if(is_404() || is_main_query() === false) {
+			return;
+		}
+
+		if(!is_package_page() && !is_booking_page()) {
 			return;
 		}
 
