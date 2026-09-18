@@ -350,7 +350,7 @@ class dy_validators
 	public static function is_confirmation_page(): bool
 	{
 		return Dynamicpackages_Actions::is_submission()
-			|| Dynamicpackages_Confirmation_Page::is_confirmation();
+			|| Dy_Confirmation_Page::is_confirmation_page();
 	}
 
 	public static function validate_request(): bool

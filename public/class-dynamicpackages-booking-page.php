@@ -17,7 +17,7 @@ class Dynamicpackages_Booking_Page {
 
     public function is_valid()
     {
-        if (Dynamicpackages_Confirmation_Page::is_confirmation()) return false;
+        if (Dy_Confirmation_Page::is_confirmation_page()) return false;
         $output = false;
 
         if(is_singular('packages') && is_booking_page() && !is_confirmation_page())
@@ -163,7 +163,7 @@ class Dynamicpackages_Booking_Page {
 
 	public function load_scripts($query)
 	{
-		if (Dynamicpackages_Confirmation_Page::is_confirmation()) return;
+		if (Dy_Confirmation_Page::is_confirmation_page()) return;
 		global $post;
 
 		$load_turnstile = false;

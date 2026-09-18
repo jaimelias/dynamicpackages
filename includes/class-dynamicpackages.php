@@ -52,7 +52,6 @@ class dynamicpackages {
 		require_once $dir . 'public/class-dynamicpackages-add-calendar.php';
 		require_once $dir . 'public/class-dynamicpackages-package-page.php';
 		require_once $dir . 'public/class-dynamicpackages-booking-page.php';
-		require_once $dir . 'public/class-dynamicpackages-confirmation-page.php';
 		require_once $dir . 'public/class-dynamicpackages-location-category.php';
 
 		//admin
@@ -92,7 +91,6 @@ class dynamicpackages {
 		new Dynamicpackages_Actions();
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
-		new Dynamicpackages_Confirmation_Page($this->version);
 		new Dynamicpackages_Location_Category($this->version);
 		new Dynamicpackages_WP_JSON();
 	}
