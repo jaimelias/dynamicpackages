@@ -267,7 +267,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		if(is_booking_page() || is_confirmation_page())
+		if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 		{	
 			$total = self::subtotal($regular, $the_id) + self::get_add_ons_total();
 		}
@@ -363,7 +363,7 @@ class dy_utilities {
 			}
 				
 
-			if(is_booking_page())
+			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 			{
 				$duration = $min_nights;
 				$duration_label = (string) $duration;
@@ -707,7 +707,7 @@ class dy_utilities {
 			return self::$cache[$cache_key];
 		}
 
-		if(!is_booking_page() && !is_confirmation_page()) {
+		if(!is_booking_page() && !Dynamicpackages_Actions::is_submission()) {
 			return null;
 		}
 
@@ -808,7 +808,7 @@ class dy_utilities {
 
 	public static function get_season($start_date)
 	{
-		if(is_booking_page() || is_confirmation_page())
+		if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 		{
 			$season = 'price_chart';
 			$seasons = self::get_season_chart();
@@ -967,7 +967,7 @@ class dy_utilities {
 	{
 		$sum = 0;
 		
-		if(is_booking_page() || is_confirmation_page())
+		if(is_booking_page() || Dynamicpackages_Actions::is_submission())
 		{
 
 			$pax_regular = dy_tx::request_value('pax_regular');
@@ -1004,7 +1004,7 @@ class dy_utilities {
 		$regular = null,
 		$type = null
 	) {
-		if (!is_booking_page() && !is_confirmation_page()) {
+		if (!is_booking_page() && !Dynamicpackages_Actions::is_submission()) {
 			return 0;
 		}
 

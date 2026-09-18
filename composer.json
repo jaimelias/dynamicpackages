@@ -22,7 +22,7 @@
       "dy-core-publish": "./dy-core/update.sh --publish",
       "start-apache": "/Applications/MAMP/bin/startApache.sh && /Applications/MAMP/bin/startMysql.sh",
       "lint": "parallel-lint --exclude vendor --exclude node_modules .",
-      "phpstan": "phpstan analyse --memory-limit=1G",
+      "phpstan": "phpstan analyse --memory-limit=4G",
       "phpcs": "phpcs",
       "phpcbf": "phpcbf",
       "check": [

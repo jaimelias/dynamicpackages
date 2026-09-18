@@ -11,32 +11,51 @@ class Dynamicpackages_Booking_Page {
     {
 		$this->version = $version;
         $this->plugin_dir_url_file = plugin_dir_url( __FILE__ );
-		add_action('wp', array($this, 'load_scripts'));
+		add_action('wp', [$this, 'validate_request'], 1, 0);
+		add_action('wp', [$this, 'load_scripts'], 10, 0);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
-    public function is_valid()
-    {
-        if (Dy_Confirmation_Page::is_confirmation_page()) return false;
-        $output = false;
+	public function validate_request(): void
+	{
+		if (is_booking_page()) {
+			dy_validators::validate_booking_page_request();
+		}
+	}
 
-        if(is_singular('packages') && is_booking_page() && !is_confirmation_page())
-        {
-            $output = true;
-        }
+	public function is_valid(): bool
+	{
+		if (dy_errors::has_errors()) {
+			return false;
+		}
 
-        if(!$output)
-        {
-			global $post;
-			
-            if(($post instanceof WP_Post) && has_shortcode( $post->post_content, 'package_contact'))
-            {
-                $output = true;
-            }
-        } 
-        
-        return $output;
-    }
+		if (is_booking_page()) {
+			return dy_validators::validate_booking_page_request();
+		}
+
+		// Contact shortcodes also share checkout assets on ordinary GET pages.
+		if (
+			!did_action('wp')
+			|| !in_array(
+				Dynamicpackages_Resolver::current(),
+				[Dynamicpackages_Resolver::NONE, Dynamicpackages_Resolver::PACKAGE],
+				true
+			)
+			|| secure_server('REQUEST_METHOD') !== 'GET'
+			|| is_admin()
+			|| wp_doing_ajax()
+			|| wp_doing_cron()
+			|| (defined('REST_REQUEST') && REST_REQUEST)
+		) {
+			return false;
+		}
+
+		$post = get_queried_object();
+
+		return $post instanceof WP_Post
+			&& $post->post_status === 'publish'
+			&& has_shortcode($post->post_content, 'package_contact');
+	}
 
     public function enqueue_scripts()
     {
@@ -161,41 +180,14 @@ class Dynamicpackages_Booking_Page {
 		}, $terms);
 	}
 
-	public function load_scripts($query)
+	public function load_scripts(): void
 	{
-		if (Dy_Confirmation_Page::is_confirmation_page()) return;
-		global $post;
-
-		$load_turnstile = false;
-		$load_request_form_utilities = false;
-
-		if($post instanceof WP_Post)
-		{
-			if(has_shortcode($post->post_content, 'package_contact'))
-			{
-				$load_turnstile = true;
-				$load_request_form_utilities = true;
-			}
+		if (!$this->is_valid()) {
+			return;
 		}
 
-		if(isset($query->query_vars['packages']) && $query->query_vars['packages'])
-		{
-			if(is_booking_page())
-			{
-				$load_turnstile = true;
-				$load_request_form_utilities = true;
-			}
-		}
-
-		if($load_turnstile)
-		{
-			$GLOBALS['dy_load_turnstile_scripts'] = true;
-		}
-
-		if($load_request_form_utilities)
-		{
-			$GLOBALS['dy_load_request_form_utilities_scripts'] = true;
-		}
+		$GLOBALS['dy_load_turnstile_scripts'] = true;
+		$GLOBALS['dy_load_request_form_utilities_scripts'] = true;
 	}
 
 }

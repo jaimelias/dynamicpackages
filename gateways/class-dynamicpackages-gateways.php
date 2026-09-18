@@ -43,7 +43,7 @@ class Dynamicpackages_Gateways
 	}
 	public function init()
 	{
-		add_filter('init', array($this, 'modify_headers'), 100);
+		add_action('wp', [$this, 'modify_headers'], 100, 0);
 		add_action('dy_cc_form', array($this, 'cc_form'));
 		add_filter('dy_list_gateways', array($this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
 		add_action('dy_checkout_area', array($this, 'checkout_area'), 1);
@@ -66,7 +66,13 @@ class Dynamicpackages_Gateways
 	{
 		$content = is_string($content) ? $content : '';
 
-		if(!is_booking_page()) return $content;
+		if (
+			!is_booking_page()
+			|| !dy_validators::validate_booking_page_request()
+			|| dy_errors::has_errors()
+		) {
+			return $content;
+		}
 
 		$package_max_persons = absint(package_field('package_max_persons'));
 		$pax_sum = (get_has('pax_regular') ? dy_tx::request_value('pax_regular') : 1)

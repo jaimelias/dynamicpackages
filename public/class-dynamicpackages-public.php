@@ -107,6 +107,13 @@ class Dynamicpackages_Public {
 	{
 		$content = is_string($content) ? $content : '';
 
+		if (
+			Dynamicpackages_Resolver::current() === Dynamicpackages_Resolver::CONFIRMATION
+			|| dy_errors::has_errors()
+		) {
+			return $content;
+		}
+
 		if (is_tax([
 			'package_location',
 			'package_category',
@@ -587,6 +594,10 @@ class Dynamicpackages_Public {
 	{
 		$excerpt = is_string($excerpt) ? $excerpt : '';
 
+		if (Dynamicpackages_Resolver::current() === Dynamicpackages_Resolver::CONFIRMATION) {
+			return $excerpt;
+		}
+
 		if (!is_singular('packages')) {
 			return $excerpt;
 		}
@@ -1038,6 +1049,13 @@ class Dynamicpackages_Public {
 
 	public function template_redirect()
 	{
+		if (
+			Dynamicpackages_Resolver::current() === Dynamicpackages_Resolver::CONFIRMATION
+			|| dy_errors::has_errors()
+		) {
+			return;
+		}
+
 		// Only front end, only GET (avoid breaking form submits/previews/AJAX/REST/cron).
 		if ( is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || wp_doing_cron() ) {
 			return;

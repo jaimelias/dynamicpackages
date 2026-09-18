@@ -38,6 +38,7 @@ class dynamicpackages {
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
 		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
+		require_once $dir . 'includes/class-dynamicpackages-resolver.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-fields.php'; //optimized
 
@@ -84,6 +85,7 @@ class dynamicpackages {
 
 	private function define_public_hooks() 
 	{
+		new Dynamicpackages_Resolver();
 		new Dynamicpackages_Public($this->version);
 		new Dynamicpackages_Tables();
 		new Dynamicpackages_Shortcodes();

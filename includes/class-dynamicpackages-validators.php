@@ -2,20 +2,13 @@
 
 if ( !defined( 'WPINC' ) ) exit;
 
-function is_package_page() : bool {
-	return secure_server('REQUEST_METHOD') === 'GET' 
-		&& is_post_type_packages() 
-		&& !is_booking_page();
+function is_package_page(): bool {
+	return Dynamicpackages_Resolver::current() === Dynamicpackages_Resolver::PACKAGE;
 }
 
-function is_booking_page()
+function is_booking_page(): bool
 {
 	return dy_validators::is_booking_page();
-}
-
-function is_confirmation_page()
-{
-	return dy_validators::is_confirmation_page();
 }
 
 function has_package()
@@ -196,39 +189,20 @@ class dy_validators
 
 	public static function is_booking_page(): bool
 	{
-		$cache_key = 'dy_is_booking_page';
+		return Dynamicpackages_Resolver::current() === Dynamicpackages_Resolver::BOOKING;
+	}
 
-		if(
-			secure_server('REQUEST_METHOD') !== 'GET'
-			|| is_admin()
-			|| wp_doing_ajax()
-			|| wp_doing_cron()
-			|| (defined('REST_REQUEST') && REST_REQUEST)
-			|| !is_singular('packages')
-		) {
+	/** Validate booking GET input without changing the resolved screen. */
+	public static function validate_booking_page_request(): bool
+	{
+		if (!self::is_booking_page()) {
 			return false;
 		}
 
+		$cache_key = 'dy_validate_booking_page_request';
+
 		if(array_key_exists($cache_key, self::$cache)) {
 			return (bool) self::$cache[$cache_key];
-		}
-
-		if(!self::is_post_type_packages()) {
-			return self::$cache[$cache_key] = false;
-		}
-
-		/*
-		* Si ambos valores están ausentes, se trata de la página normal
-		* del paquete y no de un intento de reserva.
-		*
-		* Un valor vacío permanece distinto de null y será validado como
-		* inválido más adelante.
-		*/
-		$start_date = dy_tx::request_value('start_date');
-		$pax_regular = dy_tx::request_value('pax_regular');
-
-		if(!get_has('start_date') && !get_has('pax_regular')) {
-			return self::$cache[$cache_key] = false;
 		}
 
 		$the_id = get_dy_id();
@@ -343,13 +317,6 @@ class dy_validators
 		}
 
 		return self::$cache[$cache_key] = true;
-	}
-
-	/** Compatibility predicate for pricing helpers shared by submission and confirmation. */
-	public static function is_confirmation_page(): bool
-	{
-		return Dynamicpackages_Actions::is_submission()
-			|| Dy_Confirmation_Page::is_confirmation_page();
 	}
 
 	public static function validate_request(): bool

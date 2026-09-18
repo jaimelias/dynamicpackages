@@ -13,9 +13,10 @@ class Dynamicpackages_Actions
 		add_action('template_redirect', [$this, 'submit'], 20);
 	}
 
+	/** Recognize checkout intent on the resolved destination; validation runs later. */
 	public static function is_submission(): bool
 	{
-		if (secure_server('REQUEST_METHOD') !== 'POST'
+		if (!did_action('wp') || secure_server('REQUEST_METHOD') !== 'POST'
 			|| is_admin() || wp_doing_ajax() || wp_doing_cron()
 			|| (defined('REST_REQUEST') && REST_REQUEST)) {
 			return false;
@@ -26,7 +27,7 @@ class Dynamicpackages_Actions
 			return false;
 		}
 
-		$post = get_post(get_dy_id());
+		$post = get_queried_object();
 		return $post instanceof WP_Post && $post->post_status === 'publish'
 			&& ($post->post_type === 'packages' || has_shortcode($post->post_content, 'package_contact'));
 	}
