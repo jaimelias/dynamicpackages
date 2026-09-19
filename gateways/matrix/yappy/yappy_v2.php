@@ -27,9 +27,10 @@ class yappy_v2
 	private int $show = 0;
 	private bool $enabled = false;
 
-	public function __construct(string $plugin_id)
+	public function __construct(string $plugin_id, string|int $version)
 	{
 		$this->plugin_id = $plugin_id;
+		$this->version = $version;
 
 		add_action('init', [$this, 'init']);
 		add_action('admin_init', [$this, 'settings_init'], 1);
@@ -953,7 +954,7 @@ class yappy_v2
 			'dynamicpackages-yappy-v2',
 			plugin_dir_url(__FILE__) . 'yappy-v2.js',
 			['jquery'],
-			defined('DYNAMICPACKAGES_VERSION') ? DYNAMICPACKAGES_VERSION : null,
+			$this->version,
 			true
 		);
 		wp_localize_script('dynamicpackages-yappy-v2', 'dyYappyV2', [

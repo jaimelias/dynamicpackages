@@ -99,9 +99,8 @@ class dynamicpackages {
 
 	private function define_gateteways_hooks()
 	{
-		new Dynamicpackages_Gateways($this->plugin_id);
+		new Dynamicpackages_Gateways($this->plugin_id, $this->version);
 	}
-
 
 	public function load_plugin_textdomain() {
 

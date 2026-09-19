@@ -8,9 +8,10 @@ class Dynamicpackages_Gateways
 
 	private static $cache = [];
 
-	function __construct($plugin_id)
+	function __construct(string $plugin_id, string|int $version)
 	{
 		$this->plugin_id = $plugin_id;
+		$this->version = $version;
 		$this->load_gateways();
 		$this->load_classes();
 		$this->init();
@@ -32,34 +33,33 @@ class Dynamicpackages_Gateways
 	
 	public function load_classes()
 	{
-
 		$this->estimate = new estimate_request($this->plugin_id);
 		new dy_Add_To_Calendar();
 		new paguelo_facil_on($this->plugin_id);
 		new cuanto($this->plugin_id);
 		new paypal_me($this->plugin_id);
 		new yappy_direct($this->plugin_id);
-		new yappy_v2($this->plugin_id);
+		new yappy_v2($this->plugin_id, $this->version);
 		new stable_coins($this->plugin_id, 'usdt');
 		new stable_coins($this->plugin_id, 'usdc');
 	}
 	public function init()
 	{
 		add_action('wp', [$this, 'modify_headers'], 100, 0);
-		add_action('dy_cc_form', array($this, 'cc_form'));
-		add_filter('dy_list_gateways', array($this, 'list_gateways'), PHP_INT_MAX); // Ensure this runs after all gateways have been added
-		add_action('dy_checkout_area', array($this, 'checkout_area'), 1);
-		add_filter('the_content', array($this, 'the_content'), 102);
-		add_action('dy_terms_conditions', array($this, 'terms_conditions'));
-		add_filter('dy_has_gateway', array($this, 'has_gateway'));
-		add_filter('dy_join_gateways', array($this, 'join_gateways'));
-		add_action('dy_invalid_min_duration', array($this, 'invalid_min_duration'));
-		add_action('dy_coupon_confirmation', array($this, 'coupon_confirmation'));
-		add_action('dy_cc_warning', array($this, 'cc_warning'));
-		add_action('dy_crypto_form', array($this, 'crypto_form'));		
-		add_action('dy_whatsapp_button', array($this, 'whatsapp_button'));
-		add_action('dy_copy_payment_link', array($this, 'copy_payment_link'));
-		add_action('dy_force_availability_link', array($this, 'force_availability_link'));
+		add_action('dy_cc_form', [$this, 'cc_form']);
+		add_filter('dy_list_gateways', [$this, 'list_gateways'], PHP_INT_MAX); // Ensure this runs after all gateways have been added
+		add_action('dy_checkout_area', [$this, 'checkout_area'], 1);
+		add_filter('the_content', [$this, 'the_content'], 102);
+		add_action('dy_terms_conditions', [$this, 'terms_conditions']);
+		add_filter('dy_has_gateway', [$this, 'has_gateway']);
+		add_filter('dy_join_gateways', [$this, 'join_gateways']);
+		add_action('dy_invalid_min_duration', [$this, 'invalid_min_duration']);
+		add_action('dy_coupon_confirmation', [$this, 'coupon_confirmation']);
+		add_action('dy_cc_warning', [$this, 'cc_warning']);
+		add_action('dy_crypto_form', [$this, 'crypto_form']);		
+		add_action('dy_whatsapp_button', [$this, 'whatsapp_button']);
+		add_action('dy_copy_payment_link', [$this, 'copy_payment_link']);
+		add_action('dy_force_availability_link', [$this, 'force_availability_link']);
 	}
 	
 
