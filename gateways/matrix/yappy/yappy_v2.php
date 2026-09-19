@@ -1035,7 +1035,7 @@ class yappy_v2
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html($this->name); ?></h1>
-			<p><?php echo esc_html__('This webhook is sent automatically to Yappy when each payment order is created; it does not need to be entered in the Yappy portal:', 'dynamicpackages'); ?></p>
+			<p><?php echo esc_html__('This webhook URL is sent automatically to Yappy as the "IPN" param when each payment order is created; it does not need to be entered in the Yappy portal:', 'dynamicpackages'); ?></p>
 			<p><code><?php echo esc_html(rest_url('dy-core/yappy-v2/webhook')); ?></code></p>
 			<form action="options.php" method="post">
 				<?php
