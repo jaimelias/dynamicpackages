@@ -51,7 +51,7 @@ class yappy_v2
 	{
 		$this->enabled = (string) dy_get_option($this->id . '_enabled', '0') === '1';
 		$this->merchant_id = trim((string) dy_get_option($this->id . '_merchant_id', ''));
-		$this->domain = trim((string) dy_get_option($this->id . '_domain', ''));
+		$this->domain = $this->https_domain_url();
 		$this->secret = trim((string) dy_get_option($this->id . '_secret', ''));
 		$this->min = max(0.01, (float) dy_get_option($this->id . '_min', '0.01'));
 		$this->max = max(0.0, (float) dy_get_option($this->id . '_max', '9999'));
@@ -60,6 +60,25 @@ class yappy_v2
 		$decoded = base64_decode($this->secret, true);
 		$this->signing_key = is_string($decoded)
 			? (string) explode('.', $decoded, 2)[0]
+			: '';
+	}
+
+	private function https_domain_url(): string
+	{
+		$domain_url = wp_parse_url(home_url('/'), PHP_URL_HOST);
+		if (!is_string($domain_url)) return '';
+
+		$domain_url = strtolower(rtrim($domain_url, '.'));
+		if (!str_contains($domain_url, '.')
+			|| filter_var($domain_url, FILTER_VALIDATE_IP) !== false
+			|| filter_var($domain_url, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) === false) {
+			return '';
+		}
+
+		$https_domain = 'https://' . $domain_url;
+
+		return filter_var($https_domain, FILTER_VALIDATE_URL) !== false
+			? $https_domain
 			: '';
 	}
 
@@ -961,7 +980,6 @@ class yappy_v2
 		foreach ([
 			$this->id . '_enabled' => 'intval',
 			$this->id . '_merchant_id' => 'sanitize_text_field',
-			$this->id . '_domain' => 'esc_url_raw',
 			$this->id . '_secret' => 'sanitize_text_field',
 			$this->id . '_min' => 'floatval',
 			$this->id . '_max' => 'floatval',
@@ -1007,7 +1025,6 @@ class yappy_v2
 
 		foreach ([
 			$this->id . '_merchant_id' => __('Merchant ID', 'dynamicpackages'),
-			$this->id . '_domain' => __('Registered HTTPS Domain', 'dynamicpackages'),
 			$this->id . '_secret' => __('Secret Key (Base64)', 'dynamicpackages'),
 		] as $key => $label) {
 			add_settings_field($key, $label, ['dy_input_option', 'text'], $group, $this->id . '_credentials', [
@@ -1035,8 +1052,22 @@ class yappy_v2
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html($this->name); ?></h1>
-			<p><?php echo esc_html__('This webhook URL is sent automatically to Yappy as the "IPN" param when each payment order is created; it does not need to be entered in the Yappy portal:', 'dynamicpackages'); ?></p>
-			<p><code><?php echo esc_html(rest_url('dy-core/yappy-v2/webhook')); ?></code></p>
+			<p>
+				<?php echo esc_html__('This webhook URL is sent automatically to Yappy as the "IPN" param when each payment order is created; it does not need to be entered in the Yappy portal:', 'dynamicpackages'); ?>
+				<br/><code><?php echo esc_html(rest_url('dy-core/yappy-v2/webhook')); ?></code>
+			</p>
+			<p>
+				<?php
+				printf(
+					/* translators: %s: HTTPS domain URL registered in the Yappy Portal */
+					esc_html__('Credentials issued in the Yappy V2 Portal are assigned to a single domain. Make sure the domain registered there matches this one: %s', 'dynamicpackages'),
+					'<code>' . esc_html($this->domain) . '</code>'
+				);
+				?>
+			</p>
+			<p>
+				<?php echo esc_html__('Yappy V2 is not available for sandbox testing, and it does not work in localhost environments.', 'dynamicpackages'); ?>
+			</p>
 			<form action="options.php" method="post">
 				<?php
 				settings_fields($this->id . '_settings');

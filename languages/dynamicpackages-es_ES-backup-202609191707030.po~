@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2026-09-19 17:19+0000\n"
+"PO-Revision-Date: 2026-09-19 17:06+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: gateways/matrix/yappy/yappy_v2.php:208
 #, php-format
 msgid "%1$s, thank you for your %2$s of %3$s: %4$s"
-msgstr "%1$s, gracias por su %2$s de %3$s: %4$s"
+msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:586
 msgid "%d minute"
@@ -403,7 +403,7 @@ msgstr "Copiar link de pagos"
 
 #: public/class-dynamicpackages-booking-page.php:66
 msgid "Correct fields"
-msgstr "Corregir campos"
+msgstr ""
 
 #: gateways/partials/cc-form.php:43
 msgid "Country"
@@ -429,15 +429,10 @@ msgstr "Cupones"
 #. %s: HTTPS domain URL registered in the Yappy Portal
 #: gateways/matrix/yappy/yappy_v2.php:1063
 #, php-format
-#| msgid ""
-#| "Credentials issued in the Yappy Portal are assigned to a single domain. "
-#| "Make sure the domain registered there matches this one: %s"
 msgid ""
-"Credentials issued in the Yappy V2 Portal are assigned to a single domain. "
-"Make sure the domain registered there matches this one: %s"
+"Credentials issued in the Yappy Portal are assigned to a single domain. Make "
+"sure the domain registered there matches this one: %s"
 msgstr ""
-"Las credenciales emitidas en el Portal Yappy V2 se asignan a un único "
-"dominio. Asegúrese de que el dominio registrado allí coincida con este: %s"
 
 #: public/class-dynamicpackages-forms.php:132
 #: public/class-dynamicpackages-forms.php:136
@@ -619,7 +614,7 @@ msgstr "Permitir reservas automaticas"
 
 #: gateways/matrix/yappy/yappy_v2.php:1004
 msgid "Enabled"
-msgstr "Enabled"
+msgstr ""
 
 #: public/class-dynamicpackages-forms.php:370
 msgid "Enter coupon code"
@@ -936,11 +931,11 @@ msgstr "Cupón inválido o expirado"
 
 #: gateways/matrix/yappy/yappy_v2.php:740
 msgid "Invalid or expired payment access."
-msgstr "Acceso de pago no válido o caducado."
+msgstr ""
 
 #: includes/class-dynamicpackages-submit.php:72
 msgid "Invalid or expired transaction ID."
-msgstr "ID de transacción no válido o caducado."
+msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:270
 msgid "Invalid param: pax_regular."
@@ -952,7 +947,7 @@ msgstr "Número de pax no válido."
 
 #: gateways/matrix/yappy/yappy_v2.php:729
 msgid "Invalid payment access."
-msgstr "Acceso de pago no válido."
+msgstr ""
 
 #: includes/class-dynamicpackages-validators.php:752
 msgid "Invalid repeated email."
@@ -1070,7 +1065,7 @@ msgstr "Número máximo de participantes"
 
 #: gateways/matrix/yappy/yappy_v2.php:1027
 msgid "Merchant ID"
-msgstr "ID del comercio"
+msgstr ""
 
 #: public/class-dynamicpackages-shortcodes.php:47
 msgid "Message"
@@ -1442,7 +1437,7 @@ msgstr ""
 
 #: gateways/matrix/yappy/yappy_v2.php:111
 msgid "Payment amount is outside the limits allowed by Yappy."
-msgstr "El monto del pago está fuera de los límites permitidos por Yappy."
+msgstr ""
 
 #: gateways/matrix/yappy/yappy_v2.php:304
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:495

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Travel Packages\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 20:09-0500\n"
-"PO-Revision-Date: 2026-09-19 17:19+0000\n"
+"PO-Revision-Date: 2026-09-19 17:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: Español\n"
 "Language: es_ES\n"
@@ -429,15 +429,12 @@ msgstr "Cupones"
 #. %s: HTTPS domain URL registered in the Yappy Portal
 #: gateways/matrix/yappy/yappy_v2.php:1063
 #, php-format
-#| msgid ""
-#| "Credentials issued in the Yappy Portal are assigned to a single domain. "
-#| "Make sure the domain registered there matches this one: %s"
 msgid ""
-"Credentials issued in the Yappy V2 Portal are assigned to a single domain. "
-"Make sure the domain registered there matches this one: %s"
+"Credentials issued in the Yappy Portal are assigned to a single domain. Make "
+"sure the domain registered there matches this one: %s"
 msgstr ""
-"Las credenciales emitidas en el Portal Yappy V2 se asignan a un único "
-"dominio. Asegúrese de que el dominio registrado allí coincida con este: %s"
+"Las credenciales emitidas en el Portal Yappy se asignan a un único dominio. "
+"Asegúrese de que el dominio registrado allí coincida con este: %s"
 
 #: public/class-dynamicpackages-forms.php:132
 #: public/class-dynamicpackages-forms.php:136
@@ -1442,7 +1439,7 @@ msgstr ""
 
 #: gateways/matrix/yappy/yappy_v2.php:111
 msgid "Payment amount is outside the limits allowed by Yappy."
-msgstr "El monto del pago está fuera de los límites permitidos por Yappy."
+msgstr ""
 
 #: gateways/matrix/yappy/yappy_v2.php:304
 #: gateways/matrix/paguelo_facil/paguelo_facil_on.php:495
