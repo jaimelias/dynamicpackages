@@ -675,7 +675,7 @@ class Dynamicpackages_Public {
 		$end_date = (dy_utilities::end_date()) ? dy_utilities::format_date(dy_utilities::end_date()) : null;
 		
 		$is_transport = dy_utilities::get_package_type($the_id) === 'transport';
-		$is_submission = Dynamicpackages_Actions::is_submission();
+		$is_submission = Dynamicpackages_Submit::is_submission();
 		$is_booking_page = is_booking_page();
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');

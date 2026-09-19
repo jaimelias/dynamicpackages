@@ -242,7 +242,7 @@ class paguelo_facil_on{
 
 	public function prepare_submission(object $submission_context): void
 	{
-		if (!Dynamicpackages_Actions::is_submission() || secure_post('dy_request') !== $this->id) {
+		if (!Dynamicpackages_Submit::is_submission() || secure_post('dy_request') !== $this->id) {
 			return;
 		}
 		if (!$this->is_payment_amount_allowed((float) dy_utilities::payment_amount())) {
@@ -426,7 +426,7 @@ class paguelo_facil_on{
 	}
 	public function is_request_submitted(): bool
 	{
-		return Dynamicpackages_Actions::is_submission()
+		return Dynamicpackages_Submit::is_submission()
 			&& secure_post('dy_request') === $this->id
 			&& self::$txt_status !== null;
 	}
@@ -538,7 +538,7 @@ class paguelo_facil_on{
 		{
 			$payment = (int) package_field('package_payment');
 			
-			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
+			if(is_booking_page() || Dynamicpackages_Submit::is_submission())
 			{
 				$total = (float) dy_utilities::payment_amount();
 			}
@@ -703,7 +703,7 @@ class paguelo_facil_on{
 					['estimate_request', $failed_gateway],
 					true
 				)
-				&& Dynamicpackages_Actions::is_submission()
+				&& Dynamicpackages_Submit::is_submission()
 				&& dy_validators::validate_request()
 			)
 			{

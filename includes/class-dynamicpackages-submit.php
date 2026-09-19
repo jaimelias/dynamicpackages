@@ -2,7 +2,7 @@
 
 if (!defined('WPINC')) exit;
 
-class Dynamicpackages_Actions
+class Dynamicpackages_Submit
 {
 	private static ?bool $submission_valid = null;
 	private string $plugin_dir_path_dir;
@@ -217,11 +217,13 @@ class Dynamicpackages_Actions
 		$data['disabled_dates_api'] = package_field('package_disabled_dates_api', $the_id);
 
 		$webhook_option = apply_filters('dy_webhook_option', 'dy_quote_webhook');
+
 		$webhook_args = $data;
 		$webhook_args['providers'] = apply_filters('dy_list_providers', []);
 		$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', []);
 
 		$payload = wp_json_encode($webhook_args);
+		
 
 		dy_utilities::webhook($webhook_option, $payload);
 		$this->send_email();

@@ -222,7 +222,7 @@ class stable_coins {
             return self::$cache[$cache_key];
         }
 		
-		if(Dynamicpackages_Actions::is_submission() && post_has('dy_network') && !dy_errors::has_errors())
+		if(Dynamicpackages_Submit::is_submission() && post_has('dy_network') && !dy_errors::has_errors())
 		{
 			$network = secure_post('dy_network', '', 'sanitize_key');
 
@@ -256,7 +256,7 @@ class stable_coins {
 			$show = intval($this->show);
 			$payment = package_field('package_payment');
 			
-			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
+			if(is_booking_page() || Dynamicpackages_Submit::is_submission())
 			{
 				$total = dy_utilities::payment_amount();
 			}
@@ -388,7 +388,7 @@ class stable_coins {
 				$add = true;
 			}
 			
-			if(Dynamicpackages_Actions::is_submission() && dy_validators::validate_request())
+			if(Dynamicpackages_Submit::is_submission() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

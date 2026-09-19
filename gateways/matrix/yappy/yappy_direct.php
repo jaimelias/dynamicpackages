@@ -136,7 +136,7 @@ class yappy_direct {
             return self::$cache[$cache_key];
         }
 		
-		if(Dynamicpackages_Actions::is_submission() && !dy_errors::has_errors())
+		if(Dynamicpackages_Submit::is_submission() && !dy_errors::has_errors())
 		{
 			if(secure_post('dy_request') === $this->id && dy_utilities::payment_amount() > 1)
 			{
@@ -224,7 +224,7 @@ class yappy_direct {
 			$show = intval($this->show);
 			$payment = package_field('package_payment');
 			
-			if(is_booking_page() || Dynamicpackages_Actions::is_submission())
+			if(is_booking_page() || Dynamicpackages_Submit::is_submission())
 			{
 				$total = dy_utilities::payment_amount();
 			}
@@ -371,7 +371,7 @@ class yappy_direct {
 				$add = true;
 			}
 			
-			if(Dynamicpackages_Actions::is_submission() && dy_validators::validate_request())
+			if(Dynamicpackages_Submit::is_submission() && dy_validators::validate_request())
 			{
 				if(in_array(secure_post('dy_request'), ['estimate_request', apply_filters('dy_fail_checkout_gateway_name', null)]))
 				{

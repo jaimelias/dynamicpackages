@@ -37,7 +37,7 @@ class dynamicpackages {
 		require_once $dir . 'dy-core/loader.php';
 		require_once $dir . 'includes/class-dynamicpackages-validators.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-utilities.php';
-		require_once $dir . 'includes/class-dynamicpackages-form-actions.php';
+		require_once $dir . 'includes/class-dynamicpackages-submit.php';
 		require_once $dir . 'includes/class-dynamicpackages-resolver.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-fields.php'; //optimized
@@ -90,7 +90,7 @@ class dynamicpackages {
 		new Dynamicpackages_Tables();
 		new Dynamicpackages_Shortcodes();
 		new Dynamicpackages_Forms();
-		new Dynamicpackages_Actions();
+		new Dynamicpackages_Submit();
 		new Dynamicpackages_Package_Page($this->version);
 		new Dynamicpackages_Booking_Page($this->version);
 		new Dynamicpackages_Location_Category($this->version);

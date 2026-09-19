@@ -321,7 +321,7 @@ class dy_validators
 
 	public static function validate_request(): bool
 	{
-		return Dynamicpackages_Actions::validate_request();
+		return Dynamicpackages_Submit::validate_request();
 	}
 
 	public static function is_white_listed_from_rate_limits() : bool {

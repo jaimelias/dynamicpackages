@@ -50,7 +50,7 @@ final class Dynamicpackages_Resolver
 		$method = secure_server('REQUEST_METHOD');
 
 		if ($method === 'POST') {
-			return self::$state = Dynamicpackages_Actions::is_submission()
+			return self::$state = Dynamicpackages_Submit::is_submission()
 				? self::SUBMISSION
 				: self::NONE;
 		}
