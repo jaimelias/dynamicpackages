@@ -36,6 +36,10 @@ class dynamicpackages_Activator {
 	 */
 	public static function activate() {
 		dy_core_schedule_rewrite_flush();
+
+		if (class_exists('Dy_Yappy_V2_Store')) {
+			Dy_Yappy_V2_Store::install();
+		}
 	}
 
 }

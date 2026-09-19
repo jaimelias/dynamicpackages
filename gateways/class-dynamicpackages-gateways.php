@@ -24,6 +24,7 @@ class Dynamicpackages_Gateways
 		require_once $plugin_dir_path . 'matrix/paguelo_facil/paguelo_facil_on.php';		
 		require_once $plugin_dir_path . 'matrix/paypal/paypal_me.php';		
 		require_once $plugin_dir_path . 'matrix/yappy/yappy_direct.php';
+		require_once $plugin_dir_path . 'matrix/yappy/yappy_v2.php';
 		require_once $plugin_dir_path . 'matrix/estimate/estimate.php';
 		require_once $plugin_dir_path . 'matrix/crypto/stable-coins.php';
 		
@@ -38,6 +39,7 @@ class Dynamicpackages_Gateways
 		new cuanto($this->plugin_id);
 		new paypal_me($this->plugin_id);
 		new yappy_direct($this->plugin_id);
+		new yappy_v2($this->plugin_id);
 		new stable_coins($this->plugin_id, 'usdt');
 		new stable_coins($this->plugin_id, 'usdc');
 	}

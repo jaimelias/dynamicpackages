@@ -104,7 +104,33 @@ class Dynamicpackages_Submit
 			if (!$this->store($tx)) {
 				return false;
 			}
-			$this->send_notifications($tx);
+			$notifications = $this->build_notification_snapshot($tx);
+			$deferred = (bool) apply_filters(
+				'dy_defer_transaction_notifications',
+				false,
+				$tx
+			);
+
+			if ($deferred) {
+				$stored = (bool) apply_filters(
+					'dy_store_deferred_notifications',
+					false,
+					$tx,
+					$notifications
+				);
+
+				if (!$stored) {
+					dy_errors::add(
+						__('Unable to prepare the pending payment. Please contact us before trying again.', 'dynamicpackages'),
+						503
+					);
+
+					return false;
+				}
+			} else {
+				self::dispatch_notification_snapshot($notifications);
+			}
+
 			return true;
 		} finally {
 			$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
@@ -162,7 +188,7 @@ class Dynamicpackages_Submit
 		return self::$submission_valid = $submission_valid && $post_valid && $gateway_valid;
 	}
 
-	private function send_notifications(object $tx): void
+	private function build_notification_snapshot(object $tx): array
 	{
 		$the_id = (int) $tx->dy_id;
 		if(request_has('add_ons'))
@@ -222,12 +248,56 @@ class Dynamicpackages_Submit
 		$webhook_args['providers'] = apply_filters('dy_list_providers', []);
 		$webhook_args['add_ons'] = apply_filters('dy_included_add_ons_arr', []);
 
-		$payload = wp_json_encode($webhook_args);
-		
+		return [
+			'webhook' => [
+				'option' => sanitize_key((string) $webhook_option),
+				'payload' => $webhook_args,
+			],
+			'email' => $this->build_email_notification(),
+		];
+	}
 
-		dy_utilities::webhook($webhook_option, $payload);
-		$this->send_email();
+	public static function dispatch_notification_snapshot(array $snapshot): void
+	{
+		$webhook = is_array($snapshot['webhook'] ?? null)
+			? $snapshot['webhook']
+			: [];
+		$option = sanitize_key((string) ($webhook['option'] ?? ''));
 
+		if ($option !== '') {
+			dy_utilities::webhook($option, $webhook['payload'] ?? []);
+		}
+
+		$email = is_array($snapshot['email'] ?? null)
+			? $snapshot['email']
+			: [];
+		$to = dy_sanitize_email((string) ($email['to'] ?? ''));
+		$subject = sanitize_text_field((string) ($email['subject'] ?? ''));
+		$body = (string) ($email['body'] ?? '');
+
+		if (!is_email($to) || $subject === '' || $body === '') return;
+
+		$attachments = [];
+		foreach ((array) ($email['documents'] ?? []) as $document) {
+			if (!is_array($document)) continue;
+
+			$filename = sanitize_file_name((string) ($document['filename'] ?? ''));
+			$html = (string) ($document['html'] ?? '');
+			if ($filename === '' || $html === '') continue;
+
+			$pdf = cloudflare_html_to_pdf($html, $filename);
+			if (is_array($pdf) && is_string($pdf['pathname'] ?? null)) {
+				$attachments[$filename] = $pdf['pathname'];
+			}
+		}
+
+		wp_mail(
+			$to,
+			$subject,
+			$body,
+			['Content-Type: text/html; charset=UTF-8'],
+			$attachments
+		);
 	}
 
 	private function flatten_transaction_payload(object|array $tx): array
@@ -309,20 +379,18 @@ class Dynamicpackages_Submit
 		}
 	}
 
-    public function send_email(): void
-    {
-
-		$attachments = [];
+	private function build_email_notification(): array
+	{
+		$documents = [];
 
 		if(dy_validators::validate_quote())
 		{
 			$attachment_filename = apply_filters('dy_email_label_doc', __('Estimate', 'dynamicpackages')) . '.pdf';
 			require_once $this->plugin_dir_path_dir . 'public/email-templates/estimates-pdf.php';
-			$estimate = cloudflare_html_to_pdf($email_pdf, $attachment_filename);
-
-			if(is_array($estimate)) {
-				$attachments[$attachment_filename] = $estimate['pathname'];
-			}
+			$documents[] = [
+				'filename' => sanitize_file_name($attachment_filename),
+				'html' => (string) $email_pdf,
+			];
 			
 			$terms_html = $this->get_term_condition_as_html();
 
@@ -334,11 +402,10 @@ class Dynamicpackages_Submit
 					{
 						$term_html = $terms_html[$x]['html'];
 						$term_filename = $terms_html[$x]['filename'];
-						$term_pdf = cloudflare_html_to_pdf($term_html, $term_filename);
-
-						if(is_array($term_pdf)) {
-							$attachments[$term_pdf['filename']] = $term_pdf['pathname'];
-						}
+						$documents[] = [
+							'filename' => sanitize_file_name((string) $term_filename),
+							'html' => (string) $term_html,
+						];
 						
 					}
 				}
@@ -364,13 +431,13 @@ class Dynamicpackages_Submit
 		}
 	
 
-		$to = dy_tx::request_value('email');
-		$subject = $this->subject();
-		$body = $message;
-		$headers = array('Content-Type: text/html; charset=UTF-8');
-
-		wp_mail($to, $subject, $body, $headers,  $attachments);
-    }
+		return [
+			'to' => dy_sanitize_email((string) dy_tx::request_value('email')),
+			'subject' => $this->subject(),
+			'body' => (string) $message,
+			'documents' => $documents,
+		];
+	}
 	
 	public function subject(): string
 	{
