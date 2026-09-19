@@ -693,7 +693,7 @@ class dy_validators
 		return self::$cache[$cache_key] = true;
 	}
 
-	public static function validate_unique_tx_id(): bool
+	public static function validate_tx_id(): bool
 	{
 		$tx_id = secure_post('tx_id');
 		$email = dy_tx::request_value('email');

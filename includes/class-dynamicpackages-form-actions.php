@@ -47,7 +47,7 @@ class Dynamicpackages_Actions
 		if (!self::is_submission()) {
 			return false;
 		}
-		if (!dy_validators::validate_unique_tx_id()
+		if (!dy_validators::validate_tx_id()
 			|| (int) secure_post('dy_id', 0, 'absint') !== (int) get_queried_object_id()) {
 			dy_errors::add(__('Invalid tx_id.', 'dynamicpackages'));
 			return false;
@@ -145,7 +145,7 @@ class Dynamicpackages_Actions
 		if (self::$submission_valid !== null) return self::$submission_valid;
 		self::$submission_valid = false;
 
-		if (!dy_validators::validate_unique_tx_id()) {
+		if (!dy_validators::validate_tx_id()) {
 			dy_errors::add(__('Invalid tx_id.', 'dynamicpackages'));
 			return false;
 		}
