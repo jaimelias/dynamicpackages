@@ -108,10 +108,27 @@ function package_field(string $name, null|int $the_id = null): string
             ], true)) $this_field = '';
         }
 
-        if((int) dy_tx::request_value('route') === 1) {
-            if($name === 'package_payment') $this_field = '0';
-            if($name === 'package_deposit') $this_field = '';
+        if (in_array($name, ['package_payment', 'package_deposit'], true)) {
+            $method = secure_server('REQUEST_METHOD');
+
+            $route = match (true) {
+                $method === 'GET' && get_has('route') =>
+                    secure_get('route', 0, 'absint'),
+
+                $method === 'POST' && post_has('route') =>
+                    secure_post('route', 0, 'absint'),
+
+                default => 0,
+            };
+
+            if ($route === 1) {
+                $this_field = match ($name) {
+                    'package_payment' => '0',
+                    'package_deposit' => '',
+                };
+            }
         }
+
 
         return $cache[$cache_key] = $this_field;
     } catch (Throwable $e) {
