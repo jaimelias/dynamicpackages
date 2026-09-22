@@ -25,7 +25,6 @@ class Dynamicpackages_Public {
 
 		// redirect
 		add_action('template_redirect', [$this, 'template_redirect']);
-		add_filter('post_type_link', [$this, 'post_type_link'], 10, 2);
 
 		// template
 		add_filter('template_include', [$this, 'package_template'], 10);
@@ -1094,28 +1093,35 @@ class Dynamicpackages_Public {
 		return;
 	}
 
-	public function post_type_link($url, $post)
+	public static function archive_package_url(WP_Post $post): string
 	{
+		$permalink = get_permalink($post);
+		$permalink = is_string($permalink) ? $permalink : '';
 
-		if (!is_object($post) || $post->post_type !== 'packages') {
-			return $url;
+		if (
+			$post->post_type !== 'packages'
+			|| $post->post_status !== 'publish'
+		) {
+			return $permalink;
 		}
 
-		$lang = current_language();
-		$redirect_page = (string) package_field('package_redirect_page',  $post->ID);
-		$redirect_url = (string) package_field('package_redirect_url_' . $lang, $post->ID);
+		$redirect_page = (string) package_field(
+			'package_redirect_page',
+			$post->ID
+		);
 
-		if($redirect_url === '' || filter_var($redirect_url, FILTER_VALIDATE_URL) === false)
-		{
-			return $url;
-		}
-		
-		if($redirect_page === '' || $redirect_page === '0')
-		{
-			$url = $redirect_url;
+		if ($redirect_page !== '' && $redirect_page !== '0') {
+			return $permalink;
 		}
 
-		return $url;
+		$redirect_url = (string) package_field(
+			'package_redirect_url_' . current_language(),
+			$post->ID
+		);
+
+		return filter_var($redirect_url, FILTER_VALIDATE_URL) !== false
+			? $redirect_url
+			: $permalink;
 	}
 
 	public function edit_link() {

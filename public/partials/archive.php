@@ -223,9 +223,11 @@ $itemlist_elements = [];
 
 				<?php
 				$archive_query->the_post();
+				
 
 				global $post;
 
+				$package_url = Dynamicpackages_Public::archive_package_url($post);
 				dy_utilities::update_package_date_in_db($post->ID);
 
 				$package_code = package_field('package_trip_code');
@@ -237,7 +239,7 @@ $itemlist_elements = [];
 				$itemlist_elements[] = [
 					'@type' => 'ListItem',
 					'position' => $position_counter++,
-					'url' => get_permalink(),
+					'url' => $package_url,
 					'name' => $post->post_title,
 				];
 				?>
@@ -259,7 +261,7 @@ $itemlist_elements = [];
 										<a
 											data-starting-at="<?php echo esc_attr((string) $starting_at); ?>"
 											title="<?php echo esc_attr($post->post_title); ?>"
-											href="<?php the_permalink(); ?>"
+											href="<?php echo esc_url($package_url); ?>"
 										>
 											<?php
 											the_post_thumbnail(
@@ -293,7 +295,7 @@ $itemlist_elements = [];
 										<a
 											data-starting-at="<?php echo esc_attr((string) $starting_at); ?>"
 											title="<?php echo esc_attr($post->post_title); ?>"
-											href="<?php the_permalink(); ?>"
+											href="<?php echo esc_url($package_url); ?>"
 										>
 											<span><?php echo esc_html($post->post_title); ?></span>
 										</a>
