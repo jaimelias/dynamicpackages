@@ -13,12 +13,12 @@ class Dynamicpackages_Shortcodes {
 	
 	public function init()
 	{
-		add_shortcode('packages', array($this, 'package_shortcode_full'));
-		add_shortcode('package_filter', array($this, 'package_filter'));
-		add_shortcode('package_contact', array($this, 'contact'));
-		add_shortcode('package_categories', array($this, 'categories'));
-		add_shortcode('package_locations', array($this, 'locations'));
-		add_action('dy_contact_inquiry_textarea', array($this, 'inquiry_textarea'));
+		add_shortcode('packages', [$this, 'package_shortcode_full']);
+		add_shortcode('package_filter', [$this, 'package_filter']);
+		add_shortcode('package_contact', [$this, 'contact']);
+		add_shortcode('package_categories', [$this, 'categories']);
+		add_shortcode('package_locations', [$this, 'locations']);
+		add_action('dy_contact_inquiry_textarea', [$this, 'inquiry_textarea']);
 	}
 
 	public function contact($content = null)
@@ -72,7 +72,10 @@ class Dynamicpackages_Shortcodes {
 	 */
 	public function package_shortcode_full(mixed $attr, string|null $content = ''): string
 	{
-		global $polylang;
+
+		if (!in_array(secure_server('REQUEST_METHOD'), ['GET', 'POST'], true)) {
+			return '';
+		}
 
 		$attr = is_array($attr) ? $attr : [];
 
