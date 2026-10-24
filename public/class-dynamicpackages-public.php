@@ -753,8 +753,9 @@ class Dynamicpackages_Public {
 		$sa = $modify_route;  // shorthand
 		$first_address  = $sa ? $return_address : $start_address;
 		$second_address = $sa ? $start_address        : $return_address;
-		$first_hour     = $sa ? $end_hour          : $start_hour;
-		$second_hour    = $sa ? $start_hour           : $end_hour;
+		$swap_fixed_hours = $modify_route && !$is_package_by_hour;
+		$first_hour     = $swap_fixed_hours ? $end_hour : $start_hour;
+		$second_hour    = $swap_fixed_hours ? $start_hour : $end_hour;
 		$first_checkin  = $sa ? $check_in_end_hour    : $check_in_hour;
 		$second_checkin = $sa ? $check_in_hour        : $check_in_end_hour;
 
@@ -783,7 +784,7 @@ class Dynamicpackages_Public {
 		{
 			if($schedule) $req[] = 'schedule';
 			if($show_max_persons) $req[] = 'max_persons';
-			if(dy_utilities::start_hour() && $is_transport_fixed === false) $req[] = 'start_hour';
+			if($first_hour && $is_transport_fixed === false) $req[] = 'start_hour';
 			if(!get_option('dy_archive_hide_start_address')) $req[] = 'start_address';
 			if(!get_option('dy_archive_hide_enabled_days')) $req[] = 'enabled_days';
 
@@ -804,14 +805,14 @@ class Dynamicpackages_Public {
 			}
 
 			if($check_in_hour) $req[] = 'check_in';
-			if(dy_utilities::start_hour()) $req[] = 'start_hour';
+			if($first_hour) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
 			if($is_transport)
 			{
 				$req[] = 'label_return';
 				$req[] = 'end_date';
-				if($end_hour) $req[] = 'end_hour';
+				if($second_hour) $req[] = 'end_hour';
 				if($check_in_end_hour) $req[] = 'check_in_end_hour';
 				if($return_address)$req[] = 'return_address';				
 			}
@@ -831,7 +832,7 @@ class Dynamicpackages_Public {
 
 			if($start_date) $req[] = 'start_date';
 			if($check_in_hour) $req[] = 'check_in';
-			if(dy_utilities::start_hour()) $req[] = 'start_hour';
+			if($first_hour) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
 			if(isset($_REQUEST['end_date']))
@@ -840,7 +841,7 @@ class Dynamicpackages_Public {
 				{
 					$req[] = 'label_return';
 					$req[] = 'end_date';
-					if($end_hour) $req[] = 'end_hour';
+					if($second_hour) $req[] = 'end_hour';
 					if($check_in_end_hour) $req[] = 'check_in_end_hour';
 					if($return_address) $req[] = 'return_address';
 				}

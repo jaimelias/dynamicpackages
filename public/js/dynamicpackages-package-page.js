@@ -318,6 +318,8 @@ const validateCheckPricesForm = () => {
 				returnContainer.addClass('hidden')
 				jQuery(thisForm).find('.departure_route_label').html(`${routeOrigin} &raquo; ${routeDestination}${departureSchedule}`)
 				jQuery(thisForm).find('.return_route_label').text('')
+				jQuery(thisForm).find('[name="end_date"]').val('');
+				jQuery(thisForm).find('[name="end_hour"]').val('');
 			}
 			else if(transportTypeVal === '1')
 			{
