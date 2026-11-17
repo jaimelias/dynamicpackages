@@ -162,6 +162,12 @@ class Dynamicpackages_WP_JSON
 		{
 			for($x = 0; $x < count($disabled_dates); $x++)
 			{
+
+				if(!is_array($disabled_dates[$x]) || count($disabled_dates[$x]) === 0)
+				{
+					continue;
+				}
+
 				if(!is_valid_date($disabled_dates[$x][0]))
 				{
 					continue;
