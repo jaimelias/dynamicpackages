@@ -24,11 +24,7 @@ function package_field(string $name, null|int $the_id = null): string
 {
 
     static $cache = [];
-    $cache_key = $name . '_' . $the_id;
-
-    if(array_key_exists($cache_key, $cache)) {
-        return $cache[$cache_key];
-    }
+    $cache_key = null;
 
     try {
         if ($the_id === null) {
@@ -83,6 +79,11 @@ function package_field(string $name, null|int $the_id = null): string
 
         if ($is_child && !in_array($name, $fields_not_inherited_from_parent, true)) {
             $the_id = $parent_id;
+        }
+
+        $cache_key = $name . '_' . $the_id;
+        if (array_key_exists($cache_key, $cache)) {
+            return $cache[$cache_key];
         }
 
         $this_field = Dy_Core_Fields::get($name, $the_id);
@@ -143,6 +144,10 @@ function package_field(string $name, null|int $the_id = null): string
             'ERROR'
         );
 
-        return $cache[$cache_key] = '';
+        if ($cache_key !== null) {
+            $cache[$cache_key] = '';
+        }
+
+        return '';
     }
 }
