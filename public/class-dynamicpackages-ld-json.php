@@ -162,66 +162,69 @@ class Dynamicpackages_LD_JSON
 		} else {
 			// Events
 			$events = apply_filters('dy_event_arr', []);
-			$event_max = min(30, count($events));
 			$event_arr = [];
 
 			$duration = (int) package_field('package_duration');
 			$unit     = package_field('package_length_unit');
-			$start_hr = package_field('package_start_hour');
+			$start_hours = array_column(Dynamicpackages_Schedule::departures('start_hour'), 'hour') ?: [''];
 			$start_address = package_field('package_start_address');
 			$site_url = get_bloginfo('url');
 
-			for ($x = 0; $x < $event_max; $x++) {
-				$event_date        = $events[$x] . ' ' . $start_hr;
-				$event_ts          = strtotime($event_date);
-				$event_date_name   = date_i18n('M d', $event_ts);
-				$event_date_format = date_i18n('Y-m-d\TH:i', $event_ts);
+			foreach ($events as $date) {
+				foreach ($start_hours as $start_hr) {
+					$event_date        = $date . ' ' . $start_hr;
+					$event_ts          = strtotime($event_date);
+					if ($event_ts === false) continue;
+					$event_date_name   = date_i18n('M d', $event_ts);
+					$event_date_format = date_i18n('Y-m-d\TH:i', $event_ts);
 
-				// compute end date by unit
-				if ($unit == 0) {                // minutes
-					$end_ts = $event_ts + (60 * $duration);
-				} elseif ($unit == 1) {          // hours
-					$end_ts = $event_ts + (3600 * $duration);
-				} elseif ($unit == 4) {          // weeks
-					$end_ts = $event_ts + (7 * 24 * 3600 * $duration);
-				} else {                          // days (default)
-					$end_ts = strtotime("+ {$duration} days", $event_ts);
-				}
+					// compute end date by unit
+					if ($unit == 0) {                // minutes
+						$end_ts = $event_ts + (60 * $duration);
+					} elseif ($unit == 1) {          // hours
+						$end_ts = $event_ts + (3600 * $duration);
+					} elseif ($unit == 4) {          // weeks
+						$end_ts = $event_ts + (7 * 24 * 3600 * $duration);
+					} else {                          // days (default)
+						$end_ts = strtotime("+ {$duration} days", $event_ts);
+					}
 
-				$event = [
-					'@context' => 'https://www.schema.org',
-					'@type' => 'Event',
-					'name' => esc_html($title . ' - ' . $event_date_name),
-					'startDate' => esc_html($event_date_format),
-					'endDate' => esc_html(date('Y-m-d\TH:i', $end_ts)),
-					'description' => $post->post_excerpt,
-					'organizer' => [
+					$event = [
+						'@context' => 'https://www.schema.org',
+						'@type' => 'Event',
+						'name' => esc_html($title . ' - ' . $event_date_name),
+						'startDate' => esc_html($event_date_format),
+						'endDate' => esc_html(date('Y-m-d\TH:i', $end_ts)),
+						'description' => $post->post_excerpt,
+						'organizer' => [
+							'name' => $site_name,
+							'url' => $site_url,
+						],
+						'performer' => $site_name,
+						'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+						'eventStatus' => 'https://schema.org/EventScheduled',
+					];
+
+					if ($rating_val > 0) {
+						$event['aggregateRating'] = $aggregateRating;
+					}
+					if ($has_thumb) {
+						$event['image'] = $thumb_url;
+					}
+
+					$event_offers = $offers;
+					$event_offers['priceValidUntil'] = esc_html($date);
+					$event['offers'] = $event_offers;
+
+					$event['location'] = [
+						'@type' => 'Place',
 						'name' => $site_name,
-						'url' => $site_url,
-					],
-					'performer' => $site_name,
-					'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-					'eventStatus' => 'https://schema.org/EventScheduled',
-				];
+						'address' => esc_html($start_address),
+					];
 
-				if ($rating_val > 0) {
-					$event['aggregateRating'] = $aggregateRating;
+					$event_arr[] = $event;
+					if (count($event_arr) === 30) break 2;
 				}
-				if ($has_thumb) {
-					$event['image'] = $thumb_url;
-				}
-
-				$event_offers = $offers;
-				$event_offers['priceValidUntil'] = esc_html($events[$x]);
-				$event['offers'] = $event_offers;
-
-				$event['location'] = [
-					'@type' => 'Place',
-					'name' => $site_name,
-					'address' => esc_html($start_address),
-				];
-
-				$event_arr[] = $event;
 			}
 
 			$arr['event'] = $event_arr;
@@ -242,9 +245,9 @@ class Dynamicpackages_LD_JSON
         }
 
 		$package_start_address = package_field('package_start_address');
-		$package_start_hour = package_field('package_start_hour');
+		$start_hours = Dynamicpackages_Schedule::departures('start_hour');
 
-		if(!empty($package_start_address) && !empty($package_start_hour))
+		if (!Dynamicpackages_Schedule::uses_hour_range() && $package_start_address !== '' && $start_hours !== [])
 		{
 			$from = intval(package_field('package_booking_from'));
 			$to = intval(package_field('package_booking_to'));

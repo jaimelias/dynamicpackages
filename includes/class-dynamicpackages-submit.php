@@ -226,9 +226,18 @@ class Dynamicpackages_Submit
 		$by_hour = package_field('package_by_hour');
 		$start_hour = package_field('package_start_hour');
 		$end_hour = package_field('package_end_hour');
-		$invertHours = $by_hour === '0' && $start_hour !== '' && $end_hour !== '';
+		$invertHours = $by_hour === '0' && !Dynamicpackages_Schedule::uses_options()
+			&& $start_hour !== '' && $end_hour !== '';
 
-		if($invertHours && array_key_exists('package_type', $data) && array_key_exists('route', $data))
+		if ($tx->dy_request !== 'contact' && Dynamicpackages_Schedule::uses_options()) {
+			foreach (['start_hour', 'end_hour'] as $type) {
+				if (!array_key_exists($type, $data)) {
+					continue;
+				}
+				$data[$type] = ($type === 'end_hour' && (string) ($data['end_date'] ?? '') === '')
+					? '' : (Dynamicpackages_Schedule::resolve($type, (string) $data[$type]) ?? '');
+			}
+		} elseif($invertHours && array_key_exists('package_type', $data) && array_key_exists('route', $data))
 		{
 			if($data['package_type'] === 'transport' && $data['route'] === '1')
 			{

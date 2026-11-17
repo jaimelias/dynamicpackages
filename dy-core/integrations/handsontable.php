@@ -43,10 +43,7 @@ if(!function_exists('handsontable')) {
 			return '';
 		}
 
-		$default_arr = array_fill( 0, count( $args['headers'] ), null );
-		$default_val = wp_json_encode([ 
-				$args['container'] => $default_arr
-		]);
+		$default_val = wp_json_encode([$args['container'] => []]);
 		
 		$content_is_valid = json_decode(html_entity_decode($args['value']), true);
 		$content_is_valid = is_array($content_is_valid) && array_key_exists($args['container'], $content_is_valid);

@@ -41,6 +41,7 @@ class dynamicpackages {
 		require_once $dir . 'includes/class-dynamicpackages-resolver.php';
 		require_once $dir . 'includes/class-dynamicpackages-reviews.php'; //optimized
 		require_once $dir . 'includes/class-dynamicpackages-fields.php'; //optimized
+		require_once $dir . 'includes/class-dynamicpackages-schedule.php';
 
 		
 		//public

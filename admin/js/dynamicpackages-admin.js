@@ -3,8 +3,9 @@ jQuery(() => {
 	
 
 	if(jQuery('.timepicker').length > 0 && typeof jQuery.fn.pickatime === 'function') {
-		jQuery('.timepicker').pickatime({interval: 15});
+		jQuery('.timepicker:enabled').pickatime({interval: 15});
 	}
+	initPackageSchedules();
 	
 	if(jQuery('.datepicker').length > 0 &&  typeof jQuery.fn.pickadate === 'function') {
 		jQuery('.datepicker').pickadate({format: 'yyyy-mm-dd'});
@@ -61,29 +62,77 @@ jQuery(() => {
 			{
 				jQuery('#package_min_hour').val('12:00 AM')
 				jQuery('#package_max_hour').val('11:30 PM')
-
-				if(jQuery('#package_check_in_hour').length !== 0) 
-				{
-					jQuery('#package_check_in_hour').val('')
-				}
-				if(jQuery('#package_start_hour').length !== 0)
-				{
-					jQuery('#package_start_hour').val('')
-				}
-				if(jQuery('#package_check_in_end_hour').length !== 0)
-				{
-					jQuery('#package_check_in_end_hour').val('')
-				}
-				if(jQuery('#package_end_hour').length !== 0)
-				{
-					jQuery('#package_end_hour').val('')
-				}
 			}
 		})
 	}
 	
 });
 
+const initPackageSchedules = () => {
+	jQuery('[data-package-schedule]:not([data-inherited])').each((_, element) => {
+		const editor = jQuery(element);
+		const rows = editor.find('[data-schedule-rows]');
+		const hourField = editor.find('[data-schedule-hours]');
+		let nextRowIndex = rows.children().length;
+		const updateMoveButtons = () => {
+			const items = rows.children();
+			items.find('[data-move-schedule-row]').prop('disabled', false);
+			items.first().find('[data-move-schedule-row="up"]').prop('disabled', true);
+			items.last().find('[data-move-schedule-row="down"]').prop('disabled', true);
+		};
+		updateMoveButtons();
+		const encode = values => values.length > 1 ? JSON.stringify(values) : (values[0] ?? '');
+		const sync = () => {
+			const hours = [];
+			const checkIns = [];
+			rows.find('[data-schedule-row]').each((_, row) => {
+				const hour = jQuery(row).find('[data-schedule-hour]').val().trim();
+				const checkIn = jQuery(row).find('[data-schedule-check-in]').val().trim();
+				if (hour || checkIn) {
+					hours.push(hour || null);
+					checkIns.push(checkIn || null);
+				}
+			});
+			hourField.val(encode(hours));
+			editor.find('[data-schedule-check-ins]').val(encode(checkIns));
+		};
+
+		editor.on('input change', '[data-schedule-hour], [data-schedule-check-in]', sync);
+		editor.on('click', '[data-add-schedule-row]', () => {
+			const row = element.querySelector('template').content.cloneNode(true);
+			const rowIndex = nextRowIndex++;
+			row.querySelectorAll('input').forEach((input, index) => {
+				input.id = `${hourField.attr('id')}-choice-${rowIndex}-${index}`;
+				input.previousElementSibling.htmlFor = input.id;
+			});
+			const inputs = jQuery(row.querySelectorAll('input'));
+			rows.append(row);
+			if (typeof jQuery.fn.pickatime === 'function') {
+				inputs.pickatime({interval: 15});
+			}
+			updateMoveButtons();
+			inputs.first().trigger('focus');
+		});
+		editor.on('click', '[data-move-schedule-row]', event => {
+			const button = jQuery(event.currentTarget);
+			const row = button.closest('[data-schedule-row]');
+			if (button.attr('data-move-schedule-row') === 'up') {
+				row.insertBefore(row.prev());
+			} else {
+				row.insertAfter(row.next());
+			}
+			updateMoveButtons();
+			sync();
+		});
+		editor.on('click', '[data-remove-schedule-row]', event => {
+			const row = jQuery(event.currentTarget).closest('[data-schedule-row]');
+			row.find('input').each((_, input) => jQuery(input).data('pickatime')?.stop?.());
+			row.remove();
+			updateMoveButtons();
+			sync();
+		});
+	});
+};
 
 const hotDataFilter = ({gridData, gridId}) => {
 

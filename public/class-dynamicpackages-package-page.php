@@ -24,33 +24,22 @@ class Dynamicpackages_Package_Page {
         }
     }
 
-	public function enabled_times()
-	{	
+	public function enabled_times(): ?string
+	{
+		if (!is_singular('packages')) {
+			return null;
+		}
 
 		$output = [];
-
-		if(is_singular('packages'))
-		{
-			$by_hour = intval(package_field('package_by_hour'));		
-			$min_hour = package_field('package_min_hour');		
-			$max_hour = package_field('package_max_hour');
-			
-			if($by_hour === 1)
-			{				
-				if(!empty($min_hour))
-				{
-					$min_hour = strtotime($min_hour);
-					$output['min'] = array(intval(date('H', $min_hour)), intval(date('i', $min_hour)));
-				}
-				if(!empty($max_hour))
-				{
-					$max_hour = strtotime($max_hour);
-					$output['max'] = array(intval(date('H', $max_hour)), intval(date('i', $max_hour)));			
+		if (Dynamicpackages_Schedule::uses_hour_range()) {
+			foreach (['min' => 'package_min_hour', 'max' => 'package_max_hour'] as $bound => $field) {
+				$seconds = hour_to_seconds(package_field($field));
+				if ($seconds !== false) {
+					$output[$bound] = [intdiv($seconds, 3600), intdiv($seconds % 3600, 60)];
 				}
 			}
-			
-			return 'const dyPackageEnabledTimes = '.json_encode($output).';';
 		}
+		return 'const dyPackageEnabledTimes = ' . wp_json_encode($output) . ';';
 	}
 
 	public function load_scripts(): void

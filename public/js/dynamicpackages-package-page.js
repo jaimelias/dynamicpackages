@@ -272,6 +272,31 @@ const validateCheckPricesForm = () => {
 		const returnContainer = jQuery(thisForm).find('.return_route_container');
 		const routeField = jQuery(thisForm).find('[name="route"]')
 		const scheduleField = jQuery(thisForm).find('input.schedule')
+		const scheduleConfig = thisForm.find('[data-schedule-options]');
+		const scheduleOptions = scheduleConfig.data('schedule-options');
+		const updateScheduleHours = () => {
+			if (!scheduleOptions) return;
+
+			const reverse = routeField.val() === '1';
+			const oneWay = transportTypeField.val() === '0';
+			const checkInLabel = scheduleConfig.data('check-in-label');
+			thisForm.find('[data-scheduled-hour]').each((_, select) => {
+				const isReturn = select.name === 'end_hour';
+				const direction = isReturn !== reverse ? 'end_hour' : 'start_hour';
+				const options = isReturn && oneWay ? [] : scheduleOptions[direction];
+				const previous = select.dataset.direction === direction ? select.value : '';
+				select.replaceChildren(new Option('---', ''));
+				options.forEach(({hour, check_in}) => {
+					const label = check_in ? `${hour} (${checkInLabel} ${check_in})` : hour;
+					select.add(new Option(label, hour));
+				});
+				select.value = options.length === 1 ? options[0].hour : previous;
+				if (select.selectedIndex < 0) select.selectedIndex = 0;
+				select.dataset.direction = direction;
+				select.required = options.length > 0;
+				jQuery(select).closest('[data-scheduled-hour-field]').prop('hidden', options.length === 0);
+			});
+		};
 
 		formToArray(thisForm).forEach(v => {
 			const {name, value} = v;
@@ -338,6 +363,8 @@ const validateCheckPricesForm = () => {
 
 		}
 
+		updateScheduleHours();
+		transportTypeField.add(routeField).on('change', updateScheduleHours);
 		if(transportTypeField.length !== 0)
 		{
 			showHideTransportContainers(transportTypeField, routeField)
@@ -388,7 +415,8 @@ const validateCheckPricesForm = () => {
 			data.forEach(v => {
 				const {name, value} = v;
 
-				if(required.includes(name) && value === '')
+				if (required.includes(name) && value === ''
+					&& !thisForm.find('[name="' + name + '"]').is('[data-scheduled-hour]:not([required])'))
 				{
 					invalids.push(name);
 					jQuery(thisForm).find('[name="'+name+'"]').addClass('invalid_field');

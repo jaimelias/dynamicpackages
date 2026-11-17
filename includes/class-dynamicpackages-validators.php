@@ -825,36 +825,7 @@ class dy_validators
 	
 	private static function validate_package_hour(string $type, string $request_hour): bool
 	{
-		if(!in_array($type, ['start_hour', 'end_hour'], true)) {
-			return false;
-		}
-
-		$cache_key = 'dy_validate_' . $type . '_' . $request_hour;
-
-		if(array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
-		}
-
-		$package_by_hour = absint(package_field('package_by_hour'));
-
-		if($package_by_hour === 1) {
-			$min_hour = package_field('package_min_hour');
-			$max_hour = package_field('package_max_hour');
-
-			return self::$cache[$cache_key] = is_hour_in_range(
-				$request_hour,
-				[$min_hour, $max_hour]
-			);
-		}
-
-		$package_hour = package_field('package_' . $type);
-
-		if($package_by_hour === 0) {
-			return self::$cache[$cache_key] = is_valid_time($package_hour)
-				|| ($request_hour === '' && $package_hour === '');
-		}
-
-		return self::$cache[$cache_key] = false;
+		return Dynamicpackages_Schedule::resolve($type, $request_hour) !== null;
 	}
 
 	public static function validate_booking_details()
@@ -877,7 +848,7 @@ class dy_validators
 			$invalids[] = __('Invalid start_date.', 'dynamicpackages');
 		}
 
-		$start_hour = dy_tx::request_value('start_hour');
+		$start_hour = (string) dy_tx::request_value('start_hour');
 		$is_valid_start_hour = self::validate_package_hour('start_hour', $start_hour);
 
 		if(!$is_valid_start_hour) {
@@ -885,7 +856,7 @@ class dy_validators
 		}
 
 		$has_return = dy_tx::request_value('end_date') !== '';
-		$end_hour = dy_tx::request_value('end_hour');
+		$end_hour = (string) dy_tx::request_value('end_hour');
 		$is_valid_end_hour = self::validate_package_hour('end_hour', $end_hour);
 
 		if($has_return && !$is_valid_end_hour) {

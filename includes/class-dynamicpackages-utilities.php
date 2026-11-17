@@ -1208,33 +1208,13 @@ class dy_utilities {
 			return '';
 		}
 
-		$the_id = get_dy_id();
-		$request_hour = dy_tx::request_value($type);
-		$cache_key = 'dy_' . $type . '_' . $the_id . '_' . $request_hour;
-
-		if(array_key_exists($cache_key, self::$cache)) {
-			return self::$cache[$cache_key];
+		if ($type === 'end_hour' && Dynamicpackages_Schedule::uses_options()
+			&& (string) dy_tx::request_value('end_date') === '') {
+			return '';
 		}
 
-		$package_by_hour = absint(package_field('package_by_hour'));
-
-		if($package_by_hour === 1) {
-			$min_hour = package_field('package_min_hour');
-			$max_hour = package_field('package_max_hour');
-
-			return self::$cache[$cache_key] = is_hour_in_range(
-				$request_hour,
-				[$min_hour, $max_hour]
-			)
-				? $request_hour
-				: '';
-		}
-
-		$package_hour = package_field('package_' . $type);
-
-		return self::$cache[$cache_key] = is_valid_time($package_hour)
-			? $package_hour
-			: '';
+		$request_hour = (string) dy_tx::request_value($type);
+		return Dynamicpackages_Schedule::resolve($type, $request_hour) ?? '';
 	}
 
 	public static function webhook($url, $payload = '')

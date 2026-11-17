@@ -19,3 +19,56 @@
 .htFocusCatcher {
 	display: none;
 }
+
+[data-package-schedule] {
+	max-width: 46rem;
+}
+
+[data-package-schedule] [data-schedule-rows] {
+	display: grid;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+[data-package-schedule] [data-schedule-row] {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+[data-package-schedule] .dy-schedule-field {
+	flex: 1 1 9rem;
+	min-width: 0;
+}
+
+[data-package-schedule] .dy-schedule-field label {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+[data-package-schedule] .dy-schedule-field input {
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+}
+
+[data-package-schedule] .dy-schedule-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	min-width: 0;
+	max-width: 100%;
+}
+
+[data-package-schedule] .button {
+	max-width: 100%;
+	margin: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}

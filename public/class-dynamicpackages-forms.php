@@ -170,7 +170,8 @@ class Dynamicpackages_Forms
 		$max = package_field('package_max_persons');
 		$option_disc = package_field('package_discount');
 		$option_free = package_field('package_free');
-		$by_hour = package_field('package_by_hour');
+		$uses_hour_range = Dynamicpackages_Schedule::uses_hour_range();
+		$uses_options = Dynamicpackages_Schedule::uses_options();
 		$package_type = dy_utilities::get_package_type();
 		$min_duration = intval(package_field('package_duration'));
 		$max_duration = intval(package_field('package_max_duration'));
@@ -181,8 +182,8 @@ class Dynamicpackages_Forms
 			? __('Departure Date', 'dynamicpackages') . ' &raquo; ' 
 			: __('Date', 'dynamicpackages');
 
-		$start_hour = package_field('package_start_hour');
-		$end_hour = package_field('package_end_hour');
+		$start_options = Dynamicpackages_Schedule::departures('start_hour');
+		$end_options = Dynamicpackages_Schedule::departures('end_hour');
 
 		$start_address_short = package_field('package_start_address_short');
 		$return_address_short = package_field('package_return_address_short');
@@ -208,9 +209,13 @@ class Dynamicpackages_Forms
 
 		$form .= '<input type="hidden" value="'.esc_attr(get_dy_id()).'"/>';
 
-		if(($by_hour === '0' && $start_hour !== '' && $end_hour !== ''))
-		{
-			$form .= '<input type="hidden" class="schedule" value="'.esc_attr($start_hour .' - '.$end_hour).'"/>';
+		if ($uses_options) {
+			$options = wp_json_encode(['start_hour' => $start_options, 'end_hour' => $end_options]);
+			$form .= '<div hidden data-schedule-options="' . esc_attr((string) $options)
+				. '" data-check-in-label="' . esc_attr__('Check-in', 'dynamicpackages') . '"></div>';
+		} elseif (!$uses_hour_range && $start_options !== [] && $end_options !== []) {
+			$form .= '<input type="hidden" class="schedule" value="'
+				. esc_attr($start_options[0]['hour'] . ' - ' . $end_options[0]['hour']) . '"/>';
 		}
 
 		if(isset($_GET['force_availability'])){
@@ -245,7 +250,9 @@ class Dynamicpackages_Forms
 		$form .= '<p><input type="text" name="start_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';	
 
 
-		if($by_hour == 1)
+		if ($uses_options) {
+			$form .= self::schedule_select('start_hour', __('Departure Time', 'dynamicpackages'));
+		} elseif ($uses_hour_range)
 		{
 			$form .= '<label>'.esc_html(__('Departure Time', 'dynamicpackages')).' &raquo;'.$departure_route_label.'</label>';
 			$form .= '<p><input type="text" name="start_hour"  class="dy_time_picker" /></p>';	
@@ -260,7 +267,9 @@ class Dynamicpackages_Forms
 			$form .= '<hr/><label>'.esc_html(__('Date of Return', 'dynamicpackages')).' &laquo;'.$return_route_label.'</label>';
 			$form .= '<p><input type="text" name="end_date" class="dy_date_picker" placeholder="Loading..." disabled/></p>';
 			
-			if($by_hour == 1)
+			if ($uses_options) {
+				$form .= self::schedule_select('end_hour', __('Return Time', 'dynamicpackages'));
+			} elseif ($uses_hour_range)
 			{
 				$form .= '<label>'.esc_html(__('Return Time', 'dynamicpackages')).' &laquo;'.$return_route_label.'</label>';
 				$form .= '<p><input type="text" name="end_hour" class="dy_time_picker" /></p>';
@@ -380,6 +389,13 @@ class Dynamicpackages_Forms
 
 	}
 	
+	private static function schedule_select(string $type, string $label): string
+	{
+		return '<p hidden data-scheduled-hour-field><label>' . esc_html($label)
+			. ' <select name="' . esc_attr($type) . '" data-scheduled-hour>'
+			. '<option value="">---</option></select></label></p>';
+	}
+
 	public function adults_select($price_chart, $min, $max, $option_disc, $option_free)
 	{	
 		$adults_select = null;

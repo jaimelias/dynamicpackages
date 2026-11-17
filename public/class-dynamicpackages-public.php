@@ -428,12 +428,13 @@ class Dynamicpackages_Public {
 				$retLabel = __( 'Return', 'dynamicpackages' );
 			}
 	
-			// Build legs
+			// Selectable schedules already resolve hours in trip order.
+			$swap_hours = $modify_route && !Dynamicpackages_Schedule::uses_options();
 			$itinerary  = sprintf(
 				'%s %s %s',
 				$depLabel,
 				$depDate,
-				$modify_route ? $retHour : $depHour
+				$swap_hours ? $retHour : $depHour
 			);
 			$tripType = __( 'One-way', 'dynamicpackages' );
 	
@@ -442,7 +443,7 @@ class Dynamicpackages_Public {
 					'%s %s %s',
 					$retLabel,
 					$retDate,
-					$modify_route ? $depHour : $retHour
+					$swap_hours ? $depHour : $retHour
 				);
 				$tripType = __( 'Round trip', 'dynamicpackages' );
 			}
@@ -678,21 +679,25 @@ class Dynamicpackages_Public {
 		$is_booking_page = is_booking_page();
 		$min_hour = package_field('package_min_hour');
 		$max_hour = package_field('package_max_hour');
-		$check_in_hour = package_field('package_check_in_hour');
-		$start_hour = dy_utilities::start_hour();
+		$uses_options = Dynamicpackages_Schedule::uses_options();
+		$show_options = $uses_options && !$is_booking_page && !$is_submission;
+		$start_hour = $show_options
+			? implode(', ', array_column(Dynamicpackages_Schedule::departures('start_hour'), 'hour'))
+			: dy_utilities::start_hour();
 		$start_address = package_field('package_start_address');
 		$start_address_short = package_field('package_start_address_short');
-		$check_in_end_hour = package_field('package_check_in_end_hour');
 		$return_address = package_field('package_return_address');
 		$return_address_short = package_field('package_return_address_short');
 
 		
-		$end_hour = dy_utilities::end_hour();
+		$end_hour = $show_options
+			? implode(', ', array_column(Dynamicpackages_Schedule::departures('end_hour'), 'hour'))
+			: dy_utilities::end_hour();
 		$max_persons = package_field('package_max_persons');
 		$show_max_persons = (intval(get_option('dy_archive_hide_max_persons')) === 1 || intval(package_field('package_fixed_price')) === 0) 
 			? false 
 			: true;
-		$is_package_by_hour = boolval(package_field('package_by_hour'));
+		$is_package_by_hour = Dynamicpackages_Schedule::uses_hour_range();
 		$schedule = '';
 		$is_transport_fixed = false;
 
@@ -711,7 +716,7 @@ class Dynamicpackages_Public {
 		$label_return    = __('Return',    'dynamicpackages');
 
 		// Determine if we should swap start/return
-		$modify_route = $is_transport && isset($_REQUEST['route']) && sanitize_text_field($_REQUEST['route']) === '1';
+		$modify_route = Dynamicpackages_Schedule::is_reversed();
 
 		// Only override labels if we have both addresses
 		if (
@@ -753,11 +758,11 @@ class Dynamicpackages_Public {
 		$sa = $modify_route;  // shorthand
 		$first_address  = $sa ? $return_address : $start_address;
 		$second_address = $sa ? $start_address        : $return_address;
-		$swap_fixed_hours = $modify_route && !$is_package_by_hour;
+		$swap_fixed_hours = $modify_route && !$is_package_by_hour && (!$uses_options || $show_options);
 		$first_hour     = $swap_fixed_hours ? $end_hour : $start_hour;
 		$second_hour    = $swap_fixed_hours ? $start_hour : $end_hour;
-		$first_checkin  = $sa ? $check_in_end_hour    : $check_in_hour;
-		$second_checkin = $sa ? $check_in_hour        : $check_in_end_hour;
+		$first_checkin  = Dynamicpackages_Schedule::check_in($sa ? 'end_hour' : 'start_hour', $first_hour);
+		$second_checkin = Dynamicpackages_Schedule::check_in($sa ? 'start_hour' : 'end_hour', $second_hour);
 
 		// Build once
 		$route = [
@@ -804,7 +809,7 @@ class Dynamicpackages_Public {
 				$req[] = 'label_departure';
 			}
 
-			if($check_in_hour) $req[] = 'check_in';
+			if($first_checkin) $req[] = 'check_in';
 			if($first_hour) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
@@ -813,7 +818,7 @@ class Dynamicpackages_Public {
 				$req[] = 'label_return';
 				$req[] = 'end_date';
 				if($second_hour) $req[] = 'end_hour';
-				if($check_in_end_hour) $req[] = 'check_in_end_hour';
+				if($second_checkin) $req[] = 'check_in_end_hour';
 				if($return_address)$req[] = 'return_address';				
 			}
 		}
@@ -831,7 +836,7 @@ class Dynamicpackages_Public {
 			}
 
 			if($start_date) $req[] = 'start_date';
-			if($check_in_hour) $req[] = 'check_in';
+			if($first_checkin) $req[] = 'check_in';
 			if($first_hour) $req[] = 'start_hour';
 			if($start_address) $req[] = 'start_address';
 
@@ -842,7 +847,7 @@ class Dynamicpackages_Public {
 					$req[] = 'label_return';
 					$req[] = 'end_date';
 					if($second_hour) $req[] = 'end_hour';
-					if($check_in_end_hour) $req[] = 'check_in_end_hour';
+					if($second_checkin) $req[] = 'check_in_end_hour';
 					if($return_address) $req[] = 'return_address';
 				}
 			}

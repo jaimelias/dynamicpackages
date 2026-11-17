@@ -56,6 +56,8 @@ class dy_Add_To_Calendar
 		if(empty($hour) || empty($start_date)) return '';
 
 		$label        = __('Add to calendar', 'dynamicpackages'); 
+		$address_field = Dynamicpackages_Schedule::uses_options() && Dynamicpackages_Schedule::is_reversed()
+			? 'package_return_address' : 'package_start_address';
 
 		$html = sprintf(
 			'<div class="bottom-20 addevent_container">
@@ -74,7 +76,7 @@ class dy_Add_To_Calendar
 			esc_html(get_option('timezone_string')),
 			esc_html($post->post_title),
 			esc_html((string) apply_filters('dy_description', '')),
-			esc_html(package_field('package_start_address'))
+			esc_html(package_field($address_field))
 		);
 
 		// Match the original behavior of returning buffered HTML (without extra output)

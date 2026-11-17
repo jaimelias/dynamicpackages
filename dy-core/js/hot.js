@@ -52,10 +52,8 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled, hotDataFilter
 
 
 	//unescape textarea
-	let data = {};
-	let hasError = false;
-	let content = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
-	let maxNum = parseInt(jQuery(maxId).val());
+	const content = jQuery('<textarea />').html(jQuery(textareaId).val()).text();
+	const maxNum = parseInt(jQuery(maxId).val());
 	const gridId = jQuery(containerId).attr('id');
 	const grid = jQuery(containerId);
 	const headers = getHeaders(containerId);
@@ -68,52 +66,20 @@ const registerGrid = ({textareaId, containerId, maxId, isDisabled, hotDataFilter
 		return false;
 	}
 	
-	try
-	{
-		const parsedContent = JSON.parse(content);
-		const firstDefaultRow = defaultRows[0];
-
-		if(parsedContent.length === 0)
-		{
-			hasError = true;
-			data = defaultRows;
+	let savedData = {};
+	try {
+		const parsed = JSON.parse(content);
+		if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+			savedData = parsed;
 		}
-
-		if(parsedContent.hasOwnProperty(gridId))
-		{
-			if(parsedContent[gridId].length !== 0)
-			{
-				data = parsedContent[gridId];
-				
-				while (data.length < maxNum) {
-					data.push(firstDefaultRow);
-				}				
-
-				data = data.slice(0, maxNum);
-
-			}
-			else
-			{
-				hasError = true;
-				data = defaultRows;
-			}
-			
-		}
-		else
-		{
-			hasError = true;
-			data = defaultRows;
-		}
+	} catch {
+		// An unreadable textarea starts with blank rows.
 	}
-	catch(e)
-	{
-		hasError = true;
-		data = defaultRows;
-	}
-	
-	if(hasError)
-	{
-		jQuery(textareaId).text(JSON.stringify({[gridId]: data}));
+
+	const savedRows = Array.isArray(savedData[gridId]) ? savedData[gridId] : [];
+	let data = defaultRows.map((row, index) => Array.isArray(savedRows[index]) ? savedRows[index] : row);
+	if (!savedRows.some(Array.isArray)) {
+		jQuery(textareaId).val(JSON.stringify({...savedData, [gridId]: data}));
 	}
 
 
@@ -309,7 +275,7 @@ const updateTextArea = ({textareaId, changes, containerId}) => {
 
 	jQuery(containerId).height(height);
 	output = {...oldData, [gridId]: changes};
-	jQuery(textareaId).text(JSON.stringify(output));
+	jQuery(textareaId).val(JSON.stringify(output));
 	return output;
 }
 

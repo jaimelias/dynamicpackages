@@ -11,6 +11,7 @@ class Dynamicpackages_Metapost
 	public function __construct()
 	{
 		add_action('save_post', [$this, 'package_save'], 10, 3);
+		add_action('admin_notices', [$this, 'schedule_notice']);
 	}
 
 	public static function package_save($post_id)
@@ -41,6 +42,9 @@ class Dynamicpackages_Metapost
 		self::save_package_type_fields($post_id);
 
 		self::save_simple_fields($post_id);
+		if (!$is_child) {
+			self::save_schedules($post_id);
+		}
 		self::save_duration_fields($post_id, $is_child);
 		self::save_defaulted_numeric_fields($post_id);
 		self::save_hot_fields($post_id, $is_child);
@@ -87,11 +91,7 @@ class Dynamicpackages_Metapost
 			'package_by_hour'           => 'absint',
 			'package_max_hour'          => 'sanitize_text_field',
 			'package_min_hour'          => 'sanitize_text_field',
-			'package_check_in_hour'     => 'sanitize_text_field',
-			'package_start_hour'        => 'sanitize_text_field',
 			'package_start_address'     => 'sanitize_textarea_field',
-			'package_check_in_end_hour' => 'sanitize_text_field',
-			'package_end_hour'       => 'sanitize_text_field',
 			'package_return_address'    => 'sanitize_textarea_field',
 			'package_redirect_page'     => 'absint',
 			'package_max_coupons'       => 'absint',
@@ -100,6 +100,54 @@ class Dynamicpackages_Metapost
 		foreach($fields as $key => $sanitizer)
 		{
 			self::update_posted_meta($post_id, $key, $sanitizer);
+		}
+	}
+
+	private static function save_schedules(int $post_id): void
+	{
+		$invalid = false;
+		foreach (Dynamicpackages_Schedule::CHECK_IN_FIELDS as $type => $check_in_field) {
+			$hour_field = 'package_' . $type;
+			$posted_hours = self::get_posted_scalar($hour_field, null, 'sanitize_textarea_field');
+			$posted_check_ins = self::get_posted_scalar($check_in_field, null, 'sanitize_textarea_field');
+			if ($posted_hours === null && $posted_check_ins === null) {
+				continue;
+			}
+			$stored_hours = get_post_meta($post_id, $hour_field, true);
+			$stored_check_ins = get_post_meta($post_id, $check_in_field, true);
+			$stored_hours = is_string($stored_hours) ? $stored_hours : '';
+			$stored_check_ins = is_string($stored_check_ins) ? $stored_check_ins : '';
+			$hours = $posted_hours ?? $stored_hours;
+			$check_ins = $posted_check_ins ?? $stored_check_ins;
+			$rows = Dynamicpackages_Schedule::parse($hours, $check_ins);
+			if ($rows === null || (count($rows) > 1 && ($posted_hours === null || $posted_check_ins === null))) {
+				$invalid = true;
+				continue;
+			}
+			$new_hours = Dynamicpackages_Schedule::encode(array_column($rows, 'hour'));
+			$new_check_ins = Dynamicpackages_Schedule::encode(array_column($rows, 'check_in'));
+			$update_hours = $posted_hours !== null && $new_hours !== $stored_hours;
+			if ($update_hours && !update_post_meta($post_id, $hour_field, $new_hours)) {
+				$invalid = true;
+				continue;
+			}
+			if ($posted_check_ins !== null && $new_check_ins !== $stored_check_ins
+				&& !update_post_meta($post_id, $check_in_field, $new_check_ins)) {
+				if ($update_hours) {
+					update_post_meta($post_id, $hour_field, $stored_hours, $new_hours);
+				}
+				$invalid = true;
+			}
+		}
+		if ($invalid) {
+			add_filter('redirect_post_location', static fn(string $location): string => add_query_arg('dy_schedule_invalid', '1', $location));
+		}
+	}
+
+	public function schedule_notice(): void
+	{
+		if (secure_get('dy_schedule_invalid') === '1') {
+			echo '<div class="notice notice-error"><p>' . esc_html__('Could not save a schedule. Check that each row has a unique departure time and a valid or empty check-in time.', 'dynamicpackages') . '</p></div>';
 		}
 	}
 

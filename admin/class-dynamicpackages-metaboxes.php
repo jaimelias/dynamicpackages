@@ -8,13 +8,13 @@ class Dynamicpackages_Metaboxes
 
     public function __construct()
     {
-		add_action('add_meta_boxes', [$this, 'package_add_meta_box']);
+		add_action('add_meta_boxes_packages', [$this, 'package_add_meta_box']);
     }
 
-    public function package_add_meta_box()
+    public function package_add_meta_box(WP_Post $post): void
     {
 
-		$this->set_args();
+		$this->set_args($post);
 
         add_meta_box('package-a', __('Description', 'dynamicpackages') , [$this,
             'package_description_html'
@@ -61,68 +61,75 @@ class Dynamicpackages_Metaboxes
 
     }
 
-	public function set_args()
+	public function set_args(WP_Post $post): void
 	{
-		$this->coupons = package_field('package_coupons');
-		$this->price_chart = package_field('package_price_chart');
-		$this->occupancy_chart = package_field('package_occupancy_chart');
-		$this->disabled_dates = package_field('package_disabled_dates');
-		$this->enabled_dates = package_field('package_enabled_dates');
-		$this->seasons_chart = package_field('package_seasons_chart');
-        $this->package_type = (int) package_field('package_type');
-		$this->length_unit = (int) package_field('package_length_unit');
-		$this->fixed_price = (int) package_field('package_fixed_price');
-        $this->show_pricing = (int) package_field('package_show_pricing');
-        $this->auto_booking = (int) package_field('package_auto_booking');
-        $this->payment = (int) package_field('package_payment');
-        $this->deposit = (float) package_field('package_deposit');
-		$this->max_coupons = (int) package_field('package_max_coupons');
-		$this->min_persons = (int) package_field('package_min_persons');
-		$this->max_persons = (int) package_field('package_max_persons');
-		$this->free = (int) package_field('package_free');
-		$this->discount = (int) package_field('package_discount');
-		$this->num_seasons = (int) package_field('package_num_seasons');
-		$this->booking_from = (int) package_field('package_booking_from');
-		$this->booking_to = (int) package_field('package_booking_to');
-		$this->disabled_num = (int) package_field('package_disabled_num');
-		$this->enabled_num = (int) package_field('package_enabled_num');
-		$this->package_check_in_end_hour = package_field('package_check_in_end_hour');
-		$this->check_in_hour = package_field('package_check_in_hour');
-		$this->one_way_surcharge = package_field('package_one_way_surcharge');
-		$this->start_hour = package_field('package_start_hour');
-		$this->start_address = package_field('package_start_address');
-		$this->start_address_short = package_field('package_start_address_short');
-		$this->end_hour = package_field('package_end_hour');
-		$this->return_address = package_field('package_return_address');
-		$this->return_address_short = package_field('package_return_address_short');
-		$this->increase_persons = (int) package_field('package_increase_persons');
-		$this->by_hour = (int) package_field('package_by_hour');
-		$this->min_hour = package_field('package_min_hour');
-		$this->max_hour = package_field('package_max_hour');
-		$this->disabled_dates_api = package_field('package_disabled_dates_api');
-		$this->display = (int) package_field('package_display');
-		$this->code = package_field('package_trip_code');
-		$this->duration = (float) package_field('package_duration');
-		$this->duration_max = (float) package_field('package_max_duration');
-		$this->badge = (int) package_field('package_badge');
-		$this->badge_color = package_field('package_badge_color');
-		$this->schema = (int) package_field('package_schema');
-		$this->is_child = dy_validators::is_child();
-		$this->disable_child = ($this->is_child) ? 'disabled' : '';
-		$this->is_parent_with_no_child = dy_validators::is_parent_with_no_child();
-		$this->has_children = dy_validators::has_children();
-		$this->is_transport = dy_utilities::get_package_type() === 'transport';
+		$post_id = $post->ID;
+		$this->coupons = package_field('package_coupons', $post_id);
+		$this->price_chart = package_field('package_price_chart', $post_id);
+		$this->occupancy_chart = package_field('package_occupancy_chart', $post_id);
+		$this->disabled_dates = package_field('package_disabled_dates', $post_id);
+		$this->enabled_dates = package_field('package_enabled_dates', $post_id);
+		$this->seasons_chart = package_field('package_seasons_chart', $post_id);
+        $this->package_type = (int) package_field('package_type', $post_id);
+		$this->length_unit = (int) package_field('package_length_unit', $post_id);
+		$this->fixed_price = (int) package_field('package_fixed_price', $post_id);
+        $this->show_pricing = (int) package_field('package_show_pricing', $post_id);
+        $this->auto_booking = (int) package_field('package_auto_booking', $post_id);
+        $this->payment = (int) package_field('package_payment', $post_id);
+        $this->deposit = (float) package_field('package_deposit', $post_id);
+		$this->max_coupons = (int) package_field('package_max_coupons', $post_id);
+		$this->min_persons = (int) package_field('package_min_persons', $post_id);
+		$this->max_persons = (int) package_field('package_max_persons', $post_id);
+		$this->free = (int) package_field('package_free', $post_id);
+		$this->discount = (int) package_field('package_discount', $post_id);
+		$this->num_seasons = (int) package_field('package_num_seasons', $post_id);
+		$this->booking_from = (int) package_field('package_booking_from', $post_id);
+		$this->booking_to = (int) package_field('package_booking_to', $post_id);
+		$this->disabled_num = (int) package_field('package_disabled_num', $post_id);
+		$this->enabled_num = (int) package_field('package_enabled_num', $post_id);
+		$this->package_check_in_end_hour = package_field('package_check_in_end_hour', $post_id);
+		$this->check_in_hour = package_field('package_check_in_hour', $post_id);
+		$this->one_way_surcharge = package_field('package_one_way_surcharge', $post_id);
+		$this->start_hour = package_field('package_start_hour', $post_id);
+		$this->start_address = package_field('package_start_address', $post_id);
+		$this->start_address_short = package_field('package_start_address_short', $post_id);
+		$this->end_hour = package_field('package_end_hour', $post_id);
+		$this->return_address = package_field('package_return_address', $post_id);
+		$this->return_address_short = package_field('package_return_address_short', $post_id);
+		$this->increase_persons = (int) package_field('package_increase_persons', $post_id);
+		$this->by_hour = (int) package_field('package_by_hour', $post_id);
+		$this->min_hour = package_field('package_min_hour', $post_id);
+		$this->max_hour = package_field('package_max_hour', $post_id);
+		$this->disabled_dates_api = package_field('package_disabled_dates_api', $post_id);
+		$this->display = (int) package_field('package_display', $post_id);
+		$this->code = package_field('package_trip_code', $post_id);
+		$this->duration = (float) package_field('package_duration', $post_id);
+		$this->duration_max = (float) package_field('package_max_duration', $post_id);
+		$this->badge = (int) package_field('package_badge', $post_id);
+		$this->badge_color = package_field('package_badge_color', $post_id);
+		$this->schema = (int) package_field('package_schema', $post_id);
+		$this->is_child = $post->post_parent > 0;
+		$this->disable_child = $this->is_child ? 'disabled' : '';
+		$this->has_children = (bool) get_posts([
+			'post_type'      => 'packages',
+			'post_parent'    => $post_id,
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+		]);
+		$this->is_parent_with_no_child = !$this->is_child && !$this->has_children;
+		$this->is_transport = dy_utilities::get_package_type($post_id) === 'transport';
 		$this->languages = get_languages();
 		$this->count_languages = count($this->languages);
 		$this->week_days = dy_get_week_days_abbr();
 		$this->week_day_names = dy_get_week_day_names_long();
-		$this->set_lang_fields();
-		$this->set_week_day_fields();
+		$this->set_lang_fields($post_id);
+		$this->set_week_day_fields($post_id);
 		$this->set_handsontable_args();
-		$this->redirect_page = (int) package_field('package_redirect_page');
+		$this->redirect_page = (int) package_field('package_redirect_page', $post_id);
 	}
 
-	public function set_week_day_fields(){
+	public function set_week_day_fields(int $post_id): void
+	{
 		$week_day_fields = ['week_day_surcharge', 'day'];
 
 		for($x = 0; $x < 7; $x++)
@@ -131,12 +138,12 @@ class Dynamicpackages_Metaboxes
 			{
 				$id =  $week_day_fields[$w].'_'.$this->week_days[$x];
 				$name = 'package_' . $id;
-				$this->$id = (int) package_field($name);
+				$this->$id = (int) package_field($name, $post_id);
 			}
 		}
 	}
 
-	public function set_lang_fields()
+	public function set_lang_fields(int $post_id): void
 	{
 		//handles language based fields
 		$lang_fields = ['confirmation_message', 'child_title', 'redirect_url'];
@@ -147,7 +154,7 @@ class Dynamicpackages_Metaboxes
 			{
 				$id =  $lang_fields[$x].'_'.$this->languages[$l];
 				$name = 'package_' . $id;
-				$this->$id = package_field($name);
+				$this->$id = package_field($name, $post_id);
 			}
 		}		
 	}
@@ -376,14 +383,7 @@ class Dynamicpackages_Metaboxes
 		<?php
         endif; ?>
 
-		<p>
-			<label for="package_check_in_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_check_in_hour" id="package_check_in_hour" value="<?php echo esc_attr($this->check_in_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
-		</p>
-		<p>
-			<label for="package_start_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-			<input class="timepicker" type="text" name="package_start_hour" id="package_start_hour" value="<?php echo esc_attr($this->start_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
-		</p>				
+		<?php $this->schedule_editor('start_hour', $this->start_hour, $this->check_in_hour, __('Departure Hour', 'dynamicpackages')); ?>
 		<p>
 			<label for="package_start_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
 			<textarea cols="60" type="text" name="package_start_address" id="package_start_address" <?php echo esc_attr($this->disable_child); ?>><?php echo esc_textarea($this->start_address); ?></textarea>
@@ -398,14 +398,7 @@ class Dynamicpackages_Metaboxes
 
 			<h3><?php esc_html_e('Return', 'dynamicpackages'); ?></h3>
 			
-			<p>
-				<label for="package_check_in_end_hour"><?php echo esc_html(__('Check-in Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_check_in_end_hour" id="package_check_in_end_hour" value="<?php echo esc_attr($this->package_check_in_end_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
-			</p>
-			<p>
-				<label for="package_end_hour"><?php echo esc_html(__('Departure Hour', 'dynamicpackages')); ?></label></br>
-				<input class="timepicker" type="text" name="package_end_hour" id="package_end_hour" value="<?php echo esc_attr($this->end_hour); ?>" <?php echo esc_attr($this->disable_child); ?>>
-			</p>				
+			<?php $this->schedule_editor('end_hour', $this->end_hour, $this->package_check_in_end_hour, __('Return Hour', 'dynamicpackages')); ?>
 			<p>
 				<label for="package_return_address"><?php echo esc_html(__('Departure Address', 'dynamicpackages')); ?></label></br>
 				<textarea cols="60" type="text" name="package_return_address" id="package_return_address" <?php echo esc_attr($this->disable_child); ?>><?php echo esc_textarea($this->return_address); ?></textarea>
@@ -420,6 +413,45 @@ class Dynamicpackages_Metaboxes
 
 		<?php
     }
+
+	private function schedule_editor(string $type, string $hours, string $check_ins, string $label): void
+	{
+		$hour_field = 'package_' . $type;
+		$check_in_field = Dynamicpackages_Schedule::CHECK_IN_FIELDS[$type];
+		$rows = Dynamicpackages_Schedule::parse($hours, $check_ins) ?: [['hour' => '', 'check_in' => null]];
+		$render_row = function (array $row, int $index) use ($hour_field, $label): void {
+			$hour_id = $hour_field . '-choice-' . $index . '-0';
+			$check_in_id = $hour_field . '-choice-' . $index . '-1';
+			?>
+			<div data-schedule-row>
+				<div class="dy-schedule-field">
+					<label for="<?php echo esc_attr($hour_id); ?>"><?php echo esc_html($label); ?></label>
+					<input type="text" class="timepicker" id="<?php echo esc_attr($hour_id); ?>" data-schedule-hour value="<?php echo esc_attr($row['hour']); ?>" <?php disabled($this->is_child); ?>>
+				</div>
+				<div class="dy-schedule-field">
+					<label for="<?php echo esc_attr($check_in_id); ?>"><?php esc_html_e('Check-in Hour', 'dynamicpackages'); ?></label>
+					<input type="text" class="timepicker" id="<?php echo esc_attr($check_in_id); ?>" data-schedule-check-in value="<?php echo esc_attr($row['check_in'] ?? ''); ?>" <?php disabled($this->is_child); ?>>
+				</div>
+				<div class="dy-schedule-actions">
+					<button type="button" class="button" data-move-schedule-row="up" <?php disabled($this->is_child); ?>><?php esc_html_e('Move up', 'dynamicpackages'); ?></button>
+					<button type="button" class="button" data-move-schedule-row="down" <?php disabled($this->is_child); ?>><?php esc_html_e('Move down', 'dynamicpackages'); ?></button>
+					<button type="button" class="button" data-remove-schedule-row <?php disabled($this->is_child); ?>><?php esc_html_e('Remove', 'dynamicpackages'); ?></button>
+				</div>
+			</div>
+			<?php
+		};
+		?>
+		<div data-package-schedule <?php if ($this->is_child) echo 'data-inherited'; ?>>
+			<textarea hidden data-schedule-hours name="<?php echo esc_attr($hour_field); ?>" id="<?php echo esc_attr($hour_field); ?>" <?php disabled($this->is_child); ?>><?php echo esc_textarea($hours); ?></textarea>
+			<textarea hidden data-schedule-check-ins name="<?php echo esc_attr($check_in_field); ?>" id="<?php echo esc_attr($check_in_field); ?>" <?php disabled($this->is_child); ?>><?php echo esc_textarea($check_ins); ?></textarea>
+			<div data-schedule-rows>
+				<?php foreach ($rows as $index => $row) { $render_row($row, $index); } ?>
+			</div>
+			<template><?php $render_row(['hour' => '', 'check_in' => null], 0); ?></template>
+			<button type="button" class="button" data-add-schedule-row <?php disabled($this->is_child); ?>><?php esc_html_e('Add time', 'dynamicpackages'); ?></button>
+		</div>
+		<?php
+	}
 
     public function package_pricing_html($post)
     { ?>		
